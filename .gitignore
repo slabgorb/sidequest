@@ -1,0 +1,55 @@
+# Ignore child repositories
+sidequest-api/
+sidequest-ui/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Pennyfarthing runtime
+.session/*
+!.session/.gitkeep
+.claude/settings.local.json
+.claude/persona-config.local.yaml
+.pennyfarthing/config.local.yaml
+.pennyfarthing/*.local.*
+.pennyfarthing/bell-queue.json
+.pennyfarthing/window-state.json
+.pennyfarthing/work/
+.pennyfarthing/bin/
+.pennyfarthing/tmux-status
+.pennyfarthing/tmux-status-left
+.pennyfarthing/tmux-status-right
+.pennyfarthing/tmux-activity
+
+# Runtime state files
+*.pid
+*-pid
+*-port
+.pennyfarthing/*.json
+.cyclist-*
+
+# Local tmux config
+tmux.conf
+
+# Git worktrees
+worktrees/
+
+# Sprint archives
+sprint/archive/*.md
+
+# Python virtual environment
+.venv/
+
+# Node modules
+node_modules/
