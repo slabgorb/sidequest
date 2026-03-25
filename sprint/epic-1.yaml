@@ -135,16 +135,18 @@ stories:
     \ GameService trait"
   points: 8
   priority: p1
-  status: backlog
+  status: done
   repos: sidequest-api
   workflow: tdd
   depends_on: 1-10
+  completed: '2026-03-25'
 - id: 1-12
   title: "Server \u2014 axum router, WebSocket, genres endpoint, service facade, structured\
     \ logging"
   points: 8
   priority: p1
-  status: backlog
+  status: in_progress
+  started: '2026-03-25'
   repos: sidequest-api
   workflow: tdd
   depends_on: 1-11
