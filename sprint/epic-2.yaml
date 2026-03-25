@@ -1,0 +1,80 @@
+id: '2'
+type: epic
+title: Core Game Loop Integration
+description: Wire the Rust workspace into a playable game loop. Connect server, session lifecycle, orchestrator turn processing, agent execution, and persistence so a player can start a session, create a character, take actions, and receive narrated responses. Defers media (image/audio/TTS), multiplayer sync, and scenario-specific logic.
+priority: p0
+status: ready
+repos: sidequest-api
+stories:
+  - id: 2-1
+    title: Server bootstrap — axum router, WebSocket upgrade, /api/genres REST, CORS, graceful shutdown
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 1-12
+  - id: 2-2
+    title: Session actor — per-connection tokio task, Connect/Create/Play state machine, genre binding
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 2-1
+  - id: 2-3
+    title: Character creation flow — CharacterBuilder state machine, genre scenes over WebSocket, mechanical effects
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 2-2
+  - id: 2-4
+    title: SQLite persistence — rusqlite schema, save/load GameSnapshot, narrative log, 'Previously On' recap
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 1-8
+  - id: 2-5
+    title: Orchestrator turn loop — intent routing, agent dispatch, response streaming, state patch, broadcast
+    points: 8
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 2-2
+  - id: 2-6
+    title: Agent execution — Claude CLI subprocess calls, prompt composition with genre/state context, JSON extraction
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 2-5
+  - id: 2-7
+    title: State patch pipeline — combat/chase/world JSON patches applied, state delta computation, client broadcast
+    points: 5
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 2-5
+  - id: 2-8
+    title: Trope engine runtime — tick progression, escalation beats, beat injection into narrator context
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 2-5
+  - id: 2-9
+    title: End-to-end integration — UI connects to API, full turn cycle, narration renders in client
+    points: 5
+    priority: p1
+    status: backlog
+    repos: sidequest-api,sidequest-ui
+    workflow: tdd
+    depends_on: 2-6
