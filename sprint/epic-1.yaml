@@ -79,10 +79,14 @@ stories:
     title: Prompt framework — PromptSection, attention zones, rule taxonomy, SOUL.md parser
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-03-25'
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-2
+    completed: '2026-03-25'
+    branch: feat/1-9-prompt-framework
+    review_verdict: approved
   - id: 1-10
     title: Agent infrastructure — Agent trait, ClaudeClient, JsonExtractor, ContextBuilder, format helpers
     points: 5
