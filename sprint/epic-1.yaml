@@ -10,9 +10,10 @@ stories:
     title: Workspace setup — Cargo.toml, 5 crates, shared deps
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: trivial
+    completed: '2026-03-25'
     type: chore
   - id: 1-2
     title: Protocol crate — full GameMessage enum, all 23 payload types, serde round-trips
@@ -52,10 +53,12 @@ stories:
     title: Game core types — Disposition, NonBlankString, clamp_hp, Combatant trait, Character, NPC, Inventory
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-1
+    completed: '2026-03-25'
+    review_verdict: approved
   - id: 1-7
     title: Game subsystems — CombatState, ChaseState, NarrativeEntry, progression
     points: 5
