@@ -25,3 +25,18 @@ completed_stories:
     title: Genre loader — unified loading, two-phase validation, real YAML tests
     points: 5
     completed: '2026-03-25'
+  - id: 1-9
+    epic: ''
+    title: Prompt framework — PromptSection, attention zones, rule taxonomy, SOUL.md parser
+    points: 5
+    completed: '2026-03-25'
+  - id: 1-13
+    epic: ''
+    title: Extract CreatureCore — shared struct for Character and NPC fields
+    points: 2
+    completed: '2026-03-25'
+  - id: 1-6
+    epic: ''
+    title: Game core types — Disposition, NonBlankString, clamp_hp, Combatant trait, Character, NPC, Inventory
+    points: 5
+    completed: '2026-03-25'
