@@ -1,6 +1,7 @@
 # Ignore child repositories
 sidequest-api/
 sidequest-ui/
+sidequest-daemon/
 
 # OS files
 .DS_Store
@@ -41,6 +42,10 @@ Thumbs.db
 
 # Local tmux config
 tmux.conf
+tmux.conf.*
+
+# Local session launcher
+start-session
 
 # Git worktrees
 worktrees/

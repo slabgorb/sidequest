@@ -3,6 +3,8 @@
 # subrepos (sidequest-api, sidequest-ui) are separate git repos with their own remotes.
 # PRs go to individual subrepos, not the parent.
 
+pr_title_format: "{type}({scope}): {title}"
+
 repos:
   orchestrator:
     path: .
