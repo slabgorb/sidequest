@@ -1,0 +1,8 @@
+sprint:
+  goal: "Bootstrap Rust workspace scaffolding"
+  start_date: "2026-03-25"
+  end_date: "2026-04-08"
+  status: active
+  number: 1
+epics:
+  - '1'
