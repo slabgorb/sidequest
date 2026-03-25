@@ -18,10 +18,12 @@ stories:
     title: Protocol crate — full GameMessage enum, all 23 payload types, serde round-trips
     points: 8
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-1
+    completed: '2026-03-25'
+    review_verdict: approved
   - id: 1-3
     title: Genre pack models — all structs, serde derives, deny_unknown_fields
     points: 5

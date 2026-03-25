@@ -1,0 +1,17 @@
+sprint:
+  name: "Unknown Sprint"
+  number: 1
+  jira_sprint_id:
+  jira_sprint_name: "Unknown Sprint"
+  goal: Bootstrap Rust workspace scaffolding
+  start_date: 2026-03-25
+  end_date: 2026-04-08
+  status: active
+
+completed_epics: []
+completed_stories:
+  - id: 1-2
+    epic: ''
+    title: Protocol crate — full GameMessage enum, all 23 payload types, serde round-trips
+    points: 8
+    completed: '2026-03-25'
