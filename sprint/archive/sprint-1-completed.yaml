@@ -60,8 +60,8 @@ completed_stories:
     title: Reviewer LOW rollup — thiserror migration, deny_unknown_fields gaps, test quality, doc fixes
     points: 2
     completed: '2026-03-25'
-  - id: 1-11
+  - id: 1-8
     epic: ''
-    title: Agent implementations + Orchestrator — all 8 agents, state machine, GameService trait
-    points: 8
+    title: "Game state composition — GameSnapshot, typed patches, state delta, TurnManager, session persistence"
+    points: 3
     completed: '2026-03-25'
