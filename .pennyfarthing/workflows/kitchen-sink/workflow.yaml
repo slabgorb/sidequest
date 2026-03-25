@@ -1,0 +1,76 @@
+# Kitchen Sink Workflow
+# Full ceremony: architecture review, PM validation, TDD cycle, dual review gates
+#
+# Flow: SM setup -> Architect (requirements + reuse) -> PM (requirements + context)
+#       -> TEA (red) -> Dev (green) -> TEA (verify) -> Reviewer -> PM (AC review) -> SM finish
+
+workflow:
+  name: kitchen-sink
+  description: Full-ceremony workflow with architecture review, PM validation, TDD cycle, code review, and AC sign-off
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches]
+
+    - name: analyze
+      agent: architect
+      input: [session_file]
+      output: [requirements_review, reuse_opportunities, story_context]
+      gate:
+        type: manual
+        condition: Architecture review and code reuse analysis complete
+
+    - name: plan
+      agent: pm
+      input: [requirements_review, reuse_opportunities, story_context]
+      output: [validated_requirements, story_context]
+      gate:
+        type: manual
+        condition: Requirements validated and story context updated
+
+    - name: red
+      agent: tea
+      input: [validated_requirements, story_context]
+      output: [failing_tests]
+      gate:
+        type: tests_fail
+
+    - name: green
+      agent: dev
+      input: [failing_tests]
+      output: [implementation, passing_tests]
+      gate:
+        type: tests_pass
+
+    - name: verify
+      agent: tea
+      input: [implementation, passing_tests]
+      output: [quality_verified]
+      gate:
+        type: quality_pass
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests, quality_verified]
+      output: [code_approval]
+      gate:
+        type: approval
+
+    - name: accept
+      agent: pm
+      input: [code_approval, implementation]
+      output: [ac_approval]
+      gate:
+        type: approval
+        condition: All acceptance criteria verified
+
+    - name: finish
+      agent: sm
+      input: [ac_approval]
+      output: [archived_session]
+
+  triggers:
+    tags: [kitchen-sink, full-ceremony]
+    types: [feature]

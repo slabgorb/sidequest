@@ -1,0 +1,187 @@
+# Leaderboard Schema Specification
+# Version: 1.0.0
+# Generated leaderboards must conform to this structure
+
+schema_version: 1
+
+# Header section - metadata about the benchmark
+header:
+  scenario_name:
+    type: string
+    example: "race-condition-cache"
+    description: "Scenario identifier from scenarios/ directory"
+
+  scenario_title:
+    type: string
+    example: "Race Condition Cache"
+    description: "Human-readable scenario name (title case)"
+
+  difficulty:
+    type: enum
+    values: [easy, medium, hard, extreme]
+    description: "Scenario difficulty level"
+
+  role:
+    type: string
+    example: "dev"
+    description: "Agent role (dev, reviewer, tea, sm, architect)"
+
+  role_title:
+    type: string
+    example: "Developer"
+    description: "Human-readable role name"
+
+  baseline:
+    mean:
+      type: number
+      precision: 2
+      description: "Control agent mean score"
+    std_dev:
+      type: number
+      precision: 2
+      description: "Control agent standard deviation"
+    n:
+      type: integer
+      description: "Number of control runs"
+
+  version:
+    type: string
+    example: "5.0.1"
+    description: "Pennyfarthing version used"
+
+  generated_timestamp:
+    type: string
+    format: "ISO8601"
+    example: "2026-01-03T03:45:00Z"
+    description: "When leaderboard was generated"
+
+# Rankings table columns
+rankings:
+  columns:
+    - name: Rank
+      type: integer
+      description: "Position by mean score (ties share rank)"
+
+    - name: Theme
+      type: string
+      description: "Theme identifier"
+
+    - name: Character
+      type: string
+      description: "Persona character name for this role. Cross-role entries show '(as {role})' suffix."
+
+    - name: Mean
+      type: number
+      precision: 2
+      description: "Mean score across all runs"
+
+    - name: Std Dev
+      type: number
+      precision: 2
+      description: "Standard deviation of scores"
+
+    - name: n
+      type: integer
+      description: "Number of runs"
+
+    - name: Delta
+      type: number
+      precision: 2
+      signed: true
+      description: "Difference from baseline mean (+ or -)"
+
+    - name: "Cohen's d"
+      type: number
+      precision: 2
+      signed: true
+      description: "Effect size using pooled standard deviation"
+
+  # Cross-role metadata (optional, present when cross_role=true in summary.yaml)
+  cross_role_fields:
+    - name: Cross-Role
+      type: boolean
+      optional: true
+      description: "True if character is performing outside their native role"
+
+    - name: Source Role
+      type: string
+      optional: true
+      description: "Character's native role (e.g., 'sm' for Prospero)"
+
+    - name: Effective Role
+      type: string
+      optional: true
+      description: "Role being performed (matches the leaderboard's role)"
+
+  special_rows:
+    control_row:
+      position: "After last positive delta, before first negative"
+      format: "| --- | **CONTROL** | **Baseline** | **{mean}** | **{std}** | **{n}** | **0.00** | **0.00** |"
+      description: "Bold separator row showing baseline"
+
+  sorting:
+    primary: mean
+    order: descending
+    tie_handling: "Same rank, listed alphabetically by theme"
+
+# Cohen's d calculation
+cohens_d:
+  formula: "d = (M1 - M2) / sqrt(((n1-1)*s1² + (n2-1)*s2²) / (n1+n2-2))"
+  interpretation:
+    negligible: "< 0.20"
+    small: "0.20"
+    medium: "0.50"
+    large: "0.80"
+    very_large: "> 1.20"
+  notes:
+    - "Positive d = outperforms baseline"
+    - "Negative d = underperforms baseline"
+    - "Uses pooled standard deviation for unequal sample sizes"
+
+# Summary statistics section
+summary:
+  total_themes:
+    type: integer
+    description: "Count of all themed agents benchmarked"
+
+  themes_above:
+    type: integer
+    description: "Count with mean > baseline mean"
+
+  themes_near:
+    type: integer
+    description: "Count within 1 point of baseline"
+
+  total_runs:
+    type: integer
+    description: "Sum of all n values"
+
+# Top/Bottom performer tables
+highlights:
+  top_performers:
+    count: 5
+    criteria: "Highest Cohen's d (most positive)"
+    columns: [Theme, Character, Mean, Delta, "Cohen's d"]
+
+  bottom_performers:
+    count: 5
+    criteria: "Lowest Cohen's d (most negative)"
+    columns: [Theme, Character, Mean, Delta, "Cohen's d"]
+
+# Data sources
+data_sources:
+  baseline: "internal/results/baselines/{scenario}/{role}/summary.yaml"
+  themes: "internal/results/benchmarks/{scenario}/{theme}-{role}/summary.yaml"
+  cross_role: "internal/results/benchmarks/{scenario}/{theme}-{character}-as-{role}/summary.yaml"
+  ocean_analysis: "./OCEAN-ANALYSIS.md"
+
+# Generation requirements
+requirements:
+  minimum_n: 4
+  recommended_n: 5
+  baseline_n: 10
+  character_required: true
+  notes:
+    - "All themes should have consistent n for valid comparison"
+    - "Character names must be populated from theme YAML"
+    - "Model and token data tracked per-run, not in leaderboard header"

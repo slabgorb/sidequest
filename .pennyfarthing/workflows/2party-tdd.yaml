@@ -1,0 +1,422 @@
+# 2-Party TDD Workflow - Story Refinement + Test-Driven Development
+#
+# Adds a story refinement gate before standard TDD. SM runs two focused
+# brainstorm parties to surface gaps before TEA and Dev receive the story.
+#
+# Flow: SM → SM(party:dev) → SM(party:tea) → SM(quality) → TEA → Dev → QA → Reviewer → SM
+#
+# Review rejection loop:
+#   If Reviewer finds issues and tests passed → tests are incomplete.
+#   Reviewer writes findings to story → TEA writes failing tests → Dev fixes → QA verifies → Reviewer again.
+#   If Reviewer finds only lint/format issues → Dev fixes → QA verifies → Reviewer again.
+#   QA verification ensures Reviewer only sees verified-clean code.
+#
+# PR policy:
+#   Dev pushes the branch but does NOT create a PR.
+#   SM prepares PR content, user approves before submission.
+#   Default pr_mode: draft. User can set to "ready" in pennyfarthing config.
+#
+# Post-PR lifecycle:
+#   External reviews (AI bots, humans) are triaged via party-mode evaluation.
+#   Default stance: we do NOT adopt suggestions unless the team agrees.
+#   All reply comments are drafted locally and approved by user before posting.
+#   Communication with maintainers is irreversible — protect relationships.
+#   PR is monitored through merge/close, story status updated throughout.
+#
+# The "2 party" name refers to the two stakeholder perspectives consulted:
+#   Party 1: What does Dev need to succeed?
+#   Party 2: What does TEA need to succeed?
+
+workflow:
+  name: 2party-tdd
+  description: Story refinement via two stakeholder parties, then TDD
+  version: "2.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+
+    - name: refine-dev
+      agent: sm
+      input: [session_file, story_context]
+      output: [dev_gaps, refined_story]
+      instructions: |
+        Run a party-mode brainstorm with the prompt:
+
+          "What is missing from this story for Dev to be successful?"
+
+        Perspectives to include: Dev, Architect, Reviewer.
+        Focus areas: implementation clarity, acceptance criteria gaps,
+        ambiguous requirements, missing technical context, dependency risks.
+
+        Present findings to user. User decides what to add/change.
+        Update the story description with agreed refinements.
+      gate:
+        file: gates/approval
+        type: approval
+        condition: User reviewed dev-perspective gaps and decided on each item
+
+    - name: refine-tea
+      agent: sm
+      input: [session_file, refined_story]
+      output: [tea_gaps, refined_story]
+      instructions: |
+        Run a party-mode brainstorm with the prompt:
+
+          "What is missing from this story for TEA to be successful?"
+
+        Perspectives to include: TEA, Dev, Reviewer.
+        Focus areas: testability, acceptance criteria specificity,
+        edge cases, test data needs, integration test boundaries,
+        what "done" looks like in test terms.
+
+        Present findings to user. User decides what to add/change.
+        Update the story description with agreed refinements.
+      gate:
+        file: gates/approval
+        type: approval
+        condition: User reviewed tea-perspective gaps and decided on each item
+
+    - name: quality-pass
+      agent: sm
+      input: [refined_story, dev_gaps, tea_gaps]
+      output: [final_story]
+      instructions: |
+        Final quality check on the refined story before handoff to TEA.
+
+        Verify:
+        - Acceptance criteria are specific and testable
+        - No ambiguous language remains ("should", "maybe", "as needed")
+        - Implementation approach is clear enough for Dev
+        - Test strategy is clear enough for TEA
+        - Dependencies and blockers are documented
+        - Story scope hasn't crept beyond original intent
+
+        Fix any remaining issues, then hand off to TEA.
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Story passes quality check and is ready for TEA
+
+    - name: red
+      agent: tea
+      input: [final_story, session_file]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      instructions: |
+        Write failing tests for all acceptance criteria.
+
+        In addition to functional tests, include a quality gate check
+        that verifies new files pass the project's lint and format rules.
+        This catches code generation issues (wrong API usage, style
+        violations) at the test level rather than leaving them for review.
+
+        Examples by ecosystem:
+        - Node: spawn eslint and prettier --check on new files
+        - Go: spawn go vet and golangci-lint on new packages
+        - Python: spawn ruff check and ruff format --check
+        - Rust: spawn cargo clippy and cargo fmt --check
+        - Generic: check if the project has a top-level quality command
+          and spawn it (npm test, make lint, just check, etc.)
+
+        Include this as the last test function, e.g. testCodeQuality().
+        This ensures Dev can't commit GREEN without passing all gates.
+
+        In the TEA Assessment handoff, list what quality gates Dev
+        should expect to pass beyond the functional tests.
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: All acceptance criteria have test coverage, including quality gate check
+
+    - name: green
+      agent: dev
+      input: [failing_tests, final_story]
+      output: [implementation, passing_tests]
+      instructions: |
+        Make tests GREEN. Implement minimal code to pass all failing tests.
+        Commit implementation. Push branch.
+        Hand off to QA/TEA for verification before review.
+
+        DO NOT create a PR — that happens in finish phase.
+
+    # QA verifies GREEN before Reviewer sees it
+    - name: verify
+      agent: tea
+      input: [implementation, passing_tests]
+      output: [verification_report]
+      instructions: |
+        QA verification of Dev's GREEN implementation.
+
+        Run the project's full quality gate — not just the new tests,
+        but everything CI would check: lint, format, type checks,
+        schema validation, and any other project-defined checks.
+        Use `/check` or `/run-ci` to discover and run all gates.
+
+        If verification fails, hand back to Dev with specifics.
+        If verification passes, hand off to Reviewer.
+
+        Reviewer should only receive code that is verified clean.
+      gate:
+        file: gates/quality-pass
+        type: quality_pass
+        condition: >
+          All project quality gates pass locally — tests, lint, format,
+          type checks, and any CI-equivalent checks. Dev's implementation
+          is verified clean before Reviewer spends time on it.
+
+    - name: review
+      agent: reviewer
+      input: [verification_report, implementation, passing_tests]
+      output: [review_findings]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      instructions: |
+        Adversarial code review. Write ALL findings to the story in
+        sprint/current-sprint.yaml under review_findings field.
+
+        On REJECT:
+        - Write findings with severity to story (review_findings field)
+        - Set review_verdict: rejected in story
+        - If findings are testable (logic bugs, missing edge cases):
+            Set workflow_phase to review-fix-tea → TEA writes failing tests first
+        - If findings are lint/format/dead-code only:
+            Set workflow_phase to review-fix-dev → Dev fixes directly
+        - DO NOT merge or create PRs
+
+        On APPROVE:
+        - Set review_verdict: approved in story
+        - DO NOT merge the PR — hand off to SM for finish phase
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Code review passed, no blocking issues
+
+    # Review rejection loops — TEA writes tests for what Reviewer caught
+    - name: review-fix-tea
+      agent: tea
+      input: [review_findings, failing_tests]
+      output: [additional_failing_tests]
+      instructions: |
+        Reviewer found issues that tests missed. Read review_findings
+        from the story. Write failing tests for each testable finding.
+        Commit RED tests. Hand off to Dev.
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: New tests cover reviewer findings
+
+    # Review rejection loop — Dev fixes all issues
+    - name: review-fix-dev
+      agent: dev
+      input: [review_findings, implementation]
+      output: [fixed_implementation]
+      instructions: |
+        Read review_findings from the story. Fix ALL findings:
+        - HIGH: Must fix (lint, format, dead code, logic)
+        - MEDIUM: Should fix
+        - LOW: Fix if trivial
+
+        Commit fixes. Push branch. Hand off to QA/TEA for verification.
+        Do NOT self-certify — someone else verifies your fix.
+
+    # QA verifies Dev's fixes before sending back to Reviewer
+    - name: review-fix-verify
+      agent: tea
+      input: [fixed_implementation, review_findings]
+      output: [verification_report]
+      instructions: |
+        QA verification step. Dev claims the fixes are done — verify it.
+
+        Run the project's full quality gate:
+        - Use `/check` or `/run-ci` to discover and run all gates
+        - Tests, lint, format, type checks, schema validation
+        - Confirm each review finding is actually addressed
+
+        If verification fails, hand back to Dev with specifics.
+        If verification passes, hand off to Reviewer for re-review.
+      gate:
+        file: gates/quality-pass
+        type: quality_pass
+        condition: >
+          All project quality gates pass. Each review finding verified
+          as addressed. Code is clean enough for Reviewer's time.
+      next: review
+
+    # --- Post-implementation: PR lifecycle ---
+
+    - name: pr-prepare
+      agent: sm
+      input: [approval]
+      output: [pr_draft]
+      instructions: |
+        Prepare the PR for submission. This is our "one shot" with
+        the upstream maintainer — get it right before anyone sees it.
+
+        Steps:
+        1. Draft PR title and description locally (do not post yet)
+        2. Review the diff for:
+           - Unsigned commits
+           - Extra files that shouldn't be included
+           - Sensitive data leaks (.env, credentials, local paths)
+           - Missing sections in the PR description
+        3. Run CI-equivalent checks locally one final time
+        4. Present PR description and diff summary to user for approval
+        5. Only after user approves: create PR (draft by default,
+           or per user pr_mode preference in pennyfarthing config)
+      gate:
+        file: gates/approval
+        type: approval
+        condition: User has reviewed and approved PR content before submission
+
+    # External review triage — AI reviewers and humans will comment
+    - name: pr-review-triage
+      agent: sm
+      input: [pr_draft]
+      output: [external_review_analysis]
+      instructions: |
+        Monitor the PR for external reviews (AI bots like CodeRabbit,
+        human reviewers, maintainer feedback). When reviews arrive:
+
+        CRITICAL PRINCIPLES:
+        - External reviewers lack our context: ADRs, story intent,
+          architectural decisions, and why we chose this approach.
+        - Default stance: we do NOT adopt a suggestion unless the
+          team agrees it fits. Silence is not consent — we must
+          actively agree to adopt each suggestion.
+        - Communication between humans cannot be undone. Damage to
+          relationships with maintainers is permanent. Every reply
+          is drafted locally and approved by the user before posting.
+
+        For each review comment or suggestion:
+        1. Categorize: bug fix, style preference, architectural
+           concern, nitpick, misunderstanding, valid improvement
+        2. Gather context the reviewer is missing (ADRs, story
+           decisions, prior art in the codebase)
+        3. Present to user with initial assessment
+
+        When comments are gathered, hand off to pr-review-party
+        for structured evaluation.
+
+    - name: pr-review-party
+      agent: sm
+      input: [external_review_analysis]
+      output: [review_decisions]
+      instructions: |
+        Run a party-mode evaluation of external review comments.
+
+        Prompt (tune as needed):
+          "Evaluate each external review suggestion against:
+           1. The intent and scope of this PR
+           2. Fit with project architecture and ADRs
+           3. Viability — does the proposed fix actually work?
+           4. Negative impact — could this fix break something else?
+           5. Precedent — does this conflict with established patterns?
+           6. Effort vs value — is this worth doing now?"
+
+        Perspectives: Dev, Architect, Reviewer, PM.
+
+        For each suggestion, produce one of:
+        - ADOPT: Team agrees. Will fix, test, and reply with thanks.
+        - DECLINE: Doesn't fit. Draft a respectful reply explaining
+          why, with context the reviewer was missing.
+        - DEFER: Valid but out of scope. Draft reply acknowledging
+          the point and noting it for a future PR/issue.
+        - CLARIFY: Need more info from the reviewer. Draft a question.
+
+        Present decisions to user. User has final say on every item.
+      gate:
+        file: gates/approval
+        type: approval
+        condition: User has decided on every external review comment
+
+    - name: pr-review-respond
+      agent: dev
+      input: [review_decisions]
+      output: [fixes, draft_replies]
+      instructions: |
+        For each ADOPT decision:
+        1. Implement the fix
+        2. Write or update tests if needed
+        3. Run full quality gate
+        4. Draft a reply comment (e.g., "Good catch, fixed in abc123")
+
+        For each DECLINE/DEFER/CLARIFY decision:
+        1. Draft a reply comment explaining the team's position
+        2. Include context the reviewer was missing
+        3. Be respectful — this is a relationship, not a debate
+
+        CRITICAL: Do NOT post any comments. All replies are drafted
+        locally and presented to the user for approval. The user may
+        edit wording, tone, or content before any reply is posted.
+
+        Commit fixes. Push branch. Present all draft replies to user.
+      gate:
+        file: gates/approval
+        type: approval
+        condition: >
+          User has approved every draft reply. Fixes pass quality
+          gates. No reply is posted without explicit user approval.
+
+    - name: pr-replies-post
+      agent: sm
+      input: [draft_replies]
+      output: [posted_replies]
+      instructions: |
+        Post user-approved replies to the PR. For each reply:
+        1. Confirm user approval one final time
+        2. Post the comment via gh CLI
+        3. Log the posted reply for audit
+
+        After all replies posted, return to pr-review-triage to
+        monitor for follow-up comments. This loop continues until
+        the PR is merged, closed, or the user decides to stop.
+      next: pr-monitor
+
+    - name: pr-monitor
+      agent: sm
+      input: [posted_replies]
+      output: [pr_status]
+      instructions: |
+        Monitor the PR status. Check for:
+        - New review comments → back to pr-review-triage
+        - CI failures → hand to Dev for fixes
+        - Approval from maintainer → update story status
+        - Merge → move to pr-complete
+        - Close (rejected) → move to pr-complete with rejected status
+
+        Update the story workflow_phase as status changes.
+        If new comments arrive, loop back to pr-review-triage.
+      next_on:
+        new_comments: pr-review-triage
+        ci_failure: review-fix-dev
+        merged: pr-complete
+        closed: pr-complete
+
+    - name: pr-complete
+      agent: sm
+      input: [pr_status]
+      output: [archived_session, story_summary]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      instructions: |
+        PR is merged or closed. Finalize the story:
+        1. Update story status (done if merged, blocked/cancelled if closed)
+        2. Update Jira ticket
+        3. Archive session file
+        4. Clean up branches if merged
+        5. Write story summary for sprint record
+
+  triggers:
+    types: [feature, enhancement]
+    tags: [2party, refinement, complex]
+    points:
+      min: 3

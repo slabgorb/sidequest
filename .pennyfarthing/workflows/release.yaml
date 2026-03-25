@@ -1,0 +1,69 @@
+# Release Workflow - Interactive stepped release process
+# Replaces fire-and-forget deploy.sh with gated steps
+#
+# Flow: Preflight → Bump → [Approve] → Changelog → [Approve] → README →
+#       CLAUDE.md → Retro (optional) → Commit → [Approve] → Merge →
+#       Push → [Approve] → Reinstall → Finalize
+#
+# Use for: releasing new versions of Pennyfarthing
+#
+# Key features:
+# - Gates at every destructive/irreversible point
+# - Content review steps for changelog, readme, claude.md
+# - Optional retrospective before committing
+# - Version verification at each stage
+# - Abort-safe (can stop at any gate)
+# - Shows diffs and staged files before committing
+
+workflow:
+  name: release
+  description: Interactive stepped release with verification gates
+  version: "2.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./release/steps/
+    pattern: step-{nn}-*.md
+
+  # Variables available in step files
+  variables:
+    version_file: VERSION
+    project_root: .
+    packages: "core shared themes-comedy themes-literary themes-mythology-fantasy themes-prestige-tv themes-realistic themes-scifi themes-superheroes"
+    # Set during preflight based on user choice:
+    # IS_PRERELEASE: "true" | "false"
+    # PRERELEASE_CHANNEL: "alpha" | "beta" | "rc" (only when IS_PRERELEASE=true)
+    # These control conditional behavior in steps 2, 4, 5, 6, 7, 8, 9, 10, 11
+
+  # Steps skipped for prerelease
+  prerelease_skip_steps: [4, 5, 6, 8]  # README, CLAUDE.md, Retro, Merge to main
+
+  # User approval gates
+  gates:
+    after_steps: [2, 3, 7, 9]  # After bump, changelog, commit, push
+    gate_marker: "<!-- GATE -->"
+
+  # Collaboration menus
+  collaboration:
+    menus:
+      - key: C
+        name: Continue
+        description: Approve and proceed to next step
+      - key: A
+        name: Abort
+        description: Stop the release (safe before push)
+      - key: R
+        name: Revise
+        description: Fix something before continuing
+      - key: S
+        name: Skip
+        description: Skip this step (use with caution)
+
+  # Agent assignment - SM owns the release process
+  agent: sm
+
+  # Triggers
+  triggers:
+    commands: [release]
+    tags: [release, deploy, publish]

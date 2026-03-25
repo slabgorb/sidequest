@@ -1,0 +1,76 @@
+# Architecture Workflow - Migrated from BMAD format
+# Collaborative architectural decision-making with progressive disclosure
+#
+# Flow: Initialize → [Continue?] → Context → Patterns → Components → Interfaces → Risks → Document
+# Use for architectural decisions, system design, and technical planning
+#
+# BMAD Enhancements:
+# - Continuation handler (step-01b) for resuming workflows
+# - switch prompts: Advanced Elicitation, Party Mode, Continue
+# - Web search integration for current technology versions
+# - AI agent consistency focus in component and risk steps
+# - Pre-documentation validation checks
+
+workflow:
+  name: architecture
+  description: Collaborative architectural decision facilitation for AI-agent consistency. Produces a decision-focused architecture document optimized for preventing agent conflicts through step-by-step discovery with switch prompts.
+  version: "2.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-{nn}-*.md
+    # Note: step-01b-continue.md is loaded conditionally by step-01 when existing workflow detected
+    config:
+      4:
+        tandem:
+          partner: pm
+          scope: tool-watch
+      6:
+        team:
+          teammates:
+            - agent: devops
+              task: "Review infrastructure and deployment risks"
+          model: haiku
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    planning_artifacts: sprint/planning/
+    output_file: sprint/planning/architecture.md
+    input_required:
+      - prd
+
+  # User approval gates - pause for confirmation at key decision points
+  # Steps with switch prompts naturally pause; these are the formal gates
+  gates:
+    after_steps: [2, 4, 6]
+    gate_marker: "<!-- GATE -->"
+
+  # Collaboration menus available in steps
+  collaboration:
+    menus:
+      - key: A
+        name: Advanced Elicitation
+        description: Use discovery protocols to develop deeper insights
+      - key: P
+        name: Party Mode
+        description: Bring multiple perspectives to analyze from different angles
+      - key: C
+        name: Continue
+        description: Save content and proceed to next step
+      - key: R
+        name: Revise
+        description: Need to gather more information or make changes
+
+  # Output template
+  template: ./templates/architecture-decision.md
+
+  # Agent assignment
+  agent: architect
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [architecture, design, adr, system-design]
+    tags: [architecture, stepped]

@@ -1,0 +1,45 @@
+# research Workflow - Migrated from BMAD format
+# Generated manually (routing-based modes)
+# Story: MSSCI-12135
+
+workflow:
+  name: research
+  description: Conduct comprehensive research across multiple domains using current web data and verified sources - Market, Technical, Domain research types.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration - default to market research
+  steps:
+    path: ./steps-market/
+    pattern: step-*.md
+
+  # Routing-based workflow paths (not tri-modal create/validate/edit)
+  # User selects research type which routes to appropriate step directory
+  modes:
+    market: ./steps-market/
+    domain: ./steps-domain/
+    technical: ./steps-technical/
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    planning_artifacts: sprint/planning/
+    output_file: sprint/planning/research.md
+    research_type: ""
+    research_topic: ""
+    research_goals: ""
+
+  # Template for research output
+  template: ./templates/research.template.md
+
+  # Agent assignment - Architect for research work
+  agent: architect
+
+  # Web search required for this workflow
+  requirements:
+    web_search: true
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [research, market-research, technical-research, domain-research]
+    tags: [research, stepped, analysis, web-search]

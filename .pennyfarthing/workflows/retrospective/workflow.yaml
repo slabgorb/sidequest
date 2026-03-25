@@ -1,0 +1,50 @@
+# BMAD Retrospective Workflow - Imported for BMAD Compatibility
+#
+# This is a reference workflow imported from BMAD for compatibility with
+# BMAD-based projects. It provides structured retrospective ceremonies with
+# epic review and next epic preparation.
+#
+# Key features:
+# - Single-agent execution (Scrum Master facilitation)
+# - Party mode protocol with named agent roles
+# - Two-part format: Epic Review + Next Epic Preparation
+# - Deep story analysis and lesson extraction
+# - Previous retrospective integration for continuity
+#
+# For Pennyfarthing projects, the /retro skill provides a simpler
+# retrospective experience without the full BMAD ceremony format.
+#
+# Source: BMAD-METHOD/src/modules/bmm/workflows/4-implementation/retrospective/
+# Migrated: 2026-01-22
+
+workflow:
+  name: retrospective
+  description: |
+    BMAD reference workflow: Run after epic completion to review overall success,
+    extract lessons learned, and explore if new information emerged that might
+    impact the next epic. This is imported for BMAD compatibility.
+  version: "1.0.0"
+  type: procedural
+  author: BMad
+
+  # Primary agent for this workflow
+  agent: sm
+
+  # Instructions and validation files
+  instructions: ./instructions.md
+  checklist: ./checklist.md
+
+  # Variables available in instruction files
+  variables:
+    project_root: .
+    config_source: "./_bmad/bmm/config.yaml"
+    planning_artifacts: sprint/planning/
+    implementation_artifacts: ./artifacts
+    sprint_status_file: ./artifacts/sprint-status.yaml
+    story_directory: ./artifacts/stories
+    retrospectives_folder: ./artifacts
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [bmad-retro, bmad-retrospective, epic-completion]
+    tags: [bmad, reference, procedural, retrospective]

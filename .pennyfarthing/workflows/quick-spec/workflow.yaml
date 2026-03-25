@@ -1,0 +1,35 @@
+# quick-spec Workflow - Adapted from BMAD format
+# Conversational spec engineering - ask questions, investigate code, produce implementation-ready tech-spec.
+#
+# Flow: Understand → Investigate → Generate → Review
+# Companion to quick-dev: spec first, then dev.
+
+workflow:
+  name: quick-spec
+  description: Conversational spec engineering - ask questions, investigate code, produce implementation-ready tech-spec.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    planning_artifacts: sprint/planning/
+    implementation_artifacts: sprint/planning/
+    output_file: sprint/planning/tech-spec-wip.md
+    quick_dev_workflow: '{project_root}/.pennyfarthing/workflows/quick-dev/workflow.yaml'
+
+  # Output template
+  template: ./tech-spec-template.md
+
+  # Agent assignment
+  agent: architect
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [quick-spec, tech-spec, spec]
+    tags: [quick-spec, stepped]

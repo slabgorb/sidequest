@@ -1,0 +1,59 @@
+# Git Cleanup Workflow - Organize uncommitted changes into proper commits
+# Stepped workflow for cleaning up scattered changes across repos
+#
+# Flow: Analyze → Categorize → [Approve] → Execute → Verify → [Push]
+# Use for: end-of-session cleanup, organizing mixed changes, git hygiene
+#
+# Key features:
+# - Multi-repo support (configured via repos.yaml)
+# - Conventional commit enforcement
+# - Branch workflow (never direct to develop)
+# - Stash-based change isolation
+
+workflow:
+  name: git-cleanup
+  description: Organize uncommitted changes into proper commits/branches by initiative
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./git-cleanup/steps/
+    pattern: step-{nn}-*.md
+
+  # Variables available in step files
+  variables:
+    output_file: .session/git-cleanup-plan.md
+    repos_config: .pennyfarthing/repos.yaml
+
+  # User approval gates
+  gates:
+    after_steps: [2, 4]  # After categorize and after execute
+    gate_marker: "<!-- GATE -->"
+
+  # Collaboration menus
+  collaboration:
+    menus:
+      - key: A
+        name: Analyze More
+        description: Dig deeper into a specific repo or change set
+      - key: E
+        name: Edit Groupings
+        description: Modify the proposed change groupings
+      - key: T
+        name: Track in Jira
+        description: Promote a group to a tracked Jira story (standalone-style)
+      - key: C
+        name: Continue
+        description: Approve and proceed to next step
+      - key: S
+        name: Skip Group
+        description: Skip a group (leave changes uncommitted)
+
+  # Agent assignment - uses orchestrator for cross-repo coordination
+  agent: orchestrator
+
+  # Triggers
+  triggers:
+    commands: [git-cleanup, cleanup]
+    tags: [git, cleanup, maintenance]

@@ -1,0 +1,40 @@
+# Context Document Schema — Epic & Story Context Files
+#
+# Machine-readable schema defining required and optional sections
+# for context documents in sprint/context/. Used by:
+#   - pf validate context (129-3: Context Validator)
+#   - pf-context create skill (130-1, 130-2: Context Creation)
+#   - pennyfarthing-dist/templates/context-*-template.md (Templates)
+#
+# ADR-0029 Rule #2: This schema is the ONLY authority for required sections.
+# Templates and validators MUST read this file. Never hardcode section names.
+
+version: "1.0.0"
+
+epic:
+  required_sections:
+    - Overview
+    - Background
+    - Technical Architecture
+  optional_sections:
+    - Planning Documents
+    - Cross-Epic Dependencies
+  required_frontmatter: []
+
+story:
+  required_sections:
+    - Business Context
+    - Technical Guardrails
+    - Scope Boundaries
+    - AC Context
+  optional_sections:
+    - Assumptions
+    - Interaction Patterns
+    - Accessibility Requirements
+    - Visual Constraints
+  required_frontmatter:
+    - parent
+
+# Output naming convention (ADR-0029 Rule #1):
+#   Epic:  sprint/context/context-epic-{id}.md
+#   Story: sprint/context/context-story-{id}.md

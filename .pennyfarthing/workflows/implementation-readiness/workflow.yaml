@@ -1,0 +1,40 @@
+# BMAD Implementation Readiness Workflow - Imported for BMAD Compatibility
+#
+# This is a stepped workflow imported from BMAD that validates PRD, Architecture,
+# and Epics & Stories for completeness and alignment before implementation.
+# Uses an adversarial review approach to find gaps and issues.
+#
+# Purpose: Critical pre-implementation validation gate
+# Role: Expert PM and Scrum Master doing requirements traceability
+# Output: Implementation readiness assessment report
+#
+# Source: BMAD-METHOD/src/modules/bmm/workflows/3-solutioning/check-implementation-readiness/
+# Migrated: 2026-01-21
+
+workflow:
+  name: implementation-readiness
+  description: |
+    BMAD reference workflow: Critical validation that assesses PRD, Architecture,
+    and Epics & Stories for completeness and alignment before Phase 4 implementation.
+    Uses adversarial review approach to find gaps and issues in planning artifacts.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    planning_artifacts: sprint/planning/
+    output_file: sprint/planning/implementation-readiness-report.md
+
+  # Agent assignment - PM/SM role for adversarial review
+  agent: sm
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [implementation-readiness, readiness-check, on_demand]
+    tags: [bmad, validation, assessment, pre-implementation]

@@ -1,0 +1,72 @@
+# Agent Documentation Workflow
+# For agent file creation, updates, and improvements
+#
+# Flow: Orchestrator → Tech Writer → SM
+# Use for: Agent file updates, process improvements, skill maintenance
+
+workflow:
+  name: agent-docs
+  description: Agent file and process documentation updates
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, story_context]
+      note: SM sets up the story but immediately hands off to Orchestrator
+
+    - name: analyze
+      agent: orchestrator
+      input: [session_file, story_context]
+      output: [audit_report, proposed_changes]
+      gate:
+        type: manual
+        condition: Changes identified and documented
+
+    - name: implement
+      agent: orchestrator
+      input: [audit_report, proposed_changes]
+      output: [updated_files]
+      gate:
+        file: gates/validation
+        type: validation
+        condition: Agent files parse correctly, no broken references
+
+    - name: review
+      agent: tech-writer
+      input: [updated_files]
+      output: [approval]
+      gate:
+        file: gates/approval
+        type: approval
+        condition: |
+          Documentation quality review:
+          - Clear and consistent structure
+          - No stale references
+          - Follows agent file conventions
+          - XML tags properly nested
+          - Examples are accurate
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+
+  triggers:
+    types: [docs, refactor, infrastructure]
+    labels: [agent-file, process-improvement, skill-update]
+    repos: [pennyfarthing]
+
+  notes: |
+    This workflow is for meta-work on the Pennyfarthing system itself:
+    - Updating agent definitions (.pennyfarthing/agents/*.md)
+    - Creating or updating skills (.claude/skills/*/skill.md)
+    - Process improvements and workflow refinements
+    - Agent coordination documentation
+
+    Tech Writer reviews for documentation quality, not code correctness.
+    Focus areas:
+    - Consistent XML tag usage across agents
+    - Clear handoff protocols
+    - Accurate subagent references
+    - No hardcoded theme/character names

@@ -1,0 +1,51 @@
+# BMAD Code Review Workflow - Imported for BMAD Compatibility
+#
+# This is a reference workflow imported from BMAD for compatibility with
+# BMAD-based projects. It provides adversarial code review with mandatory
+# issue discovery (3-10 specific issues minimum per review).
+#
+# Key features:
+# - Adversarial mindset: Find problems, never "looks good"
+# - Git-Story cross-reference: Compare story claims vs actual git changes
+# - AC validation: Verify each Acceptance Criterion is implemented
+# - Task audit: Verify marked-complete tasks are really done
+# - Auto-fix option: Can fix HIGH/MEDIUM issues or create action items
+# - Sprint sync: Updates sprint-status.yaml after review
+#
+# For Pennyfarthing projects, the Reviewer agent and /code-review skill provide
+# native code review without the full BMAD ceremony format.
+#
+# Source: BMAD-METHOD/src/modules/bmm/workflows/4-implementation/code-review/
+# Migrated: 2026-01-22
+
+workflow:
+  name: code-review
+  description: |
+    BMAD reference workflow: Perform an ADVERSARIAL Senior Developer code review
+    that finds 3-10 specific problems in every story. Challenges everything: code
+    quality, test coverage, architecture compliance, security, performance. NEVER
+    accepts "looks good" - must find minimum issues and can auto-fix with user approval.
+    This is imported for BMAD compatibility.
+  version: "1.0.0"
+  type: procedural
+  author: BMad
+
+  # Primary agent for this workflow
+  agent: reviewer
+
+  # Instructions and validation files
+  instructions: ./instructions.md
+  checklist: ./checklist.md
+
+  # Variables available in instruction files
+  variables:
+    project_root: .
+    config_source: "./_bmad/core/config.yaml"
+    output_folder: ./artifacts
+    sprint_status: "{output_folder}/sprint-status.yaml"
+    project_context: "**/project-context.md"
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [code-review, bmad-review, adversarial-review, senior-review]
+    tags: [bmad, reference, procedural, code-review, quality]

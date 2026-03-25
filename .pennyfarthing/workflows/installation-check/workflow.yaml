@@ -1,0 +1,47 @@
+# Installation Check Workflow
+# Interactive health check with AI-guided explanation and remediation
+#
+# Flow: Foundation → Commands → Hooks (gate) → Scripts → Layout → Legacy (gate) → Tools → Summary
+# Wraps `pf validate` for step-by-step guided verification
+#
+# Use for: onboarding, post-update verification, troubleshooting broken installs
+
+workflow:
+  name: installation-check
+  description: Interactive installation health check with AI-guided remediation. Walks through each check category with explanation and targeted fixes.
+  version: "1.0.0"
+  type: stepped
+
+  steps:
+    path: ./steps/
+    pattern: step-{nn}-*.md
+
+  variables:
+    project_root: .
+    doctor_command: pf validate --strict
+    output_file: .session/doctor-results.md
+
+  gates:
+    after_steps: [3, 6]
+    gate_marker: "<!-- GATE -->"
+
+  collaboration:
+    menus:
+      - key: F
+        name: Fix
+        description: Apply recommended fixes for this category
+      - key: E
+        name: Explain
+        description: Get detailed explanation of a specific check
+      - key: C
+        name: Continue
+        description: Proceed to next check category
+      - key: R
+        name: Recheck
+        description: Re-run checks after manual changes
+
+  agent: devops
+
+  triggers:
+    types: [installation-check, doctor, health-check]
+    tags: [installation, health, diagnostics]

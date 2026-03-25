@@ -1,0 +1,111 @@
+# BDD Tandem Workflow - BDD with Full Tandem Chain
+#
+# When to use: Best for UI/UX-heavy stories where designer-architect pairing
+# shapes implementation. Use this instead of base bdd when the story involves
+# complex user flows, new component patterns, or cross-domain UI integration.
+#
+# Tandem pairings:
+#   - DESIGN phase: UX-Designer + Architect (file-watch) — Architect validates technical feasibility
+#   - RED phase: TEA + Dev (file-watch) — Dev provides implementation context for test strategy
+#   - GREEN phase: Dev + UX-Designer (file-watch) — UX-Designer ensures design fidelity
+#   - REVIEW phase: Reviewer + PM (file-watch) — PM validates business requirements
+#
+# Compared to base bdd: Adds tandem observers on every working phase.
+# Designer-developer pairing ensures UX intent survives implementation.
+#
+# Flow: SM → UX-Designer (+Architect) → TEA (+Dev) → Dev (+UX-Designer) → Reviewer (+PM) → SM
+
+workflow:
+  name: bdd-tandem
+  description: BDD with full tandem chain — designer and architect consultation across phases
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+      gate:
+        file: gates/sm-setup-exit
+        type: sm_setup_exit
+        condition: Session file created with workflow, phase, context, and branch
+        recovery:
+          epic-context-validated:
+            action: create_context
+            type: epic
+            max_attempts: 1
+          story-context-validated:
+            action: create_context
+            type: story
+            max_attempts: 1
+
+    - name: design
+      agent: ux-designer
+      input: [session_file, story_context]
+      output: [design_spec, user_flows, wireframes, behavior_scenarios]
+      gate:
+        file: gates/design-review
+        type: design_review
+        condition: UX spec defines user flows and acceptance behaviors
+      tandem:
+        partner: architect
+        scope: file-watch
+
+    - name: red
+      agent: tea
+      input: [design_spec, behavior_scenarios, story_context]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: Behavior scenarios have test coverage
+      tandem:
+        partner: dev
+        scope: file-watch
+
+    - name: green
+      agent: dev
+      input: [failing_tests, design_spec, story_context]
+      output: [implementation, passing_tests]
+      gate:
+        file: gates/dev-exit
+        type: dev_exit
+        condition: Tests green, tree clean, no debug code, correct branch
+      tandem:
+        partner: ux-designer
+        scope: file-watch
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests, design_spec]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Code review approved, UX requirements met
+      tandem:
+        partner: pm
+        scope: file-watch
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  triggers:
+    types: [ui, ux, behavior, component, settings]
+    tags: [bdd-tandem, tandem, ux-first]
+    points:
+      min: 3
+    default: false

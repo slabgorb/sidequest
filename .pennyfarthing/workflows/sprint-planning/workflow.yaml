@@ -1,0 +1,34 @@
+# sprint-planning Workflow - Migrated from BMAD format
+# Manual migration (source used workflow.yaml + instructions.md format)
+
+workflow:
+  name: sprint-planning
+  description: Generate and manage the sprint status tracking file for Phase 4 implementation, extracting all epics and stories from epic files and tracking their status through the development lifecycle.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    planning_artifacts: sprint/planning/
+    implementation_artifacts: ./artifacts
+    epics_location: ./artifacts
+    epics_pattern: "epic*.md"
+    status_file: sprint/planning/sprint-status.yaml
+    output_file: sprint/planning/sprint-status.yaml
+
+  # Agent assignment - SM handles sprint planning
+  agent: sm
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [sprint-planning, sprint-status]
+    tags: [sprint-planning, implementation, stepped]
+
+  # Standalone workflow (not part of TDD cycle)
+  standalone: true

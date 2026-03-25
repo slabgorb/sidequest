@@ -1,0 +1,52 @@
+# {{agent_label}} Benchmark: {{scenario_id_upper}}
+# {{scenario_name}}
+
+id: {{scenario_id}}
+name: {{scenario_name}}
+category: {{scenario_category}}
+difficulty: {{scenario_difficulty}}
+agent: {{scenario_agent}}
+version: 1.0
+
+description: |
+  {{scenario_description}}
+
+instructions: |
+  {{scenario_instructions}}
+
+code:
+  language: {{code_language}}
+  filename: {{code_filename}}
+  content: |
+    {{code_content}}
+
+# Known issues - DO NOT SHARE WITH AGENT
+# Used for scoring detection rate
+known_issues:
+  critical: []
+  high: []
+  medium: []
+  low: []
+
+# Optional bonus issues beyond baseline
+bonus_issues: []
+
+# Optional red herrings (things that look like issues but aren't)
+red_herrings: []
+
+# Optional gold standard reference (populated by human grading only)
+# gold_standard:
+#   response: |
+#     [curated expert response text]
+#   score: 92
+#   notes: "Why this is the gold standard"
+#   graded_by: "[human identifier]"
+
+scoring:
+  total_issues: 0
+  weights:
+    critical: 3
+    high: 2
+    medium: 1
+    low: 0.5
+  max_score: 0

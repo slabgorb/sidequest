@@ -1,0 +1,46 @@
+# Scenario Discovery Workflow — Real-world benchmark scenario creation via multi-persona evaluation
+#
+# Uses party-mode discussion to discover which personas catch what, then codifies
+# observations into formal benchmark scenarios with empirically-grounded rubrics.
+#
+# Scientific basis:
+#   - PersonaGym (EMNLP 2025): Dynamic persona evaluation via Expected Action tasks
+#   - BARS methodology: Behavioral anchors from observed critical incidents
+#   - MBTI-in-Thoughts (arxiv 2509.04343): Persona persistence verification
+#   - Patronus AI TRAIL: Error taxonomy (reasoning, planning, execution)
+#
+# The key insight: scenarios sourced from real findings (lang-review gates, orc-ax bugs,
+# production incidents) avoid the "God lifting rocks" problem where LLMs design tests
+# they already know how to pass.
+#
+# Flow: Source -> Party Mode Discovery -> Observation -> Codify -> Validate -> Baseline
+
+workflow:
+  name: scenario-discovery
+  description: |
+    Discover benchmark scenarios from real-world findings using multi-persona evaluation.
+    Party mode surfaces which personas catch what, then observations are codified into
+    formal scenarios with BARS-anchored rubrics and persona-specific expected tendencies.
+  version: "1.0.0"
+  type: stepped
+
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  variables:
+    benchmarks_root: pennyfarthing/benchmarks/test-cases
+    gates_root: pennyfarthing/pennyfarthing-dist/gates/lang-review
+    output_file: ""
+    scenario_id: ""
+    scenario_category: ""
+    scenario_family: ""    # detection or divergent
+    source_type: ""        # lang-review, production-bug, orc-ax-finding, project-history
+    source_reference: ""   # specific gate check, PR, incident, decision
+    party_observations: "" # captured during party mode step
+
+  agent: orchestrator
+
+  triggers:
+    types: [benchmark, scenario, discovery]
+    tags: [benchmark, scenario, persona-evaluation, jobfair]

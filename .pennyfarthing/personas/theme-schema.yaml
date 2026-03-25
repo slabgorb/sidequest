@@ -1,0 +1,598 @@
+# Theme YAML Schema
+# Generated from census of 100 theme files (2026-03-08)
+# Canonical reference for theme structure and allowed values.
+#
+# Legend:
+#   required: true  — field must be present
+#   required: false — field is optional
+#   type: enum      — value must be one of the listed options
+#   type: string    — freeform string
+#   type: integer   — whole number
+#   type: float     — decimal number
+#   type: list      — ordered list of strings
+#   type: dict      — nested key-value structure
+
+schema_version: 1
+
+# ─── Top-Level Keys ──────────────────────────────────────────────────────────
+
+top_level:
+  category:
+    required: true
+    type: enum
+    values:
+      - Film
+      - Games
+      - History
+      - Literature
+      - Music
+      - Mythology
+      - Other
+      - Science
+      - TV Series
+    description: Media category of the source material
+
+  theme:
+    required: true
+    type: dict
+    description: Theme metadata and configuration
+
+  agents:
+    required: true
+    type: dict
+    description: Agent-to-character mappings (keyed by agent role name)
+
+  zeitgeist:
+    required: false
+    type: dict
+    description: Cultural recognition scoring (missing in 4/100 themes)
+
+  additional_characters:
+    required: false
+    type: dict
+    description: Extra characters not mapped to core agent roles
+
+# ─── Theme Section ───────────────────────────────────────────────────────────
+
+theme_section:
+  name:
+    required: true
+    type: string
+    description: Display name of the theme
+
+  description:
+    required: true
+    type: string
+    description: 1-2 sentence theme overview
+
+  source:
+    required: true
+    type: string
+    description: Original media source and attribution
+
+  user_title:
+    required: true
+    type: string
+    description: How to address the user (e.g., "Crew", "Patron", "Client")
+
+  portrait_style:
+    required: true
+    type: string
+    description: Prompt suffix for AI portrait generation
+
+  tier:
+    required: true
+    type: enum
+    values: [S, A, B, C, D, U]
+    description: >
+      Theme quality tier based on DPGD-116 pipeline replay benchmark (weighted avg score_pct).
+      S=≥60%, A=≥55%, B=≥50%, C=≥45%, D=<45%, U=no benchmark data
+
+  dimensions:
+    required: true
+    type: dict
+    description: Classification dimensions for filtering and benchmark slicing
+
+  spinner_verbs:
+    required: true
+    type: list
+    item_type: string
+    min_length: 20
+    max_length: 30
+    description: Thematic action verbs shown during processing
+
+  default_emoji_use:
+    required: false
+    type: enum
+    values: [none, minimal, moderate, enabled]
+    default: minimal
+    description: Default emoji density in agent output
+
+  default_humor:
+    required: false
+    type: enum
+    values: [disabled, subtle, enabled, high]
+    default: enabled
+    description: Default humor level in agent output
+
+  character_immersion:
+    required: false
+    type: enum
+    values: [none, medium, high]
+    default: high
+    description: How deeply agents stay in character
+
+  # Rare fields (present in ≤3 themes)
+  portrait_prefix:
+    required: false
+    type: string
+    description: Prefix added to character portrait prompts
+
+  negative_prompt:
+    required: false
+    type: string
+    description: Negative prompt for AI portrait generation
+
+  pennyfarthing_version:
+    required: false
+    type: string
+    description: Framework version at theme creation time
+
+  created:
+    required: false
+    type: string
+    description: ISO timestamp of theme creation
+
+  optimized:
+    required: false
+    type: boolean
+    description: Whether theme has been optimized via job-fair
+
+  optimization_source:
+    required: false
+    type: string
+    description: Job-fair run that produced the optimization
+
+# ─── Dimensions ──────────────────────────────────────────────────────────────
+
+dimensions:
+  tone:
+    required: true
+    type: enum
+    values:
+      - acerbic
+      - adventurous
+      - analytical
+      - authoritative
+      - balanced
+      - comedic
+      - contemplative
+      - dark
+      - dark-comedic
+      - dramatic
+      - drawling
+      - dread
+      - eerie
+      - flamboyant
+      - gritty
+      - heroic
+      - idealistic
+      - mysterious
+      - noir
+      - obsessive
+      - prophetic
+      - regal
+      - satirical
+      - serious
+      - sophisticated
+      - soulful
+      - stylish
+      - tense
+      - warm
+      - whimsical
+      - witty
+      - wry
+    description: Overall tonal quality of the theme
+
+  era:
+    required: true
+    type: enum
+    values:
+      - ancient
+      - medieval
+      - interwar
+      - historical
+      - retro
+      - contemporary
+      - contemporary-future
+      - futuristic
+      - timeless
+    description: Temporal setting of the source material
+
+  genre:
+    required: true
+    type: enum
+    values:
+      - comedy
+      - drama
+      - fantasy
+      - nonfiction
+      - sci-fi
+    description: Primary genre classification (consolidated)
+
+  energy:
+    required: true
+    type: enum
+    values:
+      - adventurous
+      - bittersweet
+      - bold
+      - brooding
+      - brutal
+      - calculated
+      - calculating
+      - chaotic
+      - commanding
+      - contemplative
+      - cool
+      - creeping
+      - cutthroat
+      - decadent
+      - desperate
+      - diabolical
+      - dreamlike
+      - earnest
+      - effervescent
+      - elegant
+      - enthusiastic
+      - epic
+      - explosive
+      - fierce
+      - frenetic
+      - harmonious
+      - high-energy
+      - improvisational
+      - intense
+      - kinetic
+      - laid-back
+      - manic
+      - measured
+      - meditative
+      - menacing
+      - methodical
+      - mischievous
+      - noble
+      - paranoid
+      - passionate
+      - quixotic
+      - rapid
+      - raw
+      - rebellious
+      - relentless
+      - resolute
+      - scrappy
+      - simmering
+      - slapstick
+      - swashbuckling
+      - tense
+      - transformative
+      - unsettling
+      - uplifting
+      - wired
+      - zany
+    description: Kinetic quality and pacing feel
+
+  zeitgeist:
+    required: true
+    type: enum
+    values:
+      - low            # Zeitgeist score < 75
+      - moderate       # Zeitgeist score 75-84
+      - high           # Zeitgeist score ≥ 85
+    description: Cultural recognition level derived from zeitgeist score cutoffs
+
+  # ── Benchmark Slicing Dimensions ────────────────────────────────────────────
+  # These dimensions describe behavioral properties that may correlate with
+  # pipeline detection performance. Derived from dpgd-116/117 peloton analysis:
+  # adversarial cultures outperform trusting ones, reviewer-dominated themes
+  # score higher, and character decisiveness predicts TEA effectiveness.
+
+  scrutiny:
+    required: false
+    type: enum
+    values:
+      - trusting        # Characters default to believing each other (Firefly, Gilligan's Island)
+      - professional    # Trust but verify — institutional checks (West Wing, MASH)
+      - skeptical       # Characters question motives and claims (Discworld, Monty Python)
+      - adversarial     # Default assumption is deception or incompetence (GoT, House MD)
+    description: >
+      How critically characters examine each other's work and claims.
+      Predicts reviewer aggressiveness and defect escalation rate.
+      Early signal: adversarial (44.6% avg) outperforms trusting (37.8% avg) in dpgd-116.
+
+  cooperation_model:
+    required: false
+    type: enum
+    values:
+      - unified         # Shared mission, subordinate egos (West Wing, Star Trek TNG)
+      - ensemble        # Complementary specialists, parallel autonomy (Discworld, Jazz)
+      - found-family    # Loyalty-forged bonds despite differences (Firefly, MASH)
+      - transactional   # Cooperation driven by mutual benefit, dissolves when costs shift (GoT, Rome)
+    description: >
+      How characters collaborate and share information.
+      Predicts information flow between pipeline phases and willingness to build on prior work.
+
+  conflict_approach:
+    required: false
+    type: enum
+    values:
+      - consensus       # Seek agreement through discussion (Star Trek TNG)
+      - debate          # Argue positions to find truth, accept losing (West Wing)
+      - competition     # Prove superiority through demonstration (Jazz, Princess Bride)
+      - psychological   # Outmaneuver through understanding human nature (Discworld, Shakespeare)
+      - manipulation    # Deceive, misdirect, exploit information asymmetry (GoT, Rome)
+      - confrontation   # Direct challenge, no subtext (Firefly, MASH)
+    description: >
+      How characters handle disagreement and challenge each other.
+      Predicts how the reviewer handles questionable code — rubber-stamp vs reject vs negotiate.
+
+  authority_model:
+    required: false
+    type: enum
+    values:
+      - hierarchical    # Formal chain of command, deference to rank (West Wing, Star Trek)
+      - meritocratic    # Authority earned through demonstrated skill (Jazz, Discworld)
+      - egalitarian     # Flat structure, everyone's voice equal (Firefly, MASH)
+      - feudal          # Power-based authority, loyalty to patron (GoT, Rome, Shakespeare)
+    description: >
+      How authority and decision-making are distributed.
+      Predicts whether downstream agents defer to or challenge upstream work.
+      Feudal/meritocratic may produce stronger review; hierarchical may defer too much.
+
+  formality:
+    required: false
+    type: enum
+    values:
+      - ceremonial      # Ritual language, titles essential, elaborate protocols (Shakespeare, Rome)
+      - formal          # Professional register, structured communication (West Wing, Star Trek)
+      - conversational  # Natural register, some structure (Discworld, Princess Bride)
+      - casual          # Informal, humor-heavy, minimal protocol (Firefly, MASH)
+      - irreverent      # Actively subverts formality (Monty Python, Hitchhiker's Guide)
+    description: >
+      Communication register and protocol level.
+      May correlate with output structure and thoroughness — formal themes produce
+      more systematic reviews, irreverent themes may catch unconventional issues.
+
+  intellectual_style:
+    required: false
+    type: enum
+    values:
+      - analytical      # Systematic, data-driven, methodical (Discworld, House MD)
+      - strategic       # Long-term planning, chess-like thinking (GoT, Rome)
+      - improvisational # Creative, in-the-moment, adaptive (Jazz, Firefly)
+      - philosophical   # First-principles reasoning, abstract (Shakespeare, Hitchhiker's)
+      - pragmatic       # Results-focused, whatever works (MASH, Princess Bride)
+    description: >
+      How characters approach problem-solving.
+      Predicts defect detection style — analytical finds systematic issues,
+      improvisational may catch creative edge cases but miss methodical ones.
+
+  stakes:
+    required: false
+    type: enum
+    values:
+      - existential     # Life, death, survival of civilization (GoT, Stephen King, The Expanse)
+      - institutional   # Organization or system survival (West Wing, Star Trek)
+      - personal        # Reputation, legacy, self-actualization (Jazz, Shakespeare)
+      - communal        # Group survival and bonds (Firefly, MASH, Gilligan's Island)
+      - cosmic          # Reality itself, metaphysical stakes (Discworld, Hitchhiker's, Lovecraft)
+    description: >
+      What is at risk in the source material's world.
+      High-stakes cultures may produce more thorough, paranoid reviews.
+      Existential stakes (Stephen King 45.9%) vs communal (Jazz 33.8%) shows early signal.
+
+# ─── Zeitgeist ───────────────────────────────────────────────────────────────
+
+zeitgeist_section:
+  score:
+    required: true
+    type: float
+    min: 0.0
+    max: 100.0
+    description: Cultural recognition score (0-100)
+
+  rating:
+    required: true
+    type: enum
+    values: [low, moderate, high]
+    description: Cultural recognition tier derived from score (low <75, moderate 75-84, high ≥85)
+
+# ─── Agent Entry ─────────────────────────────────────────────────────────────
+
+required_agents:
+  - orchestrator
+  - sm
+  - tea
+  - dev
+  - reviewer
+  - architect
+  - pm
+  - tech-writer
+  - ux-designer
+  - devops
+  - ba
+
+agent_fields:
+  character:
+    required: true
+    type: string
+    description: Character name from source material
+
+  style:
+    required: true
+    type: string
+    description: Character personality and archetype description
+
+  visual:
+    required: true
+    type: string
+    description: Visual description for portrait generation
+
+  ocean:
+    required: true
+    type: dict
+    description: OCEAN Big Five personality profile
+    fields:
+      O:
+        type: integer
+        min: 1
+        max: 5
+        description: Openness to experience
+      C:
+        type: integer
+        min: 1
+        max: 5
+        description: Conscientiousness
+      E:
+        type: integer
+        min: 1
+        max: 5
+        description: Extraversion
+      A:
+        type: integer
+        min: 1
+        max: 5
+        description: Agreeableness
+      N:
+        type: integer
+        min: 1
+        max: 5
+        description: Neuroticism
+
+  role:
+    required: true
+    type: string
+    description: Character-specific role description (narrative)
+
+  trait:
+    required: true
+    type: string
+    description: Core defining characteristic
+
+  expertise:
+    required: true
+    type: list
+    item_type: string
+    description: Areas of domain expertise
+
+  emoji:
+    required: true
+    type: string
+    description: Single unicode emoji representing the character
+
+  helper:
+    required: true
+    type: dict
+    description: Helper entity for the agent
+    fields:
+      name:
+        required: true
+        type: string
+        description: Helper entity name
+      style:
+        required: true
+        type: string
+        description: How the helper functions or appears
+      plural:
+        required: false
+        type: boolean
+        description: Whether the helper is plural (e.g., "The Witches")
+      shortName:
+        required: false
+        type: string
+        description: Abbreviated helper reference
+
+  quirks:
+    required: false
+    type: list
+    item_type: string
+    description: Character behavioral quirks (present in 99% of agents)
+
+  catchphrases:
+    required: false
+    type: list
+    item_type: string
+    description: Characteristic verbal tics and quotes (present in 99% of agents)
+
+  shortName:
+    required: false
+    type: string
+    description: Abbreviated character name for compact display
+
+  # Rare fields — present in ≤21 agents
+  ocean_profile:
+    required: false
+    type: string
+    pattern: "^[1-5]-[1-5]-[1-5]-[1-5]-[1-5]$"
+    description: Explicit OCEAN profile override (O-C-E-A-N format)
+
+  gap_filled:
+    required: false
+    type: string
+    description: Gap-filling role for team composition
+
+  benchmark_score:
+    required: false
+    type: float
+    description: Job-fair benchmark score
+
+# ─── Additional Characters ───────────────────────────────────────────────────
+
+additional_character_fields:
+  character:
+    required: true
+    type: string
+
+  style:
+    required: true
+    type: string
+
+  expertise:
+    required: true
+    type: list
+    item_type: string
+
+  role:
+    required: true
+    type: string
+
+  ocean_profile:
+    required: false
+    type: string
+    pattern: "^[1-5]-[1-5]-[1-5]-[1-5]-[1-5]$"
+
+  best_role:
+    required: false
+    type: string
+    description: Suggested agent role for this character
+
+  gap_filled:
+    required: false
+    type: string
+
+  visual:
+    required: false
+    type: string
+
+  shortName:
+    required: false
+    type: string
+
+  warning:
+    required: false
+    type: string
+    description: Caution about using this character
+
+  note:
+    required: false
+    type: string

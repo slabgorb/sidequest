@@ -1,0 +1,51 @@
+# Interactive Debug Workflow - BikeLane Stepped Workflow
+#
+# Connect to a running frontend (web server or Electron app), use Playwright MCP
+# for browser automation, hunt bugs collaboratively with UX Designer, fix them,
+# and roll up into a chore commit.
+#
+# Supports two connection modes:
+#   - Web Mode: Standard web servers (React, Vue, Next.js, Express, etc.)
+#   - Electron Mode: Desktop apps via Chrome DevTools Protocol (CDP)
+#
+# Prerequisites:
+#   - Playwright MCP configured in Claude settings
+#   - For web: A running dev server or command to start one
+#   - For Electron: App started with --remote-debugging-port=9222
+#
+# Purpose: Interactive visual debugging session that produces committed fixes
+# Role: UX Designer leads visual inspection, Dev fixes issues
+# Output: Chore commit with all bug fixes rolled up
+
+workflow:
+  name: interactive-debug
+  description: |
+    Interactive debugging workflow that connects to your frontend via Playwright MCP.
+    Supports both web servers and Electron apps (via CDP). Collaboratively identifies
+    bugs with UX Designer, fixes them, and commits as a chore.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    dev_command: npm run dev
+    dev_port: 3000
+    dev_url: http://localhost:3000
+    # Electron/CDP configuration (for Electron apps)
+    cdp_port: 9222
+    cdp_url: http://localhost:9222
+    app_name: app  # Used in `just {app_name} cdp` suggestion
+
+  # Agent assignment - UX Designer leads visual debugging
+  agent: ux-designer
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [interactive-debug, debug-ui, visual-debug, bug-hunt]
+    tags: [debug, visual, playwright, ux, bug-fix]

@@ -1,0 +1,136 @@
+# TDD Tandem Workflow - TDD with Full Tandem Chain
+#
+# When to use: Best for 5+ point feature stories where architectural alignment
+# during implementation provides high value. Use this instead of base tdd when
+# the story involves cross-cutting concerns, new patterns, or complex integrations.
+#
+# Team pairings (native Agent Teams when available):
+#   - RED phase: TEA (lead) + Architect — Architect reviews test strategy
+#   - GREEN phase: Dev (lead) + Architect — Architect guides implementation patterns
+#   - VERIFY phase: TEA (lead) + Architect — Architect reviews implementation quality
+#   - REVIEW phase: Reviewer (lead) + PM — PM validates business requirements
+#
+# Fallback: When native teams are unavailable (non-interactive mode, feature
+# flag off, or CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS not set), phases with
+# team blocks fall back to tandem consultation via the backseat observer pattern.
+#
+# Compared to base tdd: Adds teammate/tandem observers on every working phase.
+# The extra context from partner agents helps catch architectural drift early.
+#
+# Flow: SM → TEA (+Architect) → Dev (+Architect) → TEA (+Architect, verify) → Reviewer (+PM) → SM
+
+workflow:
+  name: tdd-tandem
+  description: TDD with full tandem chain — architect and PM collaboration across phases
+  version: "3.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+      gate:
+        file: gates/sm-setup-exit
+        type: sm_setup_exit
+        condition: Session file created with workflow, phase, context, and branch
+        recovery:
+          epic-context-validated:
+            action: create_context
+            type: epic
+            max_attempts: 1
+          story-context-validated:
+            action: create_context
+            type: story
+            max_attempts: 1
+
+    - name: red
+      agent: tea
+      input: [session_file, story_context]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: All acceptance criteria have test coverage
+      team:
+        teammates:
+          - agent: architect
+            task: "Review test strategy and architectural alignment. Flag missing edge cases or coupling concerns via SendMessage."
+      tandem:
+        partner: architect
+        scope: file-watch
+
+    - name: green
+      agent: dev
+      input: [failing_tests, story_context]
+      output: [implementation, passing_tests]
+      gate:
+        file: gates/dev-exit
+        type: dev_exit
+        condition: Tests green, tree clean, no debug code, correct branch
+      team:
+        teammates:
+          - agent: architect
+            task: "Review implementation approach and patterns. Guide on coupling, abstractions, and existing conventions via SendMessage."
+      tandem:
+        partner: architect
+        scope: file-watch
+
+    - name: verify
+      agent: tea
+      input: [implementation, passing_tests]
+      output: [quality_verified]
+      gate:
+        file: gates/quality-pass
+        type: quality_pass
+        condition: Lint, typecheck, and all tests passing
+      team:
+        teammates:
+          - agent: architect
+            task: "Review implementation quality against architectural standards. Flag regressions or pattern violations via SendMessage."
+          - agent: simplify-reuse
+            task: "Review changed files for code duplication and extraction opportunities. Report findings only."
+          - agent: simplify-quality
+            task: "Review changed files for naming, readability, and structural quality. Report findings only."
+          - agent: simplify-efficiency
+            task: "Review changed files for unnecessary complexity and over-engineering. Report findings only."
+      tandem:
+        partner: architect
+        scope: file-watch
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests, quality_verified]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Code review approved, no blocking issues
+      team:
+        teammates:
+          - agent: pm
+            task: "Validate business requirements and acceptance criteria are met. Flag gaps via SendMessage."
+      tandem:
+        partner: pm
+        scope: file-watch
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  triggers:
+    tags: [tandem]
+    points:
+      min: 5
+    default: false

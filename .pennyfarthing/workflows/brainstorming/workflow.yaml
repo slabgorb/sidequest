@@ -1,0 +1,49 @@
+# BMAD Brainstorming Workflow - Imported for BMAD Compatibility
+#
+# This is a reference workflow imported from BMAD for compatibility with
+# BMAD-based projects. It provides structured creative ideation sessions
+# with 62 brainstorming techniques across 10 categories.
+#
+# Key features:
+# - Single-agent facilitation (PM or dedicated facilitator)
+# - Four technique selection modes (user-selected, AI-recommended, random, progressive)
+# - 62 brainstorming techniques from brain-methods.csv
+# - Anti-bias protocol (semantic domain shifting every 10 ideas)
+# - Quantity goal: 100+ ideas before organization
+# - Session continuation support via frontmatter state
+#
+# For Pennyfarthing projects, the /brainstorming command provides a simpler
+# brainstorming experience without the full BMAD ceremony format.
+#
+# Source: BMAD-METHOD/src/core/workflows/brainstorming/
+# Migrated: 2026-01-22
+
+workflow:
+  name: brainstorming
+  description: |
+    BMAD reference workflow: Facilitate interactive brainstorming sessions using
+    diverse creative techniques and ideation methods. Supports 62 techniques across
+    10 categories with four selection modes. This is imported for BMAD compatibility.
+  version: "1.0.0"
+  type: procedural
+  author: BMad
+
+  # Primary agent for this workflow
+  agent: pm
+
+  # Instructions and validation files
+  instructions: ./instructions.md
+  checklist: ./checklist.md
+
+  # Variables available in instruction files
+  variables:
+    project_root: .
+    config_source: "./_bmad/core/config.yaml"
+    output_folder: ./artifacts
+    techniques_csv: ./brain-methods.csv
+    default_output_file: "{output_folder}/analysis/brainstorming-session-{date}.md"
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [brainstorm, bmad-brainstorm, ideation, creative-session]
+    tags: [bmad, reference, procedural, brainstorming, creativity]

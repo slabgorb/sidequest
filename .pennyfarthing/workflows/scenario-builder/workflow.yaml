@@ -1,0 +1,41 @@
+# Scenario Builder Workflow - Stepped benchmark scenario creation
+# Guides TEA through creating valid benchmark scenarios across all categories
+
+workflow:
+  name: scenario-builder
+  description: Build benchmark scenarios for the JobFair persona benchmarking system. Supports code-based (code-review, dev, tea, test-writing) and open-ended (architecture, pm, sm) scenario types.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration - default to code mode
+  steps:
+    path: ./steps-code/
+    pattern: step-*.md
+
+  # Mode-based routing: code categories vs open-ended categories
+  modes:
+    code: ./steps-code/
+    open-ended: ./steps-open/
+
+  # Variables available in step files
+  variables:
+    benchmarks_root: pennyfarthing/benchmarks/test-cases
+    output_file: ""
+    scenario_category: ""
+    scenario_id: ""
+    scenario_difficulty: medium
+    code_language: ""
+    existing_scenarios: ""
+
+  # Templates for scenario output
+  templates:
+    code: ./templates/scenario-code.template.yaml
+    open-ended: ./templates/scenario-open.template.yaml
+
+  # Agent assignment - TEA for benchmark scenario work
+  agent: tea
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [scenario, benchmark, scenario-builder]
+    tags: [benchmark, scenario, test-cases, jobfair]

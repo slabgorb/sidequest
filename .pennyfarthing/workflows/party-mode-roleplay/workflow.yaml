@@ -1,0 +1,62 @@
+# Party Mode Roleplay — Sustained Multi-Agent Discussion
+#
+# Adapted from BMAD party-mode workflow. Uses PF agent .md files and theme
+# persona resolution instead of BMAD's agent-manifest.csv.
+#
+# Flow: Agent Loading → Discussion (multi-round) → Graceful Exit
+#
+# This is an interactive workflow — no document output. The discussion itself
+# is the deliverable, with a structured summary produced on exit.
+#
+# Source: BMAD-METHOD/src/core/workflows/party-mode/
+# Adapted: 2026-02-13
+
+workflow:
+  name: party-mode-roleplay
+  description: |
+    Sustained multi-round discussion with real agent personas. Loads the full
+    agent roster with theme personas, orchestrates natural cross-talk and
+    intelligent agent selection, and produces a structured summary on exit.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-{nn}-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    agents_path: .pennyfarthing/agents/
+    config_path: .pennyfarthing/config.local.yaml
+
+  # No formal gates — the discussion loop is user-driven via [E] Exit
+  gates:
+    after_steps: []
+
+  # Collaboration menus available in steps
+  collaboration:
+    menus:
+      - key: E
+        name: Exit
+        description: End the discussion and produce a summary
+      - key: C
+        name: Continue
+        description: Continue the discussion
+
+  # No agent assignment — the workflow itself orchestrates multiple agents
+  agent: orchestrator
+
+  # Exit conditions
+  exit_triggers:
+    - "*exit"
+    - "end party mode"
+    - "stop party mode"
+    - "goodbye"
+    - "quit"
+
+  # Triggers — when to suggest this workflow
+  triggers:
+    types: [party-mode, roleplay, discussion, multi-agent]
+    tags: [party-mode, roleplay, interactive, stepped]

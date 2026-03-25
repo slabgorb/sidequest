@@ -53,3 +53,10 @@ sprint/archive/*.md
 
 # Node modules
 node_modules/
+# Frame server runtime files
+.frame-port
+frame-pid
+tui-pid
+# Local pf shim (machine-specific absolute paths)
+# tmux runtime cache files
+# Local tmux config (copied from sample)

@@ -1,0 +1,41 @@
+# project-setup Workflow - Interactive Project Configuration
+# A BikeLane stepped workflow for configuring Pennyfarthing projects
+
+workflow:
+  name: project-setup
+  description: Interactive workflow for configuring a new Pennyfarthing project. Discovers repos, generates CLAUDE.md, populates shared-context.md, and configures themes.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    claude_dir: .claude
+    pennyfarthing_dir: .pennyfarthing
+    output_repos: repos.yaml
+    output_claude_md: CLAUDE.md
+    output_shared_context: .claude/project/docs/shared-context.md
+
+  # Agent assignment - DevOps handles infrastructure setup
+  agent: devops
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [project-setup, init, setup]
+    tags: [setup, initialization, repos, claude-md]
+    conditions:
+      - no_repos_yaml: true
+      - no_claude_md: true
+
+  # Post-init hook suggestion
+  post_init_message: |
+    Run `/setup` to complete project configuration:
+    - Detect and configure repos
+    - Generate CLAUDE.md
+    - Populate shared-context.md
+    - Select persona theme

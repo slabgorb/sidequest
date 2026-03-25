@@ -1,0 +1,66 @@
+# Patch Mode Workflow - Interrupt-Driven Bug Fix
+# For quick fixes during active story work
+#
+# Story: 74-1
+# Epic: epic-74 (Patch Mode Workflow)
+#
+# Flow: Dev only (no TEA, no review)
+# Use for: Blocking bugs, script errors, path fixes, urgent UI fixes
+#
+# Key difference from trivial:
+# - Branches from FEATURE branch, not develop
+# - Merges back to FEATURE branch
+# - Preserves and restores workflow state
+# - Supports nested patches (stack-based)
+
+workflow:
+  name: patch
+  description: Interrupt-driven bug fix during active story work
+  version: "1.0.0"
+
+  # Patch mode is a simple single-phase workflow for interrupts
+  type: phased
+
+  phases:
+    - name: fix
+      agent: dev
+      description: Fix the blocking issue
+      output: [fix_commit]
+      gate:
+        type: manual
+        condition: Fix verified working
+
+  # Branch naming
+  branch:
+    prefix: "patch/"
+    format: "{prefix}{description}-{timestamp}"
+
+  # Commit format
+  commit:
+    format: "fix(patch): {description} [from:{story_id}]"
+    coauthor: true
+
+  # State management
+  state:
+    file: ".session/patch-stack.yaml"
+    preserved_fields:
+      - story_id
+      - workflow
+      - phase
+      - agent
+      - feature_branch
+
+  # Integration
+  tirepump:
+    auto_restore: true
+    handoff_on_complete: true
+
+  triggers:
+    commands:
+      - "/patch"
+      - "/fix-blocker"
+      # Automatic triggers (future):
+      # error_patterns:
+      #   - "No such file or directory"
+      #   - "ModuleNotFoundError"
+      #   - "command not found"

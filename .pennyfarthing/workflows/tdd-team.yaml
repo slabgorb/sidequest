@@ -1,0 +1,86 @@
+# TDD Team Workflow - TDD with Native Team Collaboration
+#
+# When to use: Best for 5+ point feature stories where sustained parallel
+# collaboration provides more value than solo execution. Teammates work
+# alongside the lead for the full phase — e.g., Architect reviewing
+# patterns as Dev implements.
+#
+# Team pairings:
+#   - GREEN phase: Dev (lead) + Architect — Architect reviews implementation
+#     approach and patterns in real-time via SendMessage
+#   - REVIEW phase: Reviewer (lead) + Architect — Architect validates
+#     architectural patterns during code review
+#
+# Fallback: When native teams are unavailable (non-interactive mode, feature
+# flag off, or CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS not set), phases with
+# team blocks fall back to solo execution. The lead agent works alone.
+#
+# Flow: SM → TEA → Dev (+Architect) → Reviewer (+Architect) → SM
+
+workflow:
+  name: tdd-team
+  description: TDD with native team collaboration — architect pairing on green and review phases
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+
+    - name: red
+      agent: tea
+      input: [session_file, story_context]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: All acceptance criteria have test coverage
+
+    - name: green
+      agent: dev
+      input: [failing_tests, story_context]
+      output: [implementation, passing_tests]
+      gate:
+        file: gates/tests-pass
+        type: tests_pass
+        condition: All tests passing, no skipped tests
+      team:
+        teammates:
+          - agent: architect
+            task: "Review implementation approach and patterns. Send observations via SendMessage as Dev works."
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Code review approved, no blocking issues
+      team:
+        teammates:
+          - agent: architect
+            task: "Validate architectural patterns and coupling. Flag concerns via SendMessage."
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  triggers:
+    tags: [team, tdd-team]
+    points:
+      min: 5
+    default: false

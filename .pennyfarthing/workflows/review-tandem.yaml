@@ -1,0 +1,77 @@
+# Review Tandem Workflow - TDD with Focused Architectural Review
+#
+# When to use: Best for stories that primarily need architectural review during
+# the review phase. Use this for large refactors (10+ pts), cross-cutting
+# infrastructure changes, or stories where an architect audit catches issues
+# that a standard code review might miss.
+#
+# Tandem pairings:
+#   - REVIEW phase: Reviewer + Architect (file-watch) — Architect provides
+#     focused architectural audit alongside standard code review
+#
+# Compared to base tdd: Same phase flow, but adds architect consultation
+# during review only. Lighter than tdd-tandem (no tandem on red/green phases).
+#
+# Flow: SM → TEA → Dev → Reviewer (+Architect) → SM
+
+workflow:
+  name: review-tandem
+  description: TDD with tandem architect consultation on review phase
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+
+    - name: red
+      agent: tea
+      input: [session_file, story_context]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: All acceptance criteria have test coverage
+
+    - name: green
+      agent: dev
+      input: [failing_tests, story_context]
+      output: [implementation, passing_tests]
+      gate:
+        file: gates/tests-pass
+        type: tests_pass
+        condition: All tests passing, no skipped tests
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Code review approved, architecture validated
+      tandem:
+        partner: architect
+        scope: file-watch
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  triggers:
+    tags: [review-tandem, tandem]
+    points:
+      min: 8

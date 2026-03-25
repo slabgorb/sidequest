@@ -1,0 +1,51 @@
+# Guided Tour Workflow
+# Interactive onboarding tour for new Pennyfarthing developers
+#
+# Flow: Welcome → Themes → Agents → Sprint → Config
+# Walks through key features with hands-on verification at each step
+#
+# Use for: new user onboarding, getting started, discovery after install
+
+workflow:
+  name: guided-tour
+  description: Interactive guided tour for new developer onboarding. Walks through Pennyfarthing's key features step-by-step with hands-on verification gates.
+  version: "2.0.0"
+  type: stepped
+
+  steps:
+    path: ./steps/
+    pattern: step-{nn}-*.md
+
+  variables:
+    project_root: .
+    config_file: .pennyfarthing/config.local.yaml
+
+  gates:
+    after_steps: [1, 2, 3, 4, 5]
+    gate_marker: "<!-- GATE -->"
+
+  collaboration:
+    gate_type: switch
+    menus:
+      - key: C
+        name: Continue
+        action: continue
+        description: Proceed to next tour stop
+      - key: D
+        name: Dig In
+        action: dig-in
+        description: Interactive deep-dive into this feature
+      - key: T
+        name: Try It
+        action: try-it
+        description: Run the suggested command yourself
+      - key: S
+        name: Skip
+        action: skip
+        description: Skip this tour stop
+
+  agent: orchestrator
+
+  triggers:
+    types: [onboarding, guided-tour]
+    tags: [onboarding, tour, discovery, getting-started]

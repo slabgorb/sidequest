@@ -1,0 +1,41 @@
+# UX Design Workflow - Imported for BMAD Compatibility
+#
+# This is a stepped workflow imported from BMAD that guides users through
+# comprehensive UX design planning with the UX Designer agent.
+# Single-mode workflow with 14 sequential steps covering discovery,
+# visual design, component strategy, and accessibility.
+#
+# Purpose: Create comprehensive UX design specifications
+# Role: UX facilitator working with product stakeholder
+# Output: UX design specification document
+#
+# Source: BMAD-METHOD/src/modules/bmm/workflows/2-plan-workflows/create-ux-design/
+# Migrated: 2026-01-22
+
+workflow:
+  name: ux-design
+  description: |
+    BMAD reference workflow: Work with a peer UX Design expert to plan your
+    application's UX patterns, look and feel. Covers discovery, emotional design,
+    visual foundation, user journeys, component strategy, and accessibility.
+  version: "1.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./steps/
+    pattern: step-*.md
+
+  # Variables available in step files
+  variables:
+    project_root: .
+    planning_artifacts: sprint/planning/
+    output_file: sprint/planning/ux-design-specification.md
+
+  # Agent assignment - UX Designer for visual design workflow
+  agent: ux-designer
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [ux-design, create-ux-design, on_demand]
+    tags: [bmad, ux, design, visual, accessibility]

@@ -1,0 +1,14 @@
+id: epic-tour-practice
+title: "Guided Tour Practice Epic"
+jira: null
+status: active
+tour_artifact: true
+stories:
+  - id: tour-practice-1
+    title: "Practice: Add a comment to a file"
+    points: 1
+    priority: p3
+    status: backlog
+    workflow: trivial
+    jira: null
+    tour_artifact: true

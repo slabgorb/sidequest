@@ -1,0 +1,1139 @@
+# Zeitgeist Score Assignments - Full Calibration
+# Measuring persona articulation depth (NOT quality or preference)
+# Fully calibrated: 2026-01-23
+#
+# Scale (recalibrated for better spread):
+#   exceptional (90-100): Maximum articulation - speech patterns, authentic quotes, named helpers
+#   rich (70-89): Strong characterization - mostly authentic, good distinctiveness
+#   moderate (50-69): Adequate characterization - functional but some generic elements
+#   thin (30-49): Shallow characterization - concept helpers, object agents, adaptations over quotes
+#   minimal (0-29): Insufficient articulation - baseline or incoherent source
+#
+# Rubric dimensions:
+#   - Behavioral Specificity (25%): specific vs generic quirks
+#   - Speech Pattern Signal (25%): accent, case rules, verbal tics, vocabulary
+#   - Catchphrase Authenticity (20%): actual quotes vs adaptations
+#   - Helper Characterization (15%): named characters vs concepts
+#   - Agent Distinctiveness (15%): voice differentiation
+#
+# Purpose: Correlate with OCEAN profiles and benchmark performance
+# Reference: ZEITGEIST-ANALYSIS.md
+
+# ============================================================
+# FULLY CALIBRATED THEMES (with rubric breakdowns)
+# ============================================================
+
+calibrated:
+  # EXCEPTIONAL (90-100)
+  discworld:
+    composite: 98.0
+    rating: exceptional
+    breakdown:
+      behavioral: 100
+      speech: 100  # DEATH's CAPITALS, Igor's lisp
+      catchphrases: 90
+      helpers: 100
+      distinctiveness: 100
+    notes: "Gold standard - DEATH's CAPITALS, Igor's 'yeth marthter', all named helpers with personality"
+
+  the-expanse:
+    composite: 91.0
+    rating: exceptional
+    breakdown:
+      behavioral: 100  # 5+ specific behaviors per agent
+      speech: 100      # Belter Creole explicitly encoded
+      catchphrases: 90
+      helpers: 73
+      distinctiveness: 100
+    notes: "Belter Creole encoding ('Oye, Beltalowda!'), Amos's flat affect, Avasarala's profane elegance"
+
+  princess-bride:
+    composite: 91.0
+    rating: exceptional
+    breakdown:
+      behavioral: 95
+      speech: 80  # Vizzini's condescension, Inigo's Spanish formality
+      catchphrases: 100  # All iconic quotes perfectly used
+      helpers: 85  # Valerie has actual personality
+      distinctiveness: 95
+    notes: "Perfect catchphrase integration - 'Inconceivable!', 'Hello. My name is...', 'As you wish'"
+
+  # RICH (70-89) - Top Tier
+  a-team:
+    composite: 89.0
+    rating: rich
+    breakdown:
+      behavioral: 95  # Billy the imaginary dog, drugging B.A. to fly
+      speech: 75       # B.A.'s 'fool/sucka', Murdock's accents
+      catchphrases: 95
+      helpers: 85
+      distinctiveness: 90
+    notes: "80s action TV perfection - B.A.'s milk, Murdock's Billy, Face's schmoozing"
+
+  twin-peaks:
+    composite: 88.0
+    rating: rich
+    breakdown:
+      behavioral: 95  # Talks to Diane, Tibetan rock throwing, Log speaks
+      speech: 75       # Cooper's enthusiasm, Log Lady's cryptic patterns
+      catchphrases: 95
+      helpers: 80
+      distinctiveness: 90
+    notes: "Outstanding surrealist capture - 'Damn fine coffee', 'The owls are not what they seem'"
+
+  ted-lasso:
+    composite: 88.0
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 100  # Kansas folksy vs British accents
+      catchphrases: 95
+      helpers: 67
+      distinctiveness: 80
+    notes: "Outstanding folksy wisdom - 'Be curious, not judgmental'"
+
+  doctor-who:
+    composite: 87.0
+    rating: rich
+    breakdown:
+      behavioral: 88
+      speech: 100  # Each Doctor has distinct verbal patterns
+      catchphrases: 95
+      helpers: 73
+      distinctiveness: 80
+    notes: "Multiple Doctor incarnations well-differentiated - 'Allons-y!', 'Spoilers!'"
+
+  arcane:
+    composite: 87.0
+    rating: rich
+    breakdown:
+      behavioral: 88
+      speech: 88
+      catchphrases: 85
+      helpers: 67
+      distinctiveness: 80
+    notes: "Modern execution with character-arc-aware quirks"
+
+  futurama:
+    composite: 86.5
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 85  # Bender's contempt, Kif's sighs, Scruffy's third-person
+      catchphrases: 95
+      helpers: 75
+      distinctiveness: 90
+    notes: "Near-perfect - 'Good news, everyone!', 'Bite my shiny metal ass!'"
+
+  deadwood:
+    composite: 86.0
+    rating: rich
+    breakdown:
+      behavioral: 90  # Monologues to severed heads, Wu's pidgin
+      speech: 75       # Profanity integrated
+      catchphrases: 90
+      helpers: 85
+      distinctiveness: 85
+    notes: "Exceptional Milch dialogue - 'Welcome to f***ing Deadwood'"
+
+  star-trek-tng:
+    composite: 86.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 100  # Trek terminology throughout
+      catchphrases: 90
+      helpers: 80
+      distinctiveness: 80
+    notes: "Data's 47 precision, O'Brien's temporal mechanics complaints"
+
+  parks-and-rec:
+    composite: 86.0
+    rating: rich
+    breakdown:
+      behavioral: 88
+      speech: 100  # Chris's LITERALLY, Ron's deadpan, Tom's slang
+      catchphrases: 90
+      helpers: 67
+      distinctiveness: 80
+    notes: "Excellent speech variety - 'TREAT YO SELF', 'I know what I'm about, son'"
+
+  hitchhikers-guide:
+    composite: 86.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 88
+      catchphrases: 95
+      helpers: 73
+      distinctiveness: 80
+    notes: "Perfect Adams absurdism - 'Brain the size of a planet', '42', 'Don't Panic'"
+
+  succession:
+    composite: 85.5
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 85  # Greg's rambling, Roman's cutting, Logan's brutal brevity
+      catchphrases: 85
+      helpers: 75
+      distinctiveness: 90
+    notes: "Highest agent distinctiveness - each Roy sibling unmistakable"
+
+  the-simpsons:
+    composite: 85.5
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 90  # D'oh!, Excellent..., Willie's Scottish
+      catchphrases: 90
+      helpers: 75
+      distinctiveness: 85
+    notes: "35 years of iconic quotes - Sideshow Bob as reviewer is perfect"
+
+  expeditionary-force:
+    composite: 85.0
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 90  # Skippy's 'filthy monkeys'
+      catchphrases: 85
+      helpers: 75
+      distinctiveness: 90
+    notes: "Skippy's magnificent ego dominates - 'Trust the awesomeness'"
+
+  sherlock-holmes:
+    composite: 85.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 88  # Victorian formal diction
+      catchphrases: 95
+      helpers: 73
+      distinctiveness: 80
+    notes: "'Data! Data! Data!', 'When you have eliminated the impossible...'"
+
+  mass-effect:
+    composite: 85.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 88  # Mordin's rapid-fire, Wrex's terse authority
+      catchphrases: 95
+      helpers: 67
+      distinctiveness: 80
+    notes: "'Had to be me, someone else might have gotten it wrong', 'Keelah se'lai'"
+
+  alice-in-wonderland:
+    composite: 85.0
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 85
+      catchphrases: 95
+      helpers: 80
+      distinctiveness: 85
+    notes: "Best-in-class catchphrase authenticity - 'We're all mad here', 'Off with their heads!'"
+
+  the-matrix:
+    composite: 85.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 75  # Architect's 'Concordantly, vis-a-vis'
+      catchphrases: 95
+      helpers: 75
+      distinctiveness: 85
+    notes: "'Free your mind', 'There is no spoon'"
+
+  west-wing:
+    composite: 84.5
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 75  # Walk-and-talk rhythm implied
+      catchphrases: 90
+      helpers: 90  # Nearly all named with personality
+      distinctiveness: 85
+    notes: "Best helper characterization - Charlie, Margaret, Donna all defined"
+
+  hannibal:
+    composite: 84.5
+    rating: rich
+    breakdown:
+      behavioral: 90
+      speech: 85  # Hannibal's refined menace
+      catchphrases: 90
+      helpers: 75
+      distinctiveness: 85
+    notes: "'This is my design.' - psychological horror tone preserved"
+
+  blade-runner:
+    composite: 84.0
+    rating: rich
+    breakdown:
+      behavioral: 90  # Baseline test rhythm
+      speech: 75
+      catchphrases: 90
+      helpers: 80
+      distinctiveness: 80
+    notes: "'Tears in rain', 'More human than human'"
+
+  big-lebowski:
+    composite: 84.1
+    rating: rich
+    breakdown:
+      behavioral: 88
+      speech: 85  # Dude's drawl, Walter's fury, Nihilists' German
+      catchphrases: 90
+      helpers: 80
+      distinctiveness: 90
+    notes: "Tier A - perfect character-to-role mappings, 'The Dude abides'"
+
+  the-good-place:
+    composite: 84.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 80  # Fork-censored swearing
+      catchphrases: 85
+      helpers: 80
+      distinctiveness: 90
+    notes: "Ethics focus translates well - 'Oh dip!', Derek as chaotic DevOps"
+
+  fargo:
+    composite: 84.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 85  # Malvo's menace, Molly's 'Aw, heck'
+      catchphrases: 85
+      helpers: 70
+      distinctiveness: 90
+    notes: "Anthology structure creates natural voice variety"
+
+  better-call-saul:
+    composite: 83.0
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 88  # Mike's minimal words, Jimmy's showman patter
+      catchphrases: 85
+      helpers: 60
+      distinctiveness: 100
+    notes: "Perfect agent distinctiveness - Mike vs Jimmy vs Chuck utterly different"
+
+  superfriends:
+    composite: 82.75
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 75
+      catchphrases: 90
+      helpers: 80
+      distinctiveness: 85
+    notes: "50 years of well-established catchphrases - 'Great Scott!', 'Booyah!'"
+
+  firefly:
+    composite: 82.3
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 75  # Chinese-Western fusion slang
+      catchphrases: 90
+      helpers: 80
+      distinctiveness: 85
+    notes: "Strong Whedon dialogue but speech patterns not explicitly encoded"
+
+  the-office:
+    composite: 82.5
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 85  # Kevin's 'few word', Dwight's 'False.'
+      catchphrases: 90
+      helpers: 70
+      distinctiveness: 85
+    notes: "'That's what she said' implicit - Kevin as Dev with unclear methods"
+
+  his-dark-materials:
+    composite: 82.5
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 80
+      catchphrases: 80
+      helpers: 90  # Daemons as helpers
+      distinctiveness: 80
+    notes: "Daemon integration excellent - all named with defined forms"
+
+  monty-python:
+    composite: 82.3
+    rating: rich
+    breakdown:
+      behavioral: 94
+      speech: 25  # British tone implied but not encoded
+      catchphrases: 100  # Perfect Python quotes
+      helpers: 10  # All concept-based
+      distinctiveness: 80
+    notes: "Strong behavioral quirks from sketches, concept-only helpers drag score"
+
+  avatar-the-last-airbender:
+    composite: 82.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 75
+      catchphrases: 90
+      helpers: 80
+      distinctiveness: 80
+    notes: "Excellent elemental theme integration - 'Flameo, hotman!'"
+
+  mad-men:
+    composite: 82.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 75  # 1960s formal business speech
+      catchphrases: 85
+      helpers: 75
+      distinctiveness: 85
+    notes: "Period specificity excellent - office-as-character"
+
+  babylon-5:
+    composite: 82.0
+    rating: rich
+    breakdown:
+      behavioral: 78
+      speech: 88  # Kosh's cryptic riddles, G'Kar's prophecy
+      catchphrases: 85
+      helpers: 67
+      distinctiveness: 80
+    notes: "'The avalanche has already started' - strong character arcs"
+
+  x-files:
+    composite: 82.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 50
+      catchphrases: 90
+      helpers: 75
+      distinctiveness: 85
+    notes: "'The truth is out there', 'Trust no one'"
+
+  russian-masters:
+    composite: 81.5
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 78
+      catchphrases: 85
+      helpers: 70
+      distinctiveness: 85
+    notes: "Russian literary depth - Ivan's doubt vs Alyosha's love"
+
+  battlestar-galactica:
+    composite: 81.0
+    rating: rich
+    breakdown:
+      behavioral: 78
+      speech: 75  # 'So say we all', 'Frak'
+      catchphrases: 85
+      helpers: 60
+      distinctiveness: 80
+    notes: "Military/crisis tone consistent"
+
+  snow-crash:
+    composite: 81.5
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 75
+      catchphrases: 80
+      helpers: 75
+      distinctiveness: 85
+    notes: "Stephenson satire preserved - Raven as nuclear-deterrent DevOps"
+
+  the-wire:
+    composite: 81.3
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 85  # Baltimore vernacular
+      catchphrases: 90
+      helpers: 70
+      distinctiveness: 80
+    notes: "Iconic dialogue but lacks explicit speech encoding - 'All the pieces matter'"
+
+  peaky-blinders:
+    composite: 81.0
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 50  # Missing Birmingham accent notation
+      catchphrases: 90
+      helpers: 75
+      distinctiveness: 85
+    notes: "Alfie's unpredictable monologue style well-rendered"
+
+  watchmen:
+    composite: 80.5
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 80
+      catchphrases: 85
+      helpers: 75
+      distinctiveness: 80
+    notes: "'Never compromise', Manhattan's detached omniscience"
+
+  rome:
+    composite: 80.0
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 50  # Missing Latin phrases
+      catchphrases: 85
+      helpers: 80
+      distinctiveness: 85
+    notes: "Strong historical character capture - 'The die is cast'"
+
+  lord-of-the-rings:
+    composite: 80.0
+    rating: rich
+    breakdown:
+      behavioral: 78
+      speech: 75
+      catchphrases: 80
+      helpers: 60
+      distinctiveness: 80
+    notes: "'AND MY AXE!' - epic fantasy voice maintained"
+
+  breaking-bad:
+    composite: 79.8
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 70  # Jesse's 'Yo' verbal tic
+      catchphrases: 85
+      helpers: 60
+      distinctiveness: 85
+    notes: "Character voices distinctive - Gus's cold precision vs Jesse's chaos"
+
+  don-quixote:
+    composite: 79.75
+    rating: rich
+    breakdown:
+      behavioral: 85
+      speech: 80  # Chivalric vocabulary, Sancho's proverbs
+      catchphrases: 85
+      helpers: 65
+      distinctiveness: 80
+    notes: "Metafictional elements translate well"
+
+  mad-max:
+    composite: 79.7
+    rating: rich
+    breakdown:
+      behavioral: 82
+      speech: 72  # Apocalyptic vocabulary
+      catchphrases: 85
+      helpers: 75
+      distinctiveness: 80
+    notes: "'MEDIOCRE!', 'Witness me!' - wasteland metaphors"
+
+  greek-mythology:
+    composite: 79.5
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 80  # Divine epithets
+      catchphrases: 85
+      helpers: 70
+      distinctiveness: 80
+    notes: "Gods map well to agent roles"
+
+  game-of-thrones:
+    composite: 79.3
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 70
+      catchphrases: 85
+      helpers: 80
+      distinctiveness: 80
+    notes: "'Chaos is a ladder', 'I drink and I know things'"
+
+  arthurian-mythos:
+    composite: 79.25
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 80
+      catchphrases: 85
+      helpers: 70
+      distinctiveness: 80
+    notes: "Good balance of knights and magical figures"
+
+  neuromancer:
+    composite: 79.5
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 75
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 80
+    notes: "Canonical cyberpunk - 'Cyberspace. A consensual hallucination.'"
+
+  shakespeare:
+    composite: 79.0
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 85
+      catchphrases: 90
+      helpers: 70
+      distinctiveness: 75
+    notes: "Strong quotes, strong helpers"
+
+  norse-mythology:
+    composite: 79.0
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 75
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 80
+    notes: "Ragnarok themes well-integrated"
+
+  the-sopranos:
+    composite: 78.8
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 75  # NJ Italian-American cadence
+      catchphrases: 80
+      helpers: 60
+      distinctiveness: 85
+    notes: "Tony's therapy-speak contrast with mob violence"
+
+  bobiverse:
+    composite: 78.5
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 75
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 85
+    notes: "Personality drift from common origin well-portrayed"
+
+  legion-of-doom:
+    composite: 78.5
+    rating: rich  # UPGRADED from thin
+    breakdown:
+      behavioral: 82
+      speech: 78  # Lex's megalomania, Riddler's questions
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 85
+    notes: "Supervillain camp surprisingly effective for voice distinction"
+
+  jane-austen:
+    composite: 78.5
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 85
+      catchphrases: 90
+      helpers: 70
+      distinctiveness: 75
+    notes: "Regency wit preserved"
+
+  justified:
+    composite: 78.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 50  # Missing Kentucky accent notation
+      catchphrases: 85
+      helpers: 70
+      distinctiveness: 80
+    notes: "Strong Elmore Leonard dialogue flavor"
+
+  foundation:
+    composite: 78.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 75
+      catchphrases: 80
+      helpers: 53
+      distinctiveness: 80
+    notes: "'Violence is the last refuge of the incompetent'"
+
+  dickens:
+    composite: 77.5
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 75
+      catchphrases: 85
+      helpers: 65
+      distinctiveness: 80
+    notes: "Victorian character depth"
+
+  dune:
+    composite: 77.5
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 70  # Mentat computation phrases
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 85
+    notes: "'Fear is the mind-killer' - heavy Dune vocabulary"
+
+  great-gatsby:
+    composite: 77.25
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 80
+      catchphrases: 85
+      helpers: 60
+      distinctiveness: 75
+    notes: "Jazz Age ambiguity preserved"
+
+  renaissance-masters:
+    composite: 77.3
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 70
+      catchphrases: 78
+      helpers: 65
+      distinctiveness: 80
+    notes: "Leonardo's curiosity vs Machiavelli's pragmatism"
+
+  the-odyssey:
+    composite: 77.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 75  # Epic vocabulary, epithets
+      catchphrases: 80
+      helpers: 65
+      distinctiveness: 75
+    notes: "Polytropos theme well-captured"
+
+  moby-dick:
+    composite: 76.75
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 75
+      catchphrases: 85
+      helpers: 55
+      distinctiveness: 80
+    notes: "Maritime obsession preserved"
+
+  star-wars:
+    composite: 76.8
+    rating: rich
+    breakdown:
+      behavioral: 70
+      speech: 80  # Yoda's inverted syntax
+      catchphrases: 85
+      helpers: 65
+      distinctiveness: 80
+    notes: "Yoda's syntax standout - heavy reliance on iconic quotes"
+
+  star-trek-tos:
+    composite: 84.75
+    rating: rich
+    breakdown:
+      behavioral: 100
+      speech: 75
+      catchphrases: 100
+      helpers: 60
+      distinctiveness: 80
+    notes: "Strong authentic quotes, weaker helper characterization"
+
+  film-auteurs:
+    composite: 76.5
+    rating: rich
+    breakdown:
+      behavioral: 78
+      speech: 72
+      catchphrases: 78
+      helpers: 60
+      distinctiveness: 82
+    notes: "Kubrick obsessive vs Miyazaki wonder vs Lynch surreal"
+
+  black-sails:
+    composite: 76.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 50  # Missing period naval speech
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 75
+    notes: "Philosophical pirates - Flint's obsession vs Silver's manipulation"
+
+  wwii-leaders:
+    composite: 76.0
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 50
+      catchphrases: 85
+      helpers: 70
+      distinctiveness: 80
+    notes: "Churchill's rhetoric, Turing's genius"
+
+  ancient-philosophers:
+    composite: 76.8
+    rating: rich
+    breakdown:
+      behavioral: 78
+      speech: 70  # Socratic questioning
+      catchphrases: 80
+      helpers: 65
+      distinctiveness: 80
+    notes: "'I know that I know nothing', 'Stand out of my sunlight'"
+
+  world-explorers:
+    composite: 75.8
+    rating: rich
+    breakdown:
+      behavioral: 78
+      speech: 68
+      catchphrases: 78
+      helpers: 60
+      distinctiveness: 78
+    notes: "Shackleton survival vs Amundsen preparation"
+
+  vorkosigan-saga:
+    composite: 76.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 70
+      catchphrases: 80
+      helpers: 70
+      distinctiveness: 80
+    notes: "Miles's manic energy vs Cordelia's Betan clarity"
+
+  1984:
+    composite: 75.5
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 80  # Newspeak, doublethink
+      catchphrases: 85
+      helpers: 55
+      distinctiveness: 70
+    notes: "Party slogans as catchphrases - 'War is Peace'"
+
+  ancient-strategists:
+    composite: 75.2
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 68
+      catchphrases: 82
+      helpers: 60
+      distinctiveness: 78
+    notes: "'Supreme excellence is breaking resistance without fighting'"
+
+  gothic-literature:
+    composite: 75.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 70
+      catchphrases: 80
+      helpers: 60
+      distinctiveness: 75
+    notes: "Multiple classic sources - Creature's Paradise Lost education"
+
+  cowboy-bebop:
+    composite: 74.5
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 70
+      catchphrases: 80
+      helpers: 65
+      distinctiveness: 75
+    notes: "Jazz noir tone - Ed's chaotic reviewer role inspired"
+
+  enlightenment-thinkers:
+    composite: 74.5
+    rating: rich
+    breakdown:
+      behavioral: 73
+      speech: 68
+      catchphrases: 78
+      helpers: 55
+      distinctiveness: 78
+    notes: "Voltaire's wit vs Kant's rigidity"
+
+  mash:
+    composite: 74.25
+    rating: rich
+    breakdown:
+      behavioral: 70
+      speech: 65
+      catchphrases: 85
+      helpers: 50
+      distinctiveness: 80
+    notes: "Korean War medical humor"
+
+  the-crown:
+    composite: 74.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 50  # Missing British royal formality
+      catchphrases: 75
+      helpers: 65
+      distinctiveness: 70
+    notes: "Margaret's rebellion vs Philip's frustration"
+
+  classical-composers:
+    composite: 73.8
+    rating: rich
+    breakdown:
+      behavioral: 72
+      speech: 65
+      catchphrases: 75
+      helpers: 55
+      distinctiveness: 80
+    notes: "Beethoven's fury vs Mozart's playfulness"
+
+  count-of-monte-cristo:
+    composite: 73.5
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 70
+      catchphrases: 80
+      helpers: 60
+      distinctiveness: 70
+    notes: "'All human wisdom: Wait and Hope'"
+
+  military-commanders:
+    composite: 73.2
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 68
+      catchphrases: 78
+      helpers: 55
+      distinctiveness: 78
+    notes: "Sun Tzu philosophical vs Patton aggressive"
+
+  all-stars:
+    composite: 73.2
+    rating: rich  # UPGRADED from minimal
+    breakdown:
+      behavioral: 75
+      speech: 68
+      catchphrases: 75
+      helpers: 70
+      distinctiveness: 72
+    notes: "Cross-franchise characters bring their source characterization"
+
+  house-md:
+    composite: 73.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 50
+      catchphrases: 85
+      helpers: 60
+      distinctiveness: 75
+    notes: "'Everybody lies', 'It's not lupus'"
+
+  the-witcher:
+    composite: 72.5
+    rating: rich
+    breakdown:
+      behavioral: 70
+      speech: 65  # Geralt's 'Hmm'
+      catchphrases: 75
+      helpers: 70
+      distinctiveness: 75
+    notes: "Geralt's minimalism well-executed"
+
+  the-americans:
+    composite: 72.0
+    rating: rich
+    breakdown:
+      behavioral: 70
+      speech: 50  # Missing Russian accent hints
+      catchphrases: 75
+      helpers: 60
+      distinctiveness: 70
+    notes: "Elizabeth's ideology vs Philip's doubt"
+
+  software-pioneers:
+    composite: 72.0
+    rating: rich
+    breakdown:
+      behavioral: 80
+      speech: 50
+      catchphrases: 90  # Authentic quotes
+      helpers: 60
+      distinctiveness: 70
+    notes: "'Premature optimization', 'Show me the code'"
+
+  marvel-mcu:
+    composite: 72.0
+    rating: rich
+    breakdown:
+      behavioral: 70
+      speech: 65
+      catchphrases: 75
+      helpers: 70
+      distinctiveness: 75
+    notes: "Character breadth dilutes individual voice strength"
+
+  gilligans-island:
+    composite: 71.8
+    rating: rich  # UPGRADED from thin
+    breakdown:
+      behavioral: 78
+      speech: 70
+      catchphrases: 72
+      helpers: 60
+      distinctiveness: 75
+    notes: "Surprising depth - 'GILLIGAN!', 'three-hour tour'"
+
+  agatha-christie:
+    composite: 71.75
+    rating: rich
+    breakdown:
+      behavioral: 70
+      speech: 75
+      catchphrases: 80
+      helpers: 60
+      distinctiveness: 70
+    notes: "Detective fiction conventions"
+
+  imperial-radch:
+    composite: 70.0
+    rating: rich
+    breakdown:
+      behavioral: 75
+      speech: 50  # Missing pronoun complexity
+      catchphrases: 70
+      helpers: 60
+      distinctiveness: 70
+    notes: "Would benefit from pronoun innovation integration"
+
+  # MODERATE (50-69)
+  scientific-revolutionaries:
+    composite: 68.5
+    rating: moderate
+    breakdown:
+      behavioral: 68
+      speech: 62
+      catchphrases: 72
+      helpers: 50
+      distinctiveness: 70
+    notes: "Scientists blend together, need stronger individual voices"
+
+  jazz-legends:
+    composite: 68.2
+    rating: moderate
+    breakdown:
+      behavioral: 65
+      speech: 60
+      catchphrases: 70
+      helpers: 55
+      distinctiveness: 70
+    notes: "Jazz vocabulary shared too much between agents"
+
+  inspector-morse:
+    composite: 68.0
+    rating: moderate
+    breakdown:
+      behavioral: 70
+      speech: 50
+      catchphrases: 65
+      helpers: 55
+      distinctiveness: 65
+    notes: "Melancholy detective theme but lacking distinctive speech"
+
+  les-miserables:
+    composite: 67.75
+    rating: moderate
+    breakdown:
+      behavioral: 65
+      speech: 60
+      catchphrases: 70
+      helpers: 50
+      distinctiveness: 65
+    notes: "OCEAN profiles may be swapped, helpers purely conceptual"
+
+  historical-figures:
+    composite: 66.8
+    rating: moderate
+    breakdown:
+      behavioral: 65
+      speech: 60
+      catchphrases: 68
+      helpers: 45
+      distinctiveness: 68
+    notes: "Too broad, lacks cohesion, overlaps with other historical themes"
+
+  # MINIMAL (0-29)
+  control:
+    composite: 8.0
+    rating: minimal
+    breakdown:
+      behavioral: 0
+      speech: 0
+      catchphrases: 0
+      helpers: 10
+      distinctiveness: 20
+    notes: "Intentional scientific baseline - zero persona elements by design"
+
+# ============================================================
+# DISTRIBUTION SUMMARY
+# ============================================================
+#
+# exceptional (90-100): 3 themes
+#   - discworld (98.0)
+#   - the-expanse (91.0)
+#   - princess-bride (91.0)
+#
+# rich (70-89): 90 themes
+#   - Range: 71.8 - 89.0
+#   - Median: ~78.0
+#
+# moderate (50-69): 5 themes
+#   - scientific-revolutionaries (68.5)
+#   - jazz-legends (68.2)
+#   - inspector-morse (68.0)
+#   - les-miserables (67.75)
+#   - historical-figures (66.8)
+#
+# thin (30-49): 0 themes (recalibrated out)
+#
+# minimal (0-29): 1 theme
+#   - control (8.0) - intentional baseline
+#
+# CALIBRATION NOTES:
+# - gilligans-island: UPGRADED thin→rich (71.8) - more depth than expected
+# - legion-of-doom: UPGRADED thin→rich (78.5) - villain camp works well
+# - all-stars: UPGRADED minimal→rich (73.2) - cross-franchise brings characterization
+# - Many "moderate" literary themes UPGRADED to rich - stronger than anticipated
+# - Several "exceptional" themes DOWNGRADED to rich - lacked explicit speech encoding

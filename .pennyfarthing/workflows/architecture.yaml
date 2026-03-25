@@ -1,0 +1,65 @@
+# Architecture Workflow - Stepped Workflow for Architectural Decisions
+# BMAD-enhanced stepped workflow with switch prompts
+#
+# Flow: Initialize → [Continue?] → Context → Patterns → Components → Interfaces → Risks → Document
+# Use for architectural decisions, system design, and technical planning
+#
+# BMAD Enhancements (v2.0.0):
+# - Continuation handler (step-01b) for resuming workflows
+# - switch prompts: Advanced Elicitation, Party Mode, Continue
+# - Mandatory execution rules and protocols in each step
+# - Web search integration for current technology versions
+# - AI agent consistency focus in component and risk steps
+# - Pre-documentation validation checks
+
+workflow:
+  name: architecture
+  description: Collaborative architectural decision-making with BMAD-style progressive disclosure and switch prompts
+  version: "2.0.0"
+  type: stepped
+
+  # Step configuration
+  steps:
+    path: ./architecture/steps/
+    pattern: step-{nn}-*.md
+    # Note: step-01b-continue.md is loaded conditionally by step-01 when existing workflow detected
+
+  # Variables available in step files
+  variables:
+    output_file: sprint/planning/architecture.md
+    planning_artifacts: sprint/planning/
+    input_required:
+      - prd
+
+  # User approval gates - pause for confirmation at key decision points
+  # Steps with switch prompts naturally pause; these are the formal gates
+  gates:
+    after_steps: [2, 4, 6]
+    gate_marker: "<!-- GATE -->"
+
+  # Collaboration menus available in steps
+  collaboration:
+    menus:
+      - key: A
+        name: Advanced Elicitation
+        description: Use discovery protocols to develop deeper insights
+      - key: P
+        name: Party Mode
+        description: Bring multiple perspectives to analyze from different angles
+      - key: C
+        name: Continue
+        description: Save content and proceed to next step
+      - key: R
+        name: Revise
+        description: Need to gather more information or make changes
+
+  # Output template
+  template: ./architecture/templates/architecture-decision.md
+
+  # Agent assignment
+  agent: architect
+
+  # Triggers - when to suggest this workflow
+  triggers:
+    types: [architecture, design, adr, system-design]
+    tags: [architecture, stepped]

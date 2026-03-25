@@ -1,0 +1,63 @@
+# Trivial Workflow - Quick Fixes
+# For small changes that don't need full TDD ceremony
+#
+# Flow: SM → Dev → Reviewer → SM (skips TEA)
+# Use for: chores, fixes, 1-2 point stories
+
+workflow:
+  name: trivial
+  description: Quick fixes without full TDD ceremony
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches]
+      gate:
+        file: gates/sm-setup-exit
+        type: sm_setup_exit
+        condition: Session file created with workflow, phase, and branch
+        recovery:
+          epic-context-validated:
+            action: create_context
+            type: epic
+            max_attempts: 1
+          story-context-validated:
+            action: create_context
+            type: story
+            max_attempts: 1
+
+    - name: implement
+      agent: dev
+      input: [session_file]
+      output: [implementation]
+      gate:
+        file: gates/dev-exit
+        type: dev_exit
+        condition: Tests green, tree clean, no debug code, correct branch
+
+    - name: review
+      agent: reviewer
+      input: [implementation]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  triggers:
+    types: [chore, fix, refactor]
+    points:
+      max: 2
