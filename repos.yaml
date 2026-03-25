@@ -43,3 +43,21 @@ repos:
       React 19 + Vite + TypeScript + Tailwind CSS + shadcn/ui.
       Ported from sq-2/client/.
       Connects to sidequest-api via WebSocket.
+
+  daemon:
+    path: sidequest-daemon
+    type: service
+    description: SideQuest media daemon — image generation, TTS, audio mixing
+    language: python
+    test_command: pytest
+    build_command: "true"
+    lint_command: ruff check .
+    dev_command: python -m sidequest_daemon
+    branch_strategy: gitflow
+    default_branch: develop
+    notes: |
+      Python media services extracted from sq-2.
+      Renderer daemon (Flux/SDXL), Kokoro TTS, audio mixer,
+      scene interpreter, subject extractor, beat filter.
+      Communicates with sidequest-api via Unix socket / HTTP.
+      Shares genre_packs/ with the Rust API for asset access.

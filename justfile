@@ -42,6 +42,19 @@ ui-lint:
 ui-install:
     cd sidequest-ui && npm install
 
+# Daemon (Python media services)
+daemon-run:
+    cd sidequest-daemon && python -m sidequest_daemon
+
+daemon-test:
+    cd sidequest-daemon && pytest
+
+daemon-lint:
+    cd sidequest-daemon && ruff check .
+
+daemon-install:
+    cd sidequest-daemon && pip install -e ".[dev]"
+
 # Cross-repo
 check-all: api-check ui-lint ui-test
 
@@ -76,9 +89,22 @@ setup:
     fi
 
     echo ""
+
+    # Daemon (Python)
+    if [ -d "sidequest-daemon" ]; then
+        echo "--- Daemon dependencies ---"
+        cd sidequest-daemon && pip install -e ".[dev]"
+        cd ..
+        echo "✓ Daemon ready"
+    else
+        echo "⚠ sidequest-daemon not cloned. Run: git clone git@github.com:slabgorb/sidequest-daemon.git"
+    fi
+
+    echo ""
     echo "=== Setup complete ==="
 
 status:
     @echo "=== API ===" && cd sidequest-api && git status --short
     @echo "=== UI ===" && cd sidequest-ui && git status --short
+    @echo "=== Daemon ===" && cd sidequest-daemon && git status --short 2>/dev/null || echo "(not cloned)"
     @echo "=== Orchestrator ===" && git status --short

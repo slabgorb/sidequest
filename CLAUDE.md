@@ -1,8 +1,9 @@
 # CLAUDE.md — SideQuest (Rust Rewrite)
 
-This is the orchestrator repo for the SideQuest Rust rewrite. It coordinates two subrepos:
-- **sidequest-api** — Rust game engine and WebSocket API
+This is the orchestrator repo for the SideQuest Rust rewrite. It coordinates three subrepos:
+- **sidequest-api** — Rust game engine and WebSocket API (workspace with 5 crates)
 - **sidequest-ui** — React/TypeScript game client
+- **sidequest-daemon** — Python media services (image gen, TTS, audio)
 
 ## CRITICAL: Personal Project
 
@@ -24,21 +25,24 @@ achieving a clean frontend/backend repo split.
 
 ```
 orc-quest/                    # This repo (orchestrator)
-├── genre_packs/              # YAML genre data (shared across repos)
+├── genre_packs/              # YAML genre data (shared across all repos)
 ├── sprint/                   # Sprint tracking
-├── docs/                     # Architecture and design docs
+├── docs/                     # Architecture docs and 30 ADRs
+│   ├── api-contract.md       # WebSocket + REST contract (from UI)
+│   ├── tech-stack.md         # Crate choices (aligned with axiathon)
+│   ├── architecture.md       # System design and layer diagram
+│   └── adr/                  # Architecture Decision Records
 ├── repos.yaml                # Multi-repo topology
 └── justfile                  # Cross-repo task runner
 
 sidequest-api/                # Rust backend (subrepo, gitignored)
-├── Cargo.toml
-├── src/
-│   ├── main.rs
-│   ├── models/               # Data models (from Pydantic → serde)
-│   ├── genre/                # Genre pack loading
-│   ├── game/                 # Game state, persistence
-│   ├── agents/               # Claude CLI subprocess orchestration
-│   └── api/                  # axum HTTP/WebSocket handlers
+├── Cargo.toml                # [workspace] root
+├── crates/
+│   ├── sidequest-protocol/   # GameMessage, typed payloads (serde)
+│   ├── sidequest-genre/      # YAML genre pack loader
+│   ├── sidequest-game/       # State, characters, combat, chase, tropes
+│   ├── sidequest-agents/     # Claude CLI subprocess orchestration
+│   └── sidequest-server/     # axum HTTP/WebSocket, sessions
 └── tests/
 
 sidequest-ui/                 # React frontend (subrepo, gitignored)
@@ -47,6 +51,13 @@ sidequest-ui/                 # React frontend (subrepo, gitignored)
 │   ├── providers/
 │   └── screens/
 └── package.json
+
+sidequest-daemon/             # Python media services (subrepo, gitignored)
+├── renderer/                 # Flux/SDXL image generation
+├── tts/                      # Kokoro + Piper voice synthesis
+├── audio/                    # Library playback, theme rotation
+├── scene/                    # Scene interpreter, subject extractor
+└── pyproject.toml
 ```
 
 ## Architecture
@@ -55,7 +66,7 @@ sidequest-ui/                 # React frontend (subrepo, gitignored)
 - **Small REST surface** for save/load, character listing, genre pack metadata
 - **Claude CLI (`claude -p`)** for all LLM calls — subprocess, not SDK
 - **Genre packs** are YAML, loaded by the API from a configured path
-- **Media daemon** stays in Python (sq-2) as a sidecar for image/audio generation
+- **Media daemon** (`sidequest-daemon`) stays in Python as a sidecar for image/audio generation
 
 ## Commands
 
