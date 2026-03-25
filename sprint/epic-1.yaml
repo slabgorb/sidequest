@@ -87,10 +87,13 @@ stories:
     title: Game state composition — GameSnapshot, typed patches, state delta, TurnManager, session persistence
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-25'
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-7
+    branch: feat/1-8-game-state-composition
   - id: 1-9
     title: Prompt framework — PromptSection, attention zones, rule taxonomy, SOUL.md parser
     points: 5
