@@ -1,5 +1,9 @@
 # SideQuest Orchestrator — Cross-repo task runner
 
+root := justfile_directory()
+
+import '.pennyfarthing/justfile.pf'
+
 # API (Rust backend)
 api-test:
     cd sidequest-api && cargo test
@@ -40,6 +44,39 @@ ui-install:
 
 # Cross-repo
 check-all: api-check ui-lint ui-test
+
+# First-time dev environment setup
+setup:
+    #!/usr/bin/env bash
+    echo "=== SideQuest Dev Environment Setup ==="
+    echo ""
+
+    # API (Rust)
+    if [ -d "sidequest-api" ]; then
+        echo "--- Rust toolchain ---"
+        rustup component add clippy
+        echo "--- API dependencies ---"
+        cd sidequest-api && cargo build
+        cd ..
+        echo "✓ API ready"
+    else
+        echo "⚠ sidequest-api not cloned. Run: git clone git@github.com:slabgorb/sidequest-api.git"
+    fi
+
+    echo ""
+
+    # UI (React)
+    if [ -d "sidequest-ui" ]; then
+        echo "--- UI dependencies ---"
+        cd sidequest-ui && npm install
+        cd ..
+        echo "✓ UI ready"
+    else
+        echo "⚠ sidequest-ui not cloned. Run: git clone git@github.com:slabgorb/sidequest-ui.git"
+    fi
+
+    echo ""
+    echo "=== Setup complete ==="
 
 status:
     @echo "=== API ===" && cd sidequest-api && git status --short
