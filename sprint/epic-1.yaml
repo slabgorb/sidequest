@@ -29,7 +29,9 @@ stories:
     title: Genre pack models — all structs, serde derives, deny_unknown_fields
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    completed: '2026-03-25'
+    review_verdict: approved
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-1
