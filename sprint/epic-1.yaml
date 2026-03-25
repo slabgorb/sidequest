@@ -107,3 +107,14 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-11
+  - id: 1-13
+    title: Extract CreatureCore — shared struct for Character and NPC fields
+    points: 2
+    priority: p0
+    status: done
+    repos: sidequest-api
+    workflow: trivial
+    depends_on: 1-6
+    completed: '2026-03-25'
+    type: refactor
+    review_verdict: approved
