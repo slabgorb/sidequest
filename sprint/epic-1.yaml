@@ -142,3 +142,15 @@ stories:
     completed: '2026-03-25'
     type: refactor
     review_verdict: approved
+  - id: 1-14
+    title: Reviewer LOW rollup — thiserror migration, deny_unknown_fields gaps, test quality, doc fixes
+    points: 2
+    priority: p2
+    status: done
+    started: '2026-03-25'
+    repos: sidequest-api
+    workflow: trivial
+    completed: '2026-03-25'
+    type: chore
+    branch: feat/1-14-reviewer-low-rollup
+    review_verdict: approved

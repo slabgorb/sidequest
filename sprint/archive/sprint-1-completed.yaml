@@ -55,3 +55,8 @@ completed_stories:
     title: Game subsystems — CombatState, ChaseState, NarrativeEntry, progression
     points: 5
     completed: '2026-03-25'
+  - id: 1-14
+    epic: ''
+    title: Reviewer LOW rollup — thiserror migration, deny_unknown_fields gaps, test quality, doc fixes
+    points: 2
+    completed: '2026-03-25'
