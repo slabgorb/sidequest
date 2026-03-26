@@ -124,7 +124,7 @@ stories:
     title: "Agent implementations + Orchestrator — all 8 agents, state machine, GameService trait"
     points: 8
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-10
