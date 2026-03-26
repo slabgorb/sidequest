@@ -137,10 +137,11 @@ stories:
       Can be a small Python or Rust CLI script consuming the WebSocket.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: orc-quest
     workflow: trivial
     depends_on: 3-6
+    completed: '2026-03-26'
   - id: 3-8
     title: "Trope alignment check — beat thresholds vs narration content"
     description: >-
