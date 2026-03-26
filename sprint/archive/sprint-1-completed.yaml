@@ -116,3 +116,8 @@ completed_stories:
     title: Agent execution — Claude CLI subprocess calls, prompt composition with genre/state context, JSON extraction
     points: 5
     completed: '2026-03-25'
+  - id: 2-7
+    epic: ''
+    title: State patch pipeline — combat/chase/world JSON patches applied, state delta computation, client broadcast
+    points: 5
+    completed: '2026-03-25'
