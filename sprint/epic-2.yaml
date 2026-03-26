@@ -41,10 +41,11 @@ stories:
     title: SQLite persistence — rusqlite schema, save/load GameSnapshot, narrative log, 'Previously On' recap
     points: 5
     priority: p0
-    status: in_progress
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 1-8
+    completed: '2026-03-25'
     branch: feat/2-4-sqlite-persistence
   - id: 2-5
     title: Orchestrator turn loop — intent routing, agent dispatch, response streaming, state patch, broadcast

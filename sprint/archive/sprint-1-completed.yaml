@@ -96,3 +96,8 @@ completed_stories:
     title: Character creation flow — CharacterBuilder state machine, genre scenes over WebSocket, mechanical effects
     points: 5
     completed: '2026-03-25'
+  - id: 2-4
+    epic: ''
+    title: SQLite persistence — rusqlite schema, save/load GameSnapshot, narrative log, 'Previously On' recap
+    points: 5
+    completed: '2026-03-25'
