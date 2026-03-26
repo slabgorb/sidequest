@@ -14,7 +14,7 @@ stories:
     title: AbilityDefinition model — genre-voiced ability descriptions with mechanical effects
     points: 3
     priority: p0
-    status: backlog
+    status: in_review
     repos: sidequest-api
     workflow: tdd
   - id: 9-2
