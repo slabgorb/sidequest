@@ -63,10 +63,13 @@ stories:
       TurnRecords with known-bad patches.
     points: 3
     priority: p0
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-25'
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-2
+    branch: feat/3-3-patch-legality-checks
   - id: 3-4
     title: "Entity reference validation — narration mentions checked against GameSnapshot"
     description: >-
