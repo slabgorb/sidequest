@@ -26,11 +26,12 @@ stories:
     title: Turn barrier — wait for all players before resolving turn, configurable timeout
     points: 5
     priority: p0
-    status: in_progress
+    status: done
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-1
-    started: '2026-03-26'
+    completed: '2026-03-26'
     branch: feat/8-2-turn-barrier
   - id: 8-3
     title: Adaptive action batching — collect window scales by player count (3s for 2-3, 5s for 4+)
