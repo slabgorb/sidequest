@@ -44,10 +44,13 @@ stories:
       receives and logs receipt. No validation logic yet.
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-25'
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-1
+    completed: '2026-03-25'
   - id: 3-3
     title: "Patch legality checks — deterministic validation of state mutations against game rules"
     description: >-
@@ -159,4 +162,4 @@ stories:
     status: backlog
     repos: sidequest-ui
     workflow: tdd
-    depends_on: 3-6,2-9
+    depends_on: 3-6

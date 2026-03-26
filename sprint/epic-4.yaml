@@ -104,4 +104,4 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 4-4,4-8
+    depends_on: 4-4

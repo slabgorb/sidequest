@@ -121,3 +121,8 @@ completed_stories:
     title: State patch pipeline — combat/chase/world JSON patches applied, state delta computation, client broadcast
     points: 5
     completed: '2026-03-25'
+  - id: 3-2
+    epic: ''
+    title: "TurnRecord struct + mpsc channel — async pipeline from orchestrator to validator"
+    points: 5
+    completed: '2026-03-25'

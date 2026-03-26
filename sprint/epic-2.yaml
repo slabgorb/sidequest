@@ -13,7 +13,6 @@ stories:
     status: done
     repos: sidequest-api
     workflow: tdd
-    depends_on: 1-12
     completed: '2026-03-25'
     review_verdict: approved
   - id: 2-2
@@ -44,7 +43,6 @@ stories:
     status: done
     repos: sidequest-api
     workflow: tdd
-    depends_on: 1-8
     completed: '2026-03-25'
     branch: feat/2-4-sqlite-persistence
   - id: 2-5
