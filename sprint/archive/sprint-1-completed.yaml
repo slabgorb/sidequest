@@ -65,3 +65,8 @@ completed_stories:
     title: "Game state composition — GameSnapshot, typed patches, state delta, TurnManager, session persistence"
     points: 3
     completed: '2026-03-25'
+  - id: 1-12
+    epic: ''
+    title: "Server — axum router, WebSocket, genres endpoint, service facade, structured logging"
+    points: 8
+    completed: '2026-03-25'
