@@ -118,10 +118,14 @@ stories:
       diagnostic data only.
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-1
+    completed: '2026-03-26'
+    branch: feat/3-6-watcher-websocket-endpoint
   - id: 3-7
     title: "CLI watcher — just watch tail mode with colored output and subsystem heatmap"
     description: >-
