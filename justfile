@@ -15,7 +15,7 @@ api-release:
     cd sidequest-api && cargo build --release
 
 api-run:
-    cd sidequest-api && cargo run
+    cd sidequest-api && cargo run -p sidequest-server -- --genre-packs-path {{root}}/genre_packs
 
 api-lint:
     cd sidequest-api && cargo clippy -- -D warnings
@@ -44,7 +44,7 @@ ui-install:
 
 # Daemon (Python media services)
 daemon-run:
-    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{root}}/genre_packs sidequest-renderer
+    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{root}}/genre_packs sidequest-renderer --warmup
 
 daemon-status:
     cd sidequest-daemon && sidequest-renderer --status

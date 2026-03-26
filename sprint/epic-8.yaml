@@ -15,10 +15,13 @@ stories:
     title: MultiplayerSession — coordinate multiple WebSocket clients in a single game session, player_id mapping
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-2
+    completed: '2026-03-26'
+    branch: feat/8-1-multiplayer-session
   - id: 8-2
     title: Turn barrier — wait for all players before resolving turn, configurable timeout
     points: 5

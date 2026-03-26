@@ -137,3 +137,8 @@ completed_stories:
     title: End-to-end integration — UI connects to API, full turn cycle, narration renders in client
     points: 5
     completed: '2026-03-26'
+  - id: 8-1
+    epic: ''
+    title: MultiplayerSession — coordinate multiple WebSocket clients in a single game session, player_id mapping
+    points: 5
+    completed: '2026-03-26'

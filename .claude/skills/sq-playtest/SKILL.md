@@ -375,6 +375,48 @@ Read the ping-pong file and print a summary:
 - Findings by status (open, in-progress, fixed, verified)
 - Blocking bugs still open (if any)
 
+---
+
+## Multiplayer Mode
+
+When the user requests multiplayer testing, use separate Playwright browser contexts
+to simulate multiple players connecting to the same game session.
+
+### Setup
+
+Create two browser contexts (each gets independent cookies/session state):
+
+```js
+// Playwright MCP supports multiple tabs — open a second tab for Player 2
+mcp__playwright__browser_navigate(url="http://localhost:5173")  // Tab 1 = Player 1
+// Use browser_tabs to manage multiple tabs
+```
+
+### Player management
+
+- **Player 1:** Primary tab — controlled by SM as usual
+- **Player 2:** Second tab — SM alternates between tabs to drive both players
+- Use `mcp__playwright__browser_tabs` to list and switch between tabs
+- Each player gets a unique name (e.g., "Kael" and "Mira")
+- Both players should select the same genre/world to join the same session
+
+### Multiplayer verification checklist
+
+Test these scenarios:
+1. **Both players connect** — party pane shows both names
+2. **Player 1 acts** — Player 2 sees the narration update
+3. **Player 2 acts** — Player 1 sees the narration update
+4. **Disconnect/reconnect** — one player refreshes, verify they rejoin the session
+5. **Concurrent actions** — both players submit actions close together, verify no crash
+
+### Screenshots
+
+Take screenshots from both tabs for each significant moment. Use naming convention:
+- `NNN-p1.png` — Player 1's view
+- `NNN-p2.png` — Player 2's view
+
+Compare both views to verify state synchronization.
+
 </run>
 
 <output>
@@ -384,4 +426,5 @@ Interactive playtest session with:
 - UX Designer teammate evaluating screenshots
 - Cross-workspace bug coordination via ping-pong file at /Users/keithavery/Projects/sq-playtest-pingpong.md
 - Service restart and log reading capability
+- Multiplayer mode with dual Playwright tabs for concurrent player testing
 </output>
