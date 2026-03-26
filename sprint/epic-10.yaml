@@ -17,7 +17,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
   - id: 10-2
     title: "Genre archetype OCEAN baselines — default profiles per NPC archetype in genre pack, random generation for unnamed NPCs"
     points: 3

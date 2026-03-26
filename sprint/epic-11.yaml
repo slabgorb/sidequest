@@ -17,7 +17,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
   - id: 11-2
     title: "LoreStore — in-memory indexed collection with add, query by category, query by keyword"
     points: 3

@@ -7,15 +7,6 @@ text: '#2D2418'
 border_style: heavy
 web_font_family: EB Garamond
 
-drop_caps:
-  enabled: true
-  cooldown: 5
-  triggers:
-    - session_open
-    - location_change
-    - combat_start
-    - major_npc
-
 dinkus:
   enabled: true
   cooldown: 2

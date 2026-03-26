@@ -59,10 +59,12 @@ stories:
     title: Turn modes — FREE_PLAY (immediate), STRUCTURED (blind simultaneous), CINEMATIC (narrator-paced)
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-2
+    branch: feat/8-5-turn-modes
   - id: 8-6
     title: Perception rewriter — per-character narration variants based on status effects (blinded, charmed, etc.)
     points: 8

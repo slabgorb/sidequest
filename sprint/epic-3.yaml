@@ -28,7 +28,6 @@ stories:
     status: done
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
     completed: '2026-03-25'
     branch: feat/3-1-agent-telemetry-spans
   - id: 3-2

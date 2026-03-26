@@ -7,14 +7,6 @@ text: '#B0C4DE'
 border_style: heavy
 web_font_family: Orbitron
 
-drop_caps:
-  enabled: true
-  cooldown: 8
-  triggers:
-    - session_open
-    - location_change
-    - act_break
-
 dinkus:
   enabled: true
   cooldown: 3

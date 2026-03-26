@@ -7,14 +7,6 @@ text: '#c8d6a0'
 border_style: heavy
 web_font_family: Special Elite
 
-drop_caps:
-  enabled: true
-  cooldown: 7
-  triggers:
-    - session_open
-    - location_change
-    - combat_start
-
 dinkus:
   enabled: true
   cooldown: 2

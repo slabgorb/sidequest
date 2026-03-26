@@ -7,15 +7,14 @@ text: '#C9D1D9'
 border_style: rounded
 web_font_family: Rajdhani
 
-drop_caps:
-  enabled: true
-  cooldown: 5
-  triggers: [session_open, location_change, combat_start, major_npc]
-
 dinkus:
   enabled: true
   cooldown: 2
   default_weight: medium
+  glyph:
+    light: "✦"
+    medium: "✦ ⬡ ✦"
+    heavy: "⬡ ✦ ⬡ ✦ ⬡"
 
 session_opener:
   enabled: true

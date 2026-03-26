@@ -7,14 +7,6 @@ text: '#C9B99A'
 border_style: heavy
 web_font_family: Lora
 
-drop_caps:
-  enabled: true
-  cooldown: 5
-  triggers:
-    - session_open
-    - location_change
-    - major_npc
-
 dinkus:
   enabled: true
   cooldown: 2

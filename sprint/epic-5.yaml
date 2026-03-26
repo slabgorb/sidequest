@@ -19,7 +19,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-7
   - id: 5-2
     title: Combat event classification — categorize combat outcomes as boring/dramatic, track boring_streak
     points: 3

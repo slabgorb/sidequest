@@ -22,7 +22,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-8
   - id: 6-2
     title: Narrator MUST-weave instruction — scene directive positioned in prompt with narrative primacy, enforced weave rules
     points: 2
@@ -38,7 +37,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-8
   - id: 6-4
     title: FactionAgenda model — schema for faction goals, urgency, and scene injection rules
     points: 3
@@ -62,7 +60,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
   - id: 6-7
     title: Faction agendas for mutant_wasteland genre pack worlds
     points: 2

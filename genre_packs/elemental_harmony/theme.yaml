@@ -7,15 +7,6 @@ text: '#1A1A2E'
 border_style: solid
 web_font_family: Cormorant Garamond
 
-drop_caps:
-  enabled: true
-  cooldown: 6
-  triggers:
-    - session_open
-    - location_change
-    - combat_start
-    - major_npc
-
 dinkus:
   enabled: true
   cooldown: 2

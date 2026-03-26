@@ -17,7 +17,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-3
   - id: 9-2
     title: Ability perception in narrator prompt — involuntary abilities trigger in narrator context (e.g., root-bonding detects corruption)
     points: 3
@@ -33,7 +32,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
   - id: 9-4
     title: Known facts in narrator prompt — character perception includes accumulated knowledge
     points: 2
@@ -57,7 +55,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
   - id: 9-7
     title: Core slash commands — /status, /inventory, /map, /save, /help handlers
     points: 5

@@ -23,7 +23,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
   - id: 7-2
     title: Gossip propagation — NPCs spread claims between turns, contradictions decay credibility
     points: 5
