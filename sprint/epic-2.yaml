@@ -71,10 +71,11 @@ stories:
     title: State patch pipeline — combat/chase/world JSON patches applied, state delta computation, client broadcast
     points: 5
     priority: p1
-    status: backlog
+    status: in-progress
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
+    branch: feat/2-7-state-patch-pipeline
   - id: 2-8
     title: Trope engine runtime — tick progression, escalation beats, beat injection into narrator context
     points: 3
