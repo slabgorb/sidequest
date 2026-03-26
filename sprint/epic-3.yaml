@@ -154,10 +154,14 @@ stories:
       Low priority — meaningful only after trope engine runtime (2-8) works.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-4
+    completed: '2026-03-26'
+    branch: feat/3-8-trope-alignment-check
   - id: 3-9
     title: "GM Mode panel — React debug overlay showing telemetry alongside game UI"
     description: >-
