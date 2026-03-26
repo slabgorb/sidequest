@@ -152,3 +152,33 @@ completed_stories:
     title: Adaptive action batching — collect window scales by player count (3s for 2-3, 5s for 4+)
     points: 3
     completed: '2026-03-26'
+  - id: 4-1
+    epic: '4'
+    title: Daemon client — HTTP client for sidequest-daemon render/TTS/audio endpoints
+    points: 5
+    completed: '2026-03-26'
+  - id: 4-2
+    epic: '4'
+    title: Subject extraction — parse narration for image render subjects, tier classification
+    points: 3
+    completed: '2026-03-26'
+  - id: 4-3
+    epic: '4'
+    title: Beat filter — suppress image renders for low-narrative-weight actions, configurable thresholds
+    points: 3
+    completed: '2026-03-26'
+  - id: 4-4
+    epic: '4'
+    title: Render queue — async image generation queue with hash-based cache dedup
+    points: 5
+    completed: '2026-03-26'
+  - id: 4-5
+    epic: '4'
+    title: IMAGE message broadcast — deliver rendered images to connected clients via WebSocket
+    points: 3
+    completed: '2026-03-26'
+  - id: 8-4
+    epic: ''
+    title: Party action composition — compose multi-character PARTY ACTIONS block for orchestrator
+    points: 3
+    completed: '2026-03-26'

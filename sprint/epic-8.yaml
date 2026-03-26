@@ -19,7 +19,6 @@ stories:
     started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-2
     completed: '2026-03-26'
     branch: feat/8-1-multiplayer-session
   - id: 8-2
@@ -48,12 +47,14 @@ stories:
     title: Party action composition — compose multi-character PARTY ACTIONS block for orchestrator
     points: 3
     priority: p1
-    status: in-progress
+    status: done
     started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-2
+    completed: '2026-03-26'
     branch: feat/8-4-party-composition
+    review_verdict: approved
   - id: 8-5
     title: Turn modes — FREE_PLAY (immediate), STRUCTURED (blind simultaneous), CINEMATIC (narrator-paced)
     points: 5
