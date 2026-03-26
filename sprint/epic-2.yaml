@@ -51,10 +51,11 @@ stories:
     title: Orchestrator turn loop — intent routing, agent dispatch, response streaming, state patch, broadcast
     points: 8
     priority: p0
-    status: backlog
+    status: in_progress
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-2
+    branch: feat/2-5-orchestrator-turn-loop
   - id: 2-6
     title: Agent execution — Claude CLI subprocess calls, prompt composition with genre/state context, JSON extraction
     points: 5
