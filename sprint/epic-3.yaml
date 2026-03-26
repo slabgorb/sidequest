@@ -101,10 +101,11 @@ stories:
       subsystems being used?" question at a glance.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-2
+    completed: '2026-03-26'
   - id: 3-6
     title: "Watcher WebSocket endpoint — /ws/watcher streaming filtered telemetry to viewers"
     description: >-
