@@ -126,3 +126,8 @@ completed_stories:
     title: "TurnRecord struct + mpsc channel — async pipeline from orchestrator to validator"
     points: 5
     completed: '2026-03-25'
+  - id: 2-8
+    epic: ''
+    title: Trope engine runtime — tick progression, escalation beats, beat injection into narrator context
+    points: 3
+    completed: '2026-03-26'
