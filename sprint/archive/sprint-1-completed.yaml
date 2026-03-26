@@ -8,7 +8,8 @@ sprint:
   end_date: 2026-04-08
   status: active
 
-completed_epics: []
+completed_epics:
+  - '1'
 completed_stories:
   - id: 1-2
     epic: ''
@@ -68,5 +69,20 @@ completed_stories:
   - id: 1-12
     epic: ''
     title: "Server — axum router, WebSocket, genres endpoint, service facade, structured logging"
+    points: 8
+    completed: '2026-03-25'
+  - id: 3-1
+    epic: ''
+    title: "Agent telemetry spans — #[instrument] on all decision points, JSON tracing subscriber, RUST_LOG filtering"
+    points: 5
+    completed: '2026-03-25'
+  - id: 1-1
+    epic: '1'
+    title: "Workspace setup — Cargo.toml, 5 crates, shared deps"
+    points: 3
+    completed: '2026-03-25'
+  - id: 1-11
+    epic: '1'
+    title: "Agent implementations + Orchestrator — all 8 agents, state machine, GameService trait"
     points: 8
     completed: '2026-03-25'

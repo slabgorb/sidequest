@@ -23,7 +23,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-8
-
   - id: 6-2
     title: Narrator MUST-weave instruction — scene directive positioned in prompt with narrative primacy, enforced weave rules
     points: 2
@@ -32,7 +31,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 6-1
-
   - id: 6-3
     title: Engagement multiplier — scale trope progression rate by player engagement signal (turns since last meaningful action)
     points: 3
@@ -41,7 +39,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-8
-
   - id: 6-4
     title: FactionAgenda model — schema for faction goals, urgency, and scene injection rules
     points: 3
@@ -50,7 +47,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 6-1
-
   - id: 6-5
     title: Wire faction agendas into scene directive — faction-driven events appear in narrator prompt
     points: 2
@@ -59,7 +55,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 6-4
-
   - id: 6-6
     title: World materialization — campaign maturity levels (fresh/early/mid/veteran), history chapter application to GameSnapshot
     points: 5
@@ -68,7 +63,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
-
   - id: 6-7
     title: Faction agendas for mutant_wasteland genre pack worlds
     points: 2
@@ -76,7 +70,6 @@ stories:
     status: backlog
     repos: orc-quest
     workflow: trivial
-
   - id: 6-8
     title: Faction agendas for low_fantasy genre pack worlds
     points: 2
@@ -84,7 +77,6 @@ stories:
     status: backlog
     repos: orc-quest
     workflow: trivial
-
   - id: 6-9
     title: Wire scene directive into orchestrator turn loop — directive generation and prompt injection per turn
     points: 3

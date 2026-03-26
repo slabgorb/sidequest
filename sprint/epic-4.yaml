@@ -17,7 +17,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
-
   - id: 4-2
     title: Subject extraction — parse narration for image render subjects, tier classification
     points: 3
@@ -26,7 +25,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
-
   - id: 4-3
     title: Beat filter — suppress image renders for low-narrative-weight actions, configurable thresholds
     points: 3
@@ -35,7 +33,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-2
-
   - id: 4-4
     title: Render queue — async image generation queue with hash-based cache dedup
     points: 5
@@ -44,7 +41,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-2
-
   - id: 4-5
     title: IMAGE message broadcast — deliver rendered images to connected clients via WebSocket
     points: 3
@@ -53,7 +49,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-4
-
   - id: 4-6
     title: TTS voice routing — map character/NPC IDs to voice presets from genre pack config
     points: 3
@@ -62,7 +57,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
-
   - id: 4-7
     title: TTS text segmentation — break narration into speakable segments for streaming delivery
     points: 3
@@ -71,7 +65,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-6
-
   - id: 4-8
     title: TTS streaming — stream synthesized audio chunks to client via WebSocket
     points: 5
@@ -80,7 +73,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-7
-
   - id: 4-9
     title: Music Director integration — mood extraction from narration, AUDIO_CUE message generation
     points: 5
@@ -89,7 +81,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
-
   - id: 4-10
     title: Audio mixer coordination — 3-channel mixing commands (music/SFX/ambience), ducking during speech
     points: 3
@@ -98,7 +89,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-9
-
   - id: 4-11
     title: Theme rotation — anti-repetition track selection within mood category
     points: 2
@@ -107,7 +97,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-9
-
   - id: 4-12
     title: Speculative prerendering — queue image generation during voice playback window
     points: 5

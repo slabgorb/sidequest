@@ -18,7 +18,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
-
   - id: 10-2
     title: "Genre archetype OCEAN baselines — default profiles per NPC archetype in genre pack, random generation for unnamed NPCs"
     points: 3
@@ -27,7 +26,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 10-1
-
   - id: 10-3
     title: "OCEAN behavioral summary — scores to narrator prompt text (e.g., 'reserved and meticulous' for low-E high-C)"
     points: 3
@@ -36,7 +34,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 10-1
-
   - id: 10-4
     title: "Narrator reads OCEAN — adjust NPC voice and behavior based on personality profile"
     points: 5
@@ -45,7 +42,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 10-3
-
   - id: 10-5
     title: "OCEAN shift log — track personality changes with cause attribution, append to structured log"
     points: 3
@@ -54,7 +50,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 10-1
-
   - id: 10-6
     title: "World state agent proposes OCEAN shifts — game events trigger personality evolution"
     points: 5
@@ -63,7 +58,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 10-5
-
   - id: 10-7
     title: "Connect Agreeableness to disposition — A-dimension feeds into existing disposition system (-15 to +15)"
     points: 2
@@ -72,7 +66,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 10-1
-
   - id: 10-8
     title: "Backfill OCEAN profiles on existing NPC archetypes across genre packs"
     points: 3

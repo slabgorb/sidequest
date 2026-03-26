@@ -9,9 +9,6 @@ description: >-
 priority: p1
 status: ready
 repos: sidequest-api
-key_references:
-  - sq-2/sprint/epic-62.yaml
-  - sq-2/sidequest/slash_commands/*.py
 stories:
   - id: 9-1
     title: AbilityDefinition model — genre-voiced ability descriptions with mechanical effects
@@ -21,7 +18,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-3
-
   - id: 9-2
     title: Ability perception in narrator prompt — involuntary abilities trigger in narrator context (e.g., root-bonding detects corruption)
     points: 3
@@ -30,7 +26,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-1
-
   - id: 9-3
     title: KnownFact model — play-derived knowledge accumulation, persistence to game state
     points: 3
@@ -39,7 +34,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
-
   - id: 9-4
     title: Known facts in narrator prompt — character perception includes accumulated knowledge
     points: 2
@@ -48,7 +42,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-3
-
   - id: 9-5
     title: Narrative character sheet — genre-voiced to_narrative_sheet() for player-facing display
     points: 3
@@ -57,7 +50,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-1
-
   - id: 9-6
     title: Slash command router — intercept /command input before intent classification, dispatch to handlers
     points: 3
@@ -66,7 +58,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
-
   - id: 9-7
     title: Core slash commands — /status, /inventory, /map, /save, /help handlers
     points: 5
@@ -75,7 +66,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-6
-
   - id: 9-8
     title: GM commands — /gm set, /gm teleport, /gm spawn, /gm dmg for operator debugging
     points: 5
@@ -84,7 +74,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-6
-
   - id: 9-9
     title: Tone command — /tone adjusts genre alignment axes (light/dark, action/mystery, serious/whimsy)
     points: 2
@@ -93,7 +82,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-6
-
   - id: 9-10
     title: Wire narrative sheet to React client — CHARACTER_SHEET message with genre-voiced content
     points: 3
@@ -102,3 +90,6 @@ stories:
     repos: sidequest-api,sidequest-ui
     workflow: tdd
     depends_on: 9-5
+key_references:
+  - sq-2/sprint/epic-62.yaml
+  - sq-2/sidequest/slash_commands/*.py

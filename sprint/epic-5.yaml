@@ -20,7 +20,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-7
-
   - id: 5-2
     title: Combat event classification — categorize combat outcomes as boring/dramatic, track boring_streak
     points: 3
@@ -29,7 +28,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-1
-
   - id: 5-3
     title: Drama weight computation — max(action_tension, stakes_tension), event spike injection with decay
     points: 3
@@ -38,7 +36,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-2
-
   - id: 5-4
     title: Pacing hint generation — drama_weight to narrator sentence count guidance (1-6 sentences)
     points: 3
@@ -47,7 +44,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-3
-
   - id: 5-5
     title: Drama-aware text delivery — INSTANT/SENTENCE/STREAMING modes based on drama_weight thresholds
     points: 5
@@ -56,7 +52,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-3
-
   - id: 5-6
     title: Quiet turn detection — count consecutive low-action turns, inject escalation beat hints
     points: 3
@@ -65,7 +60,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-1
-
   - id: 5-7
     title: Wire pacing into orchestrator — drama_weight flows from TensionTracker through turn pipeline to narrator prompt
     points: 5
@@ -74,7 +68,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-4
-
   - id: 5-8
     title: Genre-tunable thresholds — drama_weight breakpoints configurable per genre pack
     points: 2

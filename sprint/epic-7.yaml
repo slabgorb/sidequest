@@ -24,7 +24,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 2-5
-
   - id: 7-2
     title: Gossip propagation — NPCs spread claims between turns, contradictions decay credibility
     points: 5
@@ -33,7 +32,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
-
   - id: 7-3
     title: Clue activation — semantic trigger evaluation for clue availability based on game state
     points: 3
@@ -42,7 +40,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
-
   - id: 7-4
     title: Accusation system — player accuses NPC, system evaluates evidence quality and resolves
     points: 5
@@ -51,7 +48,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-3
-
   - id: 7-5
     title: NPC autonomous actions — scenario-driven NPC behaviors (alibi, confess, flee, destroy evidence)
     points: 5
@@ -60,7 +56,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
-
   - id: 7-6
     title: Scenario pacing — turn-based pressure escalation, tension ramp over scenario arc
     points: 3
@@ -69,7 +64,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-2
-
   - id: 7-7
     title: Scenario archiver — save/resume mid-scenario state, session boundary handling
     points: 3
@@ -78,7 +72,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
-
   - id: 7-8
     title: Scenario scoring — evidence collection metrics, accusation accuracy, deduction quality
     points: 3
@@ -87,7 +80,6 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-4
-
   - id: 7-9
     title: ScenarioEngine integration — wire scenario lifecycle into orchestrator turn loop
     points: 5

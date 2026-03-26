@@ -4,7 +4,6 @@ title: Rust Workspace Scaffolding
 description: "Port the Python SideQuest game engine to Rust across 5 crates. Full implementations — not stubs — informed by 30 battle-tested ADRs and a technical debt audit. Each story delivers complete, tested, working code for its layer."
 priority: p0
 status: done
-completed: '2026-03-25'
 repos: sidequest-api
 stories:
   - id: 1-1
@@ -164,3 +163,4 @@ stories:
     type: chore
     branch: feat/1-14-reviewer-low-rollup
     review_verdict: approved
+completed: '2026-03-25'

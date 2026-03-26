@@ -14,12 +14,6 @@ repos: sidequest-api,sidequest-ui
 stories:
   - id: 3-1
     title: "Agent telemetry spans — #[instrument] on all decision points, JSON tracing subscriber, RUST_LOG filtering"
-    points: 5
-    priority: p0
-    status: backlog
-    repos: sidequest-api
-    workflow: tdd
-    depends_on: 2-5
     description: >-
       Instrument every decision point in the turn loop with structured tracing
       spans. IntentRouter::classify, Agent::invoke, JsonExtractor::extract,
@@ -29,15 +23,16 @@ stories:
       timing. Configure tracing-subscriber with JSON output layer and
       env-filter for RUST_LOG control. Story 1-12 lays the foundation;
       this story adds game-specific semantic fields.
-
-  - id: 3-2
-    title: "TurnRecord struct + mpsc channel — async pipeline from orchestrator to validator"
     points: 5
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
-    depends_on: 3-1
+    depends_on: 2-5
+    completed: '2026-03-25'
+    branch: feat/3-1-agent-telemetry-spans
+  - id: 3-2
+    title: "TurnRecord struct + mpsc channel — async pipeline from orchestrator to validator"
     description: >-
       Define the TurnRecord struct capturing a complete turn snapshot:
       turn_id, player_input, classified_intent, agent_name, narration,
@@ -47,15 +42,14 @@ stories:
       tokio::spawn validator task. Orchestrator sends TurnRecord after
       broadcasting to the player — never blocks the hot path. Validator
       receives and logs receipt. No validation logic yet.
-
-  - id: 3-3
-    title: "Patch legality checks — deterministic validation of state mutations against game rules"
-    points: 3
+    points: 5
     priority: p0
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 3-2
+    depends_on: 3-1
+  - id: 3-3
+    title: "Patch legality checks — deterministic validation of state mutations against game rules"
     description: >-
       First validation module in the cold-path validator. Deterministic checks
       comparing patches against game rules: HP cannot exceed max_hp, dead
@@ -64,15 +58,14 @@ stories:
       require active chase state. Each violation emits a tracing::warn! event
       tagged component="watcher", check="patch_legality". Tests use crafted
       TurnRecords with known-bad patches.
-
-  - id: 3-4
-    title: "Entity reference validation — narration mentions checked against GameSnapshot"
-    points: 5
-    priority: p1
+    points: 3
+    priority: p0
     status: backlog
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-2
+  - id: 3-4
+    title: "Entity reference validation — narration mentions checked against GameSnapshot"
     description: >-
       Heuristic validation comparing narration text against game state.
       Extract entity references from narration (NPC names, item names,
@@ -81,15 +74,14 @@ stories:
       inventory, or discovered locations. Emit tracing::warn! for unresolved
       references. Accept fuzzy matches (substring, case-insensitive) to
       reduce false positives. This is a flag for human review, not a verdict.
-
-  - id: 3-5
-    title: "Subsystem exercise tracker — agent invocation histogram, coverage gap detection"
-    points: 3
+    points: 5
     priority: p1
     status: backlog
     repos: sidequest-api
     workflow: tdd
     depends_on: 3-2
+  - id: 3-5
+    title: "Subsystem exercise tracker — agent invocation histogram, coverage gap detection"
     description: >-
       Track cumulative agent invocation counts per session. After each
       TurnRecord, update a HashMap<String, usize> of agent_name → call_count.
@@ -98,15 +90,14 @@ stories:
       invocations after a configurable threshold (default 10 turns), emit a
       tracing::warn! tagged check="subsystem_exercise". Enables the "are all
       subsystems being used?" question at a glance.
-
-  - id: 3-6
-    title: "Watcher WebSocket endpoint — /ws/watcher streaming filtered telemetry to viewers"
-    points: 5
+    points: 3
     priority: p1
     status: backlog
     repos: sidequest-api
     workflow: tdd
-    depends_on: 3-1
+    depends_on: 3-2
+  - id: 3-6
+    title: "Watcher WebSocket endpoint — /ws/watcher streaming filtered telemetry to viewers"
     description: >-
       Add /ws/watcher endpoint to the axum router. Connected clients receive
       a JSON stream of game-relevant telemetry events: agent spans, validation
@@ -115,15 +106,14 @@ stories:
       multiple viewers can connect. Opt-in: no overhead when no viewer is
       connected. Separate from the player /ws endpoint — this carries
       diagnostic data only.
-
-  - id: 3-7
-    title: "CLI watcher — just watch tail mode with colored output and subsystem heatmap"
-    points: 3
+    points: 5
     priority: p1
     status: backlog
-    repos: orc-quest
-    workflow: trivial
-    depends_on: 3-6
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 3-1
+  - id: 3-7
+    title: "CLI watcher — just watch tail mode with colored output and subsystem heatmap"
     description: >-
       Add 'just watch' recipe that connects to /ws/watcher and renders a
       live-updating terminal view. Colored output: green for normal spans,
@@ -131,15 +121,14 @@ stories:
       heatmap as a simple bar chart of agent invocation counts. Turn
       separator between turns showing turn_id, intent, agent, duration.
       Can be a small Python or Rust CLI script consuming the WebSocket.
-
+    points: 3
+    priority: p1
+    status: backlog
+    repos: orc-quest
+    workflow: trivial
+    depends_on: 3-6
   - id: 3-8
     title: "Trope alignment check — beat thresholds vs narration content"
-    points: 3
-    priority: p2
-    status: backlog
-    repos: sidequest-api
-    workflow: tdd
-    depends_on: 3-4
     description: >-
       When a trope beat fires (threshold crossed, beat_name in beats_fired),
       check whether the narration text references the trope theme or beat
@@ -148,15 +137,14 @@ stories:
       shows no thematic connection, emit a warning. This catches the case
       where the trope engine advances but the Narrator agent ignores it.
       Low priority — meaningful only after trope engine runtime (2-8) works.
-
-  - id: 3-9
-    title: "GM Mode panel — React debug overlay showing telemetry alongside game UI"
-    points: 8
+    points: 3
     priority: p2
     status: backlog
-    repos: sidequest-ui
+    repos: sidequest-api
     workflow: tdd
-    depends_on: 3-6,2-9
+    depends_on: 3-4
+  - id: 3-9
+    title: "GM Mode panel — React debug overlay showing telemetry alongside game UI"
     description: >-
       React component in sidequest-ui that connects to /ws/watcher and
       renders a collapsible debug panel alongside the game. Event stream
@@ -166,3 +154,9 @@ stories:
       warning highlights. Toggled via keyboard shortcut or URL param
       (?gm=true). Only imported when active — no bundle impact on player
       builds.
+    points: 8
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    depends_on: 3-6,2-9
