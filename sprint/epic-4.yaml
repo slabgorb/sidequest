@@ -29,10 +29,12 @@ stories:
     title: Beat filter — suppress image renders for low-narrative-weight actions, configurable thresholds
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-2
+    completed: '2026-03-26'
+    branch: feat/4-3-beat-filter
   - id: 4-4
     title: Render queue — async image generation queue with hash-based cache dedup
     points: 5
@@ -45,18 +47,22 @@ stories:
     title: IMAGE message broadcast — deliver rendered images to connected clients via WebSocket
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-4
+    completed: '2026-03-26'
+    branch: feat/4-5-image-broadcast
   - id: 4-6
     title: TTS voice routing — map character/NPC IDs to voice presets from genre pack config
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
+    completed: '2026-03-26'
+    branch: feat/4-6-tts-voice-routing
   - id: 4-7
     title: TTS text segmentation — break narration into speakable segments for streaming delivery
     points: 3

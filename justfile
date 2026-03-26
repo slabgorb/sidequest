@@ -65,6 +65,11 @@ daemon-install:
 watch port="8765":
     python3 scripts/watch.py --port {{port}}
 
+# Quick-start aliases
+warmup: daemon-run
+server: api-run
+client: ui-dev
+
 # Cross-repo
 check-all: api-check ui-lint ui-test
 
