@@ -61,6 +61,10 @@ daemon-lint:
 daemon-install:
     cd sidequest-daemon && pip install -e ".[dev]"
 
+# Watcher (telemetry tail)
+watch port="8765":
+    python3 scripts/watch.py --port {{port}}
+
 # Cross-repo
 check-all: api-check ui-lint ui-test
 
