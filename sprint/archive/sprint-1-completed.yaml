@@ -11,6 +11,7 @@ sprint:
 completed_epics:
   - '1'
   - '2'
+  - '3'
 completed_stories:
   - id: 1-2
     epic: ''
@@ -217,3 +218,38 @@ completed_stories:
     title: Combat event classification — categorize combat outcomes as boring/dramatic, track boring_streak
     points: 3
     completed: '2026-03-27'
+  - id: 3-9
+    epic: ''
+    title: "GM Mode panel — React debug overlay showing telemetry alongside game UI"
+    points: 8
+    completed: '2026-03-27'
+  - id: 3-3
+    epic: '3'
+    title: "Patch legality checks — deterministic validation of state mutations against game rules"
+    points: 3
+    completed: '2026-03-26'
+  - id: 3-4
+    epic: '3'
+    title: "Entity reference validation — narration mentions checked against GameSnapshot"
+    points: 5
+    completed: '2026-03-26'
+  - id: 3-5
+    epic: '3'
+    title: "Subsystem exercise tracker — agent invocation histogram, coverage gap detection"
+    points: 3
+    completed: '2026-03-26'
+  - id: 3-6
+    epic: '3'
+    title: "Watcher WebSocket endpoint — /ws/watcher streaming filtered telemetry to viewers"
+    points: 5
+    completed: '2026-03-26'
+  - id: 3-7
+    epic: '3'
+    title: "CLI watcher — just watch tail mode with colored output and subsystem heatmap"
+    points: 3
+    completed: '2026-03-26'
+  - id: 3-8
+    epic: '3'
+    title: "Trope alignment check — beat thresholds vs narration content"
+    points: 3
+    completed: '2026-03-26'
