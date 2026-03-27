@@ -63,10 +63,14 @@ stories:
     title: Wire faction agendas into scene directive — faction-driven events appear in narrator prompt
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keithavery
+    started: '2026-03-27'
     repos: sidequest-api
     workflow: tdd
     depends_on: 6-4
+    completed: '2026-03-27'
+    review_verdict: approved
   - id: 6-6
     title: World materialization — campaign maturity levels (fresh/early/mid/veteran), history chapter application to GameSnapshot
     points: 5

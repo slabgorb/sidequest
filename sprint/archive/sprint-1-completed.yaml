@@ -294,3 +294,8 @@ completed_stories:
     title: FactionAgenda model — schema for faction goals, urgency, and scene injection rules
     points: 3
     completed: '2026-03-27'
+  - id: 6-5
+    epic: ''
+    title: Wire faction agendas into scene directive — faction-driven events appear in narrator prompt
+    points: 2
+    completed: '2026-03-27'
