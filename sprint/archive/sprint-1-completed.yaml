@@ -268,3 +268,8 @@ completed_stories:
     title: Narrator MUST-weave instruction — scene directive positioned in prompt with narrative primacy, enforced weave rules
     points: 2
     completed: '2026-03-27'
+  - id: 6-3
+    epic: ''
+    title: Engagement multiplier — scale trope progression rate by player engagement signal (turns since last meaningful action)
+    points: 3
+    completed: '2026-03-27'
