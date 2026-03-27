@@ -212,3 +212,8 @@ completed_stories:
     title: TensionTracker struct — dual-track model with action tension (gambler's ramp) and stakes tension (HP-based)
     points: 5
     completed: '2026-03-26'
+  - id: 5-2
+    epic: ''
+    title: Combat event classification — categorize combat outcomes as boring/dramatic, track boring_streak
+    points: 3
+    completed: '2026-03-27'
