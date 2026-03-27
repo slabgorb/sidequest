@@ -19,9 +19,12 @@ stories:
     title: Scene directive formatter — format_scene_directive() composing fired beats + narrative hints + active stakes into MUST-weave narrator block
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-27'
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-03-27'
   - id: 6-2
     title: Narrator MUST-weave instruction — scene directive positioned in prompt with narrative primacy, enforced weave rules
     points: 2

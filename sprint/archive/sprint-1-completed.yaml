@@ -258,3 +258,8 @@ completed_stories:
     title: Speculative prerendering — queue image generation during voice playback window
     points: 5
     completed: '2026-03-27'
+  - id: 6-1
+    epic: ''
+    title: Scene directive formatter — format_scene_directive() composing fired beats + narrative hints + active stakes into MUST-weave narrator block
+    points: 3
+    completed: '2026-03-27'
