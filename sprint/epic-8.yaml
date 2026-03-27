@@ -71,18 +71,24 @@ stories:
     title: Perception rewriter — per-character narration variants based on status effects (blinded, charmed, etc.)
     points: 8
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-1
+    completed: '2026-03-27'
+    branch: feat/8-6-perception-rewriter
+    review_verdict: approved
   - id: 8-7
     title: Guest NPC players — human-controlled NPC characters with limited agency
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-1
+    branch: feat/8-7-guest-npc-players
   - id: 8-8
     title: Catch-up narration — generate arrival snapshot for mid-session joining players
     points: 3
