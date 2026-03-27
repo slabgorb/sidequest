@@ -207,3 +207,13 @@ completed_stories:
     title: Catch-up narration — generate arrival snapshot for mid-session joining players
     points: 3
     completed: '2026-03-27'
+  - id: 5-1
+    epic: ''
+    title: TensionTracker struct — dual-track model with action tension (gambler's ramp) and stakes tension (HP-based)
+    points: 5
+    completed: '2026-03-26'
+  - id: 5-2
+    epic: ''
+    title: Combat event classification — categorize combat outcomes as boring/dramatic, track boring_streak
+    points: 3
+    completed: '2026-03-27'

@@ -16,9 +16,10 @@ stories:
     title: TensionTracker struct — dual-track model with action tension (gambler's ramp) and stakes tension (HP-based)
     points: 5
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-03-26'
   - id: 5-2
     title: Combat event classification — categorize combat outcomes as boring/dramatic, track boring_streak
     points: 3
@@ -27,6 +28,7 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-1
+    review_verdict: approved
   - id: 5-3
     title: Drama weight computation — max(action_tension, stakes_tension), event spike injection with decay
     points: 3

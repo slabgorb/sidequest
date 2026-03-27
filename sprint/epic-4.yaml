@@ -13,18 +13,19 @@ stories:
     title: Daemon client — HTTP client for sidequest-daemon render/TTS/audio endpoints
     points: 5
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
-    depends_on: 2-5
+    completed: '2026-03-26'
   - id: 4-2
     title: Subject extraction — parse narration for image render subjects, tier classification
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
+    completed: '2026-03-26'
   - id: 4-3
     title: Beat filter — suppress image renders for low-narrative-weight actions, configurable thresholds
     points: 3
@@ -39,10 +40,11 @@ stories:
     title: Render queue — async image generation queue with hash-based cache dedup
     points: 5
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-2
+    completed: '2026-03-26'
   - id: 4-5
     title: IMAGE message broadcast — deliver rendered images to connected clients via WebSocket
     points: 3
@@ -67,10 +69,11 @@ stories:
     title: TTS text segmentation — break narration into speakable segments for streaming delivery
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-6
+    completed: '2026-03-26'
   - id: 4-8
     title: TTS streaming — stream synthesized audio chunks to client via WebSocket
     points: 5
