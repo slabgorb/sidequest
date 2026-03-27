@@ -95,10 +95,12 @@ stories:
     title: Catch-up narration — generate arrival snapshot for mid-session joining players
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-1
+    started: '2026-03-27'
+    branch: feat/8-8-catch-up-narration
   - id: 8-9
     title: Turn reminders — notify idle players after configurable timeout
     points: 2
