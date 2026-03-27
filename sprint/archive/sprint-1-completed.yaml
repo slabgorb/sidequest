@@ -197,3 +197,8 @@ completed_stories:
     title: Perception rewriter — per-character narration variants based on status effects (blinded, charmed, etc.)
     points: 8
     completed: '2026-03-26'
+  - id: 8-7
+    epic: ''
+    title: Guest NPC players — human-controlled NPC characters with limited agency
+    points: 5
+    completed: '2026-03-27'

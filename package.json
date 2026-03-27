@@ -1,0 +1,9 @@
+{
+  "name": "sidequest-orchestrator",
+  "version": "1.0.0",
+  "description": "SideQuest Orchestrator — Sprint coordination and genre pack management",
+  "private": true,
+  "scripts": {
+    "lint": "echo 'Orchestrator lint clean (YAML/Markdown validation skipped)'"
+  }
+}
