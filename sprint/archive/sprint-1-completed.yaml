@@ -192,3 +192,8 @@ completed_stories:
     title: AbilityDefinition model — genre-voiced ability descriptions with mechanical effects
     points: 3
     completed: '2026-03-26'
+  - id: 8-6
+    epic: ''
+    title: Perception rewriter — per-character narration variants based on status effects (blinded, charmed, etc.)
+    points: 8
+    completed: '2026-03-26'
