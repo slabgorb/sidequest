@@ -6,7 +6,7 @@ description: >-
   request media generation and receive results. Three subsystems: images,
   TTS/voice, and audio/music.
 priority: p1
-status: ready
+status: done
 repos: sidequest-api,sidequest-daemon
 stories:
   - id: 4-1
@@ -63,7 +63,7 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
-    completed: '2026-03-26'
+    completed: '2026-03-27'
     branch: feat/4-6-tts-voice-routing
   - id: 4-7
     title: TTS text segmentation — break narration into speakable segments for streaming delivery
@@ -88,31 +88,36 @@ stories:
     title: Music Director integration — mood extraction from narration, AUDIO_CUE message generation
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-1
+    completed: '2026-03-27'
   - id: 4-10
     title: Audio mixer coordination — 3-channel mixing commands (music/SFX/ambience), ducking during speech
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-9
+    completed: '2026-03-27'
   - id: 4-11
     title: Theme rotation — anti-repetition track selection within mood category
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-9
+    completed: '2026-03-27'
   - id: 4-12
     title: Speculative prerendering — queue image generation during voice playback window
     points: 5
     priority: p2
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 4-4
+    completed: '2026-03-27'
+completed: '2026-03-27'

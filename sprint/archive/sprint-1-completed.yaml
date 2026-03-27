@@ -11,6 +11,7 @@ sprint:
 completed_epics:
   - '1'
   - '2'
+  - '4'
 completed_stories:
   - id: 1-2
     epic: ''
@@ -225,5 +226,35 @@ completed_stories:
   - id: 5-7
     epic: ''
     title: Wire pacing into orchestrator — drama_weight flows from TensionTracker through turn pipeline to narrator prompt
+    points: 5
+    completed: '2026-03-27'
+  - id: 4-6
+    epic: '4'
+    title: TTS voice routing — map character/NPC IDs to voice presets from genre pack config
+    points: 3
+    completed: '2026-03-27'
+  - id: 4-7
+    epic: '4'
+    title: TTS text segmentation — break narration into speakable segments for streaming delivery
+    points: 3
+    completed: '2026-03-26'
+  - id: 4-9
+    epic: '4'
+    title: Music Director integration — mood extraction from narration, AUDIO_CUE message generation
+    points: 5
+    completed: '2026-03-27'
+  - id: 4-10
+    epic: '4'
+    title: Audio mixer coordination — 3-channel mixing commands (music/SFX/ambience), ducking during speech
+    points: 3
+    completed: '2026-03-27'
+  - id: 4-11
+    epic: '4'
+    title: Theme rotation — anti-repetition track selection within mood category
+    points: 2
+    completed: '2026-03-27'
+  - id: 4-12
+    epic: '4'
+    title: Speculative prerendering — queue image generation during voice playback window
     points: 5
     completed: '2026-03-27'

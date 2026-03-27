@@ -93,7 +93,9 @@ stories:
     title: Wire prompt framework into orchestrator turn loop — replace format! concatenation with ContextBuilder composition
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-27'
     repos: orc-quest
     workflow: tdd
     type: refactor
