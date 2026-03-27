@@ -9,10 +9,12 @@
 # Route names are common-tongue (English-pidgin) since they cross faction
 # boundaries and everyone needs to refer to them.
 
+starting_region: sturmichi
+
 regions:
   # --- Primary chase zones ---
 
-  - id: sturmichi
+  sturmichi:
     name: Sturmichi
     terrain: elevated_expressway
     description: >-
@@ -37,9 +39,9 @@ regions:
         - "merge ramp collisions"
         - "barrier wall at speed — nowhere to go but through"
         - "rain on banked concrete — instant drift"
-    connections: [farolumi, nokutori, bruveil, nottavello, aschgrund]
+    adjacent: [farolumi, nokutori, bruveil, nottavello, aschgrund]
 
-  - id: bruveil
+  bruveil:
     name: Bruveil
     terrain: coastal_mountain_pass
     description: >-
@@ -63,9 +65,9 @@ regions:
         - "fog — you're racing by sound alone"
         - "oncoming truck on a single-lane section"
         - "wet leaves on descent — brake failure territory"
-    connections: [sturmichi, grisevont, grensholt]
+    adjacent: [sturmichi, grisevont, grensholt]
 
-  - id: nokutori
+  nokutori:
     name: Nokutori
     terrain: dense_market_district
     description: >-
@@ -90,9 +92,9 @@ regions:
         - "dead end that wasn't there yesterday"
         - "pedestrian crowd — threading the needle at speed"
         - "motorcycle vs tuk-tuk in a one-meter-wide alley"
-    connections: [sturmichi, nottavello, harifasi, damreocha, doracanto]
+    adjacent: [sturmichi, nottavello, harifasi, damreocha, doracanto]
 
-  - id: doracanto
+  doracanto:
     name: Doracanto
     terrain: waterfront_strip
     description: >-
@@ -117,9 +119,9 @@ regions:
         - "spectator crowd surging onto the road"
         - "cross-traffic from market district side streets"
         - "wet asphalt from ocean spray — rear end breaks loose"
-    connections: [nokutori, harifasi, farolumi, langbrenner, bromsviken]
+    adjacent: [nokutori, harifasi, farolumi, langbrenner, bromsviken]
 
-  - id: farolumi
+  farolumi:
     name: Farolumi
     terrain: port_industrial
     description: >-
@@ -144,9 +146,9 @@ regions:
         - "rail crossing gate drops mid-chase"
         - "crane load swinging overhead"
         - "dead end — containers rearranged since last time"
-    connections: [sturmichi, doracanto, aschgrund, grisevont]
+    adjacent: [sturmichi, doracanto, aschgrund, grisevont]
 
-  - id: aschgrund
+  aschgrund:
     name: Aschgrund
     terrain: industrial_flats
     description: >-
@@ -172,9 +174,9 @@ regions:
         - "rusted rebar field — tire shredder"
         - "oil slick from abandoned machinery"
         - "dead end inside a warehouse — the door you came in just closed"
-    connections: [sturmichi, grensholt, langbrenner, farolumi]
+    adjacent: [sturmichi, grensholt, langbrenner, farolumi]
 
-  - id: grisevont
+  grisevont:
     name: Grisevont
     terrain: coastal_highway
     description: >-
@@ -199,11 +201,11 @@ regions:
         - "cliff edge with no barrier"
         - "beach sand blown across road surface"
         - "the road narrows where the cliff is eroding"
-    connections: [bruveil, farolumi, bromsviken]
+    adjacent: [bruveil, farolumi, bromsviken]
 
   # --- Neighborhood / secondary regions ---
 
-  - id: nottavello
+  nottavello:
     name: Nottavello
     terrain: urban_nightlife
     description: >-
@@ -212,9 +214,9 @@ regions:
       scooter swarms gather here before rides, and the all-night soul
       clubs are where information changes hands faster than pills.
     controlled_by: mods
-    connections: [sturmichi, nokutori, harifasi, grensholt]
+    adjacent: [sturmichi, nokutori, harifasi, grensholt]
 
-  - id: grensholt
+  grensholt:
     name: Grensholt
     terrain: workshop_district
     description: >-
@@ -223,9 +225,9 @@ regions:
       were here first and they never left. Every faction comes here
       eventually because this is where rigs get fixed.
     controlled_by: rockers
-    connections: [aschgrund, nottavello, bruveil]
+    adjacent: [aschgrund, nottavello, bruveil]
 
-  - id: langbrenner
+  langbrenner:
     name: Langbrenner
     terrain: highway_corridor
     description: >-
@@ -234,9 +236,9 @@ regions:
       chapters control the fuel stops and rest areas along its length.
       The highway where smuggling runs happen.
     controlled_by: one_percenters
-    connections: [aschgrund, doracanto, bromsviken]
+    adjacent: [aschgrund, doracanto, bromsviken]
 
-  - id: harifasi
+  harifasi:
     name: Harifasi
     terrain: transit_hub
     description: >-
@@ -244,9 +246,9 @@ regions:
       loud, bass-heavy, painted buses jostling for position. The touts
       run this ground and information flows through them.
     controlled_by: matatu
-    connections: [nokutori, damreocha, nottavello, doracanto]
+    adjacent: [nokutori, damreocha, nottavello, doracanto]
 
-  - id: damreocha
+  damreocha:
     name: Damreocha
     terrain: back_alleys
     description: >-
@@ -255,9 +257,9 @@ regions:
       the three-wheelers know. Where things are delivered that were
       never ordered.
     controlled_by: tuk_tuk
-    connections: [nokutori, harifasi]
+    adjacent: [nokutori, harifasi]
 
-  - id: bromsviken
+  bromsviken:
     name: Bromsviken
     terrain: suburban_strip
     description: >-
@@ -266,7 +268,7 @@ regions:
       Raggare territory. The sound of doo-wop and V8 idle fills the
       warm nights. Looks like 1957 dropped into the wrong decade.
     controlled_by: raggare
-    connections: [doracanto, grisevont, langbrenner]
+    adjacent: [doracanto, grisevont, langbrenner]
 
 routes:
   - id: the_full_circuit
