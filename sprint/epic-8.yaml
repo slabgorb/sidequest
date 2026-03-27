@@ -71,10 +71,13 @@ stories:
     title: Perception rewriter — per-character narration variants based on status effects (blinded, charmed, etc.)
     points: 8
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-03-26'
     repos: sidequest-api
     workflow: tdd
     depends_on: 8-1
+    completed: '2026-03-26'
+    branch: feat/8-6-perception-rewriter
   - id: 8-7
     title: Guest NPC players — human-controlled NPC characters with limited agency
     points: 5
