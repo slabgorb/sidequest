@@ -304,3 +304,13 @@ completed_stories:
     title: Drama weight computation — max(action_tension, stakes_tension), event spike injection with decay
     points: 3
     completed: '2026-03-27'
+  - id: 6-7
+    epic: ''
+    title: Faction agendas for mutant_wasteland genre pack worlds
+    points: 2
+    completed: '2026-03-27'
+  - id: 6-8
+    epic: ''
+    title: Faction agendas for elemental_harmony/shattered_accord genre pack worlds
+    points: 2
+    completed: '2026-03-27'

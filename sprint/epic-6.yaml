@@ -82,17 +82,23 @@ stories:
     title: Faction agendas for mutant_wasteland genre pack worlds
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keithavery
+    started: '2026-03-27'
     repos: orc-quest
     workflow: trivial
+    completed: '2026-03-27'
   - id: 6-8
     title: Faction agendas for elemental_harmony/shattered_accord genre pack worlds
     description: Faction agendas for elemental_harmony/shattered_accord genre pack worlds
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keithavery
+    started: '2026-03-27'
     repos: orc-quest
     workflow: trivial
+    completed: '2026-03-27'
   - id: 6-9
     title: Wire scene directive into orchestrator turn loop — directive generation and prompt injection per turn
     points: 3
