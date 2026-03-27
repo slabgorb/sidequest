@@ -29,10 +29,13 @@ stories:
     title: Narrator MUST-weave instruction — scene directive positioned in prompt with narrative primacy, enforced weave rules
     points: 2
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keithavery
+    started: '2026-03-27'
     repos: sidequest-api
     workflow: tdd
     depends_on: 6-1
+    completed: '2026-03-27'
   - id: 6-3
     title: Engagement multiplier — scale trope progression rate by player engagement signal (turns since last meaningful action)
     points: 3
