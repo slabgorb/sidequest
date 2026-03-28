@@ -111,10 +111,12 @@ stories:
     title: Footnote rendering in narration view — superscript markers, bottom-of-block entries, discovery vs callback styling
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
     repos: sidequest-api,sidequest-ui
     workflow: tdd
     depends_on: 9-11
+    started: '2026-03-28'
+    branch: feat/9-12-footnote-rendering
   - id: 9-13
     title: Journal browse view — accumulated KnownFacts by category with genre voice and turn provenance
     points: 3
