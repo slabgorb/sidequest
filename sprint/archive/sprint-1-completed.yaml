@@ -309,3 +309,8 @@ completed_stories:
     title: "LoreStore — in-memory indexed collection with add, query by category, query by keyword"
     points: 3
     completed: '2026-03-27'
+  - id: 11-3
+    epic: ''
+    title: "Lore seed — bootstrap store from genre pack lore entries and character creation anchors"
+    points: 3
+    completed: '2026-03-27'
