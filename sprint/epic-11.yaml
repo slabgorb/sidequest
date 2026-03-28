@@ -67,10 +67,12 @@ stories:
     title: "Morpheme glossary schema — conlang morphemes with meaning and pronunciation rules in genre pack"
     points: 2
     priority: p1
-    status: backlog
+    status: in-progress
     repos: sidequest-api
     workflow: tdd
     depends_on: 11-1
+    branch: feat/11-7-morpheme-glossary
+    session_file: sidequest-api/.session/11-7-session.md
   - id: 11-8
     title: "Name bank generation — produce glossed names with morpheme decomposition from genre pack language rules"
     points: 3

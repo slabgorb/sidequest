@@ -329,3 +329,8 @@ completed_stories:
     title: "Semantic retrieval — optional embedding-based RAG for lore query"
     points: 5
     completed: '2026-03-27'
+  - id: 11-7
+    epic: ''
+    title: "Morpheme glossary schema — conlang morphemes with meaning and pronunciation rules in genre pack"
+    points: 2
+    completed: '2026-03-27'
