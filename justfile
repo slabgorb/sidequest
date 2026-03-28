@@ -15,8 +15,8 @@ api-build:
 api-release:
     cd sidequest-api && cargo build --release
 
-api-run:
-    cd sidequest-api && cargo run -p sidequest-server -- --genre-packs-path {{content}}
+api-run *flags:
+    cd sidequest-api && cargo run -p sidequest-server -- --genre-packs-path {{content}} {{flags}}
 
 api-lint:
     cd sidequest-api && cargo clippy -- -D warnings
@@ -68,7 +68,8 @@ watch port="8765":
 
 # Quick-start aliases
 warmup: daemon-run
-server: api-run
+server *flags:
+    just api-run {{flags}}
 client: ui-dev
 
 # Cross-repo
