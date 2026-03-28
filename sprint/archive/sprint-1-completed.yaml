@@ -407,3 +407,8 @@ completed_stories:
     title: Wire prompt framework into orchestrator turn loop — replace format! concatenation with ContextBuilder composition
     points: 5
     completed: '2026-03-27'
+  - id: 9-4
+    epic: ''
+    title: Known facts in narrator prompt — tiered injection by relevance, don't-repeat constraints, register_knowledge_context()
+    points: 3
+    completed: '2026-03-28'
