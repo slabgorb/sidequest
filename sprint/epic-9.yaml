@@ -2,10 +2,7 @@ id: '9'
 type: epic
 title: Character Depth — Self-Knowledge, Slash Commands, Narrative Sheet
 description: >-
-  Combines sq-2 Epic 62 (Character Self-Knowledge) with server-side slash
-  commands. Players should know who their character is — abilities described
-  in genre voice, accumulated knowledge from play, and quick-access commands
-  for game state.
+  Combines sq-2 Epic 62 (Character Self-Knowledge) with server-side slash commands. Players should know who their character is — abilities described in genre voice, accumulated knowledge from play, and quick-access commands for game state.
 priority: p1
 status: ready
 repos: sidequest-api
