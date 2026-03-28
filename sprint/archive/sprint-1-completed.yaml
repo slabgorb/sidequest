@@ -339,3 +339,8 @@ completed_stories:
     title: "Name bank generation — produce glossed names with morpheme decomposition from genre pack language rules"
     points: 3
     completed: '2026-03-27'
+  - id: 11-9
+    epic: ''
+    title: "Narrator name injection — load name bank into narrator prompt for consistent NPC/location naming"
+    points: 2
+    completed: '2026-03-27'
