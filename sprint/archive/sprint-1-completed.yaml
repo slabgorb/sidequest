@@ -437,3 +437,8 @@ completed_stories:
     title: "Backfill OCEAN profiles on existing NPC archetypes across genre packs"
     points: 3
     completed: '2026-03-28'
+  - id: 9-5
+    epic: ''
+    title: Narrative character sheet — genre-voiced to_narrative_sheet() for player-facing display
+    points: 3
+    completed: '2026-03-28'
