@@ -103,10 +103,12 @@ stories:
     title: Structured footnote output — narrator emits NarrationPayload with footnotes[], orchestrator parses markers into KnownFacts
     points: 3
     priority: p1
-    status: backlog
+    status: active
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-3
+    started: '2026-03-28'
+    branch: feat/9-11-structured-footnote-output
   - id: 9-12
     title: Footnote rendering in narration view — superscript markers, bottom-of-block entries, discovery vs callback styling
     points: 3
