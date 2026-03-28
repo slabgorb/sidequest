@@ -65,10 +65,12 @@ stories:
     title: Core slash commands — /status, /inventory, /map, /save, /help handlers
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-6
+    branch: feat/9-7-core-slash-commands
+    started: '2026-03-28'
   - id: 9-8
     title: GM commands — /gm set, /gm teleport, /gm spawn, /gm dmg for operator debugging
     points: 5
