@@ -50,8 +50,8 @@ repos:
     path: sidequest-content
     type: content
     description: Genre packs, world data, and shared game content (single source of truth)
-    branch_strategy: trunk-based
-    default_branch: main
+    branch_strategy: gitflow
+    default_branch: develop
     notes: |
       Genre packs and game content extracted from the orchestrator.
       All repos reference content via sidequest-content/genre_packs/.
