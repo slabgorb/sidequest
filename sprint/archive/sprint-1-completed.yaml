@@ -437,3 +437,8 @@ completed_stories:
     title: "Backfill OCEAN profiles on existing NPC archetypes across genre packs"
     points: 3
     completed: '2026-03-28'
+  - id: 9-12
+    epic: ''
+    title: Footnote rendering in narration view — superscript markers, bottom-of-block entries, discovery vs callback styling
+    points: 3
+    completed: '2026-03-28'
