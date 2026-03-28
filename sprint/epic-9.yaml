@@ -41,18 +41,20 @@ stories:
     title: Known facts in narrator prompt — tiered injection by relevance, don't-repeat constraints, register_knowledge_context()
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-3
+    completed: '2026-03-28'
   - id: 9-5
     title: Narrative character sheet — genre-voiced to_narrative_sheet() for player-facing display
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-1
+    completed: '2026-03-28'
   - id: 9-6
     title: Slash command router — intercept /command input before intent classification, dispatch to handlers
     points: 3
@@ -103,10 +105,11 @@ stories:
     title: Structured footnote output — narrator emits NarrationPayload with footnotes[], orchestrator parses markers into KnownFacts
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-3
+    completed: '2026-03-28'
   - id: 9-12
     title: Footnote rendering in narration view — superscript markers, bottom-of-block entries, discovery vs callback styling
     points: 3
