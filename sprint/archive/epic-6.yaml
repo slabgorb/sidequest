@@ -12,7 +12,7 @@ description: >-
   Key reference: sq-2/docs/architecture/active-world-pacing-design.md,
   sq-2/sprint/epic-61.yaml.
 priority: p1
-status: ready
+status: done
 repos: sidequest-api
 stories:
   - id: 6-1
@@ -75,9 +75,14 @@ stories:
     title: World materialization — campaign maturity levels (fresh/early/mid/veteran), history chapter application to GameSnapshot
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keithavery
+    started: '2026-03-28'
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-03-28'
+    branch: feat/6-6-world-materialization
+    review_verdict: approved
   - id: 6-7
     title: Faction agendas for mutant_wasteland genre pack worlds
     points: 2
@@ -111,3 +116,4 @@ stories:
     depends_on: 6-2
     completed: '2026-03-27'
     review_verdict: approved
+completed: '2026-03-28'

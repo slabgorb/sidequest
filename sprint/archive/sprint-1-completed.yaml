@@ -13,6 +13,9 @@ completed_epics:
   - '2'
   - '4'
   - '8'
+  - '5'
+  - '6'
+  - '11'
 completed_stories:
   - id: 1-2
     epic: ''
@@ -374,3 +377,33 @@ completed_stories:
     title: KnownFact model — play-derived knowledge accumulation, persistence to game state
     points: 3
     completed: '2026-03-28'
+  - id: 6-6
+    epic: ''
+    title: World materialization — campaign maturity levels (fresh/early/mid/veteran), history chapter application to GameSnapshot
+    points: 5
+    completed: '2026-03-28'
+  - id: 5-4
+    epic: '5'
+    title: Pacing hint generation — drama_weight to narrator sentence count guidance (1-6 sentences)
+    points: 3
+    completed: '2026-03-28'
+  - id: 5-5
+    epic: '5'
+    title: Drama-aware text delivery — INSTANT/SENTENCE/STREAMING modes based on drama_weight thresholds
+    points: 5
+    completed: '2026-03-28'
+  - id: 5-6
+    epic: '5'
+    title: Quiet turn detection — count consecutive low-action turns, inject escalation beat hints
+    points: 3
+    completed: '2026-03-28'
+  - id: 5-8
+    epic: '5'
+    title: Genre-tunable thresholds — drama_weight breakpoints configurable per genre pack
+    points: 2
+    completed: '2026-03-28'
+  - id: 5-10
+    epic: '5'
+    title: Wire prompt framework into orchestrator turn loop — replace format! concatenation with ContextBuilder composition
+    points: 5
+    completed: '2026-03-27'
