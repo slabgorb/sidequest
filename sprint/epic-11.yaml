@@ -38,10 +38,13 @@ stories:
     title: "Lore injection into agent prompts — relevant lore fragments included in narrator/world state context"
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 11-2
+    completed: '2026-03-27'
+    branch: feat/11-4-lore-injection
+    session_file: sidequest-api/.session/11-4-session.md
   - id: 11-5
     title: "Lore accumulation — world state agent writes new lore fragments from game events"
     points: 3

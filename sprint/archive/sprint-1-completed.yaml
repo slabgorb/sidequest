@@ -314,3 +314,8 @@ completed_stories:
     title: "Lore seed — bootstrap store from genre pack lore entries and character creation anchors"
     points: 3
     completed: '2026-03-27'
+  - id: 11-4
+    epic: ''
+    title: "Lore injection into agent prompts — relevant lore fragments included in narrator/world state context"
+    points: 3
+    completed: '2026-03-27'
