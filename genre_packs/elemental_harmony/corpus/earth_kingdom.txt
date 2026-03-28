@@ -1,1 +1,0 @@
-../../../corpus/shared/earth_kingdom.txt

@@ -1,1 +1,0 @@
-../../../corpus/shared/hindi_sanskrit.txt

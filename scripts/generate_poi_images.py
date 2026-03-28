@@ -25,7 +25,8 @@ import time
 from pathlib import Path
 
 SOCKET_PATH = Path("/tmp/sidequest-renderer.sock")
-GENRE_PACKS_DIR = Path(__file__).resolve().parent.parent / "genre_packs"
+_root = Path(__file__).resolve().parent.parent
+GENRE_PACKS_DIR = _root / "sidequest-content" / "genre_packs"
 
 # Render config — landscape orientation, Flux dev for quality
 DEFAULT_STEPS = 15
