@@ -9,7 +9,7 @@ description: >-
   sq-2/docs/adr-dual-track-tension-model.md,
   sq-2/docs/adr-drama-aware-delivery.md, sq-2/docs/adr-pacing-detection.md.
 priority: p1
-status: ready
+status: done
 repos: sidequest-api
 stories:
   - id: 5-1
@@ -36,34 +36,44 @@ stories:
     title: Drama weight computation — max(action_tension, stakes_tension), event spike injection with decay
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-27'
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-2
+    completed: '2026-03-28'
+    branch: feat/5-3-drama-weight-computation
+    review_verdict: approved
   - id: 5-4
     title: Pacing hint generation — drama_weight to narrator sentence count guidance (1-6 sentences)
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-28'
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-3
+    completed: '2026-03-28'
   - id: 5-5
     title: Drama-aware text delivery — INSTANT/SENTENCE/STREAMING modes based on drama_weight thresholds
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-3
+    completed: '2026-03-28'
   - id: 5-6
     title: Quiet turn detection — count consecutive low-action turns, inject escalation beat hints
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-1
+    completed: '2026-03-28'
   - id: 5-7
     title: Wire pacing into orchestrator — drama_weight flows from TensionTracker through turn pipeline to narrator prompt
     points: 5
@@ -80,10 +90,14 @@ stories:
     title: Genre-tunable thresholds — drama_weight breakpoints configurable per genre pack
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-28'
     repos: sidequest-api
     workflow: tdd
     depends_on: 5-5
+    completed: '2026-03-28'
+    review_verdict: approved
   - id: 5-9
     title: Two-tier intent classification — Haiku classifier with narrator ambiguity resolution (ADR-032)
     points: 5
