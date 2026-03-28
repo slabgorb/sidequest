@@ -95,10 +95,11 @@ stories:
     title: Tone command — /tone adjusts genre alignment axes (light/dark, action/mystery, serious/whimsy)
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-6
+    completed: '2026-03-28'
   - id: 9-10
     title: Wire narrative sheet to React client — CHARACTER_SHEET message with genre-voiced content
     points: 3
