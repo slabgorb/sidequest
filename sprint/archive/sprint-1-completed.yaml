@@ -427,3 +427,8 @@ completed_stories:
     title: Structured footnote output — narrator emits NarrationPayload with footnotes[], orchestrator parses markers into KnownFacts
     points: 3
     completed: '2026-03-28'
+  - id: 9-8
+    epic: ''
+    title: GM commands — /gm set, /gm teleport, /gm spawn, /gm dmg for operator debugging
+    points: 5
+    completed: '2026-03-28'

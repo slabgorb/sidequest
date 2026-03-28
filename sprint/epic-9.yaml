@@ -76,10 +76,13 @@ stories:
     title: GM commands — /gm set, /gm teleport, /gm spawn, /gm dmg for operator debugging
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-03-28'
     repos: sidequest-api
     workflow: tdd
     depends_on: 9-6
+    completed: '2026-03-28'
+    branch: feat/9-8-gm-slash-commands
   - id: 9-9
     title: Tone command — /tone adjusts genre alignment axes (light/dark, action/mystery, serious/whimsy)
     points: 2
