@@ -344,3 +344,8 @@ completed_stories:
     title: "Narrator name injection — load name bank into narrator prompt for consistent NPC/location naming"
     points: 2
     completed: '2026-03-27'
+  - id: 11-10
+    epic: ''
+    title: "Language knowledge as KnownFact — transliteration comprehension grows through play"
+    points: 2
+    completed: '2026-03-27'
