@@ -57,9 +57,10 @@ stories:
     title: Slash command router — intercept /command input before intent classification, dispatch to handlers
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-03-28'
   - id: 9-7
     title: Core slash commands — /status, /inventory, /map, /save, /help handlers
     points: 5

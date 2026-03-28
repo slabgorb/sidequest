@@ -412,3 +412,8 @@ completed_stories:
     title: Known facts in narrator prompt — tiered injection by relevance, don't-repeat constraints, register_knowledge_context()
     points: 3
     completed: '2026-03-28'
+  - id: 9-6
+    epic: ''
+    title: Slash command router — intercept /command input before intent classification, dispatch to handlers
+    points: 3
+    completed: '2026-03-28'
