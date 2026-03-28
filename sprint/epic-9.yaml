@@ -103,10 +103,13 @@ stories:
     title: Wire narrative sheet to React client — CHARACTER_SHEET message with genre-voiced content
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-api,sidequest-ui
     workflow: tdd
     depends_on: 9-5
+    completed: '2026-03-28'
+    branch: feat/9-10-wire-narrative-sheet-react
+    review_verdict: approved
   - id: 9-11
     title: Structured footnote output — narrator emits NarrationPayload with footnotes[], orchestrator parses markers into KnownFacts
     points: 3
