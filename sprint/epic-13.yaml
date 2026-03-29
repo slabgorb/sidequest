@@ -1,0 +1,114 @@
+id: '13'
+type: epic
+title: Sealed Letter Turn System — Simultaneous Input Collection with Player Visibility
+description: >-
+  Replace the free-for-all turn system with a sealed letter pattern. All players
+  submit actions blindly, UI shows who has/hasn't submitted, all actions are
+  revealed and submitted to the narrator simultaneously. Players see each other's
+  actions alongside the narrator response. Builds on Epic 8's TurnBarrier and
+  MultiplayerSession infrastructure.
+priority: p0
+status: ready
+repos: sidequest-api, sidequest-ui
+stories:
+  - id: 13-1
+    title: "Turn collection UI — show pending/submitted status per player, disable input after submit"
+    points: 5
+    priority: p0
+    status: ready
+    repos: sidequest-ui
+    workflow: tdd
+    description: >-
+      Add a turn status panel showing each player's name and submission state
+      (pending/submitted). After a player submits their action, their input is
+      disabled until the narrator responds. The panel updates in real-time via
+      TURN_STATUS WebSocket messages.
+
+  - id: 13-2
+    title: "Server-side sealed collection — hold all actions until barrier met, then batch-submit to orchestrator"
+    points: 5
+    priority: p0
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 13-1
+    description: >-
+      Modify the action dispatch path so that in Structured mode, individual
+      PLAYER_ACTION messages are held (not forwarded to orchestrator) until all
+      players have submitted or timeout fires. Then compose a single batched
+      prompt with all actions and send to narrator. Replace the current behavior
+      where each action independently triggers orchestrator processing.
+
+  - id: 13-3
+    title: "Action reveal broadcast — show each player's submitted action to the full party alongside narration"
+    points: 3
+    priority: p0
+    status: ready
+    repos: sidequest-api, sidequest-ui
+    workflow: tdd
+    depends_on: 13-2
+    description: >-
+      After the barrier resolves and before narration begins, broadcast an
+      ACTION_REVEAL message containing all players' submitted actions (keyed by
+      character name). UI renders these as a brief summary block above the
+      narrator response so everyone knows what triggered the scene.
+
+  - id: 13-4
+    title: "Timeout fallback with player notification — fill missing actions and notify who was auto-resolved"
+    points: 3
+    priority: p1
+    status: ready
+    repos: sidequest-api, sidequest-ui
+    workflow: tdd
+    depends_on: 13-2
+    description: >-
+      When the adaptive timeout fires before all players submit, auto-fill
+      missing players with contextual defaults (e.g., "waits and observes")
+      and broadcast a notification indicating which players were auto-resolved.
+      UI shows a subtle indicator on those players' action cards.
+
+  - id: 13-5
+    title: "Turn mode indicator in UI — show current mode (Free Play / Structured / Cinematic) with explanation"
+    points: 2
+    priority: p1
+    status: ready
+    repos: sidequest-ui
+    workflow: tdd
+    description: >-
+      Display the current turn mode in the game UI. Brief tooltip explains
+      what each mode means. Mode transitions animate so players understand
+      when the rules change (e.g., entering combat switches to Structured).
+
+  - id: 13-6
+    title: "DM override for turn resolution — allow DM to force-resolve a turn or extend the timeout"
+    points: 3
+    priority: p1
+    status: ready
+    repos: sidequest-api, sidequest-ui
+    workflow: tdd
+    depends_on: 13-2
+    description: >-
+      Add DM tool buttons to force-resolve the current turn (collecting whatever
+      actions are in) or extend the timeout by a configurable amount. Sends
+      DM_TURN_CONTROL message. Prevents the DM from being hostage to a slow
+      or AFK player.
+
+  - id: 13-7
+    title: "Sealed letter integration test — 4-player simultaneous submission, timeout, and reveal flow"
+    points: 3
+    priority: p1
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 13-3
+    description: >-
+      End-to-end integration test with 4 simulated WebSocket clients. Verifies:
+      actions held until barrier met, ACTION_REVEAL broadcast contains all
+      actions, timeout auto-fills missing players, narration references all
+      submitted actions, turn counter increments correctly.
+key_references:
+  - sidequest-api/crates/sidequest-game/src/barrier.rs
+  - sidequest-api/crates/sidequest-game/src/multiplayer.rs
+  - sidequest-api/crates/sidequest-game/src/turn_mode.rs
+  - sidequest-api/crates/sidequest-server/src/shared_session.rs
+  - docs/api-contract.md
