@@ -12,119 +12,111 @@ repos: sidequest-api, sidequest-ui, sidequest-daemon
 stories:
   - id: 14-1
     title: "Party co-location at session start — configurable spawn point instead of faction scatter"
-    points: 5
-    priority: p0
-    status: ready
-    repos: sidequest-api
-    workflow: tdd
     description: >-
       Add a session_start_location config to world YAML (defaults to a shared
       tavern/meeting point). When a multiplayer session starts, all players
       spawn at this location instead of their faction starting area. DM can
       override via DM tools. Solo sessions continue using faction starts.
-
+    points: 5
+    priority: p0
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
   - id: 14-2
     title: "Player location on character sheet — show current location for each party member"
+    description: >-
+      Add current_location field to PARTY_STATUS and CHARACTER_SHEET payloads.
+      UI displays location under each player's name in the party panel. When
+      players are in different locations, visually group or flag the difference.
     points: 2
     priority: p0
     status: ready
     repos: sidequest-api, sidequest-ui
     workflow: tdd
-    description: >-
-      Add current_location field to PARTY_STATUS and CHARACTER_SHEET payloads.
-      UI displays location under each player's name in the party panel. When
-      players are in different locations, visually group or flag the difference.
-
   - id: 14-3
     title: "Text length slider — per-session narrator verbosity control (concise / standard / verbose)"
-    points: 3
-    priority: p1
-    status: ready
-    repos: sidequest-api, sidequest-ui
-    workflow: tdd
     description: >-
       Add a narrator_verbosity setting with three levels. Injected into narrator
       system prompt as a length/detail instruction. UI exposes as a slider in
       session settings. Default is "standard" for multiplayer, "verbose" for
       solo. Persisted per-session.
-
-  - id: 14-4
-    title: "Vocabulary level slider — narrator prose complexity control (accessible / literary / epic)"
     points: 3
     priority: p1
     status: ready
     repos: sidequest-api, sidequest-ui
     workflow: tdd
+  - id: 14-4
+    title: "Vocabulary level slider — narrator prose complexity control (accessible / literary / epic)"
     description: >-
       Add a narrator_vocabulary setting controlling prose complexity. Mapped to
       approximate reading level guidance in the narrator prompt (e.g.,
       "accessible" = 8th grade, "literary" = college, "epic" = unrestricted).
       UI slider in session settings alongside verbosity. Persisted per-session.
-
-  - id: 14-5
-    title: "Character generation back button — allow editing choices before final submit"
     points: 3
     priority: p1
     status: ready
-    repos: sidequest-ui
+    repos: sidequest-api, sidequest-ui
     workflow: tdd
+  - id: 14-5
+    title: "Character generation back button — allow editing choices before final submit"
     description: >-
       Add back/edit navigation to the character creation flow. Players can
       review and modify previous choices before confirming. The confirmation
       step shows a full preview of the character. Only the explicit "Create
       Character" button on the preview screen triggers submission.
-
-  - id: 14-6
-    title: "Image pacing throttle — configurable minimum interval between scene images"
     points: 3
     priority: p1
     status: ready
-    repos: sidequest-api
+    repos: sidequest-ui
     workflow: tdd
+  - id: 14-6
+    title: "Image pacing throttle — configurable minimum interval between scene images"
     description: >-
       Add image_cooldown_seconds config (default 60s for multiplayer, 30s for
       solo). After an image is generated, suppress further image triggers until
       cooldown expires. DM can force an image at any time. Prevents image
       flooding during rapid turn sequences.
-
-  - id: 14-7
-    title: "Image scene relevance filter — validate art prompt matches current narrative context"
-    points: 5
+    points: 3
     priority: p1
     status: ready
     repos: sidequest-api
     workflow: tdd
-    depends_on: 14-6
+  - id: 14-7
+    title: "Image scene relevance filter — validate art prompt matches current narrative context"
     description: >-
       Before sending an art prompt to the daemon, validate that the subject
       matter matches the current scene context (location, NPCs present, action
       type). Reject prompts that reference entities not in the scene. Use the
       scene interpreter's subject list as the ground truth for what should
       appear in the image.
-
+    points: 5
+    priority: p1
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 14-6
   - id: 14-8
     title: "Sound slider labels — add descriptive labels to all audio control sliders"
+    description: >-
+      Add visible labels to all audio sliders (Master, Music, SFX, Voice,
+      Ambient or whatever the current set is). Labels should be visible
+      without hovering.
     points: 1
     priority: p2
     status: ready
     repos: sidequest-ui
     workflow: trivial
-    description: >-
-      Add visible labels to all audio sliders (Master, Music, SFX, Voice,
-      Ambient or whatever the current set is). Labels should be visible
-      without hovering.
-
   - id: 14-9
     title: "Footnote inline references — connect footnote markers in text to numbered footnotes below"
+    description: >-
+      Parse footnote markers from narrator text and render as superscript
+      numbered links that scroll to the corresponding footnote entry below
+      the narration block. Currently footnotes display but aren't linked.
     points: 2
     priority: p2
     status: ready
     repos: sidequest-ui
     workflow: tdd
-    description: >-
-      Parse footnote markers from narrator text and render as superscript
-      numbered links that scroll to the corresponding footnote entry below
-      the narration block. Currently footnotes display but aren't linked.
 key_references:
   - sidequest-api/crates/sidequest-server/src/lib.rs
   - sidequest-api/crates/sidequest-server/src/shared_session.rs
