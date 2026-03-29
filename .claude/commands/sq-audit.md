@@ -86,9 +86,8 @@ Per genre:
 
 Per genre:
 - Fonts in `assets/fonts/` (expect at least one `.woff2`)
-- Dinkus in `assets/dinkus/` (expect light.png, medium.png, heavy.png)
-- Drop caps in `assets/drop_caps/` (expect A-Z .png files)
 - `theme.yaml` references valid font family
+- ~~Dinkus and drop caps are deprecated — now CSS-based, no image assets needed~~
 
 ### `conlang` — Naming Compliance
 
@@ -115,7 +114,6 @@ Per world:
 [music] ✗ No tracks in audio/music/
 [voice] ✗ No creature_voice_presets defined
 [assets] ✓ Font: Noto Serif JP
-[assets] ✗ Missing dinkus images
 [conlang] ✓ Names follow culture patterns
 ```
 

@@ -1,1 +1,0 @@
-../../../corpus/shared/reject_common.txt

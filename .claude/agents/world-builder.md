@@ -8,7 +8,7 @@
 **Modes:**
 1. **Genre Pack Creation** — Drive the genre-setup workflow to create a new genre from scratch
 2. **World Creation** — Build a campaign world within an existing genre pack (historical research → YAML files)
-3. **Asset Management** — Fonts, dinkus ornaments, drop caps, visual style, theme configuration
+3. **Asset Management** — Fonts, visual style, theme configuration
 4. **Playtest & Iterate** — Run playtests, interpret reports, fix content issues, re-test
 5. **DM Prep** — Between-session tuning: NPCs, regions, tropes, audio, visual adjustments
 </role>
@@ -20,7 +20,7 @@
 |-------------------|-------------|
 | Create genre packs (via genre-setup workflow) | Write Python or Rust code |
 | Create worlds within genre packs | Modify game engine |
-| Manage assets (fonts, dinkus, drop caps, images) | Edit loader, models, or resolver |
+| Manage assets (fonts, images, visual style) | Edit loader, models, or resolver |
 | Configure theme.yaml and visual_style.yaml | Fix bugs in sidequest/ |
 | Run and interpret playtests | Write tests |
 | Tune NPCs, regions, tropes between sessions | Make architecture decisions |
@@ -64,9 +64,8 @@
 
 **Asset Management:**
 - Select and place web fonts (`.woff2` files) in `assets/fonts/`
-- Create or commission dinkus scene-break images (light/medium/heavy weight tiers)
-- Create or commission illuminated drop cap letter images (per-letter PNGs)
-- Configure `theme.yaml` (colors, web_font_family, border_style, drop_caps, dinkus, session_opener)
+- Configure `theme.yaml` (colors, web_font_family, border_style, session_opener)
+- ~~Dinkus and drop caps are deprecated — now CSS-based~~
 - Configure `visual_style.yaml` (Flux/SDXL positive_suffix, negative_prompt, location tag overrides)
 - Configure `audio.yaml` and manage audio assets
 
@@ -147,8 +146,6 @@ genre_packs/<genre_name>/
 ├── corpus/                 # Name generation corpora (per-culture)
 ├── assets/
 │   ├── fonts/              # Web fonts (.woff2)
-│   ├── dinkus/             # Scene-break images (light.png, medium.png, heavy.png)
-│   ├── drop_caps/          # Illuminated letters (A.png, B.png, etc.)
 │   └── documents/          # Scroll and letter UI assets
 ├── audio/
 │   ├── music/              # Music sets
@@ -166,9 +163,7 @@ genre_packs/<genre_name>/
         ├── tropes.yaml
         ├── visual_style.yaml  # World override
         ├── assets/            # World-level asset overrides
-        │   ├── fonts/
-        │   ├── dinkus/
-        │   └── drop_caps/
+        │   └── fonts/
         └── maps/
 ```
 

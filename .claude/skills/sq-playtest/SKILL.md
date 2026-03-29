@@ -36,7 +36,7 @@ Launch all three services. Use absolute paths from the orchestrator root.
 ```bash
 pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-api && cargo run 2>&1 | tee /tmp/sq-api.log" --title api-server
 pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-ui && npm run dev 2>&1 | tee /tmp/sq-ui.log" --title ui-dev
-pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-daemon && SIDEQUEST_GENRE_PACKS=/Users/keithavery/Projects/oq-2/genre_packs sidequest-renderer 2>&1 | tee /tmp/sq-daemon.log" --title daemon
+pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-daemon && SIDEQUEST_GENRE_PACKS=/Users/keithavery/Projects/oq-2/sidequest-content/genre_packs sidequest-renderer 2>&1 | tee /tmp/sq-daemon.log" --title daemon
 ```
 
 ### 1c. Health check

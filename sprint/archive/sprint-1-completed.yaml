@@ -13,6 +13,9 @@ completed_epics:
   - '2'
   - '4'
   - '8'
+  - '5'
+  - '6'
+  - '11'
 completed_stories:
   - id: 1-2
     epic: ''
@@ -299,6 +302,56 @@ completed_stories:
     title: Wire faction agendas into scene directive — faction-driven events appear in narrator prompt
     points: 2
     completed: '2026-03-27'
+  - id: 11-1
+    epic: ''
+    title: "LoreFragment model — indexed narrative fact with category, token estimate, metadata"
+    points: 3
+    completed: '2026-03-27'
+  - id: 11-2
+    epic: ''
+    title: "LoreStore — in-memory indexed collection with add, query by category, query by keyword"
+    points: 3
+    completed: '2026-03-27'
+  - id: 11-3
+    epic: ''
+    title: "Lore seed — bootstrap store from genre pack lore entries and character creation anchors"
+    points: 3
+    completed: '2026-03-27'
+  - id: 11-4
+    epic: ''
+    title: "Lore injection into agent prompts — relevant lore fragments included in narrator/world state context"
+    points: 3
+    completed: '2026-03-27'
+  - id: 11-5
+    epic: ''
+    title: "Lore accumulation — world state agent writes new lore fragments from game events"
+    points: 3
+    completed: '2026-03-27'
+  - id: 11-6
+    epic: ''
+    title: "Semantic retrieval — optional embedding-based RAG for lore query"
+    points: 5
+    completed: '2026-03-27'
+  - id: 11-7
+    epic: ''
+    title: "Morpheme glossary schema — conlang morphemes with meaning and pronunciation rules in genre pack"
+    points: 2
+    completed: '2026-03-27'
+  - id: 11-8
+    epic: ''
+    title: "Name bank generation — produce glossed names with morpheme decomposition from genre pack language rules"
+    points: 3
+    completed: '2026-03-27'
+  - id: 11-9
+    epic: ''
+    title: "Narrator name injection — load name bank into narrator prompt for consistent NPC/location naming"
+    points: 2
+    completed: '2026-03-27'
+  - id: 11-10
+    epic: ''
+    title: "Language knowledge as KnownFact — transliteration comprehension grows through play"
+    points: 2
+    completed: '2026-03-27'
   - id: 5-3
     epic: ''
     title: Drama weight computation — max(action_tension, stakes_tension), event spike injection with decay
@@ -314,3 +367,88 @@ completed_stories:
     title: Faction agendas for elemental_harmony/shattered_accord genre pack worlds
     points: 2
     completed: '2026-03-27'
+  - id: 9-2
+    epic: ''
+    title: Ability perception in narrator prompt — involuntary abilities trigger in narrator context (e.g., root-bonding detects corruption)
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-3
+    epic: ''
+    title: KnownFact model — play-derived knowledge accumulation, persistence to game state
+    points: 3
+    completed: '2026-03-28'
+  - id: 6-6
+    epic: ''
+    title: World materialization — campaign maturity levels (fresh/early/mid/veteran), history chapter application to GameSnapshot
+    points: 5
+    completed: '2026-03-28'
+  - id: 5-4
+    epic: '5'
+    title: Pacing hint generation — drama_weight to narrator sentence count guidance (1-6 sentences)
+    points: 3
+    completed: '2026-03-28'
+  - id: 5-5
+    epic: '5'
+    title: Drama-aware text delivery — INSTANT/SENTENCE/STREAMING modes based on drama_weight thresholds
+    points: 5
+    completed: '2026-03-28'
+  - id: 5-6
+    epic: '5'
+    title: Quiet turn detection — count consecutive low-action turns, inject escalation beat hints
+    points: 3
+    completed: '2026-03-28'
+  - id: 5-8
+    epic: '5'
+    title: Genre-tunable thresholds — drama_weight breakpoints configurable per genre pack
+    points: 2
+    completed: '2026-03-28'
+  - id: 5-10
+    epic: '5'
+    title: Wire prompt framework into orchestrator turn loop — replace format! concatenation with ContextBuilder composition
+    points: 5
+    completed: '2026-03-27'
+  - id: 9-4
+    epic: ''
+    title: Known facts in narrator prompt — tiered injection by relevance, don't-repeat constraints, register_knowledge_context()
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-6
+    epic: ''
+    title: Slash command router — intercept /command input before intent classification, dispatch to handlers
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-7
+    epic: ''
+    title: Core slash commands — /status, /inventory, /map, /save, /help handlers
+    points: 5
+    completed: '2026-03-28'
+  - id: 9-11
+    epic: ''
+    title: Structured footnote output — narrator emits NarrationPayload with footnotes[], orchestrator parses markers into KnownFacts
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-8
+    epic: ''
+    title: GM commands — /gm set, /gm teleport, /gm spawn, /gm dmg for operator debugging
+    points: 5
+    completed: '2026-03-28'
+  - id: 10-8
+    epic: ''
+    title: "Backfill OCEAN profiles on existing NPC archetypes across genre packs"
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-5
+    epic: ''
+    title: Narrative character sheet — genre-voiced to_narrative_sheet() for player-facing display
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-12
+    epic: ''
+    title: Footnote rendering in narration view — superscript markers, bottom-of-block entries, discovery vs callback styling
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-10
+    epic: ''
+    title: Wire narrative sheet to React client — CHARACTER_SHEET message with genre-voiced content
+    points: 3
+    completed: '2026-03-28'

@@ -1,8 +1,0 @@
-name: Low Fantasy
-version: "1.0.0"
-description: >-
-  A gritty, low-magic world where steel matters more than spells.
-  Inspired by the mud-and-blood realism of sword-and-sorcery fiction,
-  where magic is rare, feared, and never flashy.
-min_sidequest_version: "0.1.0"
-refine_hooks: false

@@ -1,13 +1,9 @@
 sprint:
-  goal: "Bootstrap Rust workspace scaffolding"
-  start_date: "2026-03-25"
-  end_date: "2026-04-08"
+  goal: "Multiplayer Works For Real — sealed letter turns, session UX, text tuning"
+  start_date: "2026-03-29"
+  end_date: "2026-04-12"
   status: active
-  number: 1
+  number: 2
 epics:
-  - '5'
-  - '6'
-  - '7'
-  - '9'
-  - '10'
-  - '11'
+  - '13'
+  - '14'

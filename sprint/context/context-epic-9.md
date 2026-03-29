@@ -188,13 +188,23 @@ pub type CommandHandler = fn(&GameState, &str) -> CommandResult;
  +---> 9-1 (AbilityDefinition) |
  |      |                      +---> 9-3 (KnownFact model)
  |      +---> 9-2 (abilities   |      |
- |      |      in narrator)    |      +---> 9-4 (facts in narrator)
- |      |                      |
- |      +---> 9-5 (narrative   +---> 9-6 (slash command router)
- |             sheet)                  |
- |              |                      +---> 9-7 (core commands)
- |              +---> 9-10 (wire       |
- |                     to React)       +---> 9-8 (GM commands)
+ |      |      in narrator)    |      +---> 9-4 (facts in narrator,
+ |      |                      |      |      tiered injection)
+ |      +---> 9-5 (narrative   |      |
+ |             sheet)          |      +---> 9-11 (structured footnote
+ |              |              |              output from narrator)
+ |              +---> 9-10     |               |
+ |              (wire React)   |               +---> 9-12 (footnote
+ |                             |               |      UI rendering)
+ |                             |               |
+ |                             |               +---> 9-13 (journal
+ |                             |                      browse view)
+ |                             |
+ |                             +---> 9-6 (slash command router)
+ |                                     |
+ |                                     +---> 9-7 (core commands)
+ |                                     |
+ |                                     +---> 9-8 (GM commands)
  |                                     |
  |                                     +---> 9-9 (tone command)
 ```
@@ -210,8 +220,9 @@ pub type CommandHandler = fn(&GameState, &str) -> CommandResult;
   commands are implemented in this epic.
 - **Autocomplete / command suggestions** — Client-side slash command autocomplete in
   the React UI. The server defines the registry; client UX is deferred.
-- **Character journal** — A player-writable log distinct from KnownFacts. KnownFacts
-  are system-derived; a journal would be player-authored.
+- **Player-authored journal notes** — A player-writable log distinct from KnownFacts.
+  KnownFacts are system-derived; manual notes would be player-authored. The browse
+  view (9-13) shows system-derived entries only.
 
 ## Dependencies
 

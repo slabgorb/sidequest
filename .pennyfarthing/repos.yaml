@@ -1,6 +1,6 @@
 pr_title_format: '{jira_key} - {type}({scope}): {title}'
 repos:
-  orc-quest:
+  oq-1:
     branch_strategy: trunk-based
     default_branch: main
     path: .

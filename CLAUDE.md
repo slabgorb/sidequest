@@ -80,6 +80,51 @@ just ui-test           # Run frontend tests
 just ui-build          # Build frontend
 ```
 
+## Velocity & Quality Standards
+
+### The Numbers
+
+First commit: 2026-03-25. In 3.5 days:
+
+| Repo | Commits | LOC | Language |
+|------|---------|-----|----------|
+| **sidequest-api** | 299 | 68,358 | Rust |
+| **orc-quest** (orchestrator) | 164 | — | YAML/MD |
+| **sidequest-ui** | 45 | 15,675 | TypeScript/React |
+| **sidequest-content** | 9 | 33,059 | YAML |
+| **sidequest-daemon** | 11 | 8,071 | Python |
+| **Total** | **528** | **125,163** | |
+
+672 of 726 story points delivered. 85 stories completed. 12 epics.
+
+### What This Means for You
+
+This velocity is real. We shipped a 5-crate Rust game engine, a React client,
+a Python media daemon, 7 genre packs, 30 ADRs, and a full WebSocket protocol
+in under 4 days. When you identify the correct fix, it takes minutes — the
+item-acquisition rewrite (regex-on-prose to LLM-structured-extraction, touching
+protocol types, orchestrator, narrator prompt, server wiring, and tests) took
+5 minutes 38 seconds wall time.
+
+**Do not underestimate what we can do.** There is no fix too ambitious, no
+refactor too large, no "we should do this later." If the right fix takes 20
+minutes and the hack takes 5, do the right fix — because the hack will cost
+2-3x MORE when we come back to it. Not 20% more. Not 30% more. The debugging
+cost of figuring out whether something is a stub or the real thing, whether a
+regex hack is the intended behavior or a placeholder, whether `if false {` was
+temporary or permanent — that confusion tax dwarfs the original implementation
+time by an order of magnitude.
+
+### Rules
+
+- No stubs, no hacks, no "we'll fix it later" shortcuts
+- No skipping tests to save time
+- No half-wired features — connect the full pipeline or don't start
+- If something needs 5 connections, make 5 connections. Don't ship 3 and call it done.
+- **Never say "the right fix is X" and then do Y.** Do X.
+- **Never downgrade to a "quick fix" because you think the context is "just a playtest."**
+  Every playtest is production tomorrow. Fix it right.
+
 ## Spoiler Protection
 
 Same rules as sq-2. See sq-2/CLAUDE.md for the full policy.

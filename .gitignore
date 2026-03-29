@@ -2,6 +2,10 @@
 sidequest-api/
 sidequest-ui/
 sidequest-daemon/
+sidequest-content/
+
+# Genre packs live in sidequest-content (single source of truth)
+genre_packs/
 
 # OS files
 .DS_Store

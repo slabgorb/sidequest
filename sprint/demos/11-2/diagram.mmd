@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant YML as Genre Pack YAML
+    participant LS as LoreStore (in-memory)
+    participant API as HTTP API
+    participant NAR as Narrator Agent
+
+    YML->>LS: Load entries at server startup
+    note over LS: Indexed by category + keywords
+
+    NAR->>API: GET /lore/category/factions
+    API->>LS: query_by_category("factions")
+    LS-->>API: [LoreEntry, LoreEntry, ...]
+    API-->>NAR: JSON array
+
+    NAR->>API: GET /lore/search?q=iron
+    API->>LS: query_by_keyword("iron")
+    LS-->>API: [matching LoreEntry, ...]
+    API-->>NAR: JSON array
+
+    NAR->>NAR: Build scene context with lore

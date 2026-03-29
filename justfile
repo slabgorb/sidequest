@@ -1,6 +1,7 @@
 # SideQuest Orchestrator — Cross-repo task runner
 
 root := justfile_directory()
+content := root / "sidequest-content" / "genre_packs"
 
 import '.pennyfarthing/justfile.pf'
 
@@ -14,8 +15,8 @@ api-build:
 api-release:
     cd sidequest-api && cargo build --release
 
-api-run:
-    cd sidequest-api && cargo run -p sidequest-server -- --genre-packs-path {{root}}/genre_packs
+api-run *flags:
+    cd sidequest-api && cargo run -p sidequest-server -- --genre-packs-path {{content}} {{flags}}
 
 api-lint:
     cd sidequest-api && cargo clippy -- -D warnings
@@ -44,7 +45,7 @@ ui-install:
 
 # Daemon (Python media services)
 daemon-run:
-    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{root}}/genre_packs sidequest-renderer --warmup
+    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} sidequest-renderer --warmup
 
 daemon-status:
     cd sidequest-daemon && sidequest-renderer --status
@@ -53,7 +54,7 @@ daemon-stop:
     cd sidequest-daemon && sidequest-renderer --shutdown
 
 daemon-test:
-    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{root}}/genre_packs pytest
+    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} pytest
 
 daemon-lint:
     cd sidequest-daemon && ruff check .
@@ -67,7 +68,8 @@ watch port="8765":
 
 # Quick-start aliases
 warmup: daemon-run
-server: api-run
+server *flags:
+    just api-run {{flags}}
 client: ui-dev
 
 # Cross-repo
