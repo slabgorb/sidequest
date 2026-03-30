@@ -70,3 +70,4 @@ tui-pid
 # tmux runtime cache files
 # Local tmux config (copied from sample)
 scripts/__pycache__/
+.tmuxinator.yml
