@@ -69,3 +69,8 @@ completed_stories:
     title: Gossip propagation — NPCs spread claims between turns, contradictions decay credibility
     points: 5
     completed: '2026-03-30'
+  - id: 13-4
+    epic: ''
+    title: "Timeout fallback with player notification — fill missing actions and notify who was auto-resolved"
+    points: 3
+    completed: '2026-03-30'
