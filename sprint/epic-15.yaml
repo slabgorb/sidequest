@@ -1,0 +1,75 @@
+id: '15'
+type: epic
+title: Playtest Debt Cleanup — Stubs, Dead Code, Disabled Features
+description: >-
+  Address technical debt identified in the 2026-03-29 post-playtest audit.
+  Stubs that were never wired, dead code behind if-false branches, disabled
+  features that need architectural rethink, and placeholder values that could
+  leak to users. Lower priority than Epic 13/14 multiplayer fixes.
+priority: p2
+status: ready
+repos: sidequest-api, sidequest-ui
+stories:
+  - id: 15-1
+    title: "Remove dead code — if-false regex extraction, stale comments, duplicate placeholder chars"
+    description: >-
+      Clean up: (1) Remove 30-line if-false block at lib.rs:3858 (legacy regex
+      item extraction). (2) Fix stale "stub" comment in ocean_shift_proposals.rs
+      (module IS implemented). (3) Deduplicate barrier placeholder Character
+      construction (lib.rs:2593 and multiplayer.rs:99) into a single factory.
+      (4) Replace hardcoded chase roll cs.record_roll(0.5) with actual resolution.
+    points: 2
+    priority: p2
+    status: ready
+    repos: sidequest-api
+    workflow: trivial
+  - id: 15-2
+    title: "Wire OCEAN shift proposals into game flow — events trigger personality evolution"
+    description: >-
+      propose_ocean_shifts() is implemented but never called from the game flow.
+      Wire it into the post-narration pipeline: detect PersonalityEvents from
+      narration content or state deltas, call propose_ocean_shifts(), apply
+      approved shifts to NPC OCEAN profiles, log as OceanShift events.
+    points: 3
+    priority: p2
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+  - id: 15-3
+    title: "Voice/mic architecture — solve TTS feedback loop before re-enabling"
+    description: >-
+      Voice is disabled across 4 hooks (useWhisper, usePushToTalk, useVoiceChat,
+      InputBar) because mic captures TTS audio playback and feeds it back as
+      input. Needs architectural solution: echo cancellation, output device
+      exclusion, or TTS-aware mic gating (mute mic during TTS playback, unmute
+      after). Remove kill switches and implement proper solution.
+    points: 5
+    priority: p2
+    status: ready
+    repos: sidequest-ui
+    workflow: tdd
+  - id: 15-4
+    title: "Perception rewriter — implement at least one rewrite strategy"
+    description: >-
+      perception.rs is a stub module — types compile but no RewriteStrategy is
+      implemented. SharedGameSession references it, has_perception_effects()
+      works, but narration is never actually rewritten per-player. Implement
+      at least the Blinded strategy as proof-of-concept to validate the
+      architecture before adding more effects.
+    points: 5
+    priority: p2
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+  - id: 15-5
+    title: "Daemon client typed API — wire or remove stub types"
+    description: >-
+      daemon-client/types.rs has stub parameter types, result types, and request
+      builder that are never used — raw HTTP calls bypass the typed layer. Either
+      wire the typed API into the actual daemon communication or remove the stubs
+      to avoid confusion.
+    points: 2
+    priority: p3
+    status: ready
+    repos: sidequest-api
+    workflow: trivial

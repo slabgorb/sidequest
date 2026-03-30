@@ -1,0 +1,63 @@
+# Faction Agendas for The Shattered Accord
+#
+# Each faction pursues goals independent of player actions. Agendas define
+# their current objectives, urgency level, and scene injection rules.
+#
+# Urgency levels: dormant (no narrative reflection), simmering (moderate),
+# pressing (active), critical (dominates narrative).
+
+factions:
+  - name: The Jade Reclamation
+    description: Military-political apparatus of the Jade Kingdoms' channeler-caste
+    goal: Reunify the eight shards under Jade sovereignty and perform a second binding ritual at the Broken Nexus
+    urgency: pressing
+    scene_event: "Jade Reclamation earth-channelers tunnel beneath the border, and Songnan the Silent's agents move through the Shou Pass with sealed orders."
+    relationships:
+      The Accord Reborn: hostile — views multi-element alignment as weakness, demands Jade supremacy
+      The Drowned Covenant: hostile — ocean-spirits oppose earth dominance
+      The Sealed Gate: suspicious — both want the Nexus, for opposite reasons
+      The Monsoon Pact: dismissive — considers jungle kingdoms irrelevant to the binding
+
+  - name: The Accord Reborn
+    description: Multi-nation coalition seeking to reconstruct the Accord Eternal through voluntary alignment
+    goal: Unite channelers from all eight elements to restore the barrier between spirit and mortal worlds
+    urgency: pressing
+    scene_event: "Accord Reborn emissaries arrive from the Sky Temples, carrying breath-sealed letters proposing a summit of channelers at the Sacred Spire."
+    relationships:
+      The Jade Reclamation: hostile — single-element dominance caused the Shattering
+      The Drowned Covenant: wary — ocean channelers may join willingly or must be convinced
+      The Sealed Gate: opposed — sealing spirits away conflicts with restoring harmony
+      The Monsoon Pact: allied — monsoon channelers share the multi-element philosophy
+
+  - name: The Drowned Covenant
+    description: Ocean-spirit cultists operating from submerged ruins
+    goal: Expand ocean-spirit influence inland and claim coastal territories as spirit sanctuaries
+    urgency: simmering
+    scene_event: "Tides surge unnaturally far inland, and fishermen report voices from Qalanolei's drowned ruins speaking in the old tongue."
+    relationships:
+      The Jade Reclamation: hostile — earth-channelers are the ancient enemy of water
+      The Accord Reborn: wary — restoration would cage the ocean-spirits again
+      The Sealed Gate: hostile — sealing the rifts would destroy the Covenant's power source
+      The Monsoon Pact: competitive — both claim the monsoon waters as sacred
+
+  - name: The Sealed Gate
+    description: Ascetic order dedicated to sealing spirit-tears and containing the Shattering's damage
+    goal: Close every spirit-tear and seal the Broken Nexus permanently, trapping spirits on their side
+    urgency: simmering
+    scene_event: "Sealed Gate wardens arrive at a newly opened spirit-tear, erecting ward-stones and refusing entry to all channelers regardless of allegiance."
+    relationships:
+      The Jade Reclamation: suspicious — Jade wants the Nexus open for binding, Gate wants it sealed
+      The Accord Reborn: opposed — restoration requires open spirit-channels, Gate wants them closed
+      The Drowned Covenant: hostile — the Covenant exists because of open tears
+      The Monsoon Pact: neutral — monsoon channelers respect the Gate's discipline if not its goals
+
+  - name: The Monsoon Pact
+    description: Alliance of jungle river kingdoms blending spirit-channeling with monsoon-dance
+    goal: Protect the monsoon cycle and prevent any single faction from controlling the spirit-flows
+    urgency: dormant
+    scene_event: "Monsoon Pact drummers gather at Rathep's Temple for the seasonal dance, and their rhythms carry further than usual — the spirits are listening."
+    relationships:
+      The Jade Reclamation: hostile — Jade expansion threatens jungle sovereignty
+      The Accord Reborn: allied — shared belief in multi-element balance
+      The Drowned Covenant: competitive — monsoon rains and ocean tides are rival claims on water
+      The Sealed Gate: neutral — respects their asceticism, disagrees with total sealing

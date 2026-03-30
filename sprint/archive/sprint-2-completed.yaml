@@ -1,0 +1,27 @@
+sprint:
+  name: "Unknown Sprint"
+  number: 2
+  jira_sprint_id:
+  jira_sprint_name: "Unknown Sprint"
+  goal: Multiplayer Works For Real — sealed letter turns, session UX, text tuning
+  start_date: 2026-03-29
+  end_date: 2026-04-12
+  status: active
+
+completed_epics: []
+completed_stories:
+  - id: 13-8
+    epic: ''
+    title: "fix(barrier): single narrator call per barrier turn — elect one handler, broadcast to others"
+    points: 5
+    completed: '2026-03-29'
+  - id: 13-9
+    epic: ''
+    title: "fix(barrier): handle timeout — notify players, fill missing actions, branch on timed_out"
+    points: 3
+    completed: '2026-03-29'
+  - id: 13-10
+    epic: ''
+    title: "fix(barrier): error handling — propagate add_player errors, fix disconnect removal race"
+    points: 3
+    completed: '2026-03-30'
