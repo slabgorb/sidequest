@@ -76,6 +76,8 @@ stories:
       to avoid confusion.
     points: 2
     priority: p3
-    status: ready
+    status: in_progress
     repos: sidequest-api
     workflow: trivial
+    branch: feat/15-5-daemon-client-typed-api
+    assignee: keith
