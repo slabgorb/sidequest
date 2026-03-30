@@ -5,6 +5,13 @@
 
 pr_title_format: "{type}({scope}): {title}"
 
+gates:
+  extensions:
+    tests-fail:
+      - wiring-check
+    approval:
+      - wiring-check
+
 repos:
   orchestrator:
     path: .
