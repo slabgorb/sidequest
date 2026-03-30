@@ -1,6 +1,6 @@
 ---
 name: sq-playtest
-description: Interactive playtest — launches SideQuest stack in tmux panes, opens Playwright browser, spawns UX Designer for screenshot evaluation, coordinates cross-workspace bug reporting via ping-pong file with OQ-1.
+description: Interactive playtest — full-stack (UI + Playwright + UX Designer) or headless (API-only + Python driver). Coordinates cross-workspace bug reporting via ping-pong file with OQ-1.
 ---
 
 # SideQuest Playtest Skill
@@ -8,15 +8,121 @@ description: Interactive playtest — launches SideQuest stack in tmux panes, op
 <run>
 You are now the **Playtest SM**. You coordinate an interactive playtest of the SideQuest game engine.
 
-**Architecture:**
+**Two modes:**
+- **Full-stack** (default): UI + daemon + Playwright browser + UX Designer for visual testing
+- **Headless** (`/sq-playtest headless`): API-only + Python driver for game loop, narration, and backend testing
+
+If the user said "headless" (or "headless playtest", "API playtest", "no UI"), skip to **Headless Mode** below.
+Otherwise, proceed with the full-stack flow.
+
+**Architecture (full-stack):**
 - OQ-2 (this workspace): drives the playtest — SM + UX Designer + Playwright browser
 - OQ-1 (other workspace): fixes bugs from the shared ping-pong file — SM + Dev + Architect
+
+**Architecture (headless):**
+- OQ-2 (this workspace): drives the playtest — SM + Python driver via WebSocket
+- OQ-1 (other workspace): fixes bugs from the shared ping-pong file — SM + Dev + Architect
+- No UI, no daemon, no Playwright, no UX Designer
 
 Read `sq-playtest/pingpong.md` in this skill directory for the full coordination protocol.
 
 ---
 
-## Phase 1: Stack Launch
+## Headless Mode
+
+Use this when testing game loop, narration quality, combat, multiplayer, genre packs, or any backend behavior that doesn't need the UI or media rendering.
+
+### H1. Launch headless server
+
+```bash
+pf tmux run "cd /Users/keithavery/Projects/oq-2 && just playtest-server 2>&1 | tee /tmp/sq-headless.log" --title headless-server
+```
+
+Poll for startup:
+```bash
+pf tmux read headless-server
+```
+Look for `"SideQuest Server starting"` with `headless=true`. Timeout: 120s (compile time).
+
+### H2. Initialize ping-pong file
+
+Same as Phase 2c in the full-stack flow — create or reset the ping-pong file at `/Users/keithavery/Projects/sq-playtest-pingpong.md`.
+
+### H3. Choose driver mode
+
+**Interactive** (human drives gameplay):
+```bash
+pf tmux run "cd /Users/keithavery/Projects/oq-2 && python3 scripts/playtest.py --genre {genre} --world {world} 2>&1 | tee /tmp/sq-driver.log" --title playtest-driver
+```
+
+**Scripted** (YAML scenario):
+```bash
+pf tmux run "cd /Users/keithavery/Projects/oq-2 && just playtest-scenario {scenario_name} 2>&1 | tee /tmp/sq-driver.log" --title playtest-driver
+```
+
+**Multiplayer** (N concurrent players):
+```bash
+pf tmux run "cd /Users/keithavery/Projects/oq-2 && python3 scripts/playtest.py --players {N} --genre {genre} --world {world} 2>&1 | tee /tmp/sq-driver.log" --title playtest-driver
+```
+
+Ask the user which mode and genre/world unless they specified.
+
+### H4. Headless playtest loop
+
+Repeat until the user says to stop:
+
+1. **Read driver output** — check `pf tmux read playtest-driver` for narration, state changes, errors
+2. **Read server logs** — check `pf tmux read headless-server` for tracing spans:
+   - `render_pipeline_headless_skip` — render hook fired (verify tier, prompt)
+   - `orchestrator.process_action` — narration pipeline
+   - Any `ERROR` level spans — bugs to triage
+3. **Monitor ping-pong file** — same cycle as Phase 3e (check for `fixed` tasks, verify, update)
+4. **Triage findings** — append bugs to ping-pong file using the standard tag format (`[BUG]`, `[GAP]`, etc.)
+5. **Check trace file** — for post-mortem analysis:
+   ```bash
+   ls -la /Users/keithavery/Projects/oq-2/sidequest-api/trace-*.json
+   ```
+   The trace can be loaded in Perfetto (`chrome://tracing`) for flame-chart analysis.
+
+**What to look for in headless mode:**
+- Narration quality — does the narrator stay consistent? Does state drift?
+- Combat flow — do combat events fire correctly? Turn resolution?
+- Inventory/item acquisition — does structured extraction work?
+- Multiplayer — do turn barriers coordinate? Party status updates?
+- Genre-specific behavior — do tropes, lore, and pacing match the genre?
+- Error spans — any panics, timeouts, or daemon-connect-failed (shouldn't happen in headless)
+
+### H5. Headless sync & restart
+
+When OQ-1 pushes API fixes:
+
+```bash
+cd /Users/keithavery/Projects/oq-2/sidequest-api && git pull origin develop
+pf tmux close headless-server
+pf tmux run "cd /Users/keithavery/Projects/oq-2 && just playtest-server 2>&1 | tee /tmp/sq-headless.log" --title headless-server
+# Wait for startup, then restart driver
+pf tmux close playtest-driver
+# Re-launch driver (same command as H3)
+```
+
+### H6. Headless teardown
+
+```bash
+pf tmux close playtest-driver
+pf tmux close headless-server
+```
+
+Then run the standard teardown: archive ping-pong file (Phase 5d) and print summary (Phase 5e).
+
+---
+
+## Full-Stack Mode
+
+The original full-stack playtest with UI, daemon, Playwright, and UX Designer.
+
+---
+
+## Phase 1: Stack Launch (Full-Stack)
 
 ### 1a. Check pane capacity
 
@@ -420,11 +526,21 @@ Compare both views to verify state synchronization.
 </run>
 
 <output>
-Interactive playtest session with:
+Interactive playtest session with two modes:
+
+**Headless mode** (`/sq-playtest headless`):
+- API server with `--headless` flag (no daemon, no TTS, no rendering)
+- Python driver (`scripts/playtest.py`) — interactive, scripted, or multiplayer
+- OTEL tracing spans for render/audio hooks (verify pipeline without media)
+- Chrome trace export for Perfetto flame-chart analysis
+
+**Full-stack mode** (default):
 - 3 SideQuest services in tmux panes (api-server, ui-dev, daemon)
 - Headed Playwright browser for gameplay interaction
 - UX Designer teammate evaluating screenshots
+- Multiplayer mode with dual Playwright tabs for concurrent player testing
+
+**Both modes:**
 - Cross-workspace bug coordination via ping-pong file at /Users/keithavery/Projects/sq-playtest-pingpong.md
 - Service restart and log reading capability
-- Multiplayer mode with dual Playwright tabs for concurrent player testing
 </output>
