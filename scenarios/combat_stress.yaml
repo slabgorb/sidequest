@@ -1,0 +1,37 @@
+# Combat stress test — exercises combat, exploration, NPCs, and inventory.
+# Designed to generate rich OTEL telemetry across all subsystems.
+# Run: just playtest-scenario combat_stress
+
+name: Combat Stress Test
+genre: mutant_wasteland
+world: flickering_reach
+
+character:
+  strategy: auto
+
+actions:
+  - "look around and assess any threats nearby"
+  - "search for a weapon or something I can use to fight"
+  - "pick up the weapon"
+  - "/inventory"
+  - "head toward the most dangerous-sounding area"
+  - "look for trouble — I want to find something to fight"
+  - "attack the nearest hostile creature"
+  - "fight aggressively, go all out"
+  - "use my strongest attack"
+  - "/status"
+  - "loot whatever I just killed"
+  - "/inventory"
+  - "keep moving, look for more enemies"
+  - "attack anything that moves"
+  - "fight defensively this time, try to dodge"
+  - "/status"
+  - "talk to any NPCs nearby"
+  - "ask them about dangerous areas"
+  - "head to wherever they said is dangerous"
+  - "pick a fight with whatever I find there"
+  - "fight to the death"
+  - "/status"
+  - "/inventory"
+  - "explore a completely new area"
+  - "look for hidden or secret things"

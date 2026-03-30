@@ -1,0 +1,61 @@
+# Extended OTEL telemetry session — long-running for dashboard observation.
+# Run: just playtest-scenario otel_extended
+
+name: Extended OTEL Session
+genre: mutant_wasteland
+world: flickering_reach
+
+character:
+  strategy: auto
+
+actions:
+  - "look around carefully"
+  - "search for anything useful — weapons, supplies, anything"
+  - "pick up whatever I find"
+  - "head south toward Sporecap Garden"
+  - "talk to anyone I encounter on the way"
+  - "ask them about dangers ahead"
+  - "keep moving south"
+  - "look for hostile creatures"
+  - "attack whatever hostile thing I find"
+  - "fight aggressively with everything I have"
+  - "keep fighting, don't let up"
+  - "finish off my enemy"
+  - "loot everything from the body"
+  - "check my wounds"
+  - "look for a place to rest"
+  - "explore the area thoroughly"
+  - "search for hidden things"
+  - "travel to a new area"
+  - "look for more enemies to fight"
+  - "attack on sight"
+  - "fight defensively this time"
+  - "go for a killing blow"
+  - "search the area for loot"
+  - "talk to the nearest NPC"
+  - "ask about local rumors and quests"
+  - "head toward the most dangerous area they mention"
+  - "look for trouble"
+  - "attack the first hostile creature I see"
+  - "fight with everything I have"
+  - "use my weapon creatively"
+  - "keep attacking"
+  - "loot the body"
+  - "check my status and inventory"
+  - "travel somewhere completely new"
+  - "explore this new place"
+  - "look for interesting characters to talk to"
+  - "ask them for work or quests"
+  - "head where they point me"
+  - "fight whatever guards the place"
+  - "use tactics, try to flank"
+  - "press the attack"
+  - "finish the fight"
+  - "take everything of value"
+  - "find a safe spot and rest"
+  - "check what I've collected so far"
+  - "head back toward civilization"
+  - "look for a merchant or trader"
+  - "trade or barter for supplies"
+  - "ask about the most dangerous bounty available"
+  - "head out to hunt it down"

@@ -1,0 +1,37 @@
+# Combat-focused OTEL telemetry generator — no slash commands.
+# Exercises: exploration, NPC interaction, combat, inventory via narration.
+# Run: just playtest-scenario combat_otel
+
+name: Combat OTEL Generator
+genre: mutant_wasteland
+world: flickering_reach
+
+character:
+  strategy: auto
+
+actions:
+  - "look around and assess any threats nearby"
+  - "search for a weapon or something I can use to fight"
+  - "pick up whatever weapon I find"
+  - "check what I'm carrying"
+  - "head toward the most dangerous-sounding area"
+  - "look for trouble — I want to find something hostile to fight"
+  - "attack the nearest hostile creature with everything I have"
+  - "fight aggressively, go all out with my weapon"
+  - "keep fighting, use my strongest attack"
+  - "finish off my enemy"
+  - "loot the body and take everything useful"
+  - "check my wounds and see how hurt I am"
+  - "keep moving deeper into dangerous territory"
+  - "talk to anyone I find"
+  - "ask them where the most dangerous creatures are"
+  - "head to wherever they said is dangerous"
+  - "attack whatever I find there on sight"
+  - "fight defensively, dodge and counter-attack"
+  - "go for a killing blow"
+  - "search the area for loot and supplies"
+  - "travel to a completely new area"
+  - "look for hidden things, search carefully"
+  - "find another fight, I want combat"
+  - "charge in and attack"
+  - "fight until one of us drops"

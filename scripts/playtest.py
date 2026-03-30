@@ -218,165 +218,486 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <title>SideQuest OTEL Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <style>
+  :root {
+    --bg: #1a1a2e; --surface: #16213e; --border: #333; --accent: #00d4ff;
+    --purple: #bb86fc; --teal: #03dac6; --green: #4caf50; --amber: #ff9800;
+    --red: #f44336; --text: #e0e0e0; --muted: #888; --pink: #f06292;
+    --sky: #4fc3f7;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #1a1a2e; color: #e0e0e0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; padding: 16px; }
-  h1 { color: #00d4ff; font-size: 16px; margin-bottom: 12px; }
-  .status { color: #666; margin-bottom: 12px; font-size: 12px; }
-  .status.connected { color: #4caf50; }
+  body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono','Fira Code',monospace; font-size: 13px; }
 
-  #events { max-height: calc(100vh - 120px); overflow-y: auto; }
-  .turn { border-left: 3px solid #00d4ff; padding: 8px 12px; margin-bottom: 8px; background: #16213e; border-radius: 0 4px 4px 0; }
-  .turn-header { color: #00d4ff; font-weight: bold; margin-bottom: 4px; }
-  .event-line { padding: 1px 0; }
-  .sev-info { color: #888; }
-  .sev-pass { color: #4caf50; }
-  .sev-warn { color: #ff9800; }
-  .sev-error { color: #f44336; font-weight: bold; }
+  /* Header */
+  #header { display: flex; align-items: center; gap: 16px; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  #header .title { color: var(--accent); font-weight: bold; font-size: 15px; }
+  #header .dot { font-size: 10px; color: var(--muted); }
+  #header .dot.on { color: var(--green); }
+  #header .stat { color: var(--muted); font-size: 12px; }
+  #header .stat b { color: var(--text); }
+  #header button { background: var(--border); color: var(--text); border: none; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; }
 
-  .raw-event { padding: 4px 12px; margin-bottom: 2px; background: #16213e; border-radius: 4px; border-left: 3px solid #333; }
-  .component { color: #bb86fc; }
-  .event-type { color: #03dac6; }
+  /* Tabs */
+  #tabs { display: flex; border-bottom: 2px solid var(--border); background: var(--surface); }
+  .tab { padding: 8px 20px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; font-size: 12px; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab .badge { font-size: 10px; margin-left: 4px; padding: 1px 5px; border-radius: 8px; background: var(--border); }
+  .tab .badge.err { background: var(--red); color: white; }
 
-  .histogram { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 6px; padding: 6px 0; border-top: 1px solid #333; }
-  .hist-bar { display: flex; align-items: center; gap: 6px; }
-  .hist-label { width: 100px; text-align: right; color: #888; }
-  .hist-fill { height: 12px; background: #00d4ff; border-radius: 2px; min-width: 2px; transition: width 0.3s; }
-  .hist-count { color: #666; font-size: 11px; width: 30px; }
+  /* Tab content */
+  .tab-content { display: none; padding: 16px; height: calc(100vh - 82px); overflow-y: auto; }
+  .tab-content.active { display: block; }
 
-  .stats { display: flex; gap: 24px; margin-bottom: 12px; padding: 8px 12px; background: #16213e; border-radius: 4px; }
-  .stat { text-align: center; }
-  .stat-value { font-size: 24px; color: #00d4ff; font-weight: bold; }
-  .stat-label { font-size: 11px; color: #666; }
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+  .card-title { color: var(--accent); font-size: 12px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Flame chart */
+  .flame-row { display: flex; align-items: center; margin-bottom: 4px; }
+  .flame-label { width: 110px; text-align: right; padding-right: 8px; color: var(--muted); font-size: 11px; flex-shrink: 0; }
+  .flame-bar-wrap { flex: 1; position: relative; height: 20px; }
+  .flame-bar { height: 20px; border-radius: 2px; display: inline-flex; align-items: center; padding-left: 6px; font-size: 10px; color: rgba(255,255,255,0.8); min-width: 2px; position: absolute; top: 0; }
+  .flame-dur { color: var(--muted); font-size: 11px; margin-left: 8px; width: 60px; text-align: right; flex-shrink: 0; }
+
+  /* Turn list */
+  .turn-list { max-height: calc(100vh - 130px); overflow-y: auto; }
+  .turn-item { padding: 6px 10px; cursor: pointer; border-left: 3px solid transparent; font-size: 12px; display: flex; justify-content: space-between; }
+  .turn-item:hover { background: rgba(0,212,255,0.05); }
+  .turn-item.selected { border-left-color: var(--accent); background: rgba(0,212,255,0.08); }
+  .turn-item .ti-badge { font-size: 9px; padding: 1px 5px; border-radius: 8px; }
+  .ti-degraded { background: var(--red); color: white; }
+  .ti-combat { background: var(--amber); color: black; }
+
+  /* Summary stats row */
+  .stats-row { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px 20px; text-align: center; min-width: 100px; }
+  .stat-val { font-size: 28px; font-weight: bold; color: var(--accent); }
+  .stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+
+  /* Health grid */
+  .health-grid { display: grid; gap: 2px; font-size: 11px; }
+  .hg-row { display: contents; }
+  .hg-label { padding: 4px 8px; text-align: right; color: var(--muted); background: var(--surface); }
+  .hg-cell { width: 24px; height: 24px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+  .hg-ok { background: rgba(76,175,80,0.3); color: var(--green); }
+  .hg-warn { background: rgba(255,152,0,0.3); color: var(--amber); }
+  .hg-err { background: rgba(244,67,54,0.3); color: var(--red); }
+  .hg-empty { background: rgba(51,51,51,0.3); }
+  .hg-silent { color: var(--amber); font-size: 10px; margin-left: 8px; }
+
+  /* Event log */
+  .evt-row { padding: 3px 8px; font-size: 11px; border-left: 3px solid var(--border); margin-bottom: 1px; }
+  .evt-row .comp { color: var(--purple); }
+  .evt-row .etype { color: var(--teal); }
+
+  /* Charts */
+  .chart-container { width: 100%; }
+  .chart-container svg { width: 100%; }
+  svg text { fill: var(--muted); font-family: inherit; font-size: 11px; }
+  svg .axis line, svg .axis path { stroke: var(--border); }
+  svg .bar { rx: 2; }
+  svg .dot { stroke: var(--bg); stroke-width: 1; }
+
+  /* Layout helpers */
+  .split { display: flex; gap: 16px; }
+  .split-left { width: 220px; flex-shrink: 0; }
+  .split-right { flex: 1; min-width: 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 </style>
 </head>
 <body>
-<h1>SideQuest OTEL Dashboard</h1>
-<div class="status" id="status">Connecting...</div>
-<div class="stats">
-  <div class="stat"><div class="stat-value" id="turns">0</div><div class="stat-label">Turns</div></div>
-  <div class="stat"><div class="stat-value" id="events-count">0</div><div class="stat-label">Events</div></div>
-  <div class="stat"><div class="stat-value" id="errors">0</div><div class="stat-label">Errors</div></div>
-  <div class="stat"><div class="stat-value" id="components">0</div><div class="stat-label">Components</div></div>
+<div id="header">
+  <span class="title">SideQuest OTEL</span>
+  <span class="dot" id="dot">\●</span>
+  <span id="conn-status" style="color:var(--muted);font-size:12px">Connecting...</span>
+  <span class="stat">Turns: <b id="hdr-turns">0</b></span>
+  <span class="stat">Errors: <b id="hdr-errors">0</b></span>
+  <span class="stat">p95: <b id="hdr-p95">\—</b></span>
+  <button onclick="togglePause()">Pause</button>
+  <button onclick="clearAll()">Clear</button>
 </div>
-<div id="events"></div>
+<div id="tabs">
+  <div class="tab active" onclick="switchTab(0)">\① Timeline <span class="badge" id="tab0-badge">0</span></div>
+  <div class="tab" onclick="switchTab(1)">\② State</div>
+  <div class="tab" onclick="switchTab(2)">\③ Subsystems <span class="badge" id="tab2-badge"></span></div>
+  <div class="tab" onclick="switchTab(3)">\④ Timing</div>
+</div>
+
+<!-- Tab 0: Timeline / Flame Chart -->
+<div class="tab-content active" id="tc0">
+  <div class="split">
+    <div class="split-left">
+      <div class="card"><div class="card-title">Turns</div><div class="turn-list" id="turn-list"></div></div>
+    </div>
+    <div class="split-right">
+      <div class="card" id="flame-card">
+        <div class="card-title" id="flame-title">Select a turn</div>
+        <div id="flame-chart"></div>
+      </div>
+      <div class="card" id="turn-meta" style="display:none">
+        <div class="card-title">Turn Details</div>
+        <div id="turn-meta-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab 1: Game State Explorer -->
+<div class="tab-content" id="tc1">
+  <div class="card"><div class="card-title">Game State</div>
+    <div id="state-body" style="color:var(--muted)">Waiting for GameStateSnapshot event...</div>
+  </div>
+</div>
+
+<!-- Tab 2: Subsystem Health -->
+<div class="tab-content" id="tc2">
+  <div class="card"><div class="card-title">Activity Grid (last 20 turns)</div><div id="health-grid"></div></div>
+  <div class="card"><div class="card-title">Component Summary</div><div id="health-table"></div></div>
+  <div class="card" id="comp-detail" style="display:none"><div class="card-title" id="comp-detail-title"></div><div id="comp-detail-body"></div></div>
+</div>
+
+<!-- Tab 3: Timing Analysis -->
+<div class="tab-content" id="tc3">
+  <div class="stats-row" id="timing-summary"></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Agent Duration Histogram</div><div class="chart-container" id="hist-chart"></div></div>
+    <div class="card"><div class="card-title">Per-Agent Breakdown</div><div id="agent-breakdown"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Turn Duration Over Time</div><div class="chart-container" id="scatter-chart"></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Token Usage (in/out per turn)</div><div class="chart-container" id="token-chart"></div></div>
+    <div class="card"><div class="card-title">Extraction Tier Distribution</div><div class="chart-container" id="tier-chart"></div></div>
+  </div>
+</div>
 
 <script>
-const eventsEl = document.getElementById('events');
-const statusEl = document.getElementById('status');
-const turnsEl = document.getElementById('turns');
-const eventsCountEl = document.getElementById('events-count');
-const errorsEl = document.getElementById('errors');
-const componentsEl = document.getElementById('components');
+// ── State ──
+const S = {
+  turns: [], allEvents: [], componentMap: {}, latestSnapshot: null,
+  selectedTurn: null, paused: false, activeTab: 0
+};
 
-let turnCount = 0;
-let eventCount = 0;
-let errorCount = 0;
-const componentSet = new Set();
-const histogram = {};
+const SPAN_COLORS = {
+  preprocessor:'#03dac6', intent_route:'#4fc3f7', agent_llm:'#bb86fc',
+  extraction:'#81c784', state_patch:'#ffb74d', broadcast:'#90a4ae',
+  music_director:'#f06292', render_pipeline:'#e57373', tts_pipeline:'#ce93d8',
+  prerender_scheduler:'#80cbc4'
+};
+const AGENT_COLORS = { narrator:'#bb86fc', creature_smith:'#e57373', ensemble:'#81c784', dialectician:'#4fc3f7' };
 
-function escapeHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+// ── Tab switching ──
+function switchTab(i) {
+  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', j===i));
+  document.querySelectorAll('.tab-content').forEach((t,j) => t.classList.toggle('active', j===i));
+  S.activeTab = i;
+  if (i===2) renderHealth();
+  if (i===3) renderTiming();
+}
+function togglePause() { S.paused = !S.paused; }
+function clearAll() { S.turns.length=0; S.allEvents.length=0; Object.keys(S.componentMap).forEach(k=>delete S.componentMap[k]); S.selectedTurn=null; updateAll(); }
+
+// ── Header update ──
+function updateHeader() {
+  document.getElementById('hdr-turns').textContent = S.turns.length;
+  document.getElementById('hdr-errors').textContent = S.allEvents.filter(e=>(e.severity||'info')==='error').length;
+  const durs = S.turns.map(t=>t.fields.agent_duration_ms||0).filter(d=>d>0).sort((a,b)=>a-b);
+  const p95 = durs.length ? (durs[Math.floor(durs.length*0.95)] / 1000).toFixed(1) + 's' : '\—';
+  document.getElementById('hdr-p95').textContent = p95;
+  document.getElementById('tab0-badge').textContent = S.turns.length;
+  const errs = S.allEvents.filter(e=>(e.severity||'info')==='error').length;
+  const b2 = document.getElementById('tab2-badge');
+  if (errs > 0) { b2.textContent = errs; b2.className = 'badge err'; } else { b2.textContent = ''; b2.className = 'badge'; }
 }
 
-function sevClass(severity) {
-  return 'sev-' + (severity || 'info');
-}
+// ── Event dispatch ──
+function dispatch(ev) {
+  if (S.paused) return;
+  S.allEvents.push(ev);
+  const comp = ev.component || 'unknown';
+  if (!S.componentMap[comp]) S.componentMap[comp] = [];
+  S.componentMap[comp].push(ev);
 
-function sevPrefix(severity) {
-  return { pass: '\\u2713', warn: '\\u26a0', error: '\\u2717', info: '\\u00b7' }[severity] || '\\u00b7';
-}
-
-function renderHistogram() {
-  const entries = Object.entries(histogram).sort((a, b) => b[1] - a[1]);
-  if (!entries.length) return '';
-  const max = Math.max(...entries.map(e => e[1]));
-  return '<div class="histogram">' + entries.map(([name, count]) => {
-    const pct = max > 0 ? (count / max * 100) : 0;
-    return `<div class="hist-bar"><span class="hist-label">${escapeHtml(name)}</span><div class="hist-fill" style="width:${pct}px"></div><span class="hist-count">${count}</span></div>`;
-  }).join('') + '</div>';
-}
-
-function updateStats() {
-  turnsEl.textContent = turnCount;
-  eventsCountEl.textContent = eventCount;
-  errorsEl.textContent = errorCount;
-  componentsEl.textContent = componentSet.size;
-}
-
-function addEvent(event) {
-  eventCount++;
-
-  // Raw WatcherEvent (component/event_type/severity/fields)
-  if (event.component && event.event_type) {
-    const comp = event.component;
-    const etype = event.event_type;
-    const severity = event.severity || 'info';
-    const fields = event.fields || {};
-    componentSet.add(comp);
-    histogram[comp] = (histogram[comp] || 0) + 1;
-    if (severity === 'error') errorCount++;
-
-    const detail = Object.entries(fields)
-      .filter(([k]) => k !== 'timestamp')
-      .map(([k, v]) => `${k}=${typeof v === 'string' ? v : JSON.stringify(v)}`)
-      .join(', ');
-
-    const div = document.createElement('div');
-    div.className = 'raw-event';
-    div.innerHTML = `<span class="${sevClass(severity)}">${sevPrefix(severity)}</span> <span class="component">[${escapeHtml(comp)}]</span> <span class="event-type">${escapeHtml(etype)}</span>: ${escapeHtml(detail)}`;
-    eventsEl.appendChild(div);
+  if (ev.event_type === 'turn_complete') {
+    S.turns.push(ev);
+    if (S.activeTab === 0) { renderTurnList(); if (!S.selectedTurn) selectTurn(S.turns.length - 1); }
   }
-  // Structured turn_complete
-  else if (event.type === 'turn_complete') {
-    turnCount++;
-    const dur = ((event.agent_duration_ms || 0) / 1000).toFixed(1);
-    const div = document.createElement('div');
-    div.className = 'turn';
-    let html = `<div class="turn-header">Turn ${event.turn_id || '?'} | ${escapeHtml(event.classified_intent || '?')} \\u2192 ${escapeHtml(event.agent_name || '?')} | ${dur}s</div>`;
-    for (const line of (event.events || [])) {
-      const sev = line.severity || 'info';
-      if (sev === 'error') errorCount++;
-      html += `<div class="event-line ${sevClass(sev)}">${sevPrefix(sev)} ${escapeHtml(line.text || '')}</div>`;
-    }
-    if (event.histogram) {
-      for (const [k, v] of Object.entries(event.histogram)) {
-        componentSet.add(k);
-        histogram[k] = (histogram[k] || 0) + v;
-      }
-      html += renderHistogram();
-    }
-    div.innerHTML = html;
-    eventsEl.appendChild(div);
+  if (ev.event_type === 'game_state_snapshot' && ev.fields && ev.fields.snapshot) {
+    S.latestSnapshot = ev.fields.snapshot;
+    if (S.activeTab === 1) renderState();
   }
-  else {
-    const div = document.createElement('div');
-    div.className = 'raw-event';
-    div.innerHTML = `<span class="sev-info">\\u00b7</span> ${escapeHtml(JSON.stringify(event))}`;
-    eventsEl.appendChild(div);
-  }
-
-  updateStats();
-  eventsEl.scrollTop = eventsEl.scrollHeight;
+  updateHeader();
+  if (S.activeTab === 0 && ev.event_type === 'turn_complete') renderTurnList();
 }
 
+// ── Tab 0: Timeline ──
+function renderTurnList() {
+  const el = document.getElementById('turn-list');
+  el.innerHTML = S.turns.map((t, i) => {
+    const f = t.fields || {};
+    const dur = ((f.agent_duration_ms||0)/1000).toFixed(1);
+    const agent = f.agent_name || '?';
+    const sel = S.selectedTurn === i ? ' selected' : '';
+    let badge = '';
+    if (f.is_degraded) badge = '<span class="ti-badge ti-degraded">DEGRADED</span>';
+    else if ((f.classified_intent||'') === 'Combat') badge = '<span class="ti-badge ti-combat">COMBAT</span>';
+    return `<div class="turn-item${sel}" onclick="selectTurn(${i})">#${f.turn_id||i+1} ${esc(agent)} ${dur}s ${badge}</div>`;
+  }).reverse().join('');
+}
+
+function selectTurn(i) {
+  S.selectedTurn = i;
+  renderTurnList();
+  const t = S.turns[i];
+  if (!t) return;
+  const f = t.fields || {};
+  const dur = f.agent_duration_ms || 1;
+
+  // Flame chart
+  document.getElementById('flame-title').textContent = `Turn ${f.turn_id||'?'} \· ${f.classified_intent||'?'} \→ ${f.agent_name||'?'} \· ${(dur/1000).toFixed(1)}s`;
+
+  const spans = f.spans || [
+    { name: 'agent_llm', component: f.agent_name||'narrator', start_ms: 0, duration_ms: dur }
+  ];
+
+  const fc = document.getElementById('flame-chart');
+  fc.innerHTML = '';
+  const total = Math.max(dur, ...spans.map(s=>(s.start_ms||0)+(s.duration_ms||0)));
+  spans.forEach(s => {
+    const pctLeft = total > 0 ? ((s.start_ms||0)/total*100) : 0;
+    const pctW = total > 0 ? (Math.max(s.duration_ms||1, 1)/total*100) : 100;
+    const color = SPAN_COLORS[s.name] || SPAN_COLORS[s.component] || '#666';
+    fc.innerHTML += `<div class="flame-row">
+      <div class="flame-label">${esc(s.name||s.component)}</div>
+      <div class="flame-bar-wrap"><div class="flame-bar" style="left:${pctLeft}%;width:${pctW}%;background:${color}" title="${s.name}: ${s.duration_ms}ms">${s.duration_ms>50?s.duration_ms+'ms':''}</div></div>
+      <div class="flame-dur">${s.duration_ms}ms</div>
+    </div>`;
+  });
+  // Axis
+  fc.innerHTML += `<div style="display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:4px;padding-left:118px"><span>0ms</span><span>${Math.round(total/2)}ms</span><span>${total}ms</span></div>`;
+
+  // Meta
+  const meta = document.getElementById('turn-meta');
+  meta.style.display = 'block';
+  const patches = (f.patches||[]).map(p=>`${p.patch_type}(${(p.fields_changed||[]).join(',')})`).join(', ') || 'none';
+  const beats = (f.beats_fired||[]).map(b=>`${b.trope}@${(b.threshold||0).toFixed(1)}`).join(', ') || 'none';
+  document.getElementById('turn-meta-body').innerHTML = `
+    <div style="color:var(--muted);font-size:12px;line-height:1.8">
+    \· <b>Input:</b> ${esc(f.player_input||'')}
+    <br>\· <b>Intent:</b> ${f.classified_intent||'?'} &rarr; <b>Agent:</b> ${f.agent_name||'?'}
+    <br>\· <b>Tokens:</b> ${f.token_count_in||0} in / ${f.token_count_out||0} out &nbsp; <b>Tier:</b> ${f.extraction_tier||'?'} &nbsp; <b>Degraded:</b> ${f.is_degraded?'<span style="color:var(--red)">YES</span>':'no'}
+    <br>\· <b>Patches:</b> ${esc(patches)}
+    <br>\· <b>Beats:</b> ${esc(beats)}
+    <br>\· <b>Delta empty:</b> ${f.delta_empty}
+    </div>`;
+}
+
+// ── Tab 1: State ──
+function renderState() {
+  const el = document.getElementById('state-body');
+  const s = S.latestSnapshot;
+  if (!s) { el.innerHTML = '<span style="color:var(--muted)">Waiting for GameStateSnapshot...</span>'; return; }
+  el.innerHTML = `<pre style="white-space:pre-wrap;font-size:11px;max-height:600px;overflow:auto">${esc(JSON.stringify(s, null, 2))}</pre>`;
+}
+
+// ── Tab 2: Health ──
+function renderHealth() {
+  const comps = Object.keys(S.componentMap).sort();
+  const turnIds = S.turns.map(t => t.fields?.turn_id || 0);
+  const last20 = turnIds.slice(-20);
+
+  // Build per-component per-turn severity map
+  const grid = {};
+  comps.forEach(c => { grid[c] = {}; });
+  S.allEvents.forEach(ev => {
+    const c = ev.component || 'unknown';
+    const tid = ev.fields?.turn_number || ev.fields?.turn_id || 0;
+    if (!grid[c]) grid[c] = {};
+    const cur = grid[c][tid] || 'info';
+    const sev = ev.severity || 'info';
+    if (sev === 'error' || (sev === 'warn' && cur !== 'error')) grid[c][tid] = sev;
+    else if (!grid[c][tid]) grid[c][tid] = sev;
+  });
+
+  const cols = last20.length || 1;
+  const el = document.getElementById('health-grid');
+  let html = `<div class="health-grid" style="grid-template-columns: 130px repeat(${cols}, 24px) auto">`;
+  // Header
+  html += `<div class="hg-label"></div>`;
+  last20.forEach(t => { html += `<div class="hg-cell" style="color:var(--muted);font-size:9px">${t}</div>`; });
+  html += '<div></div>';
+
+  comps.forEach(c => {
+    html += `<div class="hg-label" style="cursor:pointer" onclick="showCompDetail('${esc(c)}')">${esc(c)}</div>`;
+    const lastSeen = Math.max(...Object.keys(grid[c]).map(Number).filter(n=>n>0), 0);
+    const maxTurn = last20.length ? last20[last20.length-1] : 0;
+    last20.forEach(tid => {
+      const sev = grid[c][tid];
+      if (!sev) html += '<div class="hg-cell hg-empty">\·</div>';
+      else if (sev === 'error') html += '<div class="hg-cell hg-err">\✗</div>';
+      else if (sev === 'warn') html += '<div class="hg-cell hg-warn">\⚠</div>';
+      else html += '<div class="hg-cell hg-ok">\●</div>';
+    });
+    const gap = maxTurn - lastSeen;
+    html += gap > 5 ? `<div class="hg-silent">SILENT ${gap}t</div>` : '<div></div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+
+  // Summary table
+  const tbl = document.getElementById('health-table');
+  let t = '<table style="width:100%;font-size:11px;border-collapse:collapse"><tr style="color:var(--muted)"><th style="text-align:left;padding:4px">Component</th><th>Events</th><th>Errors</th><th>Warns</th><th>Last Seen</th></tr>';
+  comps.forEach(c => {
+    const evts = S.componentMap[c] || [];
+    const errs = evts.filter(e=>(e.severity||'info')==='error').length;
+    const warns = evts.filter(e=>(e.severity||'info')==='warn').length;
+    const last = Math.max(...evts.map(e=>e.fields?.turn_number||e.fields?.turn_id||0).filter(n=>n>0), 0);
+    t += `<tr style="border-top:1px solid var(--border);cursor:pointer" onclick="showCompDetail('${esc(c)}')"><td style="padding:4px">${esc(c)}</td><td style="text-align:center">${evts.length}</td><td style="text-align:center;color:${errs?'var(--red)':'inherit'}">${errs}</td><td style="text-align:center;color:${warns?'var(--amber)':'inherit'}">${warns}</td><td style="text-align:center">T#${last}</td></tr>`;
+  });
+  t += '</table>';
+  tbl.innerHTML = t;
+}
+
+function showCompDetail(comp) {
+  const el = document.getElementById('comp-detail');
+  el.style.display = 'block';
+  document.getElementById('comp-detail-title').textContent = comp;
+  const evts = (S.componentMap[comp] || []).slice(-20);
+  document.getElementById('comp-detail-body').innerHTML = evts.map(e => {
+    const sev = e.severity || 'info';
+    const fields = Object.entries(e.fields||{}).filter(([k])=>k!=='timestamp').map(([k,v])=>`${k}=${typeof v==='string'?v:JSON.stringify(v)}`).join(', ');
+    return `<div class="evt-row"><span class="comp">[${esc(e.component)}]</span> <span class="etype">${esc(e.event_type)}</span> ${esc(fields)}</div>`;
+  }).join('');
+}
+
+// ── Tab 3: Timing ──
+function renderTiming() {
+  if (!S.turns.length) return;
+  const durs = S.turns.map(t => t.fields?.agent_duration_ms || 0);
+  const sorted = [...durs].sort((a,b) => a-b);
+  const p = (pct) => sorted.length ? (sorted[Math.min(Math.floor(sorted.length*pct), sorted.length-1)]/1000).toFixed(1) : '?';
+  const degraded = S.turns.filter(t => t.fields?.is_degraded).length;
+
+  // Summary
+  document.getElementById('timing-summary').innerHTML = [
+    ['p50', p(0.5)+'s'], ['p95', p(0.95)+'s'], ['p99', p(0.99)+'s'],
+    ['Degraded', `${degraded}/${S.turns.length} (${S.turns.length?(degraded/S.turns.length*100).toFixed(0):0}%)`]
+  ].map(([l,v]) => `<div class="stat-card"><div class="stat-val">${v}</div><div class="stat-lbl">${l}</div></div>`).join('');
+
+  // Agent breakdown
+  const byAgent = {};
+  S.turns.forEach(t => {
+    const a = t.fields?.agent_name || '?';
+    if (!byAgent[a]) byAgent[a] = [];
+    byAgent[a].push(t.fields?.agent_duration_ms || 0);
+  });
+  document.getElementById('agent-breakdown').innerHTML = Object.entries(byAgent).map(([a, ds]) => {
+    const avg = (ds.reduce((s,d)=>s+d,0)/ds.length/1000).toFixed(1);
+    const color = AGENT_COLORS[a] || 'var(--accent)';
+    return `<div style="padding:4px 0;font-size:12px"><span style="color:${color}">\■</span> ${esc(a)} &mdash; avg: ${avg}s (${ds.length} turns)</div>`;
+  }).join('');
+
+  // Histogram (D3)
+  renderHistogramD3();
+  // Scatter
+  renderScatterD3();
+  // Token bars
+  renderTokenBars();
+  // Tier donut
+  renderTierDonut();
+}
+
+function renderHistogramD3() {
+  const el = document.getElementById('hist-chart');
+  el.innerHTML = '';
+  const w = el.clientWidth || 400, h = 180, m = {t:10,r:20,b:30,l:40};
+  const durs = S.turns.map(t => (t.fields?.agent_duration_ms||0)/1000);
+  if (!durs.length) return;
+  const svg = d3.select(el).append('svg').attr('width',w).attr('height',h);
+  const x = d3.scaleLinear().domain([0, d3.max(durs)*1.1]).range([m.l, w-m.r]);
+  const bins = d3.bin().domain(x.domain()).thresholds(x.ticks(15))(durs);
+  const y = d3.scaleLinear().domain([0, d3.max(bins, d=>d.length)]).range([h-m.b, m.t]);
+  svg.append('g').attr('transform',`translate(0,${h-m.b})`).call(d3.axisBottom(x).ticks(6).tickFormat(d=>d+'s')).attr('class','axis');
+  svg.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4)).attr('class','axis');
+  svg.selectAll('.bar').data(bins).join('rect').attr('class','bar')
+    .attr('x', d=>x(d.x0)+1).attr('y', d=>y(d.length))
+    .attr('width', d=>Math.max(0,x(d.x1)-x(d.x0)-2))
+    .attr('height', d=>y(0)-y(d.length))
+    .attr('fill','#bb86fc');
+}
+
+function renderScatterD3() {
+  const el = document.getElementById('scatter-chart');
+  el.innerHTML = '';
+  const w = el.clientWidth || 600, h = 180, m = {t:10,r:20,b:30,l:50};
+  const data = S.turns.map((t,i) => ({i, dur:(t.fields?.agent_duration_ms||0)/1000, agent:t.fields?.agent_name||'?', degraded:t.fields?.is_degraded}));
+  if (!data.length) return;
+  const svg = d3.select(el).append('svg').attr('width',w).attr('height',h);
+  const x = d3.scaleLinear().domain([0, data.length]).range([m.l, w-m.r]);
+  const y = d3.scaleLinear().domain([0, d3.max(data,d=>d.dur)*1.1]).range([h-m.b, m.t]);
+  svg.append('g').attr('transform',`translate(0,${h-m.b})`).call(d3.axisBottom(x).ticks(Math.min(data.length,10)).tickFormat(d=>'T'+(d+1))).attr('class','axis');
+  svg.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d=>d+'s')).attr('class','axis');
+  svg.selectAll('.dot').data(data).join('circle').attr('class','dot')
+    .attr('cx', d=>x(d.i)).attr('cy', d=>y(d.dur)).attr('r', 5)
+    .attr('fill', d=>d.degraded?'#f44336':(AGENT_COLORS[d.agent]||'#00d4ff'));
+  // Moving average
+  if (data.length >= 3) {
+    const win = 3;
+    const avg = data.map((d,i) => {
+      const slice = data.slice(Math.max(0,i-win+1),i+1);
+      return {i:d.i, dur: slice.reduce((s,d)=>s+d.dur,0)/slice.length};
+    });
+    const line = d3.line().x(d=>x(d.i)).y(d=>y(d.dur)).curve(d3.curveMonotoneX);
+    svg.append('path').datum(avg).attr('d',line).attr('fill','none').attr('stroke','rgba(255,255,255,0.3)').attr('stroke-width',1.5);
+  }
+}
+
+function renderTokenBars() {
+  const el = document.getElementById('token-chart');
+  el.innerHTML = '';
+  const w = el.clientWidth || 400, h = 140, m = {t:10,r:20,b:30,l:50};
+  const data = S.turns.map((t,i) => ({i, tin:t.fields?.token_count_in||0, tout:t.fields?.token_count_out||0}));
+  if (!data.length) return;
+  const svg = d3.select(el).append('svg').attr('width',w).attr('height',h);
+  const x = d3.scaleBand().domain(data.map(d=>d.i)).range([m.l,w-m.r]).padding(0.3);
+  const maxT = d3.max(data, d=>Math.max(d.tin,d.tout)) || 1;
+  const y = d3.scaleLinear().domain([0,maxT]).range([h-m.b,m.t]);
+  svg.append('g').attr('transform',`translate(0,${h-m.b})`).call(d3.axisBottom(x).tickFormat(d=>'T'+(d+1))).attr('class','axis');
+  svg.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(3)).attr('class','axis');
+  const bw = x.bandwidth()/2;
+  svg.selectAll('.bin').data(data).join('rect').attr('x',d=>x(d.i)).attr('y',d=>y(d.tin)).attr('width',bw).attr('height',d=>y(0)-y(d.tin)).attr('fill','#4fc3f7').attr('rx',1);
+  svg.selectAll('.bout').data(data).join('rect').attr('x',d=>x(d.i)+bw).attr('y',d=>y(d.tout)).attr('width',bw).attr('height',d=>y(0)-y(d.tout)).attr('fill','#03dac6').attr('rx',1);
+}
+
+function renderTierDonut() {
+  const el = document.getElementById('tier-chart');
+  el.innerHTML = '';
+  const tiers = {};
+  S.turns.forEach(t => { const tier = t.fields?.extraction_tier ?? '?'; tiers[tier] = (tiers[tier]||0)+1; });
+  const data = Object.entries(tiers).map(([k,v])=>({label:'Tier '+k, value:v}));
+  if (!data.length) return;
+  const w = 180, h = 180, r = 70;
+  const svg = d3.select(el).append('svg').attr('width',w).attr('height',h);
+  const g = svg.append('g').attr('transform',`translate(${w/2},${h/2})`);
+  const color = d3.scaleOrdinal(['#4caf50','#ff9800','#f44336','#bb86fc']);
+  const pie = d3.pie().value(d=>d.value);
+  const arc = d3.arc().innerRadius(r*0.5).outerRadius(r);
+  g.selectAll('path').data(pie(data)).join('path').attr('d',arc).attr('fill',(_,i)=>color(i));
+  g.selectAll('text').data(pie(data)).join('text').attr('transform',d=>`translate(${arc.centroid(d)})`)
+    .attr('text-anchor','middle').attr('font-size','10px').text(d=>d.data.label+' ('+d.data.value+')');
+}
+
+function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); }
+
+// ── WebSocket ──
 function connect() {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
   const ws = new WebSocket(`${proto}//${location.host}/ws`);
-  ws.onopen = () => {
-    statusEl.textContent = 'Connected';
-    statusEl.className = 'status connected';
-  };
-  ws.onmessage = (e) => {
-    try { addEvent(JSON.parse(e.data)); } catch {}
-  };
-  ws.onclose = () => {
-    statusEl.textContent = 'Disconnected — reconnecting...';
-    statusEl.className = 'status';
-    setTimeout(connect, 2000);
-  };
+  ws.onopen = () => { document.getElementById('dot').classList.add('on'); document.getElementById('conn-status').textContent='Connected'; };
+  ws.onmessage = (e) => { try { dispatch(JSON.parse(e.data)); } catch {} };
+  ws.onclose = () => { document.getElementById('dot').classList.remove('on'); document.getElementById('conn-status').textContent='Reconnecting...'; setTimeout(connect, 2000); };
 }
 connect();
 </script>
@@ -433,7 +754,7 @@ async def run_dashboard_server(
     )
 
     # Start WebSocket server for browser clients
-    async with websockets.serve(_dashboard_handler, "0.0.0.0", ws_port):
+    async with websockets.serve(_dashboard_handler, "0.0.0.0", ws_port, ping_timeout=None):
         console.print(
             f"[bold green]OTEL Dashboard: http://localhost:{dashboard_port}/[/bold green]"
             f"[dim] (ws: :{ws_port})[/dim]"
@@ -442,7 +763,7 @@ async def run_dashboard_server(
         api_uri = f"ws://{api_host}:{api_port}/ws/watcher"
         while True:
             try:
-                async with websockets.connect(api_uri) as ws:
+                async with websockets.connect(api_uri, ping_timeout=None) as ws:
                     console.print(f"[dim]Watcher proxy connected to {api_uri}[/dim]")
                     async for raw in ws:
                         await _broadcast_to_dashboards(raw)
@@ -519,8 +840,10 @@ async def receiver(ws, state: dict) -> None:
                 if phase == "complete":
                     state["has_character"] = True
                     state["chargen_done"].set()
+                    state["chargen_prompt"].set()  # unblock loop to re-check has_character
                 elif phase in ("scene", "confirmation"):
                     state["chargen_pending"] = payload
+                    state["chargen_done"].set()
                     state["chargen_prompt"].set()
             elif msg_type == "NARRATION":
                 state["last_narration"] = payload.get("text", "")
@@ -543,7 +866,7 @@ async def run_interactive(
     uri = f"ws://{host}:{port}/ws"
     console.print(f"[bold]Connecting to {uri}...[/bold]")
 
-    async with websockets.connect(uri) as ws:
+    async with websockets.connect(uri, ping_timeout=None) as ws:
         state = {
             "connected": False,
             "has_character": False,
@@ -710,7 +1033,7 @@ async def run_scripted(
     console.print(f"  genre: {genre}, world: {world}, actions: {len(actions)}")
 
     uri = f"ws://{host}:{port}/ws"
-    async with websockets.connect(uri) as ws:
+    async with websockets.connect(uri, ping_timeout=None) as ws:
         state = {
             "connected": False,
             "has_character": False,
@@ -827,7 +1150,7 @@ async def run_player(
     uri = f"ws://{host}:{port}/ws"
     results = {"player": player_name, "passed": 0, "failed": 0}
 
-    async with websockets.connect(uri) as ws:
+    async with websockets.connect(uri, ping_timeout=None) as ws:
         state = {
             "connected": False,
             "has_character": False,

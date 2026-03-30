@@ -65,3 +65,14 @@ stories:
     branch: feat/15-5-daemon-client-typed-api
     assignee: keith
     review_verdict: approved
+  - id: 15-6
+    title: "Combat engine wiring — intent router fires COMBAT_EVENT but combat system never engages"
+    description: >-
+      The intent router correctly classifies combat actions and COMBAT_EVENT messages fire over WebSocket. But the actual combat system never engages — enemies array is always empty, turn_order is empty, current_turn is empty. The combat is purely narrated, not structured. This is a half-wired feature: the classification works but the combat engine (creature spawning, encounter triggers, HP tracking, turn-based resolution) never activates.
+    points: 5
+    priority: p0
+    status: in-progress
+    repos: sidequest-api
+    workflow: tdd
+    branch: feat/15-6-fix-combat-engine-wiring
+    assignee: dev
