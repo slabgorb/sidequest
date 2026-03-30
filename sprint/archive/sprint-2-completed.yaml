@@ -64,3 +64,8 @@ completed_stories:
     title: BeliefState model — per-NPC knowledge bubbles with facts, suspicions, claims, and credibility scores
     points: 5
     completed: '2026-03-30'
+  - id: 7-2
+    epic: ''
+    title: Gossip propagation — NPCs spread claims between turns, contradictions decay credibility
+    points: 5
+    completed: '2026-03-30'

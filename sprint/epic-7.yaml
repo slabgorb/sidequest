@@ -30,11 +30,13 @@ stories:
     title: Gossip propagation — NPCs spread claims between turns, contradictions decay credibility
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
+    completed: '2026-03-30'
     branch: feat/7-2-gossip-propagation
+    review_verdict: approved
   - id: 7-3
     title: Clue activation — semantic trigger evaluation for clue availability based on game state
     points: 3
