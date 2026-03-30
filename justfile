@@ -69,7 +69,7 @@ watch port="8765":
 # Quick-start aliases
 warmup: daemon-run
 server *flags:
-    just api-run {{flags}}
+    just api-run --trace {{flags}}
 client: ui-dev
 
 # Cross-repo
