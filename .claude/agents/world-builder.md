@@ -120,12 +120,15 @@ For world creation, ALWAYS:
 ## Genre Pack System
 
 **Structure:**
-- Genre packs live in `genre_packs/<genre_name>/`
-- Worlds live in `genre_packs/<genre_name>/worlds/<world_name>/`
+- Genre packs live in the `sidequest-content` repo (single source of truth)
+- Path: `sidequest-content/genre_packs/<genre_name>/`
+- Worlds live in `sidequest-content/genre_packs/<genre_name>/worlds/<world_name>/`
+- The orchestrator's `genre_packs/` is gitignored — never commit content there
+- To study existing packs, read from `sidequest-content/genre_packs/`
 
 **Complete Genre Pack Directory:**
 ```
-genre_packs/<genre_name>/
+sidequest-content/genre_packs/<genre_name>/
 ├── pack.yaml               # Metadata (name, version, description)
 ├── rules.yaml              # Core rules, classes, races, stats, combat
 ├── axes.yaml               # Tone axes + presets (world gen sliders)
@@ -181,6 +184,7 @@ genre_packs/<genre_name>/
 - `pulp_noir` — hardboiled detective fiction (1920s Paris)
 - `space_opera` — cinematic sci-fi
 - `road_warrior` — vehicular post-apocalypse
+- `victoria` — Victorian England mystery and romance (Playfair Display font, classical music, emotional ability scores)
 
 ## Design Principles
 
