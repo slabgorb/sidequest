@@ -384,12 +384,31 @@ connect();
 </html>"""
 
 
-def _serve_dashboard_http(connection, request):
-    """Serve the dashboard HTML page on GET /."""
-    from websockets.http11 import Response
-    if request.path == "/" or request.path == "/index.html":
-        return Response(200, "OK", websockets.Headers({"Content-Type": "text/html; charset=utf-8"}), DASHBOARD_HTML.encode())
-    return None  # Let websockets handle /ws
+async def _serve_dashboard_http(reader, writer):
+    """Minimal async HTTP server for the dashboard HTML page."""
+    try:
+        request_line = await asyncio.wait_for(reader.readline(), timeout=5)
+        # Read remaining headers (discard)
+        while True:
+            line = await reader.readline()
+            if line == b"\r\n" or line == b"\n" or not line:
+                break
+
+        # Serve HTML for any GET request
+        body = DASHBOARD_HTML.encode()
+        response = (
+            b"HTTP/1.1 200 OK\r\n"
+            b"Content-Type: text/html; charset=utf-8\r\n"
+            b"Connection: close\r\n"
+            b"Content-Length: " + str(len(body)).encode() + b"\r\n"
+            b"\r\n"
+        ) + body
+        writer.write(response)
+        await writer.drain()
+    except Exception:
+        pass
+    finally:
+        writer.close()
 
 
 async def run_dashboard_server(
@@ -397,17 +416,27 @@ async def run_dashboard_server(
 ) -> None:
     """
     Proxy: connects to API /ws/watcher as client, re-serves events on dashboard_port.
-    Serves HTML dashboard at http://localhost:{dashboard_port}/.
+    HTTP dashboard on dashboard_port, WebSocket on dashboard_port+1.
     """
-    # Start the WebSocket server for browser clients
-    async with websockets.serve(
-        _dashboard_handler,
-        "0.0.0.0",
-        dashboard_port,
-        process_request=_serve_dashboard_http,
-    ):
+    ws_port = dashboard_port + 1
+
+    # Inject the correct WebSocket port into the HTML
+    global DASHBOARD_HTML
+    DASHBOARD_HTML = DASHBOARD_HTML.replace(
+        "${proto}//${location.host}/ws",
+        f"${{proto}}//localhost:{ws_port}/ws",
+    )
+
+    # Start HTTP server for the dashboard page
+    http_server = await asyncio.start_server(
+        _serve_dashboard_http, "0.0.0.0", dashboard_port,
+    )
+
+    # Start WebSocket server for browser clients
+    async with websockets.serve(_dashboard_handler, "0.0.0.0", ws_port):
         console.print(
             f"[bold green]OTEL Dashboard: http://localhost:{dashboard_port}/[/bold green]"
+            f"[dim] (ws: :{ws_port})[/dim]"
         )
         # Connect to API watcher and proxy events
         api_uri = f"ws://{api_host}:{api_port}/ws/watcher"
