@@ -384,10 +384,11 @@ connect();
 </html>"""
 
 
-async def _serve_dashboard_http(path, request_headers):
+def _serve_dashboard_http(connection, request):
     """Serve the dashboard HTML page on GET /."""
-    if path == "/" or path == "/index.html":
-        return (200, [("Content-Type", "text/html; charset=utf-8")], DASHBOARD_HTML.encode())
+    from websockets.http11 import Response
+    if request.path == "/" or request.path == "/index.html":
+        return Response(200, "OK", websockets.Headers({"Content-Type": "text/html; charset=utf-8"}), DASHBOARD_HTML.encode())
     return None  # Let websockets handle /ws
 
 
