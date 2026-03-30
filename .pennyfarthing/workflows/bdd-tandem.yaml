@@ -62,6 +62,8 @@ workflow:
         file: gates/tests-fail
         type: tests_fail
         condition: Behavior scenarios have test coverage
+      gate_extensions:
+        - gates/wiring-check
       tandem:
         partner: dev
         scope: file-watch
@@ -90,6 +92,8 @@ workflow:
         file: gates/approval
         type: approval
         condition: Code review approved, UX requirements met
+      gate_extensions:
+        - gates/wiring-check
       tandem:
         partner: pm
         scope: file-watch

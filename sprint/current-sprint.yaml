@@ -5,6 +5,7 @@ sprint:
   status: active
   number: 2
 epics:
+  - '7'
   - '13'
   - '14'
   - '15'
