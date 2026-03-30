@@ -633,8 +633,18 @@ async def run_interactive(
                     else:
                         await ws.send(json.dumps(make_chargen_choice(choice)))
 
-                state["chargen_done"].clear()
-                await state["chargen_done"].wait()
+                # Wait for either the next scene prompt or character complete
+                # chargen_prompt fires for scene/confirmation, chargen_done fires for complete
+                state["chargen_prompt"].clear()
+                done_task = asyncio.create_task(state["chargen_done"].wait())
+                prompt_task = asyncio.create_task(state["chargen_prompt"].wait())
+                await asyncio.wait(
+                    [done_task, prompt_task],
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                # Cancel the loser
+                done_task.cancel()
+                prompt_task.cancel()
 
         # Wait for ready
         if not state["ready"]:
@@ -751,8 +761,15 @@ async def run_scripted(
                         auto_choice = "A wanderer with no past."
                     await ws.send(json.dumps(make_chargen_choice(auto_choice)))
 
-                state["chargen_done"].clear()
-                await state["chargen_done"].wait()
+                state["chargen_prompt"].clear()
+                done_task = asyncio.create_task(state["chargen_done"].wait())
+                prompt_task = asyncio.create_task(state["chargen_prompt"].wait())
+                await asyncio.wait(
+                    [done_task, prompt_task],
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                done_task.cancel()
+                prompt_task.cancel()
 
         # Wait for ready
         if not state["ready"]:
@@ -852,8 +869,15 @@ async def run_player(
                     else:
                         auto_choice = "A wanderer seeking purpose."
                     await ws.send(json.dumps(make_chargen_choice(auto_choice)))
-                state["chargen_done"].clear()
-                await state["chargen_done"].wait()
+                state["chargen_prompt"].clear()
+                done_task = asyncio.create_task(state["chargen_done"].wait())
+                prompt_task = asyncio.create_task(state["chargen_prompt"].wait())
+                await asyncio.wait(
+                    [done_task, prompt_task],
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                done_task.cancel()
+                prompt_task.cancel()
 
         if not state["ready"]:
             await state["ready_event"].wait()
