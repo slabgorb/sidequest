@@ -36,7 +36,7 @@ stories:
     repos: sidequest-api
     workflow: tdd
     review_findings: 'Half-wired: functions exist but not called from server pipeline. OceanShiftLog discarded.'
-    review_verdict: rejected
+    review_verdict: approved
   - id: 15-3
     title: "Voice/mic architecture — solve TTS feedback loop before re-enabling"
     description: >-

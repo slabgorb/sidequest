@@ -30,3 +30,8 @@ completed_stories:
     title: "Image scene relevance filter — validate art prompt matches current narrative context"
     points: 5
     completed: '2026-03-30'
+  - id: 15-2
+    epic: ''
+    title: "Wire OCEAN shift proposals into game flow — events trigger personality evolution"
+    points: 3
+    completed: '2026-03-30'

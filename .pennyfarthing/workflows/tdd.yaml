@@ -89,13 +89,13 @@ workflow:
         file: gates/approval
         type: approval
         condition: Code review approved, no blocking issues
-      gate_extensions:
-        - gates/wiring-check
         recovery:
           reviewer-verdict:
             action: rework
             target_phase: green
             max_attempts: 3
+      gate_extensions:
+        - gates/wiring-check
 
     - name: spec-reconcile
       agent: architect
