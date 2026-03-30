@@ -58,9 +58,14 @@ stories:
       produces Value::Null — log the error and skip the sync rather than propagating Null.
     points: 3
     priority: p0
-    status: ready
+    status: done
+    started: '2026-03-30'
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-03-30'
+    branch: fix/13-10-barrier-error-handling
+    assignee: keith
+    review_verdict: approved
   - id: 13-1
     title: "Turn collection UI — show pending/submitted status per player, disable input after submit"
     description: >-

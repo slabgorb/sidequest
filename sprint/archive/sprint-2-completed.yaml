@@ -20,3 +20,8 @@ completed_stories:
     title: "fix(barrier): handle timeout — notify players, fill missing actions, branch on timed_out"
     points: 3
     completed: '2026-03-29'
+  - id: 13-10
+    epic: ''
+    title: "fix(barrier): error handling — propagate add_player errors, fix disconnect removal race"
+    points: 3
+    completed: '2026-03-30'
