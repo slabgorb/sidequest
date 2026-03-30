@@ -120,6 +120,16 @@ setup:
     echo ""
     echo "=== Setup complete ==="
 
+# Headless playtest
+playtest-server *flags:
+    cd sidequest-api && cargo run -p sidequest-server -- --genre-packs-path {{content}} --headless {{flags}}
+
+playtest *flags:
+    python3 scripts/playtest.py {{flags}}
+
+playtest-scenario file:
+    python3 scripts/playtest.py --scenario scenarios/{{file}}.yaml
+
 status:
     @echo "=== API ===" && cd sidequest-api && git status --short
     @echo "=== UI ===" && cd sidequest-ui && git status --short

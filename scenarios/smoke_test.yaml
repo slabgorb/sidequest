@@ -1,0 +1,18 @@
+# Smoke test — exercises basic game loop in headless mode.
+# Run: just playtest-scenario smoke_test
+
+name: Smoke Test
+genre: mutant_wasteland
+world: flickering_reach
+
+character:
+  strategy: auto
+
+actions:
+  - "look around"
+  - "talk to the nearest person"
+  - "examine my surroundings more carefully"
+  - "/status"
+  - "/inventory"
+  - "pick up something interesting"
+  - "head somewhere new"
