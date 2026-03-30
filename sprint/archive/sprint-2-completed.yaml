@@ -79,3 +79,8 @@ completed_stories:
     title: "Action reveal broadcast — show each player's submitted action to the full party alongside narration"
     points: 3
     completed: '2026-03-30'
+  - id: 13-1
+    epic: ''
+    title: "Turn collection UI — show pending/submitted status per player, disable input after submit"
+    points: 5
+    completed: '2026-03-30'
