@@ -55,19 +55,17 @@ stories:
   - id: 15-4
     title: "Perception rewriter — implement at least one rewrite strategy"
     description: >-
-      perception.rs is a stub module — types compile but no RewriteStrategy is
-      implemented. SharedGameSession references it, has_perception_effects()
-      works, but narration is never actually rewritten per-player. Implement
-      at least the Blinded strategy as proof-of-concept to validate the
-      architecture before adding more effects.
+      perception.rs has RewriteStrategy trait and two implementations
+      (ClaudeRewriteStrategy, FullContextRewriteStrategy) in the Resonator agent.
+      SharedGameSession references it, has_perception_effects() works, but
+      rewrite() is never called from the server pipeline — narration is not
+      actually rewritten per-player. Wire the rewrite call into
+      dispatch_player_action() before broadcasting narration.
     points: 5
     priority: p2
-    status: done
+    status: ready
     repos: sidequest-api
     workflow: tdd
-    completed: '2026-03-29'
-    branch: feat/resonator-agent
-    assignee: keith
   - id: 15-5
     title: "Daemon client typed API — wire or remove stub types"
     description: >-
