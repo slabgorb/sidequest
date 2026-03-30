@@ -75,7 +75,7 @@ stories:
       TURN_STATUS WebSocket messages.
     points: 5
     priority: p0
-    status: ready
+    status: done
     repos: sidequest-ui
     workflow: tdd
   - id: 13-2
@@ -101,7 +101,7 @@ stories:
       narrator response so everyone knows what triggered the scene.
     points: 3
     priority: p0
-    status: ready
+    status: done
     repos: sidequest-api, sidequest-ui
     workflow: tdd
     depends_on: 13-2
