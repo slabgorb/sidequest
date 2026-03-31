@@ -53,10 +53,15 @@ stories:
     title: Accusation system — player accuses NPC, system evaluates evidence quality and resolves
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-31'
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-3
+    completed: '2026-03-31'
+    branch: feat/7-4-accusation-system
+    review_verdict: approved
   - id: 7-5
     title: NPC autonomous actions — scenario-driven NPC behaviors (alibi, confess, flee, destroy evidence)
     points: 5

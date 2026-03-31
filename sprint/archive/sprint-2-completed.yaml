@@ -7,7 +7,8 @@ sprint:
   start_date: 2026-03-29
   end_date: 2026-04-12
   status: active
-completed_epics: []
+completed_epics:
+  - '14'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -113,4 +114,19 @@ completed_stories:
     epic: ''
     title: Clue activation — semantic trigger evaluation for clue availability based on game state
     points: 3
+    completed: '2026-03-31'
+  - id: 14-8
+    epic: ''
+    title: "Sound slider labels — add descriptive labels to all audio control sliders"
+    points: 1
+    completed: '2026-03-31'
+  - id: 14-9
+    epic: ''
+    title: "Footnote inline references — connect footnote markers in text to numbered footnotes below"
+    points: 2
+    completed: '2026-03-31'
+  - id: 7-4
+    epic: ''
+    title: Accusation system — player accuses NPC, system evaluates evidence quality and resolves
+    points: 5
     completed: '2026-03-31'

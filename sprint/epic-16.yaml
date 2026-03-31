@@ -17,9 +17,6 @@ priority: p1
 status: future
 repos: sidequest-api, sidequest-ui, sidequest-content
 stories:
-
-  # ── Pillar 0: Quick Win ────────────────────────────────────────
-
   - id: 16-1
     title: "Narrator resource injection — serialize all genre resource state into prompt context every turn"
     description: >-
@@ -33,9 +30,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
-  # ── Pillar 1: Confrontation Engine ─────────────────────────────
-
   - id: 16-2
     title: "Confrontation trait + ConfrontationState — universal structured encounter engine"
     description: >-
@@ -51,7 +45,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
   - id: 16-3
     title: "Confrontation YAML schema — genres declare encounter types in rules.yaml"
     description: >-
@@ -66,7 +59,6 @@ stories:
     status: backlog
     repos: sidequest-api, sidequest-content
     workflow: tdd
-
   - id: 16-4
     title: "Migrate combat as confrontation — CombatState becomes a confrontation type preset"
     description: >-
@@ -80,7 +72,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
   - id: 16-5
     title: "Migrate chase as confrontation — ChaseState becomes a confrontation type preset"
     description: >-
@@ -94,7 +85,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
   - id: 16-6
     title: "Standoff confrontation type — spaghetti_western pre-combat encounter"
     description: >-
@@ -109,7 +99,6 @@ stories:
     status: backlog
     repos: sidequest-api, sidequest-content
     workflow: tdd
-
   - id: 16-7
     title: "Social confrontation types — negotiation, interrogation, trial"
     description: >-
@@ -123,7 +112,6 @@ stories:
     status: backlog
     repos: sidequest-api, sidequest-content
     workflow: tdd
-
   - id: 16-8
     title: "Genre-specific confrontation types — net combat, ship combat, auction"
     description: >-
@@ -138,7 +126,6 @@ stories:
     status: backlog
     repos: sidequest-content
     workflow: tdd
-
   - id: 16-9
     title: "Confrontation UI — generic encounter display with genre theming"
     description: >-
@@ -154,9 +141,6 @@ stories:
     status: backlog
     repos: sidequest-ui
     workflow: tdd
-
-  # ── Pillar 2: Resource Pools ───────────────────────────────────
-
   - id: 16-10
     title: "ResourcePool struct + YAML schema — generic named resource with thresholds"
     description: >-
@@ -171,7 +155,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
   - id: 16-11
     title: "Resource threshold → KnownFact pipeline — permanent narrator memory"
     description: >-
@@ -186,7 +169,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
   - id: 16-12
     title: "Wire genre resources — Luck, Humanity, Heat, Fuel-at-rest as ResourcePool instances"
     description: >-
@@ -200,7 +182,6 @@ stories:
     status: backlog
     repos: sidequest-content, sidequest-api
     workflow: tdd
-
   - id: 16-13
     title: "UI resource display — generic ResourceBar component with genre theming"
     description: >-
@@ -214,9 +195,6 @@ stories:
     status: backlog
     repos: sidequest-ui
     workflow: tdd
-
-  # ── Pillar 3: Mood Extension ───────────────────────────────────
-
   - id: 16-14
     title: "String-keyed moods + fallback aliases — genre packs declare custom moods"
     description: >-
@@ -231,7 +209,6 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
-
   - id: 16-15
     title: "Faction music routing — trigger faction themes by context"
     description: >-
@@ -245,9 +222,6 @@ stories:
     status: backlog
     repos: sidequest-api, sidequest-content
     workflow: tdd
-
-  # ── Pillar 4: Content Audit ────────────────────────────────────
-
   - id: 16-16
     title: "Content audit — all genre packs declare confrontations and resources"
     description: >-

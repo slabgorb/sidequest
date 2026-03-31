@@ -4,7 +4,7 @@ title: Multiplayer Session UX — Spawn, Visibility, Text Tuning, and Chargen Po
 description: >-
   Address the remaining multiplayer UX findings from the 2026-03-29 playtest. Party co-location at session start, player location on character sheets, text length/vocabulary sliders for group play, character generation back button, image pacing/relevance, and sound slider labels.
 priority: p0
-status: ready
+status: done
 repos: sidequest-api, sidequest-ui, sidequest-daemon
 stories:
   - id: 14-1
@@ -107,3 +107,4 @@ key_references:
   - sidequest-api/crates/sidequest-server/src/shared_session.rs
   - sidequest-ui/src/components/
   - docs/api-contract.md
+completed: '2026-03-31'
