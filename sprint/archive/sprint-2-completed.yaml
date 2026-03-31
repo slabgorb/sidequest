@@ -104,3 +104,8 @@ completed_stories:
     title: "Vocabulary level slider — narrator prose complexity control (accessible / literary / epic)"
     points: 3
     completed: '2026-03-31'
+  - id: 14-6
+    epic: ''
+    title: "Image pacing throttle — configurable minimum interval between scene images"
+    points: 3
+    completed: '2026-03-31'

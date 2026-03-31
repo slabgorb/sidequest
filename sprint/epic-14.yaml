@@ -64,10 +64,11 @@ stories:
       Add image_cooldown_seconds config (default 60s for multiplayer, 30s for solo). After an image is generated, suppress further image triggers until cooldown expires. DM can force an image at any time. Prevents image flooding during rapid turn sequences.
     points: 3
     priority: p1
-    status: in_progress
+    status: done
+    started: '2026-03-31'
     repos: sidequest-api
     workflow: tdd
-    started: '2026-03-31'
+    completed: '2026-03-31'
     branch: feat/14-6-image-pacing-throttle
   - id: 14-7
     title: "Image scene relevance filter — validate art prompt matches current narrative context"
