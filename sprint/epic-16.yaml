@@ -59,7 +59,8 @@ stories:
       structs at pack load time. Validate schema on load.
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    completed: '2026-03-31'
     repos: sidequest-api, sidequest-content
     workflow: tdd
   - id: 16-4
