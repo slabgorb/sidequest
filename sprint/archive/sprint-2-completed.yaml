@@ -94,3 +94,8 @@ completed_stories:
     title: "Player location on character sheet — show current location for each party member"
     points: 2
     completed: '2026-03-31'
+  - id: 14-3
+    epic: ''
+    title: "Text length slider — per-session narrator verbosity control (concise / standard / verbose)"
+    points: 3
+    completed: '2026-03-31'

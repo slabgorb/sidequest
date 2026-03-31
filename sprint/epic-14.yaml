@@ -32,9 +32,10 @@ stories:
       Add a narrator_verbosity setting with three levels. Injected into narrator system prompt as a length/detail instruction. UI exposes as a slider in session settings. Default is "standard" for multiplayer, "verbose" for solo. Persisted per-session.
     points: 3
     priority: p1
-    status: ready
+    status: done
     repos: sidequest-api, sidequest-ui
     workflow: tdd
+    completed: '2026-03-31'
   - id: 14-4
     title: "Vocabulary level slider — narrator prose complexity control (accessible / literary / epic)"
     description: >-
