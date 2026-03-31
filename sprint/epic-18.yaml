@@ -22,6 +22,7 @@ stories:
     repos: api,ui
     workflow: tdd
     type: bug
+    review_verdict: approved
   - id: 18-3
     title: Parallelize prompt context build and preprocess Haiku call via tokio::join!
     points: 2

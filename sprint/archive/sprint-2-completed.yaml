@@ -150,3 +150,8 @@ completed_stories:
     title: "Migrate combat as confrontation — CombatState becomes a confrontation type preset"
     points: 5
     completed: '2026-03-31'
+  - id: 18-2
+    epic: ''
+    title: Fix State tab — wire GameStateSnapshot event to dashboard state_transition listener
+    points: 2
+    completed: '2026-03-31'
