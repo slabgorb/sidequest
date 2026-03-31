@@ -43,7 +43,7 @@ stories:
       All existing combat and chase tests must continue to pass.
     points: 8
     priority: p1
-    status: backlog
+    status: complete
     repos: sidequest-api
     workflow: tdd
   - id: 16-3
