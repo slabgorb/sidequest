@@ -88,9 +88,10 @@ stories:
       can remain as convenience alias. No behavioral changes.
     points: 5
     priority: p1
-    status: backlog
+    status: in-progress
     repos: sidequest-api
     workflow: tdd
+    branch: feat/16-5-migrate-chase-confrontation
   - id: 16-6
     title: "Standoff confrontation type — spaghetti_western pre-combat encounter"
     description: >-
