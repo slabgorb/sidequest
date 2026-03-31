@@ -309,19 +309,20 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 <body>
 <div id="header">
   <span class="title">SideQuest OTEL</span>
-  <span class="dot" id="dot">\●</span>
+  <span class="dot" id="dot">●</span>
   <span id="conn-status" style="color:var(--muted);font-size:12px">Connecting...</span>
   <span class="stat">Turns: <b id="hdr-turns">0</b></span>
   <span class="stat">Errors: <b id="hdr-errors">0</b></span>
-  <span class="stat">p95: <b id="hdr-p95">\—</b></span>
+  <span class="stat">p95: <b id="hdr-p95">—</b></span>
   <button onclick="togglePause()">Pause</button>
   <button onclick="clearAll()">Clear</button>
 </div>
 <div id="tabs">
-  <div class="tab active" onclick="switchTab(0)">\① Timeline <span class="badge" id="tab0-badge">0</span></div>
-  <div class="tab" onclick="switchTab(1)">\② State</div>
-  <div class="tab" onclick="switchTab(2)">\③ Subsystems <span class="badge" id="tab2-badge"></span></div>
-  <div class="tab" onclick="switchTab(3)">\④ Timing</div>
+  <div class="tab active" onclick="switchTab(0)">① Timeline <span class="badge" id="tab0-badge">0</span></div>
+  <div class="tab" onclick="switchTab(1)">② State</div>
+  <div class="tab" onclick="switchTab(2)">③ Subsystems <span class="badge" id="tab2-badge"></span></div>
+  <div class="tab" onclick="switchTab(3)">④ Timing</div>
+  <div class="tab" onclick="switchTab(4)">⑤ Console <span class="badge" id="tab4-badge">0</span></div>
 </div>
 
 <!-- Tab 0: Timeline / Flame Chart -->
@@ -371,6 +372,21 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   </div>
 </div>
 
+<!-- Tab 4: Console (raw event log) -->
+<div class="tab-content" id="tc4">
+  <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+    <span style="color:var(--muted);font-size:11px">Filter:</span>
+    <select id="console-comp-filter" onchange="renderConsole()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:2px 6px;font-size:11px;font-family:inherit">
+      <option value="">All components</option>
+    </select>
+    <select id="console-type-filter" onchange="renderConsole()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:2px 6px;font-size:11px;font-family:inherit">
+      <option value="">All types</option>
+    </select>
+    <label style="color:var(--muted);font-size:11px"><input type="checkbox" id="console-auto-scroll" checked> Auto-scroll</label>
+  </div>
+  <div class="card" style="max-height:calc(100vh - 150px);overflow-y:auto;padding:4px" id="console-log"></div>
+</div>
+
 <script>
 // ── State ──
 const S = {
@@ -384,6 +400,11 @@ const SPAN_COLORS = {
   music_director:'#f06292', render_pipeline:'#e57373', tts_pipeline:'#ce93d8',
   prerender_scheduler:'#80cbc4'
 };
+const COMP_COLORS = {
+  game:'#4fc3f7', agent:'#bb86fc', state:'#81c784', trope:'#ffb74d',
+  combat:'#e57373', music_director:'#f06292', multiplayer:'#ce93d8',
+  orchestrator:'#03dac6'
+};
 const AGENT_COLORS = { narrator:'#bb86fc', creature_smith:'#e57373', ensemble:'#81c784', dialectician:'#4fc3f7' };
 
 function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
@@ -395,6 +416,7 @@ function switchTab(i) {
   S.activeTab = i;
   if (i===2) renderHealth();
   if (i===3) renderTiming();
+  if (i===4) renderConsole();
 }
 function togglePause() { S.paused = !S.paused; }
 function clearAll() { S.turns.length=0; S.allEvents.length=0; Object.keys(S.componentMap).forEach(k=>delete S.componentMap[k]); S.selectedTurn=null; updateAll(); }
@@ -404,7 +426,7 @@ function updateHeader() {
   document.getElementById('hdr-turns').textContent = S.turns.length;
   document.getElementById('hdr-errors').textContent = S.allEvents.filter(e=>(e.severity||'info')==='error').length;
   const durs = S.turns.map(t=>t.fields.agent_duration_ms||0).filter(d=>d>0).sort((a,b)=>a-b);
-  const p95 = durs.length ? (durs[Math.floor(durs.length*0.95)] / 1000).toFixed(1) + 's' : '\—';
+  const p95 = durs.length ? (durs[Math.floor(durs.length*0.95)] / 1000).toFixed(1) + 's' : '—';
   document.getElementById('hdr-p95').textContent = p95;
   document.getElementById('tab0-badge').textContent = S.turns.length;
   const errs = S.allEvents.filter(e=>(e.severity||'info')==='error').length;
@@ -424,12 +446,13 @@ function dispatch(ev) {
     S.turns.push(ev);
     if (S.activeTab === 0) { renderTurnList(); if (!S.selectedTurn) selectTurn(S.turns.length - 1); }
   }
-  if (ev.event_type === 'game_state_snapshot' && ev.fields && ev.fields.snapshot) {
-    S.latestSnapshot = ev.fields.snapshot;
+  if (ev.event_type === 'game_state_snapshot') {
+    S.latestSnapshot = ev.fields.snapshot || ev.fields;
     if (S.activeTab === 1) renderState();
   }
   updateHeader();
   if (S.activeTab === 0 && ev.event_type === 'turn_complete') renderTurnList();
+  if (S.activeTab === 4) renderConsole();
 }
 
 // ── Tab 0: Timeline ──
@@ -453,10 +476,10 @@ function selectTurn(i) {
   const t = S.turns[i];
   if (!t) return;
   const f = t.fields || {};
-  const dur = f.agent_duration_ms || 1;
+  const dur = f.total_duration_ms || f.agent_duration_ms || 1;
 
   // Flame chart
-  document.getElementById('flame-title').textContent = `Turn ${f.turn_id||'?'} \· ${f.classified_intent||'?'} \→ ${f.agent_name||'?'} \· ${(dur/1000).toFixed(1)}s`;
+  document.getElementById('flame-title').textContent = `Turn ${f.turn_id||'?'} · ${f.classified_intent||'?'} → ${f.agent_name||'?'} · ${(dur/1000).toFixed(1)}s`;
 
   const spans = f.spans || [
     { name: 'agent_llm', component: f.agent_name||'narrator', start_ms: 0, duration_ms: dur }
@@ -485,12 +508,12 @@ function selectTurn(i) {
   const beats = (f.beats_fired||[]).map(b=>`${b.trope}@${(b.threshold||0).toFixed(1)}`).join(', ') || 'none';
   document.getElementById('turn-meta-body').innerHTML = `
     <div style="color:var(--muted);font-size:12px;line-height:1.8">
-    \· <b>Input:</b> ${esc(f.player_input||'')}
-    <br>\· <b>Intent:</b> ${f.classified_intent||'?'} &rarr; <b>Agent:</b> ${f.agent_name||'?'}
-    <br>\· <b>Tokens:</b> ${f.token_count_in||0} in / ${f.token_count_out||0} out &nbsp; <b>Tier:</b> ${f.extraction_tier||'?'} &nbsp; <b>Degraded:</b> ${f.is_degraded?'<span style="color:var(--red)">YES</span>':'no'}
-    <br>\· <b>Patches:</b> ${esc(patches)}
-    <br>\· <b>Beats:</b> ${esc(beats)}
-    <br>\· <b>Delta empty:</b> ${f.delta_empty}
+    · <b>Input:</b> ${esc(f.player_input||'')}
+    <br>· <b>Intent:</b> ${f.classified_intent||'?'} &rarr; <b>Agent:</b> ${f.agent_name||'?'}
+    <br>· <b>Tokens:</b> ${f.token_count_in||0} in / ${f.token_count_out||0} out &nbsp; <b>Tier:</b> ${f.extraction_tier||'?'} &nbsp; <b>Degraded:</b> ${f.is_degraded?'<span style="color:var(--red)">YES</span>':'no'}
+    <br>· <b>Patches:</b> ${esc(patches)}
+    <br>· <b>Beats:</b> ${esc(beats)}
+    <br>· <b>Delta empty:</b> ${f.delta_empty}
     </div>`;
 }
 
@@ -535,10 +558,10 @@ function renderHealth() {
     const maxTurn = last20.length ? last20[last20.length-1] : 0;
     last20.forEach(tid => {
       const sev = grid[c][tid];
-      if (!sev) html += '<div class="hg-cell hg-empty">\·</div>';
-      else if (sev === 'error') html += '<div class="hg-cell hg-err">\✗</div>';
-      else if (sev === 'warn') html += '<div class="hg-cell hg-warn">\⚠</div>';
-      else html += '<div class="hg-cell hg-ok">\●</div>';
+      if (!sev) html += '<div class="hg-cell hg-empty">·</div>';
+      else if (sev === 'error') html += '<div class="hg-cell hg-err">✗</div>';
+      else if (sev === 'warn') html += '<div class="hg-cell hg-warn">⚠</div>';
+      else html += '<div class="hg-cell hg-ok">●</div>';
     });
     const gap = maxTurn - lastSeen;
     html += gap > 5 ? `<div class="hg-silent">SILENT ${gap}t</div>` : '<div></div>';
@@ -596,7 +619,7 @@ function renderTiming() {
   document.getElementById('agent-breakdown').innerHTML = Object.entries(byAgent).map(([a, ds]) => {
     const avg = (ds.reduce((s,d)=>s+d,0)/ds.length/1000).toFixed(1);
     const color = AGENT_COLORS[a] || 'var(--accent)';
-    return `<div style="padding:4px 0;font-size:12px"><span style="color:${color}">\■</span> ${esc(a)} &mdash; avg: ${avg}s (${ds.length} turns)</div>`;
+    return `<div style="padding:4px 0;font-size:12px"><span style="color:${color}">■</span> ${esc(a)} &mdash; avg: ${avg}s (${ds.length} turns)</div>`;
   }).join('');
 
   // Histogram (D3)
@@ -689,7 +712,38 @@ function renderTierDonut() {
     .attr('text-anchor','middle').attr('font-size','10px').text(d=>d.data.label+' ('+d.data.value+')');
 }
 
-function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); }
+function renderConsole() {
+  const el = document.getElementById('console-log');
+  const compFilter = document.getElementById('console-comp-filter').value;
+  const typeFilter = document.getElementById('console-type-filter').value;
+  let evts = S.allEvents;
+  if (compFilter) evts = evts.filter(e=>e.component===compFilter);
+  if (typeFilter) evts = evts.filter(e=>e.event_type===typeFilter);
+  const last200 = evts.slice(-200);
+  el.innerHTML = last200.map(e => {
+    const sev = e.severity || 'info';
+    const sevColor = sev==='error'?'var(--red)':sev==='warn'?'var(--amber)':'inherit';
+    const compColor = COMP_COLORS[e.component] || 'var(--purple)';
+    const fields = Object.entries(e.fields||{})
+      .filter(([k])=>!['turn_number','turn_id'].includes(k))
+      .map(([k,v])=>`<span style="color:var(--muted)">${esc(k)}</span>=<span style="color:var(--sky)">${typeof v==='string'?esc(v):esc(JSON.stringify(v))}</span>`)
+      .join(' ');
+    const turn = e.fields?.turn_number || e.fields?.turn_id || '';
+    return `<div class="evt-row" style="border-left-color:${compColor};color:${sevColor}">` +
+      `<span style="color:var(--muted);font-size:10px">${turn?'T'+turn+' ':''}</span>` +
+      `<span style="color:${compColor}">[${esc(e.component)}]</span> ` +
+      `<span style="color:var(--teal)">${esc(e.event_type)}</span> ${fields}</div>`;
+  }).join('');
+  document.getElementById('tab4-badge').textContent = S.allEvents.length;
+  // Update filter dropdowns with known values
+  const compSel = document.getElementById('console-comp-filter');
+  const knownComps = new Set(compSel.querySelectorAll('option').values().map(o=>o.value).filter(Boolean));
+  Object.keys(S.componentMap).sort().forEach(c => {
+    if (!knownComps.has(c)) { const o = document.createElement('option'); o.value=c; o.textContent=c; compSel.appendChild(o); }
+  });
+  if (document.getElementById('console-auto-scroll').checked) el.scrollTop = el.scrollHeight;
+}
+function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); if(S.activeTab===4)renderConsole(); }
 
 // ── WebSocket ──
 function connect() {
