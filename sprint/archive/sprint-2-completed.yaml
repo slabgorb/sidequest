@@ -140,3 +140,8 @@ completed_stories:
     title: "Narrator resource injection — serialize all genre resource state into prompt context every turn"
     points: 3
     completed: '2026-03-31'
+  - id: 16-2
+    epic: ''
+    title: "Confrontation trait + ConfrontationState — universal structured encounter engine"
+    points: 8
+    completed: '2026-03-31'
