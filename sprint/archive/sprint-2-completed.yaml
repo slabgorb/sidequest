@@ -89,3 +89,8 @@ completed_stories:
     title: "Combat engine wiring — intent router fires COMBAT_EVENT but combat system never engages"
     points: 5
     completed: '2026-03-30'
+  - id: 14-2
+    epic: ''
+    title: "Player location on character sheet — show current location for each party member"
+    points: 2
+    completed: '2026-03-31'
