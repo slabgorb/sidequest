@@ -41,10 +41,11 @@ stories:
     title: Clue activation — semantic trigger evaluation for clue availability based on game state
     points: 3
     priority: p2
-    status: backlog
+    status: in-progress
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
+    branch: feat/7-3-clue-activation
   - id: 7-4
     title: Accusation system — player accuses NPC, system evaluates evidence quality and resolves
     points: 5
