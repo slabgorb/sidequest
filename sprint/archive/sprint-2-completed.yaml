@@ -109,3 +109,8 @@ completed_stories:
     title: "Image pacing throttle — configurable minimum interval between scene images"
     points: 3
     completed: '2026-03-31'
+  - id: 7-3
+    epic: ''
+    title: Clue activation — semantic trigger evaluation for clue availability based on game state
+    points: 3
+    completed: '2026-03-31'
