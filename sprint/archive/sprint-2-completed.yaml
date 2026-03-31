@@ -130,3 +130,8 @@ completed_stories:
     title: Accusation system — player accuses NPC, system evaluates evidence quality and resolves
     points: 5
     completed: '2026-03-31'
+  - id: 7-5
+    epic: ''
+    title: NPC autonomous actions — scenario-driven NPC behaviors (alibi, confess, flee, destroy evidence)
+    points: 5
+    completed: '2026-03-31'

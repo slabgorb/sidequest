@@ -66,10 +66,15 @@ stories:
     title: NPC autonomous actions — scenario-driven NPC behaviors (alibi, confess, flee, destroy evidence)
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-03-31'
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
+    completed: '2026-03-31'
+    branch: feat/7-5-npc-autonomous-actions
+    review_verdict: approved
   - id: 7-6
     title: Scenario pacing — turn-based pressure escalation, tension ramp over scenario arc
     points: 3
