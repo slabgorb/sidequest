@@ -102,9 +102,11 @@ stories:
       lore.semantic_retrieval (query_hint, top_k_scores, fallback_to_keyword).
     points: 8
     priority: p0
-    status: backlog
+    status: done
     repos: api,daemon
     workflow: tdd
+    assignee: dev
+    review_verdict: approved
   - id: 15-8
     title: "Canonical GameSnapshot in dispatch — eliminate load-before-save round-trip on every turn"
     description: >-
