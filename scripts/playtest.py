@@ -1239,7 +1239,6 @@ async def receiver(ws, state: dict) -> None:
                 if phase == "complete":
                     state["has_character"] = True
                     state["chargen_done"].set()
-                    state["chargen_prompt"].set()  # unblock loop to re-check has_character
                 elif phase in ("scene", "confirmation"):
                     state["chargen_pending"] = payload
                     state["chargen_done"].set()
