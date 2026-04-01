@@ -55,7 +55,7 @@ stories:
     title: Prompt inspector tab — full assembled prompt with zone labels and per-zone token counts
     points: 5
     priority: p1
-    status: in_progress
+    status: in_review
     started: '2026-03-31'
     repos: api,ui
     workflow: tdd
