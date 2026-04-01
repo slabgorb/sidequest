@@ -371,3 +371,10 @@ stories:
     status: backlog
     repos: api
     workflow: tdd
+  - id: 15-23
+    title: Wire WorldBuilder into session creation — materialize GameState at target maturity on new game
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd

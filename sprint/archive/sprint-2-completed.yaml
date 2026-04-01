@@ -211,3 +211,8 @@ completed_stories:
     title: Parallelize prompt context build and preprocess Haiku call via tokio::join!
     points: 2
     completed: '2026-04-01'
+  - id: 15-23
+    epic: ''
+    title: Wire WorldBuilder into session creation — materialize GameState at target maturity on new game
+    points: 3
+    completed: '2026-04-01'
