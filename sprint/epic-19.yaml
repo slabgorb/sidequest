@@ -1,0 +1,197 @@
+id: '19'
+type: epic
+title: "Dungeon Crawl Engine — Room Graph Navigation & Resource Pressure"
+description: >-
+  Engine support for the Caverns & Claudes genre pack. Adds room-graph navigation
+  mode to CartographyConfig (ADR-055), consumable item depletion, weight-based
+  encumbrance, and an automapper UI component. Reuses trope engine for Keeper
+  awareness, NPC disposition for hireling morale, and ConfrontationDef for boss
+  encounters — no new subsystems for those.
+priority: p1
+status: active
+repos: sidequest-api, sidequest-ui, sidequest-content
+stories:
+  - id: 19-1
+    title: "RoomDef + RoomExit structs — room graph data model in sidequest-genre"
+    description: >-
+      Add RoomDef, RoomExit, and NavigationMode enum to CartographyConfig in
+      sidequest-genre/src/models.rs. Load rooms from rooms.yaml at world level.
+      Validate: all exit targets reference existing room IDs, bidirectional exits
+      (except chute_down), no orphaned rooms. Genre pack sets navigation_mode:
+      room_graph to opt in. Region mode remains the default.
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    acceptance_criteria:
+      - RoomDef, RoomExit, NavigationMode structs in models.rs
+      - rooms.yaml loaded and parsed alongside cartography.yaml
+      - Validation rejects invalid exit targets, missing bidirectional routes (non-chute)
+      - Existing genre packs unaffected (navigation_mode defaults to Region)
+      - Unit tests for deserialization and validation
+
+  - id: 19-2
+    title: "Validated room movement — location constrained to room_id with exit check"
+    description: >-
+      When navigation_mode is RoomGraph, WorldStatePatch.location must be a valid
+      room_id reachable via an exit from the current room. Invalid moves are rejected.
+      Track discovered_rooms: HashSet<String> in GameSnapshot. Rooms are discovered
+      on entry. Starting room is the room with type: entrance.
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-1]
+    acceptance_criteria:
+      - Location validation in room_graph mode rejects rooms without exit from current
+      - discovered_rooms populated on room entry
+      - Starting location set to entrance room on session create
+      - Region mode behavior unchanged
+      - Integration test: move through 3-room sequence, reject invalid move
+
+  - id: 19-3
+    title: "Trope tick on room transition — fire trope engine per room move"
+    description: >-
+      When navigation_mode is RoomGraph and location changes, fire
+      TropeEngine::tick() with the room's keeper_awareness_modifier as the
+      engagement multiplier. This makes rate_per_turn advance per room transition
+      instead of per player action. Resource ticks and Keeper awareness (via trope
+      escalation) are driven by movement.
+    points: 3
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-2]
+    acceptance_criteria:
+      - Trope tick fires on room transition in room_graph mode
+      - keeper_awareness_modifier from room data scales the multiplier
+      - Trope escalation events fire at thresholds
+      - Existing per-turn tick behavior unchanged in region mode
+      - Test: 5 room transitions advance trope by 5 × rate_per_turn × modifier
+
+  - id: 19-4
+    title: "MAP_UPDATE for room graph — send discovered rooms with exits to UI"
+    description: >-
+      Extend MAP_UPDATE / ExploredLocation in sidequest-protocol to include room
+      exits, room_type, size, and current_room flag. When navigation_mode is
+      RoomGraph, MAP_UPDATE sends the full discovered room graph. Undiscovered
+      rooms are omitted (fog of war). UI receives structured data for automapper.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-2]
+    acceptance_criteria:
+      - ExploredLocation includes exits, room_type, size fields
+      - MAP_UPDATE only includes discovered rooms
+      - Current room flagged in payload
+      - Protocol types updated in sidequest-protocol
+      - Test: discover 3 rooms, verify MAP_UPDATE contains exactly 3 with correct exits
+
+  - id: 19-5
+    title: "Consumable item depletion — uses_remaining on items, decrement on room transition"
+    description: >-
+      Add uses_remaining: Option<u32> to Item struct in inventory.rs. Add
+      consume_use(item_id) method that decrements and removes item at 0. On room
+      transition in room_graph mode, decrement uses_remaining for the first active
+      item with tag 'light'. Fire GameMessage when a light source is exhausted.
+      Genre pack item_catalog entries set resource_ticks as initial uses_remaining.
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-3]
+    acceptance_criteria:
+      - Item.uses_remaining field added, serialized/deserialized
+      - consume_use() decrements and removes at 0
+      - Room transition decrements active light source
+      - GameMessage fired on light exhaustion
+      - Test: torch with 6 uses survives 5 transitions, removed on 6th
+
+  - id: 19-6
+    title: "Wire ResourceDeclaration.decay_per_turn — apply resource decay on trope tick"
+    description: >-
+      ResourceDeclaration.decay_per_turn is parsed from YAML but never applied.
+      After trope tick (which fires per room transition in room_graph mode), apply
+      decay_per_turn to each resource in resource_state via existing
+      apply_resource_deltas(). Resources at min value trigger a GameMessage.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-3]
+    acceptance_criteria:
+      - decay_per_turn applied to resource_state after trope tick
+      - Resources clamped to declared min/max
+      - GameMessage when resource hits min
+      - Test: resource with decay -0.1 reaches 0 after 10 ticks
+
+  - id: 19-7
+    title: "Weight-based encumbrance — total_weight, carry_mode, overencumbered state"
+    description: >-
+      Add total_weight() -> f64 to Inventory. Add CarryMode enum (Count | Weight)
+      and weight_limit to genre rules. When carry_mode is Weight, Inventory.add()
+      rejects items that would exceed weight_limit. Add is_overencumbered() check.
+      When overencumbered in room_graph mode, trope tick multiplier increases by 1.5x.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-5]
+    acceptance_criteria:
+      - total_weight() sums all item weights × quantities
+      - CarryMode::Weight rejects over-limit adds
+      - is_overencumbered() returns true when at/over limit
+      - Trope multiplier increased when overencumbered
+      - Existing count-based carry unaffected
+      - Test: add items to weight limit, verify rejection and overencumbered flag
+
+  - id: 19-8
+    title: "Automapper UI component — render room graph as dungeon floorplan"
+    description: >-
+      New React component in sidequest-ui that receives room graph data from
+      MAP_UPDATE messages and renders a dungeon floorplan. Rooms as rectangles,
+      corridors as lines, doors as icons. Fog of war hides undiscovered rooms.
+      Current room highlighted. Force-directed layout from graph topology.
+      Graph-paper aesthetic from C&C theme.yaml colors.
+    points: 8
+    priority: p1
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    depends_on: [19-4]
+    acceptance_criteria:
+      - Automapper component renders room graph from MAP_UPDATE data
+      - Fog of war hides undiscovered rooms
+      - Current room highlighted with accent color
+      - Exits rendered as typed connections (door icon, corridor line, stairs)
+      - Graph-paper aesthetic matching C&C theme
+      - Responsive — works in sidebar panel
+      - Test: render 5-room graph, verify SVG/canvas output
+
+  - id: 19-9
+    title: "Treasure-as-XP — gold extraction grants affinity progress"
+    description: >-
+      When gold increases while player location is a surface region (not in dungeon),
+      advance affinity progress for the configured affinity by the gold amount.
+      Genre pack rules set xp_affinity: "Plunderer" to configure which affinity.
+      Content-level fallback: try narrator prompt first, implement engine hook only
+      if unreliable.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: [19-2]
+    acceptance_criteria:
+      - Gold increase on surface location triggers affinity progress
+      - xp_affinity field in genre rules configures target affinity
+      - No effect when gold changes inside dungeon
+      - Test: extract 100 GP to surface, verify 100 progress on configured affinity
