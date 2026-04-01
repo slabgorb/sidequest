@@ -78,3 +78,293 @@ stories:
     branch: feat/15-6-fix-combat-engine-wiring
     assignee: dev
     review_verdict: approved
+  - id: 15-7
+    title: "Wire RAG pipeline end-to-end — accumulate_lore from turns, generate embeddings via daemon, switch to semantic retrieval"
+    description: >-
+      The RAG pipeline has three broken links. (1) accumulate_lore() in lore.rs is
+      exported and tested but has ZERO non-test callers — lore_established on
+      WorldStatePatch is populated by the orchestrator but never read back in
+      dispatch to call accumulate_lore(), so the lore store never grows past its
+      initial genre-pack seed. (2) LoreFragment supports optional embedding vectors
+      and query_by_similarity() does cosine similarity search, but no embedding
+      generation pipeline exists — the daemon has transformers installed but no
+      /embed endpoint, and no Rust code calls one. (3) select_lore_for_prompt()
+      in dispatch/prompt.rs:465 falls back to keyword substring matching because
+      no fragments have embeddings — the semantic search path is dead code in
+      production. Fix all three: wire accumulate_lore() into post-narration
+      dispatch (read lore_established from WorldStatePatch, call accumulate_lore
+      for each entry), add an /embed endpoint to sidequest-daemon that generates
+      sentence embeddings via transformers, call it from the Rust daemon-client
+      when creating new lore fragments, and upgrade select_lore_for_prompt() to
+      prefer query_by_similarity() when embeddings are available. OTEL events
+      required: lore.fragment_accumulated (category, turn, token_estimate),
+      lore.embedding_generated (fragment_id, latency_ms, model),
+      lore.semantic_retrieval (query_hint, top_k_scores, fallback_to_keyword).
+    points: 8
+    priority: p0
+    status: backlog
+    repos: api,daemon
+    workflow: tdd
+  - id: 15-8
+    title: "Canonical GameSnapshot in dispatch — eliminate load-before-save round-trip on every turn"
+    description: >-
+      persist_game_state() in dispatch/mod.rs:1167 does a full SQLite load every
+      turn just to merge 15 loose local variables back into a snapshot, then saves
+      the merged result. Two actor-channel round-trips per player action. The root
+      cause: the dispatch loop scatters game state across individual locals
+      (ctx.hp, ctx.inventory, ctx.npc_registry, ctx.combat_state, etc.) instead
+      of maintaining a canonical GameSnapshot. Fix: carry a mutable GameSnapshot
+      in DispatchContext, patch it in-place as the turn progresses, and save it
+      directly — one round-trip, no load. The load path stays for session restore
+      on reconnect (dispatch_connect), but the hot path (every turn) becomes
+      save-only. OTEL event: persistence.save_latency_ms (before/after
+      comparison).
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-9
+    title: "Wire narrative_log SQLite table — append_narrative per turn, enable recap generation"
+    description: >-
+      PersistenceHandle::append_narrative() is fully implemented through the
+      actor pattern (persistence.rs:447-457) but has ZERO non-test callers in
+      sidequest-server. Instead, narration is pushed into snapshot.narrative_log
+      (a Vec inside the JSON blob in game_state.snapshot_json) at
+      dispatch/mod.rs:1242. This means the narrative_log SQLite table is always
+      empty, recent_narrative() always returns [], and generate_recap() never
+      produces a "Previously On..." summary. Fix: call
+      state.persistence().append_narrative() from persist_game_state() for each
+      new narrative entry. Stop appending to the snapshot blob's narrative_log
+      vec (or keep it as a bounded rolling window for the current session only).
+      On session restore, call recent_narrative() and populate the recap field
+      in the CONNECTED response so returning players get a "Previously On..."
+      summary. OTEL events: persistence.narrative_appended (round, author,
+      content_len), session.recap_generated (entry_count, recap_len).
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    depends_on: 15-8
+  - id: 15-10
+    title: "Wire seed_lore_from_char_creation — character backstory/hooks never enter lore store"
+    description: >-
+      seed_lore_from_genre_pack() IS called at session start (lib.rs:2182, 2388)
+      but seed_lore_from_char_creation() is never called anywhere in
+      sidequest-server. Character creation scenes chosen by the player contain
+      rich backstory, hooks, and world context that should prime the lore store
+      before the first turn. Fix: call seed_lore_from_char_creation() at the end
+      of dispatch_character_creation() after the character is finalized. OTEL
+      event: lore.char_creation_seeded (fragment_count, categories).
+    points: 2
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-11
+    title: "Fix OCEAN shift pipeline — propose_ocean_shifts skipped between detect and apply"
+    description: >-
+      dispatch/mod.rs:912 calls detect_personality_events() then immediately
+      calls apply_ocean_shifts() — skipping propose_ocean_shifts() entirely.
+      The proposal step contains the logic table that maps event types to
+      specific OCEAN dimension deltas. Without it, shifts are applied with
+      hardcoded defaults instead of the calibrated per-event mappings. Fix:
+      insert propose_ocean_shifts() between detect and apply at
+      dispatch/mod.rs:912. OTEL event: ocean_shift.proposal (npc_name,
+      dimension, proposed_delta, event_type).
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-12
+    title: "Wire SceneRelevanceValidator — art renders scenes that don't match current location"
+    description: >-
+      SceneRelevanceValidator::evaluate() (scene_relevance.rs) validates that
+      an image prompt depicts the current scene rather than a stale or
+      hallucinated setting. Fully implemented with 18 test cases. Never called
+      in dispatch/render.rs or render_integration.rs. Fix: before calling
+      queue.enqueue() in the render pipeline, call
+      SceneRelevanceValidator::evaluate() with the prompt fragment and current
+      snapshot. If verdict is Reject, skip the enqueue and emit OTEL gap event.
+      OTEL events: render.scene_validated (verdict, score),
+      render.scene_rejected (prompt_fragment, current_location, reason).
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-13
+    title: "Wire AchievementTracker — check_transition never called, achievements never fire"
+    description: >-
+      GameSnapshot holds an achievement_tracker field (state.rs:125).
+      AchievementTracker::check_transition() evaluates trope status transitions
+      against achievement definitions and returns newly earned achievements.
+      Never called from dispatch_player_action(). Fix: in the trope tick loop,
+      after calling trope.tick(), if the status changed, call
+      achievement_tracker.check_transition(&trope, old_status). Broadcast any
+      earned achievements as GameMessage events to all session players. OTEL
+      event: achievement.earned (achievement_id, trope_id, trigger_type).
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-14
+    title: "Wire enrich_registry_from_npcs — NPC registry has regex-only data, ignores structured fields"
+    description: >-
+      update_npc_registry() in npc_context.rs builds NPC registry entries from
+      narration text using regex. enrich_registry_from_npcs() in npc.rs
+      backfills registry entries with structured NPC data (pronouns, faction,
+      archetype) from the actual Npc objects on GameSnapshot. Never called.
+      Fix: after update_npc_registry() runs in dispatch, call
+      enrich_registry_from_npcs(&mut npc_registry, &snapshot.npcs) to merge
+      in structured identity data. OTEL event: npc.registry_enriched
+      (npc_name, fields_added).
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-15
+    title: "Wire resolve_abilities — affinity tiers tick but unlocked abilities never computed"
+    description: >-
+      increment_affinity_progress() and check_affinity_thresholds() ARE called
+      from dispatch/state_mutations.rs:174,211. But resolve_abilities() — which
+      computes the cumulative set of abilities a character has unlocked across
+      all affinity tiers — is never called. The narrator never knows what
+      abilities the character has mechanically available. Fix: call
+      resolve_abilities() in dispatch/prompt.rs after affinity context is
+      assembled, inject the resolved ability list into the narrator prompt
+      context. OTEL event: abilities.resolved (count, tiers_active,
+      ability_names).
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-16
+    title: "Wire merchant system — execute_buy/sell/calculate_price/format_merchant_context all unwired"
+    description: >-
+      merchant.rs contains a complete merchant subsystem: calculate_price()
+      applies markup/discount, execute_buy()/execute_sell() mutate inventory
+      and gold returning MerchantTransaction or MerchantError,
+      format_merchant_context() formats merchant inventory for narrator prompt
+      injection. Zero callers in server or agents. Fix: when intent is
+      Exploration or Dialogue and an NPC has merchant role in the registry,
+      inject format_merchant_context() into the narrator prompt. When the
+      narrator's WorldStatePatch contains a transaction (buy/sell), call
+      execute_buy()/execute_sell() to mechanically resolve it instead of
+      letting the narrator hallucinate inventory changes. OTEL events:
+      merchant.context_injected (merchant_name, item_count),
+      merchant.transaction (type, item, price, gold_before, gold_after).
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-17
+    title: "Wire chase cinematography — chase_depth context never injected into narrator prompt"
+    description: >-
+      chase_depth.rs has a full cinematography pipeline: phase_for_beat →
+      danger_for_beat → terrain_modifiers → apply_terrain_to_rig →
+      camera_for_phase → cinematography_for_phase → sentence_range_for_drama →
+      format_chase_context. These are used internally by
+      ChaseState::format_context() in chase.rs, but format_context() itself
+      has no production caller. Fix: when a ChaseState is active in dispatch,
+      call chase_state.format_context(decisions) and inject the result into
+      the narrator prompt in dispatch/prompt.rs, same as format_lore_context
+      and format_tone_context. OTEL event: chase.context_injected
+      (phase, danger_level, camera, sentence_range).
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-18
+    title: "Wire materialize_world — world builder ignores progressive materialization"
+    description: >-
+      materialize_world() in world_materialization.rs takes CampaignMaturity
+      and HistoryChapters and produces a narrative world description that
+      expands as the campaign ages. WorldBuilderAgent in sidequest-agents uses
+      CampaignMaturity to build prompts but never calls materialize_world().
+      Fix: call materialize_world(maturity, &history_chapters) in the world
+      builder agent and inject the materialized description into its prompt
+      context. OTEL event: world.materialized (maturity_level, chapter_count,
+      description_tokens).
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-19
+    title: "Wire conlang knowledge — language learning, name bank, and prompt injection all unwired"
+    description: >-
+      Four unwired conlang functions: (1) record_language_knowledge() — should
+      fire when a character learns a conlang word in narration, never called.
+      (2) record_name_knowledge() — should fire when the NameBank generates a
+      proper noun, never called. (3) query_language_knowledge() — should feed
+      into prompt context so the narrator stays consistent with vocabulary the
+      character already knows, never called. (4) format_name_bank_for_prompt()
+      — formats NameBank for narrator prompt injection, never called. Fix: wire
+      record_name_knowledge into the NameBank generation path. Wire
+      record_language_knowledge into the narration post-processing when conlang
+      morphemes are detected. Wire query_language_knowledge and
+      format_name_bank_for_prompt into dispatch/prompt.rs. OTEL events:
+      conlang.morpheme_learned (character_id, language_id, morpheme),
+      conlang.name_recorded (name, language_id, gloss),
+      conlang.context_injected (names_count, morphemes_count).
+    points: 5
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-20
+    title: "Wire StateDelta computation — broadcast_state_changes and delta.rs bypassed in server"
+    description: >-
+      delta.rs has StateSnapshot and StateDelta::compute() for diffing game
+      state between turns. broadcast_state_changes() in state.rs converts a
+      StateDelta into typed GameMessage protocol messages. Neither is called
+      from sidequest-server — the server manually builds
+      sidequest_protocol::StateDelta inline instead of using the game-crate
+      computation pair. Fix: take a StateSnapshot before the turn in
+      dispatch_player_action(), apply patches, then call
+      StateDelta::compute() to produce the delta and
+      broadcast_state_changes() to generate the broadcast messages. Remove the
+      manual inline delta construction. OTEL event: delta.computed
+      (changed_fields, snapshot_size_bytes).
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-21
+    title: "Wire level_to_defense — defense scaling ignored in combat resolution"
+    description: >-
+      level_to_damage() IS wired into CombatState::resolve_attack(). Its
+      sister function level_to_defense() in progression.rs is never called.
+      The defender's level has no effect on damage mitigation. Fix: call
+      level_to_defense(defender.level()) in resolve_attack() and factor the
+      result into damage calculation. OTEL event: combat.defense_applied
+      (defender_name, level, defense_value, damage_before, damage_after).
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 15-22
+    title: "Wire tier_to_dimensions — image dimensions never sent to daemon, daemon guesses"
+    description: >-
+      tier_to_dimensions() in render_queue.rs maps SubjectTier to
+      ImageDimensions (e.g., Portrait → 512×768). Never called from
+      render_integration.rs or dispatch/render.rs — the daemon receives
+      no dimension guidance and uses its own defaults. Fix: call
+      tier_to_dimensions(subject.tier()) when building the daemon render
+      request and include width/height in the request payload. OTEL event:
+      render.dimensions_set (tier, width, height).
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
