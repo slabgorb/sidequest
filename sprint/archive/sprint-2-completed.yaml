@@ -221,3 +221,8 @@ completed_stories:
     title: "Canonical GameSnapshot in dispatch — eliminate load-before-save round-trip on every turn"
     points: 5
     completed: '2026-04-01'
+  - id: 19-1
+    epic: ''
+    title: "RoomDef + RoomExit structs — room graph data model in sidequest-genre"
+    points: 5
+    completed: '2026-04-01'
