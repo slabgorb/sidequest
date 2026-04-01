@@ -41,9 +41,11 @@ stories:
     title: LoreStore browser tab with per-turn budget visualization — show selected vs rejected fragments and token counts
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-04-01'
     repos: api,ui
     workflow: tdd
+    branch: feat/18-4-lorestore-browser-tab
   - id: 18-5
     title: Structured NPC registry and inventory panels in State tab — tables not raw JSON
     points: 3
