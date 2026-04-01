@@ -195,3 +195,8 @@ completed_stories:
     title: "Wire RAG pipeline end-to-end — accumulate_lore from turns, generate embeddings via daemon, switch to semantic retrieval"
     points: 8
     completed: '2026-04-01'
+  - id: 15-13
+    epic: ''
+    title: "Wire AchievementTracker — check_transition never called, achievements never fire"
+    points: 3
+    completed: '2026-04-01'
