@@ -170,3 +170,8 @@ completed_stories:
     title: "Migrate chase as confrontation — ChaseState becomes a confrontation type preset"
     points: 5
     completed: '2026-03-31'
+  - id: 18-3
+    epic: ''
+    title: Parallelize prompt context build and preprocess Haiku call via tokio::join!
+    points: 2
+    completed: '2026-03-31'

@@ -29,11 +29,14 @@ stories:
     title: Parallelize prompt context build and preprocess Haiku call via tokio::join!
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-03-31'
     repos: api
     workflow: tdd
     depends_on: 18-1
+    completed: '2026-03-31'
     type: refactor
+    branch: feat/18-3-parallelize-prompt-preprocess
   - id: 18-4
     title: LoreStore browser tab with per-turn budget visualization — show selected vs rejected fragments and token counts
     points: 5
