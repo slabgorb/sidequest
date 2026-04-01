@@ -346,9 +346,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
 <!-- Tab 1: Game State Explorer -->
 <div class="tab-content" id="tc1">
-  <div class="card"><div class="card-title">Game State</div>
-    <div id="state-body" style="color:var(--muted)">Waiting for GameStateSnapshot event...</div>
-  </div>
+  <div id="state-body" style="color:var(--muted)">Waiting for GameStateSnapshot event...</div>
 </div>
 
 <!-- Tab 2: Subsystem Health -->
@@ -525,7 +523,105 @@ function renderState() {
   const el = document.getElementById('state-body');
   const s = S.latestSnapshot;
   if (!s) { el.innerHTML = '<span style="color:var(--muted)">Waiting for GameStateSnapshot...</span>'; return; }
-  el.innerHTML = `<pre style="white-space:pre-wrap;font-size:11px;max-height:600px;overflow:auto">${esc(JSON.stringify(s, null, 2))}</pre>`;
+
+  let html = '';
+
+  // Location & World
+  html += `<div class="card"><div class="card-title">Location</div>
+    <div style="font-size:14px;color:var(--accent);margin-bottom:4px">${esc(s.location || 'Unknown')}</div>
+    <div style="font-size:11px;color:var(--muted)">${esc(s.genre_slug||'')} / ${esc(s.world_slug||'')}${s.current_region ? ' · Region: '+esc(s.current_region) : ''}${s.time_of_day ? ' · '+esc(s.time_of_day) : ''}</div>
+    ${(s.discovered_regions||[]).length ? '<div style="margin-top:6px;font-size:11px;color:var(--muted)">Discovered: '+(s.discovered_regions||[]).map(r=>'<span style="color:var(--teal)">'+esc(r)+'</span>').join(', ')+'</div>' : ''}
+  </div>`;
+
+  // Characters
+  (s.characters || []).forEach(c => {
+    const hpPct = c.max_hp ? Math.round(c.hp / c.max_hp * 100) : 100;
+    const hpColor = hpPct > 60 ? 'var(--green)' : hpPct > 30 ? 'var(--amber)' : 'var(--red)';
+    const items = (c.inventory?.items || []);
+    const gold = c.inventory?.gold || 0;
+    const facts = c.known_facts || [];
+    const stats = c.stats ? Object.entries(c.stats).map(([k,v])=>`${k}:${v}`).join(' · ') : '';
+
+    html += `<div class="card"><div class="card-title">${esc(c.name)} — ${esc(c.race||'')} ${esc(c.char_class||'')} (Lv${c.level||1})</div>
+      <div style="display:flex;gap:24px;align-items:center;margin-bottom:8px">
+        <div>HP: <span style="color:${hpColor};font-weight:bold">${c.hp}/${c.max_hp}</span></div>
+        <div style="flex:1;max-width:200px;height:6px;background:var(--border);border-radius:3px"><div style="width:${hpPct}%;height:100%;background:${hpColor};border-radius:3px"></div></div>
+        ${c.pronouns ? '<div style="color:var(--muted);font-size:11px">'+esc(c.pronouns)+'</div>' : ''}
+        ${gold > 0 ? '<div style="color:var(--amber)">'+gold+' gold</div>' : ''}
+      </div>
+      ${stats ? '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">'+esc(stats)+'</div>' : ''}`;
+
+    // Inventory
+    if (items.length) {
+      html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--purple);margin-bottom:4px;font-weight:bold">INVENTORY</div><table style="width:100%;font-size:11px;border-collapse:collapse">';
+      html += '<tr style="color:var(--muted)"><th style="text-align:left;padding:2px 8px">Item</th><th style="text-align:left;padding:2px 8px">Weight</th><th style="text-align:left;padding:2px 8px">Stage</th></tr>';
+      items.forEach(item => {
+        const w = item.narrative_weight || 0;
+        const stage = w >= 0.7 ? '<span style="color:var(--accent)">evolved</span>' : w >= 0.5 ? '<span style="color:var(--green)">named</span>' : '<span style="color:var(--muted)">unnamed</span>';
+        html += `<tr><td style="padding:2px 8px">${esc(item.name||item)}</td><td style="padding:2px 8px">${w.toFixed(2)}</td><td style="padding:2px 8px">${stage}</td></tr>`;
+      });
+      html += '</table></div>';
+    }
+
+    // Known Facts
+    if (facts.length) {
+      html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--purple);margin-bottom:4px;font-weight:bold">KNOWN FACTS (' + facts.length + ')</div>';
+      facts.forEach(f => {
+        const srcColor = f.source === 'Backstory' ? 'var(--pink)' : f.source === 'Discovery' ? 'var(--teal)' : 'var(--muted)';
+        html += `<div style="font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:${srcColor};font-size:10px">[${esc(f.source||'?')} T${f.learned_turn||'?'}]</span> ${esc(f.content)}</div>`;
+      });
+      html += '</div>';
+    }
+
+    html += '</div>';
+  });
+
+  // NPC Registry
+  const npcs = s.npc_registry || [];
+  if (npcs.length) {
+    html += '<div class="card"><div class="card-title">NPC Registry (' + npcs.length + ')</div>';
+    html += '<table style="width:100%;font-size:11px;border-collapse:collapse">';
+    html += '<tr style="color:var(--muted)"><th style="text-align:left;padding:4px 8px">Name</th><th style="text-align:left;padding:4px 8px">Role</th><th style="text-align:left;padding:4px 8px">Location</th><th style="text-align:left;padding:4px 8px">Last Seen</th><th style="text-align:left;padding:4px 8px">Pronouns</th></tr>';
+    npcs.forEach(n => {
+      html += `<tr><td style="padding:4px 8px;color:var(--text)">${esc(n.name)}</td><td style="padding:4px 8px;color:var(--muted)">${esc(n.role||'')}</td><td style="padding:4px 8px;color:var(--teal)">${esc(n.location||'')}</td><td style="padding:4px 8px;color:var(--muted)">T${n.last_seen_turn||'?'}</td><td style="padding:4px 8px;color:var(--muted)">${esc(n.pronouns||'')}</td></tr>`;
+    });
+    html += '</table></div>';
+  }
+
+  // Active Tropes
+  const tropes = s.active_tropes || [];
+  if (tropes.length) {
+    html += '<div class="card"><div class="card-title">Active Tropes (' + tropes.length + ')</div>';
+    tropes.forEach(t => {
+      const pct = Math.round((t.progression || 0) * 100);
+      const beats = (t.fired_beats || []).length;
+      html += `<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;font-size:11px">
+        <span style="color:var(--amber);min-width:140px">${esc(t.trope_definition_id)}</span>
+        <span style="color:var(--muted)">${esc(t.status||'?')}</span>
+        <div style="flex:1;max-width:120px;height:4px;background:var(--border);border-radius:2px"><div style="width:${pct}%;height:100%;background:var(--amber);border-radius:2px"></div></div>
+        <span style="color:var(--muted)">${pct}%</span>
+        ${beats ? '<span style="color:var(--muted)">'+beats+' beats</span>' : ''}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Quest Log
+  const quests = Object.entries(s.quest_log || {});
+  if (quests.length) {
+    html += '<div class="card"><div class="card-title">Quest Log</div>';
+    quests.forEach(([name, desc]) => {
+      html += `<div style="font-size:11px;margin-bottom:4px"><span style="color:var(--green);font-weight:bold">${esc(name)}</span> — ${esc(desc)}</div>`;
+    });
+    html += '</div>';
+  }
+
+  // Raw JSON (collapsible)
+  html += `<div class="card"><div class="card-title" style="cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">Raw JSON ▸</div>
+    <pre style="white-space:pre-wrap;font-size:10px;max-height:400px;overflow:auto;display:none">${esc(JSON.stringify(s, null, 2))}</pre>
+  </div>`;
+
+  el.innerHTML = html;
 }
 
 // ── Tab 2: Health ──
