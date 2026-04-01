@@ -3,7 +3,7 @@
 > WebSocket + REST protocol between sidequest-api (Rust) and sidequest-ui (React).
 > Source of truth: `sidequest-protocol/src/message.rs` — 23 message types, 35 payload structs.
 >
-> **Last updated:** 2026-03-30
+> **Last updated:** 2026-04-01
 
 ## Transport
 
@@ -82,6 +82,7 @@ Player types something in the game.
 ```
 - `aside: true` = out-of-character message (not narrated)
 - Slash commands (`/status`, `/inventory`, etc.) are intercepted server-side before intent classification
+- Player text is sanitized at the protocol layer (ADR-047) before reaching intent classification or any agent prompt.
 
 ### SESSION_EVENT (connect)
 Sent immediately after WebSocket opens.
@@ -476,6 +477,8 @@ Binary WebSocket frames carry raw TTS audio (server → client). Used alongside 
 
 Audio data is raw PCM signed 16-bit little-endian, routed through the client's AudioEngine voice channel with music ducking.
 
+See ADR-045 for the client-side Web Audio engine that processes these PCM frames, and ADR-038 for the three-channel broadcast architecture.
+
 ---
 
 ## Session Lifecycle
@@ -505,6 +508,8 @@ Audio data is raw PCM signed 16-bit little-endian, routed through the client's A
    - One handler calls narrator with combined action; others receive broadcast
    - Server sends TURN_STATUS per player as they submit
 ```
+
+See ADR-036 for the three-mode turn coordination FSM and ADR-037 for the shared-world / per-player state architecture.
 
 ---
 

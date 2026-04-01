@@ -3,7 +3,7 @@
 > System design for the Rust port of the SideQuest AI Narrator engine.
 > 6-crate workspace, 52 game modules, 7 agent types, 3 turn modes.
 >
-> **Last updated:** 2026-03-30
+> **Last updated:** 2026-04-01
 
 ## Architectural Layers
 
@@ -57,7 +57,7 @@
 
          ┌────────────────────────────────────────────────────────────┐
          │              Daemon Client (sidequest-daemon-client)        │
-         │  HTTP/Unix socket → sidequest-daemon (Python sidecar)      │
+         │  Unix socket → sidequest-daemon (Python sidecar)           │
          │  Image gen (Flux), TTS (Kokoro), Audio mixing (pygame)     │
          └────────────────────────────────────────────────────────────┘
 ```
@@ -73,7 +73,7 @@ sidequest-api/
 │   ├── sidequest-game/               # 52 modules — state, combat, NPCs, lore, audio, etc.
 │   ├── sidequest-agents/             # Claude CLI subprocess, 7 agent types, timeout/recovery
 │   ├── sidequest-server/             # axum HTTP/WS, session management, orchestrator
-│   └── sidequest-daemon-client/      # HTTP client for Python media daemon
+│   └── sidequest-daemon-client/      # Unix socket client for Python media daemon
 └── tests/                            # Integration tests
 ```
 
@@ -115,6 +115,21 @@ Only the text narration response is on the critical path. Everything else spawns
 
 `rusqlite` for structured persistence (game state, character data, saves). Wrapped in `spawn_blocking` at the async boundary. Narrative log is append-only. KnownFacts persist and accumulate across turns with provenance tracking.
 
+### ADR-035: Unix Socket IPC
+Python ML sidecar communicates via Unix domain socket (`/tmp/sidequest-renderer.sock`) with newline-delimited JSON-RPC. Separate failure domain from the game engine. Models stay warm across sessions.
+
+### ADR-036/037: Multiplayer State Architecture
+SharedGameSession keyed by `genre:world` holds world state; PlayerState holds per-player data. Sync-to-locals pattern checks out state for dispatch, preserving the single-player code path unchanged. TurnBarrier with adaptive timeout and claim-election prevents duplicate narrator calls.
+
+### ADR-038: WebSocket Transport
+Reader/writer task split per connection. Three broadcast channels: JSON GameMessage, session-scoped TargetedMessage, and binary PCM for TTS audio. ProcessingGuard prevents concurrent dispatch per player.
+
+### ADR-039: Narrator Structured Output
+Claude response embeds a JSON sidecar block with items, NPCs, visual scene, OCEAN events, lore — all extracted in one pass via three-tier fallback (extends ADR-013).
+
+### ADR-047: Input Sanitization
+All player text passes through `sanitize_player_text()` at the protocol layer — strips injection attempts before routing.
+
 ## Game Systems (sidequest-game, 52 modules)
 
 ### Core State
@@ -126,17 +141,19 @@ Only the text narration response is on the critical path. Everything else spawns
 - **Combat:** Turn-based with combatant tracking, HP management, ability resolution
 - **Chase:** Beat-based cinematic chases with Lead variable and rig mechanics (ADR-017)
 - **Consequences:** Action outcome tracking
+- **Consequence engine:** Genie Wish detection with rotating consequence types (ADR-041)
 
 ### Characters & NPCs
 - **Character:** Unified model — narrative identity + mechanical stats (ADR-007)
 - **NPC:** OCEAN personality profiles (0.0-10.0), disposition system, behavioral summaries
+- **OCEAN evolution:** Live personality shifts via narrator-extracted events (ADR-042)
 - **Guest NPCs:** Human-controlled NPCs in multiplayer (ADR-029)
 - **Character builder:** Genre-driven scene-based creation state machine (ADR-015/016)
 
 ### Narrative Systems
 - **KnownFact:** Play-derived knowledge with tiered injection by relevance
-- **Lore:** LoreFragment/LoreStore, genre pack seeding, semantic retrieval
-- **Conlang:** Morpheme glossary, name bank generation, transliteration growth
+- **Lore:** LoreFragment/LoreStore, genre pack seeding, semantic retrieval (ADR-048: cross-process embedding via daemon)
+- **Conlang:** Morpheme glossary, name bank generation, transliteration growth (ADR-043)
 - **Scene directives:** Mandatory narrator instructions with engagement multiplier
 - **Footnotes:** Structured output with discovery/callback typing
 
@@ -157,13 +174,15 @@ Only the text narration response is on the critical path. Everything else spawns
 - **Turn modes:** FREE_PLAY, STRUCTURED, CINEMATIC
 - **Party action composition:** Multi-character PARTY ACTIONS block
 - **Perception rewriter:** Per-player narration variants based on status effects
+- **Two-tier turn counter:** Interaction (monotonic) vs Round (narrative beats) — ADR-051
 - **Catch-up narration:** Snapshot + "Previously On..." for mid-session joins
 
 ### Media Integration
 - **Music director:** Mood extraction from narration → audio cue selection
 - **Voice router:** Character voice mapping from genre pack presets
-- **TTS streaming:** Text segmentation → Kokoro synthesis → binary PCM frames
-- **Render queue:** Speculative prerendering with hash-based cache dedup
+- **TTS streaming:** Text segmentation → Kokoro synthesis → binary PCM frames (ADR-045: Web Audio three-channel graph with ducking)
+- **Image pacing throttle:** Configurable cooldown (30s solo, 60s multiplayer) with DM override (ADR-050)
+- **Render queue:** Speculative prerendering with hash-based cache dedup (ADR-044)
 - **Subject extractor:** Prose → visual description via Claude CLI
 
 ### Player Interface
@@ -193,7 +212,7 @@ Three turn modes govern coordination:
 
 ## What Stays in Python (sidequest-daemon)
 
-The ML inference pipeline stays in Python as a sidecar service. Rust communicates via `sidequest-daemon-client` crate over HTTP/Unix socket.
+The ML inference pipeline stays in Python as a sidecar service. Rust communicates via `sidequest-daemon-client` crate over Unix socket (ADR-035).
 
 | Subsystem | Stack | Notes |
 |-----------|-------|-------|
@@ -213,7 +232,7 @@ sidequest-api (Rust)  ◄──── HTTP / Unix socket ────►  sidequ
 
 ## ADR Index
 
-32 Architecture Decision Records govern the system. See [docs/adr/README.md](adr/README.md) for the full index covering: core architecture (7), prompt engineering (2), agent system (4), game systems (12), frontend/protocol (2), multiplayer (3), and media pipeline (12 from sq-2).
+54 Architecture Decision Records govern the system. See [docs/adr/README.md](adr/README.md) for the full index covering: core architecture (7), prompt engineering (2), agent system (4), game systems (12), frontend/protocol (2), multiplayer (6), transport/infrastructure (4), narrator/text (4), NPC/character (4), media/audio/rendering (4), turn management (1), and media pipeline (12 from sq-2).
 
 ## Wiring Diagrams
 

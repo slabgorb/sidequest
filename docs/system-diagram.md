@@ -73,7 +73,7 @@ graph TB
 |------|----------|--------|
 | UI ↔ API | WebSocket (`/ws`) | JSON `GameMessage` enum |
 | UI → API | REST (`/api/*`) | JSON (genres, save/load) |
-| API → Daemon | Unix socket (`/tmp/sidequest-renderer.sock`) | Newline-delimited JSON-RPC |
+| API → Daemon | Unix socket (`/tmp/sidequest-renderer.sock`) | Newline-delimited JSON-RPC (ADR-035) |
 | API → Claude | Subprocess (`claude -p`) | Stdin prompt, stdout response |
 | Content → All | Filesystem path | YAML + binary assets (Git LFS) |
 
@@ -185,7 +185,7 @@ sequenceDiagram
 ### oq-1 (Orchestrator)
 - Cross-repo coordination via `justfile`
 - Sprint tracking and story management
-- Architecture docs, ADRs, design artifacts
+- Architecture docs, 54 ADRs, design artifacts
 - Asset generation scripts (POI images, music, portraits)
 - System-level documentation (this file)
 
@@ -197,12 +197,13 @@ sequenceDiagram
 - SQLite persistence: save/load game state
 - Pacing engine: tension model, drama-aware delivery
 - Multiplayer: turn barriers, perception rewriting
+- Input sanitization: protocol-layer prompt injection defense (ADR-047)
 
 ### sidequest-ui (TypeScript/React)
 - Game client: narrative display, character sheets, inventory, map
-- Audio engine: 3-channel mixer, crossfade, ducking
+- Audio engine: 3-channel mixer, crossfade, ducking (ADR-045)
 - Voice: push-to-talk with local Whisper transcription
-- WebRTC: peer-to-peer voice chat between players
+- WebRTC: peer-to-peer voice chat (disabled — echo loop, ADR-054)
 - GM Mode: real-time telemetry dashboard
 - Genre theming: CSS variable injection from pack config
 
@@ -211,6 +212,7 @@ sequenceDiagram
 - Voice synthesis: Kokoro TTS (54 voices, blending, streaming)
 - Music generation: ACE-Step (prompt-based, configurable duration)
 - Audio mixing: pygame-ce, 3 named channels, ducking
+- GPU memory coordination: LRU model eviction across 80GB budget (ADR-046)
 
 ### sidequest-content (Git LFS)
 - Genre pack YAML configs (7 packs)

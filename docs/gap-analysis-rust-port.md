@@ -41,7 +41,7 @@ The Rust port has reached 75% feature completion in 5 days (103/138 stories acro
 
 | Epic | Feature Area | Stories | Priority | Notes |
 |------|-------------|---------|----------|-------|
-| 7 | Scenario system — whodunit, belief state, gossip | 0/9 | P2 | Deferred until after multiplayer hardening |
+| 7 | Scenario system — whodunit, belief state, gossip | 0/9 | P2 | Core mechanics implemented (ADR-053: ClueGraph, BeliefState, GossipEngine, AccusationEvaluator) but not wired to orchestrator. Deferred until after multiplayer hardening. |
 | 12 | Cinematic audio — score cue variations, crossfade | 0/3 | P2 | Infrastructure exists, wiring needed |
 
 ## Gap Details

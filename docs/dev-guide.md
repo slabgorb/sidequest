@@ -175,7 +175,7 @@ These are the `#[instrument]` spans you'll see in logs and traces:
 |------|-------|-----------------|
 | `intent_router.classify` | sidequest-game | Player input → classified intent → routed agent |
 | `agent.invoke` | sidequest-agents | Token counts, duration, raw response length |
-| `json_extractor.extract` | sidequest-agents | Extraction tier (1/2/3), target type, success |
+| `json_extractor.extract` | sidequest-agents | Extraction tier (1/2/3), target type, success (ADR-039) |
 | `state.apply_patch` | sidequest-game | Patch type (world/combat/chase), fields changed |
 | `trope_engine.tick` | sidequest-game | Tropes advanced, beats fired, thresholds crossed |
 | `context_builder.compose` | sidequest-agents | Section count, total tokens, zone distribution |
@@ -243,3 +243,17 @@ just setup
 ```
 
 This installs Rust toolchain components, npm dependencies, and Python dev dependencies across all three subrepos.
+
+---
+
+## Architecture Decision Records
+
+54 ADRs document the key architectural decisions. See [docs/adr/README.md](adr/README.md).
+
+Key ADRs for debugging and development:
+- **ADR-031:** Semantic telemetry — the three-layer observability model
+- **ADR-035:** Unix socket IPC — how API talks to daemon
+- **ADR-038:** WebSocket transport — three-channel broadcast architecture
+- **ADR-039:** Narrator structured output — JSON sidecar extraction
+- **ADR-047:** Prompt injection sanitization — protocol-layer input defense
+- **ADR-044:** Speculative prerendering — latency hiding during TTS

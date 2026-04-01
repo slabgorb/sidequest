@@ -3,7 +3,7 @@
 > Crate and dependency choices for the Rust game engine.
 > 6-crate workspace, edition 2021, stable toolchain.
 >
-> **Last updated:** 2026-03-30
+> **Last updated:** 2026-04-01
 
 ## Workspace Dependencies
 
@@ -27,7 +27,7 @@ Centralized in `Cargo.toml` `[workspace.dependencies]`:
 | Random | `rand` | 0.9 | OCEAN profile generation, combat dice, NPC behavior |
 | SQLite | `rusqlite` | 0.31 (bundled, chrono, uuid) | Game save/load, session persistence |
 | Futures | `futures` | 0.3 | Stream combinators for WebSocket message routing |
-| Regex | `regex` | 1.10 | Input sanitization, prompt injection defense |
+| Regex | `regex` | 1.10 | Input sanitization, prompt injection defense (ADR-047) |
 | Ordered floats | `ordered-float` | 4 (serde) | Hashable floats for OCEAN profiles, drama weights |
 
 ### Crate-Specific Dependencies
@@ -99,7 +99,11 @@ let output = Command::new("claude")
     .await?;
 ```
 
+The narrator response embeds a structured JSON sidecar block containing items, NPCs, visual scene, and OCEAN events — all extracted in a single pass (ADR-039).
+
 JSON extraction uses a three-tier fallback: direct parse → regex extraction → structured retry (ADR-013).
+
+Player input is sanitized at the protocol layer before reaching any agent prompt (ADR-047).
 
 ## Python Sidecar (sidequest-daemon)
 
@@ -114,6 +118,8 @@ The ML inference stack stays in Python. The Rust server communicates via `sidequ
 | Scene interpretation | Pattern matching | Narrative text → stage cues |
 | Subject extraction | Claude CLI | Prose → visual descriptions |
 
+See ADR-035 for the Unix socket IPC architecture and ADR-046 for GPU memory budget coordination.
+
 ## React Client (sidequest-ui)
 
 | Concern | Choice | Notes |
@@ -123,9 +129,9 @@ The ML inference stack stays in Python. The Rust server communicates via `sidequ
 | Language | TypeScript | Strict mode |
 | Styling | Tailwind CSS + shadcn/ui | Genre theming via CSS variables |
 | Testing | Vitest | Unit + component tests |
-| Audio | Web Audio API | 3-channel playback, voice ducking |
-| Voice chat | WebRTC (PeerMesh) | Peer-to-peer, echo cancellation |
-| State management | useStateMirror (custom) | Delta replay from server |
+| Audio | Web Audio API | 3-channel playback, voice ducking (ADR-045) |
+| Voice chat | WebRTC (PeerMesh) | Disabled — echo feedback loop (ADR-054) |
+| State management | useStateMirror (custom) | Delta replay from server (ADR-026) |
 
 ## Deliberate Omissions
 

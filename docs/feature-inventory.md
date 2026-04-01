@@ -1,6 +1,6 @@
 # SideQuest Feature Inventory
 
-**Last updated:** 2026-03-30
+**Last updated:** 2026-04-01
 **Sprint 1:** Bootstrap Rust workspace (completed — 85 stories, 672/726 points)
 **Sprint 2:** Multiplayer Works For Real (active — 11/87 points)
 
@@ -43,11 +43,11 @@ These features work from player input through to rendered output.
 |---------|-----|-----|--------|-------|
 | Image generation | Subject extractor → Render queue | IMAGE display | Flux.1 (schnell + dev) | 6 tiers: scene, portrait, landscape, text, cartography, tactical |
 | Beat filter | Suppress low-drama renders | — | — | drama_weight threshold |
-| Speculative prerender | Queue during voice playback | — | — | Hash-based cache dedup |
+| Speculative prerender | Queue during voice playback | — | — | Hash-based cache dedup (ADR-044) |
 | TTS voice synthesis | Voice routing, text segmentation | useVoicePlayback | Kokoro (54 voices) | Streaming delivery |
 | Character voice mapping | Genre pack voice presets | — | Voice router + effects | Per-character voices |
 | Music direction | Mood extraction from narration | useMusicPlayer | Audio mixer | AUDIO_CUE messages |
-| 3-channel audio | Music/SFX/ambience commands | AudioStatus component | pygame mixer | Ducking during speech |
+| 3-channel audio | Music/SFX/ambience commands | AudioStatus component | pygame mixer | Ducking during speech (ADR-045) |
 | Theme rotation | Anti-repetition track selection | — | Audio rotator | Mood-based |
 
 ### Observability (Epic 3, complete)
@@ -73,8 +73,8 @@ These features work from player input through to rendered output.
 | Journal/handouts | JournalView | Thumbnail grid, lightbox viewer |
 | Combat overlay | CombatOverlay | Enemy HP, turn order |
 | Slash commands | useSlashCommands | /inventory, /character, /quests, /journal, /help |
-| Push-to-talk | usePushToTalk | Record → Whisper transcribe → preview → send |
-| WebRTC voice chat | useVoiceChat + PeerMesh | Peer-to-peer, echo cancellation |
+| Push-to-talk | usePushToTalk | Record → Whisper transcribe → preview → send (disabled, ADR-054) |
+| WebRTC voice chat | useVoiceChat + PeerMesh | Disabled — echo feedback loop (ADR-054) |
 | Keyboard shortcuts | GameLayout | P/C/I/M/J toggles, Space, Escape |
 | Responsive layout | useBreakpoint | Mobile/tablet/desktop |
 | Genre theming | ThemeProvider + useGenreTheme | CSS vars from pack config |
@@ -86,11 +86,11 @@ These features work from player input through to rendered output.
 | Feature | Story | Notes |
 |---------|-------|-------|
 | Multi-client sessions | 8-1 | player_id mapping |
-| Turn barrier | 8-2 | Wait for all players |
+| Turn barrier | 8-2 | Wait for all players (ADR-036) |
 | Adaptive action batching | 8-3 | 3s for 2-3, 5s for 4+ |
 | Party action composition | 8-4 | Multi-character PARTY ACTIONS block |
-| Turn modes | 8-5 | FREE_PLAY, STRUCTURED, CINEMATIC |
-| Perception rewriter | 8-6 | Per-character narration variants |
+| Turn modes | 8-5 | FREE_PLAY, STRUCTURED, CINEMATIC (ADR-036) |
+| Perception rewriter | 8-6 | Per-character narration variants (ADR-028) |
 | Guest NPC players | 8-7 | Human-controlled NPCs |
 | Catch-up narration | 8-8 | Mid-session join snapshot |
 | Turn reminders | 8-9 | Idle player timeout |
@@ -151,7 +151,7 @@ These features work from player input through to rendered output.
 | Behavioral summary | 10-3 | Scores → prompt text |
 | Narrator reads OCEAN | 10-4 | Voice/behavior adjustment |
 | OCEAN shift log | 10-5 | Personality change tracking |
-| Agent proposes shifts | 10-6 | Event-driven evolution |
+| Agent proposes shifts | 10-6 | Event-driven evolution (ADR-042) |
 | Agreeableness → Disposition | 10-7 | Feeds existing disposition system |
 | Backfill genre packs | 10-8 | OCEAN profiles on all archetypes |
 
@@ -164,8 +164,8 @@ These features work from player input through to rendered output.
 | Lore seed | 11-3 | Bootstrap from genre pack |
 | Lore in agent prompts | 11-4 | Relevant fragment injection |
 | Lore accumulation | 11-5 | World state writes new fragments |
-| Semantic retrieval | 11-6 | Embedding-based RAG |
-| Morpheme glossary | 11-7 | Conlang morphemes |
+| Semantic retrieval | 11-6 | Embedding-based RAG (ADR-048) |
+| Morpheme glossary | 11-7 | Conlang morphemes (ADR-043) |
 | Name bank generation | 11-8 | Glossed names from language rules |
 | Narrator name injection | 11-9 | Consistent naming |
 | Language as KnownFact | 11-10 | Transliteration growth |
@@ -214,8 +214,8 @@ Technical debt from 2026-03-29 post-playtest audit.
 | Feature | Story | Status | Points | Notes |
 |---------|-------|--------|--------|-------|
 | Remove dead code | 15-1 | Ready | 2 | if-false blocks, stale comments, duplicates |
-| Wire OCEAN shift proposals | 15-2 | Ready | 3 | Events trigger personality evolution |
-| Voice/mic architecture | 15-3 | Ready | 5 | Solve TTS feedback loop |
+| Wire OCEAN shift proposals | 15-2 | Ready | 3 | Events trigger personality evolution (ADR-042) |
+| Voice/mic architecture | 15-3 | Ready | 5 | Solve TTS feedback loop (ADR-054) |
 | Perception rewriter | 15-4 | Ready | 5 | Implement Blinded strategy as proof-of-concept |
 | Daemon client typed API | 15-5 | Ready | 2 | Wire or remove stub types |
 
@@ -224,6 +224,8 @@ Technical debt from 2026-03-29 post-playtest audit.
 ## Planned (Not Started)
 
 ### Epic 7: Scenario System — Bottle Episodes, Whodunit (P2, deferred)
+
+**Note:** Core scenario mechanics (BeliefState, GossipEngine, ClueGraph, AccusationEvaluator) are implemented in sidequest-game but not yet wired to the orchestrator (ADR-053). Stories here cover wiring and integration.
 
 | Feature | Story | Points | Notes |
 |---------|-------|--------|-------|
@@ -280,4 +282,4 @@ Character depth is nearly complete: server-side slash commands (/status, /invent
 
 **Sprint 2 focus:** Sealed letter turn system (simultaneous action submission), multiplayer UX polish (spawn points, text/vocabulary sliders, chargen back button), and playtest debt cleanup.
 
-**Not yet exercised:** Scenario/mystery mechanics (Epic 7), cinematic score cue variations (Epic 12), perception rewriter strategies, OCEAN shift proposal wiring into game flow.
+**Not yet exercised:** Scenario/mystery mechanics (Epic 7, core mechanics implemented per ADR-053 but not yet wired), cinematic score cue variations (Epic 12), perception rewriter strategies, OCEAN shift proposal wiring into game flow.

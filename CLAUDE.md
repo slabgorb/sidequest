@@ -27,7 +27,7 @@ achieving a clean frontend/backend repo split.
 ```
 orc-quest/                    # This repo (orchestrator)
 ├── sprint/                   # Sprint tracking
-├── docs/                     # Architecture docs and 35 ADRs
+├── docs/                     # Architecture docs and 54 ADRs
 │   ├── api-contract.md       # WebSocket + REST contract (from UI)
 │   ├── tech-stack.md         # Crate choices
 │   ├── architecture.md       # System design and layer diagram
