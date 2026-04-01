@@ -1459,8 +1459,21 @@ async def run_scripted(
         if not state["has_character"]:
             console.print("[yellow]Auto-creating character...[/yellow]")
             while not state["has_character"]:
+                # Wait for either a new chargen prompt or chargen completion
                 state["chargen_prompt"].clear()
-                await state["chargen_prompt"].wait()
+                state["chargen_done"].clear()
+                done_task = asyncio.create_task(state["chargen_done"].wait())
+                prompt_task = asyncio.create_task(state["chargen_prompt"].wait())
+                await asyncio.wait(
+                    [done_task, prompt_task],
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                done_task.cancel()
+                prompt_task.cancel()
+
+                # Re-check — "complete" may have fired
+                if state["has_character"]:
+                    break
 
                 pending = state["chargen_pending"]
                 if not pending:
@@ -1481,16 +1494,6 @@ async def run_scripted(
                     else:
                         auto_choice = "A wanderer with no past."
                     await ws.send(json.dumps(make_chargen_choice(auto_choice)))
-
-                state["chargen_prompt"].clear()
-                done_task = asyncio.create_task(state["chargen_done"].wait())
-                prompt_task = asyncio.create_task(state["chargen_prompt"].wait())
-                await asyncio.wait(
-                    [done_task, prompt_task],
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                done_task.cancel()
-                prompt_task.cancel()
 
         # Wait for ready
         if not state["ready"]:
