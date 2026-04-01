@@ -165,3 +165,8 @@ completed_stories:
     title: Session restore syncs full character state — level, inventory, known facts from loaded snapshot
     points: 3
     completed: '2026-03-31'
+  - id: 16-5
+    epic: ''
+    title: "Migrate chase as confrontation — ChaseState becomes a confrontation type preset"
+    points: 5
+    completed: '2026-03-31'
