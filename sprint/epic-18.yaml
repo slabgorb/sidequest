@@ -64,3 +64,21 @@ stories:
     workflow: tdd
     depends_on: 18-1
     type: refactor
+  - id: 18-8
+    title: Port WorldBuilder from Python — materialize GameState at any maturity level for playtesting
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 18-9
+    title: Session restore syncs full character state — level, inventory, known facts from loaded snapshot
+    points: 3
+    priority: p0
+    status: done
+    started: '2026-03-31'
+    repos: api
+    workflow: tdd
+    completed: '2026-03-31'
+    type: bug
+    branch: feat/18-9-session-restore-character-state

@@ -160,3 +160,8 @@ completed_stories:
     title: Add sub-spans to preprocess, agent_llm, and system_tick for flame chart granularity
     points: 3
     completed: '2026-03-31'
+  - id: 18-9
+    epic: ''
+    title: Session restore syncs full character state — level, inventory, known facts from loaded snapshot
+    points: 3
+    completed: '2026-03-31'
