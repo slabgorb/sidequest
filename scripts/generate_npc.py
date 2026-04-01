@@ -273,6 +273,68 @@ GENDER_PRONOUNS = {
 }
 
 
+HISTORY_TEMPLATES = [
+    "Once served as a {role} in {faction} territory before {event}.",
+    "Grew up in the {faction} settlements. Left after {event}.",
+    "Claims to have been {role} for years, but something about the story doesn't add up.",
+    "Arrived from the wastes with nothing. Earned {faction} trust through {deed}.",
+    "Former {alt_role} who switched trades after {event}.",
+    "Born into {faction} culture. Never left the region. Knows every path and every grudge.",
+]
+
+HISTORY_EVENTS = [
+    "a bad trade went wrong", "their settlement was raided", "a mutation changed everything",
+    "a drought drove them out", "they found something in the ruins they won't talk about",
+    "a feud with another faction", "the water turned bad", "they lost someone important",
+    "an Ancient device activated nearby", "a pack of beasts destroyed their homestead",
+]
+
+HISTORY_DEEDS = [
+    "hard work and silence", "a timely warning about raiders", "fixing something nobody else could",
+    "sharing water during the drought", "standing their ground when it mattered",
+    "knowing where the good salvage was", "patching up the wounded after the last raid",
+]
+
+
+def generate_history(culture_name: str, role: str, archetype: dict) -> str:
+    """Generate a brief backstory from templates."""
+    alt_roles = [r.lower() for r in archetype.get("typical_classes", ["wanderer"])]
+    template = random.choice(HISTORY_TEMPLATES)
+    return template.format(
+        role=role,
+        faction=culture_name,
+        event=random.choice(HISTORY_EVENTS),
+        deed=random.choice(HISTORY_DEEDS),
+        alt_role=random.choice(alt_roles) if alt_roles else "drifter",
+    )
+
+
+def match_tropes(tropes: list[dict], archetype: dict, culture: dict) -> list[dict]:
+    """Find tropes this NPC could be connected to based on tag overlap."""
+    # Build a tag set from archetype and culture context
+    npc_tags = set()
+    for cls in archetype.get("typical_classes", []):
+        npc_tags.add(cls.lower())
+    for trait in archetype.get("personality_traits", []):
+        npc_tags.add(trait.lower())
+    npc_tags.add(culture["name"].lower())
+    # Add archetype name words
+    for word in archetype["name"].lower().split():
+        npc_tags.add(word)
+
+    matches = []
+    for trope in tropes:
+        trope_tags = set(t.lower() for t in trope.get("tags", []))
+        overlap = npc_tags & trope_tags
+        if overlap:
+            matches.append({
+                "trope": trope["name"],
+                "connection": f"linked via: {', '.join(sorted(overlap))}",
+                "category": trope.get("category", "unknown"),
+            })
+    return matches
+
+
 def generate_npc(
     genre_dir: Path,
     culture_name: str | None = None,
@@ -284,6 +346,20 @@ def generate_npc(
     cultures = load_yaml(genre_dir / "cultures.yaml")
     archetypes = load_yaml(genre_dir / "archetypes.yaml")
     corpus_dir = genre_dir / "corpus"
+
+    # Load tropes (genre-level + world-level)
+    tropes = []
+    tropes_path = genre_dir / "tropes.yaml"
+    if tropes_path.exists():
+        tropes = load_yaml(tropes_path) or []
+    worlds_dir = genre_dir / "worlds"
+    if worlds_dir.is_dir():
+        for world_dir in worlds_dir.iterdir():
+            world_tropes = world_dir / "tropes.yaml"
+            if world_tropes.exists():
+                wt = load_yaml(world_tropes)
+                if wt:
+                    tropes.extend(wt)
 
     # Select culture
     culture = None
@@ -306,12 +382,11 @@ def generate_npc(
     name = ""
     for _ in range(10):
         candidate = gen.generate_person()
-        # Reject names that start with small words (empty slot produced "Of the ...")
         if candidate and not candidate.lower().startswith(("of ", "the ", "and ")):
             name = candidate
             break
     if not name:
-        name = gen.generate_person()  # last resort
+        name = gen.generate_person()
 
     # Gender + pronouns
     if not gender:
@@ -331,34 +406,49 @@ def generate_npc(
     # Personality traits
     traits = archetype.get("personality_traits", [])
 
-    # Build result
-    result = {
-        "name": name,
-        "pronouns": pronouns,
-        "gender": gender,
-        "culture": culture["name"],
-        "archetype": archetype["name"],
-        "role": npc_role,
-        "personality": ", ".join(traits) if traits else "",
-        "ocean": ocean,
-        "ocean_summary": ocean_summary(ocean),
-        "disposition": archetype.get("disposition_default", 0),
-    }
-
-    # Appearance from archetype description + user description
+    # Appearance — layer user description over archetype description
     appearance_parts = []
     if description:
         appearance_parts.append(description)
     if archetype.get("description"):
-        appearance_parts.append(archetype["description"][:120])
-    result["appearance"] = ". ".join(appearance_parts) if appearance_parts else ""
+        appearance_parts.append(archetype["description"].strip())
+    appearance = ". ".join(appearance_parts) if appearance_parts else ""
 
-    # Dialogue quirks if available
+    # Backstory
+    history = generate_history(culture["name"], npc_role, archetype)
+
+    # Trope connections
+    trope_connections = match_tropes(tropes, archetype, culture)
+
+    # Inventory hints from archetype
+    inventory = archetype.get("inventory_hints", [])
+
+    # Dialogue quirks
     quirks = archetype.get("dialogue_quirks", [])
-    if quirks:
-        result["dialogue_quirks"] = quirks
 
-    return result
+    # Stat ranges for mechanical grounding
+    stat_ranges = archetype.get("stat_ranges", {})
+
+    return {
+        "name": name,
+        "pronouns": pronouns,
+        "gender": gender,
+        "culture": culture["name"],
+        "faction": culture["name"],
+        "faction_description": culture["description"],
+        "archetype": archetype["name"],
+        "role": npc_role,
+        "appearance": appearance,
+        "personality": ", ".join(traits) if traits else "",
+        "dialogue_quirks": quirks,
+        "history": history,
+        "ocean": ocean,
+        "ocean_summary": ocean_summary(ocean),
+        "disposition": archetype.get("disposition_default", 0),
+        "inventory": inventory,
+        "stat_ranges": stat_ranges,
+        "trope_connections": trope_connections,
+    }
 
 
 def main():
