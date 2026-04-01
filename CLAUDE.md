@@ -85,6 +85,7 @@ sidequest-daemon/             # Python media services (subrepo)
 - **Claude CLI (`claude -p`)** for all LLM calls — subprocess, not SDK
 - **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth), loaded by the API from a configured path
 - **Media daemon** (`sidequest-daemon`) stays in Python as a sidecar for image/audio generation
+- **Save files** live at `~/.sidequest/saves/` (SQLite `.db` files, one per genre/world session) — not in the repo. See `.pennyfarthing/guides/save-management.md` for cleanup, inspection, and migration procedures
 
 ## Commands
 
