@@ -51,9 +51,11 @@ stories:
     title: Structured NPC registry and inventory panels in State tab — tables not raw JSON
     points: 3
     priority: p1
-    status: backlog
+    status: in_review
+    started: '2026-04-01'
     repos: ui
     workflow: tdd
+    branch: feat/18-5-npc-registry-inventory-otel
   - id: 18-6
     title: Prompt inspector tab — full assembled prompt with zone labels and per-zone token counts
     points: 5

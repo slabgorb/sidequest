@@ -348,6 +348,10 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
 <!-- Tab 1: Game State Explorer -->
 <div class="tab-content" id="tc1">
+  <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+    <span style="color:var(--muted);font-size:11px">Search:</span>
+    <input id="state-filter" type="text" placeholder="Filter NPCs, items..." oninput="renderState()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:2px 6px;font-size:11px;font-family:inherit;width:200px">
+  </div>
   <div id="state-body" style="color:var(--muted)">Waiting for GameStateSnapshot event...</div>
 </div>
 
@@ -429,7 +433,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 // ── State ──
 const S = {
   turns: [], allEvents: [], componentMap: {}, latestSnapshot: null,
-  selectedTurn: null, paused: false, activeTab: 0, promptEvents: [], loreEvents: []
+  selectedTurn: null, paused: false, activeTab: 0, promptEvents: [], loreEvents: [],
+  npcSort: { col: 'name', asc: true }, expandedNpcs: {}, expandedItems: {}
 };
 
 const SPAN_COLORS = {
@@ -584,11 +589,37 @@ function selectTurn(i) {
 }
 
 // ── Tab 1: State ──
+function npcDispositionColor(d) {
+  if (d > 10) return 'var(--green)';
+  if (d < -10) return 'var(--red)';
+  return 'var(--muted)';
+}
+function npcDispositionLabel(d) {
+  if (d > 10) return 'Friendly';
+  if (d < -10) return 'Hostile';
+  return 'Neutral';
+}
+function sortNpcs(col) {
+  if (S.npcSort.col === col) { S.npcSort.asc = !S.npcSort.asc; }
+  else { S.npcSort.col = col; S.npcSort.asc = true; }
+  renderState();
+}
+function toggleNpcExpand(name) {
+  S.expandedNpcs[name] = !S.expandedNpcs[name];
+  renderState();
+}
+function toggleItemExpand(charName, itemName) {
+  const key = charName + '::' + itemName;
+  S.expandedItems[key] = !S.expandedItems[key];
+  renderState();
+}
+
 function renderState() {
   const el = document.getElementById('state-body');
   const s = S.latestSnapshot;
   if (!s) { el.innerHTML = '<span style="color:var(--muted)">Waiting for GameStateSnapshot...</span>'; return; }
 
+  const filter = (document.getElementById('state-filter').value || '').toLowerCase();
   let html = '';
 
   // Location & World
@@ -607,6 +638,10 @@ function renderState() {
     const facts = c.known_facts || [];
     const stats = c.stats ? Object.entries(c.stats).map(([k,v])=>`${k}:${v}`).join(' · ') : '';
 
+    // Filter: if searching, only show characters with matching items
+    const filteredItems = filter ? items.filter(item => (item.name||'').toLowerCase().includes(filter)) : items;
+    if (filter && filteredItems.length === 0) return; // skip character if no matching items
+
     html += `<div class="card"><div class="card-title">${esc(c.name)} — ${esc(c.race||'')} ${esc(c.char_class||'')} (Lv${c.level||1})</div>
       <div style="display:flex;gap:24px;align-items:center;margin-bottom:8px">
         <div>HP: <span style="color:${hpColor};font-weight:bold">${c.hp}/${c.max_hp}</span></div>
@@ -616,14 +651,21 @@ function renderState() {
       </div>
       ${stats ? '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">'+esc(stats)+'</div>' : ''}`;
 
-    // Inventory
-    if (items.length) {
+    // Inventory — clickable rows with expansion
+    if (filteredItems.length) {
       html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--purple);margin-bottom:4px;font-weight:bold">INVENTORY</div><table style="width:100%;font-size:11px;border-collapse:collapse">';
-      html += '<tr style="color:var(--muted)"><th style="text-align:left;padding:2px 8px">Item</th><th style="text-align:left;padding:2px 8px">Weight</th><th style="text-align:left;padding:2px 8px">Stage</th></tr>';
-      items.forEach(item => {
+      html += '<tr style="color:var(--muted)"><th style="text-align:left;padding:2px 8px">Item</th><th style="text-align:left;padding:2px 8px">Weight</th><th style="text-align:left;padding:2px 8px">Stage</th><th style="text-align:left;padding:2px 8px">Description</th></tr>';
+      filteredItems.forEach(item => {
         const w = item.narrative_weight || 0;
         const stage = w >= 0.7 ? '<span style="color:var(--accent)">evolved</span>' : w >= 0.5 ? '<span style="color:var(--green)">named</span>' : '<span style="color:var(--muted)">unnamed</span>';
-        html += `<tr><td style="padding:2px 8px">${esc(item.name||item)}</td><td style="padding:2px 8px">${w.toFixed(2)}</td><td style="padding:2px 8px">${stage}</td></tr>`;
+        const itemKey = esc(c.name) + '::' + esc(item.name||item);
+        const expanded = S.expandedItems[c.name + '::' + (item.name||item)];
+        const desc = item.description || '';
+        const truncDesc = desc.length > 40 ? esc(desc.slice(0, 40)) + '…' : esc(desc);
+        html += `<tr style="cursor:pointer" onclick="toggleItemExpand(${JSON.stringify(c.name)},${JSON.stringify(item.name||String(item))})"><td style="padding:2px 8px">${esc(item.name||item)}</td><td style="padding:2px 8px">${w.toFixed(2)}</td><td style="padding:2px 8px">${stage}</td><td style="padding:2px 8px;color:var(--muted)">${truncDesc}</td></tr>`;
+        if (expanded) {
+          html += `<tr><td colspan="4" style="padding:4px 8px"><pre style="white-space:pre-wrap;font-size:10px;color:var(--muted);margin:0">${esc(JSON.stringify(item, null, 2))}</pre></td></tr>`;
+        }
       });
       html += '</table></div>';
     }
@@ -641,16 +683,62 @@ function renderState() {
     html += '</div>';
   });
 
-  // NPC Registry
-  const npcs = s.npc_registry || [];
-  if (npcs.length) {
-    html += '<div class="card"><div class="card-title">NPC Registry (' + npcs.length + ')</div>';
+  // NPC Registry — enriched with disposition + HP from s.npcs, sortable, expandable
+  const registry = s.npc_registry || [];
+  // Build lookup from full NPC data for enrichment
+  const npcLookup = {};
+  (s.npcs || []).forEach(n => { npcLookup[(n.name||'').toLowerCase()] = n; });
+  // Enrich registry entries
+  let enriched = registry.map(n => {
+    const full = npcLookup[(n.name||'').toLowerCase()];
+    return {
+      name: n.name, role: n.role||'', location: n.location||'', last_seen_turn: n.last_seen_turn,
+      pronouns: n.pronouns||'', age: n.age||'', appearance: n.appearance||'', ocean_summary: n.ocean_summary||'',
+      disposition: full ? (typeof full.disposition === 'number' ? full.disposition : 0) : null,
+      hp: full ? full.hp : null, max_hp: full ? full.max_hp : null,
+      _full: full || n
+    };
+  });
+  // Apply filter
+  if (filter) {
+    enriched = enriched.filter(n => n.name.toLowerCase().includes(filter) || n.role.toLowerCase().includes(filter) || n.location.toLowerCase().includes(filter));
+  }
+  // Apply sort
+  const sortCol = S.npcSort.col;
+  const sortAsc = S.npcSort.asc;
+  enriched.sort((a, b) => {
+    let va, vb;
+    if (sortCol === 'disposition') { va = a.disposition ?? 0; vb = b.disposition ?? 0; }
+    else if (sortCol === 'location') { va = a.location; vb = b.location; }
+    else { va = a.name; vb = b.name; }
+    if (typeof va === 'number') return sortAsc ? va - vb : vb - va;
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+
+  if (enriched.length) {
+    const arrow = (col) => S.npcSort.col === col ? (S.npcSort.asc ? ' ▲' : ' ▼') : '';
+    html += '<div class="card"><div class="card-title">NPC Registry (' + enriched.length + ')</div>';
     html += '<table style="width:100%;font-size:11px;border-collapse:collapse">';
-    html += '<tr style="color:var(--muted)"><th style="text-align:left;padding:4px 8px">Name</th><th style="text-align:left;padding:4px 8px">Role</th><th style="text-align:left;padding:4px 8px">Location</th><th style="text-align:left;padding:4px 8px">Last Seen</th><th style="text-align:left;padding:4px 8px">Pronouns</th></tr>';
-    npcs.forEach(n => {
-      html += `<tr><td style="padding:4px 8px;color:var(--text)">${esc(n.name)}</td><td style="padding:4px 8px;color:var(--muted)">${esc(n.role||'')}</td><td style="padding:4px 8px;color:var(--teal)">${esc(n.location||'')}</td><td style="padding:4px 8px;color:var(--muted)">T${n.last_seen_turn||'?'}</td><td style="padding:4px 8px;color:var(--muted)">${esc(n.pronouns||'')}</td></tr>`;
+    html += `<tr style="color:var(--muted)"><th style="text-align:left;padding:4px 8px;cursor:pointer" onclick="sortNpcs('name')">Name${arrow('name')}</th><th style="text-align:left;padding:4px 8px">Role</th><th style="text-align:left;padding:4px 8px;cursor:pointer" onclick="sortNpcs('location')">Location${arrow('location')}</th><th style="text-align:left;padding:4px 8px;cursor:pointer" onclick="sortNpcs('disposition')">Disposition${arrow('disposition')}</th><th style="text-align:left;padding:4px 8px">HP</th><th style="text-align:left;padding:4px 8px">Last Seen</th><th style="text-align:left;padding:4px 8px">Pronouns</th></tr>`;
+    enriched.forEach(n => {
+      const dispVal = n.disposition;
+      const dispColor = dispVal !== null ? npcDispositionColor(dispVal) : 'var(--muted)';
+      const dispText = dispVal !== null ? npcDispositionLabel(dispVal) + ' (' + dispVal + ')' : '—';
+      let hpHtml = '—';
+      if (n.hp !== null && n.max_hp !== null) {
+        const hpPct = n.max_hp > 0 ? Math.round(n.hp / n.max_hp * 100) : 100;
+        const hpColor = hpPct > 60 ? 'var(--green)' : hpPct > 30 ? 'var(--amber)' : 'var(--red)';
+        hpHtml = `<span style="color:${hpColor}">${n.hp}/${n.max_hp}</span>`;
+      }
+      const expanded = S.expandedNpcs[n.name];
+      html += `<tr style="cursor:pointer;border-bottom:1px solid var(--border)" onclick="toggleNpcExpand(${JSON.stringify(n.name)})"><td style="padding:4px 8px;color:var(--text);font-weight:bold">${esc(n.name)}</td><td style="padding:4px 8px;color:var(--muted)">${esc(n.role)}</td><td style="padding:4px 8px;color:var(--teal)">${esc(n.location)}</td><td style="padding:4px 8px;color:${dispColor}">${dispText}</td><td style="padding:4px 8px">${hpHtml}</td><td style="padding:4px 8px;color:var(--muted)">T${n.last_seen_turn||'?'}</td><td style="padding:4px 8px;color:var(--muted)">${esc(n.pronouns)}</td></tr>`;
+      if (expanded) {
+        html += `<tr><td colspan="7" style="padding:8px"><pre style="white-space:pre-wrap;font-size:10px;color:var(--muted);margin:0">${esc(JSON.stringify(n._full, null, 2))}</pre></td></tr>`;
+      }
     });
     html += '</table></div>';
+  } else if (!filter) {
+    html += '<div class="card"><div class="card-title">NPC Registry</div><div style="font-size:11px;color:var(--muted)">No NPCs in registry yet.</div></div>';
   }
 
   // Active Tropes
