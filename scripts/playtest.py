@@ -323,6 +323,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <div class="tab" onclick="switchTab(2)">③ Subsystems <span class="badge" id="tab2-badge"></span></div>
   <div class="tab" onclick="switchTab(3)">④ Timing</div>
   <div class="tab" onclick="switchTab(4)">⑤ Console <span class="badge" id="tab4-badge">0</span></div>
+  <div class="tab" onclick="switchTab(5)">⑥ Prompt <span class="badge" id="tab5-badge">0</span></div>
 </div>
 
 <!-- Tab 0: Timeline / Flame Chart -->
@@ -385,11 +386,29 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <div class="card" style="max-height:calc(100vh - 150px);overflow-y:auto;padding:4px" id="console-log"></div>
 </div>
 
+<!-- Tab 5: Prompt Inspector -->
+<div class="tab-content" id="tc5">
+  <div id="prompt-select-row" style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+    <span style="color:var(--muted);font-size:11px">Turn:</span>
+    <select id="prompt-turn-select" onchange="renderPrompt()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:2px 6px;font-size:11px;font-family:inherit">
+      <option value="">Select a turn</option>
+    </select>
+  </div>
+  <div id="prompt-summary" class="card" style="display:none">
+    <div class="card-title">Zone Breakdown</div>
+    <div id="prompt-zones"></div>
+  </div>
+  <div id="prompt-detail" class="card" style="display:none">
+    <div class="card-title">Full Prompt</div>
+    <pre id="prompt-text" style="white-space:pre-wrap;word-break:break-word;color:var(--text);font-size:12px;max-height:calc(100vh - 300px);overflow-y:auto"></pre>
+  </div>
+</div>
+
 <script>
 // ── State ──
 const S = {
   turns: [], allEvents: [], componentMap: {}, latestSnapshot: null,
-  selectedTurn: null, paused: false, activeTab: 0
+  selectedTurn: null, paused: false, activeTab: 0, promptEvents: []
 };
 
 const SPAN_COLORS = {
@@ -417,6 +436,7 @@ function switchTab(i) {
   S.activeTab = i;
   if (i===2) renderHealth();
   if (i===3) renderTiming();
+  if (i===5) renderPrompt();
   if (i===4) renderConsole();
 }
 function togglePause() { S.paused = !S.paused; }
@@ -450,6 +470,18 @@ function dispatch(ev) {
   if (ev.event_type === 'game_state_snapshot') {
     S.latestSnapshot = ev.fields.snapshot || ev.fields;
     if (S.activeTab === 1) renderState();
+  }
+  if (ev.event_type === 'prompt_assembled') {
+    S.promptEvents.push(ev);
+    document.getElementById('tab5-badge').textContent = S.promptEvents.length;
+    // Update turn selector
+    const sel = document.getElementById('prompt-turn-select');
+    const f = ev.fields || {};
+    const opt = document.createElement('option');
+    opt.value = S.promptEvents.length - 1;
+    opt.textContent = `T${f.turn_number||'?'} · ${f.agent||'?'} · ${f.total_tokens||0} tokens`;
+    sel.appendChild(opt);
+    if (S.activeTab === 5) renderPrompt();
   }
   updateHeader();
   if (S.activeTab === 0 && ev.event_type === 'turn_complete') renderTurnList();
@@ -842,7 +874,55 @@ function renderConsole() {
   });
   if (document.getElementById('console-auto-scroll').checked) el.scrollTop = el.scrollHeight;
 }
-function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); if(S.activeTab===4)renderConsole(); }
+// ── Tab 5: Prompt Inspector ──
+const ZONE_COLORS = { Primacy:'var(--accent)', Early:'var(--teal)', Valley:'var(--amber)', Late:'var(--pink)', Recency:'var(--purple)' };
+function renderPrompt() {
+  const sel = document.getElementById('prompt-turn-select');
+  const idx = sel.value;
+  if (idx === '' || !S.promptEvents[idx]) {
+    document.getElementById('prompt-summary').style.display = 'none';
+    document.getElementById('prompt-detail').style.display = 'none';
+    return;
+  }
+  const ev = S.promptEvents[idx];
+  const f = ev.fields || {};
+  const zones = f.zones || [];
+  const totalTokens = f.total_tokens || 0;
+
+  // Zone breakdown bars
+  const zonesHtml = zones.map(z => {
+    const pct = totalTokens > 0 ? (z.total_tokens / totalTokens * 100) : 0;
+    const color = ZONE_COLORS[z.zone] || 'var(--muted)';
+    const sections = (z.sections || []).map(s =>
+      `<div style="margin-left:24px;font-size:11px;color:var(--muted)">${esc(s.name)} <span style="color:var(--sky)">${s.token_estimate} tok</span> <span style="color:var(--border)">${s.category}</span></div>`
+    ).join('');
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:70px;text-align:right;color:${color};font-size:12px;font-weight:bold">${esc(z.zone)}</span>
+        <div style="flex:1;background:var(--border);border-radius:2px;height:18px;position:relative">
+          <div style="width:${pct}%;background:${color};height:100%;border-radius:2px;opacity:0.7"></div>
+        </div>
+        <span style="width:80px;font-size:11px;color:var(--text)">${z.total_tokens} tok</span>
+      </div>
+      ${sections}
+    </div>`;
+  }).join('');
+
+  document.getElementById('prompt-zones').innerHTML =
+    `<div style="margin-bottom:8px;font-size:12px">Agent: <b style="color:var(--accent)">${esc(f.agent||'?')}</b> · Total: <b>${totalTokens}</b> tokens · Sections: <b>${f.section_count||0}</b></div>` +
+    zonesHtml;
+  document.getElementById('prompt-summary').style.display = 'block';
+
+  // Full prompt text
+  if (f.full_prompt) {
+    document.getElementById('prompt-text').textContent = f.full_prompt;
+    document.getElementById('prompt-detail').style.display = 'block';
+  } else {
+    document.getElementById('prompt-detail').style.display = 'none';
+  }
+}
+
+function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); if(S.activeTab===4)renderConsole(); if(S.activeTab===5)renderPrompt(); }
 
 // ── WebSocket ──
 function connect() {

@@ -55,9 +55,11 @@ stories:
     title: Prompt inspector tab — full assembled prompt with zone labels and per-zone token counts
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-03-31'
     repos: api,ui
     workflow: tdd
+    branch: feat/18-6-prompt-inspector-tab
   - id: 18-7
     title: Parallelize prompt context build and preprocess Haiku call via tokio::join!
     points: 2
