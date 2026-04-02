@@ -236,8 +236,8 @@ completed_stories:
     title: "Wire StateDelta computation — broadcast_state_changes and delta.rs bypassed in server"
     points: 3
     completed: '2026-04-02'
-  - id: 15-14
+  - id: 15-27
     epic: ''
-    title: "Wire enrich_registry_from_npcs — NPC registry has regex-only data, ignores structured fields"
-    points: 2
+    title: "Wire script tool invocation — encountergen, loadoutgen, namegen registered but never called by LLM"
+    points: 5
     completed: '2026-04-02'

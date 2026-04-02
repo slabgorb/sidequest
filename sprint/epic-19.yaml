@@ -42,6 +42,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-1
     acceptance_criteria:
       - Location validation in room_graph mode rejects rooms without exit from current
       - discovered_rooms populated on room entry
@@ -61,6 +63,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-2
     acceptance_criteria:
       - Trope tick fires on room transition in room_graph mode
       - keeper_awareness_modifier from room data scales the multiplier
@@ -79,6 +83,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-2
     acceptance_criteria:
       - ExploredLocation includes exits, room_type, size fields
       - MAP_UPDATE only includes discovered rooms
@@ -98,6 +104,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-3
     acceptance_criteria:
       - Item.uses_remaining field added, serialized/deserialized
       - consume_use() decrements and removes at 0
@@ -116,6 +124,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-3
     acceptance_criteria:
       - decay_per_turn applied to resource_state after trope tick
       - Resources clamped to declared min/max
@@ -133,6 +143,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-5
     acceptance_criteria:
       - total_weight() sums all item weights × quantities
       - CarryMode::Weight rejects over-limit adds
@@ -153,6 +165,8 @@ stories:
     status: backlog
     repos: sidequest-ui
     workflow: tdd
+    depends_on:
+      - 19-4
     acceptance_criteria:
       - Automapper component renders room graph from MAP_UPDATE data
       - Fog of war hides undiscovered rooms
@@ -174,6 +188,8 @@ stories:
     status: backlog
     repos: sidequest-api
     workflow: tdd
+    depends_on:
+      - 19-2
     acceptance_criteria:
       - Gold increase on surface location triggers affinity progress
       - xp_affinity field in genre rules configures target affinity

@@ -42,6 +42,9 @@ Two-tier intent classification added but never called from `process_action()`. N
 **Story 15-23 — WorldBuilder Unwired**
 `materialize_world()` had full test coverage but zero call sites. Existed specifically because story 18-8 left WorldBuilder unwired. Dev had to add the server callsite at `lib.rs:2331`.
 
+**Story 15-6 — Combat NPC Turns (Playtest Discovery)**
+`resolve_attack()` and `check_victory()` were added to CombatState, fully tested, story marked done and reviewed. But NPCs never get a turn — the server only processes the player's action. creature_smith narrates "the goblin attacks" but `resolve_attack()` is never called. Claude compensates by improvising damage numbers in the narration. Caught during playtest when combat felt like an asskicking simulator — player always attacks, enemies never mechanically fight back. Classic pattern 5 (LLM Compensation) at the million-to-one cost tier.
+
 ### The Five Failure Patterns
 
 1. **Component-First TDD** — Build model, write tests, mark done. Integration "in another story." That story either never happens or discovers the model doesn't fit.

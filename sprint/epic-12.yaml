@@ -32,7 +32,7 @@ stories:
       5s fade-in, tension_build gets 1s, resolution gets 4s fade-out.
     points: 2
     priority: p2
-    status: backlog
+    status: future
     repos: sidequest-ui
     workflow: tdd
   - id: 12-3
@@ -42,6 +42,6 @@ stories:
       Visible in the GM telemetry panel.
     points: 1
     priority: p2
-    status: backlog
+    status: future
     repos: sidequest-api
     workflow: trivial
