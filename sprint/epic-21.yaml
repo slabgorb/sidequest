@@ -1,0 +1,109 @@
+id: '21'
+type: epic
+title: "Claude Subprocess OTEL Passthrough — See Inside the Black Box (ADR-058)"
+description: >-
+  Bridge Claude Code's native OTEL telemetry into the playtest dashboard.
+  Each claude -p subprocess exports tool invocations, token breakdowns,
+  and timing data to a lightweight OTLP receiver embedded in the playtest
+  dashboard. Requires splitting playtest.py into focused modules, adding
+  the OTLP receiver, and injecting OTEL env vars in ClaudeClient. See ADR-058.
+priority: p1
+status: in_progress
+repos: sidequest-api, orchestrator
+stories:
+  - id: 21-1
+    title: "Split playtest.py into focused modules"
+    description: >-
+      Extract playtest.py (27K+ tokens) into four modules: playtest.py (CLI/main),
+      playtest_dashboard.py (HTML/JS/WebSocket), playtest_otlp.py (empty skeleton
+      for next story), playtest_messages.py (MSG_STYLES, render_message, message
+      helpers). All existing behavior preserved — no functional changes. Tests
+      verify the split doesn't break interactive, scripted, or multiplayer modes.
+    points: 3
+    priority: p1
+    status: in_progress
+    repos: orchestrator
+    workflow: tdd
+    branch: feat/21-1-split-playtest-modules
+    assignee: keithavery
+    acceptance_criteria:
+      - playtest.py contains only CLI parsing, main(), and mode dispatch
+      - playtest_dashboard.py contains DASHBOARD_HTML, WebSocket server, HTTP serving, broadcast
+      - playtest_messages.py contains MSG_STYLES, render_message(), message construction helpers
+      - playtest_otlp.py exists as empty module (populated in 21-2)
+      - just playtest still works for interactive, scripted, and dashboard-only modes
+      - No functional changes — pure extraction refactor
+
+  - id: 21-2
+    title: "OTLP receiver in playtest dashboard — parse and broadcast Claude Code telemetry"
+    description: >-
+      Add a lightweight OTLP HTTP receiver to the playtest dashboard process.
+      Accepts POST at /v1/logs, /v1/metrics, /v1/traces. Parsing modeled on
+      Frame's otlp.py (same OTLP JSON format). Received tool spans and token
+      stats are broadcast to connected dashboard browsers via the existing
+      WebSocket channel, wrapped in {"source": "claude_otel", ...} envelopes.
+      Bounded span buffer (500 max, FIFO eviction). OTLP receiver port is
+      configurable via --otlp-port flag (default: dashboard_port + 2).
+    points: 5
+    priority: p1
+    status: backlog
+    repos: orchestrator
+    workflow: tdd
+    acceptance_criteria:
+      - POST /v1/logs parses claude_code.tool_result events into tool spans
+      - POST /v1/metrics parses claude_code.token.usage into token stats
+      - POST /v1/traces parses tool spans from trace payloads
+      - Parsed events broadcast to dashboard browsers via WebSocket
+      - Envelope format distinguishes OTEL events from watcher events
+      - Span buffer bounded at 500 with FIFO eviction
+      - Late-joining browsers receive span history
+      - --otlp-port CLI flag configures receiver port
+      - Unit tests for all three parse functions (modeled on Frame's test_148_5)
+
+  - id: 21-3
+    title: "Dashboard Claude tab — tool timeline, token breakdown, cost accumulator"
+    description: >-
+      Add tab 8 (Claude) to the playtest dashboard HTML/JS. Renders OTEL data
+      from claude_otel WebSocket events. Tool call timeline with duration bars
+      (reuse flame chart pattern from tab 1). Token breakdown table
+      (input/output/cache read/cache creation) per turn. Running cost accumulator.
+      Tool success/failure indicators. Events are correlated to game turns via
+      timestamp proximity to watcher turn events.
+    points: 5
+    priority: p1
+    status: backlog
+    repos: orchestrator
+    workflow: tdd
+    acceptance_criteria:
+      - Tab 8 (Claude) appears in dashboard tab bar
+      - Tool call timeline renders with duration bars per tool invocation
+      - Token breakdown shows input/output/cache read/cache creation per turn
+      - Running cost accumulator displays total spend
+      - Tool failures highlighted with error indicator
+      - Events correlate to game turns via timestamp
+      - Tab badge shows count of tool invocations
+
+  - id: 21-4
+    title: "ClaudeClient OTEL endpoint injection — env vars on subprocess Command"
+    description: >-
+      Add optional otel_endpoint: Option<String> to ClaudeClient via the
+      existing builder pattern. When set, send_impl() adds OTEL env vars
+      (CLAUDE_CODE_ENABLE_TELEMETRY, OTEL_LOGS_EXPORTER, etc.) to the
+      Command before spawn. When unset, no env vars added — zero overhead.
+      Server config/CLI flag --otel-endpoint threads through to all
+      ClaudeClient instances (narrator, intent router, creature_smith, etc.).
+      OTEL flush timeout set to 3000ms to ensure spans export before process exit.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    acceptance_criteria:
+      - ClaudeClientBuilder gains .otel_endpoint(url) method
+      - send_impl() sets 7 OTEL env vars on Command when endpoint is configured
+      - send_impl() sets CLAUDE_CODE_OTEL_FLUSH_TIMEOUT_MS=3000
+      - No env vars set when otel_endpoint is None
+      - Server --otel-endpoint flag threads through to all ClaudeClient instances
+      - Unit test verifies env vars are set on Command when endpoint configured
+      - Unit test verifies no env vars when endpoint is None
+      - Integration test with echo subprocess confirms env inheritance
