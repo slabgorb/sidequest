@@ -37,10 +37,12 @@ stories:
     title: lore_mark tool — footnote extraction via tool call
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
     branch: feat/20-4-lore-mark-tool
+    review_verdict: approved
   - id: 20-5
     title: scene_render tool — visual scene via tool call
     points: 3

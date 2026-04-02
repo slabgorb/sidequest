@@ -256,3 +256,8 @@ completed_stories:
     title: item_acquire and merchant_transact tools
     points: 5
     completed: '2026-04-02'
+  - id: 20-4
+    epic: ''
+    title: lore_mark tool — footnote extraction via tool call
+    points: 3
+    completed: '2026-04-02'
