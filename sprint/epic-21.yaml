@@ -21,11 +21,12 @@ stories:
       verify the split doesn't break interactive, scripted, or multiplayer modes.
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     repos: orchestrator
     workflow: tdd
     branch: feat/21-1-split-playtest-modules
     assignee: keithavery
+    completed: '2026-04-02'
     acceptance_criteria:
       - playtest.py contains only CLI parsing, main(), and mode dispatch
       - playtest_dashboard.py contains DASHBOARD_HTML, WebSocket server, HTTP serving, broadcast
