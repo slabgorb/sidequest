@@ -466,9 +466,12 @@ stories:
       script_tool.result (tool_name, output_keys).
     points: 5
     priority: p1
-    status: ready
+    status: in_progress
     repos: sidequest-api
     workflow: tdd
+    branch: feat/15-27-wire-script-tool-invocation
+    assignee: keith
+    started: '2026-04-02T08:06:39Z'
   - id: 15-28
     title: "Reinforce narrator structured output compliance — footnotes, quest_updates, scene_mood"
     description: >-
