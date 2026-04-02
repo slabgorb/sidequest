@@ -47,9 +47,11 @@ stories:
     title: scene_render tool — visual scene via tool call
     points: 3
     priority: p1
-    status: backlog
+    status: in_review
+    started: '2026-04-02'
     repos: api
     workflow: tdd
+    branch: feat/20-5-scene-render-tool
   - id: 20-6
     title: quest_update tool — quest state transitions
     points: 3
