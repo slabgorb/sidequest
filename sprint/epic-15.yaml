@@ -528,9 +528,10 @@ stories:
       string.
     points: 1
     priority: p3
-    status: ready
+    status: done
     repos: sidequest-ui
     workflow: trivial
+    completed: '2026-04-02'
   - id: 15-31
     title: "Add missing ambient SFX files — neon_hum.ogg and rain.ogg 404"
     description: >-
@@ -541,9 +542,10 @@ stories:
       sidequest-content/genre_packs/neon_dystopia/audio/sfx/.
     points: 1
     priority: p3
-    status: ready
+    status: done
     repos: sidequest-content
     workflow: trivial
+    completed: '2026-04-02'
   - id: 15-32
     title: "Add Orbitron font — neon_dystopia theme references missing woff2"
     description: >-
@@ -554,6 +556,7 @@ stories:
       add to genre assets.
     points: 1
     priority: p3
-    status: ready
+    status: done
     repos: sidequest-content
     workflow: trivial
+    completed: '2026-04-02'
