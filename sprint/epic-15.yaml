@@ -234,9 +234,11 @@ stories:
       (npc_name, fields_added).
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
     repos: api
     workflow: tdd
+    branch: feat/15-14-wire-enrich-registry-from-npcs
+    assignee: keith
   - id: 15-15
     title: "Wire resolve_abilities — affinity tiers tick but unlocked abilities never computed"
     description: >-
