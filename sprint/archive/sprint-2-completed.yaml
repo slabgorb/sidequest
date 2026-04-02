@@ -271,3 +271,8 @@ completed_stories:
     title: Wire assemble_turn into dispatch pipeline
     points: 3
     completed: '2026-04-02'
+  - id: 20-10
+    epic: ''
+    title: Wire tool call parsing — connect Claude tool output to ToolCallResults
+    points: 5
+    completed: '2026-04-02'

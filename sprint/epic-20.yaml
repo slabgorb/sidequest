@@ -88,6 +88,9 @@ stories:
     title: Wire tool call parsing — connect Claude tool output to ToolCallResults
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-02'
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
