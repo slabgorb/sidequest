@@ -241,3 +241,8 @@ completed_stories:
     title: "Wire script tool invocation — encountergen, loadoutgen, namegen registered but never called by LLM"
     points: 5
     completed: '2026-04-02'
+  - id: 20-1
+    epic: ''
+    title: assemble_turn infrastructure + action preprocessors
+    points: 5
+    completed: '2026-04-02'

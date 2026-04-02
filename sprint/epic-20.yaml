@@ -10,10 +10,12 @@ stories:
     title: assemble_turn infrastructure + action preprocessors
     points: 5
     priority: p1
-    status: in_progress
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
     branch: feat/20-1-assemble-turn-infrastructure
+    review_verdict: approved
   - id: 20-2
     title: scene_mood and scene_intent tool calls
     points: 3
