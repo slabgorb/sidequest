@@ -56,7 +56,7 @@ stories:
     title: quest_update tool — quest state transitions
     points: 3
     priority: p2
-    status: in_progress
+    status: in_review
     started: '2026-04-02'
     repos: api
     workflow: tdd

@@ -286,3 +286,8 @@ completed_stories:
     title: quest_update tool — quest state transitions
     points: 3
     completed: '2026-04-02'
+  - id: 21-2
+    epic: ''
+    title: "OTLP receiver in playtest dashboard — parse and broadcast Claude Code telemetry"
+    points: 5
+    completed: '2026-04-02'

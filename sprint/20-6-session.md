@@ -135,6 +135,12 @@ pub struct QuestUpdate {
 |-------|---------|-------|----------|
 | setup | 2026-04-02T15:05:18Z | - | - |
 
+## Sm Assessment
+
+Story 20-6 follows the established tool-call pattern from Phases 2-4. Session has clear ACs, scope boundaries (Phase 8 handles prompt removal), and technical references to all four prior tool implementations. Branch created on API develop. No blockers — well-grooved pattern.
+
+**Routing:** TDD → TEA (red phase) writes failing tests first.
+
 ## Delivery Findings
 
 No upstream findings at setup time.

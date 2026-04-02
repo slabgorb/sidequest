@@ -46,7 +46,7 @@ stories:
       configurable via --otlp-port flag (default: dashboard_port + 2).
     points: 5
     priority: p1
-    status: in_progress
+    status: done
     repos: orchestrator
     workflow: tdd
     acceptance_criteria:
@@ -59,6 +59,7 @@ stories:
       - Late-joining browsers receive span history
       - --otlp-port CLI flag configures receiver port
       - Unit tests for all three parse functions (modeled on Frame's test_148_5)
+    completed: '2026-04-02'
     branch: feat/21-2-otlp-receiver-playtest
     assignee: keithavery
   - id: 21-3
