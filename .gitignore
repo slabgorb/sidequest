@@ -73,5 +73,5 @@ tui-pid
 # Local pf shim (machine-specific absolute paths)
 # tmux runtime cache files
 # Local tmux config (copied from sample)
-scripts/__pycache__/
+**/__pycache__/
 .tmuxinator.yml
