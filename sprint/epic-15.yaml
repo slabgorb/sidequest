@@ -71,13 +71,12 @@ stories:
       The intent router correctly classifies combat actions and COMBAT_EVENT messages fire over WebSocket. But the actual combat system never engages — enemies array is always empty, turn_order is empty, current_turn is empty. The combat is purely narrated, not structured. This is a half-wired feature: the classification works but the combat engine (creature spawning, encounter triggers, HP tracking, turn-based resolution) never activates.
     points: 5
     priority: p0
-    status: done
+    status: in_progress
     repos: sidequest-api
     workflow: tdd
-    completed: '2026-03-30'
     branch: feat/15-6-fix-combat-engine-wiring
-    assignee: dev
-    review_verdict: approved
+    assignee: keith
+    started: '2026-04-02T05:00:00Z'
   - id: 15-7
     title: "Wire RAG pipeline end-to-end — accumulate_lore from turns, generate embeddings via daemon, switch to semantic retrieval"
     description: >-
@@ -252,12 +251,10 @@ stories:
       ability_names).
     points: 2
     priority: p1
-    status: in_progress
+    status: done
+    completed: '2026-04-02'
     repos: api
     workflow: tdd
-    branch: feat/15-15-wire-resolve-abilities
-    assignee: keith
-    started: '2026-04-02T03:00:00Z'
   - id: 15-16
     title: "Wire merchant system — execute_buy/sell/calculate_price/format_merchant_context all unwired"
     description: >-
@@ -447,3 +444,105 @@ stories:
     status: backlog
     repos: api
     workflow: tdd
+  - id: 15-27
+    title: "Wire script tool invocation — encountergen, loadoutgen, namegen registered but never called by LLM"
+    description: >-
+      Server discovers and registers ADR-056 script tools (encountergen,
+      loadoutgen, namegen) at startup. OTEL shows zero invocations across
+      12+ turns. The LLM has these tools available but never calls them —
+      encounters, loadouts, and NPC names are improvised instead of
+      generated from genre pack data. Root cause: the narrator prompt
+      doesn't instruct the LLM to use these tools, or the tool definitions
+      aren't formatted for Claude's tool_use protocol. Fix: (1) verify
+      script tools are registered as Claude tool_use definitions (not just
+      logged). (2) Add narrator prompt instructions that explicitly direct
+      tool usage for NPC introductions (namegen), combat encounters
+      (encountergen), and starting loadouts (loadoutgen). (3) Verify
+      tool_use calls appear in OTEL spans. OTEL events:
+      script_tool.invoked (tool_name, genre, args),
+      script_tool.result (tool_name, output_keys).
+    points: 5
+    priority: p1
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+  - id: 15-28
+    title: "Reinforce narrator structured output compliance — footnotes, quest_updates, scene_mood"
+    description: >-
+      The narrator prompt asks for structured fields (footnotes,
+      quest_updates, scene_mood, npcs_present) but Claude inconsistently
+      produces them. Footnotes fire on turn 1 (Backstory intent) then
+      stop. quest_updates appear 2/12 turns. scene_mood is rarely
+      included. Root cause: the JSON schema example shows these fields but
+      doesn't strongly enough reinforce that they're required every turn.
+      Fix: (1) Add a "REQUIRED EVERY TURN" checklist to the narrator
+      prompt immediately before the JSON schema. (2) Move the JSON schema
+      to the Anchoring zone (higher attention). (3) Add a post-extraction
+      validation that logs warnings when expected fields are missing, so
+      OTEL shows compliance rate. (4) For quest_updates specifically, add
+      quest objective context to the narrator prompt so the LLM can track
+      progress against known objectives. OTEL events:
+      extraction.compliance (turn, fields_present, fields_missing).
+    points: 3
+    priority: p1
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+  - id: 15-29
+    title: "Wire append_narrative to SQLite — narrative_log table never written to"
+    description: >-
+      persist_game_state() appends narration to snapshot.narrative_log
+      (in-memory) and saves the snapshot blob. But the dedicated
+      narrative_log SQLite table (created by schema, queried by
+      recent_narrative()) is never written to. append_narrative() in
+      persistence.rs exists but has no caller. Fix: after appending to
+      snapshot.narrative_log in persist_game_state(), also call
+      persistence.append_narrative() to write to the SQLite table.
+      This enables recent_narrative() for "Previously On..." reconnect
+      recaps. OTEL event: persistence.narrative_appended (turn, length).
+    points: 2
+    priority: p2
+    status: ready
+    repos: sidequest-api
+    workflow: tdd
+  - id: 15-30
+    title: "Genre-aware chargen loading text — replace hardcoded 'old woman' with genre NPC"
+    description: >-
+      CharacterCreation.tsx line 46 shows "The old woman considers your
+      words..." during chargen loading. This is genre-agnostic — in
+      neon_dystopia the chargen NPC is a ripperdoc, not an old woman.
+      Fix: pass the chargen NPC description or a genre-neutral phrase
+      from the server's CHARACTER_CREATION scene payload. The loading
+      component should display text from the server, not a hardcoded
+      string.
+    points: 1
+    priority: p3
+    status: ready
+    repos: sidequest-ui
+    workflow: trivial
+  - id: 15-31
+    title: "Add missing ambient SFX files — neon_hum.ogg and rain.ogg 404"
+    description: >-
+      neon_dystopia audio.yaml references sfx/neon_hum.ogg and
+      sfx/rain.ogg for ambient soundscape. Files don't exist in the
+      content repo. Console shows 404 + "Unable to decode audio data".
+      Fix: generate or source ambient SFX files and add them to
+      sidequest-content/genre_packs/neon_dystopia/audio/sfx/.
+    points: 1
+    priority: p3
+    status: ready
+    repos: sidequest-content
+    workflow: trivial
+  - id: 15-32
+    title: "Add Orbitron font — neon_dystopia theme references missing woff2"
+    description: >-
+      neon_dystopia theme.yaml references Orbitron-Regular.woff2 for the
+      cyberpunk UI typeface. File not found at /genre/assets/fonts/.
+      Fallback font renders fine but not the intended aesthetic. Fix:
+      obtain Orbitron from Google Fonts (OFL license), convert to woff2,
+      add to genre assets.
+    points: 1
+    priority: p3
+    status: ready
+    repos: sidequest-content
+    workflow: trivial
