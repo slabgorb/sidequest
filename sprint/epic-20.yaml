@@ -120,9 +120,12 @@ stories:
       and narrator-described items (new/improvised items). Generation pattern — call tool first, narrate around result.
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-04-02'
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
+    branch: feat/20-11-item-acquire-sidecar
   - id: 20-12
     title: "merchant_transact sidecar tool — narrator calls tool to execute buy/sell, sidecar parser validates against merchant inventory"
     description: >-

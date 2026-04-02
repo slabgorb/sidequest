@@ -306,3 +306,8 @@ completed_stories:
     title: Eliminate narrator JSON block — delete extractor.rs
     points: 3
     completed: '2026-04-02'
+  - id: 20-11
+    epic: ''
+    title: "item_acquire sidecar tool — narrator calls tool to grant items, sidecar parser validates and feeds assemble_turn"
+    points: 5
+    completed: '2026-04-02'
