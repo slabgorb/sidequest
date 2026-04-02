@@ -272,7 +272,8 @@ stories:
       merchant.transaction (type, item, price, gold_before, gold_after).
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    completed: '2026-04-01'
     repos: api
     workflow: tdd
   - id: 15-17
@@ -388,3 +389,25 @@ stories:
     repos: api
     workflow: tdd
     completed: "2026-03-30"
+  - id: 15-24
+    title: "Persist LoreFragments to SQLite — game-accumulated lore lost between sessions"
+    description: >-
+      LoreStore is in-memory only. On session resume, lore is reconstructed from
+      genre pack YAML via seed_lore_from_genre_pack(), but any lore accumulated
+      during gameplay (via accumulate_lore() in dispatch/mod.rs:520) is lost.
+      The lore_established Vec<String> in GameSnapshot survives but lacks
+      LoreFragment metadata (category, source, turn_created). Fix: add a
+      lore_fragments table to the SQLite schema in persistence.rs. Add
+      AppendLoreFragment and LoadLoreFragments commands to PersistenceHandle.
+      On accumulate_lore(), persist the fragment. On session load, reconstruct
+      LoreStore from both genre pack seed AND persisted fragments. Embeddings
+      are NOT persisted — regenerated on demand via daemon. Old saves without
+      the table get it created via CREATE IF NOT EXISTS on first access. OTEL
+      events: lore.fragment_persisted (fragment_id, category),
+      lore.fragments_restored (count, categories).
+    points: 3
+    priority: p1
+    status: done
+    completed: '2026-04-02'
+    repos: api
+    workflow: tdd
