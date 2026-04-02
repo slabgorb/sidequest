@@ -49,7 +49,6 @@ stories:
     priority: p1
     status: done
     started: '2026-04-02'
-    completed: '2026-04-02'
     repos: api
     workflow: tdd
     completed: '2026-04-02'
@@ -60,7 +59,6 @@ stories:
     priority: p2
     status: done
     started: '2026-04-02'
-    completed: '2026-04-02'
     repos: api
     workflow: tdd
     completed: '2026-04-02'
@@ -87,6 +85,7 @@ stories:
     workflow: tdd
     completed: '2026-04-02'
     branch: feat/20-8-eliminate-narrator-json
+    review_verdict: approved
   - id: 20-9
     title: Wire assemble_turn into dispatch pipeline
     points: 3
