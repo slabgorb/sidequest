@@ -61,9 +61,10 @@ stories:
       Extend MAP_UPDATE / ExploredLocation in sidequest-protocol to include room exits, room_type, size, and current_room flag. When navigation_mode is RoomGraph, MAP_UPDATE sends the full discovered room graph. Undiscovered rooms are omitted (fog of war). UI receives structured data for automapper.
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
     repos: sidequest-api
     workflow: tdd
+    branch: feat/19-4-map-update-room-graph
     acceptance_criteria:
       - ExploredLocation includes exits, room_type, size fields
       - MAP_UPDATE only includes discovered rooms
