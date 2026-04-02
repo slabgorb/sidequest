@@ -13,7 +13,7 @@ stories:
       Add RoomDef, RoomExit, and NavigationMode enum to CartographyConfig in sidequest-genre/src/models.rs. Load rooms from rooms.yaml at world level. Validate: all exit targets reference existing room IDs, bidirectional exits (except chute_down), no orphaned rooms. Genre pack sets navigation_mode: room_graph to opt in. Region mode remains the default.
     points: 5
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     acceptance_criteria:
@@ -22,13 +22,14 @@ stories:
       - Validation rejects invalid exit targets, missing bidirectional routes (non-chute)
       - Existing genre packs unaffected (navigation_mode defaults to Region)
       - Unit tests for deserialization and validation
+    completed: '2026-04-02'
   - id: 19-2
     title: "Validated room movement — location constrained to room_id with exit check"
     description: >-
       When navigation_mode is RoomGraph, WorldStatePatch.location must be a valid room_id reachable via an exit from the current room. Invalid moves are rejected. Track discovered_rooms: HashSet<String> in GameSnapshot. Rooms are discovered on entry. Starting room is the room with type: entrance.
     points: 5
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     acceptance_criteria:
@@ -37,13 +38,14 @@ stories:
       - Starting location set to entrance room on session create
       - Region mode behavior unchanged
       - Integration test: move through 3-room sequence, reject invalid move
+    completed: '2026-04-02'
   - id: 19-3
     title: "Trope tick on room transition — fire trope engine per room move"
     description: >-
       When navigation_mode is RoomGraph and location changes, fire TropeEngine::tick() with the room's keeper_awareness_modifier as the engagement multiplier. This makes rate_per_turn advance per room transition instead of per player action. Resource ticks and Keeper awareness (via trope escalation) are driven by movement.
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-api
     workflow: tdd
     acceptance_criteria:
@@ -52,6 +54,7 @@ stories:
       - Trope escalation events fire at thresholds
       - Existing per-turn tick behavior unchanged in region mode
       - Test: 5 room transitions advance trope by 5 × rate_per_turn × modifier
+    completed: '2026-04-02'
   - id: 19-4
     title: "MAP_UPDATE for room graph — send discovered rooms with exits to UI"
     description: >-
