@@ -21,6 +21,10 @@ Thumbs.db
 # Logs
 *.log
 
+# Playtest artifacts
+playtest-*.png
+.playwright-mcp/
+
 # Pennyfarthing runtime
 .session/*
 !.session/.gitkeep
