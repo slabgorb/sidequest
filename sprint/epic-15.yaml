@@ -290,8 +290,9 @@ stories:
       (phase, danger_level, camera, sentence_range).
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: api
+    completed: "2026-04-02"
     workflow: tdd
   - id: 15-18
     title: "Wire materialize_world — world builder ignores progressive materialization"
