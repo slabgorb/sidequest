@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_NAME="$(basename "$0")"
+
+usage() {
+  cat <<EOF
+$SCRIPT_NAME — Generate enemy encounter stat blocks from genre pack data.
+
+Call any time new enemies enter the scene. Pick flags based on narrative context.
+
+Usage:
+  $SCRIPT_NAME [OPTIONS]
+
+Options:
+  --tier N            Power tier 1-4 (maps to level ranges). Random if omitted.
+  --count N           Number of enemies (default: 1).
+  --class NAME        Character class (e.g., Scavenger, Mutant). Random if omitted.
+  --culture NAME      Culture for name generation. Random if omitted.
+  --archetype NAME    Archetype (e.g., "Wasteland Trader"). Random if omitted.
+  --role ROLE         Enemy role hint (e.g., "ambush predator", "pack scout").
+  --context TEXT      Scene context for visual prompt (e.g., "guarding a bridge").
+  -h, --help          Show this help.
+
+Environment (set by the engine — do not set manually):
+  SIDEQUEST_GENRE           Genre slug for the current session (e.g., low_fantasy)
+  SIDEQUEST_CONTENT_PATH    Path to sidequest-content repo (default: ~/Projects/sidequest-content)
+  SIDEQUEST_API_BIN         Path to API binary directory (default: ~/Projects/sidequest-api/target/debug)
+
+Output:
+  JSON with: enemies[].{name, class, level, hp, abilities, weaknesses,
+  stat_scores, visual_prompt}
+
+Example:
+  $SCRIPT_NAME --tier 2 --count 3 --culture Nordmark --role "border patrol"
+EOF
+  exit 0
+}
+
+[[ "${1:-}" == "-h" || "${1:-}" == "--help" ]] && usage
+
+# Resolve paths from environment with defaults
+CONTENT_PATH="${SIDEQUEST_CONTENT_PATH:-$HOME/Projects/sidequest-content}"
+API_BIN="${SIDEQUEST_API_BIN:-$HOME/Projects/sidequest-api/target/debug}"
+GENRE="${SIDEQUEST_GENRE:-}"
+
+if [[ -z "$GENRE" ]]; then
+  echo "ERROR: SIDEQUEST_GENRE is not set. The engine must set this per-session." >&2
+  exit 1
+fi
+
+BINARY="$API_BIN/sidequest-encountergen"
+if [[ ! -x "$BINARY" ]]; then
+  echo "ERROR: Binary not found at $BINARY — run 'cargo build' in sidequest-api." >&2
+  exit 1
+fi
+
+exec "$BINARY" \
+  --genre-packs-path "$CONTENT_PATH/genre_packs" \
+  --genre "$GENRE" \
+  "$@"

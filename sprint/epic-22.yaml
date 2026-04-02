@@ -1,0 +1,43 @@
+id: '22'
+type: epic
+title: Seed Tropes — Narrative Variety via Schrödinger's Gun
+description: Expand the trope engine with short-arc 'seed' tropes — deliberately vague narrative events (a sealed letter, a missing item, an uneasy innkeeper) randomly dealt each session from a per-genre deck. Seeds inject as background context; the LLM narrator retroactively connects them to macro-trope escalations, creating emergent foreshadowing. Expired seeds linger as ghosts for cross-session callbacks. The player experiences a world with narrative memory and variety.
+priority: p1
+status: backlog
+repos: api,content,orchestrator
+stories:
+  - id: 22-1
+    title: Seed trope schema + deck engine — lifespan, flavor tags, draw-without-replacement, ghost retention
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 22-2
+    title: Seed trope content — author 20-30 seeds per genre pack with flavor tags and NPC delivery hints
+    points: 5
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+  - id: 22-3
+    title: Seed trope narrator injection — Valley-zone context for active seeds, Faded tag for expired ghosts
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 22-4
+    title: Seed trope OTEL + GM panel — seed_fired, seed_expired, seed_promoted spans
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 22-5
+    title: Engagement-triggered seed drops — passive player pacing, mid-session seed injection
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd

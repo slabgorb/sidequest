@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_NAME="$(basename "$0")"
+
+usage() {
+  cat <<EOF
+$SCRIPT_NAME — Generate a complete NPC identity from genre pack data.
+
+Call this BEFORE introducing any new NPC. Do not invent NPC names.
+
+Usage:
+  $SCRIPT_NAME [OPTIONS]
+
+Options:
+  --culture NAME      Culture/faction name (e.g., Brevonne, Scrapborn). Random if omitted.
+  --archetype NAME    Archetype (e.g., "Wasteland Trader"). Random if omitted.
+  --gender GENDER     male, female, or nonbinary. Random if omitted.
+  --role ROLE         Role override (e.g., mechanic). Defaults to archetype name.
+  --description TEXT  Physical description hints.
+  -h, --help          Show this help.
+
+Environment (set by the engine — do not set manually):
+  SIDEQUEST_GENRE           Genre slug for the current session (e.g., low_fantasy)
+  SIDEQUEST_CONTENT_PATH    Path to sidequest-content repo (default: ~/Projects/sidequest-content)
+  SIDEQUEST_API_BIN         Path to API binary directory (default: ~/Projects/sidequest-api/target/debug)
+
+Output:
+  JSON with: name, pronouns, culture, role, appearance, personality,
+  dialogue_quirks, history, ocean, inventory, trope_connections
+
+Example:
+  $SCRIPT_NAME --culture Brevonne --role innkeeper
+EOF
+  exit 0
+}
+
+[[ "${1:-}" == "-h" || "${1:-}" == "--help" ]] && usage
+
+# Resolve paths from environment with defaults
+CONTENT_PATH="${SIDEQUEST_CONTENT_PATH:-$HOME/Projects/sidequest-content}"
+API_BIN="${SIDEQUEST_API_BIN:-$HOME/Projects/sidequest-api/target/debug}"
+GENRE="${SIDEQUEST_GENRE:-}"
+
+if [[ -z "$GENRE" ]]; then
+  echo "ERROR: SIDEQUEST_GENRE is not set. The engine must set this per-session." >&2
+  exit 1
+fi
+
+BINARY="$API_BIN/sidequest-namegen"
+if [[ ! -x "$BINARY" ]]; then
+  echo "ERROR: Binary not found at $BINARY — run 'cargo build' in sidequest-api." >&2
+  exit 1
+fi
+
+exec "$BINARY" \
+  --genre-packs-path "$CONTENT_PATH/genre_packs" \
+  --genre "$GENRE" \
+  "$@"

@@ -52,6 +52,7 @@ stories:
     completed: '2026-04-02'
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
     branch: feat/20-5-scene-render-tool
   - id: 20-6
     title: quest_update tool — quest state transitions
@@ -62,6 +63,7 @@ stories:
     completed: '2026-04-02'
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
     branch: feat/20-6-quest-update-tool
   - id: 20-7
     title: personality_event, resource_change, play_sfx tools
@@ -107,3 +109,46 @@ stories:
     repos: api
     workflow: tdd
     completed: '2026-04-02'
+  - id: 20-11
+    title: "item_acquire sidecar tool — narrator calls tool to grant items, sidecar parser validates and feeds assemble_turn"
+    description: >-
+      item_acquire is not wired into the sidecar tool call pipeline. After 20-8 deleted extractor.rs,
+      items_gained flows through NarratorExtraction as an always-empty vector. The narrator narrates
+      item acquisition but no inventory update occurs. Wire item_acquire as a sidecar tool: narrator
+      calls it before narrating the acquisition, parser validates against genre pack item_catalog,
+      assemble_turn feeds the result into items_gained. Must handle both catalog lookups (existing items)
+      and narrator-described items (new/improvised items). Generation pattern — call tool first, narrate around result.
+    points: 5
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 20-12
+    title: "merchant_transact sidecar tool — narrator calls tool to execute buy/sell, sidecar parser validates against merchant inventory"
+    description: >-
+      merchant_transact is not wired into the sidecar tool call pipeline. MerchantTransactionExtracted
+      struct exists but always returns empty. Narrator narrates commerce but no gold/inventory changes occur.
+      Wire merchant_transact as a sidecar tool: narrator calls it with transaction type (buy/sell),
+      item reference, and merchant name. Parser validates against merchant inventory and player gold.
+      assemble_turn feeds result into merchant_transactions. Depends on 20-11 (item_acquire) for the
+      item resolution pattern.
+    points: 5
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+    depends_on: 20-11
+  - id: 20-13
+    title: "lore_mark sidecar tool — narrator calls tool to emit footnotes, sidecar parser collects into lore_established"
+    description: >-
+      lore_mark is not wired into the sidecar tool call pipeline. lore_established flows through
+      NarratorExtraction as always-None. Footnote markers in prose ([1]) have no mechanical backing.
+      Wire lore_mark as a sidecar tool: narrator calls it with text, confidence level, and category.
+      Parser validates and feeds into assemble_turn lore_established field. This completes the Epic 20
+      migration — all mechanical extraction flows through sidecar tools, zero narrator JSON.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    depends_on: 20-11

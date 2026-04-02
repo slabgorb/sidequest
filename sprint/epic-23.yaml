@@ -1,0 +1,89 @@
+id: '23'
+type: epic
+title: Narrator Prompt Architecture — Template, RAG, Universal Cartography
+description: >-
+  Rework the narrator system prompt from a hardcoded monolith into a structured template with
+  attention-zone-aware sections, bash tool wrappers, and graph-based lore retrieval. The prompt
+  template (docs/prompt-reworked.md) defines the canonical narrator contract: identity, critical
+  rules, guiding principles, output style, tool definitions, player data, world lore, game state,
+  and tone axes. The RAG strategy (docs/narrator-prompt-rag-strategy.md) replaces the full lore
+  dump with tiered summaries + graph-distance retrieval. Universal room graph cartography
+  (docs/universal-room-graph-cartography.md) makes Epic 19's cyclic graph the standard
+  cartography format across all genre packs, enabling location-based context retrieval.
+priority: p1
+status: backlog
+repos: api,content,orchestrator
+stories:
+  - id: 23-1
+    title: "Wire reworked narrator prompt — replace hardcoded narrator.rs with template sections"
+    description: >-
+      Replace the hardcoded system prompt in narrator.rs and the inline section registration in
+      orchestrator.rs:build_narrator_prompt() with the structured template from docs/prompt-reworked.md.
+      Identity goes to Primacy zone. Four critical blocks go to Primacy. Seven important blocks go to
+      Early zone. Output-style goes to Early. Tool definitions (generation wrappers) go to Valley.
+      Player data, world lore, game state, tone stay in Valley/Late as today but use the new structure.
+      Bash wrappers (scripts/sidequest-npc, sidequest-encounter, sidequest-loadout) replace hardcoded
+      tool paths. SIDEQUEST_GENRE and SIDEQUEST_CONTENT_PATH env vars set per-session.
+    points: 8
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 23-2
+    title: "Tiered lore summaries — add summary field to faction/culture/location YAML schemas"
+    description: >-
+      Add a summary field (one line, ~10 tokens) to faction, culture, and location definitions in
+      genre pack YAML. Write summaries for low_fantasy as pilot. Update sidequest-genre loader to
+      parse summaries. This is the prerequisite for lore filtering — summaries are the safety net
+      that prevents retrieval misses from leaving the narrator with zero context. See
+      docs/narrator-prompt-rag-strategy.md.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: content,api
+    workflow: tdd
+  - id: 23-3
+    title: "Universal room graph cartography — convert all genre packs to hierarchical graph format"
+    description: >-
+      Make Epic 19's cyclic room graph the canonical cartography format for all genre packs.
+      Define the hierarchical schema: world_graph (coarse nodes + edges with danger/terrain) and
+      sub_graphs (keyed by parent node). Convert low_fantasy Pinwheel Coast as pilot — world graph
+      with edges between major locations, sub-graph for Solenne. Edge danger levels encode story
+      generation: danger > 0 means travel becomes a scene, danger = 0 means fast travel. Update
+      CartographyConfig in sidequest-genre to support the hierarchical model. See
+      docs/universal-room-graph-cartography.md.
+    points: 8
+    priority: p1
+    status: backlog
+    repos: content,api
+    workflow: tdd
+  - id: 23-4
+    title: "LoreFilter — graph-distance + intent-based context retrieval for Valley zone"
+    description: >-
+      Build a LoreFilter struct in sidequest-agents that determines which lore sections to inject
+      per turn. Primary signal: graph distance from current node (0 hops = full, 1 hop = full,
+      2+ = summary only). Secondary signals: intent classification (Combat pulls enemy factions,
+      Dialogue pulls NPC culture/faction, Travel pulls destination + edge properties) and NPC
+      presence (NPCs in scene pull their faction/culture). Gate Valley section registration in
+      build_narrator_prompt() through the filter. Always inject name-only lists as closed-world
+      assertions. Add OTEL lore_filter span logging included/excluded decisions. See
+      docs/narrator-prompt-rag-strategy.md.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+    depends_on: 23-2,23-3
+  - id: 23-5
+    title: "Dynamic tone axes — genre packs define their own tone axis names and levels"
+    description: >-
+      Replace hardcoded comedy/gravity/outlook tone axes with a dynamic loop over genre-pack-defined
+      axes. Each genre pack declares its own axes (e.g., space_opera might have wonder, pulp_noir
+      might have cynicism) with name, level (0-1 float), and a prose description. Update tone
+      injection in build_narrator_prompt() to loop over whatever axes the genre pack provides.
+      Update genre pack YAML schema and sidequest-genre loader.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api,content
+    workflow: tdd
