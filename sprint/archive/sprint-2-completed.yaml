@@ -261,3 +261,8 @@ completed_stories:
     title: lore_mark tool — footnote extraction via tool call
     points: 3
     completed: '2026-04-02'
+  - id: 19-2
+    epic: ''
+    title: "Validated room movement — location constrained to room_id with exit check"
+    points: 5
+    completed: '2026-04-02'
