@@ -80,7 +80,7 @@ async def receiver(ws, state: dict) -> None:
 
 async def run_interactive(
     host: str, port: int, genre: str, world: str, player_name: str,
-    watch: bool = True, dashboard_port: int = 9765,
+    watch: bool = True, dashboard_port: int = 9765, otlp_port: int | None = None,
 ) -> None:
     """Interactive playtest — human types actions, sees narration."""
     uri = f"ws://{host}:{port}/ws"
@@ -106,7 +106,7 @@ async def run_interactive(
         # Start watcher telemetry (OTEL dashboard)
         watcher_task = None
         if watch:
-            watcher_task = asyncio.create_task(run_dashboard_server(host, port, dashboard_port))
+            watcher_task = asyncio.create_task(run_dashboard_server(host, port, dashboard_port, otlp_port=otlp_port))
 
         # Connect to session
         console.print(f"[bold]Joining {genre}/{world} as {player_name}...[/bold]")
@@ -234,7 +234,7 @@ async def run_interactive(
 
 async def run_scripted(
     host: str, port: int, scenario_path: str, watch: bool = True,
-    dashboard_port: int = 9765,
+    dashboard_port: int = 9765, otlp_port: int | None = None,
 ) -> None:
     """Run a YAML scenario file against the server."""
     path = Path(scenario_path)
@@ -273,7 +273,7 @@ async def run_scripted(
 
         watcher_task = None
         if watch:
-            watcher_task = asyncio.create_task(run_dashboard_server(host, port, dashboard_port))
+            watcher_task = asyncio.create_task(run_dashboard_server(host, port, dashboard_port, otlp_port=otlp_port))
 
         # Connect
         await ws.send(json.dumps(make_connect_msg(genre, world, player_name)))
@@ -457,7 +457,7 @@ async def run_player(
 
 async def run_multiplayer(
     host: str, port: int, genre: str, world: str, num_players: int,
-    watch: bool = True, dashboard_port: int = 9765,
+    watch: bool = True, dashboard_port: int = 9765, otlp_port: int | None = None,
 ) -> None:
     """Spawn N players concurrently."""
     console.print(
@@ -473,7 +473,7 @@ async def run_multiplayer(
     # One watcher connection for all players (server-wide telemetry)
     watcher_task = None
     if watch:
-        watcher_task = asyncio.create_task(run_dashboard_server(host, port, dashboard_port))
+        watcher_task = asyncio.create_task(run_dashboard_server(host, port, dashboard_port, otlp_port=otlp_port))
 
     tasks = []
     for i in range(num_players):
@@ -563,6 +563,12 @@ def main() -> None:
         help="Port for the OTEL dashboard web server (default: 9765)",
     )
     parser.add_argument(
+        "--otlp-port",
+        type=int,
+        default=None,
+        help="Port for the OTLP receiver (default: dashboard-port + 2)",
+    )
+    parser.add_argument(
         "--dashboard-only",
         action="store_true",
         help="Run only the OTEL dashboard (no playtest). Connects to a running server.",
@@ -574,26 +580,27 @@ def main() -> None:
     signal.signal(signal.SIGINT, lambda *_: sys.exit(0))
 
     dp = args.dashboard_port
+    op = args.otlp_port
 
     if args.dashboard_only:
         console.print(
             f"[bold]OTEL Dashboard — connecting to ws://{args.host}:{args.port}/ws/watcher[/bold]"
         )
-        asyncio.run(run_dashboard_server(args.host, args.port, dp))
+        asyncio.run(run_dashboard_server(args.host, args.port, dp, otlp_port=op))
     elif args.scenario:
-        asyncio.run(run_scripted(args.host, args.port, args.scenario, watch=args.watch, dashboard_port=dp))
+        asyncio.run(run_scripted(args.host, args.port, args.scenario, watch=args.watch, dashboard_port=dp, otlp_port=op))
     elif args.players > 1:
         asyncio.run(
             run_multiplayer(
                 args.host, args.port, args.genre, args.world, args.players,
-                watch=args.watch, dashboard_port=dp,
+                watch=args.watch, dashboard_port=dp, otlp_port=op,
             )
         )
     else:
         asyncio.run(
             run_interactive(
                 args.host, args.port, args.genre, args.world, args.name,
-                watch=args.watch, dashboard_port=dp,
+                watch=args.watch, dashboard_port=dp, otlp_port=op,
             )
         )
 

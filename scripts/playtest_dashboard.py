@@ -971,12 +971,17 @@ async def _serve_dashboard_http(reader, writer):
 
 async def run_dashboard_server(
     api_host: str, api_port: int, dashboard_port: int,
+    otlp_port: int | None = None,
 ) -> None:
     """
     Proxy: connects to API /ws/watcher as client, re-serves events on dashboard_port.
     HTTP dashboard on dashboard_port, WebSocket on dashboard_port+1.
+    OTLP receiver on otlp_port (defaults to dashboard_port+2).
     """
+    from playtest_otlp import run_otlp_receiver
+
     ws_port = dashboard_port + 1
+    otlp = otlp_port if otlp_port is not None else dashboard_port + 2
 
     # Inject the correct WebSocket port into the HTML
     global DASHBOARD_HTML
@@ -989,6 +994,9 @@ async def run_dashboard_server(
     http_server = await asyncio.start_server(
         _serve_dashboard_http, "0.0.0.0", dashboard_port,
     )
+
+    # Start OTLP receiver as a background task
+    otlp_task = asyncio.create_task(run_otlp_receiver(otlp, _broadcast_to_dashboards))
 
     # Start WebSocket server for browser clients
     async with websockets.serve(_dashboard_handler, "0.0.0.0", ws_port, ping_timeout=None):
