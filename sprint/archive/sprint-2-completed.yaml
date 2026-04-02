@@ -226,10 +226,10 @@ completed_stories:
     title: "RoomDef + RoomExit structs — room graph data model in sidequest-genre"
     points: 5
     completed: '2026-04-01'
-  - id: 15-17
+  - id: 15-16
     epic: ''
-    title: "Wire chase cinematography — chase_depth context never injected into narrator prompt"
-    points: 3
+    title: "Wire merchant system — execute_buy/sell/calculate_price/format_merchant_context all unwired"
+    points: 5
     completed: '2026-04-01'
   - id: 15-20
     epic: ''

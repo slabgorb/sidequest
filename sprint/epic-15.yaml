@@ -252,9 +252,12 @@ stories:
       ability_names).
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
     repos: api
     workflow: tdd
+    branch: feat/15-15-wire-resolve-abilities
+    assignee: keith
+    started: '2026-04-02T03:00:00Z'
   - id: 15-16
     title: "Wire merchant system — execute_buy/sell/calculate_price/format_merchant_context all unwired"
     description: >-
