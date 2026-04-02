@@ -296,3 +296,8 @@ completed_stories:
     title: "Dashboard Claude tab — tool timeline, token breakdown, cost accumulator"
     points: 5
     completed: '2026-04-02'
+  - id: 20-7
+    epic: ''
+    title: personality_event, resource_change, play_sfx tools
+    points: 3
+    completed: '2026-04-02'

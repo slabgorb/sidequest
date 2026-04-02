@@ -65,11 +65,13 @@ stories:
     title: personality_event, resource_change, play_sfx tools
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-04-02'
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
     branch: feat/20-7-personality-resource-sfx-tools
+    review_verdict: approved
   - id: 20-8
     title: Eliminate narrator JSON block — delete extractor.rs
     description: Remove remaining JSON field schemas from narrator prompt. Delete extractor.rs and the 3-tier extraction pipeline. assemble_turn is now the sole ActionResult producer. Only safe AFTER 20-10 proves tools are firing reliably.
