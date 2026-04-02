@@ -402,10 +402,7 @@ function dispatch(ev) {
     }
     if (ev.type === 'token_usage') {
       const tt = ev.token_type || '';
-      if (tt === 'input') S.claudeTokens.input += ev.value || 0;
-      else if (tt === 'output') S.claudeTokens.output += ev.value || 0;
-      else if (tt === 'cache_read') S.claudeTokens.cache_read += ev.value || 0;
-      else if (tt === 'cache_creation') S.claudeTokens.cache_creation += ev.value || 0;
+      if (tt in S.claudeTokens) S.claudeTokens[tt] += ev.value || 0;
     }
     updateClaudeCost();
     if (S.activeTab === 7) renderClaudeTimeline();

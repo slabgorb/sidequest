@@ -60,6 +60,14 @@ def _get_dashboard_js() -> str:
     return match.group(1)
 
 
+def _find_claude_functions(js: str) -> list[str]:
+    """Extract all Claude-related function blocks from dashboard JS."""
+    return re.findall(
+        r"function\s+\w*[Cc]laude\w*\(.*?\n\}",
+        js, re.DOTALL
+    )
+
+
 # ============================================================================
 # AC-1: Tab 8 (Claude) appears in dashboard tab bar
 # ============================================================================
@@ -123,12 +131,7 @@ class TestToolTimeline:
     def test_tool_timeline_shows_tool_name(self):
         """Tool timeline rendering must include the tool name from OTEL span events."""
         js = _get_dashboard_js()
-        # The Claude-specific render function should reference tool_name
-        # Must be in a Claude-related function, not the existing flame chart
-        claude_fns = re.findall(
-            r"function\s+\w*[Cc]laude\w*\(.*?\n\}",
-            js, re.DOTALL
-        )
+        claude_fns = _find_claude_functions(js)
         assert claude_fns, (
             "Dashboard JS must have Claude-specific render functions that display tool names"
         )
@@ -140,11 +143,7 @@ class TestToolTimeline:
     def test_tool_timeline_shows_duration(self):
         """Tool timeline must display duration_ms for each tool invocation."""
         js = _get_dashboard_js()
-        # Must be in a Claude-related function, not the existing flame chart
-        claude_fns = re.findall(
-            r"function\s+\w*[Cc]laude\w*\(.*?\n\}",
-            js, re.DOTALL
-        )
+        claude_fns = _find_claude_functions(js)
         assert claude_fns, (
             "Dashboard JS must have Claude-specific render functions that show duration"
         )
@@ -394,11 +393,7 @@ class TestNoSilentErrorSwallowing:
     def test_no_empty_catch_in_claude_handlers(self):
         """Claude-related JS functions must not have empty catch blocks."""
         js = _get_dashboard_js()
-        # Find all function blocks that reference Claude
-        claude_blocks = re.findall(
-            r"(function\s+\w*[Cc]laude\w*.*?\})",
-            js, re.DOTALL
-        )
+        claude_blocks = _find_claude_functions(js)
         assert claude_blocks, (
             "No Claude handler functions found — must exist before checking rule compliance"
         )
@@ -438,12 +433,7 @@ class TestDomSecurity:
     def test_tool_names_escaped_in_timeline(self):
         """Tool names from OTEL events must be escaped before insertion into HTML."""
         js = _get_dashboard_js()
-        # The existing dashboard uses esc() function for escaping
-        # Claude tab should also use esc() when rendering tool names
-        claude_render_fns = re.findall(
-            r"(function\s+render(?:Claude|claude)\w*.*?\n\})",
-            js, re.DOTALL
-        )
+        claude_render_fns = _find_claude_functions(js)
         assert claude_render_fns, (
             "No Claude render functions found — must exist before checking esc() usage"
         )
