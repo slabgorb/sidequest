@@ -56,14 +56,11 @@ stories:
     title: quest_update tool — quest state transitions
     points: 3
     priority: p2
-    status: done
+    status: in_progress
     started: '2026-04-02'
     repos: api
     workflow: tdd
-    completed: '2026-04-02'
     branch: feat/20-6-quest-update-tool
-    review_findings: parser bypasses validator, missing wiring test, pub fields on validated type
-    review_verdict: approved
   - id: 20-7
     title: personality_event, resource_change, play_sfx tools
     points: 3
