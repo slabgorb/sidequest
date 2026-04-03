@@ -407,3 +407,8 @@ completed_stories:
     title: "lore_mark sidecar tool — narrator calls tool to emit footnotes, sidecar parser collects into lore_established"
     points: 3
     completed: '2026-04-03'
+  - id: 12-1
+    epic: ''
+    title: Cinematic track variation selection — MusicDirector uses themed score cues
+    points: 5
+    completed: '2026-04-03'
