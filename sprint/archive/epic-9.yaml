@@ -4,7 +4,7 @@ title: Character Depth — Self-Knowledge, Slash Commands, Narrative Sheet
 description: >-
   Combines sq-2 Epic 62 (Character Self-Knowledge) with server-side slash commands. Players should know who their character is — abilities described in genre voice, accumulated knowledge from play, and quick-access commands for game state.
 priority: p1
-status: ready
+status: done
 repos: sidequest-api
 stories:
   - id: 9-1
@@ -134,12 +134,14 @@ stories:
     title: Journal browse view — accumulated KnownFacts by category with genre voice and turn provenance
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-03-29'
     repos: sidequest-ui
     workflow: tdd
     depends_on: 9-12
+    completed: '2026-04-03'
     branch: feat/9-13-journal-browse-view
 key_references:
   - sq-2/sprint/epic-62.yaml
   - sq-2/sidequest/slash_commands/*.py
+completed: '2026-04-03'

@@ -10,6 +10,7 @@ sprint:
 completed_epics:
   - '14'
   - '18'
+  - '9'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -316,3 +317,68 @@ completed_stories:
     title: "merchant_transact sidecar tool — narrator calls tool to execute buy/sell, sidecar parser validates against merchant inventory"
     points: 5
     completed: '2026-04-02'
+  - id: 9-13
+    epic: ''
+    title: Journal browse view — accumulated KnownFacts by category with genre voice and turn provenance
+    points: 3
+    completed: '2026-04-03'
+  - id: 9-1
+    epic: '9'
+    title: AbilityDefinition model — genre-voiced ability descriptions with mechanical effects
+    points: 3
+    completed: '2026-03-26'
+  - id: 9-2
+    epic: '9'
+    title: Ability perception in narrator prompt — involuntary abilities trigger in narrator context (e.g., root-bonding detects corruption)
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-3
+    epic: '9'
+    title: KnownFact model — play-derived knowledge accumulation, persistence to game state
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-4
+    epic: '9'
+    title: Known facts in narrator prompt — tiered injection by relevance, don't-repeat constraints, register_knowledge_context()
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-5
+    epic: '9'
+    title: Narrative character sheet — genre-voiced to_narrative_sheet() for player-facing display
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-6
+    epic: '9'
+    title: Slash command router — intercept /command input before intent classification, dispatch to handlers
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-7
+    epic: '9'
+    title: Core slash commands — /status, /inventory, /map, /save, /help handlers
+    points: 5
+    completed: '2026-03-28'
+  - id: 9-8
+    epic: '9'
+    title: GM commands — /gm set, /gm teleport, /gm spawn, /gm dmg for operator debugging
+    points: 5
+    completed: '2026-03-28'
+  - id: 9-9
+    epic: '9'
+    title: Tone command — /tone adjusts genre alignment axes (light/dark, action/mystery, serious/whimsy)
+    points: 2
+    completed: '2026-03-28'
+  - id: 9-10
+    epic: '9'
+    title: Wire narrative sheet to React client — CHARACTER_SHEET message with genre-voiced content
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-11
+    epic: '9'
+    title: Structured footnote output — narrator emits NarrationPayload with footnotes[], orchestrator parses markers into KnownFacts
+    points: 3
+    completed: '2026-03-28'
+  - id: 9-12
+    epic: '9'
+    title: Footnote rendering in narration view — superscript markers, bottom-of-block entries, discovery vs callback styling
+    points: 3
+    completed: '2026-03-28'
