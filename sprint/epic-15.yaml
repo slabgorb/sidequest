@@ -442,7 +442,7 @@ stories:
       the GM panel (ocean.shift_proposed, ocean.shift_applied).
     points: 3
     priority: p2
-    status: backlog
+    status: ready
     repos: api
     workflow: tdd
   - id: 15-26
@@ -524,9 +524,9 @@ stories:
     status: done
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-04-02'
     branch: feat/15-29-wire-append-narrative-sqlite
     review_verdict: approved
-    completed: '2026-04-02'
   - id: 15-30
     title: "Genre-aware chargen loading text — replace hardcoded 'old woman' with genre NPC"
     description: >-

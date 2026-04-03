@@ -136,10 +136,13 @@ stories:
       item resolution pattern.
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-04-02'
     repos: api
     workflow: tdd
     depends_on: 20-11
+    completed: '2026-04-03'
+    branch: feat/20-12-merchant-transact-sidecar
   - id: 20-13
     title: "lore_mark sidecar tool — narrator calls tool to emit footnotes, sidecar parser collects into lore_established"
     description: >-
