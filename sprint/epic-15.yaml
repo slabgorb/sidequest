@@ -521,9 +521,12 @@ stories:
       recaps. OTEL event: persistence.narrative_appended (turn, length).
     points: 2
     priority: p2
-    status: ready
+    status: done
     repos: sidequest-api
     workflow: tdd
+    branch: feat/15-29-wire-append-narrative-sqlite
+    review_verdict: approved
+    completed: '2026-04-02'
   - id: 15-30
     title: "Genre-aware chargen loading text — replace hardcoded 'old woman' with genre NPC"
     description: >-

@@ -331,3 +331,8 @@ completed_stories:
     title: "Wire level_to_defense — defense scaling ignored in combat resolution"
     points: 2
     completed: '2026-04-02'
+  - id: 15-29
+    epic: ''
+    title: "Wire append_narrative to SQLite — narrative_log table never written to"
+    points: 2
+    completed: '2026-04-02'
