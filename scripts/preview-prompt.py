@@ -65,10 +65,18 @@ def parse_soul_md(path: Path) -> list[SoulPrinciple]:
     return principles
 
 
+# SOUL principles the narrator already covers via Primacy guardrails (story 23-10).
+# Excluded from narrator's SOUL injection to prevent double-injection.
+NARRATOR_COVERED_PRINCIPLES = {"Agency", "Genre Truth"}
+
+
 def filter_soul_for_agent(principles: list[SoulPrinciple], agent: str) -> str:
     lines = []
     for p in principles:
         if any(a == "all" or a == agent for a in p.agents):
+            # Narrator has richer versions of these as Primacy guardrails (story 23-10)
+            if agent == "narrator" and p.name in NARRATOR_COVERED_PRINCIPLES:
+                continue
             lines.append(f"- {p.name}: {p.text}")
     return "\n".join(lines)
 
