@@ -444,3 +444,8 @@ completed_stories:
     title: Deduplicate SOUL overlap — audit Agency and Genre Truth double-injection in narrator prompt
     points: 3
     completed: '2026-04-03'
+  - id: 23-3
+    epic: ''
+    title: "Universal room graph cartography — convert all genre packs to hierarchical graph format"
+    points: 8
+    completed: '2026-04-03'
