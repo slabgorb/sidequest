@@ -388,9 +388,13 @@ stories:
       render.dimensions_set (tier, width, height).
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-02'
     repos: api
     workflow: tdd
+    completed: '2026-04-02'
+    review_verdict: approved
   - id: 15-23
     title: Wire WorldBuilder into session creation — materialize GameState at target maturity on new game
     points: 3

@@ -316,3 +316,13 @@ completed_stories:
     title: "merchant_transact sidecar tool — narrator calls tool to execute buy/sell, sidecar parser validates against merchant inventory"
     points: 5
     completed: '2026-04-02'
+  - id: 19-4
+    epic: ''
+    title: "MAP_UPDATE for room graph — send discovered rooms with exits to UI"
+    points: 3
+    completed: '2026-04-02'
+  - id: 15-18
+    epic: ''
+    title: "Wire materialize_world — world builder ignores progressive materialization"
+    points: 2
+    completed: '2026-04-02'
