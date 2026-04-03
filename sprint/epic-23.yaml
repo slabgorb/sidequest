@@ -58,9 +58,12 @@ stories:
       docs/universal-room-graph-cartography.md.
     points: 8
     priority: p1
-    status: backlog
+    status: in_progress
     repos: content,api
     workflow: tdd
+    started: '2026-04-03'
+    assignee: keith
+    branch: feat/23-3-universal-room-graph-cartography
   - id: 23-4
     title: "LoreFilter — graph-distance + intent-based context retrieval for Valley zone"
     description: >-
