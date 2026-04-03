@@ -153,7 +153,8 @@ stories:
       migration — all mechanical extraction flows through sidecar tools, zero narrator JSON.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: api
     workflow: tdd
     depends_on: 20-11
+    completed: '2026-04-03'

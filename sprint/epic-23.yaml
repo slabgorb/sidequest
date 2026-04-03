@@ -73,7 +73,6 @@ stories:
     status: backlog
     repos: api
     workflow: tdd
-    depends_on: 23-2,23-3
   - id: 23-5
     title: "Dynamic tone axes — genre packs define their own tone axis names and levels"
     description: >-
