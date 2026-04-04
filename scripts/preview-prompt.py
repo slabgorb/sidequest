@@ -87,9 +87,11 @@ def filter_soul_for_agent(principles: list[SoulPrinciple], agent: str) -> str:
 # ---------------------------------------------------------------------------
 
 NARRATOR_IDENTITY = """\
-You are the Game Master of a collaborative RPG. You narrate like an author, \
-frame scenes like a cinematographer, and run the world like a tabletop GM — \
-but better, because you can do all three simultaneously."""
+You are the director and cinematographer of a collaborative RPG. You frame \
+scenes, direct the cast, and narrate like an author — but you work with the \
+actors you've been given. You cast from the <casting_call> roster, never \
+invent performers. You run the world like a tabletop GM who prepped their \
+NPC cards before the session."""
 
 NARRATOR_CONSTRAINTS = """\
 You will receive game-state constraints (location rules, inventory limits, \
@@ -147,42 +149,47 @@ talking to Y, do NOT have Y send the player back to X for the same objective. \
 Advance the quest instead."""
 
 # ---------------------------------------------------------------------------
-# Script tool sections — compact XML format (story 23-11)
-# Wrapper names replace binary paths. --genre/--genre-packs-path replaced by
-# env vars SIDEQUEST_GENRE and SIDEQUEST_CONTENT_PATH on the Claude subprocess.
+# Monster Manual — pre-generated content pool (ADR-059)
+# Server generates NPCs/encounters ahead of time. Narrator picks from menu.
+# Full mechanical data stays in backend; prompt gets names + brief descriptors.
 # ---------------------------------------------------------------------------
 
-SCRIPT_TOOL_ENCOUNTERGEN = """\
-<tool name="ENCOUNTER">
-When to call: any time new enemies enter the scene. Pick flags based on narrative context.
-<command>sidequest-encounter [--tier N] [--count N] [--culture NAME] [--archetype NAME] [--role ROLE] [--context TEXT]</command>
-<usage>
-- [ ] Use the generated name in your narration
-- [ ] Reference abilities from the abilities list (not invented ones)
-</usage>
-</tool>"""
+MONSTER_MANUAL_NPCS = ""  # populated dynamically by --seed flag
+MONSTER_MANUAL_ENCOUNTERS = ""  # populated dynamically by --seed flag
 
-SCRIPT_TOOL_NAMEGEN = """\
-<tool name="NPC">
-MANDATORY: Call this BEFORE introducing any new NPC. Do NOT invent NPC names.
-<command>sidequest-npc [--culture NAME] [--archetype NAME] [--gender GENDER] [--role ROLE] [--description TEXT]</command>
-<usage>
-- [ ] Use the generated name exactly — do NOT modify or replace it
-- [ ] Use dialogue_quirks to flavor their speech
-- [ ] Reference their role and appearance in narration
-</usage>
-</tool>"""
+# Static fallback for preview without --seed
+MONSTER_MANUAL_NPCS_STATIC = """\
+<on_set>
+These actors are on set today. No extras, no last-minute hires. If a scene needs a new face,
+pull one of these performers. They're in costume, they know their lines.
 
-SCRIPT_TOOL_LOADOUTGEN = """\
-<tool name="LOADOUT">
-When to call: at character creation when introducing the character's starting gear.
-<command>sidequest-loadout --class CLASS [--tier N]</command>
-<usage>
-- [ ] Weave the narrative_hook into the opening scene naturally
-- [ ] Reference specific items by name when the character uses them
-- [ ] Use the currency_name for all money references
-</usage>
-</tool>"""
+<audition name="Nagy Vinecrawl" role="wasteland trader" faction="Greenfolk">
+Personality: outgoing and talkative, pragmatic, emotionally steady
+Voice: quotes prices in three different barter systems; casually mentions dangerous places like they're just another stop on the route
+</audition>
+
+<audition name="Åe the Cold" role="beastkin scout" faction="Drifters">
+Personality: selectively social, pragmatic, occasionally anxious
+Voice: refers to pure humans as 'smoothskins'; tracks things by smell mid-conversation
+</audition>
+
+<audition name="Prime Hout" role="wandering synth" faction="Vaultborn">
+Personality: reserved and quiet, meticulous, pragmatic
+Voice: uses pre-apocalypse words nobody understands; pauses mid-sentence as if buffering
+</audition>
+</on_set>"""
+
+MONSTER_MANUAL_ENCOUNTERS_STATIC = """\
+<available_encounters>
+Pre-generated enemies for this area. When combat starts, use enemies from this list.
+Use their EXACT names, stats, and abilities. Do NOT invent different enemies.
+If no combat this turn, ignore this section.
+
+- 2x Salt Burrower (tier 2, HP 14 each) — eyeless ambush predators, chitin mandibles, burrow underground
+  Weakness: bright light, fire. Abilities: Burrow Ambush, Mandible Crush.
+- 1x Rad-Crawler (tier 3, HP 22) — six-legged mutant, radioactive carapace, territorial
+  Weakness: cold, sonic. Abilities: Radiation Pulse, Leg Sweep, Shell Charge.
+</available_encounters>"""
 
 # ---------------------------------------------------------------------------
 # Dynamic placeholders (runtime values shown as examples)
@@ -209,6 +216,17 @@ Active Quests:
 NPCs present:
   - Patchwork (merchant, friendly) — trades salvage at The Overpass
   - Skitter (scout, wary) — watching from the scaffolding
+
+NPCs nearby (not yet met by player):
+  - Joch Glowvein (wasteland trader, Scrapborn) — blunt, quotes prices in three barter systems
+  - Seven Jewsa (village elder, Vaultborn) — reserved, pauses mid-sentence as if buffering
+  - Lafono of the Burnt Dust (beastkin scout, Drifters) — tracks by smell, calls humans 'smoothskins'
+
+Hostile creatures in the area:
+  - Salt Burrower (tier 2, HP 14) — eyeless ambush predator, chitin mandibles, burrows underground
+    Abilities: Burrow Ambush, Mandible Crush. Weakness: bright light, fire.
+  - Rad-Crawler (tier 3, HP 22) — six-legged mutant, radioactive carapace, territorial
+    Abilities: Radiation Pulse, Leg Sweep. Weakness: cold, sonic.
 
 Turn: 14
 </game_state>"""
@@ -247,7 +265,7 @@ Use rich but clear prose. Employ varied vocabulary and literary \
 devices where they serve the narrative. Balance elegance with \
 accessibility — vivid but not purple."""
 
-PLACEHOLDER_ACTION = "I want to ask Patchwork about the radio signal."
+PLACEHOLDER_ACTION = "Something lunges at me from the dark. I swing my wrench at it."
 
 # ---------------------------------------------------------------------------
 # Assemble sections
@@ -321,27 +339,18 @@ def build_sections(soul_principles: list[SoulPrinciple]) -> list[Section]:
         category="State",
     ))
 
+    # --- Monster Manual NPCs now embedded in game_state as "NPCs nearby" ---
+    # No separate section needed.
+
+    encounter_content = MONSTER_MANUAL_ENCOUNTERS if MONSTER_MANUAL_ENCOUNTERS else MONSTER_MANUAL_ENCOUNTERS_STATIC
+    sections.append(Section(
+        name="available_encounters",
+        content=encounter_content,
+        zone="Early",
+        category="State",
+    ))
+
     # --- Valley ---
-    sections.append(Section(
-        name="script_tool_encountergen",
-        content=SCRIPT_TOOL_ENCOUNTERGEN,
-        zone="Valley",
-        category="State",
-    ))
-
-    sections.append(Section(
-        name="script_tool_namegen",
-        content=SCRIPT_TOOL_NAMEGEN,
-        zone="Valley",
-        category="State",
-    ))
-
-    sections.append(Section(
-        name="script_tool_loadoutgen",
-        content=SCRIPT_TOOL_LOADOUTGEN,
-        zone="Valley",
-        category="State",
-    ))
 
     sections.append(Section(
         name="game_state",
@@ -432,6 +441,78 @@ def render_raw(sections: list[Section]) -> str:
 # Main
 # ---------------------------------------------------------------------------
 
+def seed_from_binaries(genre: str, genre_packs_path: str) -> None:
+    """Call namegen/encountergen binaries to populate Monster Manual sections."""
+    import json
+    import subprocess
+
+    global MONSTER_MANUAL_NPCS, MONSTER_MANUAL_ENCOUNTERS
+
+    # Find binaries relative to API build dir
+    api_dir = Path(__file__).resolve().parent.parent / "sidequest-api"
+    namegen = api_dir / "target" / "debug" / "sidequest-namegen"
+    encountergen = api_dir / "target" / "debug" / "sidequest-encountergen"
+
+    # Generate 3 NPCs
+    npc_lines = []
+    if namegen.exists():
+        for _ in range(3):
+            try:
+                result = subprocess.run(
+                    [str(namegen), "--genre-packs-path", genre_packs_path, "--genre", genre],
+                    capture_output=True, text=True, timeout=10,
+                )
+                if result.returncode == 0:
+                    d = json.loads(result.stdout)
+                    quirks = "; ".join(d.get("dialogue_quirks", [])[:2])
+                    npc_lines.append(
+                        f'<audition name="{d["name"]}" role="{d["role"]}" faction="{d["culture"]}">\n'
+                        f'Personality: {d["ocean_summary"]}\n'
+                        f'Voice: {quirks}\n'
+                        f'</audition>'
+                    )
+            except Exception as e:
+                print(f"WARNING: namegen failed: {e}", file=sys.stderr)
+
+    if npc_lines:
+        MONSTER_MANUAL_NPCS = (
+            "<on_set>\n"
+            "These actors are on set today. No extras, no last-minute hires. If a scene needs a new face,\n"
+            "pull one of these performers. They're in costume, they know their lines.\n\n"
+            + "\n\n".join(npc_lines)
+            + "\n</on_set>"
+        )
+
+    # Generate 1 encounter (2 enemies)
+    if encountergen.exists():
+        try:
+            result = subprocess.run(
+                [str(encountergen), "--genre-packs-path", genre_packs_path, "--genre", genre, "--count", "2"],
+                capture_output=True, text=True, timeout=10,
+            )
+            if result.returncode == 0:
+                d = json.loads(result.stdout)
+                enemy_lines = []
+                for e in d.get("enemies", []):
+                    abilities = ", ".join(e.get("abilities", [])[:3])
+                    weaknesses = ", ".join(e.get("weaknesses", [])[:2])
+                    enemy_lines.append(
+                        f"- {e['name']} ({e.get('class','unknown')}, tier {e.get('tier_label','?')}, HP {e.get('hp','?')}) — {e.get('role','enemy')}\n"
+                        f"  Abilities: {abilities}. Weakness: {weaknesses}."
+                    )
+                if enemy_lines:
+                    MONSTER_MANUAL_ENCOUNTERS = (
+                        "<available_encounters>\n"
+                        "Pre-generated enemies for this area. When combat starts, use enemies from this list.\n"
+                        "Use their EXACT names, stats, and abilities. Do NOT invent different enemies.\n"
+                        "If no combat this turn, ignore this section.\n\n"
+                        + "\n".join(enemy_lines)
+                        + "\n</available_encounters>"
+                    )
+        except Exception as e:
+            print(f"WARNING: encountergen failed: {e}", file=sys.stderr)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Preview the fully composed narrator prompt."
@@ -440,6 +521,26 @@ def main():
         "--raw",
         action="store_true",
         help="Strip zone/section labels — show plain text as Claude sees it.",
+    )
+    parser.add_argument(
+        "--seed",
+        action="store_true",
+        help="Generate real NPCs/encounters from tool binaries instead of static placeholders.",
+    )
+    parser.add_argument(
+        "--genre",
+        default="mutant_wasteland",
+        help="Genre for --seed (default: mutant_wasteland).",
+    )
+    parser.add_argument(
+        "--genre-packs-path",
+        default=None,
+        help="Path to genre_packs/ for --seed (auto-detected if omitted).",
+    )
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        help="Pipe the raw prompt to 'claude -p' and show the narrator's response.",
     )
     args = parser.parse_args()
 
@@ -452,9 +553,31 @@ def main():
     if not principles:
         print(f"WARNING: SOUL.md not found at {soul_path}", file=sys.stderr)
 
+    # Seed Monster Manual from real binaries if requested
+    if args.seed:
+        genre_packs = args.genre_packs_path or str(repo_root / "sidequest-content" / "genre_packs")
+        print(f"Seeding Monster Manual from {args.genre} ...", file=sys.stderr)
+        seed_from_binaries(args.genre, genre_packs)
+        print(f"  NPCs: {'seeded' if MONSTER_MANUAL_NPCS else 'FAILED (using static)'}", file=sys.stderr)
+        print(f"  Encounters: {'seeded' if MONSTER_MANUAL_ENCOUNTERS else 'FAILED (using static)'}", file=sys.stderr)
+
     sections = build_sections(principles)
 
-    if args.raw:
+    if args.test:
+        # Pipe raw prompt to claude -p and show response
+        import subprocess
+        prompt = render_raw(sections)
+        print(f"Testing prompt ({len(prompt.split())} tokens) against claude -p ...", file=sys.stderr)
+        result = subprocess.run(
+            ["claude", "-p", "--model", "sonnet", prompt],
+            capture_output=True, text=True, timeout=120,
+        )
+        if result.returncode == 0:
+            print(result.stdout)
+        else:
+            print(f"ERROR: claude -p failed: {result.stderr}", file=sys.stderr)
+            sys.exit(1)
+    elif args.raw:
         print(render_raw(sections))
     else:
         total_tokens = sum(len(s.content.split()) for s in sections)
