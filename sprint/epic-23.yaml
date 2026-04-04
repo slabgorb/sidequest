@@ -43,11 +43,13 @@ stories:
       docs/narrator-prompt-rag-strategy.md.
     points: 3
     priority: p1
-    status: in_progress
+    status: in_review
     started: '2026-04-04'
     repos: content,api
     workflow: tdd
     branch: feat/23-2-tiered-lore-summaries
+    review_findings: sidequest-game test fixture missing summary field on Faction literals (lore.rs:1369,1375) — breaks workspace compilation
+    review_verdict: approved
   - id: 23-3
     title: "Universal room graph cartography — convert all genre packs to hierarchical graph format"
     description: >-
