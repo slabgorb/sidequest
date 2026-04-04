@@ -449,3 +449,8 @@ completed_stories:
     title: "Universal room graph cartography — convert all genre packs to hierarchical graph format"
     points: 8
     completed: '2026-04-03'
+  - id: 19-10
+    epic: ''
+    title: Wire deplete_light_on_transition into room transition dispatch — server call site, GameMessage, OTEL spans
+    points: 5
+    completed: '2026-04-04'

@@ -157,7 +157,10 @@ stories:
     title: Wire deplete_light_on_transition into room transition dispatch — server call site, GameMessage, OTEL spans
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-04'
     repos: sidequest-api
     workflow: tdd
     depends_on: 19-5
+    completed: '2026-04-04'
