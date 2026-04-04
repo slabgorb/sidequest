@@ -83,11 +83,15 @@ stories:
       docs/narrator-prompt-rag-strategy.md.
     points: 5
     priority: p2
-    status: in_progress
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-04'
     repos: api
     workflow: tdd
+    completed: '2026-04-04'
     branch: feat/23-4-lore-filter-graph-distance
-    started: '2026-04-04'
+    review_findings: compile error in 18-1 tests, missing warn on unknown node, enrichment_categories dead code
+    review_verdict: approved
   - id: 23-5
     title: "Dynamic tone axes — genre packs define their own tone axis names and levels"
     description: >-
