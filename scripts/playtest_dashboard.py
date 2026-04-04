@@ -163,7 +163,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <div class="tab" onclick="switchTab(4)">⑤ Console <span class="badge" id="tab4-badge">0</span></div>
   <div class="tab" onclick="switchTab(5)">⑥ Prompt <span class="badge" id="tab5-badge">0</span></div>
   <div class="tab" onclick="switchTab(6)">⑦ Lore <span class="badge" id="tab6-badge">0</span></div>
-  <div class="tab" onclick="switchTab(7)">⑧ Claude <span class="badge" id="tab7-badge">0</span></div>
 </div>
 
 <!-- Tab 0: Timeline / Flame Chart -->
@@ -268,32 +267,13 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   </div>
 </div>
 
-<!-- Tab 7: Claude OTEL Telemetry -->
-<div class="tab-content" id="tc7">
-  <div class="stats-row">
-    <div class="stat-card" id="claude-cost"><span class="stat-label">Total Cost</span><span class="stat-value">$0.00</span></div>
-    <div class="stat-card" id="claude-tool-count"><span class="stat-label">Tool Calls</span><span class="stat-value">0</span></div>
-    <div class="stat-card" id="claude-error-count"><span class="stat-label">Errors</span><span class="stat-value">0</span></div>
-  </div>
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-title">Tool Timeline</div>
-      <div id="claude-tool-timeline" style="max-height:400px;overflow-y:auto"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Token Breakdown</div>
-      <div id="claude-token-breakdown"></div>
-    </div>
-  </div>
-</div>
-
 <script>
 // ── State ──
 const S = {
   turns: [], allEvents: [], componentMap: {}, latestSnapshot: null,
   selectedTurn: null, paused: false, activeTab: 0, promptEvents: [], loreEvents: [],
   npcSort: { col: 'name', asc: true }, expandedNpcs: {}, expandedItems: {},
-  claudeEvents: [], claudeTokens: { input: 0, output: 0, cache_read: 0, cache_creation: 0 }
+  _placeholder: null
 };
 
 const SPAN_COLORS = {
@@ -324,10 +304,10 @@ function switchTab(i) {
   if (i===5) renderPrompt();
   if (i===6) renderLore();
   if (i===4) renderConsole();
-  if (i===7) { renderClaudeTimeline(); renderClaudeTokens(); }
+  // Tab 7 (Claude) removed — ADR-059
 }
 function togglePause() { S.paused = !S.paused; }
-function clearAll() { S.turns.length=0; S.allEvents.length=0; Object.keys(S.componentMap).forEach(k=>delete S.componentMap[k]); S.selectedTurn=null; S.claudeEvents.length=0; S.claudeTokens={input:0,output:0,cache_read:0,cache_creation:0}; updateAll(); }
+function clearAll() { S.turns.length=0; S.allEvents.length=0; Object.keys(S.componentMap).forEach(k=>delete S.componentMap[k]); S.selectedTurn=null; updateAll(); }
 
 // ── Header update ──
 function updateHeader() {
@@ -381,32 +361,7 @@ function dispatch(ev) {
     sel.appendChild(opt);
     if (S.activeTab === 6) renderLore();
   }
-  // Route claude_otel events to Claude tab
-  if (ev.source === 'claude_otel') {
-    if (ev.type === 'tool_result' || ev.type === 'span') {
-      // Correlate claude turn via timestamp_ns / start_ns proximity to game turns
-      const evTs = parseInt(ev.timestamp_ns || ev.start_ns || '0');
-      let claudeTurn = S.turns.length;
-      for (let ti = S.turns.length - 1; ti >= 0; ti--) {
-        const turnTs = parseInt(S.turns[ti].fields?.timestamp_ns || '0');
-        if (turnTs && evTs >= turnTs) { claudeTurn = ti + 1; break; }
-      }
-      const toolStatus = ev.error ? 'error' : 'ok';
-      S.claudeEvents.push({ ...ev, claudeTurn, toolStatus });
-      document.getElementById('tab7-badge').textContent = S.claudeEvents.length;
-      if (toolStatus === 'error') {
-        const errEl = document.getElementById('claude-error-count');
-        const errCount = S.claudeEvents.filter(e => e.toolStatus === 'error').length;
-        errEl.querySelector('.stat-value').textContent = errCount;
-      }
-    }
-    if (ev.type === 'token_usage') {
-      const tt = ev.token_type || '';
-      if (tt in S.claudeTokens) S.claudeTokens[tt] += ev.value || 0;
-    }
-    updateClaudeCost();
-    if (S.activeTab === 7) renderClaudeTimeline();
-  }
+  // Claude tab removed (ADR-059 — tool infrastructure replaced by Monster Manual)
   updateHeader();
   if (S.activeTab === 0 && ev.event_type === 'turn_complete') renderTurnList();
   if (S.activeTab === 4) renderConsole();
@@ -974,62 +929,7 @@ function renderLore() {
   document.getElementById('lore-fragments').style.display = 'block';
 }
 
-// ── Tab 7: Claude OTEL ──
-// Cost rates per token (Claude Opus pricing as of 2026)
-const CLAUDE_COST_INPUT = 15.0 / 1_000_000;   // $15 per 1M input tokens
-const CLAUDE_COST_OUTPUT = 75.0 / 1_000_000;  // $75 per 1M output tokens
-const CLAUDE_COST_CACHE_READ = 1.5 / 1_000_000;
-const CLAUDE_COST_CACHE_CREATE = 18.75 / 1_000_000;
-
-function updateClaudeCost() {
-  const t = S.claudeTokens;
-  const cost = t.input * CLAUDE_COST_INPUT + t.output * CLAUDE_COST_OUTPUT
-    + t.cache_read * CLAUDE_COST_CACHE_READ + t.cache_creation * CLAUDE_COST_CACHE_CREATE;
-  const costEl = document.getElementById('claude-cost');
-  costEl.querySelector('.stat-value').textContent = '$' + cost.toFixed(4);
-  document.getElementById('claude-tool-count').querySelector('.stat-value').textContent = S.claudeEvents.length;
-}
-
-function renderClaudeTimeline() {
-  const el = document.getElementById('claude-tool-timeline');
-  if (!S.claudeEvents.length) {
-    el.innerHTML = '<span style="color:var(--muted)">Waiting for Claude OTEL events...</span>';
-    return;
-  }
-  const maxDur = S.claudeEvents.reduce((m, e) => Math.max(m, e.duration_ms || 1), 1);
-  el.innerHTML = S.claudeEvents.map(e => {
-    const name = e.tool_name || e.name || '?';
-    const dur = e.duration_ms || 0;
-    const pctW = Math.max((dur / maxDur) * 100, 2);
-    const color = e.toolStatus === 'error' ? 'var(--red)' : 'var(--accent)';
-    const errorBadge = e.toolStatus === 'error' ? ' <span style="color:var(--red);font-weight:bold">✗</span>' : '';
-    return `<div class="flame-row">
-      <div class="flame-label">${esc(name)}${errorBadge}</div>
-      <div class="flame-bar-wrap"><div class="flame-bar" style="width:${pctW}%;background:${color}" title="${esc(name)}: ${dur}ms">${dur>50?dur+'ms':''}</div></div>
-      <div class="flame-dur">${dur}ms</div>
-    </div>`;
-  }).reverse().join('');
-}
-
-function renderClaudeTokens() {
-  const el = document.getElementById('claude-token-breakdown');
-  const t = S.claudeTokens;
-  const total = t.input + t.output + t.cache_read + t.cache_creation;
-  if (total === 0) {
-    el.innerHTML = '<span style="color:var(--muted)">No token data yet.</span>';
-    return;
-  }
-  el.innerHTML = `<table style="width:100%;font-size:12px;border-collapse:collapse">
-    <tr style="color:var(--muted)"><th style="text-align:left;padding:4px">Type</th><th style="text-align:right;padding:4px">Tokens</th><th style="text-align:right;padding:4px">Cost</th></tr>
-    <tr><td style="padding:4px;color:var(--accent)">${esc('Input')}</td><td style="text-align:right;padding:4px">${t.input.toLocaleString()}</td><td style="text-align:right;padding:4px">$${(t.input * CLAUDE_COST_INPUT).toFixed(4)}</td></tr>
-    <tr><td style="padding:4px;color:var(--purple)">Output</td><td style="text-align:right;padding:4px">${t.output.toLocaleString()}</td><td style="text-align:right;padding:4px">$${(t.output * CLAUDE_COST_OUTPUT).toFixed(4)}</td></tr>
-    <tr><td style="padding:4px;color:var(--teal)">Cache Read</td><td style="text-align:right;padding:4px">${t.cache_read.toLocaleString()}</td><td style="text-align:right;padding:4px">$${(t.cache_read * CLAUDE_COST_CACHE_READ).toFixed(4)}</td></tr>
-    <tr><td style="padding:4px;color:var(--green)">Cache Create</td><td style="text-align:right;padding:4px">${t.cache_creation.toLocaleString()}</td><td style="text-align:right;padding:4px">$${(t.cache_creation * CLAUDE_COST_CACHE_CREATE).toFixed(4)}</td></tr>
-    <tr style="border-top:1px solid var(--border);font-weight:bold"><td style="padding:4px">Total</td><td style="text-align:right;padding:4px">${total.toLocaleString()}</td><td style="text-align:right;padding:4px">—</td></tr>
-  </table>`;
-}
-
-function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); if(S.activeTab===4)renderConsole(); if(S.activeTab===5)renderPrompt(); if(S.activeTab===6)renderLore(); if(S.activeTab===7){renderClaudeTimeline();renderClaudeTokens();} }
+function updateAll() { updateHeader(); renderTurnList(); if(S.activeTab===2)renderHealth(); if(S.activeTab===3)renderTiming(); if(S.activeTab===4)renderConsole(); if(S.activeTab===5)renderPrompt(); if(S.activeTab===6)renderLore(); }
 
 // ── WebSocket ──
 function connect() {
