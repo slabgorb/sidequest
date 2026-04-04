@@ -504,7 +504,7 @@ stories:
       extraction.compliance (turn, fields_present, fields_missing).
     points: 3
     priority: p1
-    status: ready
+    status: canceled
     repos: sidequest-api
     workflow: tdd
   - id: 15-29
