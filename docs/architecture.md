@@ -3,7 +3,7 @@
 > System design for the Rust port of the SideQuest AI Narrator engine.
 > 6-crate workspace, 52 game modules, 7 agent types, 3 turn modes.
 >
-> **Last updated:** 2026-04-01
+> **Last updated:** 2026-04-04
 
 ## Architectural Layers
 
@@ -124,8 +124,23 @@ SharedGameSession keyed by `genre:world` holds world state; PlayerState holds pe
 ### ADR-038: WebSocket Transport
 Reader/writer task split per connection. Three broadcast channels: JSON GameMessage, session-scoped TargetedMessage, and binary PCM for TTS audio. ProcessingGuard prevents concurrent dispatch per player.
 
-### ADR-039: Narrator Structured Output
-Claude response embeds a JSON sidecar block with items, NPCs, visual scene, OCEAN events, lore — all extracted in one pass via three-tier fallback (extends ADR-013).
+### ADR-039/057: Narrator Output & Sidecar Tools
+The narrator outputs prose only — no JSON blocks. Mechanical state changes (mood, intent,
+items acquired, quests, SFX, resource deltas, personality events, scene renders) are handled
+by sidecar tools that write JSONL results during narration. `assemble_turn` merges tool
+results with narration, with tool values always taking precedence. The old three-tier JSON
+extraction fallback (ADR-039/013) is superseded by this tool-based approach.
+
+### ADR-059: Monster Manual — Server-Side Pre-Generation
+NPC and encounter data is pre-generated server-side using Rust tool binaries (namegen,
+encountergen, loadoutgen) and stored in a persistent Monster Manual at
+`~/.sidequest/manuals/{genre}_{world}.json`. The narrator sees pre-generated NPCs and
+enemies embedded in `<game_state>` as world facts ("NPCs nearby", "Hostile creatures").
+Claude treats game_state as ground truth and uses exact names, dialogue quirks, and
+abilities. Post-narration gate matches mentioned names against the Manual via compound
+key `(name, faction, world)` for stat block enrichment. This replaced narrator-side
+tool calling (ADR-056), which failed empirically — Claude in `claude -p` mode
+consistently ignores `--allowedTools` instructions.
 
 ### ADR-047: Input Sanitization
 All player text passes through `sanitize_player_text()` at the protocol layer — strips injection attempts before routing.

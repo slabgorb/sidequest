@@ -3,7 +3,7 @@
 > Crate and dependency choices for the Rust game engine.
 > 6-crate workspace, edition 2021, stable toolchain.
 >
-> **Last updated:** 2026-04-01
+> **Last updated:** 2026-04-04
 
 ## Workspace Dependencies
 
@@ -99,9 +99,13 @@ let output = Command::new("claude")
     .await?;
 ```
 
-The narrator response embeds a structured JSON sidecar block containing items, NPCs, visual scene, and OCEAN events — all extracted in a single pass (ADR-039).
-
-JSON extraction uses a three-tier fallback: direct parse → regex extraction → structured retry (ADR-013).
+The narrator outputs prose only — no JSON blocks or structured data. Mechanical state
+changes are handled by sidecar tools that run alongside narration (mood, intent, items,
+quests, SFX, resource changes, personality events, scene renders). Tool results are
+validated and merged in `assemble_turn` with tool values taking precedence over
+extraction. NPC and encounter data is pre-generated server-side and injected into
+`<game_state>` as world facts (ADR-059: Monster Manual). Claude treats game_state
+as ground truth and uses pre-generated names, abilities, and dialogue quirks naturally.
 
 Player input is sanitized at the protocol layer before reaching any agent prompt (ADR-047).
 

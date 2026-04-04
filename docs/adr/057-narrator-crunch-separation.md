@@ -1,6 +1,6 @@
 # ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch
 
-**Status:** Proposed
+**Status:** Partially superseded by [ADR-059](059-monster-manual-server-side-pregen.md) (narrator tool-calling removed; crunch separation principle retained via sidecar tools)
 **Date:** 2026-04-02
 **Deciders:** Keith
 **Relates to:** ADR-056 (Script Tool Generators), ADR-001 (Claude CLI Only), ADR-031 (Game Watcher Telemetry)

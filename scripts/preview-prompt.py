@@ -89,9 +89,10 @@ def filter_soul_for_agent(principles: list[SoulPrinciple], agent: str) -> str:
 NARRATOR_IDENTITY = """\
 You are the director and cinematographer of a collaborative RPG. You frame \
 scenes, direct the cast, and narrate like an author — but you work with the \
-actors you've been given. You cast from the <casting_call> roster, never \
-invent performers. You run the world like a tabletop GM who prepped their \
-NPC cards before the session."""
+actors you've been given. NPCs and enemies listed in <game_state> are your \
+cast — use their exact names, dialogue quirks, and abilities. Do not invent \
+new characters when the roster has someone suitable. You run the world like \
+a tabletop GM who prepped their NPC cards before the session."""
 
 NARRATOR_CONSTRAINTS = """\
 You will receive game-state constraints (location rules, inventory limits, \
@@ -126,9 +127,8 @@ at the table, including the NPCs."""
 
 NARRATOR_OUTPUT_ONLY = """\
 Output ONLY narrative prose. Do NOT emit any JSON blocks, fenced code blocks, \
-or structured data. All mechanical extraction (items, NPCs, footnotes, mood, \
-etc.) is handled by tool calls during narration. Your only job is to tell \
-the story."""
+or structured data. All mechanical state tracking (items, NPCs, mood, quests, \
+etc.) is handled by the game engine. Your only job is to tell the story."""
 
 NARRATOR_OUTPUT_STYLE = """\
 - Most turns: 2-3 sentences. Movement, dialogue, simple actions = SHORT.
@@ -159,25 +159,10 @@ MONSTER_MANUAL_ENCOUNTERS = ""  # populated dynamically by --seed flag
 
 # Static fallback for preview without --seed
 MONSTER_MANUAL_NPCS_STATIC = """\
-<on_set>
-These actors are on set today. No extras, no last-minute hires. If a scene needs a new face,
-pull one of these performers. They're in costume, they know their lines.
-
-<audition name="Nagy Vinecrawl" role="wasteland trader" faction="Greenfolk">
-Personality: outgoing and talkative, pragmatic, emotionally steady
-Voice: quotes prices in three different barter systems; casually mentions dangerous places like they're just another stop on the route
-</audition>
-
-<audition name="Åe the Cold" role="beastkin scout" faction="Drifters">
-Personality: selectively social, pragmatic, occasionally anxious
-Voice: refers to pure humans as 'smoothskins'; tracks things by smell mid-conversation
-</audition>
-
-<audition name="Prime Hout" role="wandering synth" faction="Vaultborn">
-Personality: reserved and quiet, meticulous, pragmatic
-Voice: uses pre-apocalypse words nobody understands; pauses mid-sentence as if buffering
-</audition>
-</on_set>"""
+NPCs nearby (not yet met by player):
+  - Nagy Vinecrawl (wasteland trader, Greenfolk) — outgoing, quotes prices in three barter systems; casually mentions dangerous places like they're just another stop on the route
+  - Åe the Cold (beastkin scout, Drifters) — selectively social, pragmatic; refers to pure humans as 'smoothskins'; tracks things by smell mid-conversation
+  - Prime Hout (wandering synth, Vaultborn) — reserved and quiet, meticulous; uses pre-apocalypse words nobody understands; pauses mid-sentence as if buffering"""
 
 MONSTER_MANUAL_ENCOUNTERS_STATIC = """\
 <available_encounters>
@@ -466,21 +451,15 @@ def seed_from_binaries(genre: str, genre_packs_path: str) -> None:
                     d = json.loads(result.stdout)
                     quirks = "; ".join(d.get("dialogue_quirks", [])[:2])
                     npc_lines.append(
-                        f'<audition name="{d["name"]}" role="{d["role"]}" faction="{d["culture"]}">\n'
-                        f'Personality: {d["ocean_summary"]}\n'
-                        f'Voice: {quirks}\n'
-                        f'</audition>'
+                        f'  - {d["name"]} ({d["role"]}, {d["culture"]}) — {d["ocean_summary"]}; {quirks}'
                     )
             except Exception as e:
                 print(f"WARNING: namegen failed: {e}", file=sys.stderr)
 
     if npc_lines:
         MONSTER_MANUAL_NPCS = (
-            "<on_set>\n"
-            "These actors are on set today. No extras, no last-minute hires. If a scene needs a new face,\n"
-            "pull one of these performers. They're in costume, they know their lines.\n\n"
-            + "\n\n".join(npc_lines)
-            + "\n</on_set>"
+            "NPCs nearby (not yet met by player):\n"
+            + "\n".join(npc_lines)
         )
 
     # Generate 1 encounter (2 enemies)

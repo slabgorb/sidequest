@@ -1,6 +1,6 @@
 # ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries
 
-**Status:** Proposed
+**Status:** Superseded by [ADR-059](059-monster-manual-server-side-pregen.md)
 **Date:** 2026-04-01
 **Deciders:** Keith
 **Relates to:** ADR-001 (Claude CLI Only), ADR-003 (Genre Pack Architecture), ADR-011 (JSON Patches), ADR-018 (Trope Engine), ADR-057 (Narrator Crunch Separation)
