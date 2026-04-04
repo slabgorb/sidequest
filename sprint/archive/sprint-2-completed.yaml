@@ -459,3 +459,13 @@ completed_stories:
     title: "Wire ResourceDeclaration.decay_per_turn — apply resource decay on trope tick"
     points: 2
     completed: '2026-04-04'
+  - id: 16-6
+    epic: ''
+    title: "Standoff confrontation type — spaghetti_western pre-combat encounter"
+    points: 3
+    completed: '2026-04-04'
+  - id: 16-7
+    epic: ''
+    title: "Social confrontation types — negotiation, interrogation, trial"
+    points: 5
+    completed: '2026-04-04'

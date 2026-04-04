@@ -104,9 +104,13 @@ stories:
       Mood: standoff. Write integration test with full beat sequence.
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-04'
     repos: sidequest-api, sidequest-content
     workflow: tdd
+    completed: '2026-04-04'
+    branch: feat/16-6-standoff-confrontation
+    review_verdict: approved
   - id: 16-7
     title: "Social confrontation types — negotiation, interrogation, trial"
     description: >-
@@ -117,9 +121,12 @@ stories:
       gets interrogation. Victoria gets trial. All genres get negotiation.
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-04'
     repos: sidequest-api, sidequest-content
     workflow: tdd
+    completed: '2026-04-04'
+    branch: feat/16-7-social-confrontation-types
   - id: 16-8
     title: "Genre-specific confrontation types — net combat, ship combat, auction"
     description: >-
