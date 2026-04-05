@@ -605,3 +605,8 @@ completed_stories:
     title: "Wire select_npc_action — NPC autonomous actions not invoked from server"
     points: 3
     completed: '2026-04-05'
+  - id: 15-3
+    epic: ''
+    title: "Voice/mic architecture — solve TTS feedback loop before re-enabling"
+    points: 5
+    completed: '2026-04-05'
