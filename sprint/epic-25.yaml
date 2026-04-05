@@ -33,7 +33,7 @@ stories:
     title: Rewire GameLayout — CharacterPanel integration, hotkeys, slash commands
     points: 5
     priority: p1
-    status: backlog
+    status: in-progress
     repos: ui
     workflow: tdd
     depends_on: 25-2
