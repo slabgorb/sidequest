@@ -484,3 +484,8 @@ completed_stories:
     title: "Automapper UI component — render room graph as dungeon floorplan"
     points: 8
     completed: '2026-04-04'
+  - id: 7-6
+    epic: ''
+    title: Scenario pacing — turn-based pressure escalation, tension ramp over scenario arc
+    points: 3
+    completed: '2026-04-05'
