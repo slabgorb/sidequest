@@ -585,3 +585,8 @@ completed_stories:
     title: Chrome CSS — parchment, terminal, rugged archetype rulesets
     points: 3
     completed: '2026-04-05'
+  - id: 25-8
+    epic: ''
+    title: Layout modes — scroll, focus, cards narrative view with settings toggle
+    points: 5
+    completed: '2026-04-05'
