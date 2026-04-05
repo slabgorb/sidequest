@@ -336,11 +336,11 @@ stories:
     points: 5
     priority: p2
     status: ready
+    started: '2026-04-04T18:00:00Z'
     repos: api
     workflow: tdd
     assignee: keith
     branch: feat/15-19-wire-conlang-knowledge
-    started: '2026-04-04T18:00:00Z'
   - id: 15-20
     title: "Wire StateDelta computation — broadcast_state_changes and delta.rs bypassed in server"
     description: >-

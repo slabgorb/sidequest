@@ -128,6 +128,7 @@ stories:
     status: ready
     repos: sidequest-ui
     workflow: tdd
+    review_verdict: approved
   - id: 13-6
     title: "DM override for turn resolution — allow DM to force-resolve a turn or extend the timeout"
     description: >-
