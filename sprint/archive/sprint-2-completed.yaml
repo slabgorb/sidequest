@@ -565,3 +565,8 @@ completed_stories:
     title: "Confrontation YAML schema — genres declare encounter types in rules.yaml"
     points: 5
     completed: '2026-03-31'
+  - id: 25-4
+    epic: ''
+    title: Rewire GameLayout — CharacterPanel integration, hotkeys, slash commands
+    points: 5
+    completed: '2026-04-05'

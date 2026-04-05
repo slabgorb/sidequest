@@ -33,10 +33,11 @@ stories:
     title: Rewire GameLayout — CharacterPanel integration, hotkeys, slash commands
     points: 5
     priority: p1
-    status: in-progress
+    status: done
     repos: ui
     workflow: tdd
     depends_on: 25-2
+    completed: '2026-04-05'
   - id: 25-5
     title: Remove Roman numeral turn counter from running header
     points: 1
