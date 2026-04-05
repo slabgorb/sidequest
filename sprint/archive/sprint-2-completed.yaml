@@ -504,3 +504,8 @@ completed_stories:
     title: "ResourcePool struct + YAML schema — generic named resource with thresholds"
     points: 5
     completed: '2026-04-05'
+  - id: 16-11
+    epic: ''
+    title: "Resource threshold → KnownFact pipeline — permanent narrator memory"
+    points: 3
+    completed: '2026-04-05'
