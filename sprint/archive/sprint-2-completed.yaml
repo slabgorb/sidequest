@@ -509,3 +509,8 @@ completed_stories:
     title: "Resource threshold → KnownFact pipeline — permanent narrator memory"
     points: 3
     completed: '2026-04-05'
+  - id: 16-12
+    epic: ''
+    title: "Wire genre resources — Luck, Humanity, Heat, Fuel-at-rest as ResourcePool instances"
+    points: 3
+    completed: '2026-04-05'
