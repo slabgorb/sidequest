@@ -499,3 +499,8 @@ completed_stories:
     title: Scenario archiver — save/resume mid-scenario state, session boundary handling
     points: 3
     completed: '2026-04-05'
+  - id: 16-10
+    epic: ''
+    title: "ResourcePool struct + YAML schema — generic named resource with thresholds"
+    points: 5
+    completed: '2026-04-05'
