@@ -3,7 +3,7 @@ type: epic
 title: UI Redesign — Character Panel, Layout Modes, Chrome Archetypes
 description: Replace modal overlay system with persistent docked character panel sidebar. Add 3 selectable narrative layouts (scroll/focus/cards). Genre-themed panel chrome via CSS archetypes. See docs/mockups/ for design specs.
 priority: p1
-status: ready
+status: done
 repos: ui,content
 stories:
   - id: 25-1
@@ -74,10 +74,13 @@ stories:
     title: Layout modes — scroll, focus, cards narrative view with settings toggle
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-05'
     repos: ui
     workflow: tdd
     depends_on: 25-4
+    completed: '2026-04-05'
   - id: 25-9
     title: Wire ConfrontationOverlay — render structured encounters in GameLayout
     description: >-
@@ -90,10 +93,13 @@ stories:
       spaghetti_western standoff and road_warrior chase as test cases.
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-05'
     repos: ui
     workflow: tdd
     depends_on: 25-4
+    completed: '2026-04-05'
   - id: 25-10
     title: Wire GenericResourceBar — render genre resources in CharacterPanel
     description: >-
@@ -115,16 +121,4 @@ stories:
     completed: '2026-04-05'
     branch: feat/25-10-wire-generic-resource-bar
     review_verdict: approved
-  - id: 25-11
-    title: Wire GameLayout to pass resources and genreSlug to CharacterPanel
-    points: 3
-    priority: p1
-    status: done
-    assigned_to: keith.avery@1898andco.io
-    started: '2026-04-05'
-    repos: ui
-    workflow: tdd
-    depends_on: 25-10
-    completed: '2026-04-05'
-    branch: feat/25-11-wire-gamelayout-resources
-    review_verdict: approved
+completed: '2026-04-05'

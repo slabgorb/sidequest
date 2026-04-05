@@ -14,6 +14,7 @@ completed_epics:
   - '20'
   - '12'
   - '16'
+  - '25'
 completed_stories:
   - id: 13-8
     epic: ''
