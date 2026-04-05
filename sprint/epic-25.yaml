@@ -42,10 +42,12 @@ stories:
     title: Remove Roman numeral turn counter from running header
     points: 1
     priority: p2
-    status: backlog
+    status: done
     repos: ui
     workflow: trivial
+    completed: '2026-04-05'
     type: chore
+    branch: feat/25-5-remove-roman-numeral-counter
   - id: 25-6
     title: Chrome archetypes — genre-themed panel styling via CSS custom properties
     points: 3

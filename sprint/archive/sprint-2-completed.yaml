@@ -570,3 +570,8 @@ completed_stories:
     title: Rewire GameLayout — CharacterPanel integration, hotkeys, slash commands
     points: 5
     completed: '2026-04-05'
+  - id: 25-5
+    epic: ''
+    title: Remove Roman numeral turn counter from running header
+    points: 1
+    completed: '2026-04-05'
