@@ -519,3 +519,8 @@ completed_stories:
     title: "String-keyed moods + fallback aliases — genre packs declare custom moods"
     points: 3
     completed: '2026-04-05'
+  - id: 16-9
+    epic: ''
+    title: "Confrontation UI — generic encounter display with genre theming"
+    points: 5
+    completed: '2026-04-05'
