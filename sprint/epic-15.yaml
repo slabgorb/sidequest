@@ -313,11 +313,12 @@ stories:
       description_tokens).
     points: 2
     priority: p2
-    status: in_progress
-    repos: api
-    workflow: tdd
+    status: done
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-05T15:00:00Z'
+    repos: api
+    workflow: tdd
+    completed: '2026-04-05'
     branch: feat/15-18-wire-materialize-world
     assignee: keith
   - id: 15-19
