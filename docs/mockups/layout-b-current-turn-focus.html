@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout B: Current Turn Focus</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #00FFFF;
+    --secondary: #FF00FF;
+    --accent: #39FF14;
+    --background: #0A0A0F;
+    --surface: #12121A;
+    --text: #B0C4DE;
+    --border: #1E1E2E;
+    --glow-primary: rgba(0, 255, 255, 0.15);
+    --glow-accent: rgba(57, 255, 20, 0.15);
+    --font-body: 'Share Tech Mono', monospace;
+    --font-ui: 'Orbitron', monospace;
+  }
+  body {
+    font-family: var(--font-body);
+    background: var(--background);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.012) 2px, rgba(0,255,255,0.012) 4px),
+      radial-gradient(ellipse at center, transparent 40%, rgba(5,5,8,0.6) 100%);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .layout-label {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    background: var(--background);
+    border: 1px solid rgba(57,255,20,0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    text-shadow: 0 0 8px var(--glow-accent);
+  }
+
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 24px 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    z-index: 1;
+  }
+  .running-header .location {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--primary);
+    opacity: 0.5;
+    text-shadow: 0 0 10px var(--glow-primary);
+  }
+  .running-header .turn {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--accent);
+    opacity: 0.4;
+  }
+
+  .main-area {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    z-index: 1;
+  }
+
+  /* ════════════════════════════════════════
+     LAYOUT B: CURRENT TURN FOCUS + COLLAPSIBLE HISTORY
+     ════════════════════════════════════════ */
+  .narrative-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* History drawer — collapsible */
+  .history-drawer {
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,255,255,0.01);
+    flex-shrink: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .history-drawer.open {
+    max-height: 250px;
+    overflow-y: auto;
+  }
+  .history-drawer-content {
+    padding: 16px 48px;
+    opacity: 0.45;
+  }
+  .history-drawer-content p {
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: 10px;
+    max-width: 72ch;
+  }
+  .history-drawer-content .old-action {
+    font-size: 12px;
+    color: var(--primary);
+    opacity: 0.5;
+    padding-left: 12px;
+    border-left: 1px solid rgba(0,255,255,0.15);
+    margin: 8px 0;
+  }
+  .history-drawer-content .hist-divider {
+    text-align: center;
+    color: var(--accent);
+    opacity: 0.3;
+    letter-spacing: 0.8em;
+    margin: 16px 0;
+    font-size: 12px;
+  }
+
+  /* History toggle button */
+  .history-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(176,196,222,0.3);
+    background: rgba(0,255,255,0.015);
+    transition: all 0.2s;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .history-toggle:hover {
+    color: var(--primary);
+    background: rgba(0,255,255,0.03);
+  }
+  .history-toggle .arrow {
+    transition: transform 0.3s;
+    font-size: 8px;
+  }
+  .history-toggle.open .arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Current turn — fills remaining space */
+  .current-turn-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 48px 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Push content to bottom so latest text is near the input */
+  .current-turn-spacer {
+    flex: 1;
+  }
+  .current-turn {
+    max-width: 72ch;
+  }
+  .scene-banner {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #0D0D15, #1A0A2E, #0D0D15);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 12px;
+    font-family: var(--font-ui);
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 15px var(--glow-primary);
+    position: relative;
+    overflow: hidden;
+  }
+  .scene-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,255,255,0.03) 1px, rgba(0,255,255,0.03) 2px);
+  }
+  .current-turn p {
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px rgba(0,255,255,0.03);
+  }
+  .player-action {
+    font-size: 14px;
+    color: var(--primary);
+    opacity: 0.7;
+    padding-left: 16px;
+    border-left: 2px solid var(--primary);
+    margin: 20px 0;
+    text-shadow: 0 0 10px var(--glow-primary);
+  }
+
+  /* ── Sidebar ── */
+  .character-panel {
+    width: 280px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--primary);
+    background: var(--surface);
+    box-shadow: -4px 0 20px rgba(0,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+  }
+  .tab-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,255,255,0.02);
+  }
+  .tab {
+    flex: 1;
+    padding: 8px 4px 6px;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 8px;
+    color: rgba(176,196,222,0.35);
+    border-bottom: 2px solid transparent;
+    letter-spacing: 0.1em;
+  }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    text-shadow: 0 0 8px var(--glow-primary);
+  }
+  .tab-icon { display: block; font-size: 14px; margin-bottom: 1px; }
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    font-size: 12px;
+  }
+  .panel-content .char-name {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--glow-primary);
+    margin-bottom: 2px;
+  }
+  .panel-content .char-sub { font-size: 11px; color: rgba(176,196,222,0.5); margin-bottom: 12px; }
+  .hp-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: rgba(176,196,222,0.5);
+    font-family: var(--font-ui);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .hp-track {
+    height: 6px;
+    background: rgba(0,255,255,0.06);
+    border: 1px solid rgba(0,255,255,0.1);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .hp-fill { height: 100%; background: var(--accent); box-shadow: 0 0 6px rgba(57,255,20,0.15); }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 6px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(0,255,255,0.04);
+  }
+  .stat-row .label { color: rgba(176,196,222,0.4); font-family: var(--font-ui); font-size: 9px; letter-spacing: 0.1em; }
+  .stat-row .val { color: var(--primary); font-weight: 700; text-shadow: 0 0 6px var(--glow-primary); }
+
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    z-index: 1;
+  }
+  .input-field {
+    flex: 1;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--background);
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    caret-color: var(--primary);
+  }
+  .input-field:focus { border-color: var(--primary); box-shadow: 0 0 8px var(--glow-primary); }
+  .input-field::placeholder { color: rgba(176,196,222,0.2); }
+
+  .narrative-column::-webkit-scrollbar,
+  .current-turn-area::-webkit-scrollbar,
+  .history-drawer::-webkit-scrollbar,
+  .panel-content::-webkit-scrollbar { width: 4px; }
+  .narrative-column::-webkit-scrollbar-thumb,
+  .current-turn-area::-webkit-scrollbar-thumb,
+  .history-drawer::-webkit-scrollbar-thumb,
+  .panel-content::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.15); }
+</style>
+</head>
+<body>
+
+<div class="layout-label">LAYOUT B — CURRENT TURN FOCUS + HISTORY DRAWER</div>
+
+<div class="running-header">
+  <span class="location">Neon District — Sub-Level 7</span>
+  <span class="turn">CYCLE 12</span>
+</div>
+
+<div class="main-area">
+  <div class="narrative-column">
+
+    <!-- History drawer (collapsible) -->
+    <div class="history-drawer open" id="historyDrawer">
+      <div class="history-drawer-content">
+        <p>The elevator dropped you into Sub-Level 7 with a hydraulic scream that scattered the rats. Down here, the neon doesn't reach — just the amber emergency strips bolted every ten meters along the ceiling, half of them dead.</p>
+        <div class="old-action">▸ I activate my mesh sniffer and scan for wireless signals</div>
+
+        <div class="hist-divider">◇ ◇ ◇</div>
+
+        <p>Your mesh sniffer lights up like a holiday display. Twelve distinct signals, most encrypted corporate dead-drops. But three are live — two personal devices and something bigger drawing serious power behind a reinforced door.</p>
+        <div class="old-action">▸ I head for the red graffiti junction, keeping to the shadows</div>
+
+        <div class="hist-divider">◇ ◇ ◇</div>
+
+        <p>The junction is easy to find — someone's sprayed a three-meter tall eye in fluorescent red across the wall, its pupil a camera lens that tracks you as you pass.</p>
+        <div class="old-action">▸ I spoof the camera with my retinal spoof program</div>
+      </div>
+    </div>
+
+    <!-- History toggle -->
+    <div class="history-toggle open" id="historyToggle" onclick="toggleHistory()">
+      <span class="arrow">▲</span>
+      <span>PREVIOUS CYCLES (3)</span>
+    </div>
+
+    <!-- Current turn — primary focus -->
+    <div class="current-turn-area">
+      <div class="current-turn-spacer"></div>
+      <div class="current-turn">
+        <div class="scene-banner">[ FEED: data broker's den — sub-level 7 ]</div>
+
+        <p>The data broker's den is exactly as depressing as advertised. Someone welded a sheet-metal awning over a busted storefront and lined the interior with salvaged server racks, their fans humming a discordant chorus. Cables snake across the floor like sleeping eels.</p>
+
+        <p>The broker himself sits behind a desk made from a slab of bulletproof glass resting on two gutted ATMs. He's old-school — no visible chrome except for the fiber optic cable running from behind his left ear directly into the wall. His eyes never quite focus on the same spot.</p>
+
+        <p>"You're the one Kira sent." It's not a question. His fingers drum a pattern on the glass. "I have what you need. Question is whether you have what I need. Creds are boring. I want the access codes to NovaCorp's employee mesh network. Sub-Level 3." He smiles. "Tick tock."</p>
+
+        <div class="player-action">▸ I jack into the local mesh to scan for hidden surveillance feeds</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="character-panel">
+    <div class="tab-strip">
+      <div class="tab active"><span class="tab-icon">⚡</span>Status</div>
+      <div class="tab"><span class="tab-icon">🔧</span>Gear</div>
+      <div class="tab"><span class="tab-icon">📡</span>Intel</div>
+      <div class="tab"><span class="tab-icon">🗺</span>Map</div>
+    </div>
+    <div class="panel-content">
+      <div class="char-name">ZYX-7</div>
+      <div class="char-sub">Lvl 6 Netrunner</div>
+      <div class="hp-row"><span>INTEGRITY</span><span>42 / 55</span></div>
+      <div class="hp-track"><div class="hp-fill" style="width:76%"></div></div>
+      <div class="stat-row"><span class="label">BODY</span><span class="val">8</span></div>
+      <div class="stat-row"><span class="label">REFLEX</span><span class="val">14</span></div>
+      <div class="stat-row"><span class="label">TECH</span><span class="val">16</span></div>
+      <div class="stat-row"><span class="label">COOL</span><span class="val">12</span></div>
+      <div class="stat-row"><span class="label">NET</span><span class="val">18</span></div>
+      <div class="stat-row"><span class="label">LUCK</span><span class="val">7</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="input-bar">
+  <input class="input-field" type="text" placeholder="Enter command..." />
+</div>
+
+<script>
+function toggleHistory() {
+  const drawer = document.getElementById('historyDrawer');
+  const toggle = document.getElementById('historyToggle');
+  drawer.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

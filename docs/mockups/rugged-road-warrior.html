@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SideQuest — Road Warrior (Rugged Chrome)</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #C4650A;
+    --secondary: #8B4513;
+    --accent: #FF6B00;
+    --background: #1a1208;
+    --surface: #2d2010;
+    --text: #d4b896;
+    --border: #3d2e1a;
+    --hp-high: #C4650A;
+    --hp-mid: #B8860B;
+    --hp-low: #8B0000;
+    --rust: #6B3A1F;
+    --chrome: #8A7B6B;
+    --font-body: 'Source Sans 3', 'Helvetica Neue', sans-serif;
+    --font-ui: 'Oswald', Impact, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--background);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Dusty vignette overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, transparent 35%, rgba(10, 8, 4, 0.5) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Running Header ── */
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 24px 8px;
+    border-bottom: 2px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .running-header .location {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.5;
+  }
+  .running-header .turn {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    color: var(--chrome);
+    opacity: 0.4;
+  }
+
+  /* ── Main Layout ── */
+  .main-area {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Narrative Column ── */
+  .narrative-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .narrative-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 48px;
+  }
+
+  .history-section {
+    opacity: 0.4;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+  .history-section p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    max-width: 72ch;
+  }
+
+  .current-turn {
+    max-width: 72ch;
+  }
+  .current-turn .scene-banner {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #1a1208, #2d1a08, #1a1208);
+    border: 2px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    position: relative;
+  }
+  /* Riveted corners on banner */
+  .scene-banner::before,
+  .scene-banner::after {
+    content: '●';
+    position: absolute;
+    font-size: 6px;
+    color: var(--chrome);
+  }
+  .scene-banner::before { top: 6px; left: 8px; }
+  .scene-banner::after { top: 6px; right: 8px; }
+  .current-turn p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .player-action {
+    font-size: 15px;
+    color: var(--accent);
+    opacity: 0.7;
+    padding-left: 16px;
+    border-left: 3px solid var(--accent);
+    margin: 20px 0;
+    font-weight: 600;
+  }
+
+  .dinkus {
+    text-align: center;
+    color: var(--accent);
+    letter-spacing: 0.5em;
+    margin: 28px 0;
+    font-size: 14px;
+  }
+
+  /* ── Character Panel (Rugged Chrome) ── */
+  .character-panel {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: 3px solid var(--border);
+    background: var(--surface);
+    position: relative;
+  }
+
+  /* Riveted edge */
+  .character-panel::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--border) 0px,
+      var(--border) 24px,
+      var(--chrome) 24px,
+      var(--chrome) 28px,
+      var(--border) 28px,
+      var(--border) 30px
+    );
+  }
+
+  /* Tab strip — stamped metal */
+  .tab-strip {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    padding: 0;
+    gap: 0;
+    background: rgba(45, 32, 16, 0.8);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 4px 8px;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--chrome);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .tab:hover {
+    color: var(--accent);
+    background: rgba(196, 101, 10, 0.05);
+  }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  /* Stamp mark indicator */
+  .tab.active::after {
+    content: '▼';
+    display: block;
+    font-size: 6px;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+  .tab-icon {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+  .tab-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+  }
+
+  /* Panel content */
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  /* Section divider — bolt row */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 14px 0;
+    height: 8px;
+  }
+  .section-divider::before {
+    content: '● ─────────── ● ─────────── ●';
+    width: 100%;
+    text-align: center;
+    font-size: 7px;
+    color: var(--chrome);
+    letter-spacing: 0;
+    opacity: 0.4;
+  }
+
+  /* Character header */
+  .char-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .char-portrait {
+    width: 72px;
+    height: 72px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, var(--secondary), var(--rust));
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 28px;
+    border: 2px solid var(--border);
+  }
+  .char-info h2 {
+    font-family: var(--font-ui);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .char-info .subtitle {
+    font-size: 13px;
+    color: var(--chrome);
+    margin-top: 2px;
+  }
+  .char-info .location-line {
+    font-size: 11px;
+    color: rgba(212, 184, 150, 0.4);
+    margin-top: 4px;
+  }
+
+  /* HP bar — fuel gauge style */
+  .hp-section { margin: 12px 0; }
+  .hp-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: var(--chrome);
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .hp-bar-track {
+    height: 10px;
+    background: rgba(212, 184, 150, 0.06);
+    border-radius: 1px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    position: relative;
+  }
+  /* Tick marks on the fuel gauge */
+  .hp-bar-track::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to right,
+      transparent 0px,
+      transparent 28px,
+      rgba(61, 46, 26, 0.6) 28px,
+      rgba(61, 46, 26, 0.6) 30px
+    );
+  }
+  .hp-bar-fill {
+    height: 100%;
+    transition: width 0.5s;
+  }
+  .hp-bar-fill.high {
+    background: linear-gradient(to right, var(--secondary), var(--accent));
+  }
+  .hp-bar-fill.mid {
+    background: linear-gradient(to right, var(--hp-mid), #DAA520);
+  }
+  .hp-bar-fill.low {
+    background: linear-gradient(to right, var(--hp-low), #CC0000);
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .stat-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 8px;
+    background: rgba(212, 184, 150, 0.04);
+    border: 1px solid rgba(61, 46, 26, 0.5);
+    border-radius: 1px;
+  }
+  .stat-name {
+    font-family: var(--font-ui);
+    color: var(--chrome);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .stat-value {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 15px;
+  }
+
+  /* Conditions */
+  .conditions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .condition-badge {
+    font-size: 10px;
+    font-family: var(--font-ui);
+    padding: 3px 10px;
+    border-radius: 1px;
+    background: rgba(196, 101, 10, 0.1);
+    border: 1px solid rgba(196, 101, 10, 0.3);
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .condition-badge.danger {
+    background: rgba(139, 0, 0, 0.15);
+    border-color: rgba(139, 0, 0, 0.4);
+    color: #CC4444;
+  }
+
+  /* Abilities */
+  .section-label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--chrome);
+    margin-bottom: 6px;
+  }
+  .abilities-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .abilities-list li {
+    font-size: 13px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(61, 46, 26, 0.3);
+    color: rgba(212, 184, 150, 0.8);
+  }
+  .abilities-list li::before {
+    content: '⚙ ';
+    color: var(--chrome);
+    font-size: 10px;
+  }
+
+  /* ── Input Bar ── */
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border-top: 2px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .input-field {
+    flex: 1;
+    padding: 10px 16px;
+    border: 2px solid var(--border);
+    border-radius: 2px;
+    background: var(--background);
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+  }
+  .input-field::placeholder {
+    color: rgba(212, 184, 150, 0.3);
+    font-style: italic;
+  }
+  .input-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(255, 107, 0, 0.2);
+  }
+
+  .audio-status {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--chrome);
+    opacity: 0.5;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Scrollbar — dark channel */
+  .narrative-scroll::-webkit-scrollbar,
+  .panel-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .narrative-scroll::-webkit-scrollbar-thumb,
+  .panel-content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 1px;
+  }
+  .narrative-scroll::-webkit-scrollbar-track,
+  .panel-content::-webkit-scrollbar-track {
+    background: rgba(26, 18, 8, 0.5);
+  }
+</style>
+</head>
+<body>
+
+<!-- Running Header -->
+<div class="running-header">
+  <span class="location">The Circuit — Scorchflats</span>
+  <span class="turn">Turn 9</span>
+</div>
+
+<!-- Main Area -->
+<div class="main-area">
+
+  <!-- Narrative Column -->
+  <div class="narrative-column">
+    <div class="narrative-scroll">
+
+      <div class="history-section">
+        <p>Three days on the salt flats and the radiator was already singing a death rattle. You'd rationed the coolant, nursed the throttle, kept to the shade of the canyon walls where there was shade to keep to. But the Circuit doesn't forgive careful. Careful is just slow dying.</p>
+        <p>The convoy signal had been intermittent since dawn — three blips, then static, then nothing. Either they'd changed frequencies or they'd been hit. Either way, you were alone with the engine noise and the horizon.</p>
+      </div>
+
+      <div class="dinkus">⛽ ☠ ⛽</div>
+
+      <div class="current-turn">
+        <div class="scene-banner">[ the fuel depot — dusk ]</div>
+
+        <p>The fuel depot is a carcass of rusted tanks and stripped pumps baking under a sky the color of a bruise. Someone's living here — there's smoke from behind the main building, and a makeshift antenna lashed to the water tower with baling wire. Two vehicles sit in the yard: a flatbed missing its rear axle, and a motorcycle that looks like it still runs.</p>
+
+        <p>A figure steps out of the main building's shadow. Woman, maybe forty, built like someone who's been lifting engine blocks without help. She's got a wrench in one hand and a sawed-off in the other, and she's not pointing either at you yet.</p>
+
+        <p>"Kill the engine," she says. "We talk. Then maybe you get fuel, maybe you get gone. Depends on what you're carrying and where you're pointed."</p>
+
+        <div class="player-action">
+          ▸ I cut the engine and raise my hands, keeping them visible
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Panel -->
+  <div class="character-panel">
+    <div class="tab-strip">
+      <div class="tab active">
+        <span class="tab-icon">💀</span>
+        <span class="tab-label">Status</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">🔧</span>
+        <span class="tab-label">Gear</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">📋</span>
+        <span class="tab-label">Log</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">🗺</span>
+        <span class="tab-label">Map</span>
+      </div>
+    </div>
+
+    <div class="panel-content">
+      <div class="char-header">
+        <div class="char-portrait">☠</div>
+        <div class="char-info">
+          <h2>VEX "DUSTCUTTER"</h2>
+          <div class="subtitle">Lvl 5 Road Hound</div>
+          <div class="location-line">Scorchflats Fuel Depot</div>
+        </div>
+      </div>
+
+      <!-- HP — fuel gauge -->
+      <div class="hp-section">
+        <div class="hp-label">
+          <span>GRIT</span>
+          <span>22 / 35</span>
+        </div>
+        <div class="hp-bar-track">
+          <div class="hp-bar-fill high" style="width: 62.8%"></div>
+        </div>
+      </div>
+
+      <!-- Vehicle HP -->
+      <div class="hp-section">
+        <div class="hp-label">
+          <span>VEHICLE</span>
+          <span>14 / 40</span>
+        </div>
+        <div class="hp-bar-track">
+          <div class="hp-bar-fill low" style="width: 35%"></div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <span class="stat-name">Brawn</span>
+          <span class="stat-value">12</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Reflex</span>
+          <span class="stat-value">15</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Guts</span>
+          <span class="stat-value">14</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Wits</span>
+          <span class="stat-value">11</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Mech</span>
+          <span class="stat-value">16</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Scav</span>
+          <span class="stat-value">13</span>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-label">Conditions</div>
+      <div class="conditions">
+        <span class="condition-badge">🔥 Heat Stressed</span>
+        <span class="condition-badge danger">⛽ Low Fuel</span>
+        <span class="condition-badge">🛡 Road Hardened</span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-label">Skills</div>
+      <ul class="abilities-list">
+        <li>Jury-Rig (Mech +3)</li>
+        <li>Highwire Driving</li>
+        <li>Scrap Dealer's Eye</li>
+        <li>Dead Reckoning</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Input Bar -->
+<div class="input-bar">
+  <input class="input-field" type="text" placeholder="What do you do?" />
+  <div class="audio-status">
+    <span>♪</span>
+    <span>DUSTBOWL DIRGE</span>
+  </div>
+</div>
+
+</body>
+</html>

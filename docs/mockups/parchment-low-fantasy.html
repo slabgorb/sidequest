@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SideQuest — Low Fantasy (Parchment Chrome)</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #6B4423;
+    --secondary: #4A2E15;
+    --accent: #8B6E4E;
+    --background: #F3EDE0;
+    --surface: #E8DFD0;
+    --text: #2D2418;
+    --border: #C4B49A;
+    --hp-high: #5B7D3A;
+    --hp-mid: #B8860B;
+    --hp-low: #8B2500;
+    --font-body: 'EB Garamond', Georgia, serif;
+    --font-ui: 'EB Garamond', Georgia, serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--background);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Parchment texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at center, transparent 50%, rgba(180, 160, 130, 0.2) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Running Header ── */
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 24px 8px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(to bottom, var(--surface), transparent);
+    position: relative;
+    z-index: 1;
+  }
+  .running-header .location {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(45, 36, 24, 0.4);
+    font-weight: 400;
+  }
+  .running-header .turn {
+    font-size: 11px;
+    color: rgba(45, 36, 24, 0.3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Main Layout ── */
+  .main-area {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Narrative Column ── */
+  .narrative-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-y: auto;
+  }
+  .narrative-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 48px;
+  }
+
+  /* History section — faded */
+  .history-section {
+    opacity: 0.45;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-section p {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    max-width: 72ch;
+  }
+
+  /* Current turn */
+  .current-turn {
+    max-width: 72ch;
+  }
+  .current-turn .scene-banner {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    border-radius: 4px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--surface);
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.1em;
+  }
+  .current-turn p {
+    font-size: 20px;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+  .current-turn p:first-of-type::first-letter {
+    font-size: 3.2em;
+    float: left;
+    line-height: 0.8;
+    margin-right: 8px;
+    margin-top: 4px;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .player-action {
+    font-size: 16px;
+    color: rgba(45, 36, 24, 0.6);
+    font-style: italic;
+    padding-left: 20px;
+    border-left: 2px solid rgba(107, 68, 35, 0.25);
+    margin: 20px 0;
+  }
+
+  /* Dinkus */
+  .dinkus {
+    text-align: center;
+    color: var(--accent);
+    opacity: 0.5;
+    letter-spacing: 0.4em;
+    margin: 28px 0;
+    font-size: 14px;
+  }
+
+  /* ── Character Panel (Parchment Chrome) ── */
+  .character-panel {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+  }
+
+  /* Parchment edge decoration */
+  .character-panel::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 18px,
+      var(--border) 18px,
+      var(--border) 20px
+    );
+    opacity: 0.4;
+  }
+
+  /* Tab strip — manuscript tabs */
+  .tab-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0 8px;
+    gap: 0;
+    background: rgba(200, 185, 160, 0.15);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 4px 8px;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    color: rgba(45, 36, 24, 0.5);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab:hover {
+    color: var(--primary);
+    background: rgba(107, 68, 35, 0.04);
+  }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    font-weight: 700;
+  }
+  /* Ink blot indicator for active tab */
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+  .tab-icon {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+  .tab-label {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Panel content */
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  /* Section divider — ornamental rule */
+  .section-divider {
+    text-align: center;
+    color: var(--border);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Character header */
+  .char-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .char-portrait {
+    width: 72px;
+    height: 72px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--surface);
+    font-size: 28px;
+    border: 1px solid var(--border);
+  }
+  .char-info h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+  }
+  .char-info .subtitle {
+    font-size: 13px;
+    color: rgba(45, 36, 24, 0.6);
+    margin-top: 2px;
+  }
+  .char-info .location-line {
+    font-size: 11px;
+    color: rgba(45, 36, 24, 0.45);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* HP bar */
+  .hp-section {
+    margin: 12px 0;
+  }
+  .hp-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: rgba(45, 36, 24, 0.7);
+  }
+  .hp-bar-track {
+    height: 8px;
+    background: rgba(45, 36, 24, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(45, 36, 24, 0.15);
+  }
+  .hp-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+  .hp-bar-fill.high { background: var(--hp-high); }
+  .hp-bar-fill.mid { background: var(--hp-mid); }
+  .hp-bar-fill.low { background: var(--hp-low); }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .stat-cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 8px;
+    background: rgba(45, 36, 24, 0.04);
+    border-radius: 3px;
+    font-size: 13px;
+    border: 1px solid rgba(45, 36, 24, 0.06);
+  }
+  .stat-name {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .stat-value {
+    font-family: Georgia, serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  /* Conditions */
+  .conditions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .condition-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: rgba(107, 68, 35, 0.1);
+    border: 1px solid rgba(107, 68, 35, 0.2);
+    color: var(--primary);
+  }
+
+  /* Abilities */
+  .abilities-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .abilities-list li {
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(45, 36, 24, 0.06);
+    color: rgba(45, 36, 24, 0.8);
+  }
+  .abilities-list li::before {
+    content: '✦ ';
+    color: var(--accent);
+    font-size: 10px;
+  }
+
+  /* ── Input Bar ── */
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .input-field {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--background);
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+  }
+  .input-field::placeholder {
+    color: rgba(45, 36, 24, 0.35);
+    font-style: italic;
+  }
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(107, 68, 35, 0.1);
+  }
+
+  /* Audio status */
+  .audio-status {
+    font-size: 11px;
+    color: rgba(45, 36, 24, 0.4);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .audio-status .note { font-size: 14px; }
+
+  /* Scrollbar styling */
+  .narrative-scroll::-webkit-scrollbar,
+  .panel-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .narrative-scroll::-webkit-scrollbar-thumb,
+  .panel-content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+  .narrative-scroll::-webkit-scrollbar-track,
+  .panel-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+</style>
+</head>
+<body>
+
+<!-- Running Header -->
+<div class="running-header">
+  <span class="location">Ironvale Mines</span>
+  <span class="turn">Turn 7</span>
+</div>
+
+<!-- Main Area -->
+<div class="main-area">
+
+  <!-- Narrative Column -->
+  <div class="narrative-column">
+    <div class="narrative-scroll">
+
+      <!-- History (faded) -->
+      <div class="history-section">
+        <p>The descent into the mines began at dawn, when the last traces of mist still clung to the valley floor. Brother Aldric blessed the threshold with salt and iron filings while the rest of the company checked their provisions one final time.</p>
+        <p>The first level proved unremarkable — abandoned carts, rusted picks, the remnants of a mining operation halted decades ago. But the air grew heavier with each flight of stairs, and by the third landing, even the torches seemed reluctant to burn.</p>
+      </div>
+
+      <div class="dinkus">⁂</div>
+
+      <!-- Current Turn -->
+      <div class="current-turn">
+        <div class="scene-banner">[ scene image — the merchant's underground stall ]</div>
+
+        <p>The merchant sits cross-legged atop a threadbare rug, his wares arranged in careful rows upon a salvaged door laid flat across two barrels. Tallow candles gutter at each corner, throwing unsteady light across an assortment of oddments — tarnished pendants, small leather pouches that clink when disturbed, a hand-drawn map pinned open with iron nails.</p>
+
+        <p>He watches you approach with eyes that catch the candlelight like a cat's. "Careful, friend," he says, not looking up from the blade he's oiling. "Everything here has a price. And I don't mean gold."</p>
+
+        <p>A faint scratching comes from behind the stone wall to your left — too rhythmic to be rats, too quiet to be mining. The merchant doesn't react.</p>
+
+        <div class="player-action">
+          ▸ I search the merchant's cart while he's distracted
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Panel -->
+  <div class="character-panel">
+    <!-- Tab Strip -->
+    <div class="tab-strip">
+      <div class="tab active">
+        <span class="tab-icon">⚔</span>
+        <span class="tab-label">Status</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">📦</span>
+        <span class="tab-label">Gear</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">📖</span>
+        <span class="tab-label">Journal</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">🗺</span>
+        <span class="tab-label">Map</span>
+      </div>
+    </div>
+
+    <!-- Panel Content: Status Tab -->
+    <div class="panel-content">
+      <!-- Character Header -->
+      <div class="char-header">
+        <div class="char-portrait">⚔</div>
+        <div class="char-info">
+          <h2>Kael Ironhand</h2>
+          <div class="subtitle">Level 4 Ranger</div>
+          <div class="location-line">Ironvale Mines, Level 3</div>
+        </div>
+      </div>
+
+      <!-- HP -->
+      <div class="hp-section">
+        <div class="hp-label">
+          <span>Hit Points</span>
+          <span>31 / 38</span>
+        </div>
+        <div class="hp-bar-track">
+          <div class="hp-bar-fill high" style="width: 81.5%"></div>
+        </div>
+      </div>
+
+      <div class="section-divider">✦</div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <span class="stat-name">Str</span>
+          <span class="stat-value">14</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Dex</span>
+          <span class="stat-value">16</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Con</span>
+          <span class="stat-value">12</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Wis</span>
+          <span class="stat-value">13</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Int</span>
+          <span class="stat-value">10</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">Cha</span>
+          <span class="stat-value">11</span>
+        </div>
+      </div>
+
+      <div class="section-divider">✦</div>
+
+      <!-- Conditions -->
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(45,36,24,0.5); margin-bottom: 6px;">Conditions</div>
+      <div class="conditions">
+        <span class="condition-badge">🛡 Blessed (5 turns)</span>
+        <span class="condition-badge">👁 Darkvision</span>
+      </div>
+
+      <div class="section-divider">✦</div>
+
+      <!-- Abilities -->
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(45,36,24,0.5); margin-bottom: 4px;">Abilities</div>
+      <ul class="abilities-list">
+        <li>Favored Terrain (Underground)</li>
+        <li>Hunters Mark</li>
+        <li>Natural Explorer</li>
+        <li>Two-Weapon Fighting</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Input Bar -->
+<div class="input-bar">
+  <input class="input-field" type="text" placeholder="What do you do?" />
+  <div class="audio-status">
+    <span class="note">♪</span>
+    <span>Depths of Iron</span>
+  </div>
+</div>
+
+</body>
+</html>

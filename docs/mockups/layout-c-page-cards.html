@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout C: Page Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #00FFFF;
+    --secondary: #FF00FF;
+    --accent: #39FF14;
+    --background: #0A0A0F;
+    --surface: #12121A;
+    --text: #B0C4DE;
+    --border: #1E1E2E;
+    --glow-primary: rgba(0, 255, 255, 0.15);
+    --glow-accent: rgba(57, 255, 20, 0.15);
+    --font-body: 'Share Tech Mono', monospace;
+    --font-ui: 'Orbitron', monospace;
+  }
+  body {
+    font-family: var(--font-body);
+    background: var(--background);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.012) 2px, rgba(0,255,255,0.012) 4px),
+      radial-gradient(ellipse at center, transparent 40%, rgba(5,5,8,0.6) 100%);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .layout-label {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--primary);
+    background: var(--background);
+    border: 1px solid rgba(0,255,255,0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    text-shadow: 0 0 8px var(--glow-primary);
+  }
+
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 24px 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    z-index: 1;
+  }
+  .running-header .location {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--primary);
+    opacity: 0.5;
+    text-shadow: 0 0 10px var(--glow-primary);
+  }
+  .running-header .turn {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--accent);
+    opacity: 0.4;
+  }
+
+  .main-area {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    z-index: 1;
+  }
+
+  /* ════════════════════════════════════════
+     LAYOUT C: PAGE/CARD MODEL — ONE TURN PER CARD
+     ════════════════════════════════════════ */
+  .narrative-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* Page navigator */
+  .page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,255,255,0.015);
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .page-nav-btn {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(176,196,222,0.3);
+    cursor: pointer;
+    padding: 4px 12px;
+    border: 1px solid rgba(0,255,255,0.1);
+    border-radius: 2px;
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .page-nav-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 6px var(--glow-primary);
+  }
+  .page-nav-btn.disabled {
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+  }
+  .page-indicator {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(176,196,222,0.4);
+  }
+  .page-indicator .current-page {
+    color: var(--primary);
+    text-shadow: 0 0 6px var(--glow-primary);
+  }
+  /* Page dots */
+  .page-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .page-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(0,255,255,0.15);
+    border: 1px solid rgba(0,255,255,0.2);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .page-dot.active {
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+  }
+  .page-dot.visited {
+    background: rgba(0,255,255,0.3);
+  }
+
+  /* Card container */
+  .card-container {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 24px 48px;
+    overflow: hidden;
+  }
+
+  /* The card itself */
+  .turn-card {
+    max-width: 72ch;
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .turn-card.active {
+    display: flex;
+  }
+
+  /* Card content */
+  .card-scene {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #0D0D15, #1A0A2E, #0D0D15);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 12px;
+    font-family: var(--font-ui);
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 15px var(--glow-primary);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .card-scene::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,255,255,0.03) 1px, rgba(0,255,255,0.03) 2px);
+  }
+
+  .turn-card p {
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px rgba(0,255,255,0.03);
+  }
+  .card-action {
+    font-size: 14px;
+    color: var(--primary);
+    opacity: 0.7;
+    padding-left: 16px;
+    border-left: 2px solid var(--primary);
+    margin-top: auto;
+    padding-top: 16px;
+    text-shadow: 0 0 10px var(--glow-primary);
+  }
+
+  /* Older cards are slightly faded */
+  .turn-card.old p { opacity: 0.7; }
+  .turn-card.old .card-scene { opacity: 0.6; }
+
+  /* ── Sidebar ── */
+  .character-panel {
+    width: 280px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--primary);
+    background: var(--surface);
+    box-shadow: -4px 0 20px rgba(0,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+  }
+  .tab-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,255,255,0.02);
+  }
+  .tab {
+    flex: 1;
+    padding: 8px 4px 6px;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 8px;
+    color: rgba(176,196,222,0.35);
+    border-bottom: 2px solid transparent;
+    letter-spacing: 0.1em;
+  }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    text-shadow: 0 0 8px var(--glow-primary);
+  }
+  .tab-icon { display: block; font-size: 14px; margin-bottom: 1px; }
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    font-size: 12px;
+  }
+  .panel-content .char-name {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--glow-primary);
+    margin-bottom: 2px;
+  }
+  .panel-content .char-sub { font-size: 11px; color: rgba(176,196,222,0.5); margin-bottom: 12px; }
+  .hp-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: rgba(176,196,222,0.5);
+    font-family: var(--font-ui);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .hp-track {
+    height: 6px;
+    background: rgba(0,255,255,0.06);
+    border: 1px solid rgba(0,255,255,0.1);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .hp-fill { height: 100%; background: var(--accent); box-shadow: 0 0 6px rgba(57,255,20,0.15); }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 6px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(0,255,255,0.04);
+  }
+  .stat-row .label { color: rgba(176,196,222,0.4); font-family: var(--font-ui); font-size: 9px; letter-spacing: 0.1em; }
+  .stat-row .val { color: var(--primary); font-weight: 700; text-shadow: 0 0 6px var(--glow-primary); }
+
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    z-index: 1;
+  }
+  .input-field {
+    flex: 1;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--background);
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    caret-color: var(--primary);
+  }
+  .input-field:focus { border-color: var(--primary); box-shadow: 0 0 8px var(--glow-primary); }
+  .input-field::placeholder { color: rgba(176,196,222,0.2); }
+
+  .turn-card::-webkit-scrollbar,
+  .panel-content::-webkit-scrollbar { width: 4px; }
+  .turn-card::-webkit-scrollbar-thumb,
+  .panel-content::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.15); }
+</style>
+</head>
+<body>
+
+<div class="layout-label">LAYOUT C — PAGE / CARD MODEL</div>
+
+<div class="running-header">
+  <span class="location">Neon District — Sub-Level 7</span>
+  <span class="turn">CYCLE 12</span>
+</div>
+
+<div class="main-area">
+  <div class="narrative-column">
+
+    <!-- Page navigator -->
+    <div class="page-nav">
+      <div class="page-nav-btn" onclick="showCard(currentCard - 1)">◁ PREV</div>
+      <div class="page-dots">
+        <div class="page-dot visited" onclick="showCard(0)"></div>
+        <div class="page-dot visited" onclick="showCard(1)"></div>
+        <div class="page-dot visited" onclick="showCard(2)"></div>
+        <div class="page-dot active" onclick="showCard(3)"></div>
+      </div>
+      <div class="page-indicator">CYCLE <span class="current-page" id="pageNum">4</span> / 4</div>
+      <div class="page-nav-btn disabled">NEXT ▷</div>
+    </div>
+
+    <!-- Card container -->
+    <div class="card-container">
+
+      <!-- Card 1 (Turn 1) -->
+      <div class="turn-card old" id="card-0">
+        <div class="card-scene">[ FEED: sub-level 7 — elevator bay ]</div>
+        <p>The elevator dropped you into Sub-Level 7 with a hydraulic scream that scattered the rats. Down here, the neon doesn't reach — just the amber emergency strips bolted every ten meters along the ceiling, half of them dead.</p>
+        <p>The air tastes like ozone and old copper. Your neural HUD flickered twice on the descent — interference from the shielding, or something else scanning you.</p>
+        <div class="card-action">▸ I activate my mesh sniffer and scan for wireless signals</div>
+      </div>
+
+      <!-- Card 2 (Turn 2) -->
+      <div class="turn-card old" id="card-1">
+        <div class="card-scene">[ FEED: corridor — emergency lighting ]</div>
+        <p>Your mesh sniffer lights up like a holiday display. Twelve distinct signals, most of them encrypted corporate dead-drops running automated handshakes with nobody. But three are live — two personal devices and something bigger, something drawing serious power from behind a reinforced door at the corridor's end.</p>
+        <p>Kira's voice crackled through your cochlear implant: "The data broker operates out of a converted water treatment plant. Third corridor, left at the junction marked with red graffiti. And Zyx? Don't let him scan your optics."</p>
+        <div class="card-action">▸ I head for the red graffiti junction, keeping to the shadows</div>
+      </div>
+
+      <!-- Card 3 (Turn 3) -->
+      <div class="turn-card old" id="card-2">
+        <div class="card-scene">[ FEED: junction — surveillance eye ]</div>
+        <p>The junction is easy to find — someone's sprayed a three-meter tall eye in fluorescent red across the wall, its pupil a camera lens that tracks you as you pass. Art project or surveillance? Down here, probably both.</p>
+        <p>The left corridor slopes downward. The air here is warmer — server heat, probably. You can hear the hum of hardware ahead, and underneath it, something that might be music or might be signal interference rendered as sound.</p>
+        <div class="card-action">▸ I spoof the camera with my retinal spoof program before turning left</div>
+      </div>
+
+      <!-- Card 4 (Turn 4 — current) -->
+      <div class="turn-card active" id="card-3">
+        <div class="card-scene">[ FEED: data broker's den — sub-level 7 ]</div>
+        <p>The data broker's den is exactly as depressing as advertised. Someone welded a sheet-metal awning over a busted storefront and lined the interior with salvaged server racks, their fans humming a discordant chorus. Cables snake across the floor like sleeping eels.</p>
+        <p>The broker himself sits behind a desk made from a slab of bulletproof glass resting on two gutted ATMs. He's old-school — no visible chrome except for the fiber optic cable running from behind his left ear directly into the wall. His eyes never quite focus on the same spot.</p>
+        <p>"You're the one Kira sent." It's not a question. His fingers drum a pattern on the glass. "I have what you need. Question is whether you have what I need. Creds are boring. I want the access codes to NovaCorp's employee mesh network. Sub-Level 3." He smiles. "Tick tock."</p>
+        <div class="card-action">▸ I jack into the local mesh to scan for hidden surveillance feeds</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="character-panel">
+    <div class="tab-strip">
+      <div class="tab active"><span class="tab-icon">⚡</span>Status</div>
+      <div class="tab"><span class="tab-icon">🔧</span>Gear</div>
+      <div class="tab"><span class="tab-icon">📡</span>Intel</div>
+      <div class="tab"><span class="tab-icon">🗺</span>Map</div>
+    </div>
+    <div class="panel-content">
+      <div class="char-name">ZYX-7</div>
+      <div class="char-sub">Lvl 6 Netrunner</div>
+      <div class="hp-row"><span>INTEGRITY</span><span>42 / 55</span></div>
+      <div class="hp-track"><div class="hp-fill" style="width:76%"></div></div>
+      <div class="stat-row"><span class="label">BODY</span><span class="val">8</span></div>
+      <div class="stat-row"><span class="label">REFLEX</span><span class="val">14</span></div>
+      <div class="stat-row"><span class="label">TECH</span><span class="val">16</span></div>
+      <div class="stat-row"><span class="label">COOL</span><span class="val">12</span></div>
+      <div class="stat-row"><span class="label">NET</span><span class="val">18</span></div>
+      <div class="stat-row"><span class="label">LUCK</span><span class="val">7</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="input-bar">
+  <input class="input-field" type="text" placeholder="Enter command..." />
+</div>
+
+<script>
+let currentCard = 3;
+const totalCards = 4;
+
+function showCard(index) {
+  if (index < 0 || index >= totalCards) return;
+  // Hide all
+  for (let i = 0; i < totalCards; i++) {
+    document.getElementById('card-' + i).classList.remove('active');
+  }
+  // Show selected
+  document.getElementById('card-' + index).classList.add('active');
+  currentCard = index;
+
+  // Update page number
+  document.getElementById('pageNum').textContent = index + 1;
+
+  // Update dots
+  const dots = document.querySelectorAll('.page-dot');
+  dots.forEach((dot, i) => {
+    dot.classList.remove('active');
+    if (i === index) dot.classList.add('active');
+  });
+
+  // Update nav buttons
+  const btns = document.querySelectorAll('.page-nav-btn');
+  btns[0].classList.toggle('disabled', index === 0);
+  btns[1].classList.toggle('disabled', index === totalCards - 1);
+}
+
+// Arrow key navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') showCard(currentCard - 1);
+  if (e.key === 'ArrowRight') showCard(currentCard + 1);
+});
+</script>
+
+</body>
+</html>

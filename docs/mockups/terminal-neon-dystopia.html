@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SideQuest — Neon Dystopia (Terminal Chrome)</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #00FFFF;
+    --secondary: #FF00FF;
+    --accent: #39FF14;
+    --background: #0A0A0F;
+    --surface: #12121A;
+    --text: #B0C4DE;
+    --border: #1E1E2E;
+    --hp-high: #39FF14;
+    --hp-mid: #FFD700;
+    --hp-low: #FF3333;
+    --glow-primary: rgba(0, 255, 255, 0.15);
+    --glow-accent: rgba(57, 255, 20, 0.15);
+    --font-body: 'Share Tech Mono', 'Courier New', monospace;
+    --font-ui: 'Orbitron', monospace;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--background);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* CRT scanline + neon bloom overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 255, 0.012) 2px,
+        rgba(0, 255, 255, 0.012) 4px
+      ),
+      radial-gradient(ellipse at 50% 50%, rgba(0, 255, 255, 0.025) 0%, transparent 50%),
+      radial-gradient(ellipse at center, transparent 40%, rgba(5, 5, 8, 0.6) 100%);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── Running Header ── */
+  .running-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 24px 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .running-header .location {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--primary);
+    opacity: 0.5;
+    text-shadow: 0 0 10px var(--glow-primary);
+  }
+  .running-header .turn {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--accent);
+    opacity: 0.4;
+    text-shadow: 0 0 8px var(--glow-accent);
+  }
+
+  /* ── Main Layout ── */
+  .main-area {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Narrative Column ── */
+  .narrative-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .narrative-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 48px;
+  }
+
+  /* History — faded */
+  .history-section {
+    opacity: 0.35;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .history-section p {
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 12px;
+    max-width: 72ch;
+  }
+
+  /* Current turn */
+  .current-turn {
+    max-width: 72ch;
+  }
+  .current-turn .scene-banner {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, #0D0D15, #1A0A2E, #0D0D15);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 12px;
+    font-family: var(--font-ui);
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 15px var(--glow-primary);
+    position: relative;
+    overflow: hidden;
+  }
+  .scene-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 1px,
+      rgba(0, 255, 255, 0.03) 1px, rgba(0, 255, 255, 0.03) 2px
+    );
+  }
+  .current-turn p {
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.03);
+  }
+  .player-action {
+    font-size: 14px;
+    color: var(--primary);
+    opacity: 0.7;
+    padding-left: 16px;
+    border-left: 2px solid var(--primary);
+    margin: 20px 0;
+    text-shadow: 0 0 10px var(--glow-primary);
+  }
+
+  /* Dinkus */
+  .dinkus {
+    text-align: center;
+    color: var(--accent);
+    letter-spacing: 1em;
+    margin: 28px 0;
+    font-size: 14px;
+    text-shadow: 0 0 10px var(--glow-accent);
+  }
+
+  /* ── Character Panel (Terminal Chrome) ── */
+  .character-panel {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--primary);
+    background: var(--surface);
+    position: relative;
+    box-shadow: -4px 0 20px rgba(0, 255, 255, 0.05);
+  }
+
+  /* Neon border glow */
+  .character-panel::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--primary);
+    box-shadow: 0 0 8px var(--primary), 0 0 16px var(--glow-primary);
+  }
+
+  /* Tab strip — terminal style */
+  .tab-strip {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    gap: 0;
+    background: rgba(0, 255, 255, 0.02);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 4px 8px;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 9px;
+    cursor: pointer;
+    color: rgba(176, 196, 222, 0.4);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.1em;
+  }
+  .tab:hover {
+    color: var(--primary);
+    background: rgba(0, 255, 255, 0.03);
+  }
+  .tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    text-shadow: 0 0 8px var(--glow-primary);
+    background: rgba(0, 255, 255, 0.04);
+  }
+  /* Glow pulse on active tab */
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .tab.active .tab-icon {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+  .tab-icon {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+  .tab-label {
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Panel content */
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  /* Section divider — horizontal line */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 14px 0;
+    position: relative;
+  }
+  .section-divider::after {
+    content: '//';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--surface);
+    padding: 0 8px;
+    font-size: 9px;
+    color: rgba(176, 196, 222, 0.2);
+    font-family: var(--font-ui);
+  }
+
+  /* Character header */
+  .char-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .char-portrait {
+    width: 72px;
+    height: 72px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #0D0D15, #1A0A2E);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 24px;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 8px var(--glow-primary), inset 0 0 12px rgba(0, 255, 255, 0.05);
+  }
+  .char-info h2 {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    text-shadow: 0 0 8px var(--glow-primary);
+  }
+  .char-info .subtitle {
+    font-size: 12px;
+    color: rgba(176, 196, 222, 0.5);
+    margin-top: 3px;
+  }
+  .char-info .location-line {
+    font-size: 11px;
+    color: var(--accent);
+    opacity: 0.5;
+    margin-top: 4px;
+    text-shadow: 0 0 6px var(--glow-accent);
+  }
+
+  /* HP bar */
+  .hp-section { margin: 12px 0; }
+  .hp-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+    color: rgba(176, 196, 222, 0.5);
+    font-family: var(--font-ui);
+    letter-spacing: 0.05em;
+  }
+  .hp-bar-track {
+    height: 6px;
+    background: rgba(0, 255, 255, 0.06);
+    border-radius: 1px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+  }
+  .hp-bar-fill {
+    height: 100%;
+    transition: width 0.5s;
+  }
+  .hp-bar-fill.high {
+    background: var(--hp-high);
+    box-shadow: 0 0 6px var(--glow-accent);
+  }
+  .hp-bar-fill.mid {
+    background: var(--hp-mid);
+    box-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
+  }
+  .hp-bar-fill.low {
+    background: var(--hp-low);
+    box-shadow: 0 0 6px rgba(255, 51, 51, 0.3);
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .stat-cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 8px;
+    background: rgba(0, 255, 255, 0.02);
+    border: 1px solid rgba(0, 255, 255, 0.06);
+    border-radius: 1px;
+    font-size: 12px;
+  }
+  .stat-name {
+    color: rgba(176, 196, 222, 0.5);
+    font-family: var(--font-ui);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .stat-value {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 13px;
+    text-shadow: 0 0 6px var(--glow-primary);
+  }
+
+  /* Conditions */
+  .conditions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .condition-badge {
+    font-size: 10px;
+    font-family: var(--font-ui);
+    padding: 3px 8px;
+    border-radius: 1px;
+    background: rgba(57, 255, 20, 0.06);
+    border: 1px solid rgba(57, 255, 20, 0.2);
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 4px var(--glow-accent);
+  }
+  .condition-badge.warning {
+    background: rgba(255, 0, 255, 0.06);
+    border-color: rgba(255, 0, 255, 0.2);
+    color: var(--secondary);
+    text-shadow: 0 0 4px rgba(255, 0, 255, 0.15);
+  }
+
+  /* Abilities */
+  .abilities-list {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .abilities-list li {
+    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.04);
+    color: rgba(176, 196, 222, 0.7);
+  }
+  .abilities-list li::before {
+    content: '> ';
+    color: var(--primary);
+    opacity: 0.5;
+  }
+
+  /* Section labels */
+  .section-label {
+    font-family: var(--font-ui);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(176, 196, 222, 0.35);
+    margin-bottom: 6px;
+  }
+
+  /* ── Input Bar ── */
+  .input-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 1;
+  }
+  .input-field {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--background);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    caret-color: var(--primary);
+  }
+  .input-field::placeholder {
+    color: rgba(176, 196, 222, 0.25);
+  }
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px var(--glow-primary);
+  }
+
+  .audio-status {
+    font-family: var(--font-ui);
+    font-size: 9px;
+    color: var(--secondary);
+    opacity: 0.5;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 6px rgba(255, 0, 255, 0.15);
+  }
+
+  /* Scrollbar — neon track */
+  .narrative-scroll::-webkit-scrollbar,
+  .panel-content::-webkit-scrollbar {
+    width: 4px;
+  }
+  .narrative-scroll::-webkit-scrollbar-thumb,
+  .panel-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+  .narrative-scroll::-webkit-scrollbar-track,
+  .panel-content::-webkit-scrollbar-track {
+    background: rgba(0, 255, 255, 0.02);
+  }
+</style>
+</head>
+<body>
+
+<!-- Running Header -->
+<div class="running-header">
+  <span class="location">Neon District — Sub-Level 7</span>
+  <span class="turn">CYCLE 12</span>
+</div>
+
+<!-- Main Area -->
+<div class="main-area">
+
+  <!-- Narrative Column -->
+  <div class="narrative-column">
+    <div class="narrative-scroll">
+
+      <!-- History -->
+      <div class="history-section">
+        <p>The elevator dropped you into Sub-Level 7 with a hydraulic scream that scattered the rats. Down here, the neon doesn't reach — just the amber emergency strips bolted every ten meters along the ceiling, half of them dead. The air tastes like ozone and old copper.</p>
+        <p>Kira's voice crackled through your cochlear implant: "The data broker operates out of a converted water treatment plant. Third corridor, left at the junction marked with red graffiti. And Zyx? Don't let him scan your optics. He'll clone your retinal print before you finish blinking."</p>
+      </div>
+
+      <div class="dinkus">◇ ◇ ◇</div>
+
+      <!-- Current Turn -->
+      <div class="current-turn">
+        <div class="scene-banner">[ FEED: sub-level corridor — data broker entrance ]</div>
+
+        <p>The data broker's den is exactly as depressing as advertised. Someone welded a sheet-metal awning over a busted storefront and lined the interior with salvaged server racks, their fans humming a discordant chorus. Cables snake across the floor like sleeping eels.</p>
+
+        <p>The broker himself sits behind a desk made from a slab of bulletproof glass resting on two gutted ATMs. He's old-school — no visible chrome except for the fiber optic cable running from behind his left ear directly into the wall. His eyes never quite focus on the same spot.</p>
+
+        <p>"You're the one Kira sent." It's not a question. His fingers drum a pattern on the glass. "I have what you need. Question is whether you have what I need. Creds are boring. I want the access codes to NovaCorp's employee mesh network. Sub-Level 3." He smiles. "Tick tock."</p>
+
+        <div class="player-action">
+          ▸ I jack into the local mesh to scan for hidden surveillance feeds
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Panel -->
+  <div class="character-panel">
+    <div class="tab-strip">
+      <div class="tab active">
+        <span class="tab-icon">⚡</span>
+        <span class="tab-label">Status</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">🔧</span>
+        <span class="tab-label">Gear</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">📡</span>
+        <span class="tab-label">Intel</span>
+      </div>
+      <div class="tab">
+        <span class="tab-icon">🗺</span>
+        <span class="tab-label">Map</span>
+      </div>
+    </div>
+
+    <div class="panel-content">
+      <!-- Character Header -->
+      <div class="char-header">
+        <div class="char-portrait">◈</div>
+        <div class="char-info">
+          <h2>ZYX-7</h2>
+          <div class="subtitle">Lvl 6 Netrunner</div>
+          <div class="location-line">// Sub-Level 7, Neon District</div>
+        </div>
+      </div>
+
+      <!-- HP -->
+      <div class="hp-section">
+        <div class="hp-label">
+          <span>INTEGRITY</span>
+          <span>42 / 55</span>
+        </div>
+        <div class="hp-bar-track">
+          <div class="hp-bar-fill high" style="width: 76.4%"></div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-cell">
+          <span class="stat-name">BODY</span>
+          <span class="stat-value">8</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">REFLEX</span>
+          <span class="stat-value">14</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">TECH</span>
+          <span class="stat-value">16</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">COOL</span>
+          <span class="stat-value">12</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">NET</span>
+          <span class="stat-value">18</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-name">LUCK</span>
+          <span class="stat-value">7</span>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-label">Active Effects</div>
+      <div class="conditions">
+        <span class="condition-badge">🔋 ICE Shield (4 cycles)</span>
+        <span class="condition-badge warning">⚠ Neural Load 68%</span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-label">Programs</div>
+      <ul class="abilities-list">
+        <li>Mesh Sniffer v3.1</li>
+        <li>Ghost Protocol</li>
+        <li>Black ICE Breaker</li>
+        <li>Retinal Spoof</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Input Bar -->
+<div class="input-bar">
+  <input class="input-field" type="text" placeholder="Enter command..." />
+  <div class="audio-status">
+    <span>♫</span>
+    <span>SYNTH_RAIN.loop</span>
+  </div>
+</div>
+
+</body>
+</html>
