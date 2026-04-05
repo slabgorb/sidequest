@@ -61,7 +61,11 @@ def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, str, int]:
     negative = visual_style.get("negative_prompt", "")
     base_seed = visual_style.get("base_seed", 42)
 
-    parts = [f"Portrait of {char['name']}, {char['role']}."]
+    # Build scene-based prompt: style first, then character in context
+    parts = []
+    if style_suffix:
+        parts.append(style_suffix)
+    parts.append(f"{char['name']}, {char['role']}.")
     if char.get("appearance"):
         parts.append(char["appearance"])
     if char.get("culture_aesthetic"):
@@ -71,17 +75,11 @@ def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, str, int]:
 
     narrative = " ".join(parts)
 
-    style_tokens = estimate_tokens(style_suffix)
-    narrative_tokens = estimate_tokens(narrative)
-    if narrative_tokens + style_tokens > TOKEN_LIMIT:
-        narrative = truncate_to_tokens(narrative, TOKEN_LIMIT - style_tokens - 10)
+    narrative = truncate_to_tokens(narrative, TOKEN_LIMIT - 10)
 
-    positive = f"{narrative}, {style_suffix}" if style_suffix else narrative
+    positive = narrative
 
-    clip_parts = ["character portrait, bust shot, dramatic lighting"]
-    if style_suffix:
-        clip_parts.append(style_suffix)
-    clip = ", ".join(clip_parts)
+    clip = style_suffix if style_suffix else "pen and ink illustration"
 
     seed_key = f"{char['genre']}:{char['world']}:{char['name']}:portrait"
     seed = deterministic_seed(seed_key, base_seed)
