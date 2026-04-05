@@ -93,10 +93,15 @@ stories:
     title: Scenario archiver — save/resume mid-scenario state, session boundary handling
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-05'
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-1
+    completed: '2026-04-05'
+    branch: feat/7-7-scenario-archiver
+    review_verdict: approved
   - id: 7-8
     title: Scenario scoring — evidence collection metrics, accusation accuracy, deduction quality
     points: 3
