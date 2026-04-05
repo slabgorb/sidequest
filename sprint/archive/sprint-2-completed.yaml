@@ -590,3 +590,8 @@ completed_stories:
     title: Layout modes — scroll, focus, cards narrative view with settings toggle
     points: 5
     completed: '2026-04-05'
+  - id: 25-9
+    epic: ''
+    title: Wire ConfrontationOverlay — render structured encounters in GameLayout
+    points: 3
+    completed: '2026-04-05'
