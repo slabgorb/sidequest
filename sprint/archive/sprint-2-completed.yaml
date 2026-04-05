@@ -539,3 +539,8 @@ completed_stories:
     title: "Faction music routing — trigger faction themes by context"
     points: 3
     completed: '2026-04-05'
+  - id: 16-16
+    epic: ''
+    title: "Content audit — all genre packs declare confrontations and resources"
+    points: 3
+    completed: '2026-04-05'
