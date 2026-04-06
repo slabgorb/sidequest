@@ -116,7 +116,9 @@ stories:
       Add total_weight() -> f64 to Inventory. Add CarryMode enum (Count | Weight) and weight_limit to genre rules. When carry_mode is Weight, Inventory.add() rejects items that would exceed weight_limit. Add is_overencumbered() check. When overencumbered in room_graph mode, trope tick multiplier increases by 1.5x.
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-06'
     repos: sidequest-api
     workflow: tdd
     acceptance_criteria:
@@ -126,6 +128,9 @@ stories:
       - Trope multiplier increased when overencumbered
       - Existing count-based carry unaffected
       - Test: add items to weight limit, verify rejection and overencumbered flag
+    completed: '2026-04-06'
+    review_findings: 'HIGH: half-wired — no production consumers for weight methods. Wire CarryMode dispatch + encumbrance_multiplier into trope engine + OTEL. MEDIUM: #[non_exhaustive] on CarryMode, f64 Display precision.'
+    review_verdict: approved
   - id: 19-8
     title: "Automapper UI component — render room graph as dungeon floorplan"
     description: >-

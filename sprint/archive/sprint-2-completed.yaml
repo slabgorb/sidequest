@@ -727,3 +727,8 @@ completed_stories:
     title: Wire map cartography data through dispatch to UI
     points: 5
     completed: '2026-04-06'
+  - id: 19-7
+    epic: ''
+    title: "Weight-based encumbrance — total_weight, carry_mode, overencumbered state"
+    points: 3
+    completed: '2026-04-06'
