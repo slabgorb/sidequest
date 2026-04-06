@@ -22,10 +22,12 @@ stories:
     title: Wire exercise_tracker into orchestrator dispatch
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     repos: api
     workflow: trivial
+    completed: '2026-04-06'
     type: chore
+    review_verdict: approved
   - id: 26-3
     title: Wire session_restore into dispatch_connect
     points: 3

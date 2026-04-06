@@ -626,3 +626,8 @@ completed_stories:
     title: Wire entity_reference into run_legality_checks
     points: 3
     completed: '2026-04-06'
+  - id: 26-2
+    epic: ''
+    title: Wire exercise_tracker into orchestrator dispatch
+    points: 3
+    completed: '2026-04-06'
