@@ -631,3 +631,8 @@ completed_stories:
     title: Wire exercise_tracker into orchestrator dispatch
     points: 3
     completed: '2026-04-06'
+  - id: 26-6
+    epic: ''
+    title: Wire scenario_archiver into save/load endpoints
+    points: 3
+    completed: '2026-04-06'

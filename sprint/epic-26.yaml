@@ -58,6 +58,7 @@ stories:
     repos: api
     workflow: trivial
     type: chore
+    review_verdict: approved
   - id: 26-7
     title: Add missing protocol types — JOURNAL_REQUEST, JOURNAL_RESPONSE, ITEM_DEPLETED, RESOURCE_MIN_REACHED
     points: 5
@@ -79,7 +80,7 @@ stories:
     title: Remove orphaned TurnModeIndicator and markdownToHtml
     points: 1
     priority: p1
-    status: backlog
+    status: canceled
     repos: ui
     workflow: trivial
     type: chore
