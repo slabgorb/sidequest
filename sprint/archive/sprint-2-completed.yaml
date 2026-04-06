@@ -616,3 +616,8 @@ completed_stories:
     title: Wire GameLayout to pass resources and genreSlug to CharacterPanel
     points: 3
     completed: '2026-04-05'
+  - id: 26-7
+    epic: ''
+    title: Add missing protocol types — JOURNAL_REQUEST, JOURNAL_RESPONSE, ITEM_DEPLETED, RESOURCE_MIN_REACHED
+    points: 5
+    completed: '2026-04-06'
