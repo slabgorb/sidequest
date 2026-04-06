@@ -468,7 +468,7 @@ stories:
       encounters. OTEL events: npc.action_selected (npc_name, action, role).
     points: 3
     priority: p2
-    status: in-progress
+    status: in_progress
     started: '2026-04-05T10:35:00Z'
     repos: api
     workflow: tdd
