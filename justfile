@@ -27,6 +27,10 @@ api-fmt:
 api-check:
     cd sidequest-api && cargo fmt --check && cargo clippy -- -D warnings && cargo test
 
+# Preview narrator prompt (uses real Rust types — never drifts)
+prompt-preview *flags:
+    cd sidequest-api && cargo run -p sidequest-promptpreview -- {{flags}}
+
 # UI (React frontend)
 ui-dev:
     cd sidequest-ui && npm run dev
