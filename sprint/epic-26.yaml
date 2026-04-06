@@ -84,3 +84,10 @@ stories:
     repos: ui
     workflow: trivial
     type: chore
+  - id: 26-10
+    title: Wire map cartography data through dispatch to UI
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api,ui
+    workflow: tdd
