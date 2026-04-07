@@ -147,3 +147,5 @@ stories:
     repos: api,ui
     workflow: trivial
     depends_on: 28-9
+    review_findings: 'Half-wired: lore_mark.rs and merchant_transact.rs downgraded to private instead of deleted. Delete entire modules.'
+    review_verdict: approved

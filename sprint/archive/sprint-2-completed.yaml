@@ -813,3 +813,8 @@ completed_stories:
     title: LoRA loading verification — genre style LoRAs via mflux
     points: 3
     completed: '2026-04-07'
+  - id: 28-13
+    epic: ''
+    title: "Dead export cleanup — remove unwired pub fns and UI exports"
+    points: 3
+    completed: '2026-04-07'
