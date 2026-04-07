@@ -34,9 +34,13 @@ stories:
     title: FluxMLXWorker — replace FluxWorker with mflux backend
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: daemon
     workflow: tdd
+    completed: '2026-04-07'
+    branch: feat/27-3-flux-mlx-worker
+    session: .session/27-3-session.md
+    review_verdict: approved
   - id: 27-4
     title: Daemon dependency swap — remove torch/diffusers, add mlx/mflux
     points: 2

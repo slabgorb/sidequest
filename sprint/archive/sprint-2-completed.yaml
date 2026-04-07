@@ -747,3 +747,8 @@ completed_stories:
     title: Strip ACEStepWorker from daemon runtime
     points: 2
     completed: '2026-04-07'
+  - id: 27-3
+    epic: ''
+    title: FluxMLXWorker — replace FluxWorker with mflux backend
+    points: 5
+    completed: '2026-04-07'
