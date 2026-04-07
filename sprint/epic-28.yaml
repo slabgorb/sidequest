@@ -24,9 +24,12 @@ stories:
       Before routing real traffic through StructuredEncounter, make it observable. Add sidequest-telemetry dependency to sidequest-game (only 2 emissions exist today, both in persistence.rs). Instrument: apply_beat() — beat_id, metric before/after, phase transition, resolved; metric threshold checks; phase transitions; escalation triggers. OTEL events: encounter.beat_applied (encounter_type, beat_id, stat_check, metric_before, metric_after, phase), encounter.resolved (encounter_type, beats_total, outcome), encounter.phase_transition (encounter_type, old_phase, new_phase), encounter.escalated (from_type, to_type).
     points: 3
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-07'
+    branch: feat/28-2-otel-structured-encounter
+    session_file: .session/28-2-session.md
   - id: 28-3
     title: "Populate beats in Confrontation protocol message — UI beat buttons come alive"
     description: >-
@@ -58,7 +61,7 @@ stories:
     status: ready
     repos: api
     workflow: tdd
-    depends_on: 28-2, 28-4
+    depends_on:
   - id: 28-6
     title: "Change creature_smith to output beat selections instead of CombatPatch"
     description: >-
@@ -117,7 +120,7 @@ stories:
     status: ready
     repos: api,ui,content
     workflow: tdd
-    depends_on: 28-9, 28-10
+    depends_on:
   - id: 28-12
     title: "OTEL for game crate internals — CreatureCore, trope tick, disposition, turn phases"
     description: >-

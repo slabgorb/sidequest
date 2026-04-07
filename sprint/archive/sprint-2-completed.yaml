@@ -772,3 +772,8 @@ completed_stories:
     title: "Populate beats in Confrontation protocol message — UI beat buttons come alive"
     points: 2
     completed: '2026-04-07'
+  - id: 28-2
+    epic: ''
+    title: "OTEL for StructuredEncounter — instrument apply_beat, metric changes, resolution"
+    points: 3
+    completed: '2026-04-07'
