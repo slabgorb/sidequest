@@ -106,10 +106,13 @@ stories:
     title: Scenario scoring — evidence collection metrics, accusation accuracy, deduction quality
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-06'
     repos: sidequest-api
     workflow: tdd
     depends_on: 7-4
+    completed: '2026-04-06'
   - id: 7-9
     title: ScenarioEngine integration — wire scenario lifecycle into orchestrator turn loop
     points: 5
