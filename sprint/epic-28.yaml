@@ -48,7 +48,7 @@ stories:
       dispatch/prompt.rs builds combat and chase context inline with ad-hoc string formatting. format_encounter_context() on StructuredEncounter already produces a complete prompt block with phase, metric, available beats, secondary stats, and cinematography hints — but has zero non-test callers. Fix: replace the inline combat/chase context assembly in dispatch/prompt.rs with a single call to encounter.format_encounter_context(&def). This gives the narrator structured beat options for ALL encounter types, not just combat and chase. OTEL event: encounter.context_injected (encounter_type, phase, beat_count).
     points: 3
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
     depends_on: 28-1
@@ -60,7 +60,7 @@ stories:
       The core wiring. When creature_smith (or the player via UI beat buttons) selects a beat, dispatch calls apply_beat(beat_id, &def) on the live StructuredEncounter. The beat's stat_check field names the mechanic to resolve. Dispatch maps stat_check to existing resolution functions: "attack" calls resolve_attack() on CreatureCore, "escape" calls the chase escape logic, "persuade"/"intimidate"/etc. use the confrontation metric directly (already handled by apply_beat's metric_delta). After apply_beat(), check resolution. If resolved, handle outcome (victory/ defeat/escape/etc.). If escalates_to is set and threshold crossed, start the escalation encounter. OTEL events: encounter.beat_dispatched (beat_id, stat_check, resolver), encounter.stat_check_resolved (stat_check, result). HP/damage OTEL comes from CreatureCore (story 28-2).
     points: 5
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
     depends_on:
@@ -70,7 +70,7 @@ stories:
       creature_smith currently produces CombatPatch (engage/disengage, turn order, drama weight). Change its prompt to present available beats from the ConfrontationDef and ask for a beat_id selection per actor. The output format changes from CombatPatch fields to a beat_selections array: [{actor: "Goblin", beat_id: "attack"}, {actor: "Player", beat_id: "defend"}]. For non-combat encounters (standoff, negotiation), the narrator selects beats that advance the dramatic arc. Remove CombatPatch from the agent output schema entirely. OTEL event: encounter.agent_beat_selection (actor, beat_id, encounter_type).
     points: 5
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
     depends_on: 28-5
