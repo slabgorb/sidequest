@@ -783,3 +783,8 @@ completed_stories:
     title: ScenarioEngine integration — wire scenario lifecycle into orchestrator turn loop
     points: 5
     completed: '2026-04-07'
+  - id: 28-4
+    epic: ''
+    title: "Wire format_encounter_context() into narrator prompt — replace inline combat/chase context"
+    points: 3
+    completed: '2026-04-07'
