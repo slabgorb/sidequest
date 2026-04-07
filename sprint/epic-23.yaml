@@ -101,14 +101,17 @@ stories:
       Update genre pack YAML schema and sidequest-genre loader.
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-06'
     repos: api,content
     workflow: tdd
+    branch: feat/23-5-dynamic-tone-axes
   - id: 23-7
     title: Wire tone axes injection into narrator prompt — TurnContext + genre pack models
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: api
     workflow: tdd
   - id: 23-8
