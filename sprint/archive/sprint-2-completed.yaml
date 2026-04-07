@@ -752,3 +752,8 @@ completed_stories:
     title: FluxMLXWorker — replace FluxWorker with mflux backend
     points: 5
     completed: '2026-04-07'
+  - id: 27-4
+    epic: ''
+    title: Daemon dependency swap — remove torch/diffusers, add mlx/mflux
+    points: 2
+    completed: '2026-04-07'

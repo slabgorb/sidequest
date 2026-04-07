@@ -45,11 +45,15 @@ stories:
     title: Daemon dependency swap — remove torch/diffusers, add mlx/mflux
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: daemon
     workflow: trivial
     depends_on: 27-3
+    completed: '2026-04-07'
     type: chore
+    branch: feat/27-4-daemon-dep-swap
+    session: .session/27-4-session.md
+    review_verdict: approved
   - id: 27-5
     title: LoRA loading verification — genre style LoRAs via mflux
     points: 3
