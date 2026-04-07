@@ -17,6 +17,7 @@ completed_epics:
   - '25'
   - '15'
   - '7'
+  - '19'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -823,3 +824,13 @@ completed_stories:
     title: "Genre pack combat/chase ConfrontationDefs — declare combat and chase as confrontation types"
     points: 3
     completed: '2026-04-07'
+  - id: 28-7
+    epic: ''
+    title: "Promote StructuredEncounter onto GameSnapshot — replace combat and chase fields"
+    points: 8
+    completed: '2026-04-07'
+  - id: 19-3
+    epic: '19'
+    title: "Trope tick on room transition — fire trope engine per room move"
+    points: 3
+    completed: '2026-04-02'

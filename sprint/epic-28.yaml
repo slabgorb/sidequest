@@ -80,10 +80,14 @@ stories:
       GameSnapshot currently has combat: CombatState and chase: Option<ChaseState>. Replace both with encounter: Option<StructuredEncounter>. Update every reference to ctx.combat_state and ctx.chase_state in the dispatch pipeline to use ctx.encounter. HP and status effects stay on CreatureCore — the encounter tracks the dramatic arc (beats, metric, phase, resolution), not creature state. This is the point of no return. All dispatch code that reads/writes CombatState or ChaseState now reads/writes StructuredEncounter. state_mutations.rs engage/disengage logic becomes encounter start/resolve. OTEL event: encounter.started (encounter_type, actors, metric_starting), encounter.ended (encounter_type, outcome, total_beats).
     points: 8
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
     depends_on: 28-6
+    completed: '2026-04-07'
+    branch: feat/28-7-promote-structured-encounter
+    session_file: .session/28-7-session.md
+    review_verdict: approved
   - id: 28-8
     title: "NPC turns through beat system — NPCs mechanically act every round"
     description: >-

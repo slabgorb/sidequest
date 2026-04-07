@@ -4,7 +4,7 @@ title: "Dungeon Crawl Engine — Room Graph Navigation & Resource Pressure"
 description: >-
   Engine support for the Caverns & Claudes genre pack. Adds room-graph navigation mode to CartographyConfig (ADR-055), consumable item depletion, weight-based encumbrance, and an automapper UI component. Reuses trope engine for Keeper awareness, NPC disposition for hireling morale, and ConfrontationDef for boss encounters — no new subsystems for those.
 priority: p1
-status: active
+status: done
 repos: sidequest-api, sidequest-ui, sidequest-content
 stories:
   - id: 19-1
@@ -137,7 +137,7 @@ stories:
       New React component in sidequest-ui that receives room graph data from MAP_UPDATE messages and renders a dungeon floorplan. Rooms as rectangles, corridors as lines, doors as icons. Fog of war hides undiscovered rooms. Current room highlighted. Force-directed layout from graph topology. Graph-paper aesthetic from C&C theme.yaml colors.
     points: 8
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-ui
     workflow: tdd
     acceptance_criteria:
@@ -148,6 +148,7 @@ stories:
       - Graph-paper aesthetic matching C&C theme
       - Responsive — works in sidebar panel
       - Test: render 5-room graph, verify SVG/canvas output
+    completed: '2026-04-07'
   - id: 19-9
     title: "Treasure-as-XP — gold extraction grants affinity progress"
     description: >-
@@ -179,3 +180,4 @@ stories:
     workflow: tdd
     depends_on: 19-5
     completed: '2026-04-04'
+completed: '2026-04-07'
