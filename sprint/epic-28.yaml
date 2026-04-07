@@ -1,9 +1,8 @@
 id: '28'
 type: epic
 title: "Unified Encounter Engine — Kill CombatState/ChaseState, Ship StructuredEncounter"
-description: >-
+description: |-
   Combat has failed ~13 times across Epics 5, 15, 16, 25, and 26. Root cause: Epic 16 built StructuredEncounter to unify combat and chase but never replaced the old systems. The server uses CombatState/ChaseState as runtime models and wraps them in read-only StructuredEncounter adapters for the protocol message. The beat-driven encounter engine — apply_beat(), format_encounter_context(), ConfrontationDef loading — is dead code. apply_beat() has zero non-test callers. format_encounter_context() has zero non-test callers. The Confrontation message sends beats: vec![]. The UI beat buttons render nothing.
-
   This epic kills CombatState and ChaseState. StructuredEncounter becomes the sole runtime model. Genre pack ConfrontationDefs drive ALL encounter types — combat and chase are just confrontation types declared in YAML, same as standoff, negotiation, trial, etc. Genres that don't fit combat (victoria, star_chamber) simply don't declare a combat type. Beats are the universal action unit. The existing math (resolve_attack, check_escape) stays where it is — StructuredEncounter orchestrates it via beat stat_check dispatch. No transition layers. No fallbacks. No save migration. Hard cut.
 priority: p0
 status: ready
@@ -34,10 +33,12 @@ stories:
       dispatch/mod.rs:2393 sends beats: vec![] in every Confrontation message. The ConfrontationOverlay renders beat buttons from this array. Empty array = no buttons = no player interaction with the encounter system. Fix: look up the ConfrontationDef by encounter_type from the defs loaded in 28-1, serialize its beats into the protocol message. Each beat has id, label, stat_check, metric_delta, risk, reveals, narrator_hint. OTEL event: encounter.beats_sent (encounter_type, beat_count, beat_ids).
     points: 2
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
     depends_on: 28-1
+    completed: '2026-04-07'
+    review_verdict: approved
   - id: 28-4
     title: "Wire format_encounter_context() into narrator prompt — replace inline combat/chase context"
     description: >-

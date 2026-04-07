@@ -767,3 +767,8 @@ completed_stories:
     title: OTEL spans for MLX render pipeline
     points: 2
     completed: '2026-04-07'
+  - id: 28-3
+    epic: ''
+    title: "Populate beats in Confrontation protocol message — UI beat buttons come alive"
+    points: 2
+    completed: '2026-04-07'
