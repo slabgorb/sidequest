@@ -3,7 +3,7 @@ type: epic
 title: MLX Image Renderer — Replace PyTorch with Apple MLX
 description: Migrate daemon image generation from PyTorch/diffusers to Apple MLX via mflux. Drop TTS (Kokoro) and ACE-Step runtime workers. Daemon becomes single-purpose Flux image renderer. See ADR-070.
 priority: p1
-status: backlog
+status: in_progress
 repos: daemon
 stories:
   - id: 27-1
