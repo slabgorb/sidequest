@@ -839,3 +839,8 @@ completed_stories:
     title: ASCII grid parser — glyph vocabulary, legend, exit extraction from wall gaps
     points: 3
     completed: '2026-04-08'
+  - id: 29-2
+    epic: ''
+    title: Tactical grid validation in sidequest-validate — perimeter closure, flood fill, exit matching
+    points: 2
+    completed: '2026-04-08'
