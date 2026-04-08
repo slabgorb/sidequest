@@ -127,10 +127,11 @@ stories:
       Run a playtest scenario that exercises: (1) combat encounter start via narrator, (2) player beat selection via UI buttons, (3) NPC beat resolution with mechanical damage, (4) victory/defeat resolution, (5) chase encounter with escape threshold, (6) encounter escalation (standoff → combat). Verify in GM panel OTEL that every mechanical decision is visible: beat applied, stat_check resolved, HP changed, phase transitioned, encounter resolved. If the narrator improvises damage numbers that don't match OTEL, the story fails. Two genres minimum (one fantasy, one non-fantasy).
     points: 3
     priority: p0
-    status: ready
+    status: done
     repos: api,ui,content
     workflow: tdd
     depends_on:
+    completed: '2026-04-08'
   - id: 28-12
     title: "OTEL for game crate internals — CreatureCore, trope tick, disposition, turn phases"
     description: >-

@@ -834,3 +834,8 @@ completed_stories:
     title: "Trope tick on room transition — fire trope engine per room move"
     points: 3
     completed: '2026-04-02'
+  - id: 29-1
+    epic: ''
+    title: ASCII grid parser — glyph vocabulary, legend, exit extraction from wall gaps
+    points: 3
+    completed: '2026-04-08'

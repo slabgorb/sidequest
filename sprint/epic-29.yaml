@@ -10,9 +10,13 @@ stories:
     title: ASCII grid parser — glyph vocabulary, legend, exit extraction from wall gaps
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-08'
+    branch: feat/29-1-ascii-grid-parser
+    session_file: .session/29-1-session.md
+    review_verdict: approved
   - id: 29-2
     title: Tactical grid validation in sidequest-validate — perimeter closure, flood fill, exit matching
     points: 2
