@@ -38,4 +38,4 @@ stories:
     priority: p1
     status: in_progress
     repos: api
-    workflow: bdd
+    workflow: tdd
