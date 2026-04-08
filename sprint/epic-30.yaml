@@ -1,0 +1,47 @@
+id: '30'
+type: epic
+title: Playtest Bug Bash
+description: Bugs found during playtesting — character creation, narrator context, and other issues blocking clean playtest sessions
+priority: p1
+status: backlog
+repos: api,ui
+stories:
+  - id: 30-1
+    title: Character name not saved — persists as numeric index instead of player-entered name
+    points: 3
+    priority: p1
+    status: done
+    assigned_to: keithavery
+    repos: api
+    workflow: tdd
+    completed: '2026-04-08'
+    type: bug
+    branch: feat/30-1-character-name-not-saved
+    review_verdict: approved
+  - id: 30-2
+    title: Narrator missing genre and world context — asks player for information it should already have
+    points: 3
+    priority: p1
+    status: done
+    repos: api
+    workflow: tdd
+    completed: '2026-04-08'
+    type: bug
+    review_findings: MockGameService missing trait method (compile error); select_prompt_tier genre switch doesn't clear stale session
+    review_verdict: approved
+  - id: 30-3
+    title: GM panel StateTab crashes on undefined in_combat — PlayerCard reads uninitialized game state
+    points: 2
+    priority: p1
+    status: backlog
+    repos: ui
+    workflow: tdd
+    type: bug
+  - id: 30-4
+    title: Daemon loads Kokoro TTS instead of Mac native — unwired or unmerged TTS backend switch
+    points: 2
+    priority: p1
+    status: backlog
+    repos: daemon
+    workflow: tdd
+    type: bug
