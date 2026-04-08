@@ -49,13 +49,13 @@ ui-install:
 
 # Daemon (Python media services)
 daemon-run:
-    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} sidequest-renderer --warmup
+    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} uv run sidequest-renderer --warmup
 
 daemon-status:
-    cd sidequest-daemon && sidequest-renderer --status
+    cd sidequest-daemon && uv run sidequest-renderer --status
 
 daemon-stop:
-    cd sidequest-daemon && sidequest-renderer --shutdown
+    cd sidequest-daemon && uv run sidequest-renderer --shutdown
 
 daemon-test:
     cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} pytest

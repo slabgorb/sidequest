@@ -69,9 +69,15 @@ stories:
     title: Shared-wall layout engine — tree topology placement with actual room dimensions
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: sm
+    started: '2026-04-08'
     repos: api
     workflow: tdd
+    completed: '2026-04-08'
+    branch: feat/29-6-shared-wall-layout
+    session_file: .session/29-6-session.md
+    review_verdict: approved
   - id: 29-7
     title: Jaquayed layout — cycle detection, ring placement, loop closure validation, overlap detection
     points: 5
