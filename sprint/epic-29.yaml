@@ -31,9 +31,11 @@ stories:
     title: Author ASCII grids for Mawdeep 18 rooms — non-rectangular shapes, template library seed
     points: 5
     priority: p0
-    status: backlog
+    status: in_progress
     repos: content
     workflow: trivial
+    branch: feat/29-3-mawdeep-ascii-grids
+    session_file: .session/29-3-session.md
   - id: 29-4
     title: Single-room SVG tactical renderer — cell-level tiles, feature markers, genre-themed palette
     points: 5
