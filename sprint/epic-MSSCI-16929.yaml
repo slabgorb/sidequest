@@ -5,6 +5,7 @@ description: 'Deterministic tactical dungeon maps from ASCII grids. Tokens, zone
 priority: p1
 status: backlog
 repos: api,ui,content
+jira: MSSCI-16929
 stories:
   - id: 29-1
     title: ASCII grid parser — glyph vocabulary, legend, exit extraction from wall gaps
@@ -39,12 +40,18 @@ stories:
     session_file: .session/29-3-session.md
     review_verdict: approved
   - id: 29-4
+    jira: MSSCI-16930
     title: Single-room SVG tactical renderer — cell-level tiles, feature markers, genre-themed palette
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-08'
     repos: ui
     workflow: tdd
+    completed: '2026-04-08'
+    branch: feat/29-4-svg-tactical-renderer
+    session_file: .session/29-4-session.md
   - id: 29-5
     title: TACTICAL_STATE protocol message — room grid, entities, zones, wire into dispatch on room entry
     points: 3
