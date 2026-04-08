@@ -889,3 +889,8 @@ completed_stories:
     title: Implement roll_3d6_strict stat generation in CharacterBuilder
     points: 5
     completed: '2026-04-08'
+  - id: 29-9
+    epic: ''
+    title: Author ASCII grids for Grimvault — second C&C world, validate format across dungeon styles
+    points: 3
+    completed: '2026-04-08'

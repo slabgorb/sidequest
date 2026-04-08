@@ -105,6 +105,7 @@ stories:
     status: backlog
     repos: content
     workflow: trivial
+    review_verdict: approved
   - id: 29-10
     title: TacticalEntity model + token rendering — position, size, faction, SVG tokens on grid
     points: 3
