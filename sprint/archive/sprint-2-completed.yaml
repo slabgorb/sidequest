@@ -894,3 +894,8 @@ completed_stories:
     title: Author ASCII grids for Grimvault — second C&C world, validate format across dungeon styles
     points: 3
     completed: '2026-04-08'
+  - id: 29-19
+    epic: ''
+    title: Wire tactical grid into MAP_UPDATE — populate ExploredLocation.tactical_grid from RoomDef, parse in useAutomapperData
+    points: 3
+    completed: '2026-04-08'

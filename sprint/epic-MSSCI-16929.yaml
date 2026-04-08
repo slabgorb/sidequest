@@ -176,3 +176,4 @@ stories:
     status: backlog
     repos: api,ui
     workflow: tdd
+    review_verdict: approved
