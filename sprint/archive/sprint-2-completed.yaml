@@ -854,3 +854,8 @@ completed_stories:
     title: Single-room SVG tactical renderer — cell-level tiles, feature markers, genre-themed palette
     points: 5
     completed: '2026-04-08'
+  - id: 28-8
+    epic: ''
+    title: "NPC turns through beat system — NPCs mechanically act every round"
+    points: 5
+    completed: '2026-04-08'
