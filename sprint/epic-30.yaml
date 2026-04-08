@@ -18,7 +18,10 @@ stories:
     title: Narrator missing genre and world context — asks player for information it should already have
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-08'
     type: bug
+    review_findings: MockGameService missing trait method (compile error); select_prompt_tier genre switch doesn't clear stale session
+    review_verdict: approved

@@ -864,3 +864,8 @@ completed_stories:
     title: TACTICAL_STATE protocol message — room grid, entities, zones, wire into dispatch on room entry
     points: 3
     completed: '2026-04-08'
+  - id: 30-2
+    epic: ''
+    title: Narrator missing genre and world context — asks player for information it should already have
+    points: 3
+    completed: '2026-04-08'
