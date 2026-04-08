@@ -864,3 +864,8 @@ completed_stories:
     title: TACTICAL_STATE protocol message — room grid, entities, zones, wire into dispatch on room entry
     points: 3
     completed: '2026-04-08'
+  - id: 29-6
+    epic: ''
+    title: Shared-wall layout engine — tree topology placement with actual room dimensions
+    points: 5
+    completed: '2026-04-08'
