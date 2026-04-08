@@ -1,0 +1,172 @@
+id: '32'
+type: epic
+title: System/Milieu Decomposition — ADR-072
+description: Decompose genre packs into composable system (mechanics) + milieu (aesthetic) layers. Genre packs become thin composition manifests. Worlds become pure geography. See ADR-072.
+priority: p1
+status: backlog
+repos: content,api
+stories:
+  - id: 32-1
+    title: pack.yaml schema extension — system_ref and milieu_ref fields
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api,content
+    workflow: trivial
+    type: chore
+  - id: 32-2
+    title: Three-path loader — resolve system and milieu refs in GenrePackLoader
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 32-3
+    title: Layer boundary validator — enforce file ownership per layer in sidequest-validate
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 32-4
+    title: Extract jazz_age milieu from pulp_noir — first milieu extraction
+    points: 3
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: refactor
+  - id: 32-5
+    title: Extract noir_detective system from pulp_noir — first system extraction
+    points: 3
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: refactor
+  - id: 32-6
+    title: Create gangster system — territory, rackets, loyalty mechanics
+    points: 5
+    priority: p2
+    status: backlog
+    repos: content,api
+    workflow: tdd
+    depends_on: 32-5
+  - id: 32-7
+    title: Create gangsters_prohibition genre pack — gangster + jazz_age composition
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-6
+  - id: 32-8
+    title: Decompose caverns_and_claudes — dungeon_crawl system + high_fantasy milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-9
+    title: Decompose space_opera — space_adventure system + space_opera milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-10
+    title: Decompose spaghetti_western — gunslinger system + old_west milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-11
+    title: Decompose neon_dystopia — cyberpunk system + cyberpunk_noir milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-12
+    title: Decompose road_warrior — vehicular_combat system + automotive_wasteland milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-13
+    title: Decompose mutant_wasteland — wasteland_survival system + postapocalyptic milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-14
+    title: Decompose victoria — gothic_mystery system + victorian milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-15
+    title: Decompose low_fantasy — gritty_adventure system + low_fantasy milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-16
+    title: Decompose elemental_harmony — elemental system + eastern_fantasy milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-17
+    title: Decompose star_chamber — political_intrigue system + renaissance milieu
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: chore
+  - id: 32-18
+    title: Remove legacy loader fallback — all packs must use system/milieu refs
+    points: 2
+    priority: p3
+    status: backlog
+    repos: api
+    workflow: trivial
+    depends_on: 32-17
+    type: chore
+  - id: 32-19
+    title: Strip world-level tropes, archetypes, and visual_style from all 16 worlds
+    points: 3
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    depends_on: 32-2
+    type: refactor
