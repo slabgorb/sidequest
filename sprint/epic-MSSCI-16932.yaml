@@ -1,0 +1,111 @@
+id: '35'
+type: epic
+title: Wiring Remediation II — Unwired Modules, OTEL Blind Spots, Dead Code
+description: >-
+  Eight fully-implemented API modules with zero production consumers, 15+ subsystems
+  wired but invisible to GM panel (no OTEL), 4 dead UI components. Discovered in
+  2026-04-09 cross-repo wiring audit. Successor to Epic 26. Critical finding:
+  patch_legality (narrator state validation) fully built with OTEL but never called.
+priority: p0
+status: ready
+repos: api,ui,daemon
+jira: MSSCI-16932
+stories:
+  - id: 35-1
+    jira: MSSCI-16933
+    title: Wire patch_legality into turn validator cold path
+    points: 3
+    priority: p0
+    status: done
+    repos: api
+    workflow: tdd
+    completed: '2026-04-09'
+    type: bug
+  - id: 35-2
+    title: Wire entity_reference hot-path validation after NPC registry update
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: chore
+  - id: 35-3
+    title: Wire scenario_scoring into /accuse handler with questioned_npcs tracking
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: chore
+  - id: 35-4
+    title: Wire treasure_xp into state_mutations after item acquisition
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: chore
+  - id: 35-5
+    title: Wire turn_reminder into barrier creation — spawn async reminder task
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: chore
+  - id: 35-6
+    title: Wire guest_npc permission gating into dispatch pipeline
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: chore
+  - id: 35-7
+    title: Wire tactical_grid population into connect.rs room-graph branch
+    points: 3
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: chore
+  - id: 35-8
+    title: OTEL watcher events for beat_filter and scene_relevance
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: trivial
+    type: chore
+  - id: 35-9
+    title: OTEL watcher events for NPC subsystems — belief, disposition, actions, gossip
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: trivial
+    type: chore
+  - id: 35-10
+    title: OTEL watcher events for consequence, combatant, party_reconciliation, progression
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: trivial
+    type: chore
+  - id: 35-11
+    title: Delete dead UI components — LayoutModeSelector, TurnModeIndicator
+    points: 1
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: trivial
+    type: chore
+  - id: 35-12
+    title: Delete dead daemon export — is_discardable
+    points: 1
+    priority: p2
+    status: backlog
+    repos: daemon
+    workflow: trivial
+    type: chore

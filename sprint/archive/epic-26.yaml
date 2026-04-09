@@ -3,7 +3,7 @@ type: epic
 title: Wiring Audit Remediation — Unwired Modules, Protocol Gaps, OTEL Blind Spots
 description: Six fully-implemented Rust modules (843 LOC) with zero production consumers, 4 missing UI protocol message types, 1 OTEL blind spot (location transitions), and UI orphaned components. Discovered in 2026-04-06 cross-repo wiring audit. Successor to Epic 15 (wiring debt cleanup).
 priority: p1
-status: ready
+status: done
 repos: api,ui,orchestrator
 stories:
   - id: 26-1
@@ -45,16 +45,20 @@ stories:
     title: Wire turn_reminder into dispatch idle detection
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: api
     workflow: tdd
+    type: chore
+    superseded_by: '35-5'
   - id: 26-5
     title: Wire guest_npc into multiplayer dispatch pipeline
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: api
     workflow: tdd
+    type: chore
+    superseded_by: '35-6'
   - id: 26-6
     title: Wire scenario_archiver into save/load endpoints
     points: 3
@@ -120,3 +124,4 @@ stories:
     type: bug
     branch: feat/26-11-fix-session-resume-split-party
     session_file: sprint/26-11-session.md
+completed: '2026-04-09'

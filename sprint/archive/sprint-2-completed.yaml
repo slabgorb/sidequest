@@ -21,6 +21,7 @@ completed_epics:
   - '23'
   - '30'
   - '28'
+  - '26'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -957,3 +958,23 @@ completed_stories:
     title: "Playtest verification — combat AND chase work through unified encounter system"
     points: 3
     completed: '2026-04-08'
+  - id: 35-1
+    epic: ''
+    title: Wire patch_legality into turn validator cold path
+    points: 3
+    completed: '2026-04-09'
+  - id: 26-4
+    epic: '26'
+    title: Wire turn_reminder into dispatch idle detection
+    points: 5
+    completed: '2026-04-09'
+  - id: 26-5
+    epic: '26'
+    title: Wire guest_npc into multiplayer dispatch pipeline
+    points: 5
+    completed: '2026-04-09'
+  - id: 26-9
+    epic: '26'
+    title: Remove orphaned TurnModeIndicator and markdownToHtml
+    points: 1
+    completed: '2026-04-09'

@@ -173,7 +173,8 @@ stories:
     title: Wire tactical grid into MAP_UPDATE — populate ExploredLocation.tactical_grid from RoomDef, parse in useAutomapperData
     points: 3
     priority: p0
-    status: backlog
+    status: canceled
     repos: api,ui
     workflow: tdd
-    review_verdict: approved
+    type: chore
+    superseded_by: '35-7'
