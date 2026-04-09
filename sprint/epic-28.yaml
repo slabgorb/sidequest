@@ -94,10 +94,11 @@ stories:
       Story 15-6's original sin: NPCs never mechanically act. The narrator says "the goblin attacks" but resolve_attack() is never called for the NPC. In the unified system: each NPC actor in the encounter gets a beat selection per round. For combat encounters, NPC beats default to "attack" targeting a player. For other encounters, creature_smith selects NPC beats based on the NPC's disposition and role. dispatch loops through all actors in the encounter, calls apply_beat() for each, resolves the stat_check. Every NPC action produces OTEL events. The GM panel shows exactly what each NPC did mechanically. OTEL events: encounter.npc_beat (npc_name, beat_id, target, stat_check_result).
     points: 5
     priority: p0
-    status: ready
+    status: done
     repos: api
     workflow: tdd
     depends_on: 28-7
+    completed: '2026-04-07'
   - id: 28-9
     title: "Delete CombatState, ChaseState, CombatPatch, ChasePatch, from_combat_state, from_chase_state"
     description: >-
@@ -152,9 +153,10 @@ stories:
       2026-04-06 audit found 22 API pub exports and 9 UI exports with zero non-test consumers. After the encounter unification (28-9 deletes many of these), audit what remains and remove or downgrade to pub(crate). API targets: dedup_window, format_narrator_context, handle_accusation, last_narration, requires_npc_knowledge, try_claim_resolution, with_dedup_window, with_prompt_fragment, acquire_footnote, add_ambiguity_context, send_with_tools, transact_merchant, troper, troper_mut, with_client, debug_state, describe_player_effects, has_perception_effects, loadoutgen_binary_path, new_with_options, trace. UI targets: CartographyMetadata/Region/Route/ExploredLocation (verify 26-10 didn't add consumers), buttonVariants, toggleVariants, CreationChoice, OverlayManagerProps, TurnModeIndicatorProps.
     points: 3
     priority: p2
-    status: ready
+    status: done
     repos: api,ui
     workflow: trivial
     depends_on: 28-9
+    completed: '2026-04-07'
     review_findings: 'Half-wired: lore_mark.rs and merchant_transact.rs downgraded to private instead of deleted. Delete entire modules.'
     review_verdict: approved
