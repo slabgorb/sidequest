@@ -3,7 +3,11 @@
 > Ported from sq-2. Proposed feature — hidden-role scenario engine.
 
 ## Status
-Proposed
+Partially implemented (Epic 7, ADR-053)
+
+> **Note (2026-04):** Core scenario infrastructure is implemented: scenario_state.rs,
+> ClueGraph, AccusationEvaluator, and the `/accuse` handler are wired. The full
+> scenario pack format (cumulative memory, depth_unlocks) is still proposed.
 
 ## Context
 Replayable "bottle episode" game modes (e.g., whodunit on a train) nested inside genre packs.

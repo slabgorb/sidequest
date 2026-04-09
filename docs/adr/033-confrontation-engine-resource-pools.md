@@ -1,6 +1,6 @@
 # ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools
 
-**Status:** Proposed
+**Status:** Accepted (implemented in Epic 28, revised — see note)
 **Date:** 2026-03-31
 **Epic:** 16
 **Deciders:** Keith
@@ -33,36 +33,34 @@ a metric, beats, actors, and resolution." Combat's metric is HP. Chase's metric
 is separation. A standoff's metric is tension. A negotiation's metric is leverage.
 They share the same shape.
 
-**Decision:** Do NOT merge CombatState and ChaseState into one type yet.
+**Original decision:** Do NOT merge CombatState and ChaseState into one type yet.
 
-**Rationale:**
+> **Update (2026-04, Epic 28):** This decision was revised during implementation.
+> CombatState and ChaseState were **both deleted** and replaced by a unified
+> `StructuredEncounter`. The original concern about god-objects was addressed by
+> making StructuredEncounter metric-driven rather than role-driven — all encounter
+> types (combat, chase, standoff, negotiation) share the same beat + metric
+> structure. The CombatPatch and ChasePatch types were also removed.
+
+**Original rationale (preserved for context):**
 
 Reading the actual code changes the brainstorm's conclusion. CombatState and
-ChaseState have fundamentally different internal structures:
+ChaseState had fundamentally different internal structures:
 
-- **CombatState** is actor-centric: turn order, per-actor effects, per-actor
-  damage log, initiative. The metric (HP) lives on the Combatant trait
-  implementations, not on CombatState itself.
-- **ChaseState** is scene-centric: separation as a single scalar, beats as a
-  sequence, one optional rig. The metric (separation) lives directly on the
-  state struct.
+- **CombatState** was actor-centric: turn order, per-actor effects, per-actor
+  damage log, initiative.
+- **ChaseState** was scene-centric: separation as a single scalar, beats as a
+  sequence, one optional rig.
 
-Forcing these into one `ConfrontationState` would either:
-(a) make the unified struct a god-object with half its fields unused per type, or
-(b) require trait objects / enum dispatch that adds complexity without removing code.
+**What actually shipped:**
 
-**Instead:**
-
-1. **Keep CombatState and ChaseState as-is.** They work. 500+ lines of tests pass.
-2. **Generalize ChaseState into StructuredEncounter** by making its type fields
-   string-keyed instead of enum-keyed.
-3. **New encounter types (standoff, negotiation, net_combat, ship_combat) are
-   StructuredEncounter variants**, not CombatState variants. They follow the
-   chase pattern (scene-centric metric + beats), not the combat pattern
-   (actor-centric turns + damage).
-4. **Combat stays combat.** It's already genre-agnostic — the genre's rules.yaml
-   tells the LLM what combat *means* in this genre. The engine tracks rounds,
-   damage, and effects regardless.
+1. **StructuredEncounter replaces both.** Genre-declared ConfrontationDefs in
+   rules.yaml define encounter types with metrics, beats, and resolution conditions.
+2. **All encounter types are StructuredEncounter variants** — combat, chase,
+   standoff, negotiation, net_combat, ship_combat.
+3. **Beat selections drive progression** — the narrator outputs beat selections,
+   the engine applies them via `apply_beat()`.
+4. **Old save migration** handles ChaseState → StructuredEncounter transparently.
 
 #### StructuredEncounter (generalized ChaseState)
 
@@ -245,8 +243,7 @@ The Mood enum is only used for classification. The fix is smaller than expected.
 - UI gets generic components (ResourceBar, EncounterOverlay) that work for all genres
 
 ### Negative
-- StructuredEncounter is a second encounter system alongside CombatState
-  (acceptable: they model different things)
+- StructuredEncounter is the sole encounter system (CombatState and ChaseState deleted)
 - Genre YAML grows more complex (mitigated: optional sections, sensible defaults)
 - Save format changes (mitigated: serde defaults handle missing fields in old saves)
 

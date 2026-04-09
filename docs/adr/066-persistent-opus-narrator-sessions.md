@@ -1,7 +1,11 @@
 # ADR-066: Persistent Opus Narrator Sessions
 
 ## Status
-Accepted
+Accepted (partially implemented)
+
+> **Note (2026-04):** The `--resume` CLI integration is not yet wired into
+> ClaudeClient. The spike validated the approach but the persistent session
+> transport has not shipped. Currently still using stateless `claude -p` per turn.
 
 ## Context
 

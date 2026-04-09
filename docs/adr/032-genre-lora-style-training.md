@@ -3,7 +3,11 @@
 > New for Rust port. sq-2 uses text-only style prompts via `positive_suffix`.
 
 ## Status
-Proposed
+Accepted (LoRA generation working as of 2026-04)
+
+> **Note (2026-04):** Genre Flux LoRAs are generating successfully. The training
+> pipeline described below is operational. Schema fields (`lora`, `lora_trigger`)
+> and daemon wiring are pending integration stories (Epic 17 backlog).
 
 ## Context
 
