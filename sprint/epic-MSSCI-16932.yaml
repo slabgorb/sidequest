@@ -69,13 +69,14 @@ stories:
     workflow: tdd
     type: chore
   - id: 35-7
-    title: Wire tactical_grid population into connect.rs room-graph branch
+    title: Wire tactical_grid through MapWidget to Automapper/TacticalGridRenderer
     points: 3
     priority: p0
-    status: backlog
-    repos: api
+    status: done
+    repos: api,ui
     workflow: tdd
     type: chore
+    completed: '2026-04-09'
   - id: 35-8
     title: OTEL watcher events for beat_filter and scene_relevance
     points: 3
