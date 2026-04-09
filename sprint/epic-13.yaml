@@ -156,6 +156,37 @@ stories:
     repos: sidequest-api
     workflow: tdd
     depends_on: 13-3
+  - id: 13-11
+    title: Activate sealed-letter mode for multiplayer — flip barrier on, remove timeout
+    points: 3
+    priority: p0
+    status: in_progress
+    repos: sidequest-api, sidequest-ui
+    workflow: tdd
+    branch: feat/13-11-sealed-letter-activate
+    assignee: keith
+  - id: 13-12
+    title: Initiative stat mapping — genre pack schema + caverns authoring
+    points: 3
+    priority: p0
+    status: backlog
+    repos: sidequest-content,sidequest-api
+    workflow: tdd
+  - id: 13-13
+    title: Player panel sealed-letter prominence — submission indicators and all-in state
+    points: 3
+    priority: p0
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+  - id: 13-14
+    title: Sealed-round prompt architecture — one narrator call with initiative context
+    points: 5
+    priority: p0
+    status: backlog
+    repos: sidequest-api
+    workflow: tdd
+    depends_on: 13-11
 key_references:
   - sidequest-api/crates/sidequest-game/src/barrier.rs
   - sidequest-api/crates/sidequest-game/src/multiplayer.rs
