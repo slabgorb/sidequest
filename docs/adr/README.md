@@ -47,6 +47,7 @@
 | [Session Persistence](023-session-persistence.md) | Accepted | State + narrative log with "Previously On..." recap |
 | [Dual-Track Tension Model](024-dual-track-tension-model.md) | Accepted | drama_weight from gambler's ramp + HP stakes + event spikes |
 | [Pacing Detection](025-pacing-detection.md) | Accepted | Quiet turn counting + trope-aware escalation hints |
+| [Dice Resolution Protocol](074-dice-resolution-protocol.md) | Proposed | Server-authoritative dice rolls via WebSocket with sealed-letter integration |
 
 ## Frontend / Protocol
 
@@ -54,6 +55,7 @@
 |-----|--------|---------|
 | [Client-Side State Mirror](026-client-state-mirror.md) | Accepted | Server piggybacks state deltas; slash commands resolve locally |
 | [Reactive State Messaging](027-reactive-state-messaging.md) | Accepted | State changes emit typed events to connected clients |
+| [3D Dice Rendering](075-3d-dice-rendering.md) | Proposed | Three.js + Rapier overlay with genre-themed skins and deterministic replay |
 
 ## Multiplayer
 
