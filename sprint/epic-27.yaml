@@ -90,7 +90,8 @@ stories:
     title: Playtest validation — MLX renderer end-to-end
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: daemon
     workflow: trivial
     depends_on: 27-4
+    completed: '2026-04-09'
