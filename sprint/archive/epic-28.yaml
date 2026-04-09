@@ -5,7 +5,7 @@ description: |-
   Combat has failed ~13 times across Epics 5, 15, 16, 25, and 26. Root cause: Epic 16 built StructuredEncounter to unify combat and chase but never replaced the old systems. The server uses CombatState/ChaseState as runtime models and wraps them in read-only StructuredEncounter adapters for the protocol message. The beat-driven encounter engine — apply_beat(), format_encounter_context(), ConfrontationDef loading — is dead code. apply_beat() has zero non-test callers. format_encounter_context() has zero non-test callers. The Confrontation message sends beats: vec![]. The UI beat buttons render nothing.
   This epic kills CombatState and ChaseState. StructuredEncounter becomes the sole runtime model. Genre pack ConfrontationDefs drive ALL encounter types — combat and chase are just confrontation types declared in YAML, same as standoff, negotiation, trial, etc. Genres that don't fit combat (victoria, star_chamber) simply don't declare a combat type. Beats are the universal action unit. The existing math (resolve_attack, check_escape) stays where it is — StructuredEncounter orchestrates it via beat stat_check dispatch. No transition layers. No fallbacks. No save migration. Hard cut.
 priority: p0
-status: ready
+status: done
 repos: api,ui
 stories:
   - id: 28-1
@@ -160,3 +160,4 @@ stories:
     completed: '2026-04-07'
     review_findings: 'Half-wired: lore_mark.rs and merchant_transact.rs downgraded to private instead of deleted. Delete entire modules.'
     review_verdict: approved
+completed: '2026-04-09'

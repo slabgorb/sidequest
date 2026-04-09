@@ -20,6 +20,7 @@ completed_epics:
   - '19'
   - '23'
   - '30'
+  - '28'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -941,3 +942,18 @@ completed_stories:
     title: 'Spike: Owlbear dice fork — validate 3D physics feel in browser'
     points: 2
     completed: '2026-04-09'
+  - id: 26-11
+    epic: ''
+    title: Fix session resume split-party — reconcile divergent player locations on reconnect
+    points: 3
+    completed: '2026-04-09'
+  - id: 28-5
+    epic: '28'
+    title: "Wire apply_beat() into dispatch — beat selection drives encounter progression"
+    points: 5
+    completed: '2026-04-09'
+  - id: 28-11
+    epic: '28'
+    title: "Playtest verification — combat AND chase work through unified encounter system"
+    points: 3
+    completed: '2026-04-08'

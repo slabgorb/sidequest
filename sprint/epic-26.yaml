@@ -107,3 +107,16 @@ stories:
     completed: '2026-04-06'
     branch: feat/26-10-wire-map-cartography
     review_verdict: approved
+  - id: 26-11
+    title: Fix session resume split-party — reconcile divergent player locations on reconnect
+    points: 3
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-09'
+    repos: sidequest-api
+    workflow: tdd
+    completed: '2026-04-09'
+    type: bug
+    branch: feat/26-11-fix-session-resume-split-party
+    session_file: sprint/26-11-session.md

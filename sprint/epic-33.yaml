@@ -1,88 +1,64 @@
 id: '33'
 type: epic
 title: Composable GameBoard — Drag-and-Drop Dashboard Polish
-description: >
-  The structural GameBoard (react-grid-layout grid replacing the fixed GameLayout)
-  shipped in feat/composable-gameboard. This epic covers the visual polish, genre
-  theming, preset tuning, and mobile UX that require playtesting to get right.
-  The grid, widgets, image gallery, hotkeys, and layout persistence are already wired.
+description: |
+  The structural GameBoard (react-grid-layout grid replacing the fixed GameLayout) shipped in feat/composable-gameboard. This epic covers the visual polish, genre theming, preset tuning, and mobile UX that require playtesting to get right. The grid, widgets, image gallery, hotkeys, and layout persistence are already wired.
 priority: p1
 status: backlog
 repos: ui
-jira: null
+jira:
 stories:
   - id: 33-1
     title: Genre-themed widget chrome — archetype-specific CSS for widget borders, headers, and backgrounds
+    description: |
+      WidgetWrapper uses CSS vars from useGenreTheme/useChromeArchetype. Add [data-archetype] CSS rules for parchment (warm shadows, corner decorations), terminal (glow borders, scan lines), rugged (thick weathered borders). Verify across at least 3 genre packs.
     points: 5
     priority: p1
     status: backlog
     repos: ui
     workflow: trivial
-    description: >
-      WidgetWrapper uses CSS vars from useGenreTheme/useChromeArchetype. Add
-      [data-archetype] CSS rules for parchment (warm shadows, corner decorations),
-      terminal (glow borders, scan lines), rugged (thick weathered borders).
-      Verify across at least 3 genre packs.
-
   - id: 33-2
     title: Background canvas per-archetype textures — genre-themed surface visible through grid gutters
+    description: |
+      BackgroundCanvas.tsx currently renders a generic radial gradient. Add archetype-specific backgrounds: star field (space_opera), cracked earth (road_warrior), rain on glass (neon_dystopia), parchment texture (low_fantasy), etc. CSS only, no images.
     points: 3
     priority: p1
     status: backlog
     repos: ui
     workflow: trivial
-    description: >
-      BackgroundCanvas.tsx currently renders a generic radial gradient. Add
-      archetype-specific backgrounds: star field (space_opera), cracked earth
-      (road_warrior), rain on glass (neon_dystopia), parchment texture
-      (low_fantasy), etc. CSS only, no images.
-
   - id: 33-3
     title: Preset layout tuning — adjust grid coordinates with real component sizes during playtest
+    description: |
+      presetLayouts.ts has estimated grid coordinates. Playtest each preset (Classic, Tactician, Explorer, Minimalist) and adjust x/y/w/h values so widgets don't overlap or leave awkward gaps at common viewport sizes (1440x900, 1920x1080, 2560x1440).
     points: 3
     priority: p1
     status: backlog
     repos: ui
     workflow: trivial
-    description: >
-      presetLayouts.ts has estimated grid coordinates. Playtest each preset
-      (Classic, Tactician, Explorer, Minimalist) and adjust x/y/w/h values
-      so widgets don't overlap or leave awkward gaps at common viewport sizes
-      (1440x900, 1920x1080, 2560x1440).
-
   - id: 33-4
     title: Mobile tab view polish — swipe gestures, tab badges, smooth transitions
+    description: |
+      MobileTabView.tsx renders a basic tab bar. Polish: badge indicators for unread gallery images or knowledge entries, smooth tab transitions, optional swipe-to-switch gesture. Test on iPhone Safari viewport.
     points: 3
     priority: p2
     status: backlog
     repos: ui
     workflow: tdd
-    description: >
-      MobileTabView.tsx renders a basic tab bar. Polish: badge indicators for
-      unread gallery images or knowledge entries, smooth tab transitions,
-      optional swipe-to-switch gesture. Test on iPhone Safari viewport.
-
   - id: 33-5
     title: Edit mode UX — visual cues, first-run tooltip, reset-to-default button
+    description: |
+      When edit mode is active, show visual affordances (resize handles glow, widget borders become dashed, grid gutters become visible). Add a first-run tooltip explaining layout customization. Add "Reset to Default" button in settings widget that calls setPreset("classic").
     points: 3
     priority: p1
     status: backlog
     repos: ui
     workflow: trivial
-    description: >
-      When edit mode is active, show visual affordances (resize handles glow,
-      widget borders become dashed, grid gutters become visible). Add a
-      first-run tooltip explaining layout customization. Add "Reset to Default"
-      button in settings widget that calls setPreset("classic").
-
   - id: 33-6
     title: Widget add/remove menu — dropdown to toggle widget visibility from header bar
+    description: |
+      Add a "+" button in the running header that opens a dropdown listing all available widgets with checkboxes. Toggling a checkbox calls showWidget/hideWidget. Data-gated widgets show as disabled when no data.
     points: 3
     priority: p2
     status: backlog
     repos: ui
     workflow: tdd
-    description: >
-      Add a "+" button in the running header that opens a dropdown listing all
-      available widgets with checkboxes. Toggling a checkbox calls
-      showWidget/hideWidget. Data-gated widgets show as disabled when no data.
