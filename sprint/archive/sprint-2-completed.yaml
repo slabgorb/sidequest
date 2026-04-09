@@ -936,3 +936,8 @@ completed_stories:
     title: Wire hp_formula evaluation with CON modifier after stat rolling
     points: 2
     completed: '2026-04-08'
+  - id: 34-1
+    epic: '34'
+    title: 'Spike: Owlbear dice fork — validate 3D physics feel in browser'
+    points: 2
+    completed: '2026-04-09'
