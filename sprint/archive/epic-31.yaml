@@ -3,7 +3,7 @@ type: epic
 title: Character Generation Overhaul
 description: Overhaul character creation mechanics — roll_3d6_strict, random backstory composition from genre-pack tables, random equipment generation, HP formula wiring. Caverns & Claudes is the first consumer but the infrastructure is genre-agnostic.
 priority: p1
-status: backlog
+status: done
 repos: api,content
 jira:
 stories:
@@ -27,9 +27,11 @@ stories:
     title: Wire equipment_generation random_table in CharacterBuilder
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-10'
     repos: api,content
-    workflow: bdd
+    workflow: tdd
+    completed: '2026-04-10'
   - id: 31-4
     title: Wire hp_formula evaluation with CON modifier after stat rolling
     points: 2
@@ -38,3 +40,4 @@ stories:
     repos: api
     workflow: tdd
     completed: '2026-04-08'
+completed: '2026-04-10'
