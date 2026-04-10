@@ -8,7 +8,7 @@ description: >-
   actions alongside the narrator response. Builds on Epic 8's TurnBarrier and
   MultiplayerSession infrastructure.
 priority: p0
-status: ready
+status: done
 repos: sidequest-api, sidequest-ui
 stories:
   - id: 13-8
@@ -205,3 +205,4 @@ key_references:
   - sidequest-api/crates/sidequest-game/src/turn_mode.rs
   - sidequest-api/crates/sidequest-server/src/shared_session.rs
   - docs/api-contract.md
+completed: '2026-04-10'

@@ -23,6 +23,8 @@ completed_epics:
   - '28'
   - '26'
   - '31'
+  - '13'
+  - '27'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -1044,3 +1046,13 @@ completed_stories:
     title: OTEL watcher events for chargen subsystems — stats, backstory, hp_formula + AudioVariation fallback
     points: 3
     completed: '2026-04-10'
+  - id: 13-6
+    epic: '13'
+    title: "DM override for turn resolution — allow DM to force-resolve a turn or extend the timeout"
+    points: 3
+    completed: '2026-04-10'
+  - id: 27-8
+    epic: '27'
+    title: Playtest validation — MLX renderer end-to-end
+    points: 2
+    completed: '2026-04-09'

@@ -3,7 +3,7 @@ type: epic
 title: MLX Image Renderer — Replace PyTorch with Apple MLX
 description: Migrate daemon image generation from PyTorch/diffusers to Apple MLX via mflux. Drop TTS (Kokoro) and ACE-Step runtime workers. Daemon becomes single-purpose Flux image renderer. See ADR-070.
 priority: p1
-status: in_progress
+status: done
 repos: daemon
 stories:
   - id: 27-1
@@ -66,14 +66,6 @@ stories:
     branch: feat/27-5-lora-loading-verification
     session: .session/27-5-session.md
     review_verdict: approved
-  - id: 27-6
-    title: Redux/img2img evaluation — portrait identity without IP-Adapter
-    points: 3
-    priority: p2
-    status: backlog
-    repos: daemon
-    workflow: tdd
-    depends_on: 27-3
   - id: 27-7
     title: OTEL spans for MLX render pipeline
     points: 2
@@ -106,3 +98,4 @@ stories:
     type: refactor
     branch: feat/27-9-collapse-narration-protocol
     session: .session/27-9-session.md
+completed: '2026-04-10'

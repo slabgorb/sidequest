@@ -44,3 +44,10 @@ stories:
     repos: api,daemon
     workflow: tdd
     depends_on: 17-3
+  - id: 17-6
+    title: Redux/img2img evaluation — portrait identity without IP-Adapter
+    points: 3
+    priority: p2
+    status: backlog
+    repos: daemon
+    workflow: tdd
