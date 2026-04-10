@@ -9,6 +9,7 @@ description: >-
 priority: p0
 status: ready
 repos: api,ui,daemon
+jira: MSSCI-35
 stories:
   - id: 35-1
     title: Wire patch_legality into turn validator cold path
@@ -87,10 +88,13 @@ stories:
     title: OTEL watcher events for NPC subsystems — belief, disposition, actions, gossip
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
     repos: api
     workflow: trivial
     type: chore
+    jira: MSSCI-35-9
+    started: '2026-04-10'
+    branch: feat/35-9-otel-watcher-events-npc-subsystems
   - id: 35-10
     title: OTEL watcher events for consequence, combatant, party_reconciliation, progression
     points: 2
@@ -113,5 +117,13 @@ stories:
     priority: p2
     status: backlog
     repos: daemon
+    workflow: trivial
+    type: chore
+  - id: 35-13
+    title: OTEL watcher events for chargen subsystems — stats, backstory, hp_formula + AudioVariation fallback
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
     workflow: trivial
     type: chore
