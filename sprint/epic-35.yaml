@@ -124,7 +124,9 @@ stories:
     title: OTEL watcher events for chargen subsystems — stats, backstory, hp_formula + AudioVariation fallback
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-04-10'
     repos: api
-    workflow: trivial
+    workflow: tdd
     type: chore
+    branch: feat/35-13-otel-chargen-watcher-events
