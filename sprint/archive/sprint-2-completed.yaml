@@ -1034,3 +1034,8 @@ completed_stories:
     title: Random backstory composition from genre-pack backstory_tables.yaml
     points: 3
     completed: '2026-04-08'
+  - id: 35-9
+    epic: ''
+    title: OTEL watcher events for NPC subsystems — belief, disposition, actions, gossip
+    points: 3
+    completed: '2026-04-10'

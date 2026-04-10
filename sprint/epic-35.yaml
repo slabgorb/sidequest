@@ -88,13 +88,14 @@ stories:
     title: OTEL watcher events for NPC subsystems — belief, disposition, actions, gossip
     points: 3
     priority: p1
-    status: in_progress
+    status: done
+    started: '2026-04-10'
     repos: api
     workflow: trivial
+    completed: '2026-04-10'
     type: chore
-    jira: MSSCI-35-9
-    started: '2026-04-10'
     branch: feat/35-9-otel-watcher-events-npc-subsystems
+    review_verdict: approved
   - id: 35-10
     title: OTEL watcher events for consequence, combatant, party_reconciliation, progression
     points: 2
