@@ -1039,3 +1039,8 @@ completed_stories:
     title: OTEL watcher events for NPC subsystems — belief, disposition, actions, gossip
     points: 3
     completed: '2026-04-10'
+  - id: 35-13
+    epic: ''
+    title: OTEL watcher events for chargen subsystems — stats, backstory, hp_formula + AudioVariation fallback
+    points: 3
+    completed: '2026-04-10'

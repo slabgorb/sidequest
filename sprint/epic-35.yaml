@@ -124,7 +124,12 @@ stories:
     title: OTEL watcher events for chargen subsystems — stats, backstory, hp_formula + AudioVariation fallback
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-10'
     repos: api
-    workflow: trivial
+    workflow: tdd
+    completed: '2026-04-10'
     type: chore
+    branch: feat/35-13-otel-chargen-watcher-events
+    review_findings: 'Pass 3 APPROVED. All 4 silent paths in select_variation() closed. Rule A1 (No Silent Fallbacks) FULLY SATISFIED per rule-checker. 14/14 tests. Zero blocking findings. One out-of-scope delivery finding for as_variation() in sidequest-genre.'
+    review_verdict: approved
