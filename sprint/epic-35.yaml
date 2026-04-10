@@ -112,10 +112,13 @@ stories:
     title: Delete dead UI components — LayoutModeSelector, TurnModeIndicator
     points: 1
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-04-10'
+    assigned_to: slabgorb@gmail.com
     repos: ui
     workflow: trivial
     type: chore
+    branch: feat/35-11-delete-dead-ui-components
   - id: 35-12
     title: Delete dead daemon export — is_discardable
     points: 1
