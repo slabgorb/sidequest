@@ -173,9 +173,12 @@ stories:
     title: Initiative stat mapping — genre pack schema + caverns authoring
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-content,sidequest-api
     workflow: tdd
+    completed: '2026-04-10'
+    assignee: keith
+    branch: feat/13-12-initiative-stat-mapping
   - id: 13-13
     title: Player panel sealed-letter prominence — submission indicators and all-in state
     points: 3
