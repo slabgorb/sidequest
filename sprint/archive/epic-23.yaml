@@ -27,7 +27,7 @@ stories:
     points: 8
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-03'
     repos: api
     workflow: tdd
@@ -83,7 +83,7 @@ stories:
     points: 5
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-04'
     repos: api
     workflow: tdd
@@ -102,7 +102,7 @@ stories:
     points: 3
     priority: p2
     status: canceled
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-06'
     repos: api,content
     workflow: tdd

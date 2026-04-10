@@ -41,7 +41,7 @@ Command-specific output. Most commands print status messages. Use `--dry-run` on
 
 | GitHub | Jira Email |
 |--------|------------|
-| slabgorb | keith.avery@1898andco.io |
+| slabgorb | slabgorb@gmail.com |
 | arcaven | michael.pursifull@1898andco.io |
 | RoseSecurity | michael.rosenfeld@1898andco.io |
 | Zious11 | jared.richards@1898andco.io |

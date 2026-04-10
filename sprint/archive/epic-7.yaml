@@ -42,7 +42,7 @@ stories:
     points: 3
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-31'
     repos: sidequest-api
     workflow: tdd
@@ -54,7 +54,7 @@ stories:
     points: 5
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-31'
     repos: sidequest-api
     workflow: tdd
@@ -67,7 +67,7 @@ stories:
     points: 5
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-31'
     repos: sidequest-api
     workflow: tdd
@@ -80,7 +80,7 @@ stories:
     points: 3
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-05'
     repos: sidequest-api
     workflow: tdd
@@ -94,7 +94,7 @@ stories:
     points: 3
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-05'
     repos: sidequest-api
     workflow: tdd
@@ -107,7 +107,7 @@ stories:
     points: 3
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-06'
     repos: sidequest-api
     workflow: tdd
@@ -118,7 +118,7 @@ stories:
     points: 5
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-07'
     repos: sidequest-api
     workflow: tdd

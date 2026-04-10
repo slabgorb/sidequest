@@ -11,7 +11,7 @@ stories:
     points: 3
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-06'
     repos: api
     workflow: trivial
@@ -33,7 +33,7 @@ stories:
     points: 3
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-06'
     repos: api
     workflow: trivial
@@ -83,7 +83,7 @@ stories:
     points: 2
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-06'
     repos: api
     workflow: trivial
@@ -104,7 +104,7 @@ stories:
     points: 5
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-06'
     repos: api,ui
     workflow: tdd
@@ -116,7 +116,7 @@ stories:
     points: 3
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-09'
     repos: sidequest-api
     workflow: tdd

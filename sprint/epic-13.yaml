@@ -183,9 +183,11 @@ stories:
     title: Player panel sealed-letter prominence — submission indicators and all-in state
     points: 3
     priority: p0
-    status: backlog
+    status: done
     repos: sidequest-ui
     workflow: tdd
+    completed: '2026-04-10'
+    assignee: keith
   - id: 13-14
     title: Sealed-round prompt architecture — one narrator call with initiative context
     points: 5

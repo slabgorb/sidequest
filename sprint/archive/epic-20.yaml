@@ -103,7 +103,7 @@ stories:
     points: 5
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-04-02'
     repos: api
     workflow: tdd

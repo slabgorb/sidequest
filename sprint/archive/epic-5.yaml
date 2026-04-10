@@ -25,7 +25,7 @@ stories:
     points: 3
     priority: p0
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-27'
     repos: sidequest-api
     workflow: tdd
@@ -37,7 +37,7 @@ stories:
     points: 3
     priority: p0
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-27'
     repos: sidequest-api
     workflow: tdd
@@ -50,7 +50,7 @@ stories:
     points: 3
     priority: p0
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-28'
     repos: sidequest-api
     workflow: tdd
@@ -91,7 +91,7 @@ stories:
     points: 2
     priority: p2
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-28'
     repos: sidequest-api
     workflow: tdd
@@ -116,7 +116,7 @@ stories:
     points: 5
     priority: p1
     status: done
-    assigned_to: keith.avery@1898andco.io
+    assigned_to: slabgorb@gmail.com
     started: '2026-03-27'
     repos: orc-quest
     workflow: tdd
