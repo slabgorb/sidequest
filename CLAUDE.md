@@ -1,9 +1,9 @@
 # CLAUDE.md — SideQuest (Rust Rewrite)
 
 This is the orchestrator repo for the SideQuest RPG Runner/Editor It coordinates four subrepos:
-- **sidequest-api** — Rust game engine and WebSocket API (workspace with 10 crates)
+- **sidequest-api** — Rust game engine and WebSocket API (workspace with 12 crates)
 - **sidequest-ui** — React/TypeScript game client
-- **sidequest-daemon** — Python media services (image gen, TTS, audio)
+- **sidequest-daemon** — Python media services (image gen, audio)
 - **sidequest-content** — Genre packs (YAML configs, audio, images, world data)
 
 ## Repository Structure
@@ -11,7 +11,7 @@ This is the orchestrator repo for the SideQuest RPG Runner/Editor It coordinates
 ```
 orc-quest/                    # This repo (orchestrator)
 ├── sprint/                   # Sprint tracking
-├── docs/                     # Architecture docs and 71 ADRs
+├── docs/                     # Architecture docs and 75 ADRs
 │   ├── api-contract.md       # WebSocket + REST contract (from UI)
 │   ├── tech-stack.md         # Crate choices
 │   ├── architecture.md       # System design and layer diagram
@@ -41,10 +41,12 @@ sidequest-api/                # Rust backend (subrepo)
 ├── crates/
 │   ├── sidequest-protocol/   # GameMessage, typed payloads (serde)
 │   ├── sidequest-genre/      # YAML genre pack loader
-│   ├── sidequest-game/       # State, characters, combat, chase, tropes
+│   ├── sidequest-game/       # State, characters, encounters, tropes
 │   ├── sidequest-agents/     # Claude CLI subprocess orchestration
 │   ├── sidequest-daemon-client/ # Client for Python media daemon
 │   ├── sidequest-server/     # axum HTTP/WebSocket, sessions, dispatch
+│   ├── sidequest-telemetry/  # OTEL span definitions and watcher macros
+│   ├── sidequest-promptpreview/ # CLI: prompt preview and inspection
 │   ├── sidequest-encountergen/ # CLI: enemy stat block generator
 │   ├── sidequest-loadoutgen/ # CLI: starting equipment generator
 │   ├── sidequest-namegen/    # CLI: NPC identity block generator
@@ -73,7 +75,7 @@ sidequest-daemon/             # Python media services (subrepo)
 │   ├── media/
 │   ├── ml/
 │   ├── renderer/
-│   └── voice/
+│   └── voice/                # (removed — TTS deprecated)
 ├── tests/
 └── pyproject.toml
 ```
@@ -157,7 +159,7 @@ system — imported, called, and reachable from production code paths.
 <information>
 ### Rust vs Python Split
 If it doesn't involve operating LLMs, it goes in Rust. If it needs to run model inference
-(Flux, Kokoro, ACE-Step — not Claude), use Python for library maturity. Claude calls go
+(Flux, ACE-Step — not Claude), use Python for library maturity. Claude calls go
 through Rust as CLI subprocesses
 </information>
 

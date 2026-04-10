@@ -3,7 +3,12 @@
 > Ported from sq-2. Language-agnostic game mechanic.
 
 ## Status
-Accepted
+Superseded by ADR-033
+
+> **Note (2026-04):** The standalone `ChaseState` struct was removed in Epic 28.
+> Chases are now one encounter type within `StructuredEncounter` (ADR-033).
+> The beat-based design principles below remain valid — they're implemented
+> in the generalized encounter engine, not as a separate state machine.
 
 ## Context
 Chases in RPGs are often anticlimactic. A physics simulation doesn't create drama; narrative beats do.
@@ -39,4 +44,4 @@ Chase scenes register high narrative weight (0.7-0.95). Aftermath suppresses bac
 ## Consequences
 - Chases feel cinematic, not mechanical
 - Rig damage creates visible attrition across the chase
-- Chase state is a first-class field on GameState alongside CombatState
+- Chase is a first-class encounter type within StructuredEncounter on GameState

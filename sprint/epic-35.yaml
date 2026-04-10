@@ -78,10 +78,11 @@ stories:
     title: OTEL watcher events for beat_filter and scene_relevance
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: api
     workflow: trivial
     type: chore
+    completed: '2026-04-10'
   - id: 35-9
     title: OTEL watcher events for NPC subsystems — belief, disposition, actions, gossip
     points: 3

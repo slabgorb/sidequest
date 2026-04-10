@@ -6,7 +6,7 @@
 Accepted
 
 ## Context
-SideQuest depends on external services (Claude CLI, renderer daemon, TTS daemon) that may be unavailable. The game must never crash due to a subsystem failure.
+SideQuest depends on external services that may be unavailable. The Claude CLI (narrator) is non-negotiable — if it's down, the game is down. But media subsystems (renderer daemon, audio) must degrade gracefully. The game must never crash due to a media subsystem failure.
 
 ## Decision
 Every subsystem has a defined fallback chain. Failures are logged and degraded, never propagated as fatal errors.
@@ -17,7 +17,6 @@ Every subsystem has a defined fallback chain. Failures are logged and degraded, 
 |-----------|---------|----------|-------------|
 | Rendering | Daemon | Subprocess | Skip (no image) |
 | Audio | MusicDirector | AudioInterpreter | Silence |
-| Voice/TTS | Kokoro | Piper | Skip (text only) |
 | Scene Detection | LLM extractor | Regex patterns | Skip render |
 | Lore Retrieval | Embedding search | Static fragments | No lore context |
 | Character Parse | Claude extraction | Keyword heuristics | Partial character |

@@ -6,7 +6,7 @@
 Accepted
 
 ## Context
-Genre packs are swappable YAML directories that configure all game personality: lore, rules, prompt extensions, UI theming, audio, visual styles, voice presets, inventory, progression, topology, and tropes.
+Genre packs are swappable YAML directories that configure all game personality: lore, rules, prompt extensions, UI theming, audio, visual styles, inventory, progression, topology, and tropes.
 
 ## Decision
 Each genre pack is a directory of YAML files loaded by a `GenrePackLoader` and deserialized into typed Rust structs via `serde_yaml`.
@@ -23,7 +23,6 @@ genre_packs/{genre_name}/
 ├── theme.yaml             # UI CSS theming
 ├── audio.yaml             # Music moods and SFX mappings
 ├── visual_style.yaml      # Image generation style prompts
-├── voice_presets.yaml     # TTS voice mappings per archetype
 ├── inventory.yaml         # Item catalogs and economy rules
 ├── progression.yaml       # Leveling, affinities, milestones
 ├── topology.yaml          # World map regions and routes

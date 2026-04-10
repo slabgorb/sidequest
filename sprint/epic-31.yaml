@@ -11,20 +11,18 @@ stories:
     title: Implement roll_3d6_strict stat generation in CharacterBuilder
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: api
     workflow: bdd
+    completed: '2026-04-08'
   - id: 31-2
     title: Random backstory composition from genre-pack backstory_tables.yaml
     points: 3
     priority: p1
-    status: in_progress
-    assigned_to: keith.avery@1898andco.io
-    started: '2026-04-08'
+    status: done
     repos: api,content
     workflow: bdd
-    branch: feat/31-2-chargen-random-backstory
-    session_file: .session/31-2-session.md
+    completed: '2026-04-08'
   - id: 31-3
     title: Wire equipment_generation random_table in CharacterBuilder
     points: 3
