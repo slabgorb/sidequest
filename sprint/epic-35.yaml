@@ -104,10 +104,13 @@ stories:
     title: OTEL watcher events for consequence, combatant, party_reconciliation, progression
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
     repos: api
-    workflow: trivial
+    workflow: tdd
     type: chore
+    started: '2026-04-10'
+    assigned_to: slabgorb@gmail.com
+    branch: feat/35-10-otel-consequence-combatant-party-progression
   - id: 35-11
     title: Delete dead UI components — LayoutModeSelector, TurnModeIndicator
     points: 1
