@@ -134,10 +134,13 @@ stories:
     title: Delete dead daemon export — is_discardable
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-11'
     repos: daemon
     workflow: trivial
+    completed: '2026-04-11'
     type: chore
+    review_verdict: approved
   - id: 35-13
     title: OTEL watcher events for chargen subsystems — stats, backstory, hp_formula + AudioVariation fallback
     points: 3

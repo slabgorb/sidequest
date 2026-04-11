@@ -1076,3 +1076,8 @@ completed_stories:
     title: Wire guest_npc permission gating into dispatch pipeline
     points: 5
     completed: '2026-04-10'
+  - id: 35-12
+    epic: ''
+    title: Delete dead daemon export — is_discardable
+    points: 1
+    completed: '2026-04-11'
