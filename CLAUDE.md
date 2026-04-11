@@ -9,9 +9,9 @@ This is the orchestrator repo for the SideQuest RPG Runner/Editor It coordinates
 ## Repository Structure
 
 ```
-orc-quest/                    # This repo (orchestrator)
+orc-quest/                    # This repo (orchestrator, also cloned as oq-1 / oq-2)
 ├── sprint/                   # Sprint tracking
-├── docs/                     # Architecture docs and 75 ADRs
+├── docs/                     # Architecture docs and ADRs
 │   ├── api-contract.md       # WebSocket + REST contract (from UI)
 │   ├── tech-stack.md         # Crate choices
 │   ├── architecture.md       # System design and layer diagram
@@ -57,25 +57,24 @@ sidequest-ui/                 # React frontend (subrepo)
 ├── src/
 │   ├── __tests__/
 │   ├── assets/
-│   ├── audio/
+│   ├── audio/                # Music + SFX playback (no TTS)
 │   ├── components/
+│   ├── dice/                 # 3D dice overlay (Three.js + Rapier)
 │   ├── hooks/
 │   ├── lib/
 │   ├── providers/
 │   ├── screens/
 │   ├── styles/
-│   ├── types/
-│   └── webrtc/
+│   └── types/
 └── package.json
 
 sidequest-daemon/             # Python media services (subrepo)
 ├── sidequest_daemon/         # Package root
-│   ├── audio/
+│   ├── audio/                # Music library, SFX mixer, scene interpreter
 │   ├── genre/
-│   ├── media/
+│   ├── media/                # Flux image generation pipeline
 │   ├── ml/
-│   ├── renderer/
-│   └── voice/                # (removed — TTS deprecated)
+│   └── renderer/
 ├── tests/
 └── pyproject.toml
 ```

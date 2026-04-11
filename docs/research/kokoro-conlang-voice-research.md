@@ -1,6 +1,11 @@
 # Kokoro Voice Research: Conlang Pronunciation + Non-Human Voices
 
-Status: **RESEARCH QUEUED** — waiting for token refresh
+Status: **HISTORICAL** — Kokoro TTS was removed from SideQuest in 2026-04.
+This document is preserved as a reference for any future voice-synthesis
+reintroduction, but it no longer describes a live subsystem. See
+`docs/adr/076-narration-protocol-collapse-post-tts.md` for the removal
+decision. The IPA pronunciation and voice-blending research below may still
+inform whichever TTS engine replaces Kokoro, if one is brought in later.
 
 ## The Discovery
 

@@ -788,7 +788,7 @@ flowchart TD
 Blue   (#4a9eff)  — Client/WebSocket messages (visible to player)
 Purple (#6c5ce7)  — Internal data (narration text, results)
 Red    (#ff6b6b)  — Claude CLI subprocess / narrator prompt
-Green  (#00b894)  — Python daemon (Flux, Kokoro)
+Green  (#00b894)  — Python daemon (Flux image gen)
 Orange (#e17055)  — SQLite persistence
 Yellow (#fdcb6e)  — YAML configuration (genre packs)
 Gray   (#b2bec3)  — Not yet wired / stub

@@ -26,10 +26,10 @@
 
 | ADR | Status | Summary |
 |-----|--------|---------|
-| [Intent-Based Agent Routing](010-intent-based-agent-routing.md) | Accepted | LLM classifier routes player input to specialist agents |
+| [Intent-Based Agent Routing](010-intent-based-agent-routing.md) | **Superseded by ADR-067** | LLM classifier routed player input to specialist agents (historical) |
 | [World State JSON Patches](011-world-state-json-patches.md) | Accepted | Agents emit patches, not full state replacements |
 | [Agent Session Management](012-agent-session-management.md) | Accepted | Persistent Claude sessions with stale recovery |
-| [Lazy JSON Extraction](013-lazy-json-extraction.md) | Accepted | Three-tier fallback for parsing Claude subprocess output |
+| [Lazy JSON Extraction](013-lazy-json-extraction.md) | Superseded by ADR-057 | Three-tier fallback replaced by sidecar tool calls |
 
 ## Game Systems
 
@@ -66,7 +66,7 @@
 | [Scenario Packs](030-scenario-packs.md) | Proposed | Hidden-role scenario engine with clue DAGs |
 | [Multiplayer Turn Coordination](036-multiplayer-turn-coordination.md) | Accepted | Three-mode FSM with adaptive barrier and claim-election |
 | [Shared-World / Per-Player State](037-shared-world-per-player-state.md) | Accepted | SharedGameSession keyed by genre:world, sync-to-locals pattern |
-| [WebRTC Voice Chat (Disabled)](054-webrtc-voice-chat-disabled.md) | Accepted | Full PeerMesh impl disabled due to TTS echo feedback loop |
+| [WebRTC Voice Chat (Disabled)](054-webrtc-voice-chat-disabled.md) | Historical | Was disabled for echo feedback; WebRTC + Whisper files since **deleted** along with TTS removal |
 
 ## Transport / Infrastructure
 
@@ -99,10 +99,11 @@
 
 | ADR | Status | Summary |
 |-----|--------|---------|
-| [Speculative Prerendering](044-speculative-prerendering.md) | Accepted | Latency-hiding image renders during TTS with self-disabling waste tracker |
-| [Client Audio Engine](045-client-audio-engine.md) | Accepted | Web Audio three-channel graph, crossfader, TTS ducking, raw PCM |
+| [Speculative Prerendering](044-speculative-prerendering.md) | Accepted | Latency-hiding image renders queued against turn boundaries (originally "during TTS playback") |
+| [Client Audio Engine](045-client-audio-engine.md) | Partially superseded | Web Audio graph now two-channel (music + SFX) after TTS removal; Crossfader still active |
 | [Image Pacing Throttle](050-image-pacing-throttle.md) | Accepted | Configurable cooldown with DM force-override, separate from BeatFilter |
 | [Lore RAG Store](048-lore-rag-store.md) | Accepted | Cross-process embedding pipeline with budget-aware context selection |
+| [MLX Image Renderer](070-mlx-image-renderer.md) | Accepted | Replace PyTorch/diffusers Flux worker with Apple MLX runtime |
 
 ## Turn Management
 
@@ -115,6 +116,7 @@
 | ADR | Status | Summary |
 |-----|--------|---------|
 | [Room Graph Navigation](055-room-graph-navigation.md) | Accepted | Graph-based dungeon navigation with resource pressure |
+| [Tactical ASCII Grid Maps](071-tactical-ascii-grid-maps.md) | Proposed | Deterministic room layout via ASCII art for tactical play |
 
 ## Code Generation / Tooling
 
@@ -130,7 +132,9 @@
 |-----|--------|---------|
 | [Narrator Crunch Separation](057-narrator-crunch-separation.md) | Accepted | LLM narrates prose, sidecar tools handle mechanical state |
 | [Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) | Accepted | Long-lived Opus sessions for narrator continuity |
-| [Unified Narrator Agent](067-unified-narrator-agent.md) | Accepted | Collapse multi-agent into single persistent session |
+| [Unified Narrator Agent](067-unified-narrator-agent.md) | Accepted (migration in progress) | Collapse multi-agent into single persistent session — `intent_router` still resident |
+| [Local Fine-Tuned Model Architecture](073-local-fine-tuned-model-architecture.md) | Accepted | Local fine-tuned model plan to replace generic Claude prompting for narrator |
+| [Narration Protocol Collapse Post-TTS](076-narration-protocol-collapse-post-tts.md) | Proposed | Remove `NarrationChunk` and TTS-era UI buffer plumbing |
 
 ## Observability
 
@@ -147,35 +151,36 @@
 | [Server lib.rs Extraction](062-server-lib-extraction.md) | Accepted | Route groups, state, and watcher events |
 | [Dispatch Handler Splitting](063-dispatch-handler-splitting.md) | Accepted | Split dispatch by pipeline stage |
 | [Game Crate Domain Modules](064-game-crate-domain-modules.md) | Accepted | Organize flat files into domain modules |
-| [Protocol Message Decomposition](065-protocol-message-decomposition.md) | Accepted | Split message.rs by domain |
+| [Protocol Message Decomposition](065-protocol-message-decomposition.md) | Proposed (unexecuted) | Plan to split message.rs by domain; `message.rs` remains a single file |
 | [Magic Literal Extraction](068-magic-literal-extraction.md) | Accepted | Domain-scoped constants replace magic literals |
+| [System/Milieu Decomposition](072-system-milieu-decomposition.md) | Proposed | Split genre packs into mechanics (system), aesthetic (milieu), and world instances |
 
 ## Media Pipeline (stays in sidequest-daemon)
 
 These decisions govern the Python media daemon, not the Rust API. Listed here
 for reference — the daemon is a separate repo (`sidequest-daemon`).
 
-| ADR | Origin | Summary |
-|-----|--------|---------|
-| Renderer Daemon | sq-2 | Persistent daemon with Unix socket and multi-model GPU pool |
-| Flux Worker | sq-2 | Schnell for text overlays, dev for scene art and cartography |
-| Scene Interpreter | sq-2 | Pattern-matching narrative text to structured stage cues |
-| Pre-Generated Audio | sq-2 | ACE-Step at build time, library playback at runtime |
-| Thematic Audio Variations | sq-2 | Theme families with mood-intensity variation selection |
-| Kokoro TTS | sq-2 | Kokoro primary (54 voices, streaming) + Piper fallback |
-| Scene Cache | sq-2 | SHA256-keyed LRU render cache on disk |
-| Subject Extractor | sq-2 | Claude CLI translates prose to visual descriptions |
-| Beat Filter | sq-2 | Heuristic gate for image generation worthiness |
-| Library Backend | sq-2 | DJ/radio separation for audio track selection vs playback |
-| Stale Render Policy | sq-2 | Only TEXT_OVERLAY tier is discardable after scene change |
-| Music Director Agent | sq-2 | LLM selects music by narrative mood, not heuristics |
+| ADR | Origin | Status | Summary |
+|-----|--------|--------|---------|
+| Renderer Daemon | sq-2 | Active | Persistent daemon with Unix socket and multi-model GPU pool |
+| Flux Worker | sq-2 | Active | Schnell for text overlays, dev for scene art and cartography |
+| Scene Interpreter | sq-2 | Active | Pattern-matching narrative text to structured stage cues |
+| Pre-Generated Audio | sq-2 | Active | ACE-Step at build time, library playback at runtime |
+| Thematic Audio Variations | sq-2 | Active | Theme families with mood-intensity variation selection |
+| Kokoro TTS | sq-2 | **Removed (2026-04)** | Was Kokoro primary + Piper fallback; the entire TTS path has been removed — see ADR-076 |
+| Scene Cache | sq-2 | Active | SHA256-keyed LRU render cache on disk |
+| Subject Extractor | sq-2 | Active | Claude CLI translates prose to visual descriptions |
+| Beat Filter | sq-2 | Active | Heuristic gate for image generation worthiness |
+| Library Backend | sq-2 | Active | DJ/radio separation for audio track selection vs playback |
+| Stale Render Policy | sq-2 | Active | Only TEXT_OVERLAY tier is discardable after scene change |
+| Music Director Agent | sq-2 | Active | LLM selects music by narrative mood, not heuristics |
 
 ## Skipped (superseded or not applicable)
 
 - ~~Discord Multiplayer~~ — superseded by WebSocket server
 - ~~Illustrated Book TUI~~ — superseded by React client
 - ~~Custom Game Client~~ — superseded by React client
-- ~~Voice Pipeline Dual Engine~~ — superseded by Kokoro TTS
+- ~~Voice Pipeline Dual Engine~~ — was superseded by Kokoro TTS; all voice synthesis now removed from the system (2026-04)
 - ~~React Web Client~~ — describes the UI we already have (see api-contract.md)
 - ~~RAG Lore Retrieval~~ — implemented as [Lore RAG Store](048-lore-rag-store.md) using daemon embeddings
 - ~~Inter-Agent Channel~~ — minimal usage; replaced by in-memory channels in Rust
