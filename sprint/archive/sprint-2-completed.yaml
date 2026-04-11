@@ -25,6 +25,7 @@ completed_epics:
   - '31'
   - '13'
   - '27'
+  - '35'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -1086,3 +1087,28 @@ completed_stories:
     title: Genre-themed widget chrome — archetype-specific CSS for widget borders, headers, and backgrounds
     points: 5
     completed: '2026-04-11'
+  - id: 33-11
+    epic: ''
+    title: Tab notification badges — indicate new content in Knowledge and Map tabs
+    points: 2
+    completed: '2026-04-11'
+  - id: 35-5
+    epic: MSSCI-35
+    title: Wire turn_reminder into barrier creation — spawn async reminder task
+    points: 5
+    completed: '2026-04-09'
+  - id: 35-7
+    epic: MSSCI-35
+    title: Wire tactical_grid through MapWidget to Automapper/TacticalGridRenderer
+    points: 3
+    completed: '2026-04-09'
+  - id: 35-8
+    epic: MSSCI-35
+    title: OTEL watcher events for beat_filter and scene_relevance
+    points: 3
+    completed: '2026-04-10'
+  - id: 35-14
+    epic: MSSCI-35
+    title: OTEL watcher event for unknown AudioVariation type — close sidequest-genre as_variation() silent fallback
+    points: 1
+    completed: '2026-04-10'

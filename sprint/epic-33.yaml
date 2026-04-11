@@ -133,7 +133,7 @@ stories:
     description: "The tab bar (Character / Inventory / Map / Knowledge / Flashbacks / Gallery / Audio) gives no indication when a tab has received new content during the current turn. Players miss Knowledge entries and Gallery images because there's no signal to look. This story adds a small dot badge (5px, accent color) inline after the tab label when the tab's content was updated this turn. Badge clears when the tab is opened. See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-11. Knowledge and Gallery are the primary targets — Map and Inventory are secondary."
     points: 2
     priority: p2
-    status: in_progress
+    status: done
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-11'
     repos: sidequest-ui
@@ -147,6 +147,8 @@ stories:
       - 'Gallery tab: badges on new scene images received via WebSocket'
       - 'Map, Inventory: badge when their content payload changes (lower priority, same implementation)'
       - No badge on Character or Audio tabs
+    completed: '2026-04-11'
+    review_verdict: approved
   - id: 33-12
     title: Party section — expandable party member status with portrait and condition at a glance
     description: 'The current PARTY section at the bottom of the Character tab is a single non-interactive row: a tiny avatar, the character name, and a raw HP string. It does not show NPCs travelling with the player, does not show conditions, and cannot be expanded or collapsed. This story replaces it with an expandable panel listing all party members (PC + companion NPCs) with portrait, name, archetype, HP mini-track, and active condition chips. Collapsed by default, expands on click. See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-12. Party data comes from game_state.party array.'

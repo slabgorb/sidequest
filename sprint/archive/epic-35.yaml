@@ -7,7 +7,7 @@ description: >-
   2026-04-09 cross-repo wiring audit. Successor to Epic 26. Critical finding:
   patch_legality (narrator state validation) fully built with OTEL but never called.
 priority: p0
-status: ready
+status: done
 repos: api,ui,daemon
 jira: MSSCI-35
 stories:
@@ -211,3 +211,4 @@ stories:
     type: chore
     review_findings: 'Pass 3 APPROVED. Pass 2 rework closed all 8 findings (A/B/C/D/E/F/G/I): (A) reverted deny_unknown_fields on VisualStyle per pre-existing extensibility exemption test; (B) audio.rs path traversal now loud (tracing::error + WatcherEvent); (C) explicit (Some(lora), None) warn arm in audio.rs; (D) process-scoped mark_lora_warned debounce; (E) lora_active bool gates lora_abs so trigger-missing no longer fires contradictory lora_activated telemetry; (F) validate_lora_scale custom deserializer rejects non-finite/negative/>2.0; (G) canonicalize path traversal guard catches symlink escapes with 3 distinct action codes; (I) audio.rs applies visual_tag_overrides mirroring render.rs. Merged as slabgorb/sidequest-api#398 (commit 723b4f4). 92/92 story tests pass. 9 non-blocking Delivery Findings logged (audio.rs wiring test gaps, LoraScale newtype, cross-path debounce scope) for future stories.'
     review_verdict: approved
+completed: '2026-04-11'
