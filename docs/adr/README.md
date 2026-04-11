@@ -48,6 +48,7 @@
 | [Dual-Track Tension Model](024-dual-track-tension-model.md) | Accepted | drama_weight from gambler's ramp + HP stakes + event spikes |
 | [Pacing Detection](025-pacing-detection.md) | Accepted | Quiet turn counting + trope-aware escalation hints |
 | [Dice Resolution Protocol](074-dice-resolution-protocol.md) | Proposed | Server-authoritative dice rolls via WebSocket with sealed-letter integration |
+| [Dogfight Subsystem](077-dogfight-subsystem.md) | Proposed | StructuredEncounter extension for sealed-letter fighter duels (per-actor descriptors + cross-product lookup table) |
 
 ## Frontend / Protocol
 
