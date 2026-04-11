@@ -1,9 +1,9 @@
 # SideQuest API — Architecture
 
 > System design for the Rust port of the SideQuest AI Narrator engine.
-> 12-crate workspace, 71 game modules, 7 agent types, 3 turn modes.
+> 12-crate workspace, ~70 game modules, narrator-primary agent model, 3 turn modes.
 >
-> **Last updated:** 2026-04-06
+> **Last updated:** 2026-04-11
 
 ## Architectural Layers
 
@@ -11,7 +11,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        React Client (sidequest-ui)                  │
 │  ThemeProvider, GameLayout, NarrativeView, PartyPanel, CombatOverlay│
-│  useGameSocket, useStateMirror, useVoicePlayback, useMusicPlayer   │
+│  useGameSocket, useStateMirror, useMusicPlayer, 3D dice overlay     │
 └────────┬──────────────────────────────────────┬─────────────────────┘
          │ WebSocket /ws (JSON + binary PCM)     │ REST /api/genres
          ▼                                       ▼
@@ -40,10 +40,10 @@
          ▼                      ▼
 ┌──────────────────────┐ ┌────────────────────────────────────────────┐
 │    Agent Layer       │ │              Game Layer (sidequest-game)    │
-│  (sidequest-agents)  │ │  71 modules: state, combat, chase, tropes, │
+│  (sidequest-agents)  │ │  ~70 modules: state, combat, chase, tropes,│
 │  Claude CLI subproc  │ │  inventory, NPCs, OCEAN, lore, conlang,    │
-│  7 agent types       │ │  faction agendas, world materialization,   │
-│  Timeout + recovery  │ │  music direction, voice routing, barriers  │
+│  Unified narrator    │ │  faction agendas, world materialization,   │
+│  + auxiliary agents  │ │  music direction, barriers, dice resolve   │
 └──────────────────────┘ └──────────────┬─────────────────────────────┘
                                         │
          ┌──────────────────────────────┤
@@ -58,7 +58,7 @@
          ┌────────────────────────────────────────────────────────────┐
          │              Daemon Client (sidequest-daemon-client)        │
          │  Unix socket → sidequest-daemon (Python sidecar)           │
-         │  Image gen (Flux), TTS (Kokoro), Audio mixing (pygame)     │
+         │  Image gen (Flux), music (ACE-Step), SFX mixing (pygame)   │
          └────────────────────────────────────────────────────────────┘
 ```
 
@@ -68,10 +68,10 @@
 sidequest-api/
 ├── Cargo.toml                        # [workspace] root
 ├── crates/
-│   ├── sidequest-protocol/           # GameMessage enum, 31 typed payloads, serde
+│   ├── sidequest-protocol/           # GameMessage enum, typed payloads, serde
 │   ├── sidequest-genre/              # YAML loader, genre pack structs, 11 packs
-│   ├── sidequest-game/               # 71 modules — state, combat, NPCs, lore, audio, etc.
-│   ├── sidequest-agents/             # Claude CLI subprocess, 7 agent types, timeout/recovery
+│   ├── sidequest-game/               # ~70 modules — state, combat, NPCs, lore, pacing, etc.
+│   ├── sidequest-agents/             # Claude CLI subprocess, narrator + auxiliary agents
 │   ├── sidequest-server/             # axum HTTP/WS, session management, orchestrator
 │   ├── sidequest-daemon-client/      # Unix socket client for Python media daemon
 │   ├── sidequest-telemetry/          # OTEL tracing and watcher event infrastructure
@@ -97,13 +97,13 @@ sidequest-server
 
 ## Key Design Decisions
 
-### ADR-001: Claude CLI Only
+### ADR-001 / ADR-067: Claude CLI Only, Unified Narrator
 
-All LLM calls use `claude -p` subprocess via `tokio::process::Command`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery across 7 agent types: Narrator, WorldBuilder, CreatureSmith, Ensemble, Dialectician, IntentRouter, Troper.
+All LLM calls use `claude -p` subprocess via `tokio::process::Command`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery. Per **ADR-067** (Unified Narrator Agent), the narrator is the primary agent — it handles exploration, dialogue, combat narration, and chase narration through a persistent Opus session. Auxiliary agents (`world_builder`, `troper`, `resonator`) run for specialist tasks outside the per-turn critical path. The original multi-agent dispatch (ADR-010: creature_smith, dialectician, ensemble) is superseded; those agent files have been removed. `intent_router` remains in-crate as a lightweight fallback during the ADR-067 migration.
 
 ### ADR-002: Typed Protocol
 
-Strongly-typed Rust structs for every message payload using `serde(tag = "type")` on the `GameMessage` enum. 33 message types. The type system catches payload mismatches at compile time — eliminates the `KeyError` class of bugs from the Python codebase.
+Strongly-typed Rust structs for every message payload using `serde(tag = "type")` on the `GameMessage` enum. The type system catches payload mismatches at compile time — eliminates the `KeyError` class of bugs from the Python codebase. Current `GameMessage` variant count grows with each story; count is intentionally not tracked here to avoid stale documentation.
 
 ### ADR-003: Session as Actor
 
@@ -115,7 +115,7 @@ Each WebSocket connection spawns a tokio task owning a `Session`. Single-player:
 
 ### ADR-005: Background-First Pipeline
 
-Only the text narration response is on the critical path. Everything else spawns as background tasks: image generation, TTS synthesis, music cue selection, state delta computation, trope tick, lore accumulation. The player sees narration immediately; media arrives asynchronously.
+Only the text narration response is on the critical path. Everything else spawns as background tasks: image generation, music cue selection, state delta computation, trope tick, lore accumulation. The player sees narration immediately; media arrives asynchronously.
 
 ### ADR-006: Persistence via SQLite
 
@@ -128,7 +128,7 @@ Python ML sidecar communicates via Unix domain socket (`/tmp/sidequest-renderer.
 SharedGameSession keyed by `genre:world` holds world state; PlayerState holds per-player data. Sync-to-locals pattern checks out state for dispatch, preserving the single-player code path unchanged. TurnBarrier with adaptive timeout and claim-election prevents duplicate narrator calls.
 
 ### ADR-038: WebSocket Transport
-Reader/writer task split per connection. Three broadcast channels: JSON GameMessage, session-scoped TargetedMessage, and binary PCM for TTS audio. ProcessingGuard prevents concurrent dispatch per player.
+Reader/writer task split per connection. Broadcast channels: JSON `GameMessage` for global state and session-scoped `TargetedMessage` for per-player narration. ProcessingGuard prevents concurrent dispatch per player. *(Note: ADR-038 still references a binary-PCM audio channel from the TTS era — pending ADR update to match post-TTS reality.)*
 
 ### ADR-039/057: Narrator Output & Sidecar Tools
 The narrator outputs prose only — no JSON blocks. Mechanical state changes (mood, intent,
@@ -200,11 +200,10 @@ All player text passes through `sanitize_player_text()` at the protocol layer �
 
 ### Media Integration
 - **Music director:** Mood extraction from narration → audio cue selection
-- **Voice router:** Character voice mapping from genre pack presets
-- **TTS streaming:** Text segmentation → Kokoro synthesis → binary PCM frames (ADR-045: Web Audio three-channel graph with ducking)
 - **Image pacing throttle:** Configurable cooldown (30s solo, 60s multiplayer) with DM override (ADR-050)
 - **Render queue:** Speculative prerendering with hash-based cache dedup (ADR-044)
 - **Subject extractor:** Prose → visual description via Claude CLI
+- **Client audio:** Music + SFX channels only. Voice/TTS pipeline removed — ADR-045 and ADR-054 describe the historical architecture and are marked for retirement.
 
 ### Player Interface
 - **Slash router:** Server-side /command interception before intent classification
@@ -237,9 +236,9 @@ The ML inference pipeline stays in Python as a sidecar service. Rust communicate
 
 | Subsystem | Stack | Notes |
 |-----------|-------|-------|
-| Image generation | Flux.1 (schnell + dev) | 6 render tiers, scene cache, beat filter |
-| TTS synthesis | Kokoro (54 voices) | Streaming, per-character voice routing |
-| Audio mixing | pygame mixer | 3-channel (music/SFX/ambience), speech ducking |
+| Image generation | Flux.1 (schnell + dev) | Multiple render tiers, scene cache, beat filter |
+| Music library | ACE-Step pre-render | Mood-indexed theme tracks, cross-fade on scene change |
+| Audio mixing | pygame mixer | Music + SFX channels only (no voice/TTS) |
 | Scene interpretation | Pattern matching | Narrative text → structured stage cues |
 | Subject extraction | Claude CLI | Prose → visual descriptions |
 
@@ -247,13 +246,13 @@ The ML inference pipeline stays in Python as a sidecar service. Rust communicate
 sidequest-api (Rust)  ◄──── HTTP / Unix socket ────►  sidequest-daemon (Python)
      │                                                        │
      ├── Sends: narrative text, scene context                 ├── Returns: image URLs, audio paths
-     ├── Sends: voice synthesis requests                      ├── Returns: binary PCM frames
+     ├── Sends: music cue requests (mood / intensity)         ├── Returns: track identifiers
      └── Shares: genre_packs/ (read-only assets)              └── Reads: genre_packs/ visual/audio config
 ```
 
 ## ADR Index
 
-69 Architecture Decision Records govern the system. See [docs/adr/README.md](adr/README.md) for the full index covering: core architecture (7), prompt engineering (2), agent system (4), game systems (12), frontend/protocol (2), multiplayer (6), transport/infrastructure (4), narrator/text (4), NPC/character (4), media/audio/rendering (4), turn management (1), and media pipeline (12 from sq-2).
+Architecture Decision Records govern the system. See [docs/adr/README.md](adr/README.md) for the current index. **Note:** several ADRs in the TTS / voice chat / WebRTC family describe historical architecture that has since been removed — pass 2 of the 2026-04-11 doc sweep will mark the affected ADRs (notably ADR-045, ADR-054, and media-channel references in ADR-038) with status updates.
 
 ## Wiring Diagrams
 
