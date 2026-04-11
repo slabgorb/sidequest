@@ -3,7 +3,16 @@
 > Retrospective — documents a decision already implemented in the codebase.
 
 ## Status
-Accepted
+Accepted (historical — 2026-04 update)
+
+> **Update (2026-04-11):** The "full implementation is preserved" claim below is
+> no longer true. After TTS removal, the WebRTC voice chat files
+> (`PeerMesh.ts`, `useVoiceChat.ts`, `LocalTranscriber.ts`, `useWhisper.ts`) and
+> the entire `sidequest-ui/src/webrtc/` directory have been **deleted** from the
+> UI repo. The echo-feedback motivation and the architectural rationale below
+> remain as history. Any future voice chat work should start from a fresh ADR —
+> the original echo problem would need to be re-analyzed against whatever new
+> audio pipeline replaces the (also removed) Kokoro TTS output path.
 
 ## Context
 Multiplayer SideQuest sessions need player-to-player voice communication. A `PeerMesh` WebRTC

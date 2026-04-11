@@ -3,7 +3,15 @@
 > Retrospective — documents a decision already implemented in the codebase.
 
 ## Status
-Accepted
+Accepted (partially superseded — TTS removed 2026-04, see ADR-076)
+
+> **Note (2026-04-11):** The original three-channel design below included a
+> binary PCM channel for Kokoro TTS frames. **TTS has been removed from the
+> server**; no production code path now sends `Message::Binary` frames. The
+> reader/writer split and `ProcessingGuard` RAII pattern remain in active use,
+> but the broadcast topology is effectively two channels (JSON `GameMessage`
+> and session-scoped `TargetedMessage`). ADR-076 formalizes the post-TTS
+> narration flow. Treat the "three channels" language below as historical.
 
 ## Context
 
