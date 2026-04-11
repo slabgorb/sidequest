@@ -34,7 +34,6 @@ Centralized in `Cargo.toml` `[workspace.dependencies]`:
 
 | Crate | Additional Deps | Purpose |
 |-------|----------------|---------|
-| sidequest-game | `base64` 0.22 | TTS audio chunk encoding |
 | sidequest-server | `dirs` 5 | User directory resolution for config |
 | sidequest-server | `tokio-tungstenite` 0.24 (dev) | WebSocket integration tests |
 | sidequest-game | `tempfile` 3 (dev) | SQLite test fixtures |
@@ -115,10 +114,9 @@ The ML inference stack stays in Python. The Rust server communicates via `sidequ
 
 | Subsystem | Python Stack | Notes |
 |-----------|-------------|-------|
-| Image generation | Flux.1 (schnell + dev), diffusers | 6 render tiers, GPU-accelerated |
-| TTS synthesis | Kokoro (54 voices) | Streaming, per-character voice routing |
-| Music generation | ACE-Step | Build-time generation, runtime library playback |
-| Audio mixing | pygame mixer | 3-channel (music/SFX/ambience), speech ducking |
+| Image generation | Flux.1 (schnell + dev), MLX | Multiple render tiers, Apple Silicon target (ADR-070) |
+| Music library | Pre-rendered ACE-Step tracks | Build-time generation, runtime library playback — daemon does not run ACE-Step at request time |
+| Audio mixing | pygame mixer | Music + SFX (no voice/TTS channel after 2026-04 removal) |
 | Scene interpretation | Pattern matching | Narrative text → stage cues |
 | Subject extraction | Claude CLI | Prose → visual descriptions |
 
@@ -133,8 +131,7 @@ See ADR-035 for the Unix socket IPC architecture and ADR-046 for GPU memory budg
 | Language | TypeScript | Strict mode |
 | Styling | Tailwind CSS + shadcn/ui | Genre theming via CSS variables |
 | Testing | Vitest | Unit + component tests |
-| Audio | Web Audio API | 3-channel playback, voice ducking (ADR-045) |
-| Voice chat | WebRTC (PeerMesh) | Disabled — echo feedback loop (ADR-054) |
+| Audio | Web Audio API | Two-channel playback (music + SFX) per current ADR-045 state |
 | State management | useStateMirror (custom) | Delta replay from server (ADR-026) |
 
 ## Deliberate Omissions

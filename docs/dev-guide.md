@@ -10,7 +10,7 @@ Debugging, logging, tracing, and local development reference for agents working 
 |------|---------|-------|
 | Run API server | `just server` or `just api-run` | Alias adds `--trace` |
 | Run API with tracing | `just api-run --trace` | Chrome trace → `trace-{pid}.json` |
-| Run API headless | `just playtest-server` | No daemon, no TTS, no rendering |
+| Run API headless | `just playtest-server` | No daemon, no rendering |
 | Run UI dev server | `just ui-dev` | Vite on `localhost:5173` |
 | Run daemon | `just daemon-run` | Renderer warmup |
 | Run watcher (CLI) | `just watch` | Rich terminal telemetry stream |
@@ -129,7 +129,7 @@ This runs `scripts/watch.py` — a Rich-formatted stream of agent decisions, val
 
 ## Headless Playtest
 
-Test game logic without UI, daemon, or media rendering. The API runs with `--headless` which stubs out the render pipeline and TTS.
+Test game logic without UI, daemon, or media rendering. The API runs with `--headless` which stubs out the render pipeline.
 
 ### Start headless server
 
@@ -253,7 +253,7 @@ This installs Rust toolchain components, npm dependencies, and Python dev depend
 Key ADRs for debugging and development:
 - **ADR-031:** Semantic telemetry — the three-layer observability model
 - **ADR-035:** Unix socket IPC — how API talks to daemon
-- **ADR-038:** WebSocket transport — three-channel broadcast architecture
+- **ADR-038:** WebSocket transport — broadcast architecture (now two-channel post-TTS, see ADR-076)
 - **ADR-039:** Narrator structured output — JSON sidecar extraction
 - **ADR-047:** Prompt injection sanitization — protocol-layer input defense
-- **ADR-044:** Speculative prerendering — latency hiding during TTS
+- **ADR-044:** Speculative prerendering — latency hiding during the gap between narration turns

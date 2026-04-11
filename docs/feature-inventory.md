@@ -41,14 +41,14 @@ These features work from player input through to rendered output.
 
 | Feature | API | UI | Daemon | Notes |
 |---------|-----|-----|--------|-------|
-| Image generation | Subject extractor → Render queue | IMAGE display | Flux.1 (schnell + dev) | 6 tiers: scene, portrait, landscape, text, cartography, tactical |
+| Image generation | Subject extractor → Render queue | IMAGE display | Flux.1 (schnell + dev) via MLX | Multiple tiers: scene, portrait, landscape, text, cartography, tactical |
 | Beat filter | Suppress low-drama renders | — | — | drama_weight threshold |
-| Speculative prerender | Queue during voice playback | — | — | Hash-based cache dedup (ADR-044) |
-| TTS voice synthesis | Voice routing, text segmentation | useVoicePlayback | Kokoro (54 voices) | Streaming delivery |
-| Character voice mapping | Genre pack voice presets | — | Voice router + effects | Per-character voices |
-| Music direction | Mood extraction from narration | useMusicPlayer | Audio mixer | AUDIO_CUE messages |
-| 3-channel audio | Music/SFX/ambience commands | AudioStatus component | pygame mixer | Ducking during speech (ADR-045) |
+| Speculative prerender | Queue against turn boundaries | — | — | Hash-based cache dedup (ADR-044) |
+| Music direction | Mood extraction from narration | useAudioCue | Audio library backend | AUDIO_CUE messages → pre-rendered ACE-Step tracks |
+| 2-channel audio | Music + SFX commands | AudioStatus component | pygame mixer | No voice/TTS channel after 2026-04 removal |
 | Theme rotation | Anti-repetition track selection | — | Audio rotator | Mood-based |
+| ~~TTS voice synthesis~~ | **Removed 2026-04** — Kokoro TTS pipeline removed; see ADR-076 | | | |
+| ~~Character voice mapping~~ | **Removed 2026-04** alongside TTS | | | |
 
 ### Observability (Epic 3, complete)
 
@@ -73,8 +73,6 @@ These features work from player input through to rendered output.
 | Journal/handouts | JournalView | Thumbnail grid, lightbox viewer |
 | Combat overlay | CombatOverlay | Enemy HP, turn order |
 | Slash commands | useSlashCommands | /inventory, /character, /quests, /journal, /help |
-| Push-to-talk | usePushToTalk | Record → Whisper transcribe → preview → send (disabled, ADR-054) |
-| WebRTC voice chat | useVoiceChat + PeerMesh | Disabled — echo feedback loop (ADR-054) |
 | Keyboard shortcuts | GameLayout | P/C/I/M/J toggles, Space, Escape |
 | Responsive layout | useBreakpoint | Mobile/tablet/desktop |
 | Genre theming | ThemeProvider + useGenreTheme | CSS vars from pack config |

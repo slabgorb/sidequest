@@ -145,21 +145,20 @@ The SOUL principle "Diamonds and Coal" means not every moment is epic. Test this
 - [ ] **Verify:** Beat filter suppresses image renders for low-drama actions
 - [ ] **Verify:** High-drama actions trigger image generation
 
-## 10. Voice & Audio
+## 10. Audio
 
-- [ ] **Test push-to-talk** — Hold mic button, speak an action, release
-  - Verify: Recording indicator shows duration
-  - Verify: Whisper transcribes speech to text
-  - Verify: Transcript preview appears for editing
-  - Verify: Confirm sends the transcribed action
-- [ ] **Verify:** TTS voice narration plays
-  - Character voices should be distinct per NPC (Scrapborn grit vs Drifter mysticism vs Greenfolk serenity)
-  - Music should duck during voice playback
+> Voice features (push-to-talk, Whisper STT, TTS voice narration, WebRTC
+> voice chat) were removed in 2026-04. The playtest script no longer
+> exercises them.
+
 - [ ] **Test audio controls** — AudioStatus panel (bottom-left)
   - Adjust music volume slider
   - Adjust SFX volume slider
   - Mute/unmute individual channels
   - Verify: Settings persist across page reload (localStorage)
+- [ ] **Music cues fire on mood changes** — watch for crossfade between tracks
+  on narrative beat changes (tense → calm, etc.)
+- [ ] **SFX cues fire on combat / confrontation beats**
 
 ## 11. Multiplayer
 
@@ -214,19 +213,14 @@ After completing the playtest, verify these systems were exercised:
 | Intent classification | | |
 | Narrator agent | | |
 | WorldBuilder agent | | |
-| CreatureSmith agent | | |
-| Ensemble agent (dialogue) | | |
-| Dialectician agent | | |
 | Troper agent | | |
+| Resonator agent | | |
 | State patching | | |
 | Combat system | | |
 | Trope engine | | |
-| Image generation (Flux) | | |
-| TTS (Kokoro) | | |
-| Music (mood-based) | | |
-| Audio mixing (3-channel) | | |
-| Push-to-talk (Whisper) | | |
-| WebRTC voice chat | | |
+| Image generation (Flux via MLX) | | |
+| Music (mood-based library playback) | | |
+| Audio mixing (music + SFX) | | |
 | Slash commands | | |
 | Map overlay | | |
 | Inventory panel | | |

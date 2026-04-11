@@ -20,14 +20,12 @@ graph TB
     end
 
     subgraph "React Client (sidequest-ui)"
-        UI[React 19 + TypeScript<br/>Game client, audio engine,<br/>voice chat, GM mode]
+        UI[React 19 + TypeScript<br/>Game client, audio engine,<br/>3D dice overlay, GM mode]
     end
 
     subgraph "Media Services (sidequest-daemon)"
-        FLUX[Flux Worker<br/>Image generation]
-        KOKORO[Kokoro TTS<br/>Voice synthesis]
-        ACE[ACE-Step<br/>Music generation]
-        MIXER[Audio Mixer<br/>3-channel playback]
+        FLUX[Flux Worker<br/>Image generation MLX]
+        MIXER[Audio Library<br/>+ pygame mixer]
     end
 
     subgraph "Asset Library (sidequest-content)"
@@ -44,12 +42,10 @@ graph TB
     UI --> PROTO
     SERVER -->|Unix socket| DCLIENT
     DCLIENT -->|JSON-RPC| FLUX
-    DCLIENT -->|JSON-RPC| KOKORO
-    DCLIENT -->|JSON-RPC| ACE
 
     PACKS -.->|--genre-packs-path| GENRE
     PACKS -.->|SIDEQUEST_GENRE_PACKS| FLUX
-    PACKS -.->|audio tracks| MIXER
+    PACKS -.->|pre-rendered tracks| MIXER
     ORC -.->|just commands| SERVER
     ORC -.->|just commands| UI
     ORC -.->|just commands| FLUX
@@ -106,14 +102,14 @@ sequenceDiagram
 
     par Media Pipeline
         O->>D: render(subject, tier)
-        D->>M: Flux/Kokoro/ACE-Step
-        M-->>D: image/audio/music bytes
+        D->>M: Flux image gen (MLX)
+        M-->>D: PNG bytes
         D-->>O: render result
     end
 
     O->>S: broadcast(NARRATION + patches)
-    S->>P: NARRATION_CHUNK (streamed)
-    S->>P: IMAGE / AUDIO_CUE / VOICE
+    S->>P: NARRATION → NARRATION_END (atomic state commit)
+    S->>P: IMAGE / AUDIO_CUE
     S->>P: PARTY_STATUS / MAP_UPDATE
 ```
 
@@ -152,9 +148,8 @@ sequenceDiagram
     participant BF as Beat Filter
     participant RQ as Render Queue
     participant DC as Daemon Client
-    participant FX as Flux Worker
-    participant TTS as Kokoro TTS
-    participant MX as Audio Mixer
+    participant FX as Flux Worker (MLX)
+    participant MX as Audio Library
 
     O->>SE: extract(narration)
     SE-->>O: subjects + tiers
@@ -171,27 +166,23 @@ sequenceDiagram
         BF-->>O: suppress
     end
 
-    O->>DC: synthesize(narration_segments)
-    DC->>TTS: text + voice_id
-    TTS-->>DC: PCM audio chunks
-
     O->>DC: audio_cue(mood, genre)
-    DC->>MX: play(track, channel, volume)
-    Note over MX: 3 channels: music, SFX, ambience<br/>Auto-duck during voice playback
+    DC->>MX: play(pre-rendered track, channel)
+    Note over MX: Channels: music, SFX<br/>(TTS voice pipeline removed 2026-04)
 ```
 
 ## Repository Responsibilities
 
-### oq-1 (Orchestrator)
+### orc-quest (Orchestrator)
 - Cross-repo coordination via `justfile`
 - Sprint tracking and story management
-- Architecture docs, 54 ADRs, design artifacts
+- Architecture docs, Architecture Decision Records, design artifacts
 - Asset generation scripts (POI images, music, portraits)
 - System-level documentation (this file)
 
 ### sidequest-api (Rust)
 - Game engine: state, combat, chase, tropes, progression
-- Agent orchestration: 7 Claude-powered agents
+- Agent orchestration: unified Opus narrator (ADR-067) with auxiliary agents
 - WebSocket server: real-time game communication
 - Session management: connect → create → play lifecycle
 - SQLite persistence: save/load game state
@@ -201,22 +192,20 @@ sequenceDiagram
 
 ### sidequest-ui (TypeScript/React)
 - Game client: narrative display, character sheets, inventory, map
-- Audio engine: 3-channel mixer, crossfade, ducking (ADR-045)
-- Voice: push-to-talk with local Whisper transcription
-- WebRTC: peer-to-peer voice chat (disabled — echo loop, ADR-054)
+- Audio engine: two-channel mixer (music + SFX), crossfader
+- 3D dice overlay: Three.js + Rapier (ADR-075, proposed)
 - GM Mode: real-time telemetry dashboard
 - Genre theming: CSS variable injection from pack config
 
 ### sidequest-daemon (Python)
-- Image generation: Flux.1 (schnell + dev), 6 render tiers
-- Voice synthesis: Kokoro TTS (54 voices, blending, streaming)
-- Music generation: ACE-Step (prompt-based, configurable duration)
-- Audio mixing: pygame-ce, 3 named channels, ducking
-- GPU memory coordination: LRU model eviction across 80GB budget (ADR-046)
+- Image generation: Flux.1 (schnell + dev) via MLX (ADR-070)
+- Audio library playback: pre-rendered ACE-Step tracks, mood-indexed rotation
+- Audio mixing: pygame-ce
+- GPU memory coordination: LRU model eviction across budget (ADR-046)
 
-### sidequest-content (Git LFS)
-- Genre pack YAML configs (7 packs)
-- Audio assets (music, SFX, ambience)
+### sidequest-content
+- Genre pack YAML configs (11 packs)
+- Audio assets (pre-rendered music, SFX)
 - Image assets (portraits, POI landscapes, maps)
 - World data (history, factions, cultures)
 - Fonts and visual style assets

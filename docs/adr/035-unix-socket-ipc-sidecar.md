@@ -5,6 +5,14 @@
 ## Status
 Accepted
 
+> **Note (2026-04):** The Context below lists text-to-speech (Kokoro) and runtime
+> ACE-Step music generation among the sidecar's workloads. Both are gone: Kokoro
+> TTS has been removed from the system entirely, and ACE-Step is now a build-time
+> pipeline (tracks are pre-rendered and played from a library, not generated at
+> request time). The Unix socket IPC architecture itself is unchanged; only the
+> set of inference workloads it carries has shrunk. Current production traffic
+> over the socket is Flux image generation plus lore embedding jobs.
+
 ## Context
 
 SideQuest requires ML inference for image generation (Flux), text-to-speech (Kokoro),

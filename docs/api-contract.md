@@ -10,7 +10,7 @@
 ### WebSocket
 
 - **URL:** `ws://{host}/ws` (or `wss://` over TLS)
-- **Protocol:** JSON text frames for game messages, binary frames for voice audio
+- **Protocol:** JSON text frames for game messages *(binary frames were used for TTS PCM audio; removed 2026-04 along with TTS)*
 - **Reconnect:** Client auto-reconnects on abnormal close (code != 1000) with 1s backoff
 
 All JSON messages conform to:
@@ -45,8 +45,7 @@ Client → Server:
 
 Server → Client:
   NARRATION           Complete narration with state delta + footnotes
-  NARRATION_CHUNK     Streaming partial text
-  NARRATION_END       Stream complete, optional final state delta
+  NARRATION_END       Turn-completion marker, carries final state delta
   THINKING            Processing indicator (spinner)
   SESSION_EVENT       Session lifecycle (connected, ready, theme_css)
   CHARACTER_CREATION  Creation scene prompt / confirmation / complete
@@ -59,12 +58,7 @@ Server → Client:
   CONFRONTATION       Confrontation engine state (resource pools)
   RENDER_QUEUED       Image render queued notification
   IMAGE               Image delivery (scene, portrait, handout)
-  AUDIO_CUE           Music, SFX, and ambience control
-  TTS_START           TTS stream initiation (segment count)
-  TTS_CHUNK           Base64-encoded audio chunk
-  TTS_END             TTS stream complete
-  VOICE_TEXT          TTS text companion (displayed alongside audio)
-  VOICE_SIGNAL        WebRTC signaling (inbound, from peer)
+  AUDIO_CUE           Music and SFX control
   ACTION_QUEUE        Queued actions
   ACTION_REVEAL       Sealed letter action reveal (multiplayer)
   CHAPTER_MARKER      Chapter/scene transition
@@ -208,7 +202,7 @@ Controls session phase transitions.
 }
 ```
 
-### NARRATION / NARRATION_CHUNK / NARRATION_END
+### NARRATION / NARRATION_END
 
 Narrative text from the AI with optional state deltas and structured footnotes.
 
@@ -232,17 +226,20 @@ Narrative text from the AI with optional state deltas and structured footnotes.
 }
 ```
 
-**NARRATION_CHUNK (streaming):**
-```json
-{ "type": "NARRATION_CHUNK", "payload": { "text": "partial text..." } }
-```
-
-**NARRATION_END (stream complete):**
+**NARRATION_END (turn-completion marker):**
 ```json
 { "type": "NARRATION_END", "payload": { "state_delta": { ... } } }
 ```
 
-Both NARRATION_CHUNK and NARRATION_END clear the "thinking" indicator.
+`NARRATION_END` clears the "thinking" indicator and commits any final
+`state_delta` in the same render cycle as the preceding `NARRATION` text.
+Always sent, even when the turn produced no state delta.
+
+> **Removed (2026-04, per ADR-076):** `NARRATION_CHUNK` was a streaming
+> partial-text variant paired with binary TTS voice frames. With TTS gone,
+> the chunked streaming path has zero production senders. The variant still
+> exists in `sidequest-protocol/src/message.rs` but will be removed when
+> ADR-076 moves from Proposed to Accepted.
 
 #### Footnotes
 
@@ -405,53 +402,17 @@ Background music, sound effects, and ambience control.
   }
 }
 ```
-- `channel`: `"music"`, `"sfx"`, `"ambience"`
-- `action`: `"play"`, `"fade_in"`, `"fade_out"`, `"duck"`, `"restore"`, `"stop"`
+- `channel`: `"music"`, `"sfx"` *(the daemon mixer additionally tracks an `"ambience"` channel internally, but the protocol only routes music and SFX through the client)*
+- `action`: `"play"`, `"fade_in"`, `"fade_out"`, `"stop"`, plus `"configure"` for initial genre-pack mixer setup
 - `volume`: 0.0-1.0
 
-### TTS_START / TTS_CHUNK / TTS_END
-Text-to-speech streaming via JSON frames (replaces binary PCM frames for base64 transport).
-
-**TTS_START:**
-```json
-{ "type": "TTS_START", "payload": { "total_segments": 3 } }
-```
-
-**TTS_CHUNK:**
-```json
-{
-  "type": "TTS_CHUNK",
-  "payload": {
-    "audio_base64": "UklGRi...",
-    "segment_index": 0,
-    "is_last_chunk": false,
-    "speaker": "narrator",
-    "format": "wav"
-  }
-}
-```
-- `speaker`: character name or `"narrator"`
-- `format`: `"wav"` or `"opus"`
-
-**TTS_END:**
-```json
-{ "type": "TTS_END", "payload": {} }
-```
-
-### VOICE_SIGNAL (inbound)
-WebRTC signaling relay from another peer.
-```json
-{
-  "type": "VOICE_SIGNAL",
-  "payload": { "from": "peer_id", "signal": { ... } }
-}
-```
-
-### VOICE_TEXT
-TTS text companion (displayed alongside audio).
-```json
-{ "type": "VOICE_TEXT", "payload": { "text": "string" } }
-```
+> **Removed (2026-04):** `TTS_START`, `TTS_CHUNK`, `TTS_END`, `VOICE_TEXT`,
+> and `VOICE_SIGNAL` have all been removed from the protocol. Kokoro TTS and
+> WebRTC voice chat no longer exist in the system. See
+> `docs/adr/076-narration-protocol-collapse-post-tts.md` for the cleanup
+> decision and ADR-054 for the WebRTC history. The `"duck"` and `"restore"`
+> audio-cue actions were also retired — they only ever ducked music under
+> TTS voice playback.
 
 ### ACTION_QUEUE / CHAPTER_MARKER / ERROR
 ```json
@@ -463,30 +424,15 @@ TTS text companion (displayed alongside audio).
 
 ---
 
-## Binary Frames: Voice Audio
+## Binary Frames (historical)
 
-Binary WebSocket frames carry raw TTS audio (server → client). Used alongside or instead of TTS_CHUNK for low-latency streaming.
-
-**Frame format:**
-```
-[4 bytes: header length (uint32 big-endian)]
-[N bytes: JSON header]
-[remaining: raw audio data]
-```
-
-**Header:**
-```json
-{
-  "type": "VOICE_AUDIO",
-  "segment_id": "unique-id",
-  "format": "pcm_s16le",
-  "sample_rate": 24000
-}
-```
-
-Audio data is raw PCM signed 16-bit little-endian, routed through the client's AudioEngine voice channel with music ducking.
-
-See ADR-045 for the client-side Web Audio engine that processes these PCM frames, and ADR-038 for the three-channel broadcast architecture.
+> **Removed (2026-04):** Binary WebSocket frames used to carry raw TTS PCM
+> audio (server → client) alongside JSON `TTS_CHUNK` messages. After TTS
+> removal, **no production code path sends `Message::Binary`** through the
+> WebSocket. See ADR-076 for the protocol cleanup and ADR-045 for the
+> historical two-channel Web Audio engine description. ADR-038 still
+> references a three-channel broadcast topology from the TTS era and is
+> flagged for a status update.
 
 ---
 
@@ -507,10 +453,10 @@ See ADR-045 for the client-side Web Audio engine that processes these PCM frames
 5. Game loop:
    - Client sends PLAYER_ACTION { action: "...", aside: bool }
    - Server sends THINKING
-   - Server sends NARRATION_CHUNK* → NARRATION_END (streaming)
-     or NARRATION (complete, non-streaming)
+   - Server sends NARRATION (complete text) followed by NARRATION_END
+     (turn completion marker carrying the final StateDelta)
    - Server may send: PARTY_STATUS, MAP_UPDATE, COMBAT_EVENT, IMAGE,
-     AUDIO_CUE, TTS_START → TTS_CHUNK* → TTS_END, CHAPTER_MARKER
+     AUDIO_CUE, CHAPTER_MARKER
 6. Multiplayer turn flow (STRUCTURED mode):
    - All players submit PLAYER_ACTION independently
    - Server holds actions until TurnBarrier resolves (all submitted or timeout)
