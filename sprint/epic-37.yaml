@@ -1,0 +1,96 @@
+id: '37'
+type: epic
+title: Playtest 2 Fixes — Multi-Session Isolation
+description: 'Bugs from second production playtest (2026-04-12): cross-session state leakage when multiple games share one server. Resume markers and image delivery need session-scoped isolation.'
+priority: p0
+status: backlog
+repos: api,daemon
+stories:
+  - id: 37-1
+    title: Session-scoped resume markers — scope catch-up logic by game session ID to prevent cross-game state leakage on shared server
+    points: 2
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: trivial
+    type: bug
+  - id: 37-2
+    title: Session-scoped image routing — discriminate renderer responses by session ID so players receive only their own generated images
+    points: 2
+    priority: p0
+    status: backlog
+    repos: api,daemon
+    workflow: trivial
+    type: bug
+  - id: 37-3
+    title: Inventory extraction misses explicit pickup actions — two-pass extractor and game_patch both failed to register 'picks up X and pockets it' as item acquisition
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-4
+    title: Gold overspend — state_mutations clamps negative balance to zero instead of rejecting or adjusting transactions that exceed current gold
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-5
+    title: Daemon embed endpoint broken — /embed returns Unknown error, RAG semantic search degraded entire playtest session
+    points: 2
+    priority: p0
+    status: backlog
+    repos: daemon,api
+    workflow: tdd
+    type: bug
+  - id: 37-6
+    title: Spaghetti western LoRA missing — pack.yaml references spaghetti_western_style.safetensors that does not exist, 112 errors per session
+    points: 1
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: bug
+  - id: 37-7
+    title: Chargen back button not wired — UI sends CHARACTER_CREATION action:back but server payload schema does not accept it
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api,ui
+    workflow: tdd
+    type: bug
+  - id: 37-8
+    title: World materialization fails for dust_and_lead — null history chapters in spaghetti_western world YAML
+    points: 1
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: bug
+  - id: 37-9
+    title: Dungeon room graph no_exit warnings — narrator moves players to rooms without exits in caverns_and_claudes, ~40 occurrences
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api,content
+    workflow: tdd
+    type: bug
+  - id: 37-10
+    title: Inventory extraction failures — extractor crashed on 5 turns during playtest
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-11
+    title: action_rewrite and action_flags wiring — narrator emits these fields inconsistently (absent 99/~120 turns), prompt needs firmer contract
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
