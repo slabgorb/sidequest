@@ -1137,3 +1137,8 @@ completed_stories:
     title: Three.js + Rapier dice overlay — lazy-loaded React component
     points: 5
     completed: '2026-04-12'
+  - id: 34-6
+    epic: ''
+    title: Drag-and-throw interaction — gesture capture to ThrowParams
+    points: 3
+    completed: '2026-04-12'

@@ -62,9 +62,12 @@ stories:
     title: Drag-and-throw interaction — gesture capture to ThrowParams
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-12'
     repos: ui
     workflow: tdd
+    completed: '2026-04-12'
   - id: 34-7
     title: Deterministic physics replay — seed-based Rapier simulation on all clients
     points: 3
