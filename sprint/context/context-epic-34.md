@@ -226,6 +226,16 @@ overbuild for that now.
 10. **Lazy-loaded UI chunk.** The dice overlay bundle (Three.js + Rapier WASM, ~350 KB
     gzipped) must not load until a `DiceRequest` arrives. Zero bundle cost for the
     action screens. See ADR-075.
+11. **Seed must fit in JS safe integer range.** `DiceResultPayload.seed` is `u64` on the
+    wire but `number` in the UI (IEEE 754 double). Seeds above `Number.MAX_SAFE_INTEGER`
+    (~9×10^15) silently truncate via `JSON.parse`, producing a different seed on the
+    client than the server used. This breaks deterministic Rapier replay (34-7). The
+    server's seed generation (34-4 dispatch) must bound to `0..2^53-1`, or the wire
+    type must change to string + BigInt on the client. Found in 34-5 review.
+12. **UI RollOutcome needs Unknown variant.** The Rust enum has `#[serde(other)] Unknown`
+    for forward-compat. The TS `RollOutcome` union currently lacks it — a newer server
+    outcome would silently render as "Fail". Add `"Unknown"` to the union and a fallback
+    branch in DiceOverlay before shipping new outcome variants. Found in 34-5 review.
 
 ## Story Dependency Chain
 
