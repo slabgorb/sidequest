@@ -1127,3 +1127,8 @@ completed_stories:
     title: Dice resolution engine — d20+mod vs DC, RollOutcome, seed generation
     points: 3
     completed: '2026-04-12'
+  - id: 34-4
+    epic: ''
+    title: Dispatch integration — beat selection emits DiceRequest, awaits DiceThrow
+    points: 5
+    completed: '2026-04-12'
