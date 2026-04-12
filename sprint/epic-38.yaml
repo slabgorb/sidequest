@@ -18,7 +18,7 @@ stories:
     title: per_actor_state on EncounterActor — HashMap<String, Value> for per-pilot scene descriptors, serde round-trip tests, save/load preservation
     points: 2
     priority: p2
-    status: backlog
+    status: in_progress
     repos: api
     workflow: tdd
   - id: 38-3
