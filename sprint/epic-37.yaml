@@ -20,9 +20,10 @@ stories:
     title: Session-scoped image routing — discriminate renderer responses by session ID so players receive only their own generated images
     points: 2
     priority: p0
-    status: backlog
+    status: done
     repos: api,daemon
     workflow: trivial
+    completed: '2026-04-12'
     type: bug
   - id: 37-3
     title: Inventory extraction misses explicit pickup actions — two-pass extractor and game_patch both failed to register 'picks up X and pockets it' as item acquisition
