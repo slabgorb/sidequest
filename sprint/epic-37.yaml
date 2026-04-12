@@ -69,9 +69,10 @@ stories:
     title: World materialization fails for dust_and_lead — null history chapters in spaghetti_western world YAML
     points: 1
     priority: p1
-    status: backlog
+    status: done
     repos: content
     workflow: trivial
+    completed: '2026-04-12'
     type: bug
   - id: 37-9
     title: Dungeon room graph no_exit warnings — narrator moves players to rooms without exits in caverns_and_claudes, ~40 occurrences

@@ -1,0 +1,79 @@
+id: '38'
+type: epic
+title: Dogfight Subsystem — Sealed-Letter Fighter Combat via StructuredEncounter
+description: 'Extend StructuredEncounter with SealedLetterLookup resolution mode for simultaneous-commit fighter combat. Ace of Aces inspired mechanic: two pilots commit maneuvers secretly, cross-product lookup resolves outcome. Reuses TurnBarrier (Epic 13), unified narrator (ADR-067), and confrontation engine (ADR-033). See ADR-077.'
+priority: p2
+status: backlog
+repos: api,content
+stories:
+  - id: 38-1
+    title: ResolutionMode enum and resolution_mode field on ConfrontationDef — additive enum with BeatSelection default, zero runtime impact on existing confrontations
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 38-2
+    title: per_actor_state on EncounterActor — HashMap<String, Value> for per-pilot scene descriptors, serde round-trip tests, save/load preservation
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 38-3
+    title: TurnBarrier confrontation-scope investigation — verify barrier can run commit-reveal cycles at confrontation scope without breaking session-level turn accounting
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 38-4
+    title: Interaction table loader and _from file pattern — genre pack loader sources confrontation sub-files from adjacent YAML, unit tests on space_opera dogfight fixtures
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api,content
+    workflow: tdd
+  - id: 38-5
+    title: SealedLetterLookup resolution handler — new match arm in confrontation dispatch, gather actor commits via TurnBarrier, lookup interaction cell, apply per-actor deltas, OTEL spans
+    points: 5
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 38-6
+    title: Narrator cockpit-POV prompt extension — teach unified narrator to render per-actor views from per_actor_state, strictly forbid geometry not in descriptor, integration test with duel_01 scenario
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api,content
+    workflow: tdd
+  - id: 38-7
+    title: Hit severity column in interactions_mvp.yaml — extend all 16 cells with graze/clean/devastating classification, define hull damage increments per severity
+    points: 1
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+  - id: 38-8
+    title: Extend-and-return rule — author post-turn reset rule for no-hit turns with opening_fast closure, either content clause or engine rule marker
+    points: 1
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+  - id: 38-9
+    title: Paper playtest calibration — run duel_01.md 3-5 times, annotate each cell with calibrated/exciting/lopsided/confusing/dull tags, adjust deltas for any failing tags
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore
+  - id: 38-10
+    title: Tail-chase starting state — author duel_02.md with tail_chase geometry and a second 16-cell interaction table, proving the confrontation generalizes beyond merge
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial

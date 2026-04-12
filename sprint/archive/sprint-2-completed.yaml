@@ -1152,3 +1152,8 @@ completed_stories:
     title: Session-scoped image routing — discriminate renderer responses by session ID so players receive only their own generated images
     points: 2
     completed: '2026-04-12'
+  - id: 37-8
+    epic: ''
+    title: World materialization fails for dust_and_lead — null history chapters in spaghetti_western world YAML
+    points: 1
+    completed: '2026-04-12'
