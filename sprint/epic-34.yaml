@@ -1,109 +1,113 @@
+description: Player-facing 3D dice rolling integrated into sealed letter turn flow.
+  Server-authoritative resolution with deterministic Rapier physics replay across
+  multiplayer clients. Three.js overlay in UI, d20+mod vs DC, narrator tone shaped
+  by RollOutcome. See ADRs 074, 075 and sprint/planning/prd-dice-rolling.md.
 id: '34'
-type: epic
-title: 3D Dice Rolling System — MVP
-description: >-
-  Player-facing 3D dice rolling integrated into sealed letter turn flow. Server-authoritative
-  resolution with deterministic Rapier physics replay across multiplayer clients. Three.js overlay
-  in UI, d20+mod vs DC, narrator tone shaped by RollOutcome. See ADRs 074, 075 and
-  sprint/planning/prd-dice-rolling.md.
 priority: p1
-status: backlog
 repos: api,ui
+status: backlog
 stories:
-  - id: 34-1
-    title: 'Spike: Owlbear dice fork — validate 3D physics feel in browser'
-    points: 2
-    priority: p0
-    status: done
-    assigned_to: slabgorb@gmail.com
-    started: '2026-04-09'
-    repos: ui
-    workflow: trivial
-    completed: '2026-04-09'
-    type: chore
-    note: 'UI implementation merged in sidequest-ui PR #92 under historical branch name feat/33-1-spike-owlbear-dice-fork (renumbered to 34-1 in orchestrator after epic-33 collision with parallel work)'
-  - id: 34-2
-    title: DiceRequest/DiceThrow/DiceResult protocol types + serde
-    points: 3
-    priority: p0
-    status: done
-    assigned_to: keith.avery@1898andco.io
-    started: '2026-04-11'
-    repos: api
-    workflow: tdd
-    completed: '2026-04-11'
-  - id: 34-3
-    title: Dice resolution engine — d20+mod vs DC, RollOutcome, seed generation
-    points: 3
-    priority: p0
-    status: done
-    assigned_to: keith.avery@1898andco.io
-    started: '2026-04-12'
-    repos: api
-    workflow: tdd
-    completed: '2026-04-12'
-  - id: 34-4
-    title: Dispatch integration — beat selection emits DiceRequest, awaits DiceThrow
-    points: 5
-    priority: p1
-    status: backlog
-    repos: api
-    workflow: tdd
-  - id: 34-5
-    title: Three.js + Rapier dice overlay — lazy-loaded React component
-    points: 5
-    priority: p0
-    status: backlog
-    repos: ui
-    workflow: tdd
-  - id: 34-6
-    title: Drag-and-throw interaction — gesture capture to ThrowParams
-    points: 3
-    priority: p1
-    status: backlog
-    repos: ui
-    workflow: tdd
-  - id: 34-7
-    title: Deterministic physics replay — seed-based Rapier simulation on all clients
-    points: 3
-    priority: p1
-    status: backlog
-    repos: ui
-    workflow: tdd
-  - id: 34-8
-    title: Multiplayer dice broadcast — DiceRequest/DiceResult via SharedGameSession
-    points: 3
-    priority: p1
-    status: backlog
-    repos: api
-    workflow: tdd
-  - id: 34-9
-    title: Narrator outcome injection — RollOutcome shapes narration tone
-    points: 3
-    priority: p1
-    status: backlog
-    repos: api
-    workflow: tdd
-  - id: 34-10
-    title: Dice accessibility — aria-live, prefers-reduced-motion, keyboard throw
-    points: 2
-    priority: p1
-    status: backlog
-    repos: ui
-    workflow: tdd
-  - id: 34-11
-    title: OTEL dice spans — request_sent, throw_received, result_broadcast
-    points: 2
-    priority: p1
-    status: backlog
-    repos: api
-    workflow: tdd
-    type: chore
-  - id: 34-12
-    title: Playtest validation — end-to-end dice rolling in multiplayer session
-    points: 2
-    priority: p1
-    status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
+- assigned_to: slabgorb@gmail.com
+  completed: '2026-04-09'
+  id: 34-1
+  note: 'UI implementation merged in sidequest-ui PR #92 under historical branch name
+    feat/33-1-spike-owlbear-dice-fork (renumbered to 34-1 in orchestrator after epic-33
+    collision with parallel work)'
+  points: 2
+  priority: p0
+  repos: ui
+  started: '2026-04-09'
+  status: done
+  title: 'Spike: Owlbear dice fork — validate 3D physics feel in browser'
+  type: chore
+  workflow: trivial
+- assigned_to: keith.avery@1898andco.io
+  completed: '2026-04-11'
+  id: 34-2
+  points: 3
+  priority: p0
+  repos: api
+  started: '2026-04-11'
+  status: done
+  title: DiceRequest/DiceThrow/DiceResult protocol types + serde
+  workflow: tdd
+- assigned_to: keith.avery@1898andco.io
+  completed: '2026-04-12'
+  id: 34-3
+  points: 3
+  priority: p0
+  repos: api
+  started: '2026-04-12'
+  status: done
+  title: Dice resolution engine — d20+mod vs DC, RollOutcome, seed generation
+  workflow: tdd
+- assigned_to: keith.avery@1898andco.io
+  completed: '2026-04-12'
+  id: 34-4
+  points: 5
+  priority: p1
+  repos: api
+  started: '2026-04-12'
+  status: done
+  title: Dispatch integration — beat selection emits DiceRequest, awaits DiceThrow
+  workflow: tdd
+- id: 34-5
+  points: 5
+  priority: p0
+  repos: ui
+  status: backlog
+  title: Three.js + Rapier dice overlay — lazy-loaded React component
+  workflow: tdd
+- id: 34-6
+  points: 3
+  priority: p1
+  repos: ui
+  status: backlog
+  title: Drag-and-throw interaction — gesture capture to ThrowParams
+  workflow: tdd
+- id: 34-7
+  points: 3
+  priority: p1
+  repos: ui
+  status: backlog
+  title: Deterministic physics replay — seed-based Rapier simulation on all clients
+  workflow: tdd
+- id: 34-8
+  points: 3
+  priority: p1
+  repos: api
+  status: backlog
+  title: Multiplayer dice broadcast — DiceRequest/DiceResult via SharedGameSession
+  workflow: tdd
+- id: 34-9
+  points: 3
+  priority: p1
+  repos: api
+  status: backlog
+  title: Narrator outcome injection — RollOutcome shapes narration tone
+  workflow: tdd
+- id: 34-10
+  points: 2
+  priority: p1
+  repos: ui
+  status: backlog
+  title: Dice accessibility — aria-live, prefers-reduced-motion, keyboard throw
+  workflow: tdd
+- id: 34-11
+  points: 2
+  priority: p1
+  repos: api
+  status: backlog
+  title: OTEL dice spans — request_sent, throw_received, result_broadcast
+  type: chore
+  workflow: tdd
+- id: 34-12
+  points: 2
+  priority: p1
+  repos: orchestrator
+  status: backlog
+  title: Playtest validation — end-to-end dice rolling in multiplayer session
+  type: chore
+  workflow: trivial
+title: 3D Dice Rolling System — MVP
+type: epic
