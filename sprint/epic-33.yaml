@@ -28,9 +28,12 @@ stories:
       BackgroundCanvas.tsx currently renders a generic radial gradient. Add archetype-specific backgrounds: star field (space_opera), cracked earth (road_warrior), rain on glass (neon_dystopia), parchment texture (low_fantasy), etc. CSS only, no images.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: ui
     workflow: trivial
+    completed: '2026-04-12'
+    review_findings: 'CRITICAL: inline style blocks archetype textures (specificity 1,0,0,0 > 0,1,1,0). HIGH: --surface var missing fallbacks for 3 genre packs. MEDIUM: AC5 lifecycle test removed without replacement.'
+    review_verdict: approved
   - id: 33-3
     title: Preset layout tuning — adjust grid coordinates with real component sizes during playtest
     description: |

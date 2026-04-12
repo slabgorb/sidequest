@@ -1117,3 +1117,8 @@ completed_stories:
     title: DiceRequest/DiceThrow/DiceResult protocol types + serde
     points: 3
     completed: '2026-04-11'
+  - id: 33-2
+    epic: ''
+    title: Background canvas per-archetype textures — genre-themed surface visible through grid gutters
+    points: 3
+    completed: '2026-04-12'
