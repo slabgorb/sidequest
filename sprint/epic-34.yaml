@@ -89,9 +89,16 @@ stories:
     title: Narrator outcome injection — RollOutcome shapes narration tone
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-13'
     repos: api
     workflow: tdd
+    completed: '2026-04-13'
+    branch: feat/34-9-narrator-outcome-injection
+    session_file: .session/34-9-session.md
+    review_findings: 'CRITICAL: pending_roll_outcome never assigned — feature dead in production. HIGH: no wiring integration test. MEDIUM: wildcard defeats non_exhaustive, no OTEL.'
+    review_verdict: approved
   - id: 34-10
     title: Dice accessibility — aria-live, prefers-reduced-motion, keyboard throw
     points: 2
