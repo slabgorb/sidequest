@@ -27,9 +27,13 @@ stories:
     title: TurnBarrier confrontation-scope investigation — verify barrier can run commit-reveal cycles at confrontation scope without breaking session-level turn accounting
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: api
-    workflow: tdd
+    workflow: trivial
+    completed: '2026-04-13'
+    branch: feat/38-3-turnbarrier-confrontation-scope
+    assignee: keith
+    review_verdict: approved
   - id: 38-4
     title: Interaction table loader and _from file pattern — genre pack loader sources confrontation sub-files from adjacent YAML, unit tests on space_opera dogfight fixtures
     points: 3
