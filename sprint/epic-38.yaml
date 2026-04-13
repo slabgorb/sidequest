@@ -39,7 +39,9 @@ stories:
     title: Interaction table loader and _from file pattern — genre pack loader sources confrontation sub-files from adjacent YAML, unit tests on space_opera dogfight fixtures
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-13'
     repos: api,content
     workflow: tdd
   - id: 38-5
