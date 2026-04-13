@@ -1196,3 +1196,8 @@ completed_stories:
     title: TacticalEntity model + token rendering — position, size, faction, SVG tokens on grid
     points: 3
     completed: '2026-04-13'
+  - id: 37-3
+    epic: ''
+    title: Inventory extraction misses explicit pickup actions — two-pass extractor and game_patch both failed to register 'picks up X and pockets it' as item acquisition
+    points: 2
+    completed: '2026-04-13'
