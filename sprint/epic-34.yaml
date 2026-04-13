@@ -5,6 +5,7 @@ description: Player-facing 3D dice rolling integrated into sealed letter turn fl
 priority: p1
 status: backlog
 repos: api,ui
+jira: MSSCI-1034
 stories:
   - id: 34-1
     title: 'Spike: Owlbear dice fork — validate 3D physics feel in browser'
@@ -124,7 +125,11 @@ stories:
     title: Playtest validation — end-to-end dice rolling in multiplayer session
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-13'
     repos: orchestrator
     workflow: trivial
     type: chore
+    branch: fix/34-12-dice-playtest-validation
+    session_file: sprint/34-12-session.md

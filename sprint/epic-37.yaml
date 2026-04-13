@@ -103,3 +103,59 @@ stories:
     repos: api
     workflow: tdd
     type: bug
+  - id: 37-12
+    title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
+    points: 3
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-13
+    title: Encounter creation gate silently drops new confrontation type when an unresolved encounter is active — dispatch/mod.rs:1768-1814 only creates when is_none or resolved, no else-branch, no OTEL warning, no transition path (silent fallback violation)
+    points: 2
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-14
+    title: Beat dispatch silently no-ops when beat_id is not in active encounter beat library — narrator emitted 2-3 beat_selections per turn for 20 minutes, zero encounter.beat_applied events fired, no OTEL span marks the drop (lie-detector gap)
+    points: 2
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-15
+    title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-16
+    title: session.reconnect mints a new player UUID — rolling_player identity changed mid-session across a reconnect (cfa15925… → 234acfc0…) in single-player game; reconnect should restore prior player identity, not generate a fresh one
+    points: 2
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-17
+    title: Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another; canonicalize stat naming on the request path before it hits any case-sensitive lookup
+    points: 1
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: trivial
+    type: bug
+  - id: 37-18
+    title: 'pending_dice_request not persisted in game_state snapshot — dice requests live in in-memory session state only, any server restart mid-roll orphans the request (observed: 3 unresolved requests during 2026-04-13 spaghetti_western playtest, all lost at save); snapshot must include outstanding dice request so client can re-prompt on reconnect'
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: bug
