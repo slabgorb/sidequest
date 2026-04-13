@@ -45,10 +45,11 @@ stories:
     title: Daemon embed endpoint broken — /embed returns Unknown error, RAG semantic search degraded entire playtest session
     points: 2
     priority: p0
-    status: backlog
+    status: in_progress
     repos: daemon,api
     workflow: tdd
     type: bug
+    branch: feat/37-5-daemon-embed-endpoint
   - id: 37-6
     title: Spaghetti western LoRA missing — pack.yaml references spaghetti_western_style.safetensors that does not exist, 112 errors per session
     points: 1
