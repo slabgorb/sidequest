@@ -1191,3 +1191,8 @@ completed_stories:
     title: Deterministic physics replay — seed-based Rapier simulation on all clients
     points: 3
     completed: '2026-04-13'
+  - id: 29-10
+    epic: ''
+    title: TacticalEntity model + token rendering — position, size, faction, SVG tokens on grid
+    points: 3
+    completed: '2026-04-13'

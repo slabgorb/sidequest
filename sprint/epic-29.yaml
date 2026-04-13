@@ -113,13 +113,15 @@ stories:
     title: TacticalEntity model + token rendering — position, size, faction, SVG tokens on grid
     points: 3
     priority: p0
-    status: in_progress
-    repos: api,ui
-    workflow: tdd
+    status: done
     assigned_to: keithavery
     started: '2026-04-13'
+    repos: api,ui
+    workflow: tdd
+    completed: '2026-04-13'
     branch: feat/29-10-tactical-entity-model
     session_file: .session/29-10-session.md
+    review_verdict: approved
   - id: 29-11
     title: Narrator tactical_place tool — Claude places entities on grid via tool call, compact grid summary in prompt
     points: 3
