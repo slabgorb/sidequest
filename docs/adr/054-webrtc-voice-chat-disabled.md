@@ -31,30 +31,28 @@ The fix requires acoustic echo cancellation keyed on TTS playback state, hardwar
 routing, or input gating synchronized with TTS activity — none of which are trivially available
 in a browser WebGPU context.
 
-## Decision
-Voice chat and local transcription are disabled via a compile-time constant rather than removed:
+## Decision (original)
+Voice chat and local transcription were originally disabled via a compile-time
+constant rather than removed, on the theory that the WebRTC infrastructure was
+correct and should be preserved against future re-enablement once echo
+isolation was solved.
 
-```typescript
-// sidequest-ui/src/webrtc/PeerMesh.ts
-export const VOICE_DISABLED = true;
-```
+## What actually shipped (2026-04)
+TTS (Kokoro) was removed from the system in April 2026, and with it went the
+original motivation for preserving a disabled voice-chat path against a
+future TTS-aware AEC solution. The WebRTC voice chat files were then deleted
+outright:
 
-```typescript
-// sidequest-ui/src/hooks/useWhisper.ts
-export function useWhisper(): TranscriptionResult {
-  // Disabled: echo feedback loop with TTS output.
-  // See ADR-054.
-  return { transcript: '', isListening: false };
-}
-```
+- `sidequest-ui/src/webrtc/` — entire directory removed
+- `PeerMesh.ts` — removed
+- `useVoiceChat.ts` — removed
+- `LocalTranscriber.ts` — removed
+- `useWhisper.ts` — removed
+- `VOICE_DISABLED` constant — removed
 
-The full implementation is preserved:
-- `PeerMesh.ts` — WebRTC mesh topology with Google STUN for ICE negotiation
-- `useVoiceChat.ts` — React hook for peer connection lifecycle
-- `LocalTranscriber.ts` — Whisper STT via WebGPU/WASM
-- `useWhisper.ts` — returns empty string stub to prevent accidental activation
-
-`VOICE_DISABLED = true` gates the UI controls that would expose these features to players.
+If voice chat returns, it should start from a fresh ADR built on top of
+whatever the post-TTS audio pipeline looks like. The original echo-feedback
+analysis below is retained as history only.
 
 ## Alternatives Considered
 

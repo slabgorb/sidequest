@@ -43,7 +43,7 @@ built, where it lives, and what to NOT recreate.
 
 <system name="trope-engine" status="complete" crate="sidequest-game">
   <files>trope.rs (225 LOC)</files>
-  <related>engagement.rs, trope_alignment.rs (in sidequest-agents)</related>
+  <related>engagement.rs; troper.rs in sidequest-agents (trope beat injection — ADR-067 absorbed the former trope_alignment.rs into the narrator path)</related>
   <entry-point>TropeEngine::tick() runs every turn at lib.rs:~2495</entry-point>
   <wired>Yes — passive progression + keyword modifiers + escalation beats</wired>
   <do-not>Do NOT confuse TropeEngine (mechanical progression, COMPLETE) with the Troper agent (LLM-driven trope activation, STUB). The engine ticks automatically; the agent would inject narrative beats.</do-not>

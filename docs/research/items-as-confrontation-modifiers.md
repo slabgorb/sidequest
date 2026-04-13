@@ -17,7 +17,7 @@ This is the non-magic equivalent of spell slots for genres without magic systems
 | neon_dystopia | Blackmail File | Unlocks a hidden `leverage` beat in negotiation with +4 delta |
 | road_warrior | Nitro Canister | Not social — but same pattern for chase confrontations (boost a beat) |
 | space_opera | Diplomatic Credentials | +1 metric_delta on `persuade`, removes risk on `threaten` |
-| low_fantasy | Poisoned Wine | Unlocks `poison_chalice` confrontation type (future 16-8) |
+| low_fantasy | Poisoned Wine | Unlocks `poison_chalice` confrontation type (story 16-8 — shipped 2026-04-05) |
 
 ## Why This Matters
 
@@ -79,5 +79,7 @@ confrontation_modifiers:
   an optional item modifier parameter.
 - **Genre packs** — Starting equipment in `char_creation.yaml` could include
   class-specific confrontation items (Card Shark gets marked deck at creation).
-- **16-8 (genre-specific types)** — Some types (poison_chalice) are inherently
-  item-dependent. This system would make them mechanical, not just narrative.
+- **16-8 (genre-specific types)** — Shipped 2026-04-05. Some types
+  (`poison_chalice`) are inherently item-dependent. The Confrontation Engine
+  now supports these beats; the item-modifier layer in this research doc would
+  sit on top of that work as a follow-up.
