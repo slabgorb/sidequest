@@ -1201,3 +1201,8 @@ completed_stories:
     title: Inventory extraction misses explicit pickup actions — two-pass extractor and game_patch both failed to register 'picks up X and pockets it' as item acquisition
     points: 2
     completed: '2026-04-13'
+  - id: 29-11
+    epic: ''
+    title: Narrator tactical_place tool — Claude places entities on grid via tool call, compact grid summary in prompt
+    points: 3
+    completed: '2026-04-13'
