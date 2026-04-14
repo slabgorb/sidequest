@@ -1226,3 +1226,8 @@ completed_stories:
     title: Playtest validation — end-to-end dice rolling in multiplayer session
     points: 2
     completed: '2026-04-14'
+  - id: 37-13
+    epic: ''
+    title: Encounter creation gate silently drops new confrontation type when an unresolved encounter is active — dispatch/mod.rs:1768-1814 only creates when is_none or resolved, no else-branch, no OTEL warning, no transition path (silent fallback violation)
+    points: 2
+    completed: '2026-04-14'

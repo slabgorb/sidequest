@@ -115,10 +115,14 @@ stories:
     title: Encounter creation gate silently drops new confrontation type when an unresolved encounter is active — dispatch/mod.rs:1768-1814 only creates when is_none or resolved, no else-branch, no OTEL warning, no transition path (silent fallback violation)
     points: 2
     priority: p0
-    status: backlog
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-14'
     type: bug
+    branch: feat/37-13-encounter-creation-gate
+    review_findings: '2 HIGH: (1) .unwrap_or masks else-branch invariant, violates Rule #1 and #14; (2) same-type re-emission causes GM panel alert fatigue, needs sub-branch. Plus 3 MEDIUM: duplicate test logic, deferred comment without anchor, missing metric.name in OTEL.'
+    review_verdict: approved
   - id: 37-14
     title: Beat dispatch silently no-ops when beat_id is not in active encounter beat library — narrator emitted 2-3 beat_selections per turn for 20 minutes, zero encounter.beat_applied events fired, no OTEL span marks the drop (lie-detector gap)
     points: 2
