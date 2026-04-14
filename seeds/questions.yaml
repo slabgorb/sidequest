@@ -1,0 +1,55 @@
+# Question-as-seed catalog for sq-world-builder surprise mode.
+#
+# A question seed is a single interrogative sentence the downstream
+# pipeline is FORBIDDEN from resolving. Every file generated must
+# DEEPEN the question, not answer it. The world ships with the
+# question still load-bearing; the answer emerges in play, not
+# generation.
+#
+# Rules for adding questions:
+#   - Must end in "?"
+#   - Must be a single sentence
+#   - Must be genuinely open (if the answer is "obviously X", it's not a question — it's a statement in disguise)
+#   - Avoid yes/no questions unless the mechanical tension comes from the ambiguity itself
+#   - Questions with named historical anchors are better than abstract ones
+
+questions:
+  - id: 1
+    q: "What if the gods were right but the prophets were wrong?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 2
+    q: "What does a society look like when the only technology that still works is pre-industrial?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 3
+    q: "Who inherits the debt when the country that owes it ceases to exist?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 4
+    q: "What if the heretics were kinder than the orthodox?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 5
+    q: "How do you run a crew when half of them remember a war the other half never heard of?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 6
+    q: "What is the ritual for something that happens exactly once?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 7
+    q: "What does justice look like for a crime committed against a people who no longer exist?"
+    added: 2026-04-14
+    consumed: null
+
+  - id: 8
+    q: "When the map is wrong, is it the map's fault?"
+    added: 2026-04-14
+    consumed: null

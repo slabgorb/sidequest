@@ -1,0 +1,95 @@
+# Untried syncretic seed pairs for sq-world-builder surprise mode.
+#
+# Each row is a collision-pair seed — two domains that have never been
+# synthesized in a SideQuest world. The constraint forces the system to
+# operate at finer granularity than any single-domain seed would produce.
+#
+# Workflow:
+#   1. Keith adds pairs over time as he reads / sees / remembers things.
+#   2. world-builder surprise mode picks a row (Keith's choice, d20, or
+#      "surprise me" heuristic).
+#   3. On consumption, the `consumed` field gets set to the date and a
+#      brief note on which world was fueled.
+#   4. Consumed rows stay in the file (never deleted — they're a record
+#      of what has been tried).
+#
+# Rules for adding pairs:
+#   - Both halves must be at instance-level granularity (NOT "medieval
+#     trade" — "the 1280s Hanseatic herring trade with the Bergen kontor").
+#   - The two halves should come from genuinely different domains (not
+#     two flavors of the same thing).
+#   - If you can immediately imagine the output, the pair is too safe.
+#     Surprise requires some discomfort.
+
+pairs:
+  - id: 1
+    pair: "Byzantine tax law (specifically the 11th century pronoia system) + deep-sea anglerfish reproductive biology"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 2
+    pair: "1920s Shanghai Green Gang compradore politics + Tana Toraja funerary architecture"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 3
+    pair: "Candomblé Ketu terreiro hierarchy + Icelandic medieval saga-era law (Grágás)"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 4
+    pair: "1887 Mysore succession dispute + Cuban son montuno rhythmic structure"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 5
+    pair: "Vijayanagara post-Talikota (1565) diaspora nayaka system + Sami joik vocal tradition"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 6
+    pair: "Albigensian Crusade (1209 Béziers) perfecti heresy + the Manila Galleon silver-for-silk trade route 1565-1815"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 7
+    pair: "Wat Tyler 1381 poll tax rising under John of Gaunt's regency + bioluminescent dinoflagellate bloom dynamics"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 8
+    pair: "Mormon succession after 1844 Carthage + 17th-century Japanese Fachwerk-analog joinery (sukiya-zukuri tea-house construction)"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 9
+    pair: "Ilê Axé Opô Afonjá terreiro initiation in Salvador da Bahia + Mughal jagirdar tax-farming under Aurangzeb"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 10
+    pair: "Ottoman millet system for non-Muslim communities + the 1876 El Niño drought crop failure in the Madras Presidency"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 11
+    pair: "Hanseatic League Bergen kontor 1280s herring trade + Yoruba Ifá divination sixteen principal odu"
+    added: 2026-04-14
+    consumed: null
+    note: ""
+
+  - id: 12
+    pair: "Ford Pinto memo-era corporate risk accounting (1971-1978) + Lafcadio Hearn's 1890s ghost story collection Kwaidan"
+    added: 2026-04-14
+    consumed: null
+    note: ""
