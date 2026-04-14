@@ -17,6 +17,34 @@ wipFile: '{wip_file}'
 
 **Progress: Step 1 of 8**
 
+## PREAMBLE — Drift Check (ALWAYS RUN FIRST)
+
+Before anything else, verify the content specialists at `/Users/keithavery/Projects/oq-1/.claude/agents/` have not drifted from the canonical copies at `/Users/keithavery/Projects/oq-1/sidequest-content/.claude/agents/`. Claude Code discovers subagents only from the project root, so OQ-1 needs a local copy — but the source of truth lives in sidequest-content. Drift means world-builder is invoking a stale specialist.
+
+Run this bash preamble. If it fails, HALT and ask Keith to reconcile before proceeding:
+
+```bash
+DRIFT=0
+for agent in art-director music-director writer conlang scenario-designer cliche-judge; do
+    OQ1="/Users/keithavery/Projects/oq-1/.claude/agents/$agent.md"
+    SQC="/Users/keithavery/Projects/oq-1/sidequest-content/.claude/agents/$agent.md"
+    if [ ! -f "$OQ1" ]; then
+        echo "ERROR: $agent.md missing from OQ-1 (.claude/agents/)"
+        DRIFT=1
+    elif [ ! -f "$SQC" ]; then
+        echo "ERROR: $agent.md missing from sidequest-content (.claude/agents/)"
+        DRIFT=1
+    elif ! diff -q "$OQ1" "$SQC" >/dev/null 2>&1; then
+        echo "DRIFT: $agent.md differs between OQ-1 and sidequest-content. Reconcile before proceeding."
+        DRIFT=1
+    fi
+done
+[ $DRIFT -eq 0 ] && echo "OK: all specialist files in sync."
+exit $DRIFT
+```
+
+**Fail loudly. Never silently overwrite either side.** Reconciliation is a human decision about which version is authoritative. If the check passes, continue to SEQUENCE.
+
 ## SEQUENCE
 
 ### 0. Check for Work in Progress
@@ -48,6 +76,11 @@ Ask the user which mode:
 4. **DM Prep** — Between-session tuning (NPCs, regions, tropes, audio)
 5. **Playtest & Iterate** — Run playtest, interpret results, fix content
 
+Also ask whether **Surprise Mode** is on for this session:
+
+- **Surprise Mode OFF (default)** — Standard stepped workflow with human approval gates at steps 2, 3, 4, 5
+- **Surprise Mode ON** — Gates skipped. Research runs as a three-lens parallel fan-out. Design brief auto-generates. Generation writes to the dry-run directory first. The only human contact points are: (a) this mode selection, (b) step 2 seed input, (c) fact-conflict escalations from step 6 (if any), (d) final PR review. The deterministic safety rails (coherence assertion, dry-run dir, `sidequest-validate`, `cliche-judge`) still run. Surprise Mode is compatible with New Genre, New World, and DM Prep modes only.
+
 **HALT and wait for selection.**
 
 ### 2. Identify Target
@@ -73,6 +106,7 @@ Create `{wipFile}`:
 ```yaml
 ---
 mode: '{mode}'
+surprise: {true | false}    # Surprise Mode flag from step 1 selection
 genre: '{genre}'
 world: '{world}'
 created: '{date}'
@@ -81,6 +115,8 @@ stepsCompleted: [1]
 concept: '{brief concept description}'
 ---
 ```
+
+When `surprise: true`, later steps skip their HALT approval gates but still run all deterministic safety checks. World-builder reads the `surprise` field at the start of every step and routes accordingly.
 
 ### 5. Mode-Based Routing
 
