@@ -1231,3 +1231,8 @@ completed_stories:
     title: Encounter creation gate silently drops new confrontation type when an unresolved encounter is active — dispatch/mod.rs:1768-1814 only creates when is_none or resolved, no else-branch, no OTEL warning, no transition path (silent fallback violation)
     points: 2
     completed: '2026-04-14'
+  - id: 37-12
+    epic: ''
+    title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
+    points: 3
+    completed: '2026-04-14'

@@ -107,9 +107,12 @@ stories:
     title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-14'
     repos: api
     workflow: tdd
+    completed: '2026-04-14'
     type: bug
   - id: 37-13
     title: Encounter creation gate silently drops new confrontation type when an unresolved encounter is active — dispatch/mod.rs:1768-1814 only creates when is_none or resolved, no else-branch, no OTEL warning, no transition path (silent fallback violation)
