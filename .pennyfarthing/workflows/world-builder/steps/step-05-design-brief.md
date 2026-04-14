@@ -53,11 +53,15 @@ f) **Aesthetic Direction**
    - Music mood mapping
    - Font suggestion if new genre
 
-### 2. Present Brief
+### 2. Write the brief to a dedicated file
+
+Write the complete brief to `.session/world-builder-wip/design-brief.md`. It lives there because every specialist invoked in step 6 will read it as shared context — passing it inline to five parallel Task calls would balloon token usage. The specialists get the path; they read it themselves.
+
+### 3. Present / iterate (mode-dependent)
+
+**IF `surprise: false` in the WIP frontmatter:**
 
 Show the complete brief to the user. Format as a structured document, not a wall of text.
-
-### 3. Iterate
 
 **HALT and wait for feedback.**
 
@@ -69,7 +73,20 @@ Common adjustments:
 
 Revise and re-present until user says "go."
 
+**IF `surprise: true`:**
+
+Do not halt. Do not present. The brief is already written to the brief file; step 6 will read it directly. The deterministic safety rails (coherence assertion in step 3, dry-run dir in step 6, fact-diff in step 6, validate + cliche-judge in step 7) are what keeps surprise mode safe — not this gate. Proceed to step 6.
+
 ### 4. Update WIP
 
-Append approved brief to `{wipFile}`.
+Append a brief-location pointer to `{wipFile}` (not the full brief — that lives in design-brief.md):
+
+```markdown
+## Design Brief
+
+Location: `.session/world-builder-wip/design-brief.md`
+Mode: {surprise ? "surprise — auto-generated, not approval-gated" : "manual — Keith-approved"}
+Specialists will read this file directly in step 6.
+```
+
 Update frontmatter: `stepsCompleted: [1, 2, 3, 4, 5]`

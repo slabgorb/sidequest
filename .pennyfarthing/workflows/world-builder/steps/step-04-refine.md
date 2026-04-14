@@ -18,18 +18,29 @@ wipFile: '{wip_file}'
 
 ## CONTEXT
 
-Research is done. We know the history. Now we decide what this world actually IS — which parts of history we keep faithful, which we twist, and which we throw out entirely.
+Research is done. Three contrarian lenses have written their reports and world-builder has assembled a **collision artifact** listing where the lenses contradict each other. Now we decide what this world actually IS — which parts of history we keep faithful, which we twist, and which we throw out entirely.
+
+**The collision is the point.** A contradiction between two lenses is not a bug to resolve — it is creative fuel. When the political lens says "the kingdom fell in 1240" and the spiritual lens says "the temple still receives offerings from that dynasty" — that tension IS the world. The refinement step decides which side of each contradiction to canonize and which to keep unresolved as a mystery the table plays to discover.
 
 ## HOW TO REFINE
 
-### 1. Present Research Highlights
+### 1. Read the collision artifact first
 
-Don't dump the full research. Present the most interesting findings as creative prompts:
+Read `.session/world-builder-wip/collision.md` BEFORE the per-lens reports. The collision is the primary input for refinement; the per-lens reports are reference material for when a contradiction needs to be understood in depth.
 
-- "The real history had three competing merchant guilds — that maps perfectly to factions"
-- "There was a cultural practice of trial by ordeal — that could be a confrontation type"
-- "The naming patterns are {X} — here's how they'd sound in the world"
-- "This historical figure is basically a ready-made antagonist archetype"
+Then read the per-lens reports at:
+- `.session/world-builder-wip/research-political.md`
+- `.session/world-builder-wip/research-material.md`
+- `.session/world-builder-wip/research-spiritual.md`
+
+### 2. Present the collision, not the research
+
+Don't dump the full per-lens reports. Present the contradictions and shared anchors as creative prompts:
+
+- "The three lenses agree on {shared anchor}, but political says X and spiritual says Y — which side does the world take, or does it keep the mystery?"
+- "The material lens found {specific craft tradition} that nobody else mentioned — is this a faction-level detail or a world-level fact?"
+- "All three lenses independently surfaced {named figure} — this is load-bearing, they're a canon anchor, protect them."
+- "Political lens flagged a dependency it couldn't resolve ({thing}) — does the spiritual lens' answer work as canon, or do we invent something in that gap?"
 
 ### 2. Brainstorm Adaptation
 
@@ -90,7 +101,14 @@ Update riff notes with refinement decisions:
 ## EXIT
 
 1. Read back the locked direction
-2. Ask: "This is what goes into the design brief. Anything to change?"
-3. Update WIP: append refinement notes, set `stepsCompleted: [1, 2, 3, 4]`
+2. Update WIP: append refinement notes, set `stepsCompleted: [1, 2, 3, 4]`
+
+**IF `surprise: false` in the WIP frontmatter:**
+
+Ask: "This is what goes into the design brief. Anything to change?"
 
 **HALT until user confirms.**
+
+**IF `surprise: true`:**
+
+Do not halt. Proceed directly to step 5 design brief. The collision has already been read, the direction is locked by the coordinator's own synthesis of the contradictions. Trust the rails.
