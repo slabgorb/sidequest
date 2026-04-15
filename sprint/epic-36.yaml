@@ -8,11 +8,13 @@ repos: api
 stories:
   - id: 36-1
     title: Fix TurnBarrier second-turn advancement bug (barrier_story_8_2 multiple_turns_timeout_then_normal)
+    description: Fixed by commit ab1242c (barrier deadlock fix). Test multiple_turns_timeout_then_normal passes (21/21). Closed via audit 2026-04-15.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-15'
     type: bug
   - id: 36-2
     title: Refactor dispatch functions with too many arguments into context structs
@@ -24,17 +26,21 @@ stories:
     type: refactor
   - id: 36-3
     title: 'Decide Session actor fate: implement or delete server_story_2_2_tests.rs'
+    description: Session actor is implemented and live — session.rs FSM wired at dispatch/connect.rs:73 (pre-develop commit 5d12361). server_story_2_2_tests.rs was never a real stub. Closed via audit 2026-04-15.
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: api
     workflow: trivial
+    completed: '2026-04-15'
     type: chore
   - id: 36-4
     title: Wire TroperAgent or remove from Orchestrator
+    description: TroperAgent is wired. Post-ADR-067 audit (0d36441) kept it as one of 5 real agents. Production consumer at dispatch/mod.rs:2129. Closed via audit 2026-04-15.
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-15'
     type: refactor
