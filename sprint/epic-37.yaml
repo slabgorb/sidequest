@@ -56,11 +56,13 @@ stories:
     branch: feat/37-5-daemon-embed-endpoint
   - id: 37-6
     title: Spaghetti western LoRA missing — pack.yaml references spaghetti_western_style.safetensors that does not exist, 112 errors per session
+    description: 'Errors silenced by fallback commits 0d26260 + 313f262 — when LoRA file is missing, render path reverts to positive_suffix full-art description. 112 errors/session eliminated. NOTE: this is a silent-fallback (CLAUDE.md violation); a follow-up story should actually ship spaghetti_western_style.safetensors weights under Epic 32. Closed via audit 2026-04-15.'
     points: 1
     priority: p1
-    status: backlog
+    status: done
     repos: content
     workflow: trivial
+    completed: '2026-04-15'
     type: bug
   - id: 37-7
     title: Chargen back button not wired — UI sends CHARACTER_CREATION action:back but server payload schema does not accept it
@@ -81,11 +83,13 @@ stories:
     type: bug
   - id: 37-9
     title: Dungeon room graph no_exit warnings — narrator moves players to rooms without exits in caverns_and_claudes, ~40 occurrences
+    description: Fixed by e5d44d4 (room graph / narrator location contract unification) + a469f35 (jaquayed layout validation). Room IDs injected into narrator prompt; stay-in-room on unresolved IDs; layout cycle detection in validate CLI. Closed via audit 2026-04-15.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: api,content
     workflow: tdd
+    completed: '2026-04-15'
     type: bug
   - id: 37-10
     title: Inventory extraction failures — extractor crashed on 5 turns during playtest
@@ -129,11 +133,13 @@ stories:
     review_verdict: approved
   - id: 37-14
     title: Beat dispatch silently no-ops when beat_id is not in active encounter beat library — narrator emitted 2-3 beat_selections per turn for 20 minutes, zero encounter.beat_applied events fired, no OTEL span marks the drop (lie-detector gap)
+    description: Fixed by 610f479. Beat dispatch now emits encounter.beat_id.unknown OTEL event with ValidationWarning severity when beat_id is not in active confrontation library (dispatch/beat.rs:42-66). Also emits encounter.escalation_failed. No more silent drops. Closed via audit 2026-04-15.
     points: 2
     priority: p0
-    status: backlog
+    status: done
     repos: api
     workflow: tdd
+    completed: '2026-04-15'
     type: bug
   - id: 37-15
     title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
@@ -145,14 +151,16 @@ stories:
     type: bug
   - id: 37-16
     title: session.reconnect mints a new player UUID — rolling_player identity changed mid-session across a reconnect (cfa15925… → 234acfc0…) in single-player game; reconnect should restore prior player identity, not generate a fresh one
+    description: Closed as false alarm 2026-04-15. Player identity is keyed by player_name in SQLite, which is stable across reconnect. The rolling_player UUID in logs was a per-connection session ID, not a persistent player identifier. Audit confirmed no downstream consumer relies on UUID stability. Barrier state reconnect fixes (5cab02a, 9ee06f8) already handle the real reconnect concerns.
     points: 2
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: tdd
     type: bug
   - id: 37-17
     title: Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another; canonicalize stat naming on the request path before it hits any case-sensitive lookup
+    description: 'Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another. FIX SCOPE (rescoped 2026-04-15): (1) introduce explicit Stat enum in sidequest-protocol with serde case-insensitive deserialization and canonical serialization, (2) update narrator prompt contract to declare the enum variants explicitly so the model emits canonical forms at the source, (3) DiceRequestPayload.stat becomes Stat enum, not String. This fixes the root cause (narrator prompt ambiguity) and provides type-level enforcement — no dispatch-boundary normalization needed.'
     points: 1
     priority: p2
     status: backlog
