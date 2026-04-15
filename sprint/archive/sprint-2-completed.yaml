@@ -1241,3 +1241,8 @@ completed_stories:
     title: Gallery image metadata — turn badge + scene legend per image
     points: 8
     completed: '2026-04-15'
+  - id: 33-18
+    epic: ''
+    title: Scrapbook payload — bundle image + world_facts + NPCs + excerpt into single WS message
+    points: 3
+    completed: '2026-04-15'

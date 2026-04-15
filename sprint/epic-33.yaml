@@ -265,12 +265,11 @@ stories:
     description: The Gallery widget needs turn attribution, world facts, NPC presence, narration excerpts, and scene classification per image. All of this data exists server-side but arrives via separate streams — images via GalleryImage message, world facts via WorldFact events, NPCs via npc_registry, narration via NarrationComplete. This story creates a new ScrapbookEntry WebSocket message type that bundles all of these into a single payload keyed by turn_id. Server assembles the entry after narration completes (when world_facts and npc_registry for that turn are settled). See render_integration.rs for image tagging, ADR-076 for world_facts broadcast, and npc_registry for NPC data. Depended on by 33-17.
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-15'
     repos: sidequest-api
     workflow: tdd
-    branch: feat/33-18-scrapbook-payload
     acceptance_criteria:
       - 'New WS message type: ScrapbookEntry { turn_id, scene_title, scene_type, location, image_url, narrative_excerpt, world_facts: Vec<String>, npcs_present: Vec<NpcRef { name, role, disposition } > }'
       - Server emits ScrapbookEntry after NarrationComplete for that turn — not before (world_facts must be settled)
@@ -280,3 +279,21 @@ stories:
       - 'world_facts: all world_facts broadcast during this turn, as plain strings'
       - 'npcs_present: all NPCs appearing in npc_registry updates during this turn'
       - Protocol type added to sidequest-protocol crate, server emission in sidequest-server, client handler in Redux store
+    completed: '2026-04-15'
+    branch: feat/33-18-scrapbook-payload
+  - id: 33-19
+    title: Lobby genre metadata — player count + blurb in ConnectScreen
+    description: 'Add player-count recommendation and lobby blurb to every genre pack and surface them in the ConnectScreen lobby. GM has already authored lobby_blurb and recommended_players {min,max,sweet_spot} fields in all 11 sidequest-content/genre_packs/*/pack.yaml files. This story wires those fields through the stack: Rust PackMeta → GenreResponse → /api/genres → TypeScript GenreMeta → ConnectScreen OptionList hint/annotation slots. The OptionList component already exposes unused hint and annotation fields — no new UI components needed. Cosmetic UI only, no OTEL required per CLAUDE.md exclusion.'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: api,ui,content
+    workflow: tdd
+    acceptance_criteria:
+      - 'PackMeta struct in sidequest-api/crates/sidequest-genre/src/models/pack.rs deserializes lobby_blurb (Option<String>) and recommended_players (Option<RecommendedPlayers{min,max,sweet_spot: u8}>) from pack.yaml without error for all 11 genre packs'
+      - GenreResponse in sidequest-server/src/lib.rs exposes lobby_blurb and recommended_players; /api/genres returns them in the JSON payload (verify with curl + example)
+      - GenreMeta TypeScript type in sidequest-ui/src/types/genres.ts mirrors the Rust response shape exactly
+      - ConnectScreen renders lobby_blurb in OptionList hint slot and renders recommended_players as annotation (format coordinated with Alex Kamal — e.g., 'Best with 3 · 1–4 players')
+      - Wiring integration test proves ConnectScreen → OptionList → real GenreMeta payload (not mocked) is reachable from production code paths; new RecommendedPlayers struct has non-test consumer
+      - 'Visual verification in browser: all 11 genres show blurb and player-count in the lobby; no layout regression on existing connect flow'
+      - 'No scope creep: do not redesign OptionList, add filtering/sorting by player count, or restructure the lobby layout'
