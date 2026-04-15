@@ -18,7 +18,7 @@ Scripts for workflow mechanics, phase transitions, and quality gates.
 ## Usage
 
 ```bash
-pf sprint story finish MSSCI-12345
+pf sprint story finish <PROJECT-KEY>
 .pennyfarthing/scripts/workflow/start-workflow.sh prd --mode create
 ```
 

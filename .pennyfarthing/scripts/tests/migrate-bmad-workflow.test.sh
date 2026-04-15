@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # migrate-bmad-workflow.test.sh - Tests for BMAD workflow migration script
 #
-# Story MSSCI-12132: BMAD to Pennyfarthing migration script
+# Story <PROJECT-KEY>: BMAD to Pennyfarthing migration script
 #
 # These tests verify the migrate-bmad-workflow.sh script that converts
 # BMAD workflow format to Pennyfarthing stepped workflow format.
@@ -782,7 +782,7 @@ EOF
 
 echo ""
 echo "=============================================="
-echo "Story MSSCI-12132: BMAD Migration Script Tests"
+echo "Story <PROJECT-KEY>: BMAD Migration Script Tests"
 echo "=============================================="
 echo ""
 

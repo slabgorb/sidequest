@@ -26,7 +26,7 @@ Core logic lives in `pf/jira/`:
 ## Usage
 
 ```bash
-.pennyfarthing/scripts/jira/jira-claim-story.sh MSSCI-12345
+.pennyfarthing/scripts/jira/jira-claim-story.sh <PROJECT-KEY>
 .pennyfarthing/scripts/jira/jira-reconcile.sh
 ```
 

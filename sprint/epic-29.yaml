@@ -40,7 +40,6 @@ stories:
     session_file: .session/29-3-session.md
     review_verdict: approved
   - id: 29-4
-    jira: MSSCI-16930
     title: Single-room SVG tactical renderer — cell-level tiles, feature markers, genre-themed palette
     points: 5
     priority: p0
@@ -53,7 +52,6 @@ stories:
     branch: feat/29-4-svg-tactical-renderer
     session_file: .session/29-4-session.md
   - id: 29-5
-    jira: MSSCI-16931
     title: TACTICAL_STATE protocol message — room grid, entities, zones, wire into dispatch on room entry
     points: 3
     priority: p0

@@ -10,7 +10,7 @@ model: haiku
 |----------|----------|-------------|
 | `MODE` | Yes | `research` (scan backlog) or `setup` (execute story setup) |
 | `STORY_ID` | setup | Story identifier, e.g., "31-10" |
-| `JIRA_KEY` | setup | Jira issue key, e.g., "MSSCI-12345" |
+| `JIRA_KEY` | setup | Jira issue key, e.g., "<PROJECT-KEY>" |
 | `REPOS` | setup | Repository name(s) |
 | `SLUG` | setup | Branch slug, e.g., "fix-typo" |
 | `WORKFLOW` | setup | Workflow type: "tdd", "trivial", etc. |
@@ -29,7 +29,7 @@ model: haiku
   pf sprint backlog
   ```
 - [ ] Use `/pf-jira` skill to enrich with Jira status/assignee:
-  - `/pf-jira search "project=MSSCI AND sprint in openSprints()"` - Get all sprint stories
+  - `/pf-jira search "project=<PROJECT> AND sprint in openSprints()"` - Get all sprint stories
   - `/pf-jira view {JIRA_KEY}` - Check individual story details
 - [ ] Check context availability
 - [ ] Check dependencies

@@ -25,7 +25,7 @@ Repair session phase tracking when handoffs didn't update properly.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `STORY_ID` | Yes | Story ID (e.g., 56-1 or MSSCI-12190) |
+| `STORY_ID` | Yes | Story ID (e.g., 56-1 or <PROJECT-KEY>) |
 | `TARGET_PHASE` | Yes | Target phase to set (e.g., review, approved, finish) |
 | `--dry-run` | No | Preview without making changes |
 

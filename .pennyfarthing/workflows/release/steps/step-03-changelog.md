@@ -65,7 +65,7 @@ Build the new section following Keep a Changelog format:
 
 ### Added
 - {feat commits, enhanced with human-friendly descriptions}
-- {include Jira IDs where available, e.g., (MSSCI-12345)}
+- {include Jira IDs where available, e.g., (<PROJECT-KEY>)}
 
 ### Changed
 - {perf/refactor commits that changed behavior}

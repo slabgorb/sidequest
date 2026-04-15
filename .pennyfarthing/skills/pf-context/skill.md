@@ -32,7 +32,7 @@ Read `pennyfarthing-dist/templates/context-schema.yaml` to get the required and 
 Find the epic in sprint data. Try these approaches in order:
 
 1. **By ordinal ID:** Run `pf sprint epic show {id}` to get epic metadata (title, Jira key, stories, points, repo)
-2. **By Jira key:** If `{id}` is a Jira key (e.g., MSSCI-15685), use it directly
+2. **By Jira key:** If `{id}` is a Jira key (e.g., <PROJECT-KEY>), use it directly
 
 Extract from the epic metadata:
 - Epic title
@@ -261,7 +261,7 @@ Reads epic 130 metadata, finds planning docs (PRD, ADR-0029), fills template, wr
 ### Create epic context by Jira key
 
 ```
-/pf-context create epic MSSCI-15685
+/pf-context create epic <PROJECT-KEY>
 ```
 
 Resolves Jira key to ordinal ID, then follows the same flow.

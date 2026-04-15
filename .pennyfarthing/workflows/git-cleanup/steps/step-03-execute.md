@@ -128,12 +128,12 @@ For groups marked for Jira tracking:
 
 ```bash
 JIRA_KEY=$(jira issue create \
-  --project MSSCI \
+  --project <PROJECT> \
   --type Story \
   --summary "{title}" \
   --body "{description}" \
   --label pennyfarthing \
-  --no-input 2>&1 | grep -oE 'MSSCI-[0-9]+' | head -1)
+  --no-input 2>&1 | grep -oE '<PROJECT>-[0-9]+' | head -1)
 
 echo "Created: $JIRA_KEY"
 ```

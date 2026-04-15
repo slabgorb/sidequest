@@ -1,0 +1,168 @@
+# Wire-First Workflow — SideQuest-Specific TDD Variant
+#
+# Purpose:
+#   SideQuest's hard problems are boundary problems (WebSocket protocol, OTEL
+#   spans, YAML→Rust→React wiring). Base TDD optimizes for unit correctness
+#   and has repeatedly certified unwired code (see story 16-1, epic 7-1..7-5).
+#   This workflow inverts the priority: wiring is the first-class concern,
+#   and the pipeline makes half-wired stories physically unable to pass.
+#
+# What's different from base tdd:
+#   1. Collapsed to 5 phases — spec-check, verify, and spec-reconcile removed.
+#      Those phases are optional ceremony on a playgroup-scale project.
+#   2. TEA's RED test must exercise the outermost reachable layer (HTTP
+#      handler, WS round-trip, mounted component with transport) — NOT an
+#      isolated unit test. Unit tests allowed as support, not as the ceiling.
+#   3. Architect tandems with TEA in red — validates that the test actually
+#      tests the wire, not just library internals.
+#   4. Dev loop uses `cargo check` + targeted crate tests only. Full suite
+#      runs once at Reviewer entry. This is the biggest wall-clock win.
+#   5. sq-wire-it runs as a teammate in green — audits wiring gaps in real
+#      time so Dev can't declare GREEN with dead exports.
+#   6. wiring-check gate runs on BOTH red (TEA must write consumer-side test)
+#      AND green (Dev must have non-test consumers for all new exports).
+#   7. No deferrals. The word "defer" and "subsequent story" are prohibited
+#      in every phase. Any gap found mid-phase is fixed in-phase.
+#
+# Flow: SM → TEA (+Architect) → Dev (+sq-wire-it) → Reviewer → SM
+#
+# Trigger: Default for feature/enhancement work on SideQuest. Base tdd
+# remains available for stories that genuinely need the full ceremony.
+
+workflow:
+  name: wire-first
+  description: SideQuest wire-first TDD — boundary tests, no half-wired code, one test run at review
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+      gate:
+        file: gates/sm-setup-exit
+        type: sm_setup_exit
+        condition: |
+          Session file created with workflow, phase, context, and branch.
+          Story ACs MUST name the concrete call site(s) for any new export
+          (e.g., "register_resource_section called from dispatch.rs::build_prompt_context").
+          Library-only ACs like "function X exists" are invalid — rewrite or rescope.
+        recovery:
+          epic-context-validated:
+            action: create_context
+            type: epic
+            max_attempts: 1
+          story-context-validated:
+            action: create_context
+            type: story
+            max_attempts: 1
+
+    - name: red
+      agent: tea
+      input: [session_file, story_context]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      gate:
+        file: gates/tests-fail
+        type: tests_fail
+        condition: |
+          At least one failing test exercises the OUTERMOST REACHABLE LAYER
+          for the story's domain:
+            - API/server stories: test hits the HTTP handler or WS dispatch
+              (e.g., axum test client, not a direct call to a game crate fn)
+            - UI stories: test mounts the component with a mocked transport
+              and asserts on rendered output (not a pure hook unit test)
+            - Protocol stories: test serializes the message, routes it through
+              the real dispatcher, and asserts the consumer sees it
+            - Pure-logic stories (combat resolver, parsers, name generators):
+              unit test is acceptable AS the ceiling, but must exercise the
+              function from its intended call site module, not an ad-hoc test
+          Unit tests are allowed as SUPPORT for the boundary test, not as a
+          substitute. If the only failing test is in the producing crate with
+          no consumer-side equivalent, the gate fails.
+      gate_extensions:
+        - gates/wiring-check
+      team:
+        teammates:
+          - agent: architect
+            task: |
+              Validate that TEA's failing test exercises the wire, not just
+              the unit. Ask: "If this test passes but the WebSocket never
+              carries the payload, will this test still pass?" If yes, the
+              test is wrong. Flag via SendMessage. Do NOT approve scope
+              deferrals — all wiring for this story lands in this story.
+
+    - name: green
+      agent: dev
+      input: [failing_tests, story_context]
+      output: [implementation, passing_tests]
+      gate:
+        file: gates/dev-exit
+        type: dev_exit
+        condition: |
+          Boundary test from RED is green.
+          `cargo check` (api) / `tsc --noEmit` (ui) / `ruff check` (daemon) clean.
+          Targeted crate tests green (`cargo test -p <crate> -- <filter>`).
+          FULL suite is NOT required at green — it runs once at review entry.
+          Tree clean, no debug code, correct branch.
+          Every new `pub` export has at least one non-test consumer in this
+          same PR diff. No exceptions, no "will wire in next story."
+      gate_extensions:
+        - gates/wiring-check
+      team:
+        teammates:
+          - agent: general-purpose
+            task: |
+              Run the /sq-wire-it skill against the current diff. Report any
+              wiring gaps (new exports without non-test consumers, UI components
+              not mounted in the app tree, hooks not called from production code).
+              Dev MUST fix every gap before declaring GREEN. Deferral is not
+              permitted — if the gap exists, it gets wired in this phase.
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+        condition: |
+          FULL test suite green (this is the one-shot full run for the story):
+            - api: `just api-check` (fmt + clippy + test)
+            - ui:  `just ui-lint && just ui-test`
+            - daemon: `just daemon-lint && just daemon-test`
+          Wiring verified end-to-end: Reviewer traces the story's wire from
+          source → protocol → handler → consumer → UI (where applicable) and
+          confirms every hop is live in production code paths.
+          No deferral language ("follow-up", "next story", "subsequent work")
+          anywhere in the diff, PR description, or session file. If found,
+          block and send back to green.
+          Code review approved, no blocking issues.
+      gate_extensions:
+        - gates/wiring-check
+      recovery:
+        reviewer-verdict:
+          action: rework
+          target_phase: green
+          max_attempts: 3
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  triggers:
+    types: [feature, enhancement]
+    points:
+      min: 3
+    default: true

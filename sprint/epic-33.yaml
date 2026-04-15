@@ -6,7 +6,6 @@ description: |
 priority: p1
 status: backlog
 repos: ui
-jira:
 stories:
   - id: 33-1
     title: Genre-themed widget chrome — archetype-specific CSS for widget borders, headers, and backgrounds
@@ -75,7 +74,9 @@ stories:
     description: 'The character panel header is currently just a name and subtitle in plain text with no portrait slot, level display, or archetype tag. This story adds a proper header row: circular portrait placeholder (48px, filled by 33-2 portrait system when available), character name in accent color, archetype + genre as subtitle, and a compact level badge (Lv N). See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-7. Before state visible in playtest screenshot 011-turn1-result.png.'
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-15'
     repos: sidequest-ui
     workflow: trivial
     acceptance_criteria:
@@ -85,6 +86,7 @@ stories:
       - Level badge shows 'Lv N' in accent-dim background, top-right of header
       - Portrait border color transitions to danger color when HP < 25%
       - Header slot renders in all sub-tabs (Stats, Abilities, Journal)
+    completed: '2026-04-15'
   - id: 33-8
     title: Context-aware stat highlighting — surface relevant stats based on game phase
     description: 'The Stats sub-tab currently renders all stats at equal visual weight regardless of what the game is doing. When combat is active, Reflexes/Instinct/Toughness are what matter. When a Confrontation is live, Presence/Brains/Wits matter. This story reads the current game phase from Redux state (GamePhase enum: exploration, combat, confrontation, downtime) and dims irrelevant stats while adding a green dot and row highlight to relevant ones. A context banner below the header names the active phase. See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-8. Before/after visible in screenshots 011 (flat) vs 013 (Confrontation tab already doing this correctly — mirror that pattern into the Stats tab).'

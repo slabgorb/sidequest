@@ -150,9 +150,9 @@ Use AskUserQuestion with these options:
 
 | Option | Format | Example |
 |--------|--------|---------|
-| **Jira-first (Recommended)** | `{jira_key} - {type}({scope}): {title}` | `MSSCI-16204 - feat(gates): add extensions` |
-| **Conventional** | `{type}({scope}): {title} ({jira_key})` | `feat(gates): add extensions (MSSCI-16204)` |
-| **Simple** | `{jira_key} - {title}` | `MSSCI-16204 - Add gate extensions` |
+| **Jira-first (Recommended)** | `{jira_key} - {type}({scope}): {title}` | `<PROJECT-KEY> - feat(gates): add extensions` |
+| **Conventional** | `{type}({scope}): {title} ({jira_key})` | `feat(gates): add extensions (<PROJECT-KEY>)` |
+| **Simple** | `{jira_key} - {title}` | `<PROJECT-KEY> - Add gate extensions` |
 | **Custom** | User provides their own template | Any format using `{jira_key}`, `{type}`, `{scope}`, `{title}` |
 
 Write the chosen format as `pr_title_format` at the top level of repos.yaml:

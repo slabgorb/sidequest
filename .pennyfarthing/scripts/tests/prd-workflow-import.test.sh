@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# prd-workflow-import.test.sh - Tests for Story MSSCI-12133: Import PRD workflow (all 3 modes)
+# prd-workflow-import.test.sh - Tests for Story <PROJECT-KEY>: Import PRD workflow (all 3 modes)
 #
 # These tests verify that the PRD workflow from BMAD is correctly imported into Pennyfarthing's
 # stepped workflow format with all three modes (create, validate, edit) working correctly.
@@ -574,7 +574,7 @@ test_ac8_workflow_references_template() {
 
 echo ""
 echo "=============================================="
-echo "Story MSSCI-12133: Import PRD Workflow Tests"
+echo "Story <PROJECT-KEY>: Import PRD Workflow Tests"
 echo "=============================================="
 echo ""
 

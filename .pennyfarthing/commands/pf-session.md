@@ -28,7 +28,7 @@ Resume work from a saved checkpoint after context circuit breaker.
 ```bash
 pf session continue            # Interactive checkpoint selection
 pf session continue --list     # Show available checkpoints
-pf session continue --story-id MSSCI-12345  # Resume specific story
+pf session continue --story-id <PROJECT-KEY>  # Resume specific story
 ```
 
 ## Quick Reference

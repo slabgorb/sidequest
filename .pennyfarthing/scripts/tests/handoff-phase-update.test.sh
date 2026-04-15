@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Test: handoff-phase-update.test.sh
-# Story: handoff-phase-update-bug (MSSCI-12204)
+# Story: handoff-phase-update-bug (<PROJECT-KEY>)
 #
 # Tests that handoff.md contains explicit Edit tool instructions for:
 # - AC1: Updating **Phase:** field to next phase

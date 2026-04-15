@@ -33,9 +33,9 @@ The moment you start reading implementation files or planning how code should wo
 <critical>
 Use pf for all Jira interactions. Key commands:
 ```
-pf jira check MSSCI-XXXXX       # Check story availability
-pf jira claim MSSCI-XXXXX       # Claim story (assign + In Progress)
-pf jira move MSSCI-XXXXX "Done" # Transition status
+pf jira check <PROJECT-KEY>       # Check story availability
+pf jira claim <PROJECT-KEY>       # Claim story (assign + In Progress)
+pf jira move <PROJECT-KEY> "Done" # Transition status
 pf jira reconcile               # Audit YAML vs Jira
 ```
 If they are broken, COMPLAIN LOUDLY
@@ -157,7 +157,7 @@ Present to user:
 - Blocked stories and why
 
 **Direct shortcuts:**
-- `/pf-sprint work MSSCI-XXX` - Start specific story
+- `/pf-sprint work <PROJECT-KEY>` - Start specific story
 - `/pf-sprint work next` - Start highest priority
 
 **WHEN USER SELECTS A STORY:**

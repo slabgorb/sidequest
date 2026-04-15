@@ -45,7 +45,7 @@ Start work on a story. Primary entry point for development.
 | Argument | Behavior |
 |----------|----------|
 | (none) | Interactive selection from backlog |
-| `MSSCI-XXXXX` | Start specific story |
+| `<PROJECT-KEY>` | Start specific story |
 | `epic-XX` | Start first available story in epic |
 | `next` | Auto-select highest priority story |
 
@@ -117,8 +117,8 @@ pf sprint epic promote epic-XX
 | `/pf-sprint backlog` | Available stories |
 | `/pf-sprint work` | Interactive start |
 | `/pf-sprint work next` | Start highest priority |
-| `/pf-sprint work MSSCI-XXX` | Start specific story |
-| `/pf-sprint archive MSSCI-XXX` | Archive completed |
+| `/pf-sprint work <PROJECT-KEY>` | Start specific story |
+| `/pf-sprint archive <PROJECT-KEY>` | Archive completed |
 | `/pf-sprint future` | Show future work |
 | `/pf-sprint promote epic-XX` | Promote to sprint |
 

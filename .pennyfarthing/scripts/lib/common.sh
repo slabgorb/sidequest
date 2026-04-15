@@ -171,7 +171,7 @@ check_dependencies() {
 #
 # Usage:
 #   get_python
-#   $PYTHON_CMD -m pf.jira view MSSCI-12345
+#   $PYTHON_CMD -m pf.jira view <PROJECT-KEY>
 #
 get_python() {
     # Find project root if not set
@@ -200,7 +200,7 @@ get_python() {
 # Run a pf Python module with proper venv handling
 #
 # Usage:
-#   run_python_module jira view MSSCI-12345
+#   run_python_module jira view <PROJECT-KEY>
 #   run_python_module sprint status
 #   run_python_module story size 3
 #

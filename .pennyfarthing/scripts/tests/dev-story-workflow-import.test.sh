@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# dev-story-workflow-import.test.sh - Tests for Story MSSCI-12140: Import Dev-Story workflow
+# dev-story-workflow-import.test.sh - Tests for Story <PROJECT-KEY>: Import Dev-Story workflow
 #
 # These tests verify that the BMAD dev-story workflow is correctly imported
 # into Pennyfarthing's workflow format.
@@ -438,7 +438,7 @@ test_ac6_description_mentions_story_or_implementation() {
 
 echo ""
 echo "=============================================="
-echo "Story MSSCI-12140: Import Dev-Story Workflow Tests"
+echo "Story <PROJECT-KEY>: Import Dev-Story Workflow Tests"
 echo "=============================================="
 echo ""
 

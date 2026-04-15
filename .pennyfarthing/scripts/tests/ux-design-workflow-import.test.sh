@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ux-design-workflow-import.test.sh - Tests for Story MSSCI-12139
+# ux-design-workflow-import.test.sh - Tests for Story <PROJECT-KEY>
 #
 # These tests verify that the BMAD UX Design workflow is correctly
 # imported into Pennyfarthing's stepped workflow format.
@@ -553,7 +553,7 @@ test_ac7_steps_pattern_matches() {
 
 echo ""
 echo "=============================================="
-echo "Story MSSCI-12139: Import UX Design Workflow Tests"
+echo "Story <PROJECT-KEY>: Import UX Design Workflow Tests"
 echo "=============================================="
 echo ""
 

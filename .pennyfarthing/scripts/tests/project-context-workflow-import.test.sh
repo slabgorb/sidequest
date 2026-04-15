@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# project-context-workflow-import.test.sh - Tests for Story MSSCI-12145: Import Project Context workflow
+# project-context-workflow-import.test.sh - Tests for Story <PROJECT-KEY>: Import Project Context workflow
 #
 # These tests verify that the generate-project-context workflow from BMAD is correctly imported
 # into Pennyfarthing's stepped workflow format.
@@ -511,7 +511,7 @@ test_ac6_workflow_is_single_mode() {
 
 echo ""
 echo "=============================================="
-echo "Story MSSCI-12145: Import Project Context Workflow Tests"
+echo "Story <PROJECT-KEY>: Import Project Context Workflow Tests"
 echo "=============================================="
 echo ""
 

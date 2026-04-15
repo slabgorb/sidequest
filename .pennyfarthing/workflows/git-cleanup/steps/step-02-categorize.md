@@ -114,7 +114,7 @@ For each group, decide tracking level:
 | Level | Branch | Jira | PR | Use When |
 |-------|--------|------|-----|----------|
 | **Quick** | `chore/*` | No | No | Maintenance, configs |
-| **Tracked** | `feat/MSSCI-*` | Yes | Yes | Features worth tracking |
+| **Tracked** | `feat/<PROJECT>-*` | Yes | Yes | Features worth tracking |
 
 ## Approval Gate
 

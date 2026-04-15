@@ -5,7 +5,6 @@ description: Player-facing 3D dice rolling integrated into sealed letter turn fl
 priority: p1
 status: backlog
 repos: api,ui
-jira: MSSCI-1034
 stories:
   - id: 34-1
     title: 'Spike: Owlbear dice fork — validate 3D physics feel in browser'

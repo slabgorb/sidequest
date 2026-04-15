@@ -7,7 +7,7 @@ args: "[view|check|claim|move|assign|create|sync|bidirectional|reconcile|link|se
 # /pf-jira - Jira Issue Management
 
 <critical>
-Never fabricate or guess Jira IDs. Valid keys follow `MSSCI-XXXXX`. Old-style IDs like `31-18` are local sprint YAML placeholders.
+Never fabricate or guess Jira IDs. Valid keys follow `<PROJECT-KEY>`. Old-style IDs like `31-18` are local sprint YAML placeholders.
 </critical>
 
 <run>

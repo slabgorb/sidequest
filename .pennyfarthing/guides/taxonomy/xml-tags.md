@@ -337,7 +337,7 @@ Tags used in session files (`.session/{story-id}-session.md`) for workflow state
 **Usage:** Wraps entire session file content.
 
 ```markdown
-<session story="MSSCI-12345" workflow="tdd">
+<session story="<PROJECT-KEY>" workflow="tdd">
   <!-- session content -->
 </session>
 ```
@@ -354,8 +354,8 @@ Tags used in session files (`.session/{story-id}-session.md`) for workflow state
 
 ```markdown
 <meta>
-  <jira>MSSCI-12345</jira>
-  <epic>MSSCI-12300</epic>
+  <jira><PROJECT-KEY></jira>
+  <epic><PROJECT-KEY></epic>
   <points>3</points>
   <started>2026-02-03</started>
 </meta>
@@ -474,7 +474,7 @@ pf sprint status [filter]
 
 ```markdown
 <example>
-pf sprint check MSSCI-12038
+pf sprint check <PROJECT-KEY>
 # Returns: {"type": "story", "available": true}
 </example>
 ```

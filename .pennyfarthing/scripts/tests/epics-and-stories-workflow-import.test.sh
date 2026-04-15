@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# epics-and-stories-workflow-import.test.sh - Tests for Story MSSCI-12137: Import Epics-and-Stories workflow
+# epics-and-stories-workflow-import.test.sh - Tests for Story <PROJECT-KEY>: Import Epics-and-Stories workflow
 #
 # These tests verify that the create-epics-and-stories workflow from BMAD is correctly imported
 # into Pennyfarthing's stepped workflow format.
@@ -513,7 +513,7 @@ test_ac7_workflow_references_template() {
 
 echo ""
 echo "=============================================="
-echo "Story MSSCI-12137: Import Epics-and-Stories Workflow Tests"
+echo "Story <PROJECT-KEY>: Import Epics-and-Stories Workflow Tests"
 echo "=============================================="
 echo ""
 

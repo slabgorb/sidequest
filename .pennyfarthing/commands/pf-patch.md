@@ -174,7 +174,7 @@ Patches can be nested - if a patch uncovers another blocking issue, run `/patch`
   workflow: "tdd"
   phase: "green"
   agent: "dev"
-  feature_branch: "feat/MSSCI-14001-add-feature"
+  feature_branch: "feat/<PROJECT-KEY>-add-feature"
   timestamp: "2026-02-03T10:30:00-05:00"
 
 - story_id: "75-3"

@@ -43,7 +43,7 @@ Sprint (time-boxed period)
 
 **Stories** are the atomic unit of work. Each story has:
 - An ID (e.g., `132-15`)
-- A Jira key (e.g., `MSSCI-15651`)
+- A Jira key (e.g., `<PROJECT-KEY>`)
 - Points (1-5, measuring complexity)
 - A workflow (tdd, trivial, etc.)
 - A status (backlog → in_progress → in_review → done)
@@ -165,8 +165,8 @@ When the user selects Dig In, explore these topics interactively:
 
 ### YAML Shard Structure
 Sprint tracking uses a sharded YAML architecture:
-- **`current-sprint.yaml`** is the index file containing sprint metadata and epic references (as string keys like `MSSCI-14510`)
-- **`epic-MSSCI-XXXXX.yaml`** shard files contain the actual story details for each epic
+- **`current-sprint.yaml`** is the index file containing sprint metadata and epic references (as string keys like `<PROJECT-KEY>`)
+- **`epic-<PROJECT-KEY>.yaml`** shard files contain the actual story details for each epic
 - The `load_sprint()` loader merges shards into a unified data structure
 - `write_sprint()` handles writing back to the correct shard files
 

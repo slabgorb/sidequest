@@ -35,7 +35,7 @@ Fast path for shipping completed work that deserves tracking but doesn't need st
 2. Show changes and confirm with user
 3. Create Jira story (prompts for title/description if not provided)
 4. Add story to current sprint and mark Done
-5. Create feature branch: `feat/MSSCI-XXXXX-{slug}`
+5. Create feature branch: `feat/<PROJECT-KEY>-{slug}`
 6. Stage and commit changes
 7. Push branch
 8. Create PR with summary
@@ -93,7 +93,7 @@ $(echo "$CHANGED_FILES" | head -20)"
 ```bash
 # Create Jira story
 JIRA_OUTPUT=$(jira issue create \
-  --project MSSCI \
+  --project <PROJECT> \
   --type Story \
   --summary "$TITLE" \
   --body "$DESCRIPTION" \
@@ -101,7 +101,7 @@ JIRA_OUTPUT=$(jira issue create \
   --custom story-points="$POINTS" \
   --no-input 2>&1)
 
-JIRA_KEY=$(echo "$JIRA_OUTPUT" | grep -oE 'MSSCI-[0-9]+' | head -1)
+JIRA_KEY=$(echo "$JIRA_OUTPUT" | grep -oE '<PROJECT>-[0-9]+' | head -1)
 
 if [ -z "$JIRA_KEY" ]; then
   echo "ERROR: Failed to create Jira story"
