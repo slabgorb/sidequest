@@ -1246,3 +1246,8 @@ completed_stories:
     title: Scrapbook payload — bundle image + world_facts + NPCs + excerpt into single WS message
     points: 3
     completed: '2026-04-15'
+  - id: 33-7
+    epic: ''
+    title: Character panel header — portrait, level, archetype display
+    points: 3
+    completed: '2026-04-15'
