@@ -265,9 +265,12 @@ stories:
     description: The Gallery widget needs turn attribution, world facts, NPC presence, narration excerpts, and scene classification per image. All of this data exists server-side but arrives via separate streams — images via GalleryImage message, world facts via WorldFact events, NPCs via npc_registry, narration via NarrationComplete. This story creates a new ScrapbookEntry WebSocket message type that bundles all of these into a single payload keyed by turn_id. Server assembles the entry after narration completes (when world_facts and npc_registry for that turn are settled). See render_integration.rs for image tagging, ADR-076 for world_facts broadcast, and npc_registry for NPC data. Depended on by 33-17.
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-15'
     repos: sidequest-api
     workflow: tdd
+    branch: feat/33-18-scrapbook-payload
     acceptance_criteria:
       - 'New WS message type: ScrapbookEntry { turn_id, scene_title, scene_type, location, image_url, narrative_excerpt, world_facts: Vec<String>, npcs_present: Vec<NpcRef { name, role, disposition } > }'
       - Server emits ScrapbookEntry after NarrationComplete for that turn — not before (world_facts must be settled)
