@@ -234,7 +234,9 @@ stories:
     description: 'The Gallery tab is a flat image grid with zero context — clicking into it during the playtest shows bare thumbnails with no turn attribution, no scene name, no caption, no world facts, no NPCs. Defined in pingpong.md [DESIGN] entry 2026-04-11: reshape Gallery from ''image library'' into a diegetic Scrapbook — an in-world record of the adventure that connects each image to the lore, narrative beats, NPC encounters, world facts, and turn history that produced it. It should read like something the character themselves would keep: a travelogue of snapshots, field notes, and overheard conversations. See mockup: .playwright-mcp/mockups/epic-33-gallery-improvements.html. Server already emits all required data (turn_id, scene_name, scene_type, world_facts per turn, NPC registry, narration text) — see 33-18 for the payload bundling work.'
     points: 8
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-15'
     repos: sidequest-ui
     workflow: tdd
     acceptance_criteria:
@@ -255,6 +257,9 @@ stories:
       - 'Depends on 33-18: Scrapbook entry data arrives as a single bundled WS message — do not wire until 33-18 ships'
       - 'Grid compact mode for 6+ images: 3-col, title only, caption hidden, full detail on click/expand'
       - "Empty state: 'No scenes yet — the world will fill these pages.' — not a blank panel"
+    completed: '2026-04-15'
+    review_findings: Two rule-#6 key={index} violations on inner maps, one rule-#1/#4 ineffective null guard on isHandout, plus the key-stability test itself is vacuous (regex only checks one key expression). RED rework to expand test coverage and fix three production lines.
+    review_verdict: approved
   - id: 33-18
     title: Scrapbook payload — bundle image + world_facts + NPCs + excerpt into single WS message
     description: The Gallery widget needs turn attribution, world facts, NPC presence, narration excerpts, and scene classification per image. All of this data exists server-side but arrives via separate streams — images via GalleryImage message, world facts via WorldFact events, NPCs via npc_registry, narration via NarrationComplete. This story creates a new ScrapbookEntry WebSocket message type that bundles all of these into a single payload keyed by turn_id. Server assembles the entry after narration completes (when world_facts and npc_registry for that turn are settled). See render_integration.rs for image tagging, ADR-076 for world_facts broadcast, and npc_registry for NPC data. Depended on by 33-17.

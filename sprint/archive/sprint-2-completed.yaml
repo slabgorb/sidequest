@@ -1236,3 +1236,8 @@ completed_stories:
     title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
     points: 3
     completed: '2026-04-14'
+  - id: 33-17
+    epic: ''
+    title: Gallery image metadata — turn badge + scene legend per image
+    points: 8
+    completed: '2026-04-15'
