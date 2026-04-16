@@ -58,6 +58,7 @@
 | [Client-Side State Mirror](026-client-state-mirror.md) | Accepted | Server piggybacks state deltas; slash commands resolve locally |
 | [Reactive State Messaging](027-reactive-state-messaging.md) | Accepted | State changes emit typed events to connected clients |
 | [3D Dice Rendering](075-3d-dice-rendering.md) | Proposed | Three.js + Rapier overlay with genre-themed skins and deterministic replay |
+| [Genre Theme Unification](079-genre-theme-unification.md) | Accepted | Single-source genre CSS with `:root[data-genre]` specificity; kill ThemeProvider and JS bridge |
 
 ## Multiplayer
 
