@@ -1298,3 +1298,8 @@ completed_stories:
     title: Chargen back button not wired — UI sends CHARACTER_CREATION action:back but server payload schema does not accept it
     points: 2
     completed: '2026-04-16'
+  - id: 38-5
+    epic: ''
+    title: SealedLetterLookup resolution handler — new match arm in confrontation dispatch, gather actor commits via TurnBarrier, lookup interaction cell, apply per-actor deltas, OTEL spans
+    points: 5
+    completed: '2026-04-16'

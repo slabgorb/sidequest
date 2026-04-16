@@ -51,9 +51,15 @@ stories:
     title: SealedLetterLookup resolution handler — new match arm in confrontation dispatch, gather actor commits via TurnBarrier, lookup interaction cell, apply per-actor deltas, OTEL spans
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-16'
     repos: api
     workflow: wire-first
+    completed: '2026-04-16'
+    branch: feat/38-5-sealed-letter-lookup-resolution
+    review_findings: '3 HIGH: solo NPC maneuver bug (starting_state not a valid maneuver), log-no-rethrow silent fallback on resolution Err, apply_view_deltas OTEL lies on non-Mapping views'
+    review_verdict: approved
   - id: 38-6
     title: Narrator cockpit-POV prompt extension — teach unified narrator to render per-actor views from per_actor_state, strictly forbid geometry not in descriptor, integration test with duel_01 scenario
     points: 3
