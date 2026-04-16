@@ -137,10 +137,14 @@ stories:
     points: 2
     priority: p0
     status: done
+    started: '2026-04-15'
     repos: api
     workflow: tdd
     completed: '2026-04-15'
     type: bug
+    branch: feat/37-14-beat-dispatch-silent-drop
+    review_findings: 'Pass-3b: all 8 pass-2 HIGH fixes verified + 8 pass-3 review findings fixed in place. 12/12 tests green, full server + game sweep + clippy clean.'
+    review_verdict: approved
   - id: 37-15
     title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
     points: 3

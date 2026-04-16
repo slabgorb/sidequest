@@ -1,0 +1,67 @@
+id: '39'
+type: epic
+title: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals
+description: Replace phantom HP with first-class EdgePool on CreatureCore. First hard link from ADR-021 progression to engine state via per-genre mechanical_effects on existing affinity tiers. Extend pact_working beats with resource_deltas for push-currency spellcraft (Voice/Flesh/Ledger). Heavy_metal-first scope for HP delete; other 9 packs follow post-playtest. See ADR-078, plan ~/.claude/plans/ticklish-spinning-reef.md, content draft sidequest-content/genre_packs/heavy_metal/_drafts/edge-advancement-content.md
+priority: p2
+status: backlog
+repos: api,ui,content
+stories:
+  - id: 39-1
+    title: Extract threshold helper + EdgePool type — refactor mint_threshold_lore/detect_crossings to shared sidequest-game/src/thresholds.rs; define EdgePool struct (current/max/base_max/recovery_triggers/thresholds); unit tests; no wiring
+    points: 5
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 39-2
+    title: Delete HP from CreatureCore — remove hp/max_hp/ac fields, delete sidequest-game/src/hp.rs, fix Combatant trait (lose hp/max_hp/ac, gain edge/max_edge/is_broken), cascade compile errors workspace-wide, synthesize edge in constructors with placeholder values
+    points: 8
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+    type: refactor
+  - id: 39-3
+    title: Purge HP from heavy_metal YAML + RulesConfig loader — strip hp_formula/class_hp_bases/default_hp/default_ac/stat_display_fields from heavy_metal/rules.yaml only; make RulesConfig HP fields Option for other packs; add edge_config block (per-class base_max, recovery_defaults, thresholds, display_fields). Content from heavy_metal/_drafts/edge-advancement-content.md §1
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api,content
+    workflow: trivial
+    type: chore
+  - id: 39-4
+    title: BeatDef.edge_delta + target_edge_delta + beat dispatch wiring — extend BeatDef with edge_delta/target_edge_delta/resource_deltas; implement self-debit and target-debit blocks in handle_applied_side_effects (parallel to gold_delta at beat.rs:319-337); auto-resolve on Edge<=0; OTEL creature.edge_delta + encounter.composure_break events; hard-coded advancement stub (Fighter +2 edge_max) for smoke playtest gate at end of story
+    points: 8
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 39-5
+    title: Authored advancement effects + resolved_beat_for — add AdvancementEffect enum (EdgeMaxBonus/EdgeRecovery/BeatDiscount with resource_mod/LeverageBonus/LoreRevealBonus); RecoveryTrigger with while_strained:bool (current<=max/4); CreatureCore.acquired_advancements; resolved_beat_for view function in sidequest-game/src/advancement.rs; per-genre audit for effects-host location (progression.yaml affinity tiers vs new advancements.yaml); milestone-grant path. Story 5 of ADR-078
+    points: 8
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 39-6
+    title: Heavy_metal pact push currencies (content) — add three ResourcePools (voice/flesh/ledger, voluntary, no auto-refill); change pact_working category from social to ritual; add resource_deltas to all five pact_working beats (invoke/commit_cost/steady_the_rite/force_completion/close_the_book); add prompt conditional in unified narrator for confrontation.category=='ritual' (mirrors in_combat). Content from heavy_metal/_drafts/edge-advancement-content.md §3+§4
+    points: 5
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+  - id: 39-7
+    title: Save migration + UI composure sheet + real wiring test — Sqlite schema bump in sidequest-game/src/persistence.rs with legacy HP->Edge synthesis (base_max=class_base/2); React character sheet rework reading edge/max_edge/composure_state declaratively; rewrite beat_dispatch_wiring_story_28_5_tests.rs from regex-source-match to real DispatchContext + apply_beat_dispatch + assert mutation (fixes false-positive wiring test)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: api,ui
+    workflow: tdd
+  - id: 39-8
+    title: Playtest heavy_metal with full new system (acceptance gate) — author heavy_metal advancement tree (mechanical_effects on Iron/Pact/Court/Ruin/Craft/Lore tiers per draft §2); rewrite confrontations[type=combat] beats with edge_delta/target_edge_delta values; run 3 sample pacts (Frost-Letter/Borrowed-Year/Ledger-Refused) as playtest fixtures; verify GM panel OTEL trail (creature.edge_delta + advancement.effect_applied + composure_break events with full causality); SOUL §12 test — narrator never describes player damage they didn't ask for
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore

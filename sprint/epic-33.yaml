@@ -299,3 +299,18 @@ stories:
       - Wiring integration test proves ConnectScreen → OptionList → real GenreMeta payload (not mocked) is reachable from production code paths; new RecommendedPlayers struct has non-test consumer
       - 'Visual verification in browser: all 11 genres show blurb and player-count in the lobby; no layout regression on existing connect flow'
       - 'No scope creep: do not redesign OptionList, add filtering/sorting by player count, or restructure the lobby layout'
+  - id: 33-20
+    title: Rich genre picker — genre card thumbnails and mood metadata in lobby
+    description: "The lobby genre picker (OptionList in ConnectScreen) renders genres as a plain text list with left-border selection. The API's /api/genres endpoint already returns per-genre metadata (description, core_vibe, emotional_tone, inspirations) but the picker doesn't consume any of it. This story enriches the genre rows with: a mood/vibe subtitle from pack.yaml metadata, a color swatch derived from the genre's theme.yaml primary color, and optionally a small thumbnail if a genre-level cover image exists in the content repo. The world picker already shows rich previews — the genre picker should match that density."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    acceptance_criteria:
+      - Genre rows show genre name + one-line vibe subtitle (from core_vibe or emotional_tone in pack.yaml metadata)
+      - Color swatch dot or left-border color derived from genre theme.yaml primary color
+      - If genre-level cover image exists (genre_packs/{genre}/cover.{jpg,png,webp}), render as small thumbnail in row
+      - Fallback for missing thumbnail is clean — no broken image, no placeholder text
+      - API /api/genres endpoint already returns needed metadata — no backend changes unless fields are missing
+      - Genre picker remains fully keyboard-navigable (WAI-ARIA radiogroup preserved)

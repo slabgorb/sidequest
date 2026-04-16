@@ -161,3 +161,10 @@ stories:
     workflow: trivial
     depends_on: 32-2
     type: refactor
+  - id: 32-20
+    title: Dynamic Origins chargen scene from cultures.yaml — when active world has a cultures.yaml, CharacterBuilder auto-generates the Origins scene by reading each culture's name+summary and synthesizing one choice per culture with mechanical_effects.culture set directly; falls back to genre-authored Origins (archetype choices) when the world has no cultures.yaml. Solves the 'how does a player start as Vaermm or Pakook'rook' question without per-world chargen authoring. Touches sidequest-server character builder where CharCreationScene is consumed; no changes to the YAML schema itself. See char_creation.yaml genre-level Origins rewrite 2026-04-15 for the fallback baseline.
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: tdd

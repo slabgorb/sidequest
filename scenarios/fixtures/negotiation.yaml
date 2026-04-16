@@ -1,0 +1,46 @@
+name: Negotiation — Backroom Meeting
+genre: pulp_noir
+world: annees_folles
+description: A closed-door sit-down with Salvatore "The Pipe" Moretti. One wrong word ends it.
+player_name: fixture-negotiation
+
+character:
+  name: "Jack Halloran"
+  description: "A weary private detective with a reputation for reading a room."
+  personality: "Cynical, patient, and harder to rattle than he looks."
+  level: 3
+  hp: 16
+  max_hp: 20
+  ac: 11
+  inventory:
+    items: []
+    gold: 80
+  statuses: []
+  backstory: "Former military police, mustered out after a scandal he didn't start and couldn't outrun. Opened a one-man office on Rue Lepic, takes the cases the legitimate agencies won't."
+  narrative_state: "Walking into the back room at Mickey's with a name in his pocket and empty hands."
+  hooks:
+    - "client: a widow who swears her husband's death wasn't an accident"
+  char_class: Detective
+  race: Military
+  pronouns: "he/him"
+  stats:
+    Brawn: 12
+    Finesse: 13
+    Grit: 14
+    Savvy: 15
+    Nerve: 14
+    Charm: 12
+
+location: "The Back Room at Mickey's — Montmartre, Paris"
+turn: 6
+
+npcs:
+  - name: "Salvatore 'The Pipe' Moretti"
+    role: mob_boss
+    disposition: -10
+  - name: "Mickey Renaud"
+    role: bartender
+    disposition: 0
+
+encounter:
+  type: negotiation

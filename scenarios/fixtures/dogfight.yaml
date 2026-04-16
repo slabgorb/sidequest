@@ -1,0 +1,46 @@
+name: Dogfight — Aureate Intercept
+genre: space_opera
+world: aureate_span
+description: Two-ship intercept on a contested lane. Maneuver, thrust, and nerves.
+player_name: fixture-dogfight
+
+character:
+  name: "Nyx Corvane"
+  description: "A former Colonial strike-wing pilot turned freelance escort."
+  personality: "Clipped, professional, visibly uncomfortable with small talk."
+  level: 3
+  hp: 14
+  max_hp: 18
+  ac: 11
+  inventory:
+    items: []
+    gold: 300
+  statuses: []
+  backstory: "Flew three tours for the Colonial Combined before the treaty gutted her squadron. Picks up escort work where she can and pretends the fighter wing never meant anything to her."
+  narrative_state: "Closing on an unmarked corvette in Lane 7."
+  hooks:
+    - "loyalty: her old wingman, now flying for the other side"
+  char_class: Pilot
+  race: Colonial
+  pronouns: "she/her"
+  stats:
+    Physique: 12
+    Reflex: 16
+    Intellect: 13
+    Cunning: 14
+    Resolve: 13
+    Influence: 10
+
+location: "Lane 7, approach vector Delta — Aureate Span outer rim"
+turn: 4
+
+npcs:
+  - name: "Kess Vandor"
+    role: enemy_pilot
+    disposition: -20
+  - name: "Control: Tower Six"
+    role: ops_controller
+    disposition: 5
+
+encounter:
+  type: dogfight

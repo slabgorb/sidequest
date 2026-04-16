@@ -1236,6 +1236,11 @@ completed_stories:
     title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
     points: 3
     completed: '2026-04-14'
+  - id: 37-14
+    epic: ''
+    title: Beat dispatch silently no-ops when beat_id is not in active encounter beat library — narrator emitted 2-3 beat_selections per turn for 20 minutes, zero encounter.beat_applied events fired, no OTEL span marks the drop (lie-detector gap)
+    points: 2
+    completed: '2026-04-15'
   - id: 33-17
     epic: ''
     title: Gallery image metadata — turn badge + scene legend per image

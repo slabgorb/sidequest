@@ -49,6 +49,7 @@
 | [Pacing Detection](025-pacing-detection.md) | Accepted | Quiet turn counting + trope-aware escalation hints |
 | [Dice Resolution Protocol](074-dice-resolution-protocol.md) | Proposed | Server-authoritative dice rolls via WebSocket with sealed-letter integration |
 | [Dogfight Subsystem](077-dogfight-subsystem.md) | Proposed | StructuredEncounter extension for sealed-letter fighter duels (per-actor descriptors + cross-product lookup table) |
+| [Edge / Composure + Mechanical Advancement + Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | Proposed | Replace phantom HP with first-class `EdgePool` on `CreatureCore`; first hard link from ADR-021 progression to engine state; extend `pact_working` beats with `resource_deltas` for push-currency spellcraft |
 
 ## Frontend / Protocol
 
@@ -57,6 +58,7 @@
 | [Client-Side State Mirror](026-client-state-mirror.md) | Accepted | Server piggybacks state deltas; slash commands resolve locally |
 | [Reactive State Messaging](027-reactive-state-messaging.md) | Accepted | State changes emit typed events to connected clients |
 | [3D Dice Rendering](075-3d-dice-rendering.md) | Proposed | Three.js + Rapier overlay with genre-themed skins and deterministic replay |
+| [Genre Theme Unification](079-genre-theme-unification.md) | Accepted | Single-source genre CSS with `:root[data-genre]` specificity; kill ThemeProvider and JS bridge |
 
 ## Multiplayer
 

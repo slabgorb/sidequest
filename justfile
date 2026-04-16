@@ -3,6 +3,20 @@
 root := justfile_directory()
 content := root / "sidequest-content" / "genre_packs"
 
+# Disable sccache for every cargo invocation run through `just`.
+#
+# Why: sccache daemon contention between the OQ-1 and OQ-2 clones on this
+# machine causes rustc to hang indefinitely — a cargo check that should take
+# 30s has been observed sitting at 0% CPU for 19+ minutes while waiting on a
+# sccache lock held by a zombie cargo test worker in the other clone. Setting
+# RUSTC_WRAPPER="" bypasses sccache entirely and the build runs at normal
+# speed (~3-4 min cold, seconds warm). This only applies to `just` recipes —
+# raw shell `cargo ...` invocations still pick up sccache from the user env
+# if they want it.
+#
+# Discovered during scene-harness work on 2026-04-15.
+export RUSTC_WRAPPER := ""
+
 import '.pennyfarthing/justfile.pf'
 
 # API (Rust backend)
@@ -30,6 +44,50 @@ api-check:
 # Preview narrator prompt (uses real Rust types — never drifts)
 prompt-preview *flags:
     cd sidequest-api && cargo run -p sidequest-promptpreview -- {{flags}}
+
+# ---------------------------------------------------------------------------
+# Scene Harness — drop directly into an encounter for fast iteration.
+# Requires the UI dev server running on :5173 and nothing on :8765.
+# ---------------------------------------------------------------------------
+
+# Boot the API with DEV_SCENES=1, stage the named fixture save, open the UI.
+scene name:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    pkill -f 'sidequest-server' 2>/dev/null || true
+    sleep 1
+    cd sidequest-api
+    DEV_SCENES=1 SIDEQUEST_FIXTURES={{root}}/scenarios/fixtures \
+        cargo run -p sidequest-server -- \
+        --genre-packs-path {{content}} &
+    SERVER_PID=$!
+    trap "kill $SERVER_PID 2>/dev/null || true" EXIT
+    # Wait for /api/genres to answer — the server is ready when this returns 200
+    for i in $(seq 1 60); do
+        if curl -sf http://localhost:8765/api/genres >/dev/null 2>&1; then
+            break
+        fi
+        sleep 0.5
+    done
+    echo "Staging fixture '{{name}}'…"
+    curl -sSf -X POST http://localhost:8765/dev/scene/{{name}}
+    echo
+    echo "Open http://localhost:5173?scene={{name}} in your browser."
+    wait $SERVER_PID
+
+# List available scene fixtures.
+scene-list:
+    @ls {{root}}/scenarios/fixtures/*.yaml 2>/dev/null \
+        | xargs -n1 basename \
+        | sed 's/\.yaml$//' \
+        || echo "no fixtures"
+
+# Stage a fixture save WITHOUT booting the server (uses the CLI binary).
+scene-stage name:
+    cd sidequest-api && cargo run -p sidequest-fixture -- \
+        --content-root {{root}}/sidequest-content \
+        --fixtures-root {{root}}/scenarios/fixtures \
+        load {{name}}
 
 # UI (React frontend)
 ui-dev:

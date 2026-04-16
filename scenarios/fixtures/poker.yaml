@@ -1,0 +1,49 @@
+name: Poker — High Stakes
+genre: spaghetti_western
+world: dust_and_lead
+description: Four-hand poker with Black Bart. Grit vs cunning across a scarred felt table.
+player_name: fixture-poker
+
+# Character block is serde-compatible with sidequest_game::Character.
+# CreatureCore fields (name/description/personality/level/hp/max_hp/ac/
+# inventory/statuses) are flattened to the top level.
+character:
+  name: "Dusty McGraw"
+  description: "A wind-burnt gambler with a reputation for reading cards and men."
+  personality: "Cool, patient, and quick to spot a tell."
+  level: 3
+  hp: 18
+  max_hp: 20
+  ac: 12
+  inventory:
+    items: []
+    gold: 150
+  statuses: []
+  backstory: "Rode with the Dutton gang for a year. Walked away when they turned on one of their own. Been playing cards for a living ever since."
+  narrative_state: "Sizing up the table at the Whitesand Saloon."
+  hooks:
+    - "nemesis: Black Bart (owes him a debt from the Yuma card tables)"
+  char_class: Gambler
+  race: Frontier Born
+  pronouns: "he/him"
+  stats:
+    GRIT: 12
+    DRAW: 14
+    NERVE: 16
+    CUNNING: 15
+    PRESENCE: 13
+    LUCK: 10
+
+location: "The Whitesand Saloon, Dust-and-Lead County"
+turn: 8
+
+npcs:
+  - name: "Black Bart"
+    role: outlaw
+    disposition: -15
+  - name: "Miss Clara"
+    role: saloon_owner
+    disposition: 0
+
+encounter:
+  type: poker
