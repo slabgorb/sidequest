@@ -48,7 +48,7 @@ stories:
       MobileTabView.tsx renders a basic tab bar. Polish: badge indicators for unread gallery images or knowledge entries, smooth tab transitions, optional swipe-to-switch gesture. Test on iPhone Safari viewport.
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: ui
     workflow: tdd
   - id: 33-5

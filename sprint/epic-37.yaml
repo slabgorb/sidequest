@@ -40,10 +40,12 @@ stories:
     title: Gold overspend — state_mutations clamps negative balance to zero instead of rejecting or adjusting transactions that exceed current gold
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: api
-    workflow: tdd
+    workflow: wire-first
+    completed: '2026-04-16'
     type: bug
+    review_verdict: approved
   - id: 37-5
     title: Daemon embed endpoint broken — /embed returns Unknown error, RAG semantic search degraded entire playtest session
     points: 2

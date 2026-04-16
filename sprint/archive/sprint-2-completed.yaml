@@ -27,6 +27,7 @@ completed_epics:
   - '27'
   - '35'
   - '36'
+  - '34'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -1277,3 +1278,13 @@ completed_stories:
     title: Wire TroperAgent or remove from Orchestrator
     points: 3
     completed: '2026-04-15'
+  - id: 37-4
+    epic: ''
+    title: Gold overspend — state_mutations clamps negative balance to zero instead of rejecting or adjusting transactions that exceed current gold
+    points: 2
+    completed: '2026-04-16'
+  - id: 34-10
+    epic: '34'
+    title: Dice accessibility — aria-live, prefers-reduced-motion, keyboard throw
+    points: 2
+    completed: '2026-04-16'

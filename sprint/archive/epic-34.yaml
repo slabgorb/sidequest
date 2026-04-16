@@ -3,7 +3,7 @@ type: epic
 title: 3D Dice Rolling System — MVP
 description: Player-facing 3D dice rolling integrated into sealed letter turn flow. Server-authoritative resolution with deterministic Rapier physics replay across multiplayer clients. Three.js overlay in UI, d20+mod vs DC, narrator tone shaped by RollOutcome. See ADRs 074, 075 and sprint/planning/prd-dice-rolling.md.
 priority: p1
-status: backlog
+status: done
 repos: api,ui
 stories:
   - id: 34-1
@@ -106,7 +106,7 @@ stories:
     title: Dice accessibility — aria-live, prefers-reduced-motion, keyboard throw
     points: 2
     priority: p1
-    status: backlog
+    status: canceled
     repos: ui
     workflow: tdd
   - id: 34-11
@@ -135,3 +135,4 @@ stories:
     session_file: sprint/34-12-session.md
     review_findings: "2 blocking: (1) three integration tests use 'err.contains(X) || err.contains(Dice resolution failed)' OR-fallbacks that make them vacuous — tighten to specific substrings per ResolveError variant; (2) DiceResultPayload.seed docstring still claims server-seed is authoritative and 'client cannot influence the outcome' — both false under 34-12 physics-is-the-roll, rewrite to reflect face is authoritative. 6 non-blocking improvements also called out in session file."
     review_verdict: approved
+completed: '2026-04-16'
