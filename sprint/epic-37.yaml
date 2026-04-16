@@ -72,7 +72,7 @@ stories:
     priority: p2
     status: backlog
     repos: api,ui
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-8
     title: World materialization fails for dust_and_lead — null history chapters in spaghetti_western world YAML
@@ -99,7 +99,7 @@ stories:
     priority: p1
     status: backlog
     repos: api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-11
     title: action_rewrite and action_flags wiring — narrator emits these fields inconsistently (absent 99/~120 turns), prompt needs firmer contract
@@ -107,7 +107,7 @@ stories:
     priority: p1
     status: backlog
     repos: api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-12
     title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
@@ -151,10 +151,13 @@ stories:
     title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-16'
     repos: api
-    workflow: tdd
+    workflow: wire-first
     type: bug
+    branch: feat/37-15-trope-encounter-handshake
   - id: 37-16
     title: session.reconnect mints a new player UUID — rolling_player identity changed mid-session across a reconnect (cfa15925… → 234acfc0…) in single-player game; reconnect should restore prior player identity, not generate a fresh one
     description: Closed as false alarm 2026-04-15. Player identity is keyed by player_name in SQLite, which is stable across reconnect. The rolling_player UUID in logs was a per-connection session ID, not a persistent player identifier. Audit confirmed no downstream consumer relies on UUID stability. Barrier state reconnect fixes (5cab02a, 9ee06f8) already handle the real reconnect concerns.
@@ -177,7 +180,7 @@ stories:
     title: 'pending_dice_request not persisted in game_state snapshot — dice requests live in in-memory session state only, any server restart mid-roll orphans the request (observed: 3 unresolved requests during 2026-04-13 spaghetti_western playtest, all lost at save); snapshot must include outstanding dice request so client can re-prompt on reconnect'
     points: 2
     priority: p1
-    status: backlog
+    status: canceled
     repos: api
     workflow: tdd
     type: bug
