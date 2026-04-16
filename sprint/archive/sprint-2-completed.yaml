@@ -1293,3 +1293,8 @@ completed_stories:
     title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
     points: 3
     completed: '2026-04-16'
+  - id: 37-7
+    epic: ''
+    title: Chargen back button not wired — UI sends CHARACTER_CREATION action:back but server payload schema does not accept it
+    points: 2
+    completed: '2026-04-16'
