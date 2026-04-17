@@ -100,8 +100,9 @@ stories:
     priority: p2
     status: backlog
     repos: content
-    workflow: trivial
+    workflow: wire-first
     type: chore
+    review_verdict: approved
   - id: 38-10
     title: Tail-chase starting state — author duel_02.md with tail_chase geometry and a second 16-cell interaction table, proving the confrontation generalizes beyond merge
     points: 3

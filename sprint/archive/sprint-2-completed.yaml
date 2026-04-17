@@ -1318,3 +1318,8 @@ completed_stories:
     title: Extend-and-return rule — author post-turn reset rule for no-hit turns with opening_fast closure, either content clause or engine rule marker
     points: 1
     completed: '2026-04-16'
+  - id: 38-9
+    epic: ''
+    title: Paper playtest calibration — run duel_01.md 3-5 times, annotate each cell with calibrated/exciting/lopsided/confusing/dull tags, adjust deltas for any failing tags
+    points: 2
+    completed: '2026-04-16'
