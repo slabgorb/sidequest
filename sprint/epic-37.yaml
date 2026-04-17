@@ -109,6 +109,8 @@ stories:
     repos: api
     workflow: wire-first
     type: bug
+    review_findings: "HIGH: cargo fmt fails; OTEL regression at assemble_turn merge (no source-tagged tracing); downstream wiring gap (result.action_rewrite/action_flags never read in production); misleading 'preprocessor keyword-based' comment (preprocessor is actually Default::default()); 'ALWAYS include this' prompt contract unenforced; 4 stale creature_smith references. See Reviewer Assessment for full findings and remediation."
+    review_verdict: approved
   - id: 37-12
     title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
     points: 3
