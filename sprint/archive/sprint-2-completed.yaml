@@ -28,6 +28,7 @@ completed_epics:
   - '35'
   - '36'
   - '34'
+  - '38'
 completed_stories:
   - id: 13-8
     epic: ''
@@ -1332,4 +1333,9 @@ completed_stories:
     epic: ''
     title: action_rewrite and action_flags wiring — narrator emits these fields inconsistently (absent 99/~120 turns), prompt needs firmer contract
     points: 2
+    completed: '2026-04-17'
+  - id: 40-1
+    epic: ''
+    title: sidequest-test-support crate — SpanCaptureLayer, MockClaudeClient, ClaudeLike trait, canonical recipe README (the source of truth)
+    points: 5
     completed: '2026-04-17'

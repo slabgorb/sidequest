@@ -3,7 +3,7 @@ type: epic
 title: Dogfight Subsystem — Sealed-Letter Fighter Combat via StructuredEncounter
 description: 'Extend StructuredEncounter with SealedLetterLookup resolution mode for simultaneous-commit fighter combat. Ace of Aces inspired mechanic: two pilots commit maneuvers secretly, cross-product lookup resolves outcome. Reuses TurnBarrier (Epic 13), unified narrator (ADR-067), and confrontation engine (ADR-033). See ADR-077.'
 priority: p2
-status: backlog
+status: done
 repos: api,content
 stories:
   - id: 38-1
@@ -118,3 +118,4 @@ stories:
     assignee: keithavery
     branch: feat/38-10-tail-chase-starting-state
     review_verdict: approved
+completed: '2026-04-17'
