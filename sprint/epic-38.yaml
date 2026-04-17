@@ -74,12 +74,14 @@ stories:
     title: Hit severity column in interactions_mvp.yaml — extend all 16 cells with graze/clean/devastating classification, define hull damage increments per severity
     points: 1
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-04-16'
     repos: content
     workflow: wire-first
+    completed: '2026-04-16'
     branch: feat/38-7-hit-severity-interactions
     assignee: keith
-    started: '2026-04-16'
+    review_verdict: approved
   - id: 38-8
     title: Extend-and-return rule — author post-turn reset rule for no-hit turns with opening_fast closure, either content clause or engine rule marker
     points: 1
