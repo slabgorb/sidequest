@@ -70,10 +70,13 @@ stories:
     title: Chargen back button not wired — UI sends CHARACTER_CREATION action:back but server payload schema does not accept it
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: api,ui
     workflow: wire-first
+    completed: '2026-04-16'
     type: bug
+    branch: feat/37-7-chargen-back-button
+    review_verdict: approved
   - id: 37-8
     title: World materialization fails for dust_and_lead — null history chapters in spaghetti_western world YAML
     points: 1
@@ -105,11 +108,13 @@ stories:
     title: action_rewrite and action_flags wiring — narrator emits these fields inconsistently (absent 99/~120 turns), prompt needs firmer contract
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: api
     workflow: wire-first
+    completed: '2026-04-17'
     type: bug
-    review_findings: "HIGH: cargo fmt fails; OTEL regression at assemble_turn merge (no source-tagged tracing); downstream wiring gap (result.action_rewrite/action_flags never read in production); misleading 'preprocessor keyword-based' comment (preprocessor is actually Default::default()); 'ALWAYS include this' prompt contract unenforced; 4 stale creature_smith references. See Reviewer Assessment for full findings and remediation."
+    branch: feat/37-11-action-rewrite-flags-wiring
+    review_findings: "HIGH: cargo fmt fails; OTEL regression at assemble_turn merge (no source-tagged tracing); downstream wiring gap (result.action_rewrite/action_flags never read in production); misleading 'preprocessor keyword-based' comment (preprocessor is actually Default::default()); 'ALWAYS include this' prompt contract unenforced; 4 stale creature_smith references. Rework pass 2 approved."
     review_verdict: approved
   - id: 37-12
     title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
@@ -153,16 +158,15 @@ stories:
     title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
     points: 3
     priority: p1
-    status: done
+    status: in_review
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-16'
     repos: api
     workflow: wire-first
-    completed: '2026-04-16'
     type: bug
     branch: feat/37-15-trope-encounter-handshake
-    review_findings: 'Half-wired: resolve_from_trope has zero non-test callers, dispatch/tropes.rs unmodified, auto-resolve missing OTEL WatcherEvent'
-    review_verdict: approved
+    pr: 477
+    review_findings: 'Half-wired: resolve_from_trope has zero non-test callers, dispatch/tropes.rs unmodified, auto-resolve missing OTEL WatcherEvent. Rework branch opened as PR #477 2026-04-17 — YAML was prematurely marked done on 2026-04-16 but rework never merged to develop. Re-review needed.'
   - id: 37-16
     title: session.reconnect mints a new player UUID — rolling_player identity changed mid-session across a reconnect (cfa15925… → 234acfc0…) in single-player game; reconnect should restore prior player identity, not generate a fresh one
     description: Closed as false alarm 2026-04-15. Player identity is keyed by player_name in SQLite, which is stable across reconnect. The rolling_player UUID in logs was a per-connection session ID, not a persistent player identifier. Audit confirmed no downstream consumer relies on UUID stability. Barrier state reconnect fixes (5cab02a, 9ee06f8) already handle the real reconnect concerns.
