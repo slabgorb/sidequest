@@ -1323,3 +1323,8 @@ completed_stories:
     title: Paper playtest calibration — run duel_01.md 3-5 times, annotate each cell with calibrated/exciting/lopsided/confusing/dull tags, adjust deltas for any failing tags
     points: 2
     completed: '2026-04-16'
+  - id: 38-10
+    epic: ''
+    title: Tail-chase starting state — author duel_02.md with tail_chase geometry and a second 16-cell interaction table, proving the confrontation generalizes beyond merge
+    points: 3
+    completed: '2026-04-16'

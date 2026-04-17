@@ -107,6 +107,11 @@ stories:
     title: Tail-chase starting state — author duel_02.md with tail_chase geometry and a second 16-cell interaction table, proving the confrontation generalizes beyond merge
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-16'
     repos: content
-    workflow: trivial
+    workflow: wire-first
+    completed: '2026-04-16'
+    assignee: keithavery
+    branch: feat/38-10-tail-chase-starting-state
+    review_verdict: approved
