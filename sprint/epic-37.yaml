@@ -163,9 +163,9 @@ stories:
     started: '2026-04-16'
     repos: api
     workflow: wire-first
+    pr: 477
     type: bug
     branch: feat/37-15-trope-encounter-handshake
-    pr: 477
     review_findings: 'Half-wired: resolve_from_trope has zero non-test callers, dispatch/tropes.rs unmodified, auto-resolve missing OTEL WatcherEvent. Rework branch opened as PR #477 2026-04-17 — YAML was prematurely marked done on 2026-04-16 but rework never merged to develop. Re-review needed.'
   - id: 37-16
     title: session.reconnect mints a new player UUID — rolling_player identity changed mid-session across a reconnect (cfa15925… → 234acfc0…) in single-player game; reconnect should restore prior player identity, not generate a fresh one
@@ -192,4 +192,140 @@ stories:
     status: canceled
     repos: api
     workflow: tdd
+    type: bug
+  - id: 37-19
+    title: Phantom-player dedup on resume — duplicate party entry drives player_count to 2, structured-mode auto-promotion creates barrier that deadlocks waiting on ghost; dedup at resume boundary
+    points: 3
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
+    type: bug
+  - id: 37-20
+    title: Dice-request request_id lifecycle — server becomes single issuer, client echoes server-issued id, add retry/recovery so lost request does not wedge session (lost nat 20 on defend)
+    points: 5
+    priority: p0
+    status: backlog
+    repos: api,ui
+    workflow: wire-first
+    type: bug
+  - id: 37-21
+    title: Template placeholder leak in Space Opera chargen-confirm — {name}/{class}/{race} render literally; template engine mismatch or missing context keys
+    points: 1
+    priority: p0
+    status: backlog
+    repos: content,api
+    workflow: trivial
+    type: bug
+  - id: 37-22
+    title: POI manifest wiring — bind generated POI landscape images across 5 genre packs so world lobby stops showing 'the page is faded' placeholder and WARN cover_poi_missing stops spamming
+    points: 2
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: bug
+  - id: 37-23
+    title: Split daemon render_lock into render_lock + embed_lock — Flux renders serialize 10ms embeds behind 5-60s image gens, 30+ms contention tax on embed path
+    points: 2
+    priority: p1
+    status: backlog
+    repos: daemon
+    workflow: wire-first
+    type: bug
+  - id: 37-24
+    title: NPC mechanical turn + stealth/trope check — narrator currently weaves enemy/stealth outcomes with zero OTEL; emit npc.turn and trope handshake spans, surface minimal UI cue, close Illusionism gap
+    points: 5
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: wire-first
+    type: bug
+  - id: 37-25
+    title: Target number shown before the roll — display DC/mod/need on ability click, persist through dice animation, resolve color against known target, make consistent across all abilities
+    points: 2
+    priority: p1
+    status: backlog
+    repos: ui
+    workflow: trivial
+    type: bug
+  - id: 37-26
+    title: WebSocket auto-reconnect on navigation — add backoff + visible reconnect banner in useWebSocket.ts, gate input-disabled on explicit WS status
+    points: 3
+    priority: p1
+    status: backlog
+    repos: ui
+    workflow: wire-first
+    type: bug
+  - id: 37-27
+    title: Character snapshot on scene-enter — cross-genre blank Character tab until turn 1; emit character state on session-start/scene-enter not just turn-update
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: trivial
+    type: bug
+  - id: 37-28
+    title: Scrapbook image persistence across session resume — image bytes lost on reload while metadata survives; persist to stable path and rehydrate manifest on resume
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: wire-first
+    type: bug
+  - id: 37-29
+    title: Chargen standard-kit narration-vs-state mismatch — narrator references a parchment inventory list the UI never renders; align narration to actual emitted payload or emit the loadout
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api,ui
+    workflow: wire-first
+    type: bug
+  - id: 37-30
+    title: Session-to-job mapping for render_broadcast — job_id to session_id not persisted at enqueue, daemon renders are dropped with 'no session mapping'; fixes missing portrait initials too
+    points: 3
+    priority: p1
+    status: backlog
+    repos: api
+    workflow: wire-first
+    type: bug
+  - id: 37-31
+    title: Region population on opening rooms — map_update_skipped because state.current_region is blank on turn 1; require region in world.yaml or inherit default so Map tab is load-bearing from turn 1
+    points: 2
+    priority: p1
+    status: backlog
+    repos: content,api
+    workflow: trivial
+    type: bug
+  - id: 37-32
+    title: Momentum readout state sync — UI momentum value lags server BEAT_RESOLVED; ensure snapshot field updates and UI subscribes
+    points: 2
+    priority: p1
+    status: backlog
+    repos: api,ui
+    workflow: wire-first
+    type: bug
+  - id: 37-33
+    title: Lore embed worker timeout / circuit breaker tripping — verify 37-23 lock split closes this; if not, widen timeout or warm embed path
+    points: 1
+    priority: p2
+    status: backlog
+    repos: daemon,api
+    workflow: trivial
+    type: bug
+  - id: 37-34
+    title: Daemon span-context lifecycle — stale art_style from prior session leaks onto embed spans across sessions; scope attributes per call or clear on session boundary
+    points: 2
+    priority: p2
+    status: backlog
+    repos: daemon
+    workflow: trivial
+    type: bug
+  - id: 37-35
+    title: Low-priority bundle — location slug in resume recap, location header one-cycle lag, dispatcher no_exit WARN on conversation, intent:Exploration on Attack button, empty src warnings, Rajdhani-Regular 404, wrong empty-state copy on genre select
+    points: 2
+    priority: p2
+    status: backlog
+    repos: api,ui,content
+    workflow: trivial
     type: bug
