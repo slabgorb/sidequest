@@ -43,16 +43,26 @@ def load_yaml(path: Path) -> dict:
 
 
 def load_visual_style(genre_dir: Path, world: str = "") -> dict:
-    """Load visual_style.yaml, preferring world-level over genre-level."""
+    """Load visual_style.yaml — genre-level base, world-level overrides on top.
+
+    Genre-level provides the base style (positive_suffix, negative_prompt,
+    preferred_model, LoRA config). World-level can override or extend with
+    world-specific fields (style_prompt, color_palette, etc.). The merge
+    ensures world overrides don't lose genre-level rendering fields.
+    """
+    genre_vs_path = genre_dir / "visual_style.yaml"
+    base = load_yaml(genre_vs_path) if genre_vs_path.exists() else {}
+
     if world:
         world_vs = genre_dir / "worlds" / world / "visual_style.yaml"
         if world_vs.exists():
-            log.debug("Using world visual_style: %s", world_vs)
-            return load_yaml(world_vs)
-    vs_path = genre_dir / "visual_style.yaml"
-    if not vs_path.exists():
-        return {}
-    return load_yaml(vs_path)
+            world_data = load_yaml(world_vs)
+            log.debug("Merging world visual_style: %s", world_vs)
+            # World overrides genre, but genre fields not in world are preserved
+            merged = {**base, **world_data}
+            return merged
+
+    return base
 
 
 def slugify(text: str) -> str:
