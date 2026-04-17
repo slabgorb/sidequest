@@ -86,12 +86,14 @@ stories:
     title: Extend-and-return rule — author post-turn reset rule for no-hit turns with opening_fast closure, either content clause or engine rule marker
     points: 1
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-04-16'
     repos: content
     workflow: wire-first
-    started: '2026-04-16'
+    completed: '2026-04-16'
     assignee: keithavery
     branch: feat/38-8-extend-and-return-rule
+    review_verdict: approved
   - id: 38-9
     title: Paper playtest calibration — run duel_01.md 3-5 times, annotate each cell with calibrated/exciting/lopsided/confusing/dull tags, adjust deltas for any failing tags
     points: 2
