@@ -86,20 +86,48 @@ async def send_render(
     negative: str,
     seed: int,
     steps: int = 15,
+    *,
+    art_style: str = "",
+    visual_tag_overrides: dict | None = None,
+    lora_path: str = "",
+    lora_scale: float = 1.0,
+    variant: str = "",
 ) -> dict:
-    """Send a render request to the daemon and return the result."""
+    """Send a render request to the daemon and return the result.
+
+    When art_style is provided, `positive` is treated as `subject` and the
+    daemon's PromptComposer handles style injection, tag overrides, and LoRA.
+    Without art_style, `positive` is sent as `positive_prompt` (direct path).
+    """
     reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
+
+    params: dict = {
+        "tier": tier,
+        "negative_prompt": negative,
+        "seed": seed,
+    }
+
+    if art_style:
+        # Route through daemon's PromptComposer for proper style injection
+        params["subject"] = positive
+        params["art_style"] = art_style
+        if visual_tag_overrides:
+            params["visual_tag_overrides"] = visual_tag_overrides
+    else:
+        # Direct path — caller pre-composed the prompt
+        params["positive_prompt"] = positive
+        params["clip_prompt"] = clip
+
+    if lora_path:
+        params["lora_path"] = lora_path
+        params["lora_scale"] = lora_scale
+    if variant:
+        params["variant"] = variant
 
     req = {
         "id": f"{tier}-{seed}",
         "method": "render",
-        "params": {
-            "tier": tier,
-            "positive_prompt": positive,
-            "clip_prompt": clip,
-            "negative_prompt": negative,
-            "seed": seed,
-        },
+        "params": params,
     }
 
     writer.write((json.dumps(req) + "\n").encode())
@@ -211,7 +239,14 @@ async def render_batch(
             continue
 
         try:
-            result = await send_render(tier, positive, clip, negative, seed, steps)
+            result = await send_render(
+                tier, positive, clip, negative, seed, steps,
+                art_style=visual_style.get("positive_suffix", ""),
+                visual_tag_overrides=visual_style.get("visual_tag_overrides"),
+                lora_path=visual_style.get("lora", ""),
+                lora_scale=visual_style.get("lora_scale", 1.0),
+                variant=visual_style.get("preferred_model", ""),
+            )
             if "error" in result:
                 log.error("  FAILED: %s", result["error"])
                 failed += 1

@@ -19,7 +19,6 @@ from render_common import (
     GENRE_PACKS_DIR,
     TOKEN_LIMIT,
     deterministic_seed,
-    estimate_tokens,
     load_visual_style,
     load_yaml,
     render_batch,
@@ -64,63 +63,34 @@ def collect_pois(genre_dir: Path) -> list[dict]:
     return pois
 
 
-def resolve_location_tags(location: str, tag_overrides: dict[str, str]) -> str:
-    """Match location against visual tag overrides."""
-    loc_lower = location.lower()
-    for key, tags in tag_overrides.items():
-        if key in loc_lower:
-            return tags
-    return location
-
-
 def compose_prompt(poi: dict, visual_style: dict) -> tuple[str, str, str, int]:
-    """Compose positive prompt, CLIP prompt, negative prompt, and seed for a POI."""
-    style_suffix = visual_style.get("positive_suffix", "")
+    """Compose subject description, CLIP prompt, negative prompt, and seed for a POI.
+
+    Returns the subject (not a pre-composed prompt). The daemon's PromptComposer
+    handles style injection via art_style, visual_tag_overrides, and LoRA — those
+    are passed through render_common.send_render from the visual_style dict.
+    """
     negative = visual_style.get("negative_prompt", "")
-    tag_overrides = visual_style.get("visual_tag_overrides", {})
     base_seed = visual_style.get("base_seed", 42)
 
+    # Build a descriptive subject for the PromptComposer
     parts = [f"{poi['name']}: {poi['description']}"]
 
     if poi.get("atmosphere"):
         parts.append(poi["atmosphere"])
 
-    # Match POI region against visual tag overrides
-    region = poi.get("region", "")
-    if region and region in tag_overrides:
-        region_style = tag_overrides[region]
-        if isinstance(region_style, dict):
-            parts.append(region_style.get("positive_suffix", ""))
-        else:
-            parts.append(region_style)
-    else:
-        location_text = poi["name"]
-        location_tags = resolve_location_tags(location_text, tag_overrides)
-        if location_tags != location_text:
-            parts.append(location_tags)
-        if poi.get("chapter_location"):
-            chapter_tags = resolve_location_tags(poi["chapter_location"], tag_overrides)
-            if chapter_tags != poi["chapter_location"] and chapter_tags not in parts:
-                parts.append(chapter_tags)
+    if poi.get("chapter_location"):
+        parts.append(poi["chapter_location"])
 
-    style_tokens = estimate_tokens(style_suffix)
-    narrative = ", ".join(parts)
-    narrative_tokens = estimate_tokens(narrative)
-    if narrative_tokens + style_tokens > TOKEN_LIMIT:
-        narrative = truncate_to_tokens(narrative, TOKEN_LIMIT - style_tokens - 10)
+    subject = ", ".join(parts)
+    subject = truncate_to_tokens(subject, TOKEN_LIMIT - 100)
 
-    # Style first for landscapes (genre atmosphere sets the scene)
-    positive = f"{style_suffix}, {narrative}" if style_suffix else narrative
-
-    clip_parts = ["wide establishing shot, scenic vista, atmospheric"]
-    if style_suffix:
-        clip_parts.append(style_suffix)
-    clip = ", ".join(clip_parts)
+    clip = "wide establishing shot, scenic vista, atmospheric"
 
     seed_key = f"{poi['genre']}:{poi['world']}:{poi['name']}:landscape"
     seed = deterministic_seed(seed_key, base_seed)
 
-    return positive, clip, negative, seed
+    return subject, clip, negative, seed
 
 
 async def main() -> None:

@@ -56,16 +56,15 @@ def collect_characters(genre_dir: Path) -> list[dict]:
 
 
 def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, str, int]:
-    """Compose positive prompt, CLIP prompt, negative prompt, and seed."""
-    style_suffix = visual_style.get("positive_suffix", "")
+    """Compose subject description, CLIP prompt, negative prompt, and seed.
+
+    Returns the subject (not a pre-composed prompt). The daemon's PromptComposer
+    handles style injection via art_style, visual_tag_overrides, and LoRA.
+    """
     negative = visual_style.get("negative_prompt", "")
     base_seed = visual_style.get("base_seed", 42)
 
-    # Build scene-based prompt: style first, then character in context
-    parts = []
-    if style_suffix:
-        parts.append(style_suffix)
-    parts.append(f"{char['name']}, {char['role']}.")
+    parts = [f"{char['name']}, {char['role']}."]
     if char.get("appearance"):
         parts.append(char["appearance"])
     if char.get("culture_aesthetic"):
@@ -73,18 +72,15 @@ def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, str, int]:
     if char.get("element_visual"):
         parts.append(char["element_visual"])
 
-    narrative = " ".join(parts)
+    subject = " ".join(parts)
+    subject = truncate_to_tokens(subject, TOKEN_LIMIT - 100)
 
-    narrative = truncate_to_tokens(narrative, TOKEN_LIMIT - 10)
-
-    positive = narrative
-
-    clip = style_suffix if style_suffix else "pen and ink illustration"
+    clip = "character portrait, detailed face, expressive"
 
     seed_key = f"{char['genre']}:{char['world']}:{char['name']}:portrait"
     seed = deterministic_seed(seed_key, base_seed)
 
-    return positive, clip, negative, seed
+    return subject, clip, negative, seed
 
 
 async def main() -> None:
