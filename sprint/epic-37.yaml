@@ -160,11 +160,12 @@ stories:
     title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
     points: 3
     priority: p1
-    status: in_review
+    status: done
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-16'
     repos: api
     workflow: wire-first
+    completed: '2026-04-17'
     pr: 477
     type: bug
     branch: feat/37-15-trope-encounter-handshake

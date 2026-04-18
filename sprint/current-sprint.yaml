@@ -1,4 +1,5 @@
 sprint:
+  name: "2"
   goal: "Multiplayer Works For Real — sealed letter turns, session UX, text tuning"
   start_date: "2026-03-29"
   end_date: "2026-04-12"
