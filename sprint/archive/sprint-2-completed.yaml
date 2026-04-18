@@ -1364,3 +1364,8 @@ completed_stories:
     title: Target number shown before the roll — display DC/mod/need on ability click, persist through dice animation, resolve color against known target, make consistent across all abilities
     points: 2
     completed: '2026-04-18'
+  - id: 37-17
+    epic: ''
+    title: Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another; canonicalize stat naming on the request path before it hits any case-sensitive lookup
+    points: 1
+    completed: '2026-04-18'

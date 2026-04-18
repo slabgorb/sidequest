@@ -185,10 +185,14 @@ stories:
     description: 'Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another. FIX SCOPE (rescoped 2026-04-15): (1) introduce explicit Stat enum in sidequest-protocol with serde case-insensitive deserialization and canonical serialization, (2) update narrator prompt contract to declare the enum variants explicitly so the model emits canonical forms at the source, (3) DiceRequestPayload.stat becomes Stat enum, not String. This fixes the root cause (narrator prompt ambiguity) and provides type-level enforcement — no dispatch-boundary normalization needed.'
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-18'
     repos: api
     workflow: trivial
+    completed: '2026-04-18'
     type: bug
+    branch: feat/37-17-stat-name-casing-drift
   - id: 37-18
     title: 'pending_dice_request not persisted in game_state snapshot — dice requests live in in-memory session state only, any server restart mid-roll orphans the request (observed: 3 unresolved requests during 2026-04-13 spaghetti_western playtest, all lost at save); snapshot must include outstanding dice request so client can re-prompt on reconnect'
     points: 2
