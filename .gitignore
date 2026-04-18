@@ -60,6 +60,9 @@ start-session
 # Git worktrees
 worktrees/
 
+# Personal scratch workspace
+scratch/
+
 # Sprint archives
 sprint/archive/*.md
 
