@@ -1344,3 +1344,8 @@ completed_stories:
     title: Template placeholder leak in Space Opera chargen-confirm — {name}/{class}/{race} render literally; template engine mismatch or missing context keys
     points: 1
     completed: '2026-04-18'
+  - id: 37-19
+    epic: ''
+    title: Phantom-player dedup on resume — duplicate party entry drives player_count to 2, structured-mode auto-promotion creates barrier that deadlocks waiting on ghost; dedup at resume boundary
+    points: 3
+    completed: '2026-04-18'
