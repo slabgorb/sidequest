@@ -1354,3 +1354,8 @@ completed_stories:
     title: Dice-request request_id lifecycle — server becomes single issuer, client echoes server-issued id, add retry/recovery so lost request does not wedge session (lost nat 20 on defend)
     points: 5
     completed: '2026-04-18'
+  - id: 37-23
+    epic: ''
+    title: Split daemon render_lock into render_lock + embed_lock — Flux renders serialize 10ms embeds behind 5-60s image gens, 30+ms contention tax on embed path
+    points: 2
+    completed: '2026-04-18'

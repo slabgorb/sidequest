@@ -247,10 +247,15 @@ stories:
     title: Split daemon render_lock into render_lock + embed_lock — Flux renders serialize 10ms embeds behind 5-60s image gens, 30+ms contention tax on embed path
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
     repos: daemon
     workflow: wire-first
+    completed: '2026-04-18'
     type: bug
+    review_findings: 'Round 2: OTEL obligation CLOSED. New findings: render span missing error attrs (HIGH), embed span bypasses CancelledError (HIGH), render path missing log.exception (HIGH), tracer comment misattributes CLAUDE.md principle (HIGH). ~15 line fix in daemon.py only, no test changes required.'
+    review_verdict: approved
   - id: 37-24
     title: NPC mechanical turn + stealth/trope check — narrator currently weaves enemy/stealth outcomes with zero OTEL; emit npc.turn and trope handshake spans, surface minimal UI cue, close Illusionism gap
     points: 5
