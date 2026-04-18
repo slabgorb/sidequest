@@ -1359,3 +1359,8 @@ completed_stories:
     title: Split daemon render_lock into render_lock + embed_lock — Flux renders serialize 10ms embeds behind 5-60s image gens, 30+ms contention tax on embed path
     points: 2
     completed: '2026-04-18'
+  - id: 37-25
+    epic: ''
+    title: Target number shown before the roll — display DC/mod/need on ability click, persist through dice animation, resolve color against known target, make consistent across all abilities
+    points: 2
+    completed: '2026-04-18'

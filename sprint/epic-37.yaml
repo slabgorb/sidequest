@@ -268,10 +268,14 @@ stories:
     title: Target number shown before the roll — display DC/mod/need on ability click, persist through dice animation, resolve color against known target, make consistent across all abilities
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
     repos: ui
     workflow: trivial
+    completed: '2026-04-18'
     type: bug
+    branch: feat/37-25-target-number-shown-before-roll
   - id: 37-26
     title: WebSocket auto-reconnect on navigation — add backoff + visible reconnect banner in useWebSocket.ts, gate input-disabled on explicit WS status
     points: 3
