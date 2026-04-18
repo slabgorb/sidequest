@@ -68,6 +68,10 @@ sprint/archive/*.md
 
 # Node modules
 node_modules/
+
+# Per-clone CARGO_HOME (see .envrc)
+.cargo-home/
+.envrc
 # Frame server runtime files
 .frame-port
 frame-pid
