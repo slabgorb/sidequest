@@ -68,6 +68,12 @@ sprint/archive/*.md
 
 # Node modules
 node_modules/
+
+# Per-clone CARGO_HOME (see .envrc and .claude/hooks/cargo-env-inject.sh)
+.cargo/
+.cargo-home/
+.envrc
+
 # Frame server runtime files
 .frame-port
 frame-pid
