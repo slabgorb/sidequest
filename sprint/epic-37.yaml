@@ -201,9 +201,12 @@ stories:
     title: Phantom-player dedup on resume — duplicate party entry drives player_count to 2, structured-mode auto-promotion creates barrier that deadlocks waiting on ghost; dedup at resume boundary
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
     repos: api
     workflow: wire-first
+    completed: '2026-04-18'
     type: bug
     review_findings: 'Round 2 APPROVED. All 12 round-1 findings resolved. Three non-blocking MEDIUM/LOW items logged for follow-up: AC-11 doesn''t assert pending_dice_requests eviction; barrier.remove_player Err silently swallowed via .is_ok(); AC-8 title overpromises scope. Fmt drift resolved in commit 5d736fda.'
     review_verdict: approved
