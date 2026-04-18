@@ -21,7 +21,7 @@ import '.pennyfarthing/justfile.pf'
 
 # API (Rust backend)
 api-test:
-    cd sidequest-api && cargo nextest run
+    cd sidequest-api && cargo test
 
 api-build:
     cd sidequest-api && cargo build
@@ -39,7 +39,7 @@ api-fmt:
     cd sidequest-api && cargo fmt
 
 api-check:
-    cd sidequest-api && cargo fmt --check && cargo clippy -- -D warnings && cargo nextest run
+    cd sidequest-api && cargo fmt --check && cargo clippy -- -D warnings && cargo test
 
 # Preview narrator prompt (uses real Rust types — never drifts)
 prompt-preview *flags:

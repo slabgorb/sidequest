@@ -3,7 +3,7 @@ type: epic
 title: Dogfight Subsystem — Sealed-Letter Fighter Combat via StructuredEncounter
 description: 'Extend StructuredEncounter with SealedLetterLookup resolution mode for simultaneous-commit fighter combat. Ace of Aces inspired mechanic: two pilots commit maneuvers secretly, cross-product lookup resolves outcome. Reuses TurnBarrier (Epic 13), unified narrator (ADR-067), and confrontation engine (ADR-033). See ADR-077.'
 priority: p2
-status: backlog
+status: done
 repos: api,content
 stories:
   - id: 38-1
@@ -98,10 +98,13 @@ stories:
     title: Paper playtest calibration — run duel_01.md 3-5 times, annotate each cell with calibrated/exciting/lopsided/confusing/dull tags, adjust deltas for any failing tags
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-16'
     repos: content
     workflow: wire-first
+    completed: '2026-04-17'
     type: chore
+    branch: feat/38-9-paper-playtest-calibration
     review_verdict: approved
   - id: 38-10
     title: Tail-chase starting state — author duel_02.md with tail_chase geometry and a second 16-cell interaction table, proving the confrontation generalizes beyond merge
@@ -115,3 +118,4 @@ stories:
     assignee: keithavery
     branch: feat/38-10-tail-chase-starting-state
     review_verdict: approved
+completed: '2026-04-17'

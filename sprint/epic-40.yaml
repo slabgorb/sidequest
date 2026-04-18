@@ -1,0 +1,76 @@
+id: '40'
+type: epic
+title: Runtime Wiring Test Harness — DI Clients, Span-Capture Assertions, Zero Source-Grep Tolerance
+description: |
+  Eradicate the 146 source-grep .contains(...) assertions across ~30 test files.
+  Establish sidequest-test-support as the single source of truth: SpanCaptureLayer,
+  MockClaudeClient, ClaudeLike trait, canonical recipe README. Force DI of
+  ClaudeClient via Arc<dyn ClaudeLike> at every production site; server bootstrap
+  is the only legal construction site. Hard-block the anti-pattern AND the root
+  cause via pre-commit + just api-check gates. No allowlist, no grace period,
+  no exceptions. Pain is the point.
+priority: p0
+status: backlog
+repos: api
+stories:
+  - id: 40-1
+    title: sidequest-test-support crate — SpanCaptureLayer, MockClaudeClient, ClaudeLike trait, canonical recipe README (the source of truth)
+    points: 5
+    priority: p0
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-17'
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-17'
+    review_findings: 'Round 2: HIGH fmt blocker on story-owned test files + MEDIUM span_capture.rs no_run miss + MEDIUM substring-matching in Epic 40 foundation wiring test + MEDIUM missing ParseFailed/OutputTooLong error-variant coverage + MEDIUM misleading test name. Back to TEA for RED (new tests + assertion tightening), then Dev for GREEN (fmt + no_run fix).'
+    review_verdict: approved
+  - id: 40-2
+    title: ClaudeClient DI refactor — convert 8 inline sites (orchestrator, preprocessor, inventory_extractor, continuity_validator, resonator×4, server/lib.rs) to Arc<dyn ClaudeLike>; bootstrap only at server entry
+    points: 8
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
+  - id: 40-3
+    title: Pilot migration — perception_story_8_6 (23 assertions) to runtime harness; prove it catches span-rename AND behavior regressions; lock canonical recipe
+    points: 5
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
+  - id: 40-4
+    title: sidequest-game bulk migration — ~10 files; classify migrate/delete/retain per file; consolidate to domain binaries
+    points: 8
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
+  - id: 40-5
+    title: sidequest-server *_wiring_* files — enforce the wiring claim, migrate every one, consolidate
+    points: 8
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
+  - id: 40-6
+    title: Long-tail migration — remaining sidequest-server integration, sidequest-agents, sidequest-genre, sidequest-protocol tests; zero source-grep assertions remaining
+    points: 8
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
+  - id: 40-7
+    title: Hard-block gates — pre-commit + just api-check fail on (1) read_to_string/include_str! .contains in tests/, (2) ClaudeClient::new/::with_timeout outside server bootstrap; CLAUDE.md points at test-support crate README
+    points: 3
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: tdd
+  - id: 40-8
+    title: Binary consolidation sweep — merge migrated test files into domain binaries across touched crates; measure cargo test binary count before/after
+    points: 3
+    priority: p0
+    status: backlog
+    repos: api
+    workflow: wire-first
