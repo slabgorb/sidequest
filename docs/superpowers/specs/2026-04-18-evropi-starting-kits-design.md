@@ -22,13 +22,13 @@ The existing skill-tree `trunk:` / `paths:` / `capstones:` content stays in plac
 ### In scope
 
 - `starting_kit:` schema addition to `worlds/evropi/character-progression/{slug}.yaml`
-- `character_resources:` schema addition for character-scoped ResourcePools (for pę)
+- `character_resources:` schema addition for character-scoped ResourcePools (for reniksnad)
 - Kit content for five characters: Rux, Prot'Thokk, Hant, Pumblestone, Th`rook
 - Ludzo test-character kit inheritance (`inherits: rux`)
 - Th`rook full character draft (new — no existing save, no prior progression YAML)
 - Pę ResourcePool definition
 - Micro-ADR-081 covering `AllyEdgeIntercept` and `ConditionalEffectGating`
-- `sunday-progression.md` amendment adding a Th`rook section and pę-dependency narrator guidance
+- `sunday-progression.md` amendment adding a Th`rook section and reniksnad-dependency narrator guidance
 - Cross-reference updates: edge-advancement-content.md, ADR-078 deferral language, character YAMLs, character-progression README
 
 ### Out of scope
@@ -165,39 +165,39 @@ All day-1 enum.
 **Race/class:** Pakook`rook Warlock. Edge_max 4 base. Pakook-literate (knotsongs), conversational Jabber.
 
 **Backstory skeleton:**
-> Born in one of the Pę settlements, force-fed pę from childhood to keep the labor compliant. Somewhere in his teens, while working alone in the reed-beds, he heard something in the deep swamp sing back to his knotsong — and negotiated. The pact did not free him from the pę. It freed him from the Zkęd. The patron — a thing that lives where the swamp meets rock — does not know or care about withdrawal. It cares about the knotsong being sung, and about the water being deep enough. Th`rook has been walking north, because the patron named a place, and because the Wazdia still controls the pę supply south of the Zbóźny foothills and he will not go south again.
+> Born in Pę (the Zkędzała slave-city), force-fed reniksnad from childhood to keep the labor compliant. Somewhere in his teens, while working alone in the reed-beds, he heard something in the deep swamp sing back to his knotsong — and negotiated. The pact did not free him from the reniksnad. It freed him from the Zkęd. The patron — a thing that lives where the swamp meets rock — does not know or care about withdrawal. It cares about the knotsong being sung, and about the water being deep enough. Th`rook has been walking north, because the patron named a place, and because the Wazdia still controls the reniksnad supply south of the Zbóźny foothills and he will not go south again.
 
 **Hooks:** `reach_a_buried_place` (shared with four other party members), `addicted_to_controlled_supply` (unique).
 
 **Starting kit:**
 1. **Knotsung Name** — `beat_discount { beat_id: invoke, resource_mod: { voice: 1 } }` — invocation through knotsong costs less Voice
 2. **Creditor's Mark** — `lore_reveal_bonus { scope: pact_creditor_sign }` — recognizes other warlocks' pact-signs on sight
-3. **The Dose Helps** — `conditional_effect_gating` wrapping `beat_discount { beat_id: commit_cost, resource_mod: { flesh: 1 } }` when pę>5, OR `beat_penalty { beat_id: commit_cost, resource_mod: { flesh: -1 } }` when pę≤5 — **new variant, ADR-081**
+3. **The Dose Helps** — `conditional_effect_gating` wrapping `beat_discount { beat_id: commit_cost, resource_mod: { flesh: 1 } }` when reniksnad>5, OR `beat_penalty { beat_id: commit_cost, resource_mod: { flesh: -1 } }` when reniksnad≤5 — **new variant, ADR-081**
 
 Two day-1, one ADR-081.
 
-**Character resource — pę:**
+**Character resource — reniksnad:**
 ```yaml
 character_resources:
-  - name: pe
-    label: "Pę"
+  - name: reniksnad
+    label: "Reniksnad"
     min: 0
     max: 10
     starting: 7
     voluntary: false
     decay_per_scene: 1
-    refill_trigger: "narrator-authored dose event"
+    refill_trigger: "narrator-authored dose event (Wazdia-controlled supply)"
     thresholds:
       - at: 5
-        event_id: pe_first_tremor
+        event_id: reniksnad_first_tremor
         narrator_hint: "His hand shakes slightly when he reaches for water. A Wazdia informer would note it."
         direction: crossing_down
       - at: 3
-        event_id: pe_withdrawal
+        event_id: reniksnad_withdrawal
         narrator_hint: "Withdrawal has begun. His voice thins; knotsongs fail on the high notes. Voice-spends cost 1 more per invocation while he is here."
         direction: crossing_down
       - at: 0
-        event_id: pe_death_clock
+        event_id: reniksnad_death_clock
         narrator_hint: "The clock has started. He will die within one in-fiction week without another dose. Narrator: this is not dramatic; it is medical."
         direction: crossing_down
 ```
@@ -208,13 +208,13 @@ Two new `AdvancementEffect` enum variants, scoped tightly:
 
 1. **`AllyEdgeIntercept`** — self-sacrifice: redirect `target_edge_delta` from a designated ally to the actor. Required by Prot'Thokk's *Lil' Sebastian Stands* (the ability that defines his character identity). Fields: `ally_whitelist: Vec<CreatureRef>`, `max_redirect: u32`. Clamps actor's Edge to ≥1 to prevent self-breaks on the redirect.
 
-2. **`ConditionalEffectGating`** — wraps an existing effect in a condition check against a resource pool or character state. Required by Th`rook's *The Dose Helps* (pę>5 vs pę≤5). Fields: `condition: ConditionExpr`, `when_true: AdvancementEffect`, `when_false: Option<AdvancementEffect>`. `ConditionExpr` initially supports only ResourcePool threshold comparisons; richer grammar deferred.
+2. **`ConditionalEffectGating`** — wraps an existing effect in a condition check against a resource pool or character state. Required by Th`rook's *The Dose Helps* (reniksnad>5 vs reniksnad≤5). Fields: `condition: ConditionExpr`, `when_true: AdvancementEffect`, `when_false: Option<AdvancementEffect>`. `ConditionExpr` initially supports only ResourcePool threshold comparisons; richer grammar deferred.
 
 All other T2/T3 stubs across the five character drafts remain `effects: []  # TODO ADR-082+` with named variants and preserved narration_hints. A future ADR addresses them after play reveals which are load-bearing.
 
 ### Sunday playtest vs post-Epic-39 deployment
 
-- **This Sunday (pre-Epic-39):** The `sunday-progression.md` sheet already carries four of the five characters under GM fiat. This design requires appending a Th`rook section (backstory + kit prose + pę guidance) to that sheet. The narrator honors all grants and pę-threshold effects in prose. The GM (Keith) tracks pę manually.
+- **This Sunday (pre-Epic-39):** The `sunday-progression.md` sheet already carries four of the five characters under GM fiat. This design requires appending a Th`rook section (backstory + kit prose + reniksnad guidance) to that sheet. The narrator honors all grants and reniksnad-threshold effects in prose. The GM (Keith) tracks reniksnad manually.
 - **Post-Epic-39 story 5:** The `starting_kit:` and `character_resources:` blocks in the YAML files are lifted verbatim into runtime. ADR-081 lands. Sebastien gets dashboard visibility of all four resource bars and the conditional-gating flip. Kit grants appear as real AdvancementEffects in the GM panel's per-character ledger.
 
 ## Consequences
@@ -232,7 +232,7 @@ All other T2/T3 stubs across the five character drafts remain `effects: []  # TO
 - One additional variant (`ConditionalEffectGating`) beyond the original ADR-081 plan surfaced late; architectural scope is disciplined but did drift from "one variant" to "two" under playtest pressure
 - Character-scoped ResourcePools are a genuine schema extension; content-side this is trivial, but it introduces a second hydration path distinct from genre-level resources
 - Hant's T2/T3 remain heavily ADR-082+ dependent; his long-game mechanical identity is thinner than the other four's if play ever does progress to T2
-- Th`rook's pę dependency is a permanent session pressure point; if Keith decides the ongoing clock is too much mid-session, there is no soft-off switch short of narrator fiat to refill
+- Th`rook's reniksnad dependency is a permanent session pressure point; if Keith decides the ongoing clock is too much mid-session, there is no soft-off switch short of narrator fiat to refill
 
 **Neutral**
 
