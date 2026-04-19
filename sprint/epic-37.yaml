@@ -264,9 +264,12 @@ stories:
     title: NPC mechanical turn + stealth/trope check — narrator currently weaves enemy/stealth outcomes with zero OTEL; emit npc.turn and trope handshake spans, surface minimal UI cue, close Illusionism gap
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-18'
     repos: api
     workflow: wire-first
+    completed: '2026-04-18'
     type: bug
   - id: 37-25
     title: Target number shown before the roll — display DC/mod/need on ability click, persist through dice animation, resolve color against known target, make consistent across all abilities
