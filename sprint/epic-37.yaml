@@ -302,10 +302,10 @@ stories:
     priority: p1
     status: done
     assigned_to: keith.avery@1898andco.io
-    completed: '2026-04-19'
     started: '2026-04-19'
     repos: api
     workflow: trivial
+    completed: '2026-04-19'
     type: bug
     branch: feat/37-27-character-snapshot-scene-enter
   - id: 37-28

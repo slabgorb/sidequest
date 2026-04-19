@@ -198,3 +198,19 @@ stories:
     workflow: tdd
     type: chore
     superseded_by: '35-7'
+  - id: 29-20
+    title: 'Rework 29-11: wire tactical_place end-to-end (grid summary, parse_tool_results, placement consumption)'
+    description: Populate tactical_grid_summary in narrator context + OTEL (rework scope from 29-11). Under ADR-059, narrator receives tactical grid via game-state injection, not tool calls. AC-2/3/5/6 from original 29-20 scope deferred to a separate design story.
+    points: 2
+    priority: p0
+    status: canceled
+    assigned_to: keithavery
+    started: '2026-04-19'
+    repos: api,ui
+    workflow: wire-first
+    acceptance_criteria:
+      - 'AC-1: TurnContext.tactical_grid_summary is populated (non-None) with a compact human-readable grid summary whenever an active encounter has a TacticalGrid. Producer is called in the production narrator turn path (dispatch/mod.rs → process_action), not test-only.'
+      - 'AC-4: OTEL span on the narrator turn includes grid_summary_length (usize) and grid_summary_present (bool) fields — visible in GM panel.'
+    type: bug
+    branch: feat/29-20-rework-29-11-tactical-place-wiring
+    session_file: .session/29-20-session.md
