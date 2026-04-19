@@ -39,7 +39,7 @@ stories:
       presetLayouts.ts has estimated grid coordinates. Playtest each preset (Classic, Tactician, Explorer, Minimalist) and adjust x/y/w/h values so widgets don't overlap or leave awkward gaps at common viewport sizes (1440x900, 1920x1080, 2560x1440).
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: ui
     workflow: trivial
   - id: 33-4
@@ -57,7 +57,7 @@ stories:
       When edit mode is active, show visual affordances (resize handles glow, widget borders become dashed, grid gutters become visible). Add a first-run tooltip explaining layout customization. Add "Reset to Default" button in settings widget that calls setPreset("classic").
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: ui
     workflow: trivial
   - id: 33-6
@@ -66,7 +66,7 @@ stories:
       Add a "+" button in the running header that opens a dropdown listing all available widgets with checkboxes. Toggling a checkbox calls showWidget/hideWidget. Data-gated widgets show as disabled when no data.
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: ui
     workflow: wire-first
   - id: 33-7
@@ -92,7 +92,7 @@ stories:
     description: 'The Stats sub-tab currently renders all stats at equal visual weight regardless of what the game is doing. When combat is active, Reflexes/Instinct/Toughness are what matter. When a Confrontation is live, Presence/Brains/Wits matter. This story reads the current game phase from Redux state (GamePhase enum: exploration, combat, confrontation, downtime) and dims irrelevant stats while adding a green dot and row highlight to relevant ones. A context banner below the header names the active phase. See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-8. Before/after visible in screenshots 011 (flat) vs 013 (Confrontation tab already doing this correctly — mirror that pattern into the Stats tab).'
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: wire-first
     acceptance_criteria:
@@ -108,7 +108,7 @@ stories:
     description: 'Stat names (Brains, Reflexes, Presence, etc.) are opaque to new players — a number next to a word tells you nothing about when that stat applies. This story adds a one-line italic descriptor under each stat name in the Stats sub-tab. Descriptors are defined per-stat in a config file (not in genre pack YAML — these are system-level descriptions). See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-9.'
     points: 2
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: trivial
     acceptance_criteria:
@@ -122,7 +122,7 @@ stories:
     description: 'There is no health or condition display anywhere in the Character tab. HP and Stress only appear in the OTEL dashboard. This story adds a conditions bar between the character header and the stat list: two slim track bars (HP and Stress with numeric labels), plus a chip row for any active conditions (Bleeding, Rattled, Bolstered, etc.). Portrait border and name color shift to warn/danger at threshold. See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-10. Condition data comes from game_state.character.conditions (already present in protocol).'
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: wire-first
     acceptance_criteria:
@@ -159,7 +159,7 @@ stories:
     description: 'The current PARTY section at the bottom of the Character tab is a single non-interactive row: a tiny avatar, the character name, and a raw HP string. It does not show NPCs travelling with the player, does not show conditions, and cannot be expanded or collapsed. This story replaces it with an expandable panel listing all party members (PC + companion NPCs) with portrait, name, archetype, HP mini-track, and active condition chips. Collapsed by default, expands on click. See mockup: .playwright-mcp/mockups/epic-33-panel-improvements.html#s33-12. Party data comes from game_state.party array.'
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: trivial
     acceptance_criteria:
@@ -175,7 +175,7 @@ stories:
     description: 'The inventory panel has no interaction affordances. Items are read-only — there is no way to use a consumable, equip a weapon, or drop anything from this panel. This story adds inline action buttons to each item row: Use (consumables/tools), Equip/Unequip (weapons/armor), and Drop (all). Actions dispatch WebSocket messages to the server (use_item, equip_item, drop_item). See mockup: .playwright-mcp/mockups/epic-33-inventory-improvements.html#s33-13. Current state visible in provided playtest screenshot of Inventory tab.'
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: wire-first
     acceptance_criteria:
@@ -191,7 +191,7 @@ stories:
     description: "Consumable quantities are currently buried inside item names ('Rad Pills (3 doses)', 'Canteen (1 day)') rather than displayed as a discrete quantity field. This makes stacks hard to scan and ties quantity presentation to item naming conventions. This story moves quantity to a standalone chip (×3) displayed after the item name, and removes quantity text from item names. When a consumable reaches qty=1 the chip turns red to signal near-depletion. See mockup: .playwright-mcp/mockups/epic-33-inventory-improvements.html#s33-14-15."
     points: 2
     priority: p1
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: trivial
     acceptance_criteria:
@@ -206,7 +206,7 @@ stories:
     description: "The equipped state on weapons is indicated only by a tiny plain-text 'Equipped' string next to the item name — easy to miss, no visual weight. This story replaces it with a proper visual treatment: a 3px left border in equip-green, a subtle background tint, and a small badge chip with an icon. The visual treatment makes equipped state immediately legible when scanning the inventory. See mockup: .playwright-mcp/mockups/epic-33-inventory-improvements.html#s33-14-15."
     points: 2
     priority: p1
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: trivial
     acceptance_criteria:
@@ -221,7 +221,7 @@ stories:
     description: "The inventory header shows only '15 gold' as plain text. There is no load/weight display, no item count, and currency has no visual hierarchy. This story replaces the plain gold string with a summary bar below the tab header: currency block (icon + value + label), a load track bar (current/max with amber/red thresholds), and an item count. If load system is not present in game_state, the load track is omitted and only currency + item count render. See mockup: .playwright-mcp/mockups/epic-33-inventory-improvements.html#s33-16."
     points: 2
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: trivial
     acceptance_criteria:
@@ -288,7 +288,7 @@ stories:
     description: 'Add player-count recommendation and lobby blurb to every genre pack and surface them in the ConnectScreen lobby. GM has already authored lobby_blurb and recommended_players {min,max,sweet_spot} fields in all 11 sidequest-content/genre_packs/*/pack.yaml files. This story wires those fields through the stack: Rust PackMeta → GenreResponse → /api/genres → TypeScript GenreMeta → ConnectScreen OptionList hint/annotation slots. The OptionList component already exposes unused hint and annotation fields — no new UI components needed. Cosmetic UI only, no OTEL required per CLAUDE.md exclusion.'
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: api,ui,content
     workflow: wire-first
     acceptance_criteria:
@@ -304,7 +304,7 @@ stories:
     description: "The lobby genre picker (OptionList in ConnectScreen) renders genres as a plain text list with left-border selection. The API's /api/genres endpoint already returns per-genre metadata (description, core_vibe, emotional_tone, inspirations) but the picker doesn't consume any of it. This story enriches the genre rows with: a mood/vibe subtitle from pack.yaml metadata, a color swatch derived from the genre's theme.yaml primary color, and optionally a small thumbnail if a genre-level cover image exists in the content repo. The world picker already shows rich previews — the genre picker should match that density."
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-ui
     workflow: wire-first
     acceptance_criteria:

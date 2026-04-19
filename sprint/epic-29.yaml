@@ -144,21 +144,21 @@ stories:
     title: Click-to-move + server-side A* pathfinding — TACTICAL_ACTION Move, path preview, terrain cost
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: api,ui
     workflow: wire-first
   - id: 29-13
     title: EffectZone overlays — circle/cone/line/rect shapes, semi-transparent SVG, narrator tactical_hazard tool
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: api,ui
     workflow: wire-first
   - id: 29-14
     title: StructuredEncounter grid binding — EncounterActor gains GridPos, spatial beat targeting
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 29-15
@@ -186,7 +186,7 @@ stories:
     title: OTEL for tactical system — state_sent, entity_placed, move_validated, zone_created spans
     points: 2
     priority: p1
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 29-19
