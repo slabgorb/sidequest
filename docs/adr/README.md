@@ -51,6 +51,7 @@
 | [Dogfight Subsystem](077-dogfight-subsystem.md) | Proposed | StructuredEncounter extension for sealed-letter fighter duels (per-actor descriptors + cross-product lookup table) |
 | [Edge / Composure + Mechanical Advancement + Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | Proposed | Replace phantom HP with first-class `EdgePool` on `CreatureCore`; first hard link from ADR-021 progression to engine state; extend `pact_working` beats with `resource_deltas` for push-currency spellcraft |
 | [Unified Narrative Weight Trait](080-unified-narrative-weight-trait.md) | Accepted | ADR-014 enforcement — `NarrativeWeight` newtype + `Weighted` trait unifies weight across inventory, tropes, beats, scenes, NPCs, encounters |
+| [Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | Proposed | Adds `AllyEdgeIntercept` + `ConditionalEffectGating` variants to ADR-078's `AdvancementEffect` enum for Prot'Thokk's *Lil' Sebastian Stands* and Th`rook's *The Dose Helps* |
 
 ## Frontend / Protocol
 
