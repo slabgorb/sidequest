@@ -30,9 +30,22 @@
 #   Claude Code PreToolUse hook only sees the top-level Bash tool_input;
 #   children of `just` are invisible. Matching only `cargo` meant
 #   `just api-build` bypassed the guard entirely — same deadlock risk as
-#   raw cargo. Matching `just` closes that hole. Non-cargo recipes pay a
-#   negligible serialization cost (frontend/daemon builds rarely overlap
-#   in practice and the lock is cheap when uncontested).
+#   raw cargo. Matching `just` closes that hole.
+#
+# Why the bypass list (BYPASS_JUST_RE):
+#   Recipes that NEVER invoke cargo (ui-*, daemon-*, and a handful of
+#   utility aliases) don't need env injection (no cargo to inherit it),
+#   don't need the lock (no cargo contention), and emphatically don't
+#   need the 30s heartbeat to stderr — that heartbeat interferes with
+#   long-running services like `just daemon-run`, where stderr is a
+#   live log stream the consumer is parsing. (Discovered 2026-04-19:
+#   embed inference returned spurious BrokenPipe errors when the
+#   daemon was launched under cargo-guard.) The bypass returns `{}`
+#   so the command runs unmodified.
+#
+#   Default is GUARDED — new recipes that touch cargo get protected
+#   automatically. Recipes confirmed not to touch cargo can be added
+#   to BYPASS_JUST_RE.
 #
 # Reads the PreToolUse JSON payload from stdin. Emits a hookSpecificOutput
 # JSON: permissionDecision=deny for nextest, updatedInput.command for
@@ -54,6 +67,12 @@ GUARD_SCRIPT="$PROJECT_ROOT/.claude/hooks/cargo-guard.sh"
 # whitespace or end-of-string. Won't match `Cargo.toml`, `cargo-*`,
 # `justfile`, or `adjust`.
 GUARDED_RE='(^|[;&|[:space:]])(cargo|just)([[:space:]]|$)'
+# `just` recipes that NEVER invoke cargo — bypass the guard entirely so
+# their stderr is not polluted by the 30s heartbeat. Matched as
+# `just <recipe>` where recipe is a known-non-cargo name. Anything not
+# in this list defaults to GUARDED (safe fail). Update when adding new
+# non-cargo recipes to justfile.
+BYPASS_JUST_RE='(^|[;&|[:space:]])just[[:space:]]+(ui-[a-z-]+|daemon-[a-z-]+|warmup|client|tmux|otel|playtest|playtest-scenario|scene-list|status|sync-claude-md)([[:space:]]|$)'
 # Nextest detection: matches `cargo nextest ...` and bare `nextest ...`
 # in any shell-separator position. Banned regardless of entry point
 # because the XProtect deadlock is architectural, not a cargo subcommand
@@ -64,6 +83,7 @@ jq -c \
   --arg cargo_home "$CARGO_HOME_PATH" \
   --arg guard "$GUARD_SCRIPT" \
   --arg cargo_re "$GUARDED_RE" \
+  --arg bypass_re "$BYPASS_JUST_RE" \
   --arg nextest_re "$NEXTEST_RE" '
   (.tool_input.command // "") as $cmd
   | if ($cmd | test($nextest_re)) then
@@ -86,6 +106,11 @@ jq -c \
           )
         }
       }
+    elif ($cmd | test($bypass_re)) then
+      # Non-cargo just recipe (ui-*, daemon-*, etc.) — let it run unwrapped.
+      # The 30s heartbeat would interfere with long-running services that
+      # use stderr as a live log stream.
+      {}
     elif ($cmd | test($cargo_re)) then
       {
         hookSpecificOutput: {
