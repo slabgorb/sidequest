@@ -1404,3 +1404,8 @@ completed_stories:
     title: BeatDef.edge_delta + target_edge_delta + beat dispatch wiring — extend BeatDef with edge_delta/target_edge_delta/resource_deltas; implement self-debit and target-debit blocks in handle_applied_side_effects (parallel to gold_delta at beat.rs:319-337); auto-resolve on Edge<=0; OTEL creature.edge_delta + encounter.composure_break events; hard-coded advancement stub (Fighter +2 edge_max) for smoke playtest gate at end of story
     points: 8
     completed: '2026-04-19'
+  - id: 37-36
+    epic: ''
+    title: "Party-peer identity packet in game_state — canonical name/pronouns/race/class/level of other party members injected into each player's game_state so narrator references party-mates with stable pronouns across sealed-letter turns (playtest 3 2026-04-19: Blutka he/him in own save drifted to she/her in Orin's save because peer had zero canonical presence in Orin's game_state). Perception layer stays POV; physical identity is canonical. OTEL span on peer injection."
+    points: 3
+    completed: '2026-04-19'

@@ -384,9 +384,12 @@ stories:
     title: "Party-peer identity packet in game_state — canonical name/pronouns/race/class/level of other party members injected into each player's game_state so narrator references party-mates with stable pronouns across sealed-letter turns (playtest 3 2026-04-19: Blutka he/him in own save drifted to she/her in Orin's save because peer had zero canonical presence in Orin's game_state). Perception layer stays POV; physical identity is canonical. OTEL span on peer injection."
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-19'
     repos: sidequest-api
     workflow: tdd
+    completed: '2026-04-19'
     type: bug
   - id: 37-37
     title: "Sealed-letter world-state handshake between turns — after each player turn, emit a minimal shared-world delta (current location, active encounter id, party formation/adjacency) that seeds the next player's turn so narrator stops fabricating physical separations to explain party-mate absence. Playtest 3 2026-04-19: Orin's save invented a 'collapsed corridor' separating him from Blutka because Orin's game_state had no ground-truth that Blutka was in the same room fighting the same scavengers. Canonical: location, encounter presence, adjacency. Perceived (stays POV): mood, tactics, what the peer is feeling. OTEL span on handshake merge with conflict-resolution events."
