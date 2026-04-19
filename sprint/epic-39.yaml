@@ -52,9 +52,12 @@ stories:
     title: Authored advancement effects + resolved_beat_for — add AdvancementEffect enum (EdgeMaxBonus/EdgeRecovery/BeatDiscount with resource_mod/LeverageBonus/LoreRevealBonus); RecoveryTrigger with while_strained:bool (current<=max/4); CreatureCore.acquired_advancements; resolved_beat_for view function in sidequest-game/src/advancement.rs; per-genre audit for effects-host location (progression.yaml affinity tiers vs new advancements.yaml); milestone-grant path. Story 5 of ADR-078
     points: 8
     priority: p2
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-19'
     repos: api
     workflow: wire-first
+    branch: feat/39-5-authored-advancement-effects
   - id: 39-6
     title: Heavy_metal pact push currencies (content) — add three ResourcePools (voice/flesh/ledger, voluntary, no auto-refill); change pact_working category from social to ritual; add resource_deltas to all five pact_working beats (invoke/commit_cost/steady_the_rite/force_completion/close_the_book); add prompt conditional in unified narrator for confrontation.category=='ritual' (mirrors in_combat). Content from heavy_metal/_drafts/edge-advancement-content.md §3+§4
     points: 5
