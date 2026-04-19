@@ -386,7 +386,7 @@ stories:
     priority: p1
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-37
     title: "Sealed-letter world-state handshake between turns — after each player turn, emit a minimal shared-world delta (current location, active encounter id, party formation/adjacency) that seeds the next player's turn so narrator stops fabricating physical separations to explain party-mate absence. Playtest 3 2026-04-19: Orin's save invented a 'collapsed corridor' separating him from Blutka because Orin's game_state had no ground-truth that Blutka was in the same room fighting the same scavengers. Canonical: location, encounter presence, adjacency. Perceived (stays POV): mood, tactics, what the peer is feeling. OTEL span on handshake merge with conflict-resolution events."
@@ -394,7 +394,7 @@ stories:
     priority: p1
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-38
     title: 'State write-back hygiene — bookkeeping counters and handshakes run but never persist (playtest 3 2026-04-19): (1) total_beats_fired frozen at 0 across all 3 saves despite real beat fires — Orin had 5 fired beats including a fully-Resolved extraction_panic trope (beats 0.3/0.6/1.0) yet counter stayed 0; any beat-gated unlock perpetually blocks (relates 37-14). (2) encounter.outcome=null on both resolved Mawdeep encounters (Blutka resolved=true beat=6, Orin resolved=true beat=1) — resolution handshake never writes outcome back so reload may re-enter stale encounter (relates 37-12). (3) Scrapbook entries not backfilled when prior save carried forward — Orin scrapbook covers 10 of 29 rounds, subsystem blind to rounds 11-29 for context injection. (4) turn_manager.round lags narrative_log max_round — Felix turn_manager.round=65 but narrative max=72, 7-round gap so round-keyed gating operates on stale round data. (5) NPC.last_seen_turn stale — Orin Scavenger last_seen_turn=3 but creature appeared and died rounds 19-28. Add OTEL spans on each write-back so GM panel shows which handshakes fire. Common root: write-back paths exist in individual handlers but trunk state fields are never updated by the resolution/tick pipeline.'
@@ -402,7 +402,7 @@ stories:
     priority: p1
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-39
     title: "Inventory lifecycle — items persist through consume/discard and containers re-populate on revisit (playtest 3 2026-04-19): (1) Blutka starting kit double-initialised — 24 items including 6 torches, 2 waterskins, 4 rations, 2 chalk, 2 ten-foot poles; first 11 are stub-batch ('Starting equipment (x): Y') and next 13 are catalogue entries, both appended without dedup. Character init runs twice on first-turn path. (2) Consumables not removed on use — Orin drank vial round 12 but glass_vial remained in inventory; second vial appeared as distinct item glass_vial_dark_liquid after re-entering same room round 18. Two live vial items in final inventory. (3) Same container re-openable — Orin knocked the same tin box off the same wall in rounds 10 and 16, retrieving identical contents both times. Object-state not flagged as already-retrieved on room re-entry. (4) Weapon.state=Carried after explicit narrative discard — Blutka 'abandons the spear where it stands — shaft quivering in scavenger meat' (round 9) but spear still shows state=Carried in final inventory. (5) Consumed-state set but item not removed — Felix maintenance_kit.state=Consumed after patch-foam use rounds 14-16 and foil-strip tear round 48, but kit remains in inventory list with quantity=1. Extractor writes Consumed but removal pass never runs. All five symptoms converge on state_mutations.rs inventory write path — post-narration item lifecycle needs consume/discard/dedup enforcement with OTEL on every mutation. Relates 37-3, 37-10."
@@ -410,7 +410,7 @@ stories:
     priority: p1
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-40
     title: "Chargen + template + slot-reuse — evropi session blockers (playtest 3 2026-04-19): (1) Stale-slot reuse kills sessions — prot_thokk and hant saves created 2026-04-19T16:31 UTC but narrative_log holds a single entry dated 2026-04-18; session never fired Turn 1 (last_played == created_at, turn_manager frozen at round=0/interaction=2). Prior-day narrative survived session reinit because DB row wasn't cleared. Session lifecycle must either clear old rows on reinit or refuse to write over a populated slot (relates 37-29, 37-1). (2) Chargen completes partially — pumblestone_sweedlewit has resolved_archetype=NULL, no hp/ac, and never advanced past opening. Chargen pipeline has a success path that skips archetype binding (relates 37-7). (3) Template placeholder leak — all 6 evropi saves carry world_history[0].character.name='{{generated at session start}}' unresolved, polluting narrator context on every turn (relates 37-21). (4) Hardcoded description template — 'A Human {class}' written regardless of race (prot_thokk Half-Orc, hant Antman, pumblestone Gnome, rux Kobold). Chargen sets description from a human-assumed template before race substitution. (5) Notorious-party mechanic fires in solo sessions — Rux leaked into pumblestone's solo narrative prose (narrator referenced him by name) because world config seeds a known-party context regardless of player count. Session count needs to gate notorious-party seeding. Common thread: chargen/session init writes templated defaults that never get overwritten with real values, and slot reuse doesn't clean prior state."
@@ -418,7 +418,7 @@ stories:
     priority: p1
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-41
     title: "State completeness bundle — subsystems write partial or skipped state (playtest 3 2026-04-19): (1) current_region='' empty string across both Mawdeep saves — should be 'mouth' slug; region-conditional logic (atmosphere, trope region-filter, no-exit routing) silently misses on falsy check. (2) discovered_regions pollution — Felix save has '(aside — narrator brief)' registered as a traversable region alongside legitimate room names; aside rounds leak into region graph. (3) current_region freetext-vs-slug dedup — Felix discovered_regions contains both 'The crew quarters of a beat-up freighter docked at a station you can't afford to stay at' and 'The Crew Quarters — Freighter Unpaid Debt' as separate regions for the same room; needs slug normalization at write. (4) encounter.actors missing non-player combatants — Orin encounter.actors=[Orin only] through 6 rounds of combat with Crawling Scavenger; per-actor damage/momentum tracking impossible. (5) world_history arcs freeze at turn 30 — Felix has 4 arcs (fresh 1-5, early 6-12, mid 13-20, veteran 21-30) covering turns 1-30 only, session reached turn 72; turns 31-72 have no arc context, campaign_maturity injection operates on 30-turn-old snapshot. (6) Resolved tropes don't write quest_log or active_stakes — Orin extraction_panic Resolved and hireling_mutiny at 0.255, yet quest_log={} and active_stakes='' (empty string everywhere). Resolution pipeline doesn't seed durable record. (7) NPC registry HP=0/max_hp=0 — Orin Crawling Scavenger registered but combat stats never written, HP-check on registry entry sees always-dead creature. (8) Player turns not persisted to narrative_log — Felix 71 entries all author='narrator', zero player-turn entries; subsystem engagement not verifiable from log authorship. (9) world_history arc embedded narrative_log and lore all empty despite 71 turns of dense story — arc-embedding pipeline either not running or not writing back. (10) NPC auto-registration missing — Blutka hireling Pell introduced rounds 2-3 never added to npc_registry; future references would treat him as hallucination. Shared theme: state subsystems have write paths but the trunk dispatch doesn't invoke them, or invokes them with partial data. Each sub-item needs an OTEL span marking the write path fired so GM panel can surface drift."
@@ -426,7 +426,7 @@ stories:
     priority: p2
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
     type: bug
   - id: 37-42
     title: "Turn barrier counts lobby connections not active-turn-takers — playtest 3 2026-04-19 evropi session: 4 saves created within 41 seconds (pumblestone_sweedlewit 16:30:36, rux 16:30:46, hant 16:31:04, prot_thokk 16:31:17) indicating a 4-player lobby. Only Rux actually played (advanced to round=9 over 8 minutes). The other 3 test-account clients logged in but never advanced past chargen (hant/prot_thokk stuck at round=0; pumblestone stuck at round=1). Every save individually has turn_manager.player_count=1 — the per-save field reflects characters-in-that-save, not lobby-participants. But the server's in-memory lobby state counted all 4 connected clients, and the structured-mode turn barrier waited for all 4 to submit turns on every Rux turn. Result from the table: 'turn blockers fired which was very confusing' — Rux kept hitting barriers mid-solo-session because phantom lobby peers never took their turns. Related 37-19 (phantom-player dedup on resume) which targeted the resume boundary; this is the lobby-join variant. Fix directions to evaluate: (a) drop barrier slots for players who haven't submitted a turn within N seconds, (b) only count players whose characters have advanced past round 0, (c) lobby gates 'joined' vs 'playing' states explicitly, (d) chargen-abandonment cancels the player's lobby slot. OTEL must emit lobby_participant_count vs active_turn_count on every barrier wait so GM panel shows which count is driving the block. Evidence in saves: 4 sessions clustered at 16:30-16:31 UTC with all non-Rux saves frozen at round 0-1 while Rux progressed normally but reported barrier-wait confusion."
@@ -434,5 +434,44 @@ stories:
     priority: p1
     status: backlog
     repos: sidequest-api
-    workflow: tdd
+    workflow: wire-first
+    type: bug
+  - id: 37-43
+    title: "Trope progression tuning — too many tropes too fast cause narrative thread confusion (playtest 3 2026-04-19 Felix Surrone aureate_span session): table feedback — mid-session the GM panel showed one trope just fired and several others nearly at fire threshold simultaneously. Sebastien (playing) reported the narrative getting confusing shortly after. Final save state shows 3 tropes progressing at 0.03/0.048/0.06 (low) suggesting a reset on fire, but mid-session pile-up is the problem. Narrator being asked to weave 5 simultaneous trope arcs into the same scene loses the thread. The engine is working — arguably too well. Tuning dimensions to evaluate: (a) dial back per-tick progression rates across all tropes, (b) cap simultaneously-active tropes at 2 or 3 (queue the rest), (c) tune narrator prompt to foreground the one or two most load-bearing tropes and keep the rest as background flavor not explicit beats, (d) stagger fire-readiness so tropes don't cluster at threshold, (e) add cooldown after a trope fires before a new one activates. OTEL must emit active_trope_count, progression_max, progression_avg per turn so GM panel shows tempo. This is a tuning/design story, not a wiring bug — trope engine is healthy but dramaturgically too busy. Primary evidence: Sebastien's table-side reaction during a 71-turn session; secondary evidence: no save-side trope-fire log because scenario_archive write-back doesn't fire (covered by 37-38). Data fidelity for this story will improve once 37-38 lands archived trope-fire events."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: wire-first
+    type: chore
+  - id: 37-44
+    title: "NPC identity drift across turns — canonical traits (pronouns, role, appearance) reinvented by narrator every turn because NPCs introduced narratively never land in game_state.npc_registry (playtest 3 2026-04-19 Felix Surrone aureate_span): Frandrew introduced round 17 as 'she/her, captain-level — gives orders: Bridge, prep undock we are leaving now'; round 21 the narrator's own aside demoted her to 'your junior/assistant, grease monkey'; by round 22 the snapshot had shifted to 'Prefect Frandrew Andrew (grease monkey, on the ladder)'; later rounds use 'he/him, his usual brightness, scratches his neck'. Frandrew went from female captain to male grease monkey over ~10 turns. Structural root cause: npc_registry=[] and npcs=[] in Felix's save across 71 turns despite Frandrew appearing in 33 narrative entries, Vey 25x, Marrien 6x, Prefect But 2x, Tchesla 1x. Zero auto-registration means no canonical data, narrator reinvents each turn. This is the NPC-side parallel to 37-36 (party-peer identity packet for players). Fix pattern: when narrator introduces a new named NPC (detected via structured output or post-narration extraction), auto-register with canonical pronouns/role/name/appearance; inject a party-visible 'NPC dossier' block into game_state so every subsequent turn's context has the ground truth. Perception stays POV (what Felix thinks of Frandrew's mood) but physical identity is canonical. OTEL span on npc.auto_registered and npc.reinvented (warn when narrator uses pronouns inconsistent with registry). Related 37-41 sub-item 10 (NPC auto-registration missing — root cause) and 37-36 (same pattern, player side)."
+    points: 5
+    priority: p1
+    status: backlog
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-45
+    title: "Markov namegen pool undersized — stem-repetition artifacts surface ridiculous names (playtest 3 2026-04-19 Felix Surrone aureate_span): NPC 'Frandrew Andrew' generated by Markov namegen is the 'Andrew' stem repeated twice — a classic too-small-corpus artifact where the transition graph has insufficient divergence and name prefix/suffix collapse into the same token. Culture corpora for aureate_span (and likely other space_opera worlds) need expansion. Fix scope: (a) audit corpus word-list sizes per culture — count unique tokens and flag any culture below a minimum threshold, (b) add a minimum-pool guard in namegen that fails loud (warn + OTEL) when a culture's corpus drops below N entries rather than silently generating stem-repeat artifacts, (c) expand thin culture corpora for aureate_span's source cultures (Hegemonic core, voidborn, Makhani, Jambiendo/Zkęd equivalents if shared), (d) unit test that asserts no generated name has identical prefix and suffix stems. This is a conlang/namegen content + code story — corpus additions live in content, guard code lives in sidequest-namegen crate. Related: sq-voice / conlang skill work on culture-to-corpus bindings."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-api,sidequest-content
+    workflow: wire-first
+    type: bug
+  - id: 37-46
+    title: "Scrapbook render trigger rate policy — image generation is arbitrary and sparse, no visible density contract (playtest 3 2026-04-19): Felix's 71-turn aureate_span session produced only 6-8 renders during the playtest window out of 71 scrapbook rows. Effective rate ~1 render per 11 turns across all 3 concurrent sessions. SOUL.md's 'Cost Scales with Drama' says renders should be selective — quiet walk cheap, dramatic beat expensive — but current behavior looks arbitrary, not policy-driven. There is no inspectable contract for 'when does a scrapbook entry get a render', no OTEL span showing the trigger decision, no density target per session. Fix scope: (a) define explicit trigger contract — e.g. always render on beat fire, on scene/location change, on named-NPC introduction, on resolved-encounter; skip render on banter/aside/quiet-check turns, (b) expose trigger reasoning in OTEL span (render.trigger reason=beat_fire|scene_change|npc_intro|resolved|none_policy) so GM panel shows density and cause, (c) session-level density target (e.g. 'at least one render per 3 turns on average' or 'every scene change') and backpressure-aware enforcement, (d) UI indicator in scrapbook tab when a row was eligible but skipped vs requested-but-failed. Relates 37-30 (session-to-job mapping — NULL image_url linkage), 37-33 (embed worker timeout). This is the trigger layer; 37-30 is the delivery layer."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-api
+    workflow: wire-first
+  - id: 37-47
+    title: "Daemon renders halt mid-session — render pipeline goes silent before session ends (playtest 3 2026-04-19): last render landed 14:43 EDT but Felix's aureate_span session played through 14:56 EDT — last 13 minutes and ~10+ turns produced zero new renders even for rows that the trigger policy should have fired on. Root cause candidates: (a) daemon worker crashed or circuit-breaker tripped silently (relates 37-33 embed circuit breaker), (b) queue saturation with no backpressure surfaced — enqueue path silently drops, (c) OOM / GPU memory leak in Flux pipeline accumulating across session, (d) orphaned locks (37-23 split render/embed locks, but render_lock itself can still deadlock), (e) network/IPC timeout between sidequest-server and daemon not retried. Fix scope: (a) daemon emits OTEL heartbeat on ready/busy/paused per queue so GM panel shows worker health live, (b) enqueue path warns loud when queue depth exceeds threshold or when enqueue returns back-pressure, (c) graceful degradation — if daemon unresponsive, surface 'render unavailable' marker in scrapbook row rather than silently missing, (d) post-session worker state logging so we can diagnose why it stopped (crash? memory? lock?). This is observability + resilience: today there is no way to tell from the save whether a render failed, was dropped, or was never requested. Relates 37-30 (session-to-job mapping), 37-33 (embed timeout), and the new render-trigger-policy story."
+    points: 5
+    priority: p1
+    status: backlog
+    repos: sidequest-api,sidequest-daemon
+    workflow: wire-first
     type: bug
