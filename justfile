@@ -130,9 +130,26 @@ otel port="9765":
 
 # Quick-start aliases
 warmup: daemon-run
-server *flags:
-    just api-run {{flags}}
 client: ui-dev
+
+# Build server + CLI tools in one cargo invocation, then exec the prebuilt
+# binary directly. On warm restarts (cargo cache intact, no source changes)
+# the build is a fast no-op and the server starts immediately — no `cargo
+# run` rebuild-check overhead, no extra wrapper process layered on top of
+# the server. Matched by cargo-guard so the build still gets the lock,
+# heartbeat, and clone-local CARGO_HOME.
+server *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd sidequest-api
+    cargo build \
+        -p sidequest-server \
+        -p sidequest-namegen \
+        -p sidequest-encountergen \
+        -p sidequest-loadoutgen
+    exec target/debug/sidequest-server \
+        --genre-packs-path {{content}} \
+        {{flags}}
 
 # tmuxinator dev session (server, otel, client, daemon in 4 panes)
 tmux:
