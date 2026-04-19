@@ -32,9 +32,10 @@ stories:
     title: Purge HP from heavy_metal YAML + RulesConfig loader — strip hp_formula/class_hp_bases/default_hp/default_ac/stat_display_fields from heavy_metal/rules.yaml only; make RulesConfig HP fields Option for other packs; add edge_config block (per-class base_max, recovery_defaults, thresholds, display_fields). Content from heavy_metal/_drafts/edge-advancement-content.md §1
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: api,content
     workflow: trivial
+    completed: '2026-04-19'
     type: chore
     review_verdict: approved
   - id: 39-4
