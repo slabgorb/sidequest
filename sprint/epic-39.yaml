@@ -20,11 +20,12 @@ stories:
     title: Delete HP from CreatureCore — remove hp/max_hp/ac fields, delete sidequest-game/src/hp.rs, fix Combatant trait (lose hp/max_hp/ac, gain edge/max_edge/is_broken), cascade compile errors workspace-wide, synthesize edge in constructors with placeholder values
     points: 8
     priority: p2
-    status: in_progress
+    status: done
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-19'
     repos: api
     workflow: wire-first
+    completed: '2026-04-19'
     type: refactor
     branch: feat/39-2-delete-hp-creaturecore
   - id: 39-3
