@@ -1,5 +1,10 @@
 ## Dev Gotchas
 
+### Cargo test discipline (2026-04-19 incident)
+- **Never stack cargo test runs.** One invocation at a time. If one is running (mine or anyone else's), wait — do not spawn a concurrent one. Stacked runs thrash sccache/`.cargo-lock` and burn enormous amounts of wall time for zero information gain. Keith: "The way you are doing it is such an amazing waste of fucking time!"
+- **Never pipe cargo output to `tail` / `head` / `grep`.** The project has a PreToolUse hook + capture script that owns cargo output. Run `cargo test ...` bare — no shell plumbing. Piping fights the hook and loses data.
+- **Never `pkill -9 -f cargo` to "clear the decks."** That kills Keith's other tmux panes too, not just my processes. Only kill PIDs I personally spawned via `run_in_background`. If I think a test is stuck, ask — don't nuke.
+
 ### The wiring failure class (the dominant bug category in this project)
 - **Don't reinvent — wire up what exists.** Before building anything new, grep the codebase. Many systems are fully implemented but not wired into the server or UI. CLAUDE.md rule #3.
 - **No half-wired features.** Connect the full pipeline or don't start. If something needs 5 connections, make 5 connections. Shipping 3 and calling it done is the exact failure mode Epic 15 was created to clean up.
