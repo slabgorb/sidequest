@@ -1374,3 +1374,8 @@ completed_stories:
     title: NPC mechanical turn + stealth/trope check — narrator currently weaves enemy/stealth outcomes with zero OTEL; emit npc.turn and trope handshake spans, surface minimal UI cue, close Illusionism gap
     points: 5
     completed: '2026-04-18'
+  - id: 37-26
+    epic: ''
+    title: WebSocket auto-reconnect on navigation — add backoff + visible reconnect banner in useWebSocket.ts, gate input-disabled on explicit WS status
+    points: 3
+    completed: '2026-04-19'

@@ -287,10 +287,15 @@ stories:
     title: WebSocket auto-reconnect on navigation — add backoff + visible reconnect banner in useWebSocket.ts, gate input-disabled on explicit WS status
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-19'
     repos: ui
     workflow: wire-first
+    completed: '2026-04-19'
     type: bug
+    review_findings: 'Round 3 APPROVED. Preflight GREEN (tests+lint+tsc), 6/8 specialists clean or returning follow-up-only findings, edge-hunter''s HIGH finding dismissed (premised on setReadyState firing from cleanup — it doesn''t, detachHandlers is called first). Dual ref+state on intentionalClose verified necessary (sync read + reactive derivation). Follow-ups: comment clarity, 5 test polish items, pre-existing disconnect-before-open race — none blocking.'
+    review_verdict: approved
   - id: 37-27
     title: Character snapshot on scene-enter — cross-genre blank Character tab until turn 1; emit character state on session-start/scene-enter not just turn-update
     points: 2
