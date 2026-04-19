@@ -20,10 +20,13 @@ stories:
     title: Delete HP from CreatureCore — remove hp/max_hp/ac fields, delete sidequest-game/src/hp.rs, fix Combatant trait (lose hp/max_hp/ac, gain edge/max_edge/is_broken), cascade compile errors workspace-wide, synthesize edge in constructors with placeholder values
     points: 8
     priority: p2
-    status: backlog
+    status: in_progress
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-19'
     repos: api
     workflow: wire-first
     type: refactor
+    branch: feat/39-2-delete-hp-creaturecore
   - id: 39-3
     title: Purge HP from heavy_metal YAML + RulesConfig loader — strip hp_formula/class_hp_bases/default_hp/default_ac/stat_display_fields from heavy_metal/rules.yaml only; make RulesConfig HP fields Option for other packs; add edge_config block (per-class base_max, recovery_defaults, thresholds, display_fields). Content from heavy_metal/_drafts/edge-advancement-content.md §1
     points: 3
