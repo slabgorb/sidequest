@@ -41,6 +41,25 @@ api-fmt:
 api-check:
     cd sidequest-api && cargo fmt --check && cargo clippy -- -D warnings && cargo test
 
+# ---------------------------------------------------------------------------
+# Python server (ADR-082 port target — sidequest-server). Runs alongside the
+# Rust api until Phase 1 is green; cut-over swaps the default recipes.
+# ---------------------------------------------------------------------------
+
+server-dev:
+    cd sidequest-server && uv run uvicorn sidequest.server.app:create_app --factory --reload --host 127.0.0.1 --port 8080
+
+server-test:
+    cd sidequest-server && uv run pytest -v
+
+server-lint:
+    cd sidequest-server && uv run ruff check .
+
+server-fmt:
+    cd sidequest-server && uv run ruff format .
+
+server-check: server-lint server-test
+
 # Preview narrator prompt (uses real Rust types — never drifts)
 prompt-preview *flags:
     cd sidequest-api && cargo run -p sidequest-promptpreview -- {{flags}}
