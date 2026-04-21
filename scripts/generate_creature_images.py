@@ -110,7 +110,7 @@ def main():
 
     all_creatures = []
     for genre_dir in genre_dirs:
-        visual_style = load_visual_style(genre_dir)
+        visual_style = load_visual_style(genre_dir, tier="portrait")
         creatures = collect_creatures(genre_dir)
         for c in creatures:
             c["_visual_style"] = visual_style

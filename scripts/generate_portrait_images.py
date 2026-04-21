@@ -106,7 +106,7 @@ async def main() -> None:
             for char in chars:
                 w = char["world"]
                 if w not in worlds_seen:
-                    worlds_seen[w] = load_visual_style(genre_dir, w)
+                    worlds_seen[w] = load_visual_style(genre_dir, w, tier="portrait")
                 char["_visual_style"] = worlds_seen[w]
             all_chars.extend(chars)
 
