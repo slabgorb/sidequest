@@ -17,7 +17,13 @@ Kohya/mflux shape convention:
     lora_down.weight : (rank, input_dim)
     lora_up.weight   : (output_dim, rank)
 
-Every keymap rule sets `transpose: true` to flip axes [0, 1].
+Every keymap rule sets `transpose: true` to flip axes [0, 1]. Some rules
+also set `replicate: N` (default 1) for fused-QKV / Q+K+V+MLP layers —
+mflux's BFL loader splits the down matrix into N rank-chunks, so we must
+hand it a pre-stacked (N×r, in) tensor by tiling the original (r, in)
+shared down N times along axis 0. Without this, mflux extracts a rank=1
+slice from a rank=4 down and the runtime matmul fails on shape mismatch
+(the silent-fallback Task 1.5's roundtrip test was built to detect).
 """
 from __future__ import annotations
 
@@ -42,12 +48,16 @@ def _load_keymap(keymap_path: Path) -> list[dict[str, Any]]:
     rules = data.get("rules") or []
     compiled: list[dict[str, Any]] = []
     for rule in rules:
+        replicate = int(rule.get("replicate", 1))
+        if replicate < 1:
+            raise RemapError(f"rule '{rule['name']}': replicate must be >= 1")
         compiled.append(
             {
                 "name": rule["name"],
                 "mlx_re": re.compile(rule["mlx_pattern"]),
                 "kohya_template": rule["kohya_pattern"],
                 "transpose": bool(rule.get("transpose", False)),
+                "replicate": replicate,
             }
         )
     return compiled
@@ -79,6 +89,7 @@ def remap_mlx_safetensors(
 
     translated: dict = {}
     unknown: list[str] = []
+    source_rank: int | None = None
 
     with safe_open(str(input_path), framework="pt") as f:
         for key in f.keys():
@@ -88,8 +99,14 @@ def remap_mlx_safetensors(
                 continue
             rule, groups = matched
             tensor = f.get_tensor(key)
+            # Capture rank from any lora_a (mlx layout (input, rank)) before
+            # any reshape, so it survives downstream replication.
+            if source_rank is None and key.endswith(".lora_a"):
+                source_rank = int(min(tensor.shape))
             if rule["transpose"]:
                 tensor = tensor.transpose(0, 1).contiguous()
+            if rule["replicate"] > 1:
+                tensor = tensor.repeat(rule["replicate"], 1).contiguous()
             new_key = rule["kohya_template"].format(**groups)
             translated[new_key] = tensor
 
@@ -99,15 +116,8 @@ def remap_mlx_safetensors(
             + "\n  ".join(unknown)
         )
 
-    # Rank inference: the smaller dimension of any lora_down is the rank.
-    rank = 0
-    for k, t in translated.items():
-        if k.endswith("lora_down.weight"):
-            rank = int(min(t.shape))
-            break
-
     save_file(translated, str(output_path))
-    return {"translated": len(translated), "rank": rank}
+    return {"translated": len(translated), "rank": source_rank or 0}
 
 
 def _cli() -> int:

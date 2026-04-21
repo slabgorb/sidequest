@@ -28,3 +28,6 @@ packages = []
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "slow: end-to-end tests that hit the live daemon — skipped by default; run with `-m slow`",
+]

@@ -95,3 +95,67 @@ def test_transpose_flips_axes(tmp_path: Path, real_keymap_path: Path) -> None:
     assert tuple(kohya.shape) == (4, 3), "Kohya lora_down expects (rank, input_dim)"
     # Verify values too — a transpose preserves the data, just flips axes.
     assert torch.equal(kohya, original.transpose(0, 1))
+
+
+# ─── Task 1.5 fix: replicate fused-QKV down for mflux's BFL slicer ──────
+
+
+def test_fused_qkv_down_is_replicated_three_times(
+    tmp_path: Path, real_keymap_path: Path
+) -> None:
+    """double_blocks.*.img_attn.qkv.lora_a must tile ×3 along rank axis.
+
+    mflux's BFL loader splits the down rank-axis into Q/K/V chunks; mlx
+    trains it as a single shared rank-r down. Tiling ×3 means each chunk
+    mflux extracts equals the original transposed D — mathematically the
+    same delta as the fused mlx form.
+    """
+    in_path = tmp_path / "fused.safetensors"
+    original = torch.randn(32, 4)   # MLX: (input=32, rank=4)
+    save_file({"double_blocks.0.img_attn.qkv.lora_a": original}, str(in_path))
+
+    out_path = tmp_path / "out.safetensors"
+    remap_mlx_safetensors(
+        input_path=in_path,
+        output_path=out_path,
+        keymap_path=real_keymap_path,
+    )
+
+    with safe_open(str(out_path), framework="pt") as f:
+        kohya = f.get_tensor("lora_unet_double_blocks_0_img_attn_qkv.lora_down.weight")
+
+    assert tuple(kohya.shape) == (12, 32), "rank-axis must be tiled to 3×r=12"
+    # Each rank-r chunk must be identical to the original transposed D.
+    chunk_q = kohya[0:4, :]
+    chunk_k = kohya[4:8, :]
+    chunk_v = kohya[8:12, :]
+    expected = original.transpose(0, 1)
+    assert torch.equal(chunk_q, expected)
+    assert torch.equal(chunk_k, expected)
+    assert torch.equal(chunk_v, expected)
+
+
+def test_single_linear1_down_is_replicated_four_times(
+    tmp_path: Path, real_keymap_path: Path
+) -> None:
+    """single_blocks.*.linear1.lora_a must tile ×4 (Q/K/V/MLP) along rank axis."""
+    in_path = tmp_path / "fused_single.safetensors"
+    original = torch.randn(32, 4)   # MLX: (input=32, rank=4)
+    save_file({"single_blocks.0.linear1.lora_a": original}, str(in_path))
+
+    out_path = tmp_path / "out.safetensors"
+    summary = remap_mlx_safetensors(
+        input_path=in_path,
+        output_path=out_path,
+        keymap_path=real_keymap_path,
+    )
+
+    assert summary["rank"] == 4, "summary should report SOURCE rank, not tiled rank"
+
+    with safe_open(str(out_path), framework="pt") as f:
+        kohya = f.get_tensor("lora_unet_single_blocks_0_linear1.lora_down.weight")
+
+    assert tuple(kohya.shape) == (16, 32), "rank-axis must be tiled to 4×r=16"
+    expected = original.transpose(0, 1)
+    for i in range(4):
+        assert torch.equal(kohya[i * 4:(i + 1) * 4, :], expected)
