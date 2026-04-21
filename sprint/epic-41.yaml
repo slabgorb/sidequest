@@ -1,0 +1,98 @@
+id: '41'
+type: epic
+title: ADR-082 — Port sidequest-api (Rust) to sidequest-server (Python) — Phases 0-2
+description: |
+  Port the Rust game engine to Python per ADR-082. Phases 0 and 1 deliver the
+  narration vertical slice (scaffold + protocol + genre + game + telemetry +
+  narrator agent + server dispatch + integration playtest). Phase 2 ports
+  character creation (builder state machine + dispatch + persistence / world
+  seeding / opening-turn bootstrap). 1:1 crate-to-package composition with one
+  authorized carve-out: sidequest-genre consolidates per-type genre-layered-derive
+  expansions into a single LayeredMerge abstraction.
+
+  Related:
+    - docs/adr/082-port-api-rust-to-python.md
+    - docs/superpowers/specs/2026-04-19-python-port-execution-strategy-design.md
+    - docs/superpowers/plans/2026-04-19-python-port-phase-0-and-1.md
+    - docs/plans/phase-2-chargen-port.md
+priority: p0
+status: in_progress
+repos: server
+stories:
+  - id: 41-0
+    title: Scaffold sidequest-server — pyproject, FastAPI skeleton, pytest, OTEL, 15 empty packages, smoke test
+    points: 1
+    priority: p0
+    status: done
+    repos: server
+    workflow: trivial
+  - id: 41-1
+    title: Port sidequest.protocol — Phase 1 message subset (connect, PLAYER_ACTION, NARRATION, session lifecycle)
+    points: 3
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-2
+    title: Port sidequest.genre + LayeredMerge consolidation — replace per-type genre-layered-derive expansions with single layered-resolution abstraction
+    points: 5
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-3
+    title: Port sidequest.game (Phase 1 slice) — session, character, state transitions needed for narration turn
+    points: 5
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-4
+    title: Port sidequest.telemetry — OTEL span catalog parity with Rust (names, attributes, GM-panel contract)
+    points: 3
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-5
+    title: Port narrator agent + Phase 1 orchestrator — Claude CLI subprocess, prompt assembly, response parse
+    points: 5
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-6
+    title: WebSocket + REST server dispatch — narration round-trip (connect → PLAYER_ACTION → NARRATION → persist)
+    points: 8
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-7
+    title: Phase 1 integration playtest + cut-over readiness — all 6 genre packs load, schema drift accepted, handshake+session creation end-to-end
+    points: 3
+    priority: p0
+    status: done
+    repos: server
+    workflow: trivial
+  - id: 41-8
+    title: Phase 2 Story 2.1 — port CharacterBuilder state machine (BuilderPhase, scene walking, stat generators, HP formula, MechanicalEffects accumulation, build finalizer)
+    points: 5
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-9
+    title: Phase 2 Story 2.2 — port dispatch_character_creation + CHARACTER_CREATION protocol (scene/continue/confirmation/back/edit, OTEL parity, error paths)
+    points: 5
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
+  - id: 41-10
+    title: Phase 2 Story 2.3 — persistence + world seeding + opening-turn bootstrap (4 slices A-H; save→Playing transition→first narrator turn)
+    points: 8
+    priority: p0
+    status: done
+    repos: server
+    workflow: tdd
