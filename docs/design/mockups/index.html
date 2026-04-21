@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SideQuest · Frontend Redesign Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111115;
+    --panel: #1a1a22;
+    --ink: #e5e5ea;
+    --ink-dim: #9a9aa5;
+    --rule: #2a2a35;
+    --accent: #d4a24e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: 'Geist', system-ui, -apple-system, sans-serif; }
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+  header { padding: 48px 48px 24px; border-bottom: 1px solid var(--rule); }
+  header .eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); margin: 0 0 8px; }
+  header h1 { font-family: 'Cinzel', serif; font-weight: 500; font-size: 36px; margin: 0 0 8px; color: var(--accent); }
+  header p { color: var(--ink-dim); max-width: 640px; line-height: 1.5; margin: 0; font-size: 14px; }
+  main { padding: 32px 48px 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; }
+  .card h2 { font-family: 'Cinzel', serif; font-weight: 500; font-size: 22px; margin: 0 0 4px; color: var(--accent); }
+  .card .sub { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); margin: 0 0 16px; }
+  .card p { color: var(--ink-dim); font-size: 13px; line-height: 1.55; margin: 0 0 16px; }
+  .card .who { font-size: 12px; color: var(--ink); margin: 8px 0 16px; }
+  .card .who span { display: inline-block; padding: 2px 8px; border: 1px solid var(--rule); border-radius: 999px; margin: 0 4px 4px 0; font-size: 11px; }
+  .card .who .strong { border-color: var(--accent); color: var(--accent); }
+  .card .who .risk { color: #b48585; border-color: #5a3838; }
+  .card a.open { margin-top: auto; padding: 10px 14px; background: var(--accent); color: #222; text-align: center; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; transition: filter 0.15s; }
+  .card a.open:hover { filter: brightness(1.1); }
+  footer { padding: 24px 48px; border-top: 1px solid var(--rule); color: var(--ink-dim); font-size: 12px; }
+  footer code { background: var(--panel); padding: 2px 6px; border-radius: 3px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 11px; }
+  .legend { font-family: 'Geist', sans-serif; font-size: 11px; line-height: 1.4; display: grid; grid-template-columns: auto 1fr; column-gap: 8px; margin-top: 8px; }
+  .legend dt { color: var(--ink-dim); }
+</style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">SideQuest · Frontend Redesign · 2026-04-20</p>
+    <h1>Three directions, one playgroup</h1>
+    <p>Each mockup is a live HTML prototype with a genre switcher. The goal is to let you feel the compositional premise, not pixel-perfect UI. Switch genres inside each mockup to see the theming plumbing — same silhouette, different world.</p>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <p class="sub">Direction A</p>
+      <h2>The DM Screen</h2>
+      <p>Fixed three-panel silhouette. Dossier left, narration center, world right. Mechanics always visible. Balanced for all four playgroup axes.</p>
+      <div class="who">
+        <span class="strong">Keith ✓</span>
+        <span class="strong">Alex ✓</span>
+        <span class="strong">Sebastien ✓</span>
+        <span class="strong">James ✓</span>
+      </div>
+      <a class="open" href="./direction-a-dm-screen.html">Open mockup →</a>
+    </section>
+
+    <section class="card">
+      <p class="sub">Direction B · recommended</p>
+      <h2>The Folio</h2>
+      <p>Two asymmetric columns. Present-scene-only reading on the left, context sidebar on the right. History hidden by default. Matches CLAUDE.md's ratified direction.</p>
+      <div class="who">
+        <span class="strong">Keith ✓</span>
+        <span class="strong">Alex ✓✓</span>
+        <span class="risk">Sebastien ?</span>
+        <span class="strong">James ✓</span>
+      </div>
+      <a class="open" href="./direction-b-folio.html">Open mockup →</a>
+    </section>
+
+    <section class="card">
+      <p class="sub">Direction C</p>
+      <h2>The Stage</h2>
+      <p>Full-bleed narration, translucent HUD overlays, keyboard-first. Most immersive, highest risk — mechanics hidden behind state-change pulses.</p>
+      <div class="who">
+        <span class="strong">Keith ✓</span>
+        <span class="risk">Alex ?</span>
+        <span class="risk">Sebastien ✗</span>
+        <span class="strong">James ✓</span>
+      </div>
+      <a class="open" href="./direction-c-stage.html">Open mockup →</a>
+    </section>
+
+  </main>
+
+  <footer>
+    Each mockup includes a genre toggle (<code>victoria</code> · <code>neon_dystopia</code> · <code>road_warrior</code>). Shared scene content: <em>Chapter III — The Lichgate</em>. See <code>docs/design/frontend-redesign-mockups.md</code> for the written spec.
+    <dl class="legend">
+      <dt>✓✓</dt><dd>strongest fit for this player</dd>
+      <dt>✓</dt><dd>serves well</dd>
+      <dt>?</dt><dd>risk — needs mitigation</dd>
+      <dt>✗</dt><dd>loses this player without a fix</dd>
+    </dl>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en" data-genre="victoria">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Direction B · The Folio · SideQuest Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Special+Elite&family=Oswald:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ==== TOKENS ==== */
+html[data-genre="victoria"] {
+  --bg:       #f5efe1;
+  --bg-2:     #ede4ce;
+  --panel:    #ebe1cb;
+  --ink:      #2b1e13;
+  --ink-dim:  #6b5a46;
+  --rule:     #b89f74;
+  --accent:   #8b5a2b;
+  --accent-2: #c19a5b;
+  --hp:       #8a3a2e;
+  --mp:       #3e5a7a;
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Cormorant Garamond', 'Garamond', serif;
+  --font-ui:      'Cormorant Garamond', serif;
+  --rule-char:    '❦';
+}
+html[data-genre="neon_dystopia"] {
+  --bg:       #07080e;
+  --bg-2:     #0c0f18;
+  --panel:    #10131c;
+  --ink:      #c6e4f0;
+  --ink-dim:  #7b8ea3;
+  --rule:     #1f2a3a;
+  --accent:   #ff2bd6;
+  --accent-2: #2bf0ff;
+  --hp:       #ff4f6d;
+  --mp:       #2bf0ff;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body:    'JetBrains Mono', ui-monospace, monospace;
+  --font-ui:      'JetBrains Mono', ui-monospace, monospace;
+  --rule-char:    '◆';
+}
+html[data-genre="road_warrior"] {
+  --bg:       #1a110a;
+  --bg-2:     #22160d;
+  --panel:    #251810;
+  --ink:      #e8d2a8;
+  --ink-dim:  #a08566;
+  --rule:     #4a3222;
+  --accent:   #c85a1a;
+  --accent-2: #d9a24a;
+  --hp:       #c85a1a;
+  --mp:       #d9a24a;
+  --font-display: 'Oswald', sans-serif;
+  --font-body:    'IBM Plex Sans', sans-serif;
+  --font-ui:      'Special Elite', monospace;
+  --rule-char:    '☀';
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100vh; background: var(--bg); color: var(--ink); font-family: var(--font-body); overflow: hidden; }
+button { font-family: inherit; color: inherit; }
+
+/* ==== GENRE SWITCHER (mockup-only) ==== */
+.genre-switcher {
+  position: fixed; top: 12px; right: 12px; z-index: 100;
+  display: flex; gap: 6px; padding: 6px;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);
+  font-family: 'Geist', sans-serif;
+}
+.genre-switcher button {
+  background: transparent; color: #eaeaea; border: 1px solid transparent;
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+}
+.genre-switcher button[aria-pressed="true"] { background: #eaeaea; color: #111; }
+.genre-switcher a { color: #aaa; text-decoration: none; font-size: 11px; padding: 4px 8px; align-self: center; }
+
+/* ==== LAYOUT ==== */
+.app {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(360px, 1fr);
+  height: 100vh;
+}
+
+/* ==== SCENE COLUMN ==== */
+.scene {
+  display: flex; flex-direction: column;
+  background: var(--bg); padding: 48px 60px 0;
+  min-width: 0; overflow: hidden;
+}
+.chapter-mark {
+  display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px;
+}
+.chapter-mark .num {
+  font-family: var(--font-display); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase;
+}
+.chapter-mark h1 {
+  font-family: var(--font-display); font-weight: 500; font-size: 32px;
+  margin: 0; color: var(--ink); letter-spacing: 0.04em;
+}
+html[data-genre="neon_dystopia"] .chapter-mark h1 { text-transform: uppercase; font-size: 26px; letter-spacing: 0.15em; }
+html[data-genre="road_warrior"] .chapter-mark h1 { text-transform: uppercase; font-size: 30px; letter-spacing: 0.1em; }
+
+.prior-beats {
+  color: var(--ink-dim); opacity: 0.55; font-style: italic;
+  font-size: 16px; line-height: 1.65; max-width: 60ch;
+  margin: 0 0 10px;
+}
+
+.section-rule {
+  text-align: center; color: var(--rule); font-size: 14px;
+  margin: 22px auto 28px; letter-spacing: 2em; font-family: var(--font-display);
+  display: block;
+}
+.section-rule::before { content: var(--rule-char); letter-spacing: normal; }
+
+.current-turn-label {
+  font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 12px;
+}
+.current-turn {
+  font-size: 21px; line-height: 1.6; color: var(--ink); max-width: 62ch;
+  flex: 1; overflow-y: auto;
+}
+html[data-genre="victoria"] .current-turn { font-size: 22px; line-height: 1.7; }
+html[data-genre="neon_dystopia"] .current-turn { font-size: 17px; line-height: 1.7; }
+html[data-genre="road_warrior"] .current-turn { font-size: 19px; }
+
+.current-turn p { margin: 0 0 16px; }
+.current-turn .npc-speech {
+  display: block; padding: 4px 0 4px 22px; margin: 4px 0;
+  border-left: 3px solid var(--accent); color: var(--ink);
+  font-style: italic;
+}
+
+.action-row {
+  padding: 20px 0 32px;
+  border-top: 1px solid var(--rule);
+  margin-top: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.action-row form { display: flex; gap: 10px; align-items: center; }
+.action-row label { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-dim); min-width: 60px; }
+.action-row input {
+  flex: 1; background: var(--bg-2); color: var(--ink); border: 1px solid var(--rule);
+  padding: 12px 16px; font-family: var(--font-body); font-size: 17px; border-radius: 3px;
+}
+.action-row button {
+  background: var(--accent); color: var(--bg); border: none; padding: 12px 20px;
+  font-family: var(--font-ui); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px; font-weight: 600;
+}
+.action-row .meta {
+  font-family: var(--font-ui); font-size: 11px; color: var(--ink-dim);
+  letter-spacing: 0.1em; display: flex; gap: 16px;
+}
+.action-row .meta button {
+  background: transparent; border: none; color: var(--ink-dim); padding: 0;
+  font-size: inherit; text-transform: uppercase; letter-spacing: inherit; cursor: pointer;
+}
+.action-row .meta button:hover { color: var(--accent); }
+
+/* ==== SIDEBAR ==== */
+.sidebar {
+  background: var(--panel); border-left: 1px solid var(--rule);
+  padding: 32px 24px 24px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.you-card { padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+.you-card .name-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.you-card .portrait-sm {
+  width: 48px; height: 48px; border-radius: 50% / 60%;
+  background: radial-gradient(circle at 50% 40%, var(--accent-2), var(--panel));
+  border: 2px solid var(--accent); flex-shrink: 0;
+}
+html[data-genre="neon_dystopia"] .you-card .portrait-sm { border-radius: 3px; }
+html[data-genre="road_warrior"] .you-card .portrait-sm { border-radius: 3px; }
+.you-card h2 { font-family: var(--font-display); font-size: 18px; margin: 0; color: var(--accent); font-weight: 500; letter-spacing: 0.05em; }
+.you-card .role { font-size: 11px; color: var(--ink-dim); letter-spacing: 0.15em; text-transform: uppercase; font-family: var(--font-ui); margin: 2px 0 0; }
+
+.mini-bars { display: flex; gap: 10px; margin: 10px 0; }
+.mini-bar { flex: 1; }
+.mini-bar .lbl { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 3px; display: flex; justify-content: space-between; }
+.mini-bar .track { height: 5px; background: var(--bg-2); border-radius: 2px; overflow: hidden; }
+.mini-bar .fill { height: 100%; }
+.mini-bar .fill.hp { background: var(--hp); width: 82%; }
+.mini-bar .fill.mp { background: var(--mp); width: 50%; }
+.status-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+.status-chips span {
+  font-family: var(--font-ui); font-size: 11px; padding: 2px 8px;
+  border: 1px solid var(--accent); border-radius: 10px; color: var(--accent);
+}
+
+.quick-actions { display: flex; gap: 8px; margin-top: 12px; }
+.quick-actions button {
+  flex: 1; font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; padding: 7px 8px; background: transparent;
+  border: 1px solid var(--rule); color: var(--ink-dim); cursor: pointer; border-radius: 3px;
+}
+.quick-actions button:hover { color: var(--accent); border-color: var(--accent); }
+
+.card {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 14px;
+}
+.card summary {
+  cursor: pointer; display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-display); font-size: 12px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); font-weight: 500;
+  padding: 4px 0; list-style: none;
+}
+.card summary::-webkit-details-marker { display: none; }
+.card summary::after { content: '▸'; transition: transform 0.15s; color: var(--ink-dim); }
+.card[open] summary::after { transform: rotate(90deg); }
+.card summary .meta { font-size: 10px; color: var(--ink-dim); letter-spacing: 0.1em; font-family: var(--font-ui); }
+.card .body { padding: 8px 0 4px; font-size: 14px; line-height: 1.55; color: var(--ink); }
+.card .body p { margin: 0 0 6px; }
+.card .body ul { margin: 0; padding-left: 20px; }
+.card .body ul li { margin-bottom: 4px; }
+.card .body small { display: block; color: var(--ink-dim); font-size: 11px; margin-top: 2px; font-family: var(--font-ui); }
+
+.sidebar-foot {
+  margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule);
+  display: flex; gap: 16px; font-family: var(--font-ui); font-size: 11px;
+  letter-spacing: 0.1em; color: var(--ink-dim);
+}
+.sidebar-foot button { background: none; border: none; color: var(--ink-dim); padding: 0; cursor: pointer; text-transform: uppercase; letter-spacing: inherit; font-family: inherit; }
+.sidebar-foot button:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav class="genre-switcher">
+  <a href="./index.html">← all mockups</a>
+  <button data-genre="victoria" aria-pressed="true">Victoria</button>
+  <button data-genre="neon_dystopia" aria-pressed="false">Neon</button>
+  <button data-genre="road_warrior" aria-pressed="false">Road</button>
+</nav>
+
+<div class="app">
+
+  <!-- SCENE COLUMN -->
+  <section class="scene">
+    <div class="chapter-mark">
+      <span class="num">Chapter III</span>
+      <h1>The Lichgate</h1>
+    </div>
+
+    <p class="prior-beats">You crossed the plaza at dusk. The lamplighter was gone. The gate had not yet been barred — and a woman waited beneath it, hands crossed at her waist.</p>
+
+    <div class="section-rule"></div>
+
+    <p class="current-turn-label">Now</p>
+
+    <div class="current-turn">
+      <p>She hasn't blinked. You are close enough now to see the veins beneath her skin — not blue, but the pale white of old ivory. A small breeze lifts the grey of her hair and sets it down again in exactly the same place.</p>
+      <p class="npc-speech">"You are late, Rux of the Bastion. I have been waiting three nights and a morning."</p>
+      <p>The gate behind her is seamed with frost that should not be there in summer. Somewhere, far back in the city, a bell begins to count the hour.</p>
+    </div>
+
+    <div class="action-row">
+      <form onsubmit="event.preventDefault();">
+        <label>You</label>
+        <input placeholder="What do you do?" />
+        <button type="submit">Submit</button>
+      </form>
+      <div class="meta">
+        <button>▸ scroll back through history</button>
+        <button>▸ chapter list</button>
+        <button>▸ focus mode ▾</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="you-card">
+      <div class="name-row">
+        <div class="portrait-sm"></div>
+        <div>
+          <h2>Rux</h2>
+          <p class="role">Bastion · Lv 3</p>
+        </div>
+      </div>
+      <div class="mini-bars">
+        <div class="mini-bar">
+          <div class="lbl"><span>HP</span><span>18 / 22</span></div>
+          <div class="track"><div class="fill hp"></div></div>
+        </div>
+        <div class="mini-bar">
+          <div class="lbl"><span>Will</span><span>4 / 8</span></div>
+          <div class="track"><div class="fill mp"></div></div>
+        </div>
+      </div>
+      <div class="status-chips">
+        <span>◈ blessed of the gate</span>
+        <span>◈ wounded (light)</span>
+      </div>
+      <div class="quick-actions">
+        <button>▸ Sheet</button>
+        <button>▸ Inventory</button>
+      </div>
+    </div>
+
+    <details class="card" open>
+      <summary>Where you are <span class="meta">dusk · plaza</span></summary>
+      <div class="body">
+        <p><strong>Lichgate Plaza.</strong> 3 exits, 2 NPCs present. Rain has passed. Lanterns unlit.</p>
+        <small>last updated · this turn</small>
+      </div>
+    </details>
+
+    <details class="card" open>
+      <summary>What you know <span class="meta">3 facts</span></summary>
+      <div class="body">
+        <ul>
+          <li>The gate is sealed from the inside.</li>
+          <li>The ash-woman wants a key you haven't found.</li>
+          <li>Frost clings to the gate though it is summer.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>Companions <span class="meta">2</span></summary>
+      <div class="body">
+        <p>James · <strong>Rask the Wren</strong> — Scout, light wounds.<br>
+           Alex · <strong>Ven of the Grove</strong> — Speaker, full health.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>Recent NPCs <span class="meta">4</span></summary>
+      <div class="body">
+        <p>The ash-woman · <em>unnamed</em> · present now<br>
+           The lamplighter · absent · ch. II<br>
+           The librarian · absent · ch. II<br>
+           Sister Elowen · absent · ch. I</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary>Quests <span class="meta">3 active</span></summary>
+      <div class="body">
+        <ul>
+          <li>Find the gate-key before the bell finishes counting.</li>
+          <li>Return the sealed letter to the librarian.</li>
+          <li>Speak with Sister Elowen at sunrise.</li>
+        </ul>
+      </div>
+    </details>
+
+    <footer class="sidebar-foot">
+      <button>♪ audio</button>
+      <button>◉ watcher</button>
+      <button>save</button>
+    </footer>
+
+  </aside>
+
+</div>
+
+<script>
+  // Genre switcher
+  document.querySelectorAll('.genre-switcher button[data-genre]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.genre;
+      document.documentElement.setAttribute('data-genre', g);
+      document.querySelectorAll('.genre-switcher button[data-genre]').forEach(b => {
+        b.setAttribute('aria-pressed', b.dataset.genre === g ? 'true' : 'false');
+      });
+      try { localStorage.setItem('sq-mockup-genre', g); } catch (e) {}
+    });
+  });
+  try {
+    const saved = localStorage.getItem('sq-mockup-genre');
+    if (saved) {
+      document.documentElement.setAttribute('data-genre', saved);
+      document.querySelectorAll('.genre-switcher button[data-genre]').forEach(b => {
+        b.setAttribute('aria-pressed', b.dataset.genre === saved ? 'true' : 'false');
+      });
+    }
+  } catch (e) {}
+</script>
+</body>
+</html>

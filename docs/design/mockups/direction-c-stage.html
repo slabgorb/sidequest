@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en" data-genre="victoria">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Direction C · The Stage · SideQuest Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Special+Elite&family=Oswald:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html[data-genre="victoria"] {
+  --bg:       #15100a;
+  --bg-scene: radial-gradient(ellipse at 50% 30%, #3a2a18 0%, #15100a 70%);
+  --overlay:  rgba(44, 32, 20, 0.92);
+  --ink:      #f0e2c6;
+  --ink-dim:  #b39e7d;
+  --rule:     #5a4428;
+  --accent:   #d4a24e;
+  --accent-2: #f2d79c;
+  --hp:       #d66a4a;
+  --mp:       #7aa2d4;
+  --font-display: 'Cinzel', serif;
+  --font-body:    'Cormorant Garamond', serif;
+  --font-ui:      'Cormorant Garamond', serif;
+}
+html[data-genre="neon_dystopia"] {
+  --bg:       #02030a;
+  --bg-scene: radial-gradient(ellipse at 50% 35%, #0c1530 0%, #02030a 70%);
+  --overlay:  rgba(10, 15, 30, 0.92);
+  --ink:      #d6eef8;
+  --ink-dim:  #6f86a0;
+  --rule:     #1a2638;
+  --accent:   #ff2bd6;
+  --accent-2: #2bf0ff;
+  --hp:       #ff4f6d;
+  --mp:       #2bf0ff;
+  --font-display: 'Orbitron', sans-serif;
+  --font-body:    'JetBrains Mono', ui-monospace, monospace;
+  --font-ui:      'JetBrains Mono', ui-monospace, monospace;
+}
+html[data-genre="road_warrior"] {
+  --bg:       #1a0d05;
+  --bg-scene: radial-gradient(ellipse at 50% 35%, #4a2a14 0%, #1a0d05 70%);
+  --overlay:  rgba(40, 24, 12, 0.92);
+  --ink:      #f0d9ac;
+  --ink-dim:  #b89872;
+  --rule:     #4a3222;
+  --accent:   #f08040;
+  --accent-2: #f2c976;
+  --hp:       #d65a2a;
+  --mp:       #d9a24a;
+  --font-display: 'Oswald', sans-serif;
+  --font-body:    'IBM Plex Sans', sans-serif;
+  --font-ui:      'Special Elite', monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100vh; background: var(--bg); color: var(--ink); font-family: var(--font-body); overflow: hidden; }
+button { font-family: inherit; color: inherit; }
+
+/* ==== GENRE SWITCHER (mockup-only) ==== */
+.genre-switcher {
+  position: fixed; top: 12px; right: 12px; z-index: 200;
+  display: flex; gap: 6px; padding: 6px;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);
+  font-family: 'Geist', sans-serif;
+}
+.genre-switcher button {
+  background: transparent; color: #eaeaea; border: 1px solid transparent;
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+}
+.genre-switcher button[aria-pressed="true"] { background: #eaeaea; color: #111; }
+.genre-switcher a { color: #aaa; text-decoration: none; font-size: 11px; padding: 4px 8px; align-self: center; }
+
+/* ==== STAGE ==== */
+.stage {
+  position: relative; height: 100vh; width: 100vw; overflow: hidden;
+  background: var(--bg-scene);
+}
+.stage::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 25%, rgba(255,255,255,0.03) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+  pointer-events: none;
+}
+html[data-genre="neon_dystopia"] .stage::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 25%, rgba(43,240,255,0.04) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(43,240,255,0.02) 2px, rgba(43,240,255,0.02) 3px);
+}
+
+.scene-header {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+  padding: 16px 48px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--accent);
+  border-bottom: 1px solid var(--rule);
+}
+.scene-header::before, .scene-header::after { content: '━━━━'; color: var(--rule); margin: 0 18px; }
+
+.narration-stage {
+  position: absolute; inset: 64px 0 90px; overflow-y: auto;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 40px 24px 60px;
+}
+.narration-stage .prior {
+  color: var(--ink-dim); opacity: 0.35; font-style: italic;
+  max-width: 60ch; text-align: center; margin: 0 0 14px; line-height: 1.6;
+  font-size: 15px;
+  transition: opacity 0.25s;
+}
+.narration-stage:hover .prior { opacity: 0.6; }
+.stage-rule {
+  height: 1px; width: 160px; background: var(--rule); margin: 28px auto;
+  position: relative;
+}
+.stage-rule::before {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  width: 8px; height: 8px; background: var(--accent);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.act-now-label {
+  font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--accent);
+  margin: 0 auto 20px; text-align: center;
+}
+.current-turn {
+  max-width: 62ch; font-size: 22px; line-height: 1.7; text-align: left;
+  color: var(--ink);
+}
+html[data-genre="neon_dystopia"] .current-turn { font-size: 17px; line-height: 1.8; }
+html[data-genre="road_warrior"] .current-turn { font-size: 20px; }
+.current-turn p { margin: 0 0 18px; }
+.current-turn .npc-speech {
+  display: block; padding: 6px 0 6px 22px; margin: 6px 0;
+  border-left: 3px solid var(--accent); font-style: italic;
+}
+
+.action-row {
+  max-width: 62ch; width: 100%; margin: 22px auto 0;
+  display: flex; gap: 10px; align-items: center;
+}
+.action-row input {
+  flex: 1; background: rgba(0,0,0,0.35); color: var(--ink);
+  border: 1px solid var(--rule); border-bottom: 1px solid var(--accent);
+  border-radius: 3px; padding: 12px 16px; font-family: var(--font-body); font-size: 16px;
+}
+.action-row button {
+  background: var(--accent); color: var(--bg); border: none; padding: 12px 22px;
+  font-family: var(--font-ui); font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px; font-weight: 600;
+}
+
+/* ==== BOTTOM TRAY (HUD) ==== */
+.hud-tray {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-ui);
+}
+.hp-pill {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(0,0,0,0.4); border: 1px solid var(--rule);
+}
+.hp-pill .who { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.hp-pill .bar { width: 80px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.hp-pill .bar .fill { height: 100%; background: var(--hp); width: 82%; }
+.hp-pill .val { font-size: 11px; color: var(--ink); letter-spacing: 0.1em; font-family: var(--font-ui); }
+
+.hud-slots { display: flex; gap: 6px; margin-left: auto; }
+.hud-slot {
+  width: 64px; text-align: center; padding: 7px 4px;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--rule); border-radius: 3px;
+  cursor: pointer; position: relative;
+  font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--ink-dim);
+  transition: color 0.15s, border-color 0.15s;
+}
+.hud-slot:hover { color: var(--accent); border-color: var(--accent); }
+.hud-slot .glyph { display: block; font-size: 16px; margin-bottom: 3px; color: var(--accent); }
+.hud-slot .hk { position: absolute; top: 3px; right: 4px; font-size: 9px; color: var(--ink-dim); opacity: 0.6; }
+.hud-slot.pulse {
+  animation: pulse 1.6s ease-out 0s 3;
+  border-color: var(--accent-2);
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 var(--accent-2); }
+  70% { box-shadow: 0 0 0 12px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* ==== OVERLAYS ==== */
+.overlay-backdrop {
+  position: absolute; inset: 0; z-index: 10;
+  background: rgba(0,0,0,0.35); backdrop-filter: blur(4px);
+  display: none;
+}
+.overlay-backdrop.open { display: block; }
+.overlay {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: 90px; width: min(680px, calc(100% - 60px));
+  max-height: 60%;
+  background: var(--overlay); border: 1px solid var(--rule);
+  border-radius: 6px; z-index: 20;
+  padding: 22px 24px;
+  display: none; flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  overflow-y: auto;
+}
+.overlay.open { display: flex; }
+.overlay h2 {
+  font-family: var(--font-display); font-size: 16px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); margin: 0 0 14px; font-weight: 500;
+}
+.overlay .row { display: flex; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+.overlay .bar-group { flex: 1; min-width: 180px; }
+.overlay .bar-group .lbl { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 3px; display: flex; justify-content: space-between; }
+.overlay .bar-group .track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.overlay .bar-group .track .fill { height: 100%; }
+.overlay .bar-group .fill.hp { background: var(--hp); width: 82%; }
+.overlay .bar-group .fill.mp { background: var(--mp); width: 50%; }
+.overlay ul { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.55; }
+.overlay ul li { margin-bottom: 4px; }
+.overlay .esc { font-family: var(--font-ui); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 14px; text-align: right; }
+
+.map-mini {
+  width: 100%; height: 180px; border: 1px solid var(--rule); border-radius: 4px;
+  background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.05), transparent 50%), rgba(0,0,0,0.35);
+  position: relative;
+}
+.map-mini::after {
+  content: ''; position: absolute; top: 40%; left: 30%; width: 10px; height: 10px;
+  background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 0 3px var(--overlay), 0 0 0 4px var(--accent);
+}
+
+.hint-banner {
+  position: absolute; bottom: 78px; left: 50%; transform: translateX(-50%);
+  font-family: var(--font-ui); font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--ink-dim);
+  background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--rule);
+  z-index: 3;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+
+<nav class="genre-switcher">
+  <a href="./index.html">← all mockups</a>
+  <button data-genre="victoria" aria-pressed="true">Victoria</button>
+  <button data-genre="neon_dystopia" aria-pressed="false">Neon</button>
+  <button data-genre="road_warrior" aria-pressed="false">Road</button>
+</nav>
+
+<div class="stage">
+
+  <div class="scene-header">Act II · Scene 3 · The Lichgate</div>
+
+  <div class="narration-stage">
+    <p class="prior">You crossed the plaza at dusk. The lamplighter was gone.</p>
+    <p class="prior">A woman waited beneath the gate, hands crossed at her waist.</p>
+
+    <div class="stage-rule"></div>
+
+    <p class="act-now-label">Now</p>
+
+    <div class="current-turn">
+      <p>She hasn't blinked. You are close enough now to see the veins beneath her skin — not blue, but the pale white of old ivory. A small breeze lifts the grey of her hair and sets it down again in exactly the same place.</p>
+      <p class="npc-speech">"You are late, Rux of the Bastion. I have been waiting three nights and a morning."</p>
+      <p>The gate behind her is seamed with frost that should not be there in summer. Somewhere, far back in the city, a bell begins to count the hour.</p>
+    </div>
+
+    <form class="action-row" onsubmit="event.preventDefault();">
+      <input placeholder="What do you do?" autofocus />
+      <button type="submit">Act</button>
+    </form>
+  </div>
+
+  <div class="hint-banner">hover to unfade history · press <strong style="color:var(--accent)">c</strong>  i  m  k  w to open panels</div>
+
+  <div class="hud-tray">
+    <div class="hp-pill">
+      <span class="who">Rux</span>
+      <div class="bar"><div class="fill"></div></div>
+      <span class="val">18 / 22</span>
+    </div>
+
+    <div class="hud-slots">
+      <button class="hud-slot" data-overlay="character"><span class="glyph">◍</span>Sheet<span class="hk">C</span></button>
+      <button class="hud-slot" data-overlay="inventory"><span class="glyph">◍</span>Gear<span class="hk">I</span></button>
+      <button class="hud-slot pulse" data-overlay="map"><span class="glyph">◍</span>Map<span class="hk">M</span></button>
+      <button class="hud-slot pulse" data-overlay="know"><span class="glyph">◍</span>Know<span class="hk">K</span></button>
+      <button class="hud-slot" data-overlay="who"><span class="glyph">◍</span>Who<span class="hk">N</span></button>
+      <button class="hud-slot" data-overlay="watch"><span class="glyph">◍</span>Watch<span class="hk">W</span></button>
+    </div>
+  </div>
+
+  <div class="overlay-backdrop" id="backdrop"></div>
+
+  <div class="overlay" id="o-character">
+    <h2>Rux · Bastion · Lv 3</h2>
+    <div class="row">
+      <div class="bar-group"><div class="lbl"><span>Health</span><span>18 / 22</span></div><div class="track"><div class="fill hp"></div></div></div>
+      <div class="bar-group"><div class="lbl"><span>Will</span><span>4 / 8</span></div><div class="track"><div class="fill mp"></div></div></div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-dim);">Statuses: blessed of the gate · wounded (light)</p>
+    <p class="esc">esc to close</p>
+  </div>
+
+  <div class="overlay" id="o-inventory">
+    <h2>Inventory · 14 coin</h2>
+    <ul>
+      <li>Sealed letter · unread · from the librarian</li>
+      <li>Ash-dust · 1 pinch · scraped from the gate</li>
+      <li>Rations · 3 days</li>
+      <li>Bastion sigil · worn at collar</li>
+    </ul>
+    <p class="esc">esc to close</p>
+  </div>
+
+  <div class="overlay" id="o-map">
+    <h2>Lichgate Plaza · dusk</h2>
+    <div class="map-mini"></div>
+    <p style="font-size:12px;color:var(--ink-dim);margin-top:10px;">3 exits · 2 NPCs · 1 locked gate</p>
+    <p class="esc">esc to close</p>
+  </div>
+
+  <div class="overlay" id="o-know">
+    <h2>What you know</h2>
+    <ul>
+      <li>The gate is sealed from the inside. <small style="color:var(--ink-dim);">· ch. II · librarian</small></li>
+      <li>The ash-woman wants a key you haven't found. <small style="color:var(--ink-dim);">· inferred · this scene</small></li>
+      <li>Frost clings to the gate though it is summer. <small style="color:var(--ink-dim);">· observed · this scene</small></li>
+    </ul>
+    <p class="esc">esc to close</p>
+  </div>
+
+  <div class="overlay" id="o-who">
+    <h2>Recent NPCs</h2>
+    <ul>
+      <li>The ash-woman · unnamed · <strong>present</strong></li>
+      <li>The lamplighter · absent · ch. II</li>
+      <li>The librarian · absent · ch. II</li>
+      <li>Sister Elowen · absent · ch. I</li>
+    </ul>
+    <p class="esc">esc to close</p>
+  </div>
+
+  <div class="overlay" id="o-watch">
+    <h2>Watcher · narrator subsystems</h2>
+    <ul>
+      <li>intent_router · idle</li>
+      <li>scene_director · turn 47 · focus=ash_woman</li>
+      <li>knowledge_gate · 3 facts bound to scene</li>
+      <li>confrontation · inactive</li>
+      <li>audio_cue · ambience=dusk_bells</li>
+    </ul>
+    <p class="esc">esc to close · shift+w to pin</p>
+  </div>
+
+</div>
+
+<script>
+  // Genre switcher
+  document.querySelectorAll('.genre-switcher button[data-genre]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const g = btn.dataset.genre;
+      document.documentElement.setAttribute('data-genre', g);
+      document.querySelectorAll('.genre-switcher button[data-genre]').forEach(b => {
+        b.setAttribute('aria-pressed', b.dataset.genre === g ? 'true' : 'false');
+      });
+      try { localStorage.setItem('sq-mockup-genre', g); } catch (e) {}
+    });
+  });
+  try {
+    const saved = localStorage.getItem('sq-mockup-genre');
+    if (saved) {
+      document.documentElement.setAttribute('data-genre', saved);
+      document.querySelectorAll('.genre-switcher button[data-genre]').forEach(b => {
+        b.setAttribute('aria-pressed', b.dataset.genre === saved ? 'true' : 'false');
+      });
+    }
+  } catch (e) {}
+
+  // Overlays
+  const backdrop = document.getElementById('backdrop');
+  function closeAll() {
+    document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open'));
+    backdrop.classList.remove('open');
+  }
+  document.querySelectorAll('.hud-slot').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = 'o-' + btn.dataset.overlay;
+      const o = document.getElementById(id);
+      if (!o) return;
+      const wasOpen = o.classList.contains('open');
+      closeAll();
+      if (!wasOpen) {
+        o.classList.add('open');
+        backdrop.classList.add('open');
+      }
+    });
+  });
+  backdrop.addEventListener('click', closeAll);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAll();
+    const map = { c: 'character', i: 'inventory', m: 'map', k: 'know', n: 'who', w: 'watch' };
+    if (map[e.key]) {
+      const id = 'o-' + map[e.key];
+      const o = document.getElementById(id);
+      if (!o) return;
+      const wasOpen = o.classList.contains('open');
+      closeAll();
+      if (!wasOpen) { o.classList.add('open'); backdrop.classList.add('open'); }
+    }
+  });
+</script>
+</body>
+</html>
