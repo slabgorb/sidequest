@@ -1,13 +1,23 @@
-"""Translate mlx-examples Flux LoRA .npz → Kohya-convention .safetensors.
+"""Translate mlx-examples Flux LoRA safetensors → Kohya-convention safetensors.
 
 The output is consumable by mflux's `Flux1(lora_paths=[...])` without
 further conversion. Hard-fails on any source key without a keymap rule
 (no silent drops — per the project's no-silent-fallback discipline).
 
-Task 1.3 implements the unknown-key hard-fail path. The happy-path
-translation + safetensors write lands in Task 1.4 once Phase 0
-observations (docs/superpowers/notes/2026-04-20-mlx-examples-flux-notes.md)
-fix the real MLX key patterns the keymap must cover.
+Format note: Phase 0 observation
+(docs/superpowers/notes/2026-04-20-mlx-examples-flux-notes.md) confirmed
+mlx-examples outputs .safetensors directly. Earlier plan versions
+referenced .npz; that was incorrect and has been corrected here.
+
+MLX shape convention:
+    lora_a : (input_dim, rank)
+    lora_b : (rank, output_dim)
+
+Kohya/mflux shape convention:
+    lora_down.weight : (rank, input_dim)
+    lora_up.weight   : (output_dim, rank)
+
+Every keymap rule sets `transpose: true` to flip axes [0, 1].
 """
 from __future__ import annotations
 
@@ -17,8 +27,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import yaml
+from safetensors import safe_open
+from safetensors.torch import save_file
 
 
 class RemapError(RuntimeError):
@@ -52,7 +63,7 @@ def _match_rule(
     return None
 
 
-def remap_npz_to_safetensors(
+def remap_mlx_safetensors(
     input_path: Path,
     output_path: Path,
     keymap_path: Path,
@@ -65,12 +76,22 @@ def remap_npz_to_safetensors(
     Returns a summary dict with translated count and rank estimate.
     """
     rules = _load_keymap(keymap_path)
-    npz = np.load(input_path)
 
+    translated: dict = {}
     unknown: list[str] = []
-    for key in npz.files:
-        if _match_rule(key, rules) is None:
-            unknown.append(key)
+
+    with safe_open(str(input_path), framework="pt") as f:
+        for key in f.keys():
+            matched = _match_rule(key, rules)
+            if matched is None:
+                unknown.append(key)
+                continue
+            rule, groups = matched
+            tensor = f.get_tensor(key)
+            if rule["transpose"]:
+                tensor = tensor.transpose(0, 1).contiguous()
+            new_key = rule["kohya_template"].format(**groups)
+            translated[new_key] = tensor
 
     if unknown:
         raise RemapError(
@@ -78,12 +99,15 @@ def remap_npz_to_safetensors(
             + "\n  ".join(unknown)
         )
 
-    # Happy-path translation + safetensors write is implemented by Task 1.4.
-    # We only reach this line when every key matched a rule, which Task 1.3's
-    # test never exercises. Task 1.4 replaces this raise with the real logic.
-    raise NotImplementedError(
-        "Happy-path remap not yet implemented — awaits Task 1.4 + Phase 0 keymap data."
-    )
+    # Rank inference: the smaller dimension of any lora_down is the rank.
+    rank = 0
+    for k, t in translated.items():
+        if k.endswith("lora_down.weight"):
+            rank = int(min(t.shape))
+            break
+
+    save_file(translated, str(output_path))
+    return {"translated": len(translated), "rank": rank}
 
 
 def _cli() -> int:
@@ -93,7 +117,7 @@ def _cli() -> int:
     parser.add_argument("--keymap", required=True, type=Path)
     args = parser.parse_args()
 
-    summary = remap_npz_to_safetensors(args.input, args.output, args.keymap)
+    summary = remap_mlx_safetensors(args.input, args.output, args.keymap)
     print(f"Remap OK: {summary['translated']} keys translated, rank={summary['rank']}")
     print(f"Output: {args.output}")
     return 0
