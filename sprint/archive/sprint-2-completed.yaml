@@ -1475,3 +1475,8 @@ completed_stories:
     title: Close Phase 2.2 IOU — wire Culture.chargen filter into narrator world_context (culture reference injection + wiring tests)
     points: 2
     completed: '2026-04-20'
+  - id: 42-2
+    epic: ''
+    title: Port ResourcePool + ResourceThreshold + ResourcePatch(Op/Result/Error) + mint_threshold_lore; promote GameSnapshot.resources from pass-through list to typed list[ResourcePool] (recommended pull-forward from Phase 4)
+    points: 3
+    completed: '2026-04-21'

@@ -51,6 +51,8 @@ stories:
     status: backlog
     repos: server
     workflow: tdd
+    review_findings: '7 blocking: silent-fallback (No Silent Fallbacks hard-gate), wiring-test gap, stale P4-deferred comment, docstring/mutator asymmetry, ThresholdAt Protocol type lie, detect_crossings export gap, OTEL deferral docs missing on 4 resource-pool methods'
+    review_verdict: approved
   - id: 42-3
     title: Port TensionTracker + PacingHint + DeliveryMode + CombatEvent classification + classify_round/classify_combat_outcome; wire PacingHint into narrator prompt zone (Rust-parity fixture suite)
     points: 5
