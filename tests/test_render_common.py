@@ -15,7 +15,16 @@ import inspect
 
 import pytest
 
-from scripts.render_common import ComposeError, compose_lora_stack, send_render
+from pathlib import Path
+
+import yaml
+
+from scripts.render_common import (
+    ComposeError,
+    compose_lora_stack,
+    load_visual_style,
+    send_render,
+)
 
 
 def test_send_render_accepts_lora_lists() -> None:
@@ -119,3 +128,73 @@ def test_legacy_list_form_world_loras_raises() -> None:
     }
     with pytest.raises(ComposeError, match="legacy list-form"):
         compose_lora_stack(GENRE, world, tier="landscape")
+
+
+# ─── Task 4.4: load_visual_style wiring ───────────────────────────────
+
+
+def _write_yaml(path: Path, data: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.safe_dump(data))
+
+
+def test_load_visual_style_without_tier_omits_resolved_loras(tmp_path: Path) -> None:
+    """Backward compat: callers that don't pass `tier=` get the old shape."""
+    _write_yaml(tmp_path / "visual_style.yaml", {"positive_suffix": "x"})
+    style = load_visual_style(tmp_path)
+    assert "resolved_loras" not in style
+
+
+def test_load_visual_style_with_tier_adds_resolved_loras(tmp_path: Path) -> None:
+    """Genre-only LoRA flows through to `resolved_loras` for the matching tier."""
+    _write_yaml(tmp_path / "visual_style.yaml", {
+        "positive_suffix": "x",
+        "loras": [
+            {"name": "g1", "file": "a.safetensors", "scale": 0.8,
+             "applies_to": ["landscape"], "trigger": "g1"},
+        ],
+    })
+    style = load_visual_style(tmp_path, tier="landscape")
+    assert [e["name"] for e in style["resolved_loras"]] == ["g1"]
+
+
+def test_load_visual_style_world_exclude_drops_genre_lora(tmp_path: Path) -> None:
+    """End-to-end: genre lists, world excludes, the resolved stack reflects both."""
+    _write_yaml(tmp_path / "visual_style.yaml", {
+        "loras": [
+            {"name": "g1", "file": "a.safetensors", "scale": 0.8,
+             "applies_to": ["landscape"]},
+        ],
+    })
+    _write_yaml(tmp_path / "worlds" / "w1" / "visual_style.yaml", {
+        "loras": {"exclude": ["g1"]},
+    })
+    style = load_visual_style(tmp_path, world="w1", tier="landscape")
+    assert style["resolved_loras"] == []
+
+
+def test_load_visual_style_world_loras_key_does_not_clobber_genre_loras(
+    tmp_path: Path,
+) -> None:
+    """The `loras:` key is excluded from the field-by-field overlay.
+
+    A naive `merged.update(world)` would overwrite the genre's list-form
+    entries with the world's dict-form `{exclude, add}`, leaving the merged
+    dict in a half-broken state. This test pins down that we keep the
+    genre list intact as `merged["loras"]` (the resolver still uses the
+    raw genre+world dicts internally).
+    """
+    _write_yaml(tmp_path / "visual_style.yaml", {
+        "loras": [
+            {"name": "g1", "file": "a.safetensors", "scale": 0.8,
+             "applies_to": ["landscape"]},
+        ],
+    })
+    _write_yaml(tmp_path / "worlds" / "w1" / "visual_style.yaml", {
+        "loras": {"add": []},
+    })
+    style = load_visual_style(tmp_path, world="w1", tier="landscape")
+    assert style["loras"] == [
+        {"name": "g1", "file": "a.safetensors", "scale": 0.8,
+         "applies_to": ["landscape"]},
+    ]

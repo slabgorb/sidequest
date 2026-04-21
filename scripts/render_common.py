@@ -42,27 +42,50 @@ def load_yaml(path: Path) -> dict:
         return yaml.safe_load(f) or {}
 
 
-def load_visual_style(genre_dir: Path, world: str = "") -> dict:
+def load_visual_style(
+    genre_dir: Path,
+    world: str = "",
+    *,
+    tier: str | None = None,
+) -> dict:
     """Load visual_style.yaml — genre-level base, world-level overrides on top.
 
     Genre-level provides the base style (positive_suffix, negative_prompt,
     preferred_model, LoRA config). World-level can override or extend with
     world-specific fields (style_prompt, color_palette, etc.). The merge
     ensures world overrides don't lose genre-level rendering fields.
+
+    When `tier` is provided (Task 4.4 wiring), also resolves the LoRA stack
+    via compose_lora_stack and exposes it as `merged["resolved_loras"]`.
+    The `loras:` key is intentionally skipped during the field-by-field
+    world overlay because the world form is a dict `{exclude, add}` not a
+    list — a naive overlay would silently clobber inherited genre entries.
+    Callers who pass `tier=...` should read `resolved_loras`; callers that
+    don't are still on the legacy `lora:` / `lora_scale:` flat path until
+    Task 4.6 migrates the YAML files.
     """
     genre_vs_path = genre_dir / "visual_style.yaml"
-    base = load_yaml(genre_vs_path) if genre_vs_path.exists() else {}
+    genre_style = load_yaml(genre_vs_path) if genre_vs_path.exists() else {}
 
+    world_style: dict = {}
     if world:
         world_vs = genre_dir / "worlds" / world / "visual_style.yaml"
         if world_vs.exists():
-            world_data = load_yaml(world_vs)
             log.debug("Merging world visual_style: %s", world_vs)
-            # World overrides genre, but genre fields not in world are preserved
-            merged = {**base, **world_data}
-            return merged
+            world_style = load_yaml(world_vs)
 
-    return base
+    merged = dict(genre_style)
+    for key, value in world_style.items():
+        if key == "loras":
+            continue
+        merged[key] = value
+
+    if tier is not None:
+        merged["resolved_loras"] = compose_lora_stack(
+            genre_style, world_style, tier=tier
+        )
+
+    return merged
 
 
 # ── Multi-LoRA stack composition (Phase 4 Task 4.3) ───────────────────
