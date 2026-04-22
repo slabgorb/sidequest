@@ -1,243 +1,231 @@
-# SideQuest Orchestrator — Cross-repo task runner
+# SideQuest Orchestrator — cross-repo task runner (post-ADR-082, Python)
 
-root := justfile_directory()
+root    := justfile_directory()
 content := root / "sidequest-content" / "genre_packs"
-
-# Disable sccache for every cargo invocation run through `just`.
-#
-# Why: sccache daemon contention between the OQ-1 and OQ-2 clones on this
-# machine causes rustc to hang indefinitely — a cargo check that should take
-# 30s has been observed sitting at 0% CPU for 19+ minutes while waiting on a
-# sccache lock held by a zombie cargo test worker in the other clone. Setting
-# RUSTC_WRAPPER="" bypasses sccache entirely and the build runs at normal
-# speed (~3-4 min cold, seconds warm). This only applies to `just` recipes —
-# raw shell `cargo ...` invocations still pick up sccache from the user env
-# if they want it.
-#
-# Discovered during scene-harness work on 2026-04-15.
-export RUSTC_WRAPPER := ""
+logdir  := "/tmp"
 
 import '.pennyfarthing/justfile.pf'
 
-# API (Rust backend)
-api-test:
-    cd sidequest-api && cargo test
-
-api-build:
-    cd sidequest-api && cargo build
-
-api-release:
-    cd sidequest-api && cargo build --release
-
-api-run *flags:
-    cd sidequest-api && cargo build -p sidequest-namegen -p sidequest-encountergen -p sidequest-loadoutgen 2>/dev/null; cargo run -p sidequest-server -- --genre-packs-path {{content}} {{flags}}
-
-api-lint:
-    cd sidequest-api && cargo clippy -- -D warnings
-
-api-fmt:
-    cd sidequest-api && cargo fmt
-
-api-check:
-    cd sidequest-api && cargo fmt --check && cargo clippy -- -D warnings && cargo test
+# Default: run everything the way I always run it.
+default: up
 
 # ---------------------------------------------------------------------------
-# Python server (ADR-082 port target — sidequest-server). Runs alongside the
-# Rust api until Phase 1 is green; cut-over swaps the default recipes.
+# The three you actually use.
+# Each recipe tees stdout+stderr to /tmp so you can re-tail it later with:
+#   tail -f /tmp/sidequest-{server,client,daemon}.log
+# Ctrl-C stops the service in the foreground.
 # ---------------------------------------------------------------------------
 
-server-dev:
-    cd sidequest-server && uv run uvicorn sidequest.server.app:create_app --factory --reload --host 127.0.0.1 --port 8080
-
-server-test:
-    cd sidequest-server && uv run pytest -v
-
-server-lint:
-    cd sidequest-server && uv run ruff check .
-
-server-fmt:
-    cd sidequest-server && uv run ruff format .
-
-server-check: server-lint server-test
-
-# Preview narrator prompt (uses real Rust types — never drifts)
-prompt-preview *flags:
-    cd sidequest-api && cargo run -p sidequest-promptpreview -- {{flags}}
-
-# ---------------------------------------------------------------------------
-# Scene Harness — drop directly into an encounter for fast iteration.
-# Requires the UI dev server running on :5173 and nothing on :8765.
-# ---------------------------------------------------------------------------
-
-# Boot the API with DEV_SCENES=1, stage the named fixture save, open the UI.
-scene name:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    pkill -f 'sidequest-server' 2>/dev/null || true
-    sleep 1
-    cd sidequest-api
-    DEV_SCENES=1 SIDEQUEST_FIXTURES={{root}}/scenarios/fixtures \
-        cargo run -p sidequest-server -- \
-        --genre-packs-path {{content}} &
-    SERVER_PID=$!
-    trap "kill $SERVER_PID 2>/dev/null || true" EXIT
-    # Wait for /api/genres to answer — the server is ready when this returns 200
-    for i in $(seq 1 60); do
-        if curl -sf http://localhost:8765/api/genres >/dev/null 2>&1; then
-            break
-        fi
-        sleep 0.5
-    done
-    echo "Staging fixture '{{name}}'…"
-    curl -sSf -X POST http://localhost:8765/dev/scene/{{name}}
-    echo
-    echo "Open http://localhost:5173?scene={{name}} in your browser."
-    wait $SERVER_PID
-
-# List available scene fixtures.
-scene-list:
-    @ls {{root}}/scenarios/fixtures/*.yaml 2>/dev/null \
-        | xargs -n1 basename \
-        | sed 's/\.yaml$//' \
-        || echo "no fixtures"
-
-# Stage a fixture save WITHOUT booting the server (uses the CLI binary).
-scene-stage name:
-    cd sidequest-api && cargo run -p sidequest-fixture -- \
-        --content-root {{root}}/sidequest-content \
-        --fixtures-root {{root}}/scenarios/fixtures \
-        load {{name}}
-
-# UI (React frontend)
-ui-dev:
-    cd sidequest-ui && npm run dev
-
-ui-test:
-    cd sidequest-ui && npx vitest run
-
-ui-build:
-    cd sidequest-ui && npm run build
-
-ui-lint:
-    cd sidequest-ui && npm run lint
-
-ui-install:
-    cd sidequest-ui && npm install
-
-# Daemon (Python media services)
-daemon-run:
-    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} uv run sidequest-renderer --warmup
-
-daemon-status:
-    cd sidequest-daemon && uv run sidequest-renderer --status
-
-daemon-stop:
-    cd sidequest-daemon && uv run sidequest-renderer --shutdown
-
-daemon-test:
-    cd sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} pytest
-
-daemon-lint:
-    cd sidequest-daemon && ruff check .
-
-daemon-install:
-    cd sidequest-daemon && pip install -e ".[dev]"
-
-# OTEL dashboard — proxies /ws/watcher to a browser-friendly web UI
-otel port="9765":
-    python3 scripts/playtest.py --dashboard-only --dashboard-port {{port}}
-
-# Quick-start aliases
-warmup: daemon-run
-client: ui-dev
-
-# Build server + CLI tools in one cargo invocation, then exec the prebuilt
-# binary directly. On warm restarts (cargo cache intact, no source changes)
-# the build is a fast no-op and the server starts immediately — no `cargo
-# run` rebuild-check overhead, no extra wrapper process layered on top of
-# the server. Matched by cargo-guard so the build still gets the lock,
-# heartbeat, and clone-local CARGO_HOME.
+# API server (FastAPI / uvicorn) — port 8765
 server *flags:
     #!/usr/bin/env bash
     set -euo pipefail
-    cd sidequest-api
-    cargo build \
-        -p sidequest-server \
-        -p sidequest-namegen \
-        -p sidequest-encountergen \
-        -p sidequest-loadoutgen
-    exec target/debug/sidequest-server \
-        --genre-packs-path {{content}} \
-        {{flags}}
+    log={{logdir}}/sidequest-server.log
+    : > "$log"
+    cd {{root}}/sidequest-server
+    SIDEQUEST_GENRE_PACKS={{content}} \
+        uv run uvicorn sidequest.server.app:create_app \
+            --factory --reload --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
+        | tee "$log"
 
-# tmuxinator dev session (server, otel, client, daemon in 4 panes)
-tmux:
-    tmuxinator start -p .tmuxinator.yml
-
-# Cross-repo
-check-all: api-check ui-lint ui-test
-
-# First-time dev environment setup
-setup:
+# React client (Vite) — port 5173
+client *flags:
     #!/usr/bin/env bash
-    echo "=== SideQuest Dev Environment Setup ==="
-    echo ""
+    set -euo pipefail
+    log={{logdir}}/sidequest-client.log
+    : > "$log"
+    cd {{root}}/sidequest-ui
+    npm run dev -- {{flags}} 2>&1 | tee "$log"
 
-    # API (Rust)
-    if [ -d "sidequest-api" ]; then
-        echo "--- Rust toolchain ---"
-        rustup component add clippy
-        echo "--- API dependencies ---"
-        cd sidequest-api && cargo build
-        cd ..
-        echo "✓ API ready"
+# Media daemon (Flux/Z-Image renderer) with warmup
+daemon *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    log={{logdir}}/sidequest-daemon.log
+    : > "$log"
+    cd {{root}}/sidequest-daemon
+    SIDEQUEST_GENRE_PACKS={{content}} \
+        uv run sidequest-renderer --warmup {{flags}} 2>&1 \
+        | tee "$log"
+
+# ---------------------------------------------------------------------------
+# `just up` — boot all three in the background, tail the merged log stream.
+# Ctrl-C tears them down.
+# ---------------------------------------------------------------------------
+
+up:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    srv={{logdir}}/sidequest-server.log
+    cli={{logdir}}/sidequest-client.log
+    dmn={{logdir}}/sidequest-daemon.log
+    : > "$srv"; : > "$cli"; : > "$dmn"
+
+    # Kill any leftover services from a previous run.
+    for svc in server client daemon; do
+        pidfile={{logdir}}/sidequest-${svc}.pid
+        if [[ -f "$pidfile" ]]; then
+            kill "$(cat "$pidfile")" 2>/dev/null || true
+            rm -f "$pidfile"
+        fi
+    done
+
+    echo "▶ daemon  (warmup)  → $dmn"
+    ( cd {{root}}/sidequest-daemon && \
+        SIDEQUEST_GENRE_PACKS={{content}} \
+        uv run sidequest-renderer --warmup >"$dmn" 2>&1 ) &
+    echo $! > {{logdir}}/sidequest-daemon.pid
+
+    echo "▶ server  (:8765)   → $srv"
+    ( cd {{root}}/sidequest-server && \
+        SIDEQUEST_GENRE_PACKS={{content}} \
+        uv run uvicorn sidequest.server.app:create_app \
+            --factory --reload --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
+    echo $! > {{logdir}}/sidequest-server.pid
+
+    echo "▶ client  (:5173)   → $cli"
+    ( cd {{root}}/sidequest-ui && npm run dev >"$cli" 2>&1 ) &
+    echo $! > {{logdir}}/sidequest-client.pid
+
+    cleanup() {
+        echo
+        echo "Stopping services…"
+        for svc in server client daemon; do
+            pidfile={{logdir}}/sidequest-${svc}.pid
+            if [[ -f "$pidfile" ]]; then
+                kill "$(cat "$pidfile")" 2>/dev/null || true
+                rm -f "$pidfile"
+            fi
+        done
+    }
+    trap cleanup EXIT INT TERM
+
+    echo
+    echo "All services up. Open http://localhost:5173"
+    echo "Tailing logs (Ctrl-C to stop everything)…"
+    echo
+    tail -F "$dmn" "$srv" "$cli"
+
+# Stop all background services started by `just up`.
+down:
+    #!/usr/bin/env bash
+    for svc in server client daemon; do
+        pidfile={{logdir}}/sidequest-${svc}.pid
+        if [[ -f "$pidfile" ]]; then
+            pid=$(cat "$pidfile")
+            if kill -0 "$pid" 2>/dev/null; then
+                kill "$pid" && echo "stopped sidequest-$svc (pid $pid)"
+            fi
+            rm -f "$pidfile"
+        fi
+    done
+
+# Tail one or all service logs.  `just logs`, `just logs server`, etc.
+logs service="all":
+    #!/usr/bin/env bash
+    if [[ "{{service}}" == "all" ]]; then
+        tail -F {{logdir}}/sidequest-server.log \
+                {{logdir}}/sidequest-client.log \
+                {{logdir}}/sidequest-daemon.log
     else
-        echo "⚠ sidequest-api not cloned. Run: git clone git@github.com:slabgorb/sidequest-api.git"
+        tail -F {{logdir}}/sidequest-{{service}}.log
     fi
 
-    echo ""
+# ---------------------------------------------------------------------------
+# Per-service tasks
+# ---------------------------------------------------------------------------
 
-    # UI (React)
-    if [ -d "sidequest-ui" ]; then
-        echo "--- UI dependencies ---"
-        cd sidequest-ui && npm install
-        cd ..
-        echo "✓ UI ready"
-    else
-        echo "⚠ sidequest-ui not cloned. Run: git clone git@github.com:slabgorb/sidequest-ui.git"
-    fi
+# Server (FastAPI)
+server-test:
+    cd {{root}}/sidequest-server && uv run pytest -v
 
-    echo ""
+server-lint:
+    cd {{root}}/sidequest-server && uv run ruff check .
 
-    # Daemon (Python)
-    if [ -d "sidequest-daemon" ]; then
-        echo "--- Daemon dependencies ---"
-        cd sidequest-daemon && pip install -e ".[dev]"
-        cd ..
-        echo "✓ Daemon ready"
-    else
-        echo "⚠ sidequest-daemon not cloned. Run: git clone git@github.com:slabgorb/sidequest-daemon.git"
-    fi
+server-fmt:
+    cd {{root}}/sidequest-server && uv run ruff format .
 
-    echo ""
-    echo "=== Setup complete ==="
+server-check: server-lint server-test
 
-# Headless playtest
-playtest-server *flags:
-    cd sidequest-api && cargo build -p sidequest-namegen -p sidequest-encountergen -p sidequest-loadoutgen 2>/dev/null; cargo run -p sidequest-server -- --genre-packs-path {{content}} --headless {{flags}}
+# Client (React)
+client-test:
+    cd {{root}}/sidequest-ui && npx vitest run
 
+client-build:
+    cd {{root}}/sidequest-ui && npm run build
+
+client-lint:
+    cd {{root}}/sidequest-ui && npm run lint
+
+client-install:
+    cd {{root}}/sidequest-ui && npm install
+
+# Daemon (media services)
+daemon-status:
+    cd {{root}}/sidequest-daemon && uv run sidequest-renderer --status
+
+daemon-stop:
+    cd {{root}}/sidequest-daemon && uv run sidequest-renderer --shutdown
+
+daemon-test:
+    cd {{root}}/sidequest-daemon && SIDEQUEST_GENRE_PACKS={{content}} pytest
+
+daemon-lint:
+    cd {{root}}/sidequest-daemon && ruff check .
+
+daemon-install:
+    cd {{root}}/sidequest-daemon && pip install -e ".[dev]"
+
+# ---------------------------------------------------------------------------
+# Cross-repo + utilities
+# ---------------------------------------------------------------------------
+
+check-all: server-check client-lint client-test daemon-lint
+
+# OTEL dashboard — browser-friendly /ws/watcher viewer
+otel port="9765":
+    python3 {{root}}/scripts/playtest.py --dashboard-only --dashboard-port {{port}}
+
+# Headless playtest driver (uses the running server)
 playtest *flags:
-    python3 scripts/playtest.py {{flags}}
+    python3 {{root}}/scripts/playtest.py {{flags}}
 
 playtest-scenario file:
-    python3 scripts/playtest.py --scenario scenarios/{{file}}.yaml
+    python3 {{root}}/scripts/playtest.py --scenario {{root}}/scenarios/{{file}}.yaml
 
+# tmuxinator session — server, client, daemon, otel in four panes
+tmux:
+    tmuxinator start -p {{root}}/.tmuxinator.yml
+
+# Git status across every repo
 status:
-    @echo "=== API ===" && cd sidequest-api && git status --short
-    @echo "=== UI ===" && cd sidequest-ui && git status --short
-    @echo "=== Daemon ===" && cd sidequest-daemon && git status --short 2>/dev/null || echo "(not cloned)"
-    @echo "=== Orchestrator ===" && git status --short
+    @echo "=== orchestrator ===" && git status --short
+    @echo "=== server ==="        && cd {{root}}/sidequest-server  && git status --short
+    @echo "=== client ==="        && cd {{root}}/sidequest-ui      && git status --short
+    @echo "=== daemon ==="        && cd {{root}}/sidequest-daemon  && git status --short
+    @echo "=== content ==="       && cd {{root}}/sidequest-content && git status --short
 
 # Sync shared CLAUDE.md preamble to all subrepos
 sync-claude-md:
-    python3 scripts/sync-claude-preamble.py
+    python3 {{root}}/scripts/sync-claude-preamble.py
+
+# First-time setup — install deps for every subrepo
+setup:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "=== SideQuest setup ==="
+    for dir in sidequest-server sidequest-daemon; do
+        if [[ -d "{{root}}/$dir" ]]; then
+            echo "--- $dir (uv sync) ---"
+            ( cd {{root}}/$dir && uv sync --all-extras )
+        else
+            echo "⚠ $dir not cloned"
+        fi
+    done
+    if [[ -d "{{root}}/sidequest-ui" ]]; then
+        echo "--- sidequest-ui (npm install) ---"
+        ( cd {{root}}/sidequest-ui && npm install )
+    else
+        echo "⚠ sidequest-ui not cloned"
+    fi
+    echo "=== setup complete ==="
