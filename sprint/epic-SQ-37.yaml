@@ -344,10 +344,13 @@ stories:
     title: Region population on opening rooms — map_update_skipped because state.current_region is blank on turn 1; require region in world.yaml or inherit default so Map tab is load-bearing from turn 1
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-22'
     repos: content,api
     workflow: trivial
+    completed: '2026-04-22'
     type: bug
+    branch: feat/37-31-region-population-opening-rooms
   - id: 37-32
     title: Momentum readout state sync — UI momentum value lags server BEAT_RESOLVED; ensure snapshot field updates and UI subscribes
     points: 2
@@ -478,3 +481,14 @@ stories:
     repos: sidequest-api,sidequest-daemon
     workflow: wire-first
     type: bug
+  - id: 37-48
+    title: Test-lock run_narration_turn builds TurnContext with npc_registry
+    points: 1
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-22'
+    repos: sidequest-api
+    workflow: trivial
+    completed: '2026-04-22'
+    type: chore

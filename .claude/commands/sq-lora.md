@@ -329,11 +329,16 @@ from Step 2):
 ```yaml
 loras:
   - name: {genre}_{tier}                            # internal handle
-    file: lora/{genre}/{genre}_{tier}.safetensors
+    file: {genre}/{tier}.safetensors                # relative to sidequest-content/lora/
     scale: 0.8
     applies_to: [{tier}]                            # e.g., [landscape, scene]
     trigger: {genre}                                # bare genre name — the trained token
 ```
+
+The `file:` field is a path relative to `sidequest-content/lora/` —
+`render_common.py::_resolve_lora_file` prepends that prefix at
+render time so YAML stays machine-portable across clones. Absolute
+paths also work but break portability.
 
 For a world-specific divergent register (e.g., `the_real_mccoy` is
 1878 Pittsburgh, not 1966 Almería), exclude the genre LoRA and add
@@ -345,7 +350,7 @@ loras:
   exclude: [{genre}_{tier}]
   add:
     - name: {world}_{tier}
-      file: lora/{genre}/{world}_{tier}.safetensors
+      file: {genre}/{world}_{tier}.safetensors     # relative to sidequest-content/lora/
       scale: 0.8
       applies_to: [{tier}]
       trigger: {world}                              # bare world name
@@ -420,11 +425,20 @@ sidequest-content subrepo (gitflow: branch off `develop`).
 Track shipped LoRAs here; archive retired ones in
 `sidequest-content/lora/{genre}/archive/legacy/`.
 
+**Filename convention:** shipped artifacts are `{tier}.safetensors`
+(scoped by their `{genre}/` parent directory). The earlier
+`{genre}_{tier}.safetensors` convention was dropped 2026-04-22 —
+the parent dir already namespaces by genre, so the prefix was
+redundant.
+
 | Genre | Tier | Status | Trigger | Rank | Iter | File | Notes |
 |-------|------|--------|---------|------|------|------|-------|
-| elemental_harmony | landscape | shipped (legacy `.ckpt`) | `ukiyo_e_landscape` | 32 | 1500 | `lora/elemental_harmony/ukiyo_e_landscape_1500_lora_f32.ckpt` | Pre-mlx pipeline; awaiting retrain via Step 4 |
-| spaghetti_western | unified (legacy) | archived | `leone_style` | 32 | 1000 | `lora/spaghetti_western/archive/legacy/leone_style_1000_lora_f32.ckpt` | Replaced by per-tier landscape/portrait split (Phase 2) |
-| caverns_and_claudes | portrait (legacy `.ckpt`) | shipped | `dnd_ink` | 32 | 1000 | `lora/caverns_and_claudes/dnd_ink_1000_lora_f32.ckpt` | Pre-mlx pipeline; portrait re-train pending |
-| spaghetti_western | landscape | **pending** | `spaghetti_western_landscape` | 8 | 1500 | `lora/spaghetti_western/spaghetti_western_landscape.safetensors` | First mlx pipeline LoRA; visual_style.yaml awaits this file |
-| spaghetti_western | portrait | queued | `spaghetti_western_portrait` | 8 | 1500 | — | Awaits portrait dataset curation |
-| the_real_mccoy | landscape | queued | `the_real_mccoy_landscape` | 8 | 1500 | — | World-divergent (1878 Pittsburgh) |
+| spaghetti_western | landscape | **shipped** (2026-04-22) | `spaghetti_western` | 8 | 1500 | `lora/spaghetti_western/landscape.safetensors` | First mlx-pipeline LoRA; wired in `dust_and_lead` at scale 0.65; explicitly NOT applied to `the_real_mccoy` (period-divergent 1878 Pittsburgh) |
+| elemental_harmony | landscape | **shipped** (2026-04-22) | `elemental_harmony` | 8 | 1500 | `lora/elemental_harmony/landscape.safetensors` | Ukiyo-e corpus (Kuniyoshi/Hokusai/Hiroshige); wired at genre level at scale 0.65; supersedes legacy `ukiyo_e_landscape_1500_lora_f32.ckpt` |
+| caverns_and_claudes | portrait | shipped (legacy `.ckpt`) | `dnd_ink` | 32 | 1000 | `lora/caverns_and_claudes/dnd_ink_1000_lora_f32.ckpt` | Pre-mlx pipeline; portrait re-train pending |
+| elemental_harmony | landscape (legacy) | archived | `ukiyo_e_landscape` | 32 | 1500 | `lora/elemental_harmony/ukiyo_e_landscape_1500_lora_f32.ckpt` | Pre-mlx; superseded 2026-04-22 by mlx rank-8 pipeline |
+| spaghetti_western | unified (legacy) | archived | `leone_style` | 32 | 1000 | `lora/spaghetti_western/archive/legacy/leone_style_1000_lora_f32.ckpt` | Replaced by per-tier landscape split |
+| the_real_mccoy | landscape | **shipped** (2026-04-22) | `the_real_mccoy` | 8 | 1500 | `lora/spaghetti_western/the_real_mccoy/landscape.safetensors` | First world-divergent LoRA; wired at world level at scale 0.65. Dataset: 179 square tiles cropped from 90 period-media sources (Harper's Weekly engravings + Underwood stereographs + Currier & Ives lithographs + cabinet-card portraiture + Muybridge plates); all forced to sRGB TrueColor (trainer requires 3-channel). Mixed-register corpus → LoRA averages to "1870s monochrome" without committing to a single medium; works well once competing medium anchors are stripped from prompts. Stored under `{genre}/{world}/` subdir to avoid collision with genre-level LoRA. |
+| spaghetti_western | portrait | queued | `spaghetti_western` | 8 | 1500 | — | Awaits portrait dataset curation |
+| the_real_mccoy | portrait | queued | `the_real_mccoy` | 8 | 1500 | — | Training candidate `gilded_age_portrait_style` in world's `visual_style.yaml::lora_triggers.training_candidates` (corpus: Sarony cabinet cards, Brady post-war portraits, Southworth & Hawes daguerreotypes) |
+| the_real_mccoy | scene (replicant_reveal) | queued | `the_real_mccoy_replicant` | 8 | 1500 | — | Training candidate `lève_future_replicant_style` (corpus: Albert Robida 1886 illustrations, posthumous daguerreotypes, Jules Worms engravings) |

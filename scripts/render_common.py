@@ -16,6 +16,7 @@ from pathlib import Path
 SOCKET_PATH = Path("/tmp/sidequest-renderer.sock")
 _root = Path(__file__).resolve().parent.parent
 GENRE_PACKS_DIR = _root / "sidequest-content" / "genre_packs"
+LORA_DIR = _root / "sidequest-content" / "lora"
 
 # T5-XXL token limit
 TOKEN_LIMIT = 512
@@ -181,6 +182,19 @@ def compose_lora_stack(
     return [e for e in composed if tier in e["applies_to"]]
 
 
+def _resolve_lora_file(file: str) -> str:
+    """Resolve a YAML `file:` entry to an absolute path the daemon can open.
+
+    Relative entries resolve against sidequest-content/lora/ — the single
+    canonical LoRA root — so YAML stays machine-portable across clones.
+    Absolute paths are passed through untouched.
+    """
+    p = Path(file)
+    if p.is_absolute():
+        return str(p)
+    return str((LORA_DIR / p).resolve())
+
+
 def resolve_lora_args(visual_style: dict) -> tuple[list[str] | None, list[float] | None]:
     """Pick lora_paths/lora_scales for send_render based on schema state.
 
@@ -191,6 +205,10 @@ def resolve_lora_args(visual_style: dict) -> tuple[list[str] | None, list[float]
          single-entry array. Transitional; comes off when all
          visual_style.yaml files migrate to the loras: schema.
       3. Neither — return (None, None) for an un-LoRA'd render.
+
+    `file:` entries may be relative (preferred — resolved against
+    sidequest-content/lora/) or absolute. Either way, absolute paths are
+    what reach the daemon; no cwd-dependent behavior at render time.
 
     Hard-fails on the cross-schema case (`lora:` AND non-empty
     `resolved_loras` both present): no silent precedence rule should
@@ -207,13 +225,13 @@ def resolve_lora_args(visual_style: dict) -> tuple[list[str] | None, list[float]
 
     if resolved:
         return (
-            [entry["file"] for entry in resolved],
+            [_resolve_lora_file(entry["file"]) for entry in resolved],
             [float(entry["scale"]) for entry in resolved],
         )
 
     if has_legacy:
         return (
-            [visual_style["lora"]],
+            [_resolve_lora_file(visual_style["lora"])],
             [float(visual_style.get("lora_scale", 1.0))],
         )
 

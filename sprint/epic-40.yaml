@@ -74,3 +74,27 @@ stories:
     status: backlog
     repos: api
     workflow: wire-first
+  - id: 40-9
+    title: Wire flux_prompt into generate_portrait_images.py — 27+ prompts currently dead YAML
+    points: 2
+    priority: p2
+    status: backlog
+    repos: pennyfarthing
+    workflow: tdd
+    type: chore
+  - id: 40-10
+    title: Walk cartography.yaml in generate_poi_images.py — 32 the_real_mccoy region visual_prompts unwired
+    points: 3
+    priority: p2
+    status: backlog
+    repos: pennyfarthing
+    workflow: tdd
+    type: chore
+  - id: 40-11
+    title: Unify visual_prompt field name across portrait_manifest / cartography / history (rename flux_prompt → visual_prompt)
+    points: 2
+    priority: p3
+    status: backlog
+    repos: pennyfarthing
+    workflow: tdd
+    type: refactor
