@@ -478,3 +478,13 @@ stories:
     repos: sidequest-api,sidequest-daemon
     workflow: wire-first
     type: bug
+  - id: 37-48
+    title: Test-lock run_narration_turn builds TurnContext with npc_registry
+    points: 1
+    priority: p1
+    status: setup
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-22'
+    repos: sidequest-api
+    workflow: trivial
+    type: chore
