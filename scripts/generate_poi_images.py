@@ -91,10 +91,13 @@ def compose_prompt(poi: dict, visual_style: dict) -> tuple[str, str, str, int]:
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Generate POI landscape images")
     parser.add_argument("--genre", help="Only process this genre pack")
+    parser.add_argument("--world", help="Only process this world (requires --genre)")
     parser.add_argument("--dry-run", action="store_true", help="Preview prompts without rendering")
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
     parser.add_argument("--output-dir", type=Path, help="Override output directory")
     args = parser.parse_args()
+    if args.world and not args.genre:
+        parser.error("--world requires --genre")
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 
@@ -105,6 +108,8 @@ async def main() -> None:
         if args.genre and genre_dir.name != args.genre:
             continue
         pois = collect_pois(genre_dir)
+        if args.world:
+            pois = [p for p in pois if p.get("world") == args.world]
         if pois:
             worlds_seen = {}
             for poi in pois:
