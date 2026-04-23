@@ -1,9 +1,9 @@
-# CLAUDE.md — SideQuest (Rust Rewrite)
+# CLAUDE.md — SideQuest
 
-This is the orchestrator repo for the SideQuest RPG Runner/Editor It coordinates four subrepos:
-- **sidequest-api** — Rust game engine and WebSocket API (workspace with 12 crates)
-- **sidequest-ui** — React/TypeScript game client
-- **sidequest-daemon** — Python media services (image gen, audio)
+This is the orchestrator repo for the SideQuest RPG Runner/Editor. It coordinates four subrepos:
+- **sidequest-server** — Python/FastAPI game engine and WebSocket API (port 8765)
+- **sidequest-ui** — React/TypeScript game client (Vite, port 5173)
+- **sidequest-daemon** — Python media services (Flux/Z-Image generation, audio)
 - **sidequest-content** — Genre packs (YAML configs, audio, images, world data)
 
 ## Who This Is For
@@ -42,8 +42,7 @@ When evaluating a feature, ask *which of these people it serves and which it los
 orc-quest/                    # This repo (orchestrator, also cloned as oq-1 / oq-2)
 ├── sprint/                   # Sprint tracking
 ├── docs/                     # Architecture docs and ADRs
-│   ├── api-contract.md       # WebSocket + REST contract (from UI)
-│   ├── tech-stack.md         # Crate choices
+│   ├── api-contract.md       # WebSocket + REST contract
 │   ├── architecture.md       # System design and layer diagram
 │   └── adr/                  # Architecture Decision Records
 ├── scripts/                  # Cross-repo scripts (playtest, music gen, etc.)
@@ -54,6 +53,7 @@ sidequest-content/            # Genre packs — single source of truth (subrepo)
 ├── genre_packs/
 │   ├── caverns_and_claudes/
 │   ├── elemental_harmony/
+│   ├── heavy_metal/
 │   ├── low_fantasy/
 │   ├── mutant_wasteland/
 │   ├── neon_dystopia/
@@ -65,27 +65,22 @@ sidequest-content/            # Genre packs — single source of truth (subrepo)
 │   └── <genre>/worlds/<world>/
 └── CLAUDE.md
 
-sidequest-api/                # Rust backend (subrepo)
-├── Cargo.toml                # [workspace] root
-├── crates/
-│   ├── sidequest-protocol/   # GameMessage, typed payloads (serde)
-│   ├── sidequest-genre/      # YAML genre pack loader
-│   ├── sidequest-game/       # State, characters, encounters, tropes
-│   ├── sidequest-agents/     # Claude CLI subprocess orchestration
-│   ├── sidequest-daemon-client/ # Client for Python media daemon
-│   ├── sidequest-server/     # axum HTTP/WebSocket, sessions, dispatch
-│   ├── sidequest-telemetry/  # OTEL span definitions and watcher macros
-│   ├── sidequest-promptpreview/ # CLI: prompt preview and inspection
-│   ├── sidequest-encountergen/ # CLI: enemy stat block generator
-│   ├── sidequest-loadoutgen/ # CLI: starting equipment generator
-│   ├── sidequest-namegen/    # CLI: NPC identity block generator
-│   └── sidequest-validate/   # Genre pack validation utilities
-└── tests/
+sidequest-server/             # Python FastAPI backend (subrepo, uv-managed)
+├── sidequest/
+│   ├── agents/               # Claude CLI subprocess orchestration (narrator, preprocessor)
+│   ├── cli/                  # Standalone CLIs (encountergen, loadoutgen, namegen, promptpreview, validate)
+│   ├── daemon_client/        # Client for Python media daemon
+│   ├── game/                 # State, characters, encounters, tropes, turns, persistence
+│   ├── genre/                # YAML genre pack loader
+│   ├── protocol/             # GameMessage, typed payloads (pydantic)
+│   ├── server/               # FastAPI app, WebSocket, dispatch, sessions
+│   └── telemetry/            # OTEL span definitions and watcher hooks
+├── tests/
+└── pyproject.toml
 
 sidequest-ui/                 # React frontend (subrepo)
 ├── src/
 │   ├── __tests__/
-│   ├── assets/
 │   ├── audio/                # Music + SFX playback (no TTS)
 │   ├── components/
 │   ├── dice/                 # 3D dice overlay (Three.js + Rapier)
@@ -101,7 +96,7 @@ sidequest-daemon/             # Python media services (subrepo)
 ├── sidequest_daemon/         # Package root
 │   ├── audio/                # Music library, SFX mixer, scene interpreter
 │   ├── genre/
-│   ├── media/                # Flux image generation pipeline
+│   ├── media/                # Flux / Z-Image generation pipeline
 │   ├── ml/
 │   └── renderer/
 ├── tests/
@@ -110,32 +105,57 @@ sidequest-daemon/             # Python media services (subrepo)
 
 ## Architecture
 
-- **API communicates via WebSocket** for real-time game events (narration, state updates)
+- **Server communicates via WebSocket** for real-time game events (narration, state updates)
 - **Small REST surface** for save/load, character listing, genre pack metadata
-- **Claude CLI (`claude -p`)** for all LLM calls — subprocess, not SDK
-- **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth), loaded by the API from a configured path
-- **Media daemon** (`sidequest-daemon`) stays in Python as a sidecar for image/audio generation
+- **Claude CLI (`claude -p`)** for all LLM calls — subprocess from Python, not SDK
+- **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth), loaded by the server from `SIDEQUEST_GENRE_PACKS`
+- **Media daemon** is a Python sidecar for image/audio generation (Flux / Z-Image / ACE-Step)
 - **Save files** live at `~/.sidequest/saves/` (SQLite `.db` files, one per genre/world session) — not in the repo. See `.pennyfarthing/guides/save-management.md` for cleanup, inspection, and migration procedures
 
 ## Commands
 
+All commands run from the orchestrator root. Services tee logs to `/tmp/sidequest-{server,client,daemon}.log`.
+
 ```bash
-# From orchestrator root:
-just api-test          # Run Rust tests
-just api-build         # Build Rust backend
-just api-run           # Run API server (builds CLI tools first)
-just api-lint          # cargo clippy -- -D warnings
-just api-fmt           # cargo fmt
-just api-check         # fmt + clippy + test (full gate)
-just ui-dev            # Start React dev server
-just ui-test           # Run frontend tests (vitest)
-just ui-build          # Build frontend
-just ui-lint           # Run frontend linter
-just daemon-run        # Start media daemon with warmup
-just daemon-test       # Run daemon pytest suite
-just daemon-lint       # ruff check
-just check-all         # api-check + ui-lint + ui-test
-just tmux              # tmuxinator dev session (4 panes)
+# Boot everything (daemon warmup → server → client, tails merged logs)
+just up
+just down                 # Stop all background services
+just logs [service]       # Tail one or all service logs
+
+# Individual services (foreground, Ctrl-C to stop)
+just server               # FastAPI/uvicorn on :8765 (--reload)
+just client               # Vite dev server on :5173
+just daemon               # Media daemon with warmup
+
+# Server (Python / uv)
+just server-test          # uv run pytest -v
+just server-lint          # uv run ruff check .
+just server-fmt           # uv run ruff format .
+just server-check         # lint + test
+
+# Client (React)
+just client-test          # npx vitest run
+just client-build
+just client-lint
+
+# Daemon
+just daemon-test
+just daemon-lint          # ruff check
+just daemon-status        # renderer status
+just daemon-stop          # shutdown renderer
+
+# Aggregate gate
+just check-all            # server-check + client-lint + client-test + daemon-lint
+
+# Playtest / OTEL
+just playtest [flags]     # Headless playtest driver against running server
+just playtest-scenario <name>   # Runs scenarios/<name>.yaml
+just otel [port]          # /ws/watcher dashboard (default :9765)
+
+# Utilities
+just status               # git status across all subrepos
+just setup                # First-time: uv sync + npm install everywhere
+just tmux                 # tmuxinator 4-pane dev session
 ```
 ## Development Principles
 
@@ -183,13 +203,6 @@ Unit tests prove a component works in isolation. That's not enough. Every set of
 must include at least one integration test that verifies the component is wired into the
 system — imported, called, and reachable from production code paths.
 </critical>
-
-<information>
-### Rust vs Python Split
-If it doesn't involve operating LLMs, it goes in Rust. If it needs to run model inference
-(Flux, ACE-Step — not Claude), use Python for library maturity. Claude calls go
-through Rust as CLI subprocesses
-</information>
 
 <important>
 ## OTEL Observability Principle
