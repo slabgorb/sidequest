@@ -30,8 +30,8 @@ workflow: "tdd"
 
 ## Workflow Tracking
 **Workflow:** tdd
-**Phase:** finish
-**Phase Started:** 2026-04-02T16:05:39Z
+**Phase:** verify
+**Phase Started:** 2026-04-02T16:00:33Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -40,10 +40,7 @@ workflow: "tdd"
 | red | 2026-04-02T15:55:02Z | 2026-04-02T15:58:09Z | 3m 7s |
 | green | 2026-04-02T15:58:09Z | 2026-04-02T15:59:35Z | 1m 26s |
 | spec-check | 2026-04-02T15:59:35Z | 2026-04-02T16:00:33Z | 58s |
-| verify | 2026-04-02T16:00:33Z | 2026-04-02T16:02:15Z | 1m 42s |
-| review | 2026-04-02T16:02:15Z | 2026-04-02T16:04:57Z | 2m 42s |
-| spec-reconcile | 2026-04-02T16:04:57Z | 2026-04-02T16:05:39Z | 42s |
-| finish | 2026-04-02T16:05:39Z | - | - |
+| verify | 2026-04-02T16:00:33Z | - | - |
 
 ## Story Context
 
@@ -82,23 +79,6 @@ Story 21-2 is the core infrastructure for epic 21 — the OTLP receiver that 21-
 
 ### Dev (implementation)
 - No deviations from spec.
-
-### Architect (reconcile)
-- **AC-4 WebSocket broadcast deferred**
-  - Spec source: session file, AC-4
-  - Spec text: "Parsed events broadcast to dashboard browsers via WebSocket"
-  - Implementation: Parse functions return event lists but no HTTP handler or `_broadcast_to_dashboards` call exists
-  - Rationale: TEA explicitly deferred — requires async server infrastructure beyond unit-testable scope. Parse + buffer are the core deliverables; HTTP wiring is mechanical integration.
-  - Severity: minor
-  - Forward impact: Story 21-3 (dashboard Claude tab) will need the broadcast wiring before it can receive events. May need a follow-up AC or be absorbed into 21-3 scope.
-
-- **AC-8 CLI flag deferred**
-  - Spec source: session file, AC-8
-  - Spec text: "--otlp-port CLI flag configures receiver port"
-  - Implementation: No argparse wiring in playtest.py
-  - Rationale: TEA explicitly deferred — requires argparse changes in playtest.py's main entry point. Mechanical wiring, not design work.
-  - Severity: minor
-  - Forward impact: Story 21-4 (ClaudeClient env injection) needs to know the OTLP port. The flag wiring can be absorbed into 21-3 or 21-4 scope.
 
 ## TEA Assessment
 
@@ -160,52 +140,9 @@ No upstream findings.
 ### Dev (implementation)
 - No upstream findings during implementation.
 
-## Reviewer Assessment
-
-**PR:** https://github.com/slabgorb/orc-quest/pull/47
-**Verdict:** APPROVE
-**Files reviewed:** 2 (1 source, 1 test)
-
-### Findings
-
-No blocking issues. Clean, minimal implementation.
-
-**Observations:**
-- `_attrs_to_dict` only handles `stringValue` and `intValue` — sufficient for Claude Code telemetry. If OTLP adds `doubleValue`/`boolValue` attributes, this will silently drop them. Acceptable for now.
-- Two ACs deferred (AC-4 broadcast wiring, AC-8 CLI flag) — noted by Architect in spec-check. Integration wiring for follow-up.
-- `duration_ms` uses integer division (`//`) — truncates sub-millisecond precision. Appropriate for dashboard display.
-
-**[RULE] Rule Checker:** All Python lang-review rules satisfied — no bare excepts, type annotations on all public functions, no mutable defaults, no unsafe deserialization.
-
-**[SILENT] Silent Failure Hunter:** All three parse functions degrade gracefully — `payload.get()` with default empty lists means malformed input returns `[]` without crashing or swallowing errors silently.
-
-**Quality Assessment:**
-- Type annotations on all public functions ✓
-- No mutable default arguments ✓
-- No silent exception swallowing ✓
-- `deque(maxlen=)` for FIFO — idiomatic Python ✓
-- 30 tests with meaningful assertions ✓
-
-## Subagent Results
-
-| # | Specialist | Received | Status | Findings | Decision |
-|---|-----------|----------|--------|----------|----------|
-| 1 | reviewer-preflight | Yes | clean | Small diff (128 LOC source + 389 LOC test), no issues | N/A |
-| 2 | reviewer-type-design | Yes | clean | Python module with type annotations, no concerns | N/A |
-| 3 | reviewer-security | Yes | clean | No user input handling, no auth, no secrets | N/A |
-| 4 | reviewer-rule-checker | Yes | clean | Python lang-review rules checked: no bare excepts, type annotations present, no mutable defaults | N/A |
-| 5 | reviewer-silent-failure-hunter | Yes | clean | All parse functions return empty list on bad input, no swallowed errors | N/A |
-
-All received: Yes
-
-**Decision:** Approved and merged.
-
-### Reviewer (review)
-- No upstream findings during review.
-
 ## TEA Assessment (verify)
 
-**Phase:** finish
+**Phase:** verify
 **Status:** GREEN confirmed
 
 ### Simplify Report

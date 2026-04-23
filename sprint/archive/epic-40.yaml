@@ -10,7 +10,7 @@ description: |
   cause via pre-commit + just api-check gates. No allowlist, no grace period,
   no exceptions. Pain is the point.
 priority: p0
-status: backlog
+status: canceled
 repos: api
 stories:
   - id: 40-1
@@ -29,56 +29,56 @@ stories:
     title: ClaudeClient DI refactor — convert 8 inline sites (orchestrator, preprocessor, inventory_extractor, continuity_validator, resonator×4, server/lib.rs) to Arc<dyn ClaudeLike>; bootstrap only at server entry
     points: 8
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 40-3
     title: Pilot migration — perception_story_8_6 (23 assertions) to runtime harness; prove it catches span-rename AND behavior regressions; lock canonical recipe
     points: 5
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 40-4
     title: sidequest-game bulk migration — ~10 files; classify migrate/delete/retain per file; consolidate to domain binaries
     points: 8
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 40-5
     title: sidequest-server *_wiring_* files — enforce the wiring claim, migrate every one, consolidate
     points: 8
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 40-6
     title: Long-tail migration — remaining sidequest-server integration, sidequest-agents, sidequest-genre, sidequest-protocol tests; zero source-grep assertions remaining
     points: 8
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 40-7
     title: Hard-block gates — pre-commit + just api-check fail on (1) read_to_string/include_str! .contains in tests/, (2) ClaudeClient::new/::with_timeout outside server bootstrap; CLAUDE.md points at test-support crate README
     points: 3
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: tdd
   - id: 40-8
     title: Binary consolidation sweep — merge migrated test files into domain binaries across touched crates; measure cargo test binary count before/after
     points: 3
     priority: p0
-    status: backlog
+    status: canceled
     repos: api
     workflow: wire-first
   - id: 40-9
     title: Wire flux_prompt into generate_portrait_images.py — 27+ prompts currently dead YAML
     points: 2
     priority: p2
-    status: backlog
+    status: canceled
     repos: pennyfarthing
     workflow: tdd
     type: chore
@@ -86,7 +86,7 @@ stories:
     title: Walk cartography.yaml in generate_poi_images.py — 32 the_real_mccoy region visual_prompts unwired
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: pennyfarthing
     workflow: tdd
     type: chore
@@ -94,7 +94,7 @@ stories:
     title: Unify visual_prompt field name across portrait_manifest / cartography / history (rename flux_prompt → visual_prompt)
     points: 2
     priority: p3
-    status: backlog
+    status: canceled
     repos: pennyfarthing
     workflow: tdd
     type: refactor

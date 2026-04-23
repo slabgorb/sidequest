@@ -517,3 +517,17 @@ stories:
     repos: ui
     workflow: tdd
     type: refactor
+  - id: 37-52
+    title: Delete legacy /api/saves/* endpoints and (genre, world, player) save-path helper
+    description: Clean-up after MP-03 lands. Delete legacy /api/saves/* endpoints (from MP-01 Task 10) and the old (genre, world, player) save-path helper in sidequest-server/sidequest/game/persistence.py. MP-03 plan footnote flags this as mergeable once Plan 03 ships. See docs/superpowers/plans/2026-04-22-mp-03-filtered-sync-and-projections.md, final section.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: pennyfarthing
+    workflow: tdd
+    acceptance_criteria:
+      - Legacy /api/saves/* REST routes removed from sidequest-server/sidequest/server (handlers + route registration).
+      - Old (genre, world, player)-tuple save-path helper in persistence.py removed.
+      - No call sites remain referencing either the legacy endpoints or the old helper (grep is clean).
+      - All existing tests pass; any tests that exercised the legacy helpers are deleted or retargeted at the session-scoped replacement.
+    type: chore

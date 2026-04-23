@@ -34,7 +34,7 @@
 - `sidequest-server/sidequest/game/projection/genre_stage.py` — `GenreRuleStage` executor.
 - `sidequest-server/sidequest/game/projection/composed.py` — `ComposedFilter` (wires the two stages).
 - `sidequest-server/sidequest/game/projection/cache.py` — `ProjectionCache` reader/writer.
-- `sidequest-server/sidequest/game/projection/otel.py` — filter-specific span helpers.
+- ~~`sidequest-server/sidequest/game/projection/otel.py` — filter-specific span helpers.~~ **Deviation (Task 20):** span helpers landed in the existing `sidequest/telemetry/spans.py` (alongside all other OTEL helpers for the project) rather than a projection-specific module. Keeps OTEL span authoring centralized; no dedicated module needed for just three helpers.
 - `sidequest-content/genre_packs/mutant_wasteland/projection.yaml` — reference rule file.
 - `docs/projection-filter-predicates.md` — predicate reference doc.
 - Tests mirror source structure under `sidequest-server/tests/game/projection/`.

@@ -126,8 +126,8 @@ Epic 15 addresses technical debt identified in the 2026-03-29 post-playtest audi
 ## Workflow Tracking
 
 **Workflow:** tdd
-**Phase:** green
-**Phase Started:** 2026-04-05T15:05:59Z
+**Phase:** setup
+**Phase Started:** 2026-04-05T10:35Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -144,10 +144,7 @@ Each finding is one list item. Use "No upstream findings" if none.
 
 <!-- Agents: append findings below this line. Do not edit other agents' entries. -->
 
-### TEA (test design)
-- **Improvement** (non-blocking): All 5 ACs already implemented on develop — dispatch wiring (`dispatch/mod.rs:411-465`), action resolution (`scenario_state.rs:189-225`), OTEL events, and 3 wiring tests (`dispatch/mod.rs:2472-2509`). Landed as part of scenario system wiring work. Story can be closed as-is.
-  Affects `crates/sidequest-server/src/dispatch/mod.rs` (no changes needed).
-  *Found by TEA during test design.*
+No upstream findings yet.
 
 ## Design Deviations
 
@@ -156,23 +153,4 @@ Each entry: what was changed, what the spec said, and why.
 
 <!-- Agents: append deviations below this line. Do not edit other agents' entries. -->
 
-### TEA (test design)
-- No deviations from spec.
-
-## TEA Assessment
-
-**Tests Required:** No
-**Reason:** All 5 ACs already implemented and tested on develop. Dispatch wiring, action resolution, OTEL emission, and prompt injection all present. 3 wiring tests already exist. Zero diff on feature branch. Story was completed as part of prior scenario system work.
-
-**Status:** Already GREEN — no RED phase needed.
-**Handoff:** Back to SM for finish ceremony.
-
-## Sm Assessment
-
-**Story readiness:** Ready. All prerequisites (7-5 BeliefState, epic 24 tension tracking, 15-11 OCEAN shift pattern) are completed. The NPC action logic exists but isn't wired into the server dispatch pipeline.
-
-**Routing:** TDD phased workflow → TEA (Han Solo) runs RED phase to write failing tests that prove the wiring gap, then Dev (Yoda) implements the wiring in GREEN.
-
-**Risk:** Low. This is a wiring story — the implementation exists, the types exist, the insertion point (dispatch turn loop) is well-understood. The OTEL requirement adds observability but no new complexity.
-
-**Decision:** Proceed to RED phase.
+No design deviations yet.

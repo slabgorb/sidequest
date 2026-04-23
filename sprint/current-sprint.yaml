@@ -6,7 +6,6 @@ sprint:
   status: active
   number: 2
 epics:
-  - SQ-37
+  - '37'
   - '39'
-  - '40'
   - '42'

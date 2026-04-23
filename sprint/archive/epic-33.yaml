@@ -4,7 +4,7 @@ title: Composable GameBoard — Drag-and-Drop Dashboard Polish
 description: |
   The structural GameBoard (react-grid-layout grid replacing the fixed GameLayout) shipped in feat/composable-gameboard. This epic covers the visual polish, genre theming, preset tuning, and mobile UX that require playtesting to get right. The grid, widgets, image gallery, hotkeys, and layout persistence are already wired.
 priority: p1
-status: backlog
+status: canceled
 repos: ui
 stories:
   - id: 33-1
