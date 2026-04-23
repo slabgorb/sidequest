@@ -135,6 +135,8 @@ Phase 3 does not start from zero. Epic 39 landed in Rust ahead of the port, and 
 
 ### Story 3.4 — Combat dispatch + OTEL catalog + narrator wiring
 
+**Status:** ✅ Code complete (2026-04-23) — **pending Keith playtest gate**. Plan and execution log at `docs/superpowers/plans/2026-04-22-phase-3-story-3-4-combat-dispatch.md`. Landed on branch `feat/phase-3-story-3-4-combat-dispatch` (ready to merge after playtest). All 17 tasks executed via `superpowers:subagent-driven-development`; 244 server tests passing (one pre-existing REST failure unrelated). OTEL span catalog parity verified in `tests/server/test_encounter_wiring_e2e.py` — six named spans fire across the three-turn combat walkthrough: `encounter.confrontation_initiated`, `encounter.beat_applied`, `combat.tick`, `encounter.phase_transition`, `encounter.resolved`, `orchestrator.process_action`.
+
 **Scope:** Port the combat-sensitive dispatch touchpoints in `sidequest-api/crates/sidequest-server/src/` plus the combat OTEL span catalog.
 
 **Includes:**
