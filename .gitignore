@@ -4,6 +4,8 @@ sidequest-ui/
 sidequest-daemon/
 sidequest-content/
 sidequest-server/
+API/
+UI/
 
 # Genre packs live in sidequest-content (single source of truth)
 genre_packs/

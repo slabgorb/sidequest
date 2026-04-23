@@ -323,11 +323,13 @@ stories:
     review_verdict: approved
   - id: 37-29
     title: Chargen standard-kit narration-vs-state mismatch — narrator references a parchment inventory list the UI never renders; align narration to actual emitted payload or emit the loadout
+    description: 'DONE via reverse port-drift audit 2026-04-23: chargen standard-kit wiring delivered incidentally by story 37-23 (chargen dispatch port). apply_starting_loadout() in sidequest-server/sidequest/server/dispatch/chargen_loadout.py:89-144, called from session_handler.py:1602 at chargen confirmation, appends class-specific inventory_config.starting_equipment to character.core.inventory.items. Narrator-vs-state mismatch no longer reproduces. See ADR-085.'
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: api,ui
     workflow: wire-first
+    completed: '2026-04-23'
     type: bug
   - id: 37-30
     title: Session-to-job mapping for render_broadcast — job_id to session_id not persisted at enqueue, daemon renders are dropped with 'no session mapping'; fixes missing portrait initials too
@@ -363,10 +365,16 @@ stories:
     title: Lore embed worker timeout / circuit breaker tripping — verify 37-23 lock split closes this; if not, widen timeout or warm embed path
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-23'
     repos: daemon,api
     workflow: trivial
+    completed: '2026-04-23'
     type: bug
+    branch: feat/37-33-lore-embed-worker-timeout
+    review_findings: 'Round-5 closed every binding round-4 HIGH and Medium finding. +28 tests; full suite 1667 passed / 0 failed / 25 skipped. session_handler.py lint count dropped from 12 to 4 (pre-existing). Branch c919704 pushed. User-directed rework limit after round 4; round-5 landed the full punch list.'
+    review_verdict: approved
   - id: 37-34
     title: Daemon span-context lifecycle — stale art_style from prior session leaks onto embed spans across sessions; scope attributes per call or clear on session boundary
     points: 2
@@ -385,9 +393,13 @@ stories:
     type: bug
   - id: 37-36
     title: "Party-peer identity packet in game_state — canonical name/pronouns/race/class/level of other party members injected into each player's game_state so narrator references party-mates with stable pronouns across sealed-letter turns (playtest 3 2026-04-19: Blutka he/him in own save drifted to she/her in Orin's save because peer had zero canonical presence in Orin's game_state). Perception layer stays POV; physical identity is canonical. OTEL span on peer injection."
+    description: |-
+      Party-peer identity packet in game_state — canonical name/pronouns/race/class/level of other party members injected into each player's game_state so narrator references party-mates with stable pronouns across sealed-letter turns (playtest 3 2026-04-19: Blutka he/him in own save drifted to she/her in Orin's save). Perception layer stays POV; physical identity is canonical. OTEL span on peer injection.
+
+      PORT-DRIFT REOPEN 2026-04-23 (per ADR-085 audit of Epic 37): this story was previously marked done against the Rust sidequest-api tree (Rust session shipped + reviewer approved). The fix did NOT survive the ADR-082 port to Python. Current sidequest-server has no PartyPeer type, no inject_party_peers() call, and no peer dossier injection into narrator prompts — the bug the story closed is back in production. Re-opening at backlog per ADR-085 rule 2 (port-drift reopens, does not fork a new story). Rust session archive retained as design spec; port implementation is the new body of work. Blocks 37-37 (sealed-letter world-state handshake).
     points: 3
     priority: p1
-    status: done
+    status: backlog
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-19'
     repos: sidequest-api
@@ -404,6 +416,26 @@ stories:
     type: bug
   - id: 37-38
     title: 'State write-back hygiene — bookkeeping counters and handshakes run but never persist (playtest 3 2026-04-19): (1) total_beats_fired frozen at 0 across all 3 saves despite real beat fires — Orin had 5 fired beats including a fully-Resolved extraction_panic trope (beats 0.3/0.6/1.0) yet counter stayed 0; any beat-gated unlock perpetually blocks (relates 37-14). (2) encounter.outcome=null on both resolved Mawdeep encounters (Blutka resolved=true beat=6, Orin resolved=true beat=1) — resolution handshake never writes outcome back so reload may re-enter stale encounter (relates 37-12). (3) Scrapbook entries not backfilled when prior save carried forward — Orin scrapbook covers 10 of 29 rounds, subsystem blind to rounds 11-29 for context injection. (4) turn_manager.round lags narrative_log max_round — Felix turn_manager.round=65 but narrative max=72, 7-round gap so round-keyed gating operates on stale round data. (5) NPC.last_seen_turn stale — Orin Scavenger last_seen_turn=3 but creature appeared and died rounds 19-28. Add OTEL spans on each write-back so GM panel shows which handshakes fire. Common root: write-back paths exist in individual handlers but trunk state fields are never updated by the resolution/tick pipeline.'
+    description: |-
+      State write-back hygiene — bookkeeping counters and handshakes run but never persist (playtest 3 2026-04-19).
+
+      Original sub-items:
+      (1) total_beats_fired frozen at 0 despite real beat fires — any beat-gated unlock perpetually blocks (relates 37-14).
+      (2) encounter.outcome=null on resolved encounters — resolution handshake never writes outcome back so reload may re-enter stale encounter (relates 37-12).
+      (3) Scrapbook entries not backfilled when prior save carried forward — subsystem blind to missed rounds for context injection.
+      (4) turn_manager.round lags narrative_log max_round — round-keyed gating operates on stale round data.
+      (5) NPC.last_seen_turn stale — creature appeared/died but counter never updated.
+
+      ADR-085 REVERSE PORT-DRIFT AUDIT 2026-04-23: sub-items (2) and (5) landed incidentally in the Python port.
+        - (2) encounter.outcome write-back: sidequest-server/sidequest/server/session_handler.py:2828 now sets snapshot.encounter.outcome to beat_def.id on resolution.
+        - (5) NPC.last_seen_turn: session_handler.py:2596/2622 updates last_seen_turn when NPC is mentioned.
+
+      REMAINING SCOPE — tight AC for the re-scoped story:
+        - (1) total_beats_fired counter must increment in _apply_encounter_beats() on every beat fire; OTEL span emits current counter value.
+        - (3) scrapbook backfill: when a save is carried forward, detect gaps between scrapbook round coverage and narrative_log max_round; backfill or warn loudly.
+        - (4) turn_manager.round must not lag narrative_log max_round by more than 0 rounds at end of turn; add invariant check + OTEL span on every tick.
+
+      Common root still stands: write-back paths exist in individual handlers but trunk state fields are never updated by the resolution/tick pipeline. Each remaining sub-item still needs an OTEL span marking the write path fired so GM panel can surface drift.
     points: 5
     priority: p1
     status: backlog
@@ -428,6 +460,36 @@ stories:
     type: bug
   - id: 37-41
     title: "State completeness bundle — subsystems write partial or skipped state (playtest 3 2026-04-19): (1) current_region='' empty string across both Mawdeep saves — should be 'mouth' slug; region-conditional logic (atmosphere, trope region-filter, no-exit routing) silently misses on falsy check. (2) discovered_regions pollution — Felix save has '(aside — narrator brief)' registered as a traversable region alongside legitimate room names; aside rounds leak into region graph. (3) current_region freetext-vs-slug dedup — Felix discovered_regions contains both 'The crew quarters of a beat-up freighter docked at a station you can't afford to stay at' and 'The Crew Quarters — Freighter Unpaid Debt' as separate regions for the same room; needs slug normalization at write. (4) encounter.actors missing non-player combatants — Orin encounter.actors=[Orin only] through 6 rounds of combat with Crawling Scavenger; per-actor damage/momentum tracking impossible. (5) world_history arcs freeze at turn 30 — Felix has 4 arcs (fresh 1-5, early 6-12, mid 13-20, veteran 21-30) covering turns 1-30 only, session reached turn 72; turns 31-72 have no arc context, campaign_maturity injection operates on 30-turn-old snapshot. (6) Resolved tropes don't write quest_log or active_stakes — Orin extraction_panic Resolved and hireling_mutiny at 0.255, yet quest_log={} and active_stakes='' (empty string everywhere). Resolution pipeline doesn't seed durable record. (7) NPC registry HP=0/max_hp=0 — Orin Crawling Scavenger registered but combat stats never written, HP-check on registry entry sees always-dead creature. (8) Player turns not persisted to narrative_log — Felix 71 entries all author='narrator', zero player-turn entries; subsystem engagement not verifiable from log authorship. (9) world_history arc embedded narrative_log and lore all empty despite 71 turns of dense story — arc-embedding pipeline either not running or not writing back. (10) NPC auto-registration missing — Blutka hireling Pell introduced rounds 2-3 never added to npc_registry; future references would treat him as hallucination. Shared theme: state subsystems have write paths but the trunk dispatch doesn't invoke them, or invokes them with partial data. Each sub-item needs an OTEL span marking the write path fired so GM panel can surface drift."
+    description: |-
+      State completeness bundle — subsystems write partial or skipped state (playtest 3 2026-04-19).
+
+      Original sub-items:
+      (1) current_region='' empty string across both Mawdeep saves.
+      (2) discovered_regions pollution — Felix save has '(aside — narrator brief)' registered as traversable region.
+      (3) current_region freetext-vs-slug dedup — same room as two entries with different human names.
+      (4) encounter.actors missing non-player combatants.
+      (5) world_history arcs freeze at turn 30 — session reached turn 72 without arc updates.
+      (6) Resolved tropes don't write quest_log or active_stakes.
+      (7) NPC registry HP=0/max_hp=0 — combat stats never written to registry entry.
+      (8) Player turns not persisted to narrative_log — all entries author='narrator'.
+      (9) world_history arc embedded narrative_log and lore empty despite 71 turns.
+      (10) NPC auto-registration missing — hireling introduced in prose never added to npc_registry.
+
+      ADR-085 REVERSE PORT-DRIFT AUDIT 2026-04-23: sub-items (1) and (10) landed incidentally.
+        - (1) current_region populated via 37-31: sidequest-server/sidequest/game/region_init.py init_region_location() wired into _chargen_confirmation at session_handler.py:1318-1325 with region.initialized OTEL span.
+        - (10) NPC auto-registration landed via 37-44: narrator-mentioned NPCs now auto-register with canonical pronouns/role/name (core.py:346 register_npc_roster_section, drift detector at session_handler.py:1623-1631).
+
+      REMAINING SCOPE — 8 sub-items, each needs its own tight AC:
+        - (2) discovered_regions pollution: reject non-room entries (aside/narrator-brief) at write; add OTEL span on rejection.
+        - (3) slug normalization: canonicalize region identifiers to slug form at write; dedup human-name variants of same slug.
+        - (4) encounter.actors non-player inclusion: encounter start handshake must register all combatants (NPC + player) in actors array; per-actor damage/momentum tracking becomes possible.
+        - (5) world_history arcs must extend beyond turn 30 — arc generation runs on interval past session cap.
+        - (6) Resolved tropes write quest_log entry + active_stakes update; OTEL span on resolution handshake.
+        - (7) NPC registry HP/max_hp written when combat stats emitted; entry cannot report HP=0 unless actually dead.
+        - (8) Player turns appended to narrative_log with author=player (or character name); subsystem engagement verifiable from log authorship.
+        - (9) world_history arc embedding pipeline must run and write back to narrative_log/lore; OTEL span on arc embedding fire.
+
+      Given the remaining 8 sub-items and 8pt size, PM may prefer to split this bundle into 2-3 tighter stories (state-write-hygiene, npc-registry-hygiene, world-history-arcs). Defer split decision to next sprint grooming.
     points: 8
     priority: p2
     status: backlog
@@ -452,6 +514,7 @@ stories:
     type: chore
   - id: 37-44
     title: "NPC identity drift across turns — canonical traits (pronouns, role, appearance) reinvented by narrator every turn because NPCs introduced narratively never land in game_state.npc_registry (playtest 3 2026-04-19 Felix Surrone aureate_span): Frandrew introduced round 17 as 'she/her, captain-level — gives orders: Bridge, prep undock we are leaving now'; round 21 the narrator's own aside demoted her to 'your junior/assistant, grease monkey'; by round 22 the snapshot had shifted to 'Prefect Frandrew Andrew (grease monkey, on the ladder)'; later rounds use 'he/him, his usual brightness, scratches his neck'. Frandrew went from female captain to male grease monkey over ~10 turns. Structural root cause: npc_registry=[] and npcs=[] in Felix's save across 71 turns despite Frandrew appearing in 33 narrative entries, Vey 25x, Marrien 6x, Prefect But 2x, Tchesla 1x. Zero auto-registration means no canonical data, narrator reinvents each turn. This is the NPC-side parallel to 37-36 (party-peer identity packet for players). Fix pattern: when narrator introduces a new named NPC (detected via structured output or post-narration extraction), auto-register with canonical pronouns/role/name/appearance; inject a party-visible 'NPC dossier' block into game_state so every subsequent turn's context has the ground truth. Perception stays POV (what Felix thinks of Frandrew's mood) but physical identity is canonical. OTEL span on npc.auto_registered and npc.reinvented (warn when narrator uses pronouns inconsistent with registry). Related 37-41 sub-item 10 (NPC auto-registration missing — root cause) and 37-36 (same pattern, player side)."
+    description: "DONE via commit afc2142 'feat: multiplayer session foundation + 37-44 NPC drift fix (#20)'. Reviewer approved per sprint/archive/37-44-session.md. Delivered: NPC auto-registration from narrator mentions, identity-drift detector emitting npc.reinvented OTEL WARN on pronoun/role mismatch, additive-only guard preventing drifted values from overwriting canonical fields (session_handler.py:1623-1631), register_npc_roster_section NPC dossier injection into narrator prompt (core.py:346), 19 tests passing. Session archive already filed; tracker status corrected per ADR-085 audit 2026-04-23."
     points: 5
     priority: p1
     status: done

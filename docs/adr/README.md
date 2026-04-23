@@ -181,6 +181,14 @@ for reference — the daemon is a separate repo (`sidequest-daemon`).
 | Stale Render Policy | sq-2 | Active | Only TEXT_OVERLAY tier is discardable after scene change |
 | Music Director Agent | sq-2 | Active | LLM selects music by narrative mood, not heuristics |
 
+## Project Lifecycle / Meta
+
+| ADR | Status | Summary |
+|-----|--------|---------|
+| [Port API Rust to Python](082-port-api-rust-to-python.md) | Accepted | Port `sidequest-api` back to Python as `sidequest-server`; Rust tree becomes read-only spec |
+| [LoRA Composition Dimension](084-lora-composition-dimension.md) | Proposed | Composition axis separate from genre/world LoRA stacking |
+| [Rust→Python Port-Drift Tracker Hygiene](085-rust-to-python-port-drift.md) | Accepted | Sprint-tracker status reflects live Python backend, not Rust archive; audit procedure for in-flight epics |
+
 ## Skipped (superseded or not applicable)
 
 - ~~Discord Multiplayer~~ — superseded by WebSocket server
