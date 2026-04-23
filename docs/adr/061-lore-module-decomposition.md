@@ -1,9 +1,14 @@
 # ADR-061: Lore Module Decomposition — Split lore.rs by Responsibility
 
-**Status:** Proposed
+**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
 **Date:** 2026-04-04
 **Deciders:** Keith
 **Relates to:** ADR-059 (Monster Manual), ADR-003 (Genre Pack Architecture)
+
+> **Status amendment (2026-04-23):** Executed during the Python port (ADR-082).
+> Realized as sibling modules `lore_store.py` / `lore_seeding.py` /
+> `lore_embedding.py` under `sidequest-server/sidequest/game/` rather than
+> a subdirectory. See the Post-port mapping section at the end.
 
 ## Context
 

@@ -1,9 +1,15 @@
 # ADR-062: Server lib.rs Extraction — Route Groups, State, and Watcher Events
 
-**Status:** Proposed
+**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
 **Date:** 2026-04-04
 **Deciders:** Keith
 **Relates to:** ADR-058 (Claude Subprocess OTEL Passthrough)
+
+> **Status amendment (2026-04-23):** Executed during the Python port (ADR-082).
+> There is no `lib.rs` equivalent in Python; the six concerns live as separate
+> modules under `sidequest-server/sidequest/server/` (app.py, websocket.py,
+> watcher.py, rest.py, session_handler.py, session_room.py). See the Post-port
+> mapping section at the end.
 
 ## Context
 

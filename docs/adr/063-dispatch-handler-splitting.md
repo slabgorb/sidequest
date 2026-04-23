@@ -1,9 +1,15 @@
 # ADR-063: Dispatch Handler Splitting — By Pipeline Stage
 
-**Status:** Proposed
+**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
 **Date:** 2026-04-04
 **Deciders:** Keith
 **Relates to:** ADR-062 (Server lib.rs Extraction), ADR-058 (Claude Subprocess OTEL)
+
+> **Status amendment (2026-04-23):** Executed during the Python port (ADR-082).
+> Dispatch lives as `sidequest-server/sidequest/server/dispatch/` (package),
+> with per-stage modules (chargen_loadout.py, combat_brackets.py, confrontation.py,
+> culture_context.py, encounter_lifecycle.py, opening_hook.py, scenario_bind.py,
+> chargen_summary.py). See the Post-port mapping section at the end.
 
 ## Context
 

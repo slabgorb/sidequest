@@ -1,9 +1,14 @@
 # ADR-060: Genre Models Decomposition — Split models.rs by Domain
 
-**Status:** Proposed
+**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
 **Date:** 2026-04-04
 **Deciders:** Keith
 **Relates to:** ADR-003 (Genre Pack Architecture), ADR-007 (Unified Character Model)
+
+> **Status amendment (2026-04-23):** The decomposition was executed as part of
+> the Rust→Python port (ADR-082). Current home: `sidequest-server/sidequest/genre/models/`
+> with domain submodules matching the plan below. See the Post-port mapping
+> section at the end of this ADR.
 
 ## Context
 

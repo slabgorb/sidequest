@@ -1,9 +1,16 @@
 # ADR-064: Game Crate Domain Modules — Organize 69 Flat Files
 
-**Status:** Proposed
+**Status:** Partially accepted (realized during ADR-082 Python port, 2026-04)
 **Date:** 2026-04-04
 **Deciders:** Keith
 **Relates to:** ADR-060 (Genre Models Decomposition), ADR-061 (Lore Module Decomposition)
+
+> **Status amendment (2026-04-23):** The Python port landed with `sidequest-server/sidequest/game/`
+> keeping most files flat at package root rather than fully splitting into domain
+> subdirectories — `projection/` is the one domain that did grow to directory
+> scope. The flatter layout reflects deliberate application of the original ADR's
+> anti-overnesting guidance. Future growth may promote additional domains into
+> subdirectories. See the Post-port mapping section at the end.
 
 ## Context
 

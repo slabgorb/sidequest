@@ -12,16 +12,50 @@ The backend was **Rust** (`sidequest-api`) from ~2026-03-30 to 2026-04-19, then
 <https://github.com/slabgorb/sidequest-api> but no longer exists in the working
 tree. **ADR-085** governed tracker hygiene through the port window.
 
-When reading ADRs authored during the Rust era (roughly ADR-060 through ADR-081),
-interpret references to crates, `lib.rs`, `cargo`, `tokio`, `axum`, `serde`, and
-`rusqlite` as historical. The design decisions survived the port; the Rust-specific
-mechanism descriptions did not. Decomposition ADRs (060-065, 072) carry
-**"Post-port mapping"** notes at their tails that translate crate layouts to the
-current Python package structure. Narrative and game-system ADRs (014, 017-025,
-041-043, etc.) describe language-agnostic design and are unaffected by the port.
+### How to read older ADRs
+
+Rust code samples and type declarations appear in ADRs throughout the 001–081
+range — these were written while Rust was the live backend. Treat them as
+**historical illustration**, not current implementation. The design decisions
+carried forward; the language-specific mechanism descriptions did not. Quick
+translation reference:
+
+| Rust artifact in an ADR | Current Python reality |
+|-------------------------|------------------------|
+| `crates/sidequest-<X>/src/<Y>.rs` | `sidequest-server/sidequest/<X>/<Y>.py` |
+| `#[derive(Serialize, Deserialize)] pub struct` | `class X(pydantic.BaseModel)` |
+| `tokio::spawn`, `tokio::select!` | `asyncio.create_task`, `asyncio.wait` |
+| `Arc<RwLock<T>>` | `asyncio.Lock` guarding a mutable |
+| `rusqlite` | stdlib `sqlite3` (DB work via `asyncio.to_thread`) |
+| `serde_yaml` | `pyyaml` |
+| `axum` router | FastAPI app |
+| `cargo test` | `pytest` |
+
+Decomposition ADRs (060–065, 072) carry **"Post-port mapping"** notes at their
+tails that translate crate layouts to the current Python package structure.
+ADR-007 (character model) has a header note pointing to the Python home.
+Narrative and game-system ADRs (014, 017–025, 041–043, etc.) describe
+language-agnostic design and are unaffected by the port.
+
+### ADRs whose status changed at cutover
+
+The 2026-04-23 cutover audit moved these ADRs from `Proposed` to `Accepted`
+because the Python port executed their plans:
+
+- **ADR-060** (Genre Models Decomposition) — realized as `sidequest/genre/models/` package
+- **ADR-061** (Lore Module Decomposition) — realized as sibling `lore_*.py` modules under `sidequest/game/`
+- **ADR-062** (Server lib.rs Extraction) — realized as separate modules under `sidequest/server/`
+- **ADR-063** (Dispatch Handler Splitting) — realized as `sidequest/server/dispatch/` package
+- **ADR-064** (Game Crate Domain Modules) — *partially* accepted; most files flat, only `projection/` promoted to subdirectory
+- **ADR-082** itself — moved from "Proposed (quick-look draft)" to `Accepted (cutover completed 2026-04-23)`
+
+ADR-065 (protocol message decomposition) and ADR-072 (system/milieu split)
+remain **Proposed** — the Python port did not execute them; the 1:1 port rule
+forbade structural refactors during cutover.
 
 Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md`,
-`docs/api-contract.md`.
+`docs/api-contract.md`. An abbreviated index of this document is reproduced in
+`CLAUDE.md` for agent activation context.
 
 ## Core Architecture
 
@@ -176,7 +210,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [Lore Module Decomposition](061-lore-module-decomposition.md) | Accepted | Split lore.rs by responsibility |
 | [Server lib.rs Extraction](062-server-lib-extraction.md) | Accepted | Route groups, state, and watcher events |
 | [Dispatch Handler Splitting](063-dispatch-handler-splitting.md) | Accepted | Split dispatch by pipeline stage |
-| [Game Crate Domain Modules](064-game-crate-domain-modules.md) | Accepted | Organize flat files into domain modules |
+| [Game Crate Domain Modules](064-game-crate-domain-modules.md) | Partially accepted | Most files flat at `sidequest/game/` root; `projection/` is the one subdirectory |
 | [Protocol Message Decomposition](065-protocol-message-decomposition.md) | Proposed (unexecuted) | Plan to split message.rs by domain; `message.rs` remains a single file |
 | [Magic Literal Extraction](068-magic-literal-extraction.md) | Accepted | Domain-scoped constants replace magic literals |
 | [System/Milieu Decomposition](072-system-milieu-decomposition.md) | Proposed | Split genre packs into mechanics (system), aesthetic (milieu), and world instances |
