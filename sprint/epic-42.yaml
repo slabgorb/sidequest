@@ -41,16 +41,20 @@ stories:
     title: Port StructuredEncounter + EncounterMetric + SecondaryStats + EncounterActor + EncounterPhase types; formalise Combatant as a Python Protocol; promote GameSnapshot.encounter from dict to typed
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-04-24'
     repos: server
     workflow: tdd
+    completed: '2026-04-24'
   - id: 42-2
     title: Port ResourcePool + ResourceThreshold + ResourcePatch(Op/Result/Error) + mint_threshold_lore; promote GameSnapshot.resources from pass-through list to typed list[ResourcePool] (recommended pull-forward from Phase 4)
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-04-24'
     repos: server
     workflow: tdd
+    completed: '2026-04-24'
     review_findings: '7 blocking: silent-fallback (No Silent Fallbacks hard-gate), wiring-test gap, stale P4-deferred comment, docstring/mutator asymmetry, ThresholdAt Protocol type lie, detect_crossings export gap, OTEL deferral docs missing on 4 resource-pool methods'
     review_verdict: approved
   - id: 42-3
