@@ -30,7 +30,6 @@
 |-----|--------|---------|
 | [ADR-029: Guest NPC Players](029-guest-npc-players.md) | ◇ proposed | — |
 | [ADR-030: Scenario Packs](030-scenario-packs.md) | ◇ proposed | — |
-| [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ◇ proposed | — |
 | [ADR-055: Room Graph Navigation](055-room-graph-navigation.md) | ◇ proposed | — |
 | [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) | ◇ proposed | — |
 | [ADR-065: Protocol Message Decomposition — Split message.rs by Domain](065-protocol-message-decomposition.md) | ◇ proposed | — |

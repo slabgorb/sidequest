@@ -220,7 +220,6 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-031: Game Watcher — Semantic Telemetry for AI Agent Observability](031-game-watcher-semantic-telemetry.md) | ✓ accepted | live |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | ✓ accepted | *partial* → ADR-087 |
-| [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ◇ proposed | deferred |
 
 ## Project Lifecycle / Meta
 
@@ -240,6 +239,7 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |
 | [ADR-017: Cinematic Chase Engine](017-cinematic-chase-engine.md) | ✗ superseded | [ADR-033](033-confrontation-engine-resource-pools.md) |
 | [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
+| [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
 | [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |
 | [ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)](054-webrtc-voice-chat-disabled.md) | ✗ historical | — |
 | [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) | ✗ superseded | [ADR-059](059-monster-manual-server-side-pregen.md) |
@@ -254,7 +254,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 |-----|------|---------|
 | [ADR-029: Guest NPC Players](029-guest-npc-players.md) | deferred | — |
 | [ADR-030: Scenario Packs](030-scenario-packs.md) | deferred | — |
-| [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | deferred | — |
 | [ADR-055: Room Graph Navigation](055-room-graph-navigation.md) | deferred | — |
 | [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) | deferred | — |
 | [ADR-065: Protocol Message Decomposition — Split message.rs by Domain](065-protocol-message-decomposition.md) | deferred | — |

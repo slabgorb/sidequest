@@ -1,18 +1,34 @@
 ---
 id: 34
 title: "Portrait Identity Consistency — Tiered Character Recognition Pipeline"
-status: proposed
+status: superseded
 date: 2026-03-31
 deciders: [Keith]
 supersedes: []
-superseded-by: null
-related: [32]
+superseded-by: 86
+related: [86]
 tags: [genre-mechanics]
-implementation-status: deferred
-implementation-pointer: null
+implementation-status: retired
+implementation-pointer: 86
 ---
 
 # ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline
+
+> **Superseded by ADR-086 (Image-Composition Taxonomy) on 2026-04-24.**
+>
+> The tiered img2img + IP-Adapter approach described below is withdrawn.
+> Character identity consistency moves into the prompt-composition
+> pipeline: per-character LOD-keyed descriptions (solo / long / short /
+> background) authored in `portrait_manifest.yaml`, composed through the
+> Where / Who / What / Camera recipe structure under a genre → world →
+> culture art-sensibility cascade. Z-Image follows well-authored
+> per-character tokens strongly enough that runtime model conditioning
+> (IP-Adapter) is not needed.
+>
+> Epic 17 (which was the implementation of this ADR) was cancelled
+> 2026-04-24. Character identity work continues under the explicit
+> visual recipes spec; see
+> `docs/superpowers/specs/2026-04-24-explicit-visual-recipes-design.md`.
 
 ## Context
 

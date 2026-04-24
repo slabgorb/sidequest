@@ -4,9 +4,9 @@ title: "Image-Composition Taxonomy — Portraits, POIs, Illustrations"
 status: proposed
 date: 2026-04-24
 deciders: [Keith Avery]
-supersedes: [71]
+supersedes: [34, 71]
 superseded-by: null
-related: [34, 70, 71]
+related: [70]
 tags: [media-audio]
 implementation-status: deferred
 implementation-pointer: null
@@ -20,10 +20,18 @@ implementation-pointer: null
 > concepts, and identifies the genuinely new additions.
 
 Touches the visual pipeline broadly. Does not block any in-flight work but
-unlocks several follow-ons. Coordinate with **ADR-034** (Portrait Identity
-Consistency) — fits cleanly inside this taxonomy at the PC_VISUAL seam.
-The renderer is Z-Image (ADR-070); every cascade layer in this ADR is a
-text-token layer.
+unlocks several follow-ons. The renderer is Z-Image (ADR-070); every
+cascade layer in this ADR is a text-token layer.
+
+**Supersessions on 2026-04-24:**
+
+- **ADR-034** (Portrait Identity Consistency) — the tiered img2img +
+  IP-Adapter approach is withdrawn in favor of catalog-resolved
+  per-character LOD-keyed tokens composed through this ADR's recipe
+  system. Z-Image follows well-authored per-character tokens strongly
+  enough that runtime model conditioning is unnecessary.
+- **ADR-071** (Tactical ASCII Grid Maps) — ASCII rendering is removed;
+  tactical maps go through ILLUSTRATION + CAMERA.TOPDOWN_90.
 
 ## Operating Premise
 
@@ -110,9 +118,12 @@ versus what needs to be added.
   layer — collapsed into the narrative subject string.
 - **`portrait_manifest.yaml` `type: npc_major | npc_supporting`**:
   PC/NPC distinction. Read by batch scripts only; the daemon is unaware.
-- **ADR-034 (Portrait Identity Consistency)**: proposes IP-Adapter
-  re-rendering for PC portraits. Naturally seams at the PC_VISUAL vs
-  NPC_VISUAL split this ADR introduces.
+- **ADR-034 (Portrait Identity Consistency)** — superseded by this ADR
+  on 2026-04-24. Its tiered img2img + IP-Adapter pipeline is withdrawn;
+  character identity moves to per-LOD token authoring resolved through
+  this ADR's recipe system. The PC_VISUAL vs NPC_VISUAL split this ADR
+  introduces is where 034's concern lands, but the mechanism is
+  catalog-resolved tokens, not runtime model conditioning.
 
 ### Server-side dead copies (to be removed)
 
@@ -163,8 +174,11 @@ composition machinery.
 | **NARRATIVE** (pose / framing) | character entry `pose` field, default "3/4 portrait, neutral expression" | New (no `pose` field on portrait entries today) |
 | **Style cascade: GENRE → WORLD → CULTURE → SCENE** | `VisualStyle.positive_suffix` (genre) + `worlds/<world>/visual_style.yaml` (world) + culture entry (culture) + `visual_tag_overrides` (scene) | Partial (genre + scene wired; world + culture missing) |
 
-The PC vs NPC split is the seam where ADR-034's PC-fidelity pipeline
-forks off (IP-Adapter for PCs, standard txt2img for NPCs).
+The PC vs NPC split is where character-identity concerns (formerly
+ADR-034's tiered IP-Adapter pipeline) land. Under this ADR, both PCs
+and NPCs resolve through catalog-authored per-LOD tokens; PC-specific
+fidelity needs (if any emerge in practice) can be addressed by enriching
+PC token authoring rather than by runtime model conditioning.
 
 CULTURE is the slot that lets an inquisitor and a witch sharing the same
 world read as mutually unrecognizable at a glance — not through different
@@ -231,9 +245,13 @@ those callers migrate.
   the rename adds no rendered-pixel value today. Revisit opportunistically
   the next time `prompt_composer.py` needs structural changes for another
   reason.
-- **PC fidelity pipeline**: ADR-034 owns the PC_VISUAL render path.
-  This ADR only commits to surfacing the `type` field to the daemon so
-  034 has a routing seam.
+- **Advanced PC fidelity techniques** beyond catalog-token authoring
+  (e.g., face-lock via reference image, per-character fine-tuning)
+  remain deferred. This ADR commits to per-LOD token authoring as the
+  mechanism; if that proves insufficient for player emotional
+  ownership of their PC, a future ADR can revisit runtime conditioning
+  — but starts from a clean slate, not from ADR-034's superseded
+  approach.
 
 ## Token Budget Discipline
 
@@ -284,11 +302,13 @@ five participants in a generic-painterly nowhere.
   CULTURE cascade, and CAMERA parameter are each isolated, single-PR
   stories that produce visibly different renders. Hand to Captain Carrot
   one at a time.
-- **ADR-034 gets a place to land.** Portrait Identity Consistency has
-  been "proposed" for months because there was no settled host structure
-  for the PC vs NPC split. This ADR provides the seam (PC_VISUAL vs
-  NPC_VISUAL prefix layer) where 034's PC-fidelity pipeline forks from
-  the standard NPC path.
+- **ADR-034's concern gets absorbed, not just seamed.** Portrait
+  Identity Consistency has been "proposed" for months and its
+  implementation (epic 17) never landed. The catalog + LOD approach
+  here delivers character recognition through authoring rather than
+  runtime model conditioning — less infrastructure, less failure
+  surface, and tokens are inspectable and editable where IP-Adapter
+  weights are not.
 - **Cultural differentiation enables territorial gameplay.** Once a
   character or POI can render under a controlling culture, the world
   visibly changes when cultures clash — an inquisitor and a witch
@@ -302,9 +322,14 @@ five participants in a generic-painterly nowhere.
 
 ### Negative
 
-- **ADRs 086 and 034 overlap.** Future readers must consult both to
-  understand the portrait pipeline. Mitigation: cross-link in each
-  ADR's status block.
+- **Character identity is now fully dependent on token-authoring
+  quality.** The catalog + LOD system only works if the author-written
+  tokens actually produce recognizable characters across renders. If
+  Z-Image can't hold a character's face across two renders from the
+  same token string, there's no IP-Adapter fallback — a future ADR
+  would need to reopen runtime conditioning. Mitigation: the prompt
+  preview CLI lets an author iterate on tokens until consistency reads
+  correctly before the character ships.
 - **`TACTICAL_SKETCH` deprecation creates a small migration cost.**
   Existing TACTICAL_SKETCH consumers (combat encounters) need to switch
   to `ILLUSTRATION` + `CAMERA = TOPDOWN_90`. Backward-compat shim

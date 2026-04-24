@@ -1,53 +1,55 @@
 id: '17'
 type: epic
-title: Portrait Identity Consistency — Tiered Character Recognition Pipeline
-description: 'Implement ADR-034: tiered portrait consistency using canonical portraits, img2img for NPCs, and IP-Adapter for PCs. Ensures characters are visually recognizable across re-renders without runtime LoRA training.'
+title: "Portrait Identity Consistency \u2014 Tiered Character Recognition Pipeline"
+description: 'Implement ADR-034: tiered portrait consistency using canonical portraits,
+  img2img for NPCs, and IP-Adapter for PCs. Ensures characters are visually recognizable
+  across re-renders without runtime LoRA training.'
 priority: p1
-status: backlog
+status: canceled
 repos: daemon,api
 stories:
-  - id: 17-1
-    title: Daemon render params — add reference_image, source_image, img2img support
-    points: 3
-    priority: p1
-    status: backlog
-    repos: daemon
-    workflow: tdd
-  - id: 17-2
-    title: Portrait identity store — canonical generation and directory structure
-    points: 5
-    priority: p1
-    status: backlog
-    repos: api
-    workflow: tdd
-  - id: 17-3
-    title: IP-Adapter integration — verify MPS compat, wire high-fidelity re-render
-    points: 5
-    priority: p1
-    status: backlog
-    repos: daemon
-    workflow: tdd
-    depends_on: 17-1
-  - id: 17-4
-    title: Background reference sheet generation — async 4-up after canonical
-    points: 3
-    priority: p2
-    status: backlog
-    repos: daemon,api
-    workflow: tdd
-    depends_on: 17-3
-  - id: 17-5
-    title: PortraitService integration — tiered re-render routing in API
-    points: 5
-    priority: p1
-    status: backlog
-    repos: api,daemon
-    workflow: tdd
-    depends_on: 17-3
-  - id: 17-6
-    title: Redux/img2img evaluation — portrait identity without IP-Adapter
-    points: 3
-    priority: p2
-    status: backlog
-    repos: daemon
-    workflow: tdd
+- id: 17-1
+  title: "Daemon render params \u2014 add reference_image, source_image, img2img support"
+  points: 3
+  priority: p1
+  status: canceled
+  repos: daemon
+  workflow: tdd
+- id: 17-2
+  title: "Portrait identity store \u2014 canonical generation and directory structure"
+  points: 5
+  priority: p1
+  status: canceled
+  repos: api
+  workflow: tdd
+- id: 17-3
+  title: "IP-Adapter integration \u2014 verify MPS compat, wire high-fidelity re-render"
+  points: 5
+  priority: p1
+  status: canceled
+  repos: daemon
+  workflow: tdd
+  depends_on: 17-1
+- id: 17-4
+  title: "Background reference sheet generation \u2014 async 4-up after canonical"
+  points: 3
+  priority: p2
+  status: canceled
+  repos: daemon,api
+  workflow: tdd
+  depends_on: 17-3
+- id: 17-5
+  title: "PortraitService integration \u2014 tiered re-render routing in API"
+  points: 5
+  priority: p1
+  status: canceled
+  repos: api,daemon
+  workflow: tdd
+  depends_on: 17-3
+- id: 17-6
+  title: "Redux/img2img evaluation \u2014 portrait identity without IP-Adapter"
+  points: 3
+  priority: p2
+  status: canceled
+  repos: daemon
+  workflow: tdd
