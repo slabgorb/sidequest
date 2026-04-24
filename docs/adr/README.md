@@ -167,6 +167,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-070: MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX](070-mlx-image-renderer.md) | ✓ accepted | live |
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | ◇ proposed | deferred |
 | [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md) | ◇ proposed | deferred |
+| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | ◇ proposed | **drift** |
 
 ## Turn Management
 
@@ -276,6 +277,7 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | **drift** | — |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-045: Client Audio Engine](045-client-audio-engine.md) | *partial* | [ADR-076](076-narration-protocol-collapse-post-tts.md) |
 | [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | *partial* | [ADR-059](059-monster-manual-server-side-pregen.md) |

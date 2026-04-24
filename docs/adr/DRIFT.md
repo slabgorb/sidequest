@@ -15,6 +15,7 @@
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | ◇ proposed | — |
 
 ## Partial — accepted ADR, implementation incomplete
 
