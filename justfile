@@ -24,6 +24,7 @@ server *flags:
     : > "$log"
     cd {{root}}/sidequest-server
     SIDEQUEST_GENRE_PACKS={{content}} \
+    SIDEQUEST_RENDER_ENABLED=1 \
         uv run uvicorn sidequest.server.app:create_app \
             --factory --reload --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
         | tee "$log"
@@ -79,6 +80,7 @@ up:
     echo "▶ server  (:8765)   → $srv"
     ( cd {{root}}/sidequest-server && \
         SIDEQUEST_GENRE_PACKS={{content}} \
+        SIDEQUEST_RENDER_ENABLED=1 \
         uv run uvicorn sidequest.server.app:create_app \
             --factory --reload --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
     echo $! > {{logdir}}/sidequest-server.pid
