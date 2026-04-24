@@ -270,17 +270,20 @@ async def send_render(
     seed: int,
     steps: int = 15,
     *,
-    art_style: str = "",
-    visual_tag_overrides: dict | None = None,
+    subject: str = "",
+    genre: str = "",
+    world: str = "",
     lora_paths: list[str] | None = None,
     lora_scales: list[float] | None = None,
     variant: str = "",
 ) -> dict:
     """Send a render request to the daemon and return the result.
 
-    When art_style is provided, `positive` is treated as `subject` and the
-    daemon's PromptComposer handles style injection, tag overrides, and LoRA.
-    Without art_style, `positive` is sent as `positive_prompt` (direct path).
+    When subject + genre + world are provided, the daemon routes through
+    its catalog-injected PromptComposer (style, camera, cast, and places
+    are pulled from the world's visual_style.yaml / characters.yaml /
+    places.yaml). Otherwise `positive` is sent as `positive_prompt` — the
+    caller pre-composed the full prompt.
     """
     reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
 
@@ -290,14 +293,14 @@ async def send_render(
         "seed": seed,
     }
 
-    if art_style:
-        # Route through daemon's PromptComposer for proper style injection
-        params["subject"] = positive
-        params["art_style"] = art_style
-        if visual_tag_overrides:
-            params["visual_tag_overrides"] = visual_tag_overrides
+    if subject and genre and world:
+        # Catalog-composed path — daemon pulls style + cast + places from
+        # the genre pack via StyleCatalog / CharacterCatalog / PlaceCatalog.
+        params["subject"] = subject
+        params["genre"] = genre
+        params["world"] = world
     else:
-        # Direct path — caller pre-composed the prompt
+        # Direct path — caller pre-composed the prompt.
         params["positive_prompt"] = positive
         params["clip_prompt"] = clip
 
@@ -429,8 +432,9 @@ async def render_batch(
             lora_paths, lora_scales = resolve_lora_args(visual_style)
             result = await send_render(
                 tier, positive, clip, negative, seed, steps,
-                art_style=visual_style.get("positive_suffix", ""),
-                visual_tag_overrides=visual_style.get("visual_tag_overrides"),
+                subject=positive,
+                genre=item["genre"],
+                world=item["world"],
                 lora_paths=lora_paths,
                 lora_scales=lora_scales,
                 variant=visual_style.get("preferred_model", ""),

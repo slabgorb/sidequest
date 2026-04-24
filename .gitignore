@@ -87,3 +87,6 @@ tui-pid
 # Local tmux config (copied from sample)
 **/__pycache__/
 .tmuxinator.yml
+
+# Local-only archive of handoff docs, retros, scratch notes — never committed
+.archive/
