@@ -1,9 +1,41 @@
 # ADR-083: Multi-LoRA Stacking and Verification Pipeline
 
-**Status:** Proposed
+**Status:** **Superseded by ADR-070 (Z-Image / MLX Image Renderer) — 2026-04-24.**
+
+LoRA support is being dropped from the SideQuest visual pipeline.
+Z-Image follows text-prompt art direction substantially better than
+LoRA-trained variants achieved in practice — and the silent-failure modes
+documented below (mflux loading incompatible LoRAs without warning,
+training-toolchain incompatibility, multi-LoRA stack drift) made the
+LoRA pipeline a perpetual debugging tax.
+
+The multi-LoRA stacking, verification framework, and `lora_triggers` /
+`explicit_exclude` semantics described below are not being implemented.
+World-vs-genre style differentiation moves to the prompt cascade
+described in ADR-086 (GENRE → WORLD → SCENE text layers, with explicit
+token budgets per layer).
+
+**Implications:**
+- Stacking framework, verification gates, and per-format adapter logic
+  cancelled. The "mflux silently accepts incompatible LoRAs" failure
+  mode is moot once we stop loading LoRAs.
+- ADR-084 (Compositional-Dimension Specialization) — also superseded;
+  it extends this ADR.
+- ADR-086 carries the prompt-precision burden that this ADR's stacking
+  framework was meant to address (per-world style differentiation,
+  per-render-type style modulation).
+
+The text below is preserved as historical context — particularly the
+mflux silent-failure analysis, which documents real engineering tax
+spent and warns future contributors away from re-introducing the
+approach.
+
+---
+
+> **Original status (now obsolete):** Proposed
 **Date:** 2026-04-20
 **Deciders:** Keith Avery (Bossmang), Margaret Houlihan (Architect)
-**Related:**
+**Related (historical):**
 - Extends [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md)
 - Depends on [ADR-070: MLX Image Renderer](070-mlx-image-renderer.md)
 - Spec: `docs/superpowers/specs/2026-04-20-lora-pipeline-design.md`

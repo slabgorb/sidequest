@@ -1,9 +1,42 @@
 # ADR-084: Compositional-Dimension Specialization for Style LoRAs
 
-**Status:** Proposed
+**Status:** **Superseded by ADR-070 (Z-Image / MLX Image Renderer) — 2026-04-24.**
+
+LoRA support is being dropped from the SideQuest visual pipeline. The
+compositional-dimension failure mode documented below — "a single-tag
+style LoRA trained on a compositionally-biased dataset overrides prompt
+adherence at high iterations" — is itself strong evidence that LoRA
+training cannot reliably carry style without also dictating composition,
+which is exactly the thing we need prompts to control. Rather than
+building the per-dimension LoRA specialization framework this ADR
+proposed, we are moving style identity fully into prompts and letting
+Z-Image's superior text-following carry it.
+
+The `_landscape` / `_portrait` / `_creature` LoRA specialization axis is
+not being implemented. Per-render-type style modulation moves to the
+category-layered prompt recipes described in ADR-086 (PORTRAIT vs POI
+vs ILLUSTRATION each compose their own prefix layers).
+
+**Implications:**
+- Multi-dimensional training matrix (genre × composition type)
+  cancelled.
+- Progress-grid verification framework at `~/lora-runs/` no longer
+  load-bearing; can be archived.
+- ADR-083 (parent) also superseded.
+- ADR-086 inherits the responsibility of keeping composition
+  controllable across render types via prompt discipline, not LoRA
+  specialization.
+
+The text below is preserved as historical context — the prompt-adherence
+failure mode documented here is a useful warning about why LoRA training
+was not the right tool for this problem.
+
+---
+
+> **Original status (now obsolete):** Proposed
 **Date:** 2026-04-21
 **Deciders:** Keith Avery (Bossmang), GM (capturing)
-**Related:**
+**Related (historical):**
 - Extends [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md)
 - Extends [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md)
 - First empirical basis: `~/lora-runs/spaghetti_western/landscape/` (iter 0 → 1500 progress grid, 2026-04-21)

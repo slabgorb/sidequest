@@ -1,0 +1,88 @@
+id: '43'
+type: epic
+title: Dead Code Cleanup
+description: Remove code and assets left stranded by superseded ADRs. Kick-off target is the LoRA pipeline (ADRs 032/083/084 superseded by ADR-070 on 2026-04-24). Each story targets a single surface so the cleanup is reviewable and reversible — no big-bang deletion PRs.
+priority: p2
+status: backlog
+repos: server,daemon,content
+stories:
+  - id: 43-1
+    title: Remove LoRA fields (lora, lora_trigger, lora_scale, lora_path) from VisualStyle schema and genre pack YAMLs — per ADR-070 supersession
+    description: Drop lora, lora_trigger, lora_scale, lora_path from VisualStyle (server) and any genre_packs/*/visual_style.yaml or pack.yaml entries that reference them. Superseded by ADR-070/086 — genre style is now text-only. Verify no callers remain before removing (grep lora_ across server + daemon).
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: refactor
+  - id: 43-2
+    title: Remove LoRA wiring from PromptComposer clip-prompt fork and daemon Flux1 model construction — Z-Image text-prompt path only
+    description: 'Strip lora_path / lora_scale handling from PromptComposer clip-prompt substitution and daemon Flux1 model construction. Delete the lora_trigger vs positive_suffix fork. Preserve Z-Image text-prompt path as the single composition flow. Wiring test: render succeeds on a genre with no lora fields present.'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server,daemon
+    workflow: tdd
+    type: refactor
+  - id: 43-3
+    title: Archive LoRA training scripts, specs, plans, and trained .safetensors artifacts — cancelled per ADR-070 supersession
+    description: 'Move to archive: scripts/lora_*.py, docs/superpowers/specs/2026-04-20-lora-pipeline-design.md, docs/superpowers/plans/2026-04-20-lora-pipeline.md. Delete any committed .safetensors under genre_packs/*/lora/. ~/lora-runs/ is user-local, not committed — out of scope. Keep one reference trained LoRA off-repo as a cautionary artifact.'
+    points: 1
+    priority: p3
+    status: backlog
+    repos: pennyfarthing
+    workflow: trivial
+    type: chore
+  - id: 43-4
+    title: Strip LoRA triggers and explicit_exclude blocks from per-world visual_style.yaml (e.g. the_real_mccoy) — migrate visual intent into ADR-086 text cascade
+    description: Per-world visual configs may reference LoRA triggers or weights left over from ADR-083's lora_triggers block (see the_real_mccoy/visual_style.yaml explicit_exclude). Strip those fields; migrate the visual intent as text into the new GENRE → WORLD → SCENE cascade (ADR-086).
+    points: 1
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore
+  - id: 43-5
+    title: Daemon single-spawn + worker singleton — dedupe justfile recipes, delete vestigial ZImageMLXWorker.main(), enforce one-instance invariant
+    description: |
+      Two related daemon split-brains, folded into one cleanup pass per 2026-04-24
+      audit. Both fixes land in the same PR — the justfile half is mechanical, the
+      worker half encodes the invariant the justfile fix relies on.
+
+      (1) Justfile spawn dedup. `justfile:41-49` (`daemon` recipe, foreground) and
+      `justfile:74-77` (`up` recipe, background) duplicate the daemon spawn command.
+      Extract a shared private recipe (e.g. `_daemon-cmd`) that both call so a flag
+      change updates one place. Verify `just daemon` and `just up` still produce
+      identical invocations.
+
+      (2) Worker singleton invariant. Two model-load entry points exist in the
+      daemon: (A) in-process via `WorkerPool.warm_up_image()` at
+      `sidequest_daemon/media/daemon.py:102-113` (production path, called by
+      `_run_daemon` and `_ensure_image()`), and (B) standalone subprocess via
+      `ZImageMLXWorker.main()` at `sidequest_daemon/media/workers/zimage_mlx_worker.py:243-end`
+      (vestigial — has its own JSON-line protocol loop, no callers, no
+      console_script entry). Today only path A runs because nothing invokes B,
+      but the second `python -m sidequest_daemon.media.workers.zimage_mlx_worker`
+      from any future script/recipe/unit file would load a second ZImage on the
+      same MPS device. Z-Image survives this; Flux would OOM the M3 Max instantly.
+
+      Actions:
+        - Delete `ZImageMLXWorker.main()`, the `_respond()` helper, and the
+          standalone JSON-line dispatch loop (everything from line ~230 to EOF).
+        - Add a constructor-level singleton guard to `ZImageMLXWorker.__init__`
+          (class-level `_instance` ref, raise `RuntimeError` on second
+          construction in the same process) — fail loudly per CLAUDE.md "No
+          Silent Fallbacks." Document the invariant in the class docstring.
+        - Collapse the redundant `_ensure_loaded()` guard inside the worker now
+          that `WorkerPool` is the only caller and already guards via
+          `_image_loaded`. Keep one guard, not three.
+        - Wiring test (per daemon CLAUDE.md "Every Test Suite Needs a Wiring
+          Test"): assert that constructing a second `ZImageMLXWorker` in the
+          same process raises, and that `WorkerPool.warm_up_image()` is the
+          only production caller of `load_model()` (grep-based test is fine).
+    points: 2
+    priority: p3
+    status: backlog
+    repos: orchestrator,daemon
+    workflow: tdd
+    type: refactor

@@ -109,7 +109,8 @@
 | [Image Pacing Throttle](050-image-pacing-throttle.md) | Accepted | Configurable cooldown with DM force-override, separate from BeatFilter |
 | [Lore RAG Store](048-lore-rag-store.md) | Accepted | Cross-process embedding pipeline with budget-aware context selection |
 | [MLX Image Renderer](070-mlx-image-renderer.md) | Accepted | Replace PyTorch/diffusers Flux worker with Apple MLX runtime |
-| [Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | Proposed | Hybrid genre + world LoRA stack with extend/exclude/add merge; MLX-native training + custom remapper; SSIM pre-promotion gate + runtime `matched_key_count` OTEL |
+| [Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | **Superseded by ADR-070** | Historical — LoRA pipeline withdrawn 2026-04-24 in favor of Z-Image's text-prompt adherence |
+| [Image-Composition Taxonomy (Portraits / POIs / Illustrations)](086-image-composition-taxonomy.md) | Proposed | Three-category prompt-layer taxonomy; GENRE → WORLD → SCENE cascade; CAMERA parameter; token-budget discipline for the no-LoRA pipeline |
 
 ## Turn Management
 
@@ -186,7 +187,7 @@ for reference — the daemon is a separate repo (`sidequest-daemon`).
 | ADR | Status | Summary |
 |-----|--------|---------|
 | [Port API Rust to Python](082-port-api-rust-to-python.md) | Accepted | Port `sidequest-api` back to Python as `sidequest-server`; Rust tree becomes read-only spec |
-| [LoRA Composition Dimension](084-lora-composition-dimension.md) | Proposed | Composition axis separate from genre/world LoRA stacking |
+| [LoRA Composition Dimension](084-lora-composition-dimension.md) | **Superseded by ADR-070** | Historical — LoRA pipeline withdrawn 2026-04-24 in favor of Z-Image's text-prompt adherence |
 | [Rust→Python Port-Drift Tracker Hygiene](085-rust-to-python-port-drift.md) | Accepted | Sprint-tracker status reflects live Python backend, not Rust archive; audit procedure for in-flight epics |
 
 ## Skipped (superseded or not applicable)

@@ -3,11 +3,39 @@
 > New for Rust port. sq-2 uses text-only style prompts via `positive_suffix`.
 
 ## Status
-Accepted (LoRA generation working as of 2026-04)
+**Superseded by ADR-070 (MLX Image Renderer / Z-Image) — 2026-04-24.**
 
-> **Note (2026-04):** Genre Flux LoRAs are generating successfully. The training
-> pipeline described below is operational. Schema fields (`lora`, `lora_trigger`)
-> and daemon wiring are pending integration stories (Epic 17 backlog).
+LoRA support is being dropped from the SideQuest visual pipeline. The
+Z-Image renderer (ADR-070) follows text-prompt art direction substantially
+better than LoRA-trained Flux variants achieved in practice — direct
+prompt control beats trained-style enforcement for SideQuest's needs.
+
+The training pipeline described below was operational, but the rendered
+output never reliably honored the trained style under varied subject
+prompts. Effort spent tuning training datasets and trigger weights does
+not pay back compared to writing precise per-genre `positive_suffix`
+text and letting Z-Image execute it.
+
+**Implications:**
+- Schema fields `lora` and `lora_trigger` (referenced in this ADR's
+  Decision section) are NOT being added. The `VisualStyle` model stays
+  text-only.
+- Genre style identity remains a `positive_suffix` text field per genre
+  pack (the sq-2 mechanism this ADR was originally going to replace).
+- Existing trained LoRAs and the training pipeline can be archived; the
+  renderer-side wiring stories (Epic 17 backlog) are cancelled.
+- ADR-083 (Multi-LoRA Stacking) and ADR-084 (LoRA Composition Dimension)
+  should be reviewed — both depend on this one and may also need
+  superseding.
+- ADR-086 (Image-Composition Taxonomy) treats GENRE as a text prompt
+  layer unconditionally — the "text vs LoRA" tension noted there is
+  resolved by this supersession.
+
+The text below is preserved as historical context.
+
+---
+
+> **Original status (now obsolete):** Accepted (LoRA generation working as of 2026-04)
 
 ## Context
 
