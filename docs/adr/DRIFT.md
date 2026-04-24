@@ -45,4 +45,3 @@
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | ◇ proposed | — |
 | [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md) | ◇ proposed | — |
 | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) | ◇ proposed | — |
-| [ADR-088: ADR Frontmatter Schema and Auto-Generated Indexes](088-adr-frontmatter-schema.md) | ✓ accepted | — |

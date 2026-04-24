@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Pre-commit hook for ADR frontmatter validation per ADR-088.
+#
+# Enabled via `git config core.hooksPath .githooks` (runs on first `just setup`
+# post-ADR-088, see justfile).
+#
+# Runs the validator only against staged ADR files. Does NOT regenerate indexes
+# automatically — that stays a deliberate `just adr-regen` step so the hook
+# never modifies files on disk behind the user's back. If you edited ADR
+# frontmatter that affects the generated indexes (README.md, CLAUDE.md,
+# SUPERSEDED.md, DRIFT.md), run `just adr-check` before committing for a
+# staleness report, or `just adr-regen` to refresh.
+#
+# Bypass with `git commit --no-verify` only when you understand why (e.g.,
+# an in-progress ADR you intend to fix in the next commit).
+
+set -e
+
+# Only inspect staged docs/adr/NNN-*.md files
+staged_adr_files=$(
+    git diff --cached --name-only --diff-filter=ACM \
+    | grep -E '^docs/adr/[0-9]{3}-.*\.md$' || true
+)
+
+if [[ -z "$staged_adr_files" ]]; then
+    exit 0
+fi
+
+echo "Validating staged ADR frontmatter..."
+
+# shellcheck disable=SC2086
+python3 scripts/validate_adr_frontmatter.py $staged_adr_files

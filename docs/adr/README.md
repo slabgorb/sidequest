@@ -206,7 +206,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-065: Protocol Message Decomposition — Split message.rs by Domain](065-protocol-message-decomposition.md) | ◇ proposed | deferred |
 | [ADR-068: Magic Literal Extraction — Domain-Scoped Constants](068-magic-literal-extraction.md) | ✓ accepted | live |
 | [ADR-072: System/Milieu Decomposition — Separating Mechanics from Aesthetic](072-system-milieu-decomposition.md) | ◇ proposed | deferred |
-| [ADR-088: ADR Frontmatter Schema and Auto-Generated Indexes](088-adr-frontmatter-schema.md) | ✓ accepted | deferred |
+| [ADR-088: ADR Frontmatter Schema and Auto-Generated Indexes](088-adr-frontmatter-schema.md) | ✓ accepted | live |
 
 ## Narrator Architecture
 
@@ -269,7 +269,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | deferred | — |
 | [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md) | deferred | — |
 | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) | deferred | — |
-| [ADR-088: ADR Frontmatter Schema and Auto-Generated Indexes](088-adr-frontmatter-schema.md) | deferred | — |
 | [ADR-018: Trope Engine](018-trope-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |

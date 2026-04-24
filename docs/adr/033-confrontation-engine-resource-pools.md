@@ -4,9 +4,9 @@ title: "Genre Mechanics Engine — Confrontations & Resource Pools"
 status: accepted
 date: 2026-03-31
 deciders: [Keith]
-supersedes: []
+supersedes: [17]
 superseded-by: null
-related: [11, 17]
+related: [11]
 tags: [genre-mechanics]
 implementation-status: partial
 implementation-pointer: 87

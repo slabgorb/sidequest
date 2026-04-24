@@ -228,4 +228,41 @@ setup:
     else
         echo "⚠ sidequest-ui not cloned"
     fi
+    echo "--- git hooks (point to .githooks/) ---"
+    git -C {{root}} config core.hooksPath .githooks
     echo "=== setup complete ==="
+
+# Validate ADR frontmatter + report staleness of generated indexes.
+adr-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "--- Validating ADR frontmatter ---"
+    python3 {{root}}/scripts/validate_adr_frontmatter.py
+    echo ""
+    echo "--- Checking generated indexes are up to date ---"
+    tmpdir=$(mktemp -d)
+    trap "rm -rf $tmpdir" EXIT
+    for f in docs/adr/README.md docs/adr/SUPERSEDED.md docs/adr/DRIFT.md CLAUDE.md; do
+        cp "{{root}}/$f" "$tmpdir/$(basename "$f").before"
+    done
+    python3 {{root}}/scripts/regenerate_adr_indexes.py > /dev/null
+    stale=0
+    for f in docs/adr/README.md docs/adr/SUPERSEDED.md docs/adr/DRIFT.md CLAUDE.md; do
+        if ! diff -q "$tmpdir/$(basename "$f").before" "{{root}}/$f" > /dev/null; then
+            echo "  STALE: $f (regen produced changes)"
+            stale=1
+        fi
+    done
+    if [[ $stale -eq 1 ]]; then
+        echo ""
+        echo "ERROR: generated indexes are stale relative to frontmatter."
+        echo "Run: just adr-regen   (then stage and commit the index files)"
+        exit 1
+    fi
+    echo "  OK: generated indexes are up to date."
+
+# Regenerate ADR indexes from frontmatter (README tag sections, SUPERSEDED.md, DRIFT.md, CLAUDE.md block).
+adr-regen:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    python3 {{root}}/scripts/regenerate_adr_indexes.py

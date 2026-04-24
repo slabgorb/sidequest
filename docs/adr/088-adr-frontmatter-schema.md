@@ -1,14 +1,14 @@
 ---
-id: 088
+id: 88
 title: "ADR Frontmatter Schema and Auto-Generated Indexes"
 status: accepted
 date: 2026-04-24
-deciders: [Keith Avery, Leonard of Quirm (Architect)]
+deciders: ["Keith Avery", "Leonard of Quirm (Architect)", "Ponder Stibbons (Dev)"]
 supersedes: []
 superseded-by: null
-related: [082, 085, 086, 087]
+related: [82, 85, 86, 87]
 tags: [codebase-decomposition, project-lifecycle]
-implementation-status: deferred
+implementation-status: live
 implementation-pointer: null
 ---
 
@@ -72,7 +72,7 @@ implementation-pointer: 087          # ADR ID, file path, or null
 | `related` | list[ADR-id] | ✓ | Empty list if none. Non-supersession references. |
 | `tags` | list[tag] | ✓ | Minimum one. Controlled vocabulary (below). |
 | `implementation-status` | enum | ✓ | Live code state. The load-bearing new field. |
-| `implementation-pointer` | ADR-id / file path / null | conditional | Required if `implementation-status` is `partial` / `drift` / `deferred`. |
+| `implementation-pointer` | ADR-id / file path / null | conditional | Required if `implementation-status` is `partial` or `drift`. Optional for `deferred` (many Proposed ADRs have no restoration plan yet). |
 
 ### `status` enum
 
@@ -133,7 +133,7 @@ An ADR typically has 1–3 tags. ADR-067 would be `[agent-system, narrator, narr
 3. `supersedes` / `superseded-by` are symmetric — if A supersedes B, B must have `superseded-by: A`.
 4. `status: superseded` ⇒ `superseded-by` is set.
 5. `status: superseded` or `historical` ⇒ `implementation-status: retired`.
-6. `implementation-status: partial` / `drift` / `deferred` ⇒ `implementation-pointer` is set.
+6. `implementation-status: partial` or `drift` ⇒ `implementation-pointer` is set. *(`deferred` is exempt: many Proposed ADRs have no restoration plan yet and pointing them at ADR-087 would be false — the rule was relaxed during implementation on 2026-04-24 to match reality.)*
 7. All tags are from the controlled vocabulary.
 8. `date` is a valid ISO 8601 date.
 

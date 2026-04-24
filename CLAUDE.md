@@ -274,7 +274,7 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 069 Scenario Fixtures — Pre-configured World States for Testing *(drift)*
 
 **Codebase Decomposition (060, 061, 062, 063, 064, 068, 088)**
-- 060 Genre Models Decomposition — Split models.rs by Domain · 061 Lore Module Decomposition — Split lore.rs by Responsibility · 062 Server lib.rs Extraction — Route Groups, State, and Watcher Events · 063 Dispatch Handler Splitting — By Pipeline Stage · 064 Game Crate Domain Modules — Organize 69 Flat Files · 068 Magic Literal Extraction — Domain-Scoped Constants · **088 ADR Frontmatter Schema and Auto-Generated Indexes** *(deferred)*
+- 060 Genre Models Decomposition — Split models.rs by Domain · 061 Lore Module Decomposition — Split lore.rs by Responsibility · 062 Server lib.rs Extraction — Route Groups, State, and Watcher Events · 063 Dispatch Handler Splitting — By Pipeline Stage · 064 Game Crate Domain Modules — Organize 69 Flat Files · 068 Magic Literal Extraction — Domain-Scoped Constants · **088 ADR Frontmatter Schema and Auto-Generated Indexes**
 
 **Narrator Architecture (073)**
 - 073 Local Fine-Tuned Model Architecture
