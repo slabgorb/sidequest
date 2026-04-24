@@ -34,7 +34,7 @@ description: |
     - docs/superpowers/specs/2026-04-19-python-port-execution-strategy-design.md
     - docs/plans/phase-3-combat-port.md
 priority: p0
-status: backlog
+status: done
 repos: server
 stories:
   - id: 42-1
@@ -73,7 +73,9 @@ stories:
     title: Combat dispatch + OTEL catalog + narrator wiring — in_combat helper, find_confrontation_def, encounter resolution from tropes, strip_combat_brackets, combat.* span names byte-identical to Rust, e2e playtest gate
     points: 8
     priority: p0
-    status: in_progress
+    status: done
     started: '2026-04-24'
     repos: server
     workflow: tdd
+    completed: '2026-04-24'
+completed: '2026-04-24'
