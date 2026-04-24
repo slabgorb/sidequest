@@ -399,12 +399,12 @@ stories:
       PORT-DRIFT REOPEN 2026-04-23 (per ADR-085 audit of Epic 37): this story was previously marked done against the Rust sidequest-api tree (Rust session shipped + reviewer approved). The fix did NOT survive the ADR-082 port to Python. Current sidequest-server has no PartyPeer type, no inject_party_peers() call, and no peer dossier injection into narrator prompts — the bug the story closed is back in production. Re-opening at backlog per ADR-085 rule 2 (port-drift reopens, does not fork a new story). Rust session archive retained as design spec; port implementation is the new body of work. Blocks 37-37 (sealed-letter world-state handshake).
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
     assigned_to: keith.avery@1898andco.io
-    started: '2026-04-19'
-    repos: sidequest-api
+    started: '2026-04-24'
+    repos: sidequest-server
     workflow: tdd
-    completed: '2026-04-19'
+    branch: feat/37-36-party-peer-identity
     type: bug
   - id: 37-37
     title: "Sealed-letter world-state handshake between turns — after each player turn, emit a minimal shared-world delta (current location, active encounter id, party formation/adjacency) that seeds the next player's turn so narrator stops fabricating physical separations to explain party-mate absence. Playtest 3 2026-04-19: Orin's save invented a 'collapsed corridor' separating him from Blutka because Orin's game_state had no ground-truth that Blutka was in the same room fighting the same scavengers. Canonical: location, encounter presence, adjacency. Perceived (stays POV): mood, tactics, what the peer is feeling. OTEL span on handshake merge with conflict-resolution events."
