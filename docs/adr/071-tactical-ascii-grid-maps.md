@@ -1,18 +1,34 @@
 ---
 id: 71
 title: "Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art"
-status: proposed
+status: superseded
 date: 2026-04-07
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: []
+superseded-by: 86
+related: [86]
 tags: [room-graph, game-systems]
-implementation-status: deferred
-implementation-pointer: 87
+implementation-status: retired
+implementation-pointer: 86
 ---
 
 # ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art
+
+> **Superseded by ADR-086 (Image-Composition Taxonomy) on 2026-04-24.**
+>
+> ASCII rendering of tactical maps is being removed from SideQuest. The
+> tactical layer moves to image-native rendering via
+> `ILLUSTRATION + CAMERA.TOPDOWN_90` (ADR-086 story 4). Spatial data
+> (entity positions, AoE overlays, hazard zones) rides alongside as
+> structured metadata rather than as a text grid.
+>
+> The requirements enumerated below (deterministic layout,
+> non-rectangular rooms, Jaquayed topology, shared walls) remain real —
+> they are now satisfied by the structured spatial metadata that
+> accompanies the rendered map, not by ASCII art. The
+> deterministic-visualization property shifts from "same ASCII every
+> time" to "same spatial data every time, rendered by Z-Image with the
+> TOPDOWN_90 camera."
 
 ## Context
 
