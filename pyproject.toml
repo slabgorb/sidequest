@@ -23,7 +23,7 @@ build-backend = "hatchling.build"
 # This project is not meant to be installed as a wheel. It exists to give
 # the scripts/ and tests/ trees a pyproject.toml so pytest discovers them
 # and relative imports (`from scripts.lora.X import Y`) resolve.
-packages = []
+packages = ["scripts"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
