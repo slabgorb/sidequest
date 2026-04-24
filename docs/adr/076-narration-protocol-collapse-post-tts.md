@@ -1,9 +1,18 @@
-# ADR-076: Narration Protocol Collapse Post-TTS Removal
+---
+id: 76
+title: "Narration Protocol Collapse Post-TTS Removal"
+status: proposed
+date: 2026-04-10
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [65]
+tags: [narrator-migration, narrator]
+implementation-status: deferred
+implementation-pointer: null
+---
 
-**Status:** Proposed
-**Date:** 2026-04-10
-**Deciders:** Keith
-**Relates to:** ADR-065 (Protocol Message Decomposition — proposes file reorganization, unexecuted)
+# ADR-076: Narration Protocol Collapse Post-TTS Removal
 
 ## Context
 

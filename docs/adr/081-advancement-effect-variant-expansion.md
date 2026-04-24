@@ -1,9 +1,18 @@
-# ADR-081: Advancement Effect Variant Expansion (v1)
+---
+id: 81
+title: "Advancement Effect Variant Expansion (v1)"
+status: proposed
+date: 2026-04-18
+deciders: [Keith Avery, Major Houlihan (Architect)]
+supersedes: []
+superseded-by: null
+related: [78]
+tags: [game-systems]
+implementation-status: deferred
+implementation-pointer: 87
+---
 
-**Status:** Proposed
-**Date:** 2026-04-18
-**Deciders:** Keith Avery, Major Houlihan (Architect)
-**Related:** ADR-078 (Edge/Composure/Advancement/Rituals), Epic 39
+# ADR-081: Advancement Effect Variant Expansion (v1)
 
 ## Context
 

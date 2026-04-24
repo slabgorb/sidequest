@@ -1,10 +1,21 @@
+---
+id: 58
+title: "Claude Subprocess OTEL Passthrough"
+status: proposed
+date: 2026-04-02
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [observability]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-058: Claude Subprocess OTEL Passthrough
 
 > Extends ADR-031 (Game Watcher Semantic Telemetry). Bridges the gap between
 > the Rust backend's internal telemetry and the Claude CLI's internal operations.
-
-## Status
-Proposed
 
 ## Context
 

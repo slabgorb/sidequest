@@ -1,8 +1,18 @@
-# ADR-079: Genre Theme System Unification
+---
+id: 79
+title: "Genre Theme System Unification"
+status: accepted
+date: 2026-04-16
+deciders: [Keith Avery, Major Houlihan (Architect)]
+supersedes: []
+superseded-by: null
+related: []
+tags: [frontend-protocol]
+implementation-status: live
+implementation-pointer: null
+---
 
-**Status:** Accepted
-**Date:** 2026-04-16
-**Deciders:** Keith Avery, Major Houlihan (Architect)
+# ADR-079: Genre Theme System Unification
 
 ## Context
 

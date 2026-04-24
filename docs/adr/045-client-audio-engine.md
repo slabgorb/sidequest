@@ -1,9 +1,20 @@
+---
+id: 45
+title: "Client Audio Engine"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: partial
+implementation-pointer: 76
+---
+
 # ADR-045: Client Audio Engine
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted (partially superseded — TTS removed 2026-04)
 
 > **Note (2026-04):** TTS/voice narration has been removed from the system.
 > The Kokoro TTS daemon, voice channel, PCM streaming, and Ducker are no longer

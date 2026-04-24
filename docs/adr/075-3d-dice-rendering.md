@@ -1,8 +1,18 @@
+---
+id: 75
+title: "3D Dice Rendering — Three.js + Rapier Physics Overlay"
+status: proposed
+date: 2026-04-09
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [frontend-protocol]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay
-
-## Status
-
-Proposed
 
 ## Context
 

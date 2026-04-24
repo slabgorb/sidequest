@@ -1,9 +1,20 @@
+---
+id: 15
+title: "Character Builder State Machine"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-015: Character Builder State Machine
 
 > Ported from sq-2. Language-agnostic game design.
-
-## Status
-Accepted
 
 ## Context
 Character creation must be genre-driven, serializable (for mid-creation saves), and produce narrative hooks that the narrator can use.

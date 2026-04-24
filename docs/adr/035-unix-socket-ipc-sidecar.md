@@ -1,9 +1,20 @@
+---
+id: 35
+title: "Unix Socket IPC for Python Sidecar"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [transport-infrastructure]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-035: Unix Socket IPC for Python Sidecar
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 > **Note (2026-04):** The Context below lists text-to-speech (Kokoro) and runtime
 > ACE-Step music generation among the sidecar's workloads. Both are gone: Kokoro

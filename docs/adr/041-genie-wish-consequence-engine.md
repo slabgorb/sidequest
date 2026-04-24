@@ -1,9 +1,20 @@
+---
+id: 41
+title: "Genie Wish / Consequence Engine"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [npc-character]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-041: Genie Wish / Consequence Engine
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Players in open-ended narrative games frequently attempt power-grab actions: "I kill all the enemies," "I teleport to the treasure," "I summon a weapon that defeats everyone." A system that hard-rejects these breaks immersion and punishes player creativity. A system that silently ignores them trains players that ambition has no consequence. A system that passes them to the narrator without mechanical scaffolding produces inconsistent outcomes — Claude will sometimes grant wishes freely, sometimes refuse, with no coherent world logic behind either choice. The game needed a principled way to honor player agency while maintaining world integrity and tonal consistency.

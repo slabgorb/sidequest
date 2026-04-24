@@ -1,9 +1,20 @@
+---
+id: 4
+title: "Lazy Genre Binding"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-004: Lazy Genre Binding
 
 > Ported from sq-2. Language-agnostic pattern.
-
-## Status
-Accepted
 
 ## Context
 Genre pack is runtime context, not a construction dependency.

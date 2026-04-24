@@ -1,9 +1,20 @@
+---
+id: 28
+title: "Perception Rewriter"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [multiplayer]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-028: Perception Rewriter
 
 > Ported from sq-2. Language-agnostic multiplayer mechanic.
-
-## Status
-Accepted
 
 ## Context
 In multiplayer, different players should perceive the same event differently based on their character's status effects (charmed, blinded, deafened, etc.).

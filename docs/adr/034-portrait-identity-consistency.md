@@ -1,9 +1,18 @@
-# ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline
+---
+id: 34
+title: "Portrait Identity Consistency — Tiered Character Recognition Pipeline"
+status: proposed
+date: 2026-03-31
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [32]
+tags: [genre-mechanics]
+implementation-status: deferred
+implementation-pointer: null
+---
 
-**Status:** Proposed
-**Date:** 2026-03-31
-**Deciders:** Keith
-**Relates to:** ADR-032 (Genre LoRA Style Training)
+# ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline
 
 ## Context
 

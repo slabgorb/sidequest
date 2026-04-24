@@ -1,8 +1,19 @@
+---
+id: 73
+title: "Local Fine-Tuned Model Architecture"
+status: accepted
+date: 2026-04-08
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [narrator-migration, narrator]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-073: Local Fine-Tuned Model Architecture
 
-**Status:** Accepted
-**Date:** 2026-04-08
-**Deciders:** Keith Avery
 **Context:** OTEL observability findings, prompt framework complexity, operational cost
 
 ## Problem

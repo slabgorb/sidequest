@@ -1,9 +1,20 @@
+---
+id: 18
+title: "Trope Engine"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-018: Trope Engine
 
 > Ported from sq-2. Language-agnostic narrative system.
-
-## Status
-Accepted
 
 ## Context
 Stories need momentum. Genre-defined narrative patterns (tropes) provide a skeleton that ensures the story progresses even during quiet periods.

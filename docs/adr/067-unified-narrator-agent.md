@@ -1,7 +1,18 @@
-# ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session
+---
+id: 67
+title: "Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session"
+status: accepted
+date: 2026-04-04
+deciders: [Keith Avery]
+supersedes: [10]
+superseded-by: null
+related: []
+tags: [agent-system, narrator, narrator-migration]
+implementation-status: live
+implementation-pointer: null
+---
 
-## Status
-Accepted
+# ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session
 
 ## Context
 

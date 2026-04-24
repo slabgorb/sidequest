@@ -1,8 +1,18 @@
+---
+id: 71
+title: "Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art"
+status: proposed
+date: 2026-04-07
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [room-graph, game-systems]
+implementation-status: deferred
+implementation-pointer: 87
+---
+
 # ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art
-
-## Status
-
-Proposed
 
 ## Context
 

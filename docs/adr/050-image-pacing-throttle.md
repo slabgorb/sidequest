@@ -1,9 +1,20 @@
+---
+id: 50
+title: "Image Pacing Throttle"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-050: Image Pacing Throttle
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Image generation is triggered server-side when narration passes the BeatFilter's drama-weight threshold (a separate concern from this ADR). Without rate limiting at the delivery layer, rapid mechanical turn sequences — combat rounds, skill checks, quick back-and-forth dialogue — can dispatch multiple image render requests in seconds. The client receives images faster than they can be meaningfully absorbed, and the daemon wastes GPU cycles on renders that are immediately superseded.

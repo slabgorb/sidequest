@@ -1,9 +1,20 @@
+---
+id: 25
+title: "Pacing Detection"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-025: Pacing Detection
 
 > Ported from sq-2. Language-agnostic narrative system.
-
-## Status
-Accepted
 
 ## Decision
 Orchestrator detects stalled narrative momentum by counting "quiet turns" — turns where no location, combat, NPC, or quest changes occurred.

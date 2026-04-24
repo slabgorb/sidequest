@@ -1,9 +1,20 @@
+---
+id: 24
+title: "Dual-Track Tension Model"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-024: Dual-Track Tension Model
 
 > Ported from sq-2. Language-agnostic pacing mechanic.
-
-## Status
-Accepted
 
 ## Context
 Drama needs a measurable signal that drives all output systems (narration depth, voice intensity, render priority, delivery mode).

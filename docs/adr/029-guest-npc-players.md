@@ -1,9 +1,20 @@
+---
+id: 29
+title: "Guest NPC Players"
+status: proposed
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [multiplayer]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-029: Guest NPC Players
 
 > Ported from sq-2. Proposed feature.
-
-## Status
-Proposed
 
 ## Decision
 Guest players can control consequential NPCs with enriched asymmetric narration via an inverted PerceptionRewriter.

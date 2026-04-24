@@ -1,10 +1,20 @@
+---
+id: 77
+title: "Dogfight Subsystem via StructuredEncounter Extension"
+status: proposed
+date: 2026-04-11
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [33]
+tags: [game-systems]
+implementation-status: deferred
+implementation-pointer: 87
+---
+
 # ADR-077: Dogfight Subsystem via StructuredEncounter Extension
 
-**Status:** Proposed
-**Date:** 2026-04-11
 **Epic:** TBD (post-Sprint-2)
-**Deciders:** Keith
-**Relates to:**
 - ADR-033 (StructuredEncounter / Confrontation Engine) — parent decision
 - ADR-067 (Unified Narrator Agent) — narration contract
 - Epic 13 (Sealed-letter multiplayer turns) — shared commit infrastructure

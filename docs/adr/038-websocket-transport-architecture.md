@@ -1,9 +1,20 @@
+---
+id: 38
+title: "WebSocket Transport Architecture"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: [76]
+tags: [transport-infrastructure]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-038: WebSocket Transport Architecture
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted (partially superseded — TTS removed 2026-04, see ADR-076)
 
 > **Note (2026-04-11):** The original three-channel design below included a
 > binary PCM channel for Kokoro TTS frames. **TTS has been removed from the

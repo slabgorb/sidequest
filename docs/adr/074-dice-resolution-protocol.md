@@ -1,8 +1,18 @@
+---
+id: 74
+title: "Dice Resolution Protocol — Player-Facing Rolls via WebSocket"
+status: proposed
+date: 2026-04-09
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems, frontend-protocol]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-074: Dice Resolution Protocol — Player-Facing Rolls via WebSocket
-
-## Status
-
-Proposed
 
 ## Context
 

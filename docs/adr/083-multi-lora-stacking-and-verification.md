@@ -1,6 +1,18 @@
-# ADR-083: Multi-LoRA Stacking and Verification Pipeline
+---
+id: 83
+title: "Multi-LoRA Stacking and Verification Pipeline"
+status: proposed
+date: 2026-04-20
+deciders: [Keith Avery (Bossmang), Margaret Houlihan (Architect)]
+supersedes: []
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: deferred
+implementation-pointer: null
+---
 
-**Status:** **Superseded by ADR-070 (Z-Image / MLX Image Renderer) — 2026-04-24.**
+# ADR-083: Multi-LoRA Stacking and Verification Pipeline
 
 LoRA support is being dropped from the SideQuest visual pipeline.
 Z-Image follows text-prompt art direction substantially better than
@@ -33,8 +45,6 @@ approach.
 ---
 
 > **Original status (now obsolete):** Proposed
-**Date:** 2026-04-20
-**Deciders:** Keith Avery (Bossmang), Margaret Houlihan (Architect)
 **Related (historical):**
 - Extends [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md)
 - Depends on [ADR-070: MLX Image Renderer](070-mlx-image-renderer.md)

@@ -1,9 +1,20 @@
+---
+id: 19
+title: "Cartography Discovery"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-019: Cartography Discovery
 
 > Ported from sq-2. Language-agnostic world topology.
-
-## Status
-Accepted
 
 ## Decision
 World is a directed graph of regions connected by routes, defined in `topology.yaml`.

@@ -1,9 +1,20 @@
+---
+id: 30
+title: "Scenario Packs"
+status: proposed
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [multiplayer]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-030: Scenario Packs
 
 > Ported from sq-2. Proposed feature — hidden-role scenario engine.
-
-## Status
-Partially implemented (Epic 7, ADR-053)
 
 > **Note (2026-04):** Core scenario infrastructure is implemented: scenario_state.rs,
 > ClueGraph, AccusationEvaluator, and the `/accuse` handler are wired. The full

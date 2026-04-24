@@ -1,11 +1,21 @@
+---
+id: 82
+title: "Port `sidequest-api` from Rust back to Python"
+status: accepted
+date: 2026-04-19
+deciders: [Keith Avery (Bossmang), Naomi Nagata (Architect, design mode)]
+supersedes: []
+superseded-by: null
+related: [85]
+tags: [project-lifecycle]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-082: Port `sidequest-api` from Rust back to Python
 
-**Status:** Accepted (cutover completed 2026-04-23)
-**Date:** 2026-04-19 (accepted), 2026-04-23 (cutover)
-**Deciders:** Keith Avery (Bossmang), Naomi Nagata (Architect, design mode)
-**Related:** ADR-085 (port-drift tracker hygiene). Supersedes the implicit
-"Rust is the backend" decision baked in when the Python-to-Rust port landed
-(~2026-03-30).
+> Supersedes the implicit "Rust is the backend" decision baked in when the
+> Python-to-Rust port landed (~2026-03-30). Cutover completed 2026-04-23.
 
 > **Cutover note (2026-04-23):** The Rust tree (`sidequest-api/`) was removed
 > from the working tree and archived read-only at

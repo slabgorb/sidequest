@@ -1,9 +1,20 @@
+---
+id: 22
+title: "WorldBuilder Maturity"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-022: WorldBuilder Maturity
 
 > Ported from sq-2. Language-agnostic campaign initialization.
-
-## Status
-Accepted
 
 ## Context
 Starting a new campaign "from zero" is slow. Players want to jump into an established world.

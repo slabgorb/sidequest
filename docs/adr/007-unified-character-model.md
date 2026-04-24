@@ -1,12 +1,23 @@
+---
+id: 7
+title: "Unified Character Model"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-007: Unified Character Model
 
 > Ported from sq-2 (Pydantic) → Rust (serde struct) → back to Python per
 > ADR-082 (pydantic v2 model). The decision is language-agnostic; only the
 > type-declaration syntax below is a historical Rust artifact. Current home:
 > `sidequest-server/sidequest/game/character.py`.
-
-## Status
-Accepted
 
 ## Context
 Characters need both narrative identity (name, backstory, personality, relationships) and mechanical stats (class, level, HP, AC, inventory). Splitting these creates synchronization problems.

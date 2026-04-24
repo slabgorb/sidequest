@@ -1,9 +1,20 @@
+---
+id: 40
+title: "Narrative Character Sheet (No Raw Stats)"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [narrator]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-040: Narrative Character Sheet (No Raw Stats)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 SideQuest is a narrative-first game. The narrator speaks in genre voice — pulp noir, space opera, low fantasy — and the player experiences the world through that lens. Exposing raw mechanical values (HP: 34/50, Strength: 16, AC: 14) on the character sheet breaks the diegetic frame. A character who is "badly wounded" is narratively present; a character at "68% HP" is a spreadsheet entry. Beyond immersion, the character sheet is serialized over WebSocket as a protocol type — if raw numbers live in the protocol, UI formatting choices become load-bearing protocol contracts that are painful to change.

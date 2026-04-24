@@ -1,9 +1,20 @@
+---
+id: 31
+title: "Game Watcher — Semantic Telemetry for AI Agent Observability"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [genre-mechanics]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-031: Game Watcher — Semantic Telemetry for AI Agent Observability
 
 > New for Rust port. No Python equivalent — sq-2 uses ad-hoc logging.
-
-## Status
-Accepted
 
 ## Context
 SideQuest has an LLM adjudicating an RPG. Unlike a deterministic game engine, Claude makes

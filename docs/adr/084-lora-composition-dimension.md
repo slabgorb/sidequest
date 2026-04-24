@@ -1,6 +1,18 @@
-# ADR-084: Compositional-Dimension Specialization for Style LoRAs
+---
+id: 84
+title: "Compositional-Dimension Specialization for Style LoRAs"
+status: superseded
+date: 2026-04-21
+deciders: [Keith Avery (Bossmang), GM (capturing)]
+supersedes: []
+superseded-by: 70
+related: []
+tags: [media-audio]
+implementation-status: retired
+implementation-pointer: null
+---
 
-**Status:** **Superseded by ADR-070 (Z-Image / MLX Image Renderer) — 2026-04-24.**
+# ADR-084: Compositional-Dimension Specialization for Style LoRAs
 
 LoRA support is being dropped from the SideQuest visual pipeline. The
 compositional-dimension failure mode documented below — "a single-tag
@@ -34,8 +46,6 @@ was not the right tool for this problem.
 ---
 
 > **Original status (now obsolete):** Proposed
-**Date:** 2026-04-21
-**Deciders:** Keith Avery (Bossmang), GM (capturing)
 **Related (historical):**
 - Extends [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md)
 - Extends [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md)

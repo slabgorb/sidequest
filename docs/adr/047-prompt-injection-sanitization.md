@@ -1,9 +1,20 @@
+---
+id: 47
+title: "Prompt Injection Sanitization Layer"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [transport-infrastructure]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-047: Prompt Injection Sanitization Layer
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Players submit free-form text (dialogue, actions, item names) that flows directly into Claude's context window via agent prompts. Without sanitization, a player can trivially inject structural instructions — wrapping input in `<system>` tags, prefixing with "ignore all previous instructions", or using unicode confusables to bypass naive filters. The attack surface is at the seam between player input and prompt construction.

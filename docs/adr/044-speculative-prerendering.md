@@ -1,9 +1,20 @@
+---
+id: 44
+title: "Speculative Prerendering During TTS Playback"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-044: Speculative Prerendering During TTS Playback
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Flux image generation takes 5-20 seconds on the dev machine. TTS narration audio takes 5-15 seconds to play. These windows overlap — while the player is listening to the narrator, the GPU is idle waiting for the next scene context. On-demand rendering after narration ends produces a visible hold: voice stops, blank screen for 15 seconds, then image appears. This breaks immersion at the worst moment (scene transitions). The system needed a way to use the TTS playback window as free GPU render time.

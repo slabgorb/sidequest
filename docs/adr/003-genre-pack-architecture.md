@@ -1,9 +1,20 @@
+---
+id: 3
+title: "Genre Pack Architecture"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-003: Genre Pack Architecture
 
 > Ported from sq-2. Rust adaptation: Pydantic models become serde structs.
-
-## Status
-Accepted
 
 ## Context
 Genre packs are swappable YAML directories that configure all game personality: lore, rules, prompt extensions, UI theming, audio, visual styles, inventory, progression, topology, and tropes.

@@ -1,9 +1,20 @@
+---
+id: 51
+title: "Two-Tier Turn Counter (Interaction vs. Round)"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [turn-management]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-051: Two-Tier Turn Counter (Interaction vs. Round)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 A single turn counter conflates two distinct concerns: mechanical tracking (every player-narrator

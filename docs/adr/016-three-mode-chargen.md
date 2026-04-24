@@ -1,9 +1,20 @@
+---
+id: 16
+title: "Three-Mode Character Creation"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-016: Three-Mode Character Creation
 
 > Ported from sq-2. Language-agnostic game design.
-
-## Status
-Accepted
 
 ## Decision
 Character creation supports three modes, all producing the same `Character` output:

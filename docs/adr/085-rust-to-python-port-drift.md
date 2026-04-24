@@ -1,9 +1,18 @@
-# ADR-085: Tracker hygiene during the Rust→Python port — handling port-drift
+---
+id: 85
+title: "Tracker hygiene during the Rust→Python port — handling port-drift"
+status: accepted
+date: 2026-04-23
+deciders: [Keith Avery (Bossmang), The Ministry of Silly Walks Official (Architect)]
+supersedes: []
+superseded-by: null
+related: [82]
+tags: [project-lifecycle]
+implementation-status: live
+implementation-pointer: null
+---
 
-**Status:** Accepted
-**Date:** 2026-04-23
-**Deciders:** Keith Avery (Bossmang), The Ministry of Silly Walks Official (Architect)
-**Related:** ADR-082 (port `sidequest-api` from Rust back to Python)
+# ADR-085: Tracker hygiene during the Rust→Python port — handling port-drift
 
 ## Context
 

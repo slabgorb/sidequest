@@ -1,10 +1,20 @@
+---
+id: 80
+title: "Unified Narrative Weight Trait"
+status: accepted
+date: 2026-04-14
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [14]
+tags: [game-systems, narrator]
+implementation-status: not-applicable
+implementation-pointer: null
+---
+
 # ADR-080: Unified Narrative Weight Trait
 
-**Status:** Accepted
-**Date:** 2026-04-14
 **Epic:** TBD
-**Deciders:** Keith
-**Relates to:**
 - ADR-014 (Diamonds and Coal) — parent decision; this ADR enforces its cross-cutting mandate
 - ADR-018 (Trope Engine) — amended in practice; `tension_level` becomes live
 - ADR-024 (Dual-Track Tension) — adjacent but orthogonal axis; stays independent

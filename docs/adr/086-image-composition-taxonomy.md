@@ -1,13 +1,23 @@
+---
+id: 86
+title: "Image-Composition Taxonomy — Portraits, POIs, Illustrations"
+status: proposed
+date: 2026-04-24
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations
 
 > Captures a hand-drawn design sketch (slabgorb, 2026-04-24) into a durable
 > taxonomy. Most of what the sketch describes already exists in code under
 > different names; this ADR consolidates the mental model, names the implicit
 > concepts, and identifies the genuinely new additions.
-
-## Status
-
-Proposed (2026-04-24)
 
 Touches the visual pipeline broadly. Does not block any in-flight work but
 unlocks several follow-ons. Coordinate with **ADR-034** (Portrait Identity

@@ -1,9 +1,20 @@
+---
+id: 52
+title: "Narrative Axis System (/tone Command)"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [narrator]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-052: Narrative Axis System (/tone Command)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Genre packs span a wide tonal range within their setting. A pulp noir session might start

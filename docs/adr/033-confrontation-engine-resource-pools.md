@@ -1,10 +1,20 @@
+---
+id: 33
+title: "Genre Mechanics Engine — Confrontations & Resource Pools"
+status: accepted
+date: 2026-03-31
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [11, 17]
+tags: [genre-mechanics]
+implementation-status: partial
+implementation-pointer: 87
+---
+
 # ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools
 
-**Status:** Accepted (implemented in Epic 28, revised — see note)
-**Date:** 2026-03-31
 **Epic:** 16
-**Deciders:** Keith
-**Relates to:** ADR-017 (Chase Types), ADR-011 (Structured Patches)
 
 ## Context
 

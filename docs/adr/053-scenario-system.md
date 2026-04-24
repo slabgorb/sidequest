@@ -1,9 +1,20 @@
+---
+id: 53
+title: "Scenario System (Clue Graph, Belief State, Gossip Propagation)"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [npc-character]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Mystery and investigation scenarios require structural guarantees that LLMs cannot provide

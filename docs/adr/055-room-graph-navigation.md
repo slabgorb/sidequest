@@ -1,10 +1,20 @@
+---
+id: 55
+title: "Room Graph Navigation"
+status: proposed
+date: 2026-04-01
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [18, 19, 33]
+tags: [room-graph]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-055: Room Graph Navigation
 
-**Status:** Proposed
-**Date:** 2026-04-01
 **Epic:** 19
-**Deciders:** Keith
-**Relates to:** ADR-019 (Cartography), ADR-018 (Trope Engine), ADR-033 (Confrontation Engine)
 
 ## Context
 

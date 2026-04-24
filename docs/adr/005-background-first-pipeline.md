@@ -1,9 +1,20 @@
+---
+id: 5
+title: "Background-First Pipeline"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-005: Background-First Pipeline
 
 > Ported from sq-2. Rust adaptation: `tokio::spawn` replaces `asyncio.create_task`.
-
-## Status
-Accepted
 
 ## Context
 Player-perceived latency is dominated by the narrator agent response. All other work (rendering, audio, voice, state patching) can happen in the background.

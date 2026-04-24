@@ -1,9 +1,20 @@
+---
+id: 2
+title: "SOUL Principles"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: not-applicable
+implementation-pointer: null
+---
+
 # ADR-002: SOUL Principles
 
 > Ported from sq-2. Language-agnostic — game design philosophy.
-
-## Status
-Accepted
 
 ## Context
 SOUL.md is a human-readable design document that also serves as machine-parsed prompt content. It defines the seven principles that govern all agent behavior.

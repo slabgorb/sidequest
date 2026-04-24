@@ -1,9 +1,18 @@
-# ADR-065: Protocol Message Decomposition — Split message.rs by Domain
+---
+id: 65
+title: "Protocol Message Decomposition — Split message.rs by Domain"
+status: proposed
+date: 2026-04-04
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [60]
+tags: [codebase-decomposition]
+implementation-status: deferred
+implementation-pointer: null
+---
 
-**Status:** Proposed
-**Date:** 2026-04-04
-**Deciders:** Keith
-**Relates to:** ADR-060 (Genre Models Decomposition)
+# ADR-065: Protocol Message Decomposition — Split message.rs by Domain
 
 ## Context
 

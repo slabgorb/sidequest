@@ -1,9 +1,20 @@
+---
+id: 37
+title: "Shared-World / Per-Player State Split"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [multiplayer]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-037: Shared-World / Per-Player State Split
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 

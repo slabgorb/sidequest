@@ -1,7 +1,18 @@
-# ADR-066: Persistent Opus Narrator Sessions
+---
+id: 66
+title: "Persistent Opus Narrator Sessions"
+status: accepted
+date: 2026-04-04
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [agent-system, narrator]
+implementation-status: live
+implementation-pointer: null
+---
 
-## Status
-Accepted (partially implemented)
+# ADR-066: Persistent Opus Narrator Sessions
 
 > **Note (2026-04):** The `--resume` CLI integration is not yet wired into
 > ClaudeClient. The spike validated the approach but the persistent session

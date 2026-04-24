@@ -1,9 +1,20 @@
+---
+id: 17
+title: "Cinematic Chase Engine"
+status: superseded
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: 33
+related: []
+tags: [game-systems]
+implementation-status: retired
+implementation-pointer: null
+---
+
 # ADR-017: Cinematic Chase Engine
 
 > Ported from sq-2. Language-agnostic game mechanic.
-
-## Status
-Superseded by ADR-033
 
 > **Note (2026-04):** The standalone `ChaseState` struct was removed in Epic 28.
 > Chases are now one encounter type within `StructuredEncounter` (ADR-033).

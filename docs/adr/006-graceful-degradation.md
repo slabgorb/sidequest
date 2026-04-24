@@ -1,9 +1,20 @@
+---
+id: 6
+title: "Graceful Degradation"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-006: Graceful Degradation
 
 > Ported from sq-2. Rust adaptation: `Result<T, E>` and `Option<T>` model fallback chains.
-
-## Status
-Accepted
 
 ## Context
 SideQuest depends on external services that may be unavailable. The Claude CLI (narrator) is non-negotiable — if it's down, the game is down. But media subsystems (renderer daemon, audio) must degrade gracefully. The game must never crash due to a media subsystem failure.

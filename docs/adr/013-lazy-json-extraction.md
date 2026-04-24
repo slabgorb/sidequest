@@ -1,9 +1,20 @@
+---
+id: 13
+title: "Lazy JSON Extraction"
+status: superseded
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: 57
+related: []
+tags: [agent-system]
+implementation-status: retired
+implementation-pointer: null
+---
+
 # ADR-013: Lazy JSON Extraction
 
 > Ported from sq-2. Rust adaptation: `serde_json` with regex fallback.
-
-## Status
-Accepted
 
 ## Context
 Claude's output format varies despite explicit JSON instructions. ~10% of responses wrap JSON in markdown fences, add preamble text, or use other formatting.

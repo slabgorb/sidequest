@@ -1,7 +1,18 @@
-# ADR-068: Magic Literal Extraction — Domain-Scoped Constants
+---
+id: 68
+title: "Magic Literal Extraction — Domain-Scoped Constants"
+status: accepted
+date: 2026-04-05
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [codebase-decomposition]
+implementation-status: live
+implementation-pointer: null
+---
 
-## Status
-Accepted
+# ADR-068: Magic Literal Extraction — Domain-Scoped Constants
 
 ## Context
 

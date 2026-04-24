@@ -1,9 +1,20 @@
+---
+id: 32
+title: "Genre-Specific LoRA Style Training for Flux Image Generation"
+status: superseded
+date: 2026-03-28
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: 70
+related: []
+tags: [genre-mechanics]
+implementation-status: retired
+implementation-pointer: null
+---
+
 # ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation
 
 > New for Rust port. sq-2 uses text-only style prompts via `positive_suffix`.
-
-## Status
-**Superseded by ADR-070 (MLX Image Renderer / Z-Image) — 2026-04-24.**
 
 LoRA support is being dropped from the SideQuest visual pipeline. The
 Z-Image renderer (ADR-070) follows text-prompt art direction substantially

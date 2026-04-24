@@ -1,9 +1,20 @@
+---
+id: 39
+title: "Narrator Structured Output (JSON Sidecar Block)"
+status: superseded
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: 57
+related: []
+tags: [narrator]
+implementation-status: retired
+implementation-pointer: null
+---
+
 # ADR-039: Narrator Structured Output (JSON Sidecar Block)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 The narrator agent (Claude CLI subprocess) was producing prose-only responses. Extracting semantic data — image subjects for generation, NPC names for registration, items acquired, lore established — required either separate LLM calls or fragile regex over free prose. ADR-013 established that lazy JSON extraction was preferable to dedicated extraction calls, but didn't define what to extract or the full protocol shape. As the system matured, the set of data needing structured extraction grew: OCEAN personality events, quest updates, resource deltas, visual scene descriptions. Without a typed protocol, each new field was a new extraction hack.

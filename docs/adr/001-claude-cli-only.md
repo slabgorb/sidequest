@@ -1,9 +1,20 @@
+---
+id: 1
+title: "Claude CLI Only"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [core-architecture]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-001: Claude CLI Only
 
 > Ported from sq-2. Rust adaptation: `tokio::process::Command` replaces `asyncio.create_subprocess_exec`.
-
-## Status
-Accepted
 
 ## Context
 SideQuest runs on Claude Max (unlimited usage), not API credits. All LLM calls must use the `claude -p` CLI subprocess.

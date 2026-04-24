@@ -1,9 +1,20 @@
+---
+id: 42
+title: "OCEAN Personality Live Evolution"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [npc-character]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-042: OCEAN Personality Live Evolution
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 NPC personalities in SideQuest were initially static YAML configuration — a set of OCEAN dimension scores (Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism) defined at world-build time. Static personalities produce NPCs who feel like props: they don't grow, adapt, or remember what happened to them. A merchant who witnessed a betrayal in scene 2 behaves identically in scene 8. This was acceptable for early development but incompatible with the core narrative consistency goal — the game world must feel like it has memory and consequence.

@@ -1,9 +1,18 @@
-# ADR-063: Dispatch Handler Splitting — By Pipeline Stage
+---
+id: 63
+title: "Dispatch Handler Splitting — By Pipeline Stage"
+status: accepted
+date: 2026-04-04
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [58, 62]
+tags: [codebase-decomposition]
+implementation-status: live
+implementation-pointer: null
+---
 
-**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
-**Date:** 2026-04-04
-**Deciders:** Keith
-**Relates to:** ADR-062 (Server lib.rs Extraction), ADR-058 (Claude Subprocess OTEL)
+# ADR-063: Dispatch Handler Splitting — By Pipeline Stage
 
 > **Status amendment (2026-04-23):** Executed during the Python port (ADR-082).
 > Dispatch lives as `sidequest-server/sidequest/server/dispatch/` (package),

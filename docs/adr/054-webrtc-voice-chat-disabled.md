@@ -1,9 +1,20 @@
+---
+id: 54
+title: "WebRTC Voice Chat (Disabled — Echo Feedback Loop)"
+status: historical
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [multiplayer, media-audio]
+implementation-status: retired
+implementation-pointer: null
+---
+
 # ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted (historical — 2026-04 update)
 
 > **Update (2026-04-11):** The "full implementation is preserved" claim below is
 > no longer true. After TTS removal, the WebRTC voice chat files

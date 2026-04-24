@@ -1,9 +1,20 @@
+---
+id: 11
+title: "World State JSON Patches"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [agent-system]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-011: World State JSON Patches
 
 > Ported from sq-2. Language-agnostic state management pattern.
-
-## Status
-Accepted
 
 ## Context
 Multiple agents need to update game state. Full state replacement creates race conditions and data loss.

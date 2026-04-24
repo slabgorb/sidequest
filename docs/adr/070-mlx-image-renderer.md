@@ -1,8 +1,18 @@
+---
+id: 70
+title: "MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX"
+status: accepted
+date: 2026-04-07
+deciders: [Keith Avery]
+supersedes: [32, 84]
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-070: MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
-
-## Status
-
-Accepted
 
 ## Context
 

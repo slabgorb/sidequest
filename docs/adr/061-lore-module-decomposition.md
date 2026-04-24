@@ -1,9 +1,18 @@
-# ADR-061: Lore Module Decomposition — Split lore.rs by Responsibility
+---
+id: 61
+title: "Lore Module Decomposition — Split lore.rs by Responsibility"
+status: accepted
+date: 2026-04-04
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [3, 59]
+tags: [codebase-decomposition]
+implementation-status: live
+implementation-pointer: null
+---
 
-**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
-**Date:** 2026-04-04
-**Deciders:** Keith
-**Relates to:** ADR-059 (Monster Manual), ADR-003 (Genre Pack Architecture)
+# ADR-061: Lore Module Decomposition — Split lore.rs by Responsibility
 
 > **Status amendment (2026-04-23):** Executed during the Python port (ADR-082).
 > Realized as sibling modules `lore_store.py` / `lore_seeding.py` /

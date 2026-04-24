@@ -283,8 +283,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Genre mechanics (031–034)**
 - 031 Game Watcher — Semantic Telemetry · 032 Genre-Specific LoRA Training · 033 **Confrontation Engine + Resource Pools** (implemented Epic 28) · 034 Portrait Identity Consistency *(Proposed)*
 
-**Project lifecycle / meta (082, 085)**
-- 082 **Port API Rust → Python** — Accepted (cutover 2026-04-23) · 085 Port-Drift Tracker Hygiene — Accepted
+**Project lifecycle / meta (082, 085, 087, 088)**
+- 082 **Port API Rust → Python** — Accepted (cutover 2026-04-23) · 085 Port-Drift Tracker Hygiene — Accepted · 087 Post-Port Subsystem Restoration Plan *(Proposed)* · 088 **ADR Frontmatter Schema** — Accepted (2026-04-24; migration pending)
 
 **Conventions:** Bold = load-bearing for current architecture. *(Proposed)* = design approved but not yet executed. *(superseded)* = replaced by a later ADR. *(Historical)* = describes a feature since removed.
 

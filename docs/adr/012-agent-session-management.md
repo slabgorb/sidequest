@@ -1,9 +1,20 @@
+---
+id: 12
+title: "Agent Session Management"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [agent-system]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-012: Agent Session Management
 
 > Ported from sq-2. Rust adaptation: `tokio::process::Command` with timeout.
-
-## Status
-Accepted
 
 ## Context
 Claude CLI supports persistent sessions via `--session-id`. This enables conversational continuity across turns without re-sending full context.

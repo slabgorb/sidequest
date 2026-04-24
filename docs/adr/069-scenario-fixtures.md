@@ -1,8 +1,19 @@
+---
+id: 69
+title: "Scenario Fixtures — Pre-configured World States for Testing"
+status: accepted
+date: 2026-04-06
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [code-generation]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-069: Scenario Fixtures — Pre-configured World States for Testing
 
-**Status:** Accepted
-**Date:** 2026-04-06
-**Deciders:** Keith Avery
 **Context:** Epic 24 (Procedural World-Grounding), prompt preview tooling
 
 ## Problem

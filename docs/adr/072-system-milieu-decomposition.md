@@ -1,8 +1,18 @@
+---
+id: 72
+title: "System/Milieu Decomposition — Separating Mechanics from Aesthetic"
+status: proposed
+date: 2026-04-08
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [codebase-decomposition]
+implementation-status: deferred
+implementation-pointer: null
+---
+
 # ADR-072: System/Milieu Decomposition — Separating Mechanics from Aesthetic
-
-## Status
-
-Proposed
 
 ## Context
 

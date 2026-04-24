@@ -243,6 +243,8 @@ for reference — the daemon is a separate repo (`sidequest-daemon`).
 | [Port API Rust to Python](082-port-api-rust-to-python.md) | Accepted | Port `sidequest-api` back to Python as `sidequest-server`; Rust tree becomes read-only spec |
 | [LoRA Composition Dimension](084-lora-composition-dimension.md) | **Superseded by ADR-070** | Historical — LoRA pipeline withdrawn 2026-04-24 in favor of Z-Image's text-prompt adherence |
 | [Rust→Python Port-Drift Tracker Hygiene](085-rust-to-python-port-drift.md) | Accepted | Sprint-tracker status reflects live Python backend, not Rust archive; audit procedure for in-flight epics |
+| [Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) | Proposed | Verdict (RESTORE / REWIRE / REDESIGN / VERIFY / DEFER / SUPERSEDE) for every non-parity subsystem found by the port-drift audit; priority-tiered. |
+| [ADR Frontmatter Schema and Auto-Generated Indexes](088-adr-frontmatter-schema.md) | Accepted | YAML frontmatter on every ADR + script-generated indexes; adds `tags` and `implementation-status` fields. |
 
 ## Skipped (superseded or not applicable)
 

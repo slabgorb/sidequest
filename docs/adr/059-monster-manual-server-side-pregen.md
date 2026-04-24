@@ -1,10 +1,18 @@
-# ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection
+---
+id: 59
+title: "Monster Manual — Server-Side Pre-Generation via Game-State Injection"
+status: accepted
+date: 2026-04-03
+deciders: [Keith]
+supersedes: [56]
+superseded-by: null
+related: [1, 3, 7, 20]
+tags: [code-generation, agent-system]
+implementation-status: drift
+implementation-pointer: 87
+---
 
-**Status:** Accepted
-**Date:** 2026-04-03
-**Deciders:** Keith
-**Supersedes:** ADR-056 (Script Tool Generators — narrator-side tool calls)
-**Relates to:** ADR-001 (Claude CLI Only), ADR-003 (Genre Pack Architecture), ADR-007 (Unified Character Model), ADR-020 (NPC Disposition)
+# ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection
 
 ## Context
 

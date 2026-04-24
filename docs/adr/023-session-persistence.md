@@ -1,9 +1,20 @@
+---
+id: 23
+title: "Session Persistence"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-023: Session Persistence
 
 > Ported from sq-2. Rust adaptation: rusqlite replaces JSON files (see architecture.md ADR-006).
-
-## Status
-Accepted (modified for Rust)
 
 ## Context
 Game state must survive server restarts and provide "Previously On..." recaps.

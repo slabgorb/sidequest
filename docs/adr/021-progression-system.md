@@ -1,9 +1,20 @@
+---
+id: 21
+title: "Progression System"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-021: Progression System
 
 > Ported from sq-2. Language-agnostic game design.
-
-## Status
-Accepted
 
 ## Decision
 Four independent progression tracks, all narrative-first:

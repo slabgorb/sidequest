@@ -1,9 +1,20 @@
+---
+id: 14
+title: "Diamonds and Coal"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: not-applicable
+implementation-pointer: null
+---
+
 # ADR-014: Diamonds and Coal
 
 > Ported from sq-2. Language-agnostic game design principle.
-
-## Status
-Accepted
 
 ## Context
 Not everything in a game deserves equal detail. A legendary sword's description should be richer than a ration pack's. This principle must scale across all output systems.

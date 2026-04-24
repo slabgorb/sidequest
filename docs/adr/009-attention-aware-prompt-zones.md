@@ -1,9 +1,20 @@
+---
+id: 9
+title: "Attention-Aware Prompt Zones"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [prompt-engineering]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-009: Attention-Aware Prompt Zones
 
 > Ported from sq-2. Language-agnostic prompt engineering pattern.
-
-## Status
-Accepted
 
 ## Context
 LLMs have non-uniform attention across their context window. The beginning and end receive higher attention than the middle.

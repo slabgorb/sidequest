@@ -1,9 +1,20 @@
+---
+id: 20
+title: "NPC Disposition System"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [game-systems]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-020: NPC Disposition System
 
 > Ported from sq-2. Language-agnostic game mechanic.
-
-## Status
-Accepted
 
 ## Decision
 NPCs have a numeric `disposition` (integer) that maps to a qualitative `attitude` string. Agents see only the attitude; the world_state agent patches disposition with numeric deltas.

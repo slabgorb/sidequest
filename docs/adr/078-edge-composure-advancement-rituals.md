@@ -1,10 +1,20 @@
+---
+id: 78
+title: "Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals"
+status: proposed
+date: 2026-04-15
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [21]
+tags: [game-systems]
+implementation-status: deferred
+implementation-pointer: 87
+---
+
 # ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals
 
-**Status:** Proposed
-**Date:** 2026-04-15
 **Epic:** TBD (proposed: Epic-Edge, post-Sprint-2)
-**Deciders:** Keith
-**Relates to:**
 - ADR-021 (Four-Track Progression) — first hard link from progression to engine state
 - ADR-033 (Confrontation Engine + Resource Pools) — parent decision; this ADR fully consumes its primitives
 - ADR-057 (Narrator-Crunch Separation) — preserved: narrator describes, engine mutates

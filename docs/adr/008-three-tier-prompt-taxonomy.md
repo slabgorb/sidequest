@@ -1,9 +1,20 @@
+---
+id: 8
+title: "Three-Tier Rule Taxonomy"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [prompt-engineering]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-008: Three-Tier Rule Taxonomy
 
 > Ported from sq-2. Language-agnostic prompt engineering pattern.
-
-## Status
-Accepted
 
 ## Context
 Agent rules need priority levels. Some rules are absolute ("never control the player"), some are firm guidelines, and some are aesthetic preferences.

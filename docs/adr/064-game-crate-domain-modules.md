@@ -1,9 +1,18 @@
-# ADR-064: Game Crate Domain Modules — Organize 69 Flat Files
+---
+id: 64
+title: "Game Crate Domain Modules — Organize 69 Flat Files"
+status: accepted
+date: 2026-04-04
+deciders: [Keith]
+supersedes: []
+superseded-by: null
+related: [60, 61]
+tags: [codebase-decomposition]
+implementation-status: live
+implementation-pointer: null
+---
 
-**Status:** Partially accepted (realized during ADR-082 Python port, 2026-04)
-**Date:** 2026-04-04
-**Deciders:** Keith
-**Relates to:** ADR-060 (Genre Models Decomposition), ADR-061 (Lore Module Decomposition)
+# ADR-064: Game Crate Domain Modules — Organize 69 Flat Files
 
 > **Status amendment (2026-04-23):** The Python port landed with `sidequest-server/sidequest/game/`
 > keeping most files flat at package root rather than fully splitting into domain

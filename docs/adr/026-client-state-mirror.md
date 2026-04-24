@@ -1,9 +1,20 @@
+---
+id: 26
+title: "Client-Side State Mirror"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [frontend-protocol]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-026: Client-Side State Mirror
 
 > Ported from sq-2. Defines server-side requirements for the API contract.
-
-## Status
-Accepted
 
 ## Decision
 The React client maintains a local read-only GameState mirror. The server piggybacks state deltas on narration messages so the client stays in sync without polling.

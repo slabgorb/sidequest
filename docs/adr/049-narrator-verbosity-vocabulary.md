@@ -1,9 +1,20 @@
+---
+id: 49
+title: "Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [narrator]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 Narration style requirements vary sharply across player contexts: a solo player deep in an immersive RPG session wants long, literary prose; a multiplayer group at a table needs tighter narration that doesn't stall group pacing; a younger or accessibility-focused player may prefer simpler diction regardless of length preference.

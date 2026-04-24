@@ -1,9 +1,20 @@
+---
+id: 48
+title: "Lore RAG Store with Cross-Process Embedding"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [media-audio]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-048: Lore RAG Store with Cross-Process Embedding
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 As a session progresses, the narrator extracts lore fragments from its own narration — named locations, faction details, character backstory, established world facts. These need to be retrievable at prompt-construction time to prevent continuity drift. A simple append-to-context strategy doesn't scale: after a long session, naively injecting all accumulated lore would exhaust the context budget.

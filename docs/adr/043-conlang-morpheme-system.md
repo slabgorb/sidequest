@@ -1,9 +1,20 @@
+---
+id: 43
+title: "Conlang Morpheme System"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [npc-character]
+implementation-status: drift
+implementation-pointer: 87
+---
+
 # ADR-043: Conlang Morpheme System
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 SideQuest generates proper nouns at runtime — NPC names, place names, faction names — that must feel like they belong to the same invented world. Naive random syllable generation produces names that are stylistically incoherent: "Zrath" and "Bumble" feel like different worlds. Pre-authored name lists are finite and don't scale across genre packs. LLM-generated names are expensive and inconsistent across sessions (the same village gets a different name on reload). The system needed generative names with implicit morphological coherence — names that share roots because they share meaning.

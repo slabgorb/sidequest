@@ -1,9 +1,20 @@
+---
+id: 27
+title: "Reactive State Messaging"
+status: accepted
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [frontend-protocol]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-027: Reactive State Messaging
 
 > Ported from sq-2. Adapted for WebSocket delivery.
-
-## Status
-Accepted
 
 ## Context
 In Python, GameState emitted typed events via callback for TUI widgets. In the Rust port, the WebSocket replaces the callback — state changes are pushed to clients as typed messages.

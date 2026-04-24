@@ -1,9 +1,20 @@
+---
+id: 46
+title: "GPU Memory Budget Coordinator"
+status: accepted
+date: 2026-04-01
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: null
+related: []
+tags: [transport-infrastructure]
+implementation-status: live
+implementation-pointer: null
+---
+
 # ADR-046: GPU Memory Budget Coordinator
 
 > Retrospective — documents a decision already implemented in the codebase.
-
-## Status
-Accepted
 
 ## Context
 The media daemon runs three ML backends: Flux (image generation, ~24GB), ACE-Step (music generation, ~16GB), and Kokoro (TTS, ~2GB). On Apple Silicon M3 Max with 128GB unified memory, these share a single physical memory pool — there is no separate VRAM. An 80GB budget is allocated to ML models, leaving headroom for OS, UI, and game process.

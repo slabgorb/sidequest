@@ -1,9 +1,20 @@
+---
+id: 10
+title: "Intent-Based Agent Routing"
+status: superseded
+date: 2026-03-25
+deciders: [Keith Avery]
+supersedes: []
+superseded-by: 67
+related: []
+tags: [agent-system]
+implementation-status: retired
+implementation-pointer: null
+---
+
 # ADR-010: Intent-Based Agent Routing
 
 > Ported from sq-2. Language-agnostic agent architecture.
-
-## Status
-**Superseded by [ADR-067: Unified Narrator Agent](067-unified-narrator-agent.md)** (2026-04)
 
 > **Note (2026-04-11):** ADR-067 collapses the specialist-agent dispatch
 > described below into a single persistent Opus narrator session. The
