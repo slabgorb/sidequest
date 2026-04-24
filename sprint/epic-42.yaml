@@ -1,0 +1,74 @@
+id: '42'
+type: epic
+title: ADR-082 Phase 3 — Port confrontation engine (StructuredEncounter + combat dispatch) to Python
+description: |
+  Phase 3 of the ADR-082 Python port. Ports the unified StructuredEncounter
+  model (ADR-033), resource pools, tension tracker, and combat dispatch
+  from sidequest-api (Rust) to sidequest-server (Python).
+
+  Four stories in a DAG:
+    42-1 (types) → { 42-2 resource_pool, 42-3 tension_tracker } → 42-4 (dispatch + OTEL + narrator wiring)
+
+  42-2 and 42-3 are parallelisable. 42-4 carries a human-playtest
+  acceptance gate.
+
+  Structural corrections vs the execution-strategy spec (captured in the
+  decomposition plan):
+    - combat_models.rs does not exist in Rust source
+    - engagement.rs (18 LOC) is trope-engine, not combat
+    - Combat and chase are already unified via StructuredEncounter
+      (ADR-033); chase cinematography (chase_depth.rs) is Phase 4 on
+      top of the already-typed encounter.
+
+  Already ported ahead (Epic 39 Rust work): EdgePool,
+  Character.is_broken, Character.edge_fraction. Phase 3 formalises the
+  Combatant interface as a Python Protocol.
+
+  Phase 1 IOU promoted in 42-1: GameSnapshot.encounter (dict | None →
+  StructuredEncounter | None). Recommendation: pull
+  GameSnapshot.resources forward from Phase 4 into 42-2 to avoid a
+  second cleanup pass.
+
+  Related:
+    - docs/adr/082-port-api-rust-to-python.md
+    - docs/superpowers/specs/2026-04-19-python-port-execution-strategy-design.md
+    - docs/plans/phase-3-combat-port.md
+priority: p0
+status: backlog
+repos: server
+stories:
+  - id: 42-1
+    title: Port StructuredEncounter + EncounterMetric + SecondaryStats + EncounterActor + EncounterPhase types; formalise Combatant as a Python Protocol; promote GameSnapshot.encounter from dict to typed
+    points: 5
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 42-2
+    title: Port ResourcePool + ResourceThreshold + ResourcePatch(Op/Result/Error) + mint_threshold_lore; promote GameSnapshot.resources from pass-through list to typed list[ResourcePool] (recommended pull-forward from Phase 4)
+    points: 3
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+    review_findings: '7 blocking: silent-fallback (No Silent Fallbacks hard-gate), wiring-test gap, stale P4-deferred comment, docstring/mutator asymmetry, ThresholdAt Protocol type lie, detect_crossings export gap, OTEL deferral docs missing on 4 resource-pool methods'
+    review_verdict: approved
+  - id: 42-3
+    title: Port TensionTracker + PacingHint + DeliveryMode + CombatEvent classification + classify_round/classify_combat_outcome; wire PacingHint into narrator prompt zone (Rust-parity fixture suite)
+    points: 5
+    priority: p0
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-21'
+    repos: server
+    workflow: tdd
+    completed: '2026-04-21'
+    review_findings: '13 confirmed findings (6 HIGH severity per project rules: 2 silent-fallback asserts, 1 stringly-typed TurnClassification.kind, 1 _EventSpike not frozen, 1 vacuous is-not-None on enum members, 1 silent pytest.skip on missing Rust source); 6 MEDIUM (doc inaccuracies, test-file ruff missed by TEA scope, private-API coupling in tests, Any annotations); 1 OTEL span downgraded (Architect deferred to 42-4). All addressable in single green-rework pass — no test redesign needed.'
+    review_verdict: approved
+  - id: 42-4
+    title: Combat dispatch + OTEL catalog + narrator wiring — in_combat helper, find_confrontation_def, encounter resolution from tropes, strip_combat_brackets, combat.* span names byte-identical to Rust, e2e playtest gate
+    points: 8
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
