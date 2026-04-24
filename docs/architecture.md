@@ -1,9 +1,9 @@
-# SideQuest API — Architecture
+# SideQuest Server — Architecture
 
-> System design for the Rust port of the SideQuest AI Narrator engine.
-> 12-crate workspace, 70 game modules, narrator-primary agent model, 3 turn modes.
+> System design for the SideQuest AI Narrator engine.
+> Python package composition, narrator-primary agent model, three turn modes.
 >
-> **Last updated:** 2026-04-11
+> **Last updated:** 2026-04-23 (post-ADR-082 cutover)
 
 ## Architectural Layers
 
@@ -13,25 +13,25 @@
 │  ThemeProvider, GameLayout, NarrativeView, PartyPanel, CombatOverlay│
 │  useGameSocket, useStateMirror, useMusicPlayer, 3D dice overlay     │
 └────────┬──────────────────────────────────────┬─────────────────────┘
-         │ WebSocket /ws (JSON + binary PCM)     │ REST /api/genres
+         │ WebSocket /ws (JSON)                  │ REST /api/genres
          ▼                                       ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                      Transport Layer (sidequest-server)              │
-│  axum Router, WebSocket upgrade, CORS, static files                 │
-│  router.rs, ws.rs, telemetry.rs, render_integration.rs              │
+│                   Transport Layer (sidequest.server)                 │
+│  FastAPI app, WebSocket upgrade, CORS, static files                 │
+│  app.py, websocket.py, watcher.py, rest.py                          │
 └────────┬────────────────────────────────────────────────────────────┘
-         │ GameMessage (sidequest-protocol)
+         │ GameMessage (pydantic discriminated union)
          ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                      Session Layer (sidequest-server)                │
+│                    Session Layer (sidequest.server)                  │
 │  Per-connection state machine: Connect → Create → Play              │
-│  SharedGameSession for multiplayer (Arc<RwLock<>>)                  │
-│  session.rs, shared_session.rs, lifecycle.rs, dispatch.rs           │
+│  SessionRoom for multiplayer (asyncio locks + broadcast channels)   │
+│  session_handler.py, session_room.py, dispatch/                     │
 └────────┬────────────────────────────────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│                    Orchestrator Layer (sidequest-server/lib.rs)      │
+│                Orchestrator Layer (sidequest.agents.orchestrator)    │
 │  Intent routing → Agent dispatch → State patching → Broadcast       │
 │  Slash command interception, TurnBarrier, perception rewriting      │
 │  Pacing engine (TensionTracker → drama_weight → delivery mode)      │
@@ -39,119 +39,107 @@
          │                      │
          ▼                      ▼
 ┌──────────────────────┐ ┌────────────────────────────────────────────┐
-│    Agent Layer       │ │              Game Layer (sidequest-game)    │
-│  (sidequest-agents)  │ │  ~70 modules: state, combat, chase, tropes,│
-│  Claude CLI subproc  │ │  inventory, NPCs, OCEAN, lore, conlang,    │
-│  Unified narrator    │ │  faction agendas, world materialization,   │
-│  + auxiliary agents  │ │  music direction, barriers, dice resolve   │
+│    Agent Layer       │ │              Game Layer                     │
+│  (sidequest.agents)  │ │  (sidequest.game)                           │
+│  Claude CLI subproc  │ │  ~70 modules: state, combat, chase, tropes,│
+│  Unified narrator    │ │  inventory, NPCs, OCEAN, lore, conlang,    │
+│  + auxiliary agents  │ │  faction agendas, world materialization,   │
+│  + prompt_framework  │ │  music direction, barriers, dice resolve   │
 └──────────────────────┘ └──────────────┬─────────────────────────────┘
                                         │
          ┌──────────────────────────────┤
          ▼                              ▼
 ┌──────────────────────┐ ┌────────────────────────────────────────────┐
 │  Genre Layer         │ │           Persistence Layer                 │
-│  (sidequest-genre)   │ │  rusqlite (saves), serde_yaml (genre packs)│
+│  (sidequest.genre)   │ │  sqlite3 (saves), PyYAML (genre packs)     │
 │  YAML pack loader    │ │  Narrative log, KnownFact accumulation     │
-│  11 genre packs       │ │  persistence.rs                            │
+│  6 genre packs       │ │  sidequest.game.persistence                │
 └──────────────────────┘ └────────────────────────────────────────────┘
 
          ┌────────────────────────────────────────────────────────────┐
-         │              Daemon Client (sidequest-daemon-client)        │
+         │              Daemon Client (sidequest.daemon_client)        │
          │  Unix socket → sidequest-daemon (Python sidecar)           │
-         │  Image gen (Flux), music (ACE-Step), SFX mixing (pygame)   │
+         │  Image gen (Flux / Z-Image), music (ACE-Step), SFX mixing  │
          └────────────────────────────────────────────────────────────┘
 ```
 
-## Workspace Structure
+## Package Structure
 
 ```
-sidequest-api/
-├── Cargo.toml                        # [workspace] root
-├── crates/
-│   ├── sidequest-protocol/           # GameMessage enum, typed payloads, serde
-│   ├── sidequest-genre/              # YAML loader, genre pack structs, 11 packs
-│   ├── sidequest-game/               # ~70 modules — state, combat, NPCs, lore, pacing, etc.
-│   ├── sidequest-agents/             # Claude CLI subprocess, narrator + auxiliary agents
-│   ├── sidequest-server/             # axum HTTP/WS, session management, orchestrator
-│   ├── sidequest-daemon-client/      # Unix socket client for Python media daemon
-│   ├── sidequest-telemetry/          # OTEL tracing and watcher event infrastructure
-│   ├── sidequest-validate/           # Genre pack validation utilities
-│   ├── sidequest-encountergen/       # CLI: enemy stat block generator
-│   ├── sidequest-loadoutgen/         # CLI: starting equipment generator
-│   ├── sidequest-namegen/            # CLI: NPC identity block generator
-│   └── sidequest-promptpreview/      # CLI: prompt template preview tool
-└── tests/                            # Integration tests
+sidequest-server/
+├── pyproject.toml                     # hatchling build, uv-managed
+├── sidequest/
+│   ├── protocol/                      # GameMessage discriminated union, typed payloads
+│   ├── genre/                         # YAML loader, genre pack models, 6 packs
+│   ├── game/                          # ~30+ modules — state, combat, NPCs, lore, pacing, etc.
+│   ├── agents/                        # Claude CLI subprocess, narrator + auxiliary agents
+│   ├── server/                        # FastAPI HTTP/WS, session management, dispatch
+│   ├── daemon_client/                 # Unix socket client for Python media daemon
+│   ├── telemetry/                     # OTEL tracing and watcher event infrastructure
+│   └── cli/                           # Entry points (encountergen, loadoutgen, namegen,
+│                                      #   promptpreview, validate)
+└── tests/                             # pytest + pytest-asyncio
 ```
+
+The package composition mirrors the prior Rust crate layout 1:1 (per ADR-082). This was load-bearing during the port — any feature, span, or test can be compared across historical trees by path. Post-port refactoring is a separate decision; for now, structural fidelity wins ties.
 
 **Dependency graph:**
 ```
-sidequest-server
-  ├── sidequest-agents
-  │     └── sidequest-protocol
-  ├── sidequest-game
-  │     ├── sidequest-protocol
-  │     └── sidequest-genre
-  ├── sidequest-daemon-client
-  └── sidequest-protocol
+sidequest.server
+  ├── sidequest.agents
+  │     └── sidequest.protocol
+  ├── sidequest.game
+  │     ├── sidequest.protocol
+  │     └── sidequest.genre
+  ├── sidequest.daemon_client
+  └── sidequest.protocol
 ```
 
 ## Key Design Decisions
 
 ### ADR-001 / ADR-067: Claude CLI Only, Unified Narrator
 
-All LLM calls use `claude -p` subprocess via `tokio::process::Command`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery. Per **ADR-067** (Unified Narrator Agent), the narrator is the primary agent — it handles exploration, dialogue, combat narration, and chase narration through a persistent Opus session. Auxiliary agents (`world_builder`, `troper`, `resonator`) run for specialist tasks outside the per-turn critical path. The original multi-agent dispatch (ADR-010: creature_smith, dialectician, ensemble) is superseded; those agent files were removed but their names persist in routing code (`exercise_tracker`, `orchestrator` AgentKind enum, prompt framework agent lists). `intent_router` remains as state-override classification (in_combat → Combat, in_chase → Chase, default → Exploration).
+All LLM calls use `claude -p` subprocess via `asyncio.create_subprocess_exec`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery. Per **ADR-067** (Unified Narrator Agent), the narrator is the primary agent — it handles exploration, dialogue, combat narration, and chase narration through a persistent Opus session. Auxiliary agents (`world_builder`, `troper`, `resonator`) run for specialist tasks outside the per-turn critical path. The original multi-agent dispatch (ADR-010: creature_smith, dialectician, ensemble) is superseded. `intent_router` remains as state-override classification (`in_combat` → Combat, `in_chase` → Chase, default → Exploration).
 
 ### ADR-002: Typed Protocol
 
-Strongly-typed Rust structs for every message payload using `serde(tag = "type")` on the `GameMessage` enum. The type system catches payload mismatches at compile time — eliminates the `KeyError` class of bugs from the Python codebase. Current `GameMessage` variant count grows with each story; count is intentionally not tracked here to avoid stale documentation.
+Strongly-typed pydantic v2 models for every message payload. `GameMessage` is a discriminated union keyed on `type` (`Annotated[Union[...], Field(discriminator='type')]`). The type system catches payload mismatches at validation time — eliminates the `KeyError` class of bugs from legacy `dict[str, Any]` handlers. This is a strict upgrade over the pre-port Python ancestor; pydantic validation is enforced at the WebSocket boundary.
 
 ### ADR-003: Session as Actor
 
-Each WebSocket connection spawns a tokio task owning a `Session`. Single-player: one session, one orchestrator, no contention. Multiplayer: sessions share a `SharedGameSession` behind `Arc<RwLock<>>` with `TurnBarrier` for coordinated turn resolution.
+Each WebSocket connection runs as an asyncio task owning a `Session`. Single-player: one session, one orchestrator, no contention. Multiplayer: sessions share a `SessionRoom` behind `asyncio.Lock` with `TurnBarrier` for coordinated turn resolution.
 
 ### ADR-004: Genre Packs as YAML
 
-11 genre packs loaded via `serde_yaml` into typed structs. Read-only at runtime. Shared with sq-2 and sidequest-content repo. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas.
+6 genre packs loaded via PyYAML into pydantic models. Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
 
 ### ADR-005: Background-First Pipeline
 
-Only the text narration response is on the critical path. Everything else spawns as background tasks: image generation, music cue selection, state delta computation, trope tick, lore accumulation. The player sees narration immediately; media arrives asynchronously.
+Only the text narration response is on the critical path. Everything else runs as asyncio tasks: image generation, music cue selection, state delta computation, trope tick, lore accumulation. The player sees narration immediately; media arrives asynchronously.
 
 ### ADR-006: Persistence via SQLite
 
-`rusqlite` for structured persistence (game state, character data, saves). Wrapped in `spawn_blocking` at the async boundary. Narrative log is append-only. KnownFacts persist and accumulate across turns with provenance tracking.
+Standard-library `sqlite3` for structured persistence (game state, character data, saves). DB calls run on a worker thread via `asyncio.to_thread` at the async boundary. Narrative log is append-only. KnownFacts persist and accumulate across turns with provenance tracking.
 
 ### ADR-035: Unix Socket IPC
 Python ML sidecar communicates via Unix domain socket (`/tmp/sidequest-renderer.sock`) with newline-delimited JSON-RPC. Separate failure domain from the game engine. Models stay warm across sessions.
 
 ### ADR-036/037: Multiplayer State Architecture
-SharedGameSession keyed by `genre:world` holds world state; PlayerState holds per-player data. Sync-to-locals pattern checks out state for dispatch, preserving the single-player code path unchanged. TurnBarrier with adaptive timeout and claim-election prevents duplicate narrator calls.
+`SessionRoom` keyed by `genre:world` holds world state; `PlayerState` holds per-player data. Sync-to-locals pattern checks out state for dispatch, preserving the single-player code path unchanged. `TurnBarrier` with adaptive timeout and claim-election prevents duplicate narrator calls.
 
 ### ADR-038: WebSocket Transport
-Reader/writer task split per connection. Broadcast channels: JSON `GameMessage` for global state and session-scoped `TargetedMessage` for per-player narration. ProcessingGuard prevents concurrent dispatch per player. *(ADR-038 updated 2026-04-11 to mark TTS binary channel as historical; see ADR-076.)*
+Reader/writer task split per connection. Broadcast channels: JSON `GameMessage` for global state and session-scoped `TargetedMessage` for per-player narration. `ProcessingGuard` prevents concurrent dispatch per player. *(ADR-038 marks TTS binary channel as historical; see ADR-076.)*
 
 ### ADR-039/057: Narrator Output & Sidecar Tools
-The narrator outputs prose only — no JSON blocks. Mechanical state changes (mood, intent,
-items acquired, quests, SFX, resource deltas, personality events, scene renders) are handled
-by sidecar tools that write JSONL results during narration. `assemble_turn` merges tool
-results with narration, with tool values always taking precedence. The old three-tier JSON
-extraction fallback (ADR-039/013) is superseded by this tool-based approach.
+The narrator outputs prose only — no JSON blocks. Mechanical state changes (mood, intent, items acquired, quests, SFX, resource deltas, personality events, scene renders) are handled by sidecar tools that write JSONL results during narration. `assemble_turn` merges tool results with narration, with tool values always taking precedence. The old three-tier JSON extraction fallback (ADR-039/013) is superseded by this tool-based approach.
 
 ### ADR-059: Monster Manual — Server-Side Pre-Generation
-NPC and encounter data is pre-generated server-side using Rust tool binaries (namegen,
-encountergen, loadoutgen) and stored in a persistent Monster Manual at
-`~/.sidequest/manuals/{genre}_{world}.json`. The narrator sees pre-generated NPCs and
-enemies embedded in `<game_state>` as world facts ("NPCs nearby", "Hostile creatures").
-Claude treats game_state as ground truth and uses exact names, dialogue quirks, and
-abilities. Post-narration gate matches mentioned names against the Manual via compound
-key `(name, faction, world)` for stat block enrichment. This replaced narrator-side
-tool calling (ADR-056), which failed empirically — Claude in `claude -p` mode
-consistently ignores `--allowedTools` instructions.
+NPC and encounter data is pre-generated server-side using Python CLI entry points (`namegen`, `encountergen`, `loadoutgen`) and stored in a persistent Monster Manual at `~/.sidequest/manuals/{genre}_{world}.json`. The narrator sees pre-generated NPCs and enemies embedded in `<game_state>` as world facts ("NPCs nearby", "Hostile creatures"). Claude treats game_state as ground truth and uses exact names, dialogue quirks, and abilities. Post-narration gate matches mentioned names against the Manual via compound key `(name, faction, world)` for stat block enrichment. This replaced narrator-side tool calling (ADR-056), which failed empirically — Claude in `claude -p` mode consistently ignores `--allowedTools` instructions.
 
 ### ADR-047: Input Sanitization
 All player text passes through `sanitize_player_text()` at the protocol layer — strips injection attempts before routing.
 
-## Game Systems (sidequest-game, 70 modules)
+## Game Systems (sidequest.game, ~30+ modules)
 
 ### Core State
 - **GameState:** Central state composition — characters, NPCs, world, combat, chase
@@ -215,7 +203,7 @@ All player text passes through `sanitize_player_text()` at the protocol layer �
 
 ```
 Client A ──ws──► Session A ─┐
-                             ├──► SharedGameSession (Arc<RwLock<>>)
+                             ├──► SessionRoom (asyncio.Lock)
 Client B ──ws──► Session B ─┘        │
                                      ├── TurnBarrier (adaptive timeout)
 Client C ──ws──► Session C ──────────┤   └── Resolution lock (one narrator call)
@@ -230,30 +218,34 @@ Three turn modes govern coordination:
 - **STRUCTURED:** Sealed letter pattern — all submit, then barrier resolves, one narrator call
 - **CINEMATIC:** DM-driven, players observe
 
-## What Stays in Python (sidequest-daemon)
+## What Stays in sidequest-daemon (Python sidecar)
 
-The ML inference pipeline stays in Python as a sidecar service. Rust communicates via `sidequest-daemon-client` crate over Unix socket (ADR-035).
+The ML inference pipeline is its own service. `sidequest.daemon_client` communicates over Unix socket (ADR-035). The daemon is out of scope for the server and has uses beyond SideQuest.
 
 | Subsystem | Stack | Notes |
 |-----------|-------|-------|
-| Image generation | Flux.1 (schnell + dev) | Multiple render tiers, scene cache, beat filter |
+| Image generation | Flux.1 / Z-Image Turbo, MLX | Multiple render tiers, scene cache, beat filter |
 | Music library | ACE-Step pre-render | Mood-indexed theme tracks, cross-fade on scene change |
 | Audio mixing | pygame mixer | Music + SFX channels only (no voice/TTS) |
 | Scene interpretation | Pattern matching | Narrative text → structured stage cues |
 | Subject extraction | Claude CLI | Prose → visual descriptions |
 
 ```
-sidequest-api (Rust)  ◄──── HTTP / Unix socket ────►  sidequest-daemon (Python)
-     │                                                        │
-     ├── Sends: narrative text, scene context                 ├── Returns: image URLs, audio paths
-     ├── Sends: music cue requests (mood / intensity)         ├── Returns: track identifiers
-     └── Shares: genre_packs/ (read-only assets)              └── Reads: genre_packs/ visual/audio config
+sidequest-server (Python)  ◄──── Unix socket ────►  sidequest-daemon (Python)
+     │                                                     │
+     ├── Sends: narrative text, scene context              ├── Returns: image URLs, audio paths
+     ├── Sends: music cue requests (mood / intensity)      ├── Returns: track identifiers
+     └── Shares: genre_packs/ (read-only assets)           └── Reads: genre_packs/ visual/audio config
 ```
 
 ## ADR Index
 
-Architecture Decision Records govern the system. See [docs/adr/README.md](adr/README.md) for the current index. **Note:** several ADRs in the TTS / voice chat / WebRTC family describe historical architecture that has since been removed — pass 2 of the 2026-04-11 doc sweep will mark the affected ADRs (notably ADR-045, ADR-054, and media-channel references in ADR-038) with status updates.
+Architecture Decision Records govern the system. See [docs/adr/README.md](adr/README.md) for the current index. Post-ADR-082 cutover, decomposition-era ADRs that describe Rust crate layouts (060-065, 072) carry post-port mapping notes to the Python package tree; narrative and game-design ADRs remain untouched as language-agnostic historical records.
 
 ## Wiring Diagrams
 
 For end-to-end signal traces showing every feature's path from UI input through server layers to storage, see [docs/wiring-diagrams.md](wiring-diagrams.md). Covers all 15 feature areas with Mermaid flowcharts, file paths, and function names.
+
+## History
+
+The backend was originally written in Python (archived as `sq-2`), briefly ported to Rust as `sidequest-api` (~2026-03-30) as a learning exercise and for type-safety benefits, and then ported back to Python as `sidequest-server` per **ADR-082** (2026-04-19). **ADR-085** governed sprint-tracker hygiene through the cutover window. The Rust tree no longer exists on disk as of 2026-04-23. Design artifacts from the Rust era — crate boundaries, OTEL span catalog, the typed-protocol discipline — carried forward as the Python package composition; the code itself did not.

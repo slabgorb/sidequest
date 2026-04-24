@@ -1,9 +1,18 @@
 # ADR-082: Port `sidequest-api` from Rust back to Python
 
-**Status:** Proposed (quick-look draft)
-**Date:** 2026-04-19
+**Status:** Accepted (cutover completed 2026-04-23)
+**Date:** 2026-04-19 (accepted), 2026-04-23 (cutover)
 **Deciders:** Keith Avery (Bossmang), Naomi Nagata (Architect, design mode)
-**Related:** none — this ADR supersedes the implicit "Rust is the backend" decision baked in when the Python-to-Rust port landed (~2026-03-30).
+**Related:** ADR-085 (port-drift tracker hygiene). Supersedes the implicit
+"Rust is the backend" decision baked in when the Python-to-Rust port landed
+(~2026-03-30).
+
+> **Cutover note (2026-04-23):** The Rust tree (`sidequest-api/`) was removed
+> from the working tree and archived read-only at
+> <https://github.com/slabgorb/sidequest-api>. The Python tree (`sidequest-server/`)
+> is the live backend. Per ADR-085, sprint-tracker reconciliation is the
+> responsibility of Architect/PM for the remainder of the cutover-plus-one-sprint
+> audit window.
 
 ## Context
 

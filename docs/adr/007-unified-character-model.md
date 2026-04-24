@@ -1,6 +1,9 @@
 # ADR-007: Unified Character Model
 
-> Ported from sq-2. Rust adaptation: Pydantic model becomes serde struct.
+> Ported from sq-2 (Pydantic) → Rust (serde struct) → back to Python per
+> ADR-082 (pydantic v2 model). The decision is language-agnostic; only the
+> type-declaration syntax below is a historical Rust artifact. Current home:
+> `sidequest-server/sidequest/game/character.py`.
 
 ## Status
 Accepted

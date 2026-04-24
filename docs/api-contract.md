@@ -1,9 +1,14 @@
 # SideQuest API Contract
 
-> WebSocket + REST protocol between sidequest-api (Rust) and sidequest-ui (React).
-> Source of truth: `sidequest-protocol/src/message.rs` — 33 message types, 31 payload structs.
+> WebSocket + REST protocol between sidequest-server (Python) and sidequest-ui (React).
+> Source of truth: `sidequest-server/sidequest/protocol/messages.py` (pydantic v2 discriminated union).
 >
-> **Last updated:** 2026-04-06
+> **Last updated:** 2026-04-23 (post-ADR-082 cutover)
+>
+> *Historical note:* between 2026-03-30 and 2026-04-19 the source of truth was
+> `sidequest-api/crates/sidequest-protocol/src/message.rs` (Rust). ADR-082 ported
+> the protocol to pydantic with byte-identical JSON on the wire; the message
+> type set and payload shapes documented below are unchanged by the port.
 
 ## Transport
 

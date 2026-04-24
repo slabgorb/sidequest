@@ -1,7 +1,13 @@
-# Repository Configuration for SideQuest (Rust rewrite)
+# Repository Configuration for SideQuest (Python backend)
 # Orchestrator pattern: parent repo tracks sprint files and shared config,
-# subrepos (sidequest-api, sidequest-ui) are separate git repos with their own remotes.
+# subrepos (sidequest-server, sidequest-ui, sidequest-content, sidequest-daemon)
+# are separate git repos with their own remotes.
 # PRs go to individual subrepos, not the parent.
+#
+# History: sidequest-api (Rust) was the backend from ~2026-03-30 to 2026-04-19.
+# ADR-082 ported it back to Python as sidequest-server; the Rust tree was
+# removed from the working tree at cutover (2026-04-23) and archived at
+# https://github.com/slabgorb/sidequest-api.
 
 pr_title_format: "{type}({scope}): {title}"
 
@@ -20,22 +26,6 @@ repos:
     branch_strategy: trunk-based
     default_branch: main
 
-  api:
-    path: sidequest-api
-    type: api
-    description: SideQuest game engine — Rust backend with WebSocket API
-    language: rust
-    test_command: cargo test
-    build_command: cargo build
-    lint_command: cargo clippy -- -D warnings
-    dev_command: cargo run
-    branch_strategy: trunk-based
-    default_branch: develop
-    notes: |
-      Rust game engine ported from Python sq-2.
-      Tokio async runtime, axum for HTTP/WebSocket, serde for serialization.
-      Claude CLI subprocess calls for LLM integration.
-
   ui:
     path: sidequest-ui
     type: ui
@@ -51,7 +41,7 @@ repos:
     notes: |
       React 19 + Vite + TypeScript + Tailwind CSS + shadcn/ui.
       Ported from sq-2/client/.
-      Connects to sidequest-api via WebSocket.
+      Connects to sidequest-server via WebSocket.
 
   content:
     path: sidequest-content
@@ -67,7 +57,7 @@ repos:
   daemon:
     path: sidequest-daemon
     type: service
-    description: SideQuest media daemon — image generation, TTS, audio mixing
+    description: SideQuest media daemon — image generation and audio mixing
     language: python
     test_command: pytest
     build_command: "true"
@@ -77,16 +67,17 @@ repos:
     default_branch: develop
     notes: |
       Python media services extracted from sq-2.
-      Renderer daemon (Flux/SDXL), Kokoro TTS, audio mixer,
+      Renderer daemon (Flux / Z-Image Turbo, MLX), audio mixer,
       scene interpreter, subject extractor, beat filter.
-      Communicates with sidequest-api via Unix socket / HTTP.
-      Shares genre_packs/ with the Rust API for asset access.
+      TTS pipeline (Kokoro/Piper) was removed in 2026-04 — see ADR-076.
+      Communicates with sidequest-server via Unix socket / HTTP.
+      Shares genre_packs/ with the server for asset access.
       Out of scope for ADR-082 — serves uses beyond SideQuest.
 
   server:
     path: sidequest-server
     type: api
-    description: SideQuest Python API server — port target of sidequest-api (Rust)
+    description: SideQuest game engine — Python FastAPI backend with WebSocket API
     language: python
     framework: fastapi
     test_command: pytest
@@ -96,10 +87,11 @@ repos:
     branch_strategy: trunk-based
     default_branch: develop
     notes: |
-      Python FastAPI port of sidequest-api per ADR-082.
-      Gitignored inline subrepo — checked out next to sidequest-api
-      but not tracked by the orchestrator.
+      FastAPI + uvicorn + pydantic v2. Port target of the former
+      sidequest-api (Rust) per ADR-082; cutover completed 2026-04-23.
+      Gitignored inline subrepo — not tracked by the orchestrator.
       1:1 crate-to-package mapping preserved during the port to allow
-      feature/span/test comparison across trees by path.
-      See docs/adr/082-port-api-rust-to-python.md for rationale,
-      port strategy, and cut-over plan.
+      feature/span/test comparison against the archived Rust tree
+      (https://github.com/slabgorb/sidequest-api) by path.
+      See docs/adr/082-port-api-rust-to-python.md and
+      docs/adr/085-rust-to-python-port-drift.md.

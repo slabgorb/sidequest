@@ -54,14 +54,9 @@ sidequest-content/            # Genre packs — single source of truth (subrepo)
 │   ├── caverns_and_claudes/
 │   ├── elemental_harmony/
 │   ├── heavy_metal/
-│   ├── low_fantasy/
 │   ├── mutant_wasteland/
-│   ├── neon_dystopia/
-│   ├── pulp_noir/
-│   ├── road_warrior/
 │   ├── space_opera/
 │   ├── spaghetti_western/
-│   ├── victoria/
 │   └── <genre>/worlds/<world>/
 └── CLAUDE.md
 
@@ -111,6 +106,10 @@ sidequest-daemon/             # Python media services (subrepo)
 - **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth), loaded by the server from `SIDEQUEST_GENRE_PACKS`
 - **Media daemon** is a Python sidecar for image/audio generation (Flux / Z-Image / ACE-Step)
 - **Save files** live at `~/.sidequest/saves/` (SQLite `.db` files, one per genre/world session) — not in the repo. See `.pennyfarthing/guides/save-management.md` for cleanup, inspection, and migration procedures
+
+### Port history
+
+The backend was briefly a Rust workspace (`sidequest-api`, ~2026-03-30 to 2026-04-19). **ADR-082** ported it back to Python as `sidequest-server`; **ADR-085** governed tracker hygiene through cutover. The Rust tree no longer exists on disk locally, but is preserved as a read-only reference at **https://github.com/slabgorb/sidequest-api** — use it when an ADR references a Rust-specific layout and you need to trace the original implementation. Older ADRs that reference Rust-specific layouts (crates, `lib.rs`, cargo decomposition) are preserved as historical design records — see `docs/adr/README.md` for the port-era context header and per-ADR post-port mapping notes.
 
 ## Commands
 
@@ -215,4 +214,77 @@ every subsystem decision.
 The GM panel is the lie detector. If a subsystem isn't emitting OTEL spans, you can't
 tell whether it's engaged or whether Claude is just improvising.
 </important>
+
+## ADR Index
+
+Architecture Decision Records live at `docs/adr/` — see `docs/adr/README.md` for the
+authoritative index with summaries, status rationale, and the port-era reading
+guide. This section is a compact category-keyed list for activation-time orientation.
+Rust code samples in pre-ADR-082 ADRs are historical; translation table in
+`docs/adr/README.md`.
+
+**Load-bearing reads — start here:**
+- **ADR-082** Port `sidequest-api` from Rust back to Python — Accepted (cutover 2026-04-23)
+- **ADR-085** Tracker hygiene during the Rust→Python port — Accepted
+- **ADR-067** Unified Narrator Agent — Accepted (supersedes ADR-010 multi-agent routing)
+- **ADR-059** Monster Manual — Server-Side Pre-Generation — Accepted (supersedes ADR-056 narrator tool-calling)
+- **ADR-038** WebSocket Transport Architecture — Accepted
+- **ADR-035** Unix Socket IPC for Python Sidecar — Accepted
+- **ADR-014** Diamonds and Coal (narrative_weight) — Accepted; enforced by ADR-080
+
+**Core architecture (001–007)**
+- 001 Claude CLI Only · 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model
+
+**Prompt engineering (008–009)**
+- 008 Three-Tier Rule Taxonomy · 009 Attention-Aware Prompt Zones
+
+**Agent system (010–013, 066–067)**
+- 010 Intent-Based Routing (*superseded by 067*) · 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction (*superseded by 057*) · 066 Persistent Opus Narrator Sessions · 067 **Unified Narrator Agent**
+
+**Game systems — design-layer, language-agnostic (014–025, 074, 077, 078, 080, 081)**
+- 014 **Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Chargen · 017 Cinematic Chase Engine · 018 Trope Engine · 019 Cartography Discovery · 020 NPC Disposition · 021 Progression · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension · 025 Pacing Detection · 074 Dice Resolution Protocol *(Proposed)* · 077 Dogfight Subsystem *(Proposed)* · 078 Edge/Composure + Push-Currency Rituals *(Proposed)* · 080 **Unified Narrative Weight Trait** (enforces 014) · 081 Advancement Effect Variant Expansion *(Proposed)*
+
+**Frontend / protocol (026–027, 075, 079)**
+- 026 Client-Side State Mirror · 027 Reactive State Messaging · 075 3D Dice Rendering *(Proposed)* · 079 Genre Theme Unification
+
+**Multiplayer (028–030, 036–037, 054)**
+- 028 Perception Rewriter · 029 Guest NPC Players *(Proposed)* · 030 Scenario Packs *(Proposed)* · 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State · 054 WebRTC Voice Chat *(Historical — removed with TTS)*
+
+**Transport / infrastructure (035, 038, 046, 047)**
+- 035 **Unix Socket IPC** · 038 **WebSocket Transport** · 046 GPU Memory Budget Coordinator · 047 Prompt Injection Sanitization
+
+**Narrator / text (039–040, 049, 052, 057)**
+- 039 Narrator Structured Output *(superseded by 057)* · 040 Narrative Character Sheet · 049 Narrator Verbosity × Vocabulary · 052 Narrative Axis System · 057 Narrator Crunch Separation *(partially superseded by 059)*
+
+**NPC / character systems (041–043, 053)**
+- 041 Genie Wish / Consequence Engine · 042 OCEAN Personality Live Evolution · 043 Conlang Morpheme System · 053 Scenario System (clue graph, belief state, gossip)
+
+**Media / audio / rendering (044–045, 048, 050, 070, 083–084)**
+- 044 Speculative Prerendering · 045 Client Audio Engine *(partially superseded — TTS removed)* · 048 Lore RAG Store · 050 Image Pacing Throttle · 070 MLX Image Renderer · 083 Multi-LoRA Stacking *(Proposed)* · 084 LoRA Composition Dimension *(Proposed)*
+
+**Turn management (051)**
+- 051 Two-Tier Turn Counter (Interaction vs Round)
+
+**Room graph / dungeon crawl (055, 071)**
+- 055 Room Graph Navigation *(Proposed)* · 071 Tactical ASCII Grid Maps *(Proposed)*
+
+**Code generation / tooling (056, 059, 069)**
+- 056 Script Tool Generators *(superseded by 059)* · 059 **Monster Manual — Server-Side Pre-Generation** · 069 Scenario Fixtures
+
+**Observability (058)**
+- 058 Claude Subprocess OTEL Passthrough
+
+**Codebase decomposition — all realized or partially realized during the port (060–065, 068, 072)**
+- 060 Genre Models Decomposition — Accepted (via port) · 061 Lore Module Decomposition — Accepted (via port) · 062 Server lib.rs Extraction — Accepted (via port) · 063 Dispatch Handler Splitting — Accepted (via port) · 064 Game Crate Domain Modules — Partially Accepted · 065 Protocol Message Decomposition — *Proposed, unexecuted* · 068 Magic Literal Extraction — Accepted · 072 System/Milieu Decomposition — *Proposed*
+
+**Narrator architecture migration (073, 076)**
+- 073 Local Fine-Tuned Model Architecture — Accepted · 076 Narration Protocol Collapse Post-TTS *(Proposed)*
+
+**Genre mechanics (031–034)**
+- 031 Game Watcher — Semantic Telemetry · 032 Genre-Specific LoRA Training · 033 **Confrontation Engine + Resource Pools** (implemented Epic 28) · 034 Portrait Identity Consistency *(Proposed)*
+
+**Project lifecycle / meta (082, 085)**
+- 082 **Port API Rust → Python** — Accepted (cutover 2026-04-23) · 085 Port-Drift Tracker Hygiene — Accepted
+
+**Conventions:** Bold = load-bearing for current architecture. *(Proposed)* = design approved but not yet executed. *(superseded)* = replaced by a later ADR. *(Historical)* = describes a feature since removed.
 

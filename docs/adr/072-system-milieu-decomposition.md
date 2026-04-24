@@ -198,3 +198,14 @@ Some of these will discover shared milieus or systems as content grows.
 - ADR-003 is superseded for directory structure but its design principles remain valid
 - ADR-052 (narrative axis system) unaffected — axes stay in systems as tuning knobs
 - ADR-056 (script tool generators) unaffected — generators read the assembled GenrePack
+
+## Post-port mapping (ADR-082)
+
+Status in Python: **still proposed.** The Rust→Python port did not execute this
+decomposition — the 1:1 port rule forbade structural refactors during the port.
+`sidequest-server/sidequest/genre/` preserves the monolithic genre-pack shape.
+When this ADR is executed, the work applies to the content layout in
+`sidequest-content/genre_packs/` and the loader in
+`sidequest-server/sidequest/genre/loader.py` + `resolve.py`; the downstream
+game/narrator code remains unchanged per the original ADR's neutral-consequences
+section.

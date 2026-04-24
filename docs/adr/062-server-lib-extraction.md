@@ -1,9 +1,15 @@
 # ADR-062: Server lib.rs Extraction — Route Groups, State, and Watcher Events
 
-**Status:** Proposed
+**Status:** Accepted (realized during ADR-082 Python port, 2026-04)
 **Date:** 2026-04-04
 **Deciders:** Keith
 **Relates to:** ADR-058 (Claude Subprocess OTEL Passthrough)
+
+> **Status amendment (2026-04-23):** Executed during the Python port (ADR-082).
+> There is no `lib.rs` equivalent in Python; the six concerns live as separate
+> modules under `sidequest-server/sidequest/server/` (app.py, websocket.py,
+> watcher.py, rest.py, session_handler.py, session_room.py). See the Post-port
+> mapping section at the end.
 
 ## Context
 
@@ -85,3 +91,19 @@ would worsen that problem. Rejected.
 - **Negative:** More `use` imports in each submodule. Acceptable trade-off.
 - **Negative:** `websocket.rs` will be ~800 lines. Still large, but it's a single
   cohesive concern (WS lifecycle) rather than six unrelated ones.
+
+## Post-port mapping (ADR-082)
+
+The `lib.rs` extraction decision was realized directly in the Python port.
+`sidequest-server/src/lib.rs` has no Python counterpart by name; the six concerns
+live as separate modules in `sidequest-server/sidequest/server/`:
+
+- **Watcher / OTEL types** → `watcher.py`
+- **App state / session mgmt** → `session_handler.py`, `session_room.py`
+- **Router construction / HTTP handlers** → `app.py`, `rest.py`
+- **WebSocket lifecycle** → `websocket.py`
+- **Dispatch pipeline** → `dispatch/` package (see ADR-063)
+
+CLI args live in `app.py`'s entry point (`main()`) rather than a dedicated struct;
+uvicorn + FastAPI handles server bootstrap. The "lib.rs as junk drawer" failure
+mode cannot recur — there is no lib.rs.

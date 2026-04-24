@@ -90,3 +90,16 @@ keeps related types together at a manageable granularity. Rejected.
   Acceptable — it's the point of convergence by definition.
 - **Risk:** `combat.rs` may end up very small (2 types). Acceptable — combat
   payloads will grow as the combat system matures. If not, fold into `session.rs`.
+
+## Post-port mapping (ADR-082)
+
+Status in Python: **still unexecuted.** `sidequest-server/sidequest/protocol/messages.py`
+remains a single file containing the pydantic discriminated union. The
+decomposition plan from the Rust era is preserved here as design intent; when it
+is acted on, the expected layout is `protocol/messages/` with domain submodules
+(`session.py`, `narration.py`, `combat.py`, etc.) and re-exports through
+`__init__.py`. Until then, `messages.py` is the canonical location.
+
+Byte-identical JSON on the wire was a constraint of the port (ADR-082) — any
+future decomposition must preserve the discriminator field name (`type`) and
+the full payload shapes documented in `docs/api-contract.md`.
