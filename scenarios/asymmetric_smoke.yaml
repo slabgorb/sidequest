@@ -1,0 +1,27 @@
+name: asymmetric_smoke
+description: >
+  P1 kills an NPC in shadows while P2-P4 sit at the inn. Verifies end-to-end
+  asymmetric delivery: P2-P4 see no kill, leak audit fires zero, secret note
+  reaches P1 only. Group G Task 7 reference scenario.
+pack: mutant_wasteland
+world: blighted_crossing
+players:
+  - name: Alice
+    character: wanderer
+  - name: Bob
+    character: mechanic
+  - name: Cass
+    character: medic
+  - name: Dan
+    character: scout
+turns:
+  - actor: Alice
+    action: "I sneak into the shack and slit Rickard's throat. No one sees me."
+    assertions:
+      - leak_audit_zero: true
+      - player_receives:
+          Alice: ["SECRET_NOTE", "NARRATION"]
+          Bob: ["NARRATION"]
+          Cass: ["NARRATION"]
+          Dan: ["NARRATION"]
+      - redacted_tokens_absent_in_canonical: ["Rickard", "the guard"]
