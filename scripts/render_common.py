@@ -395,6 +395,16 @@ async def render_batch(
         visual_style = item.pop("_visual_style")
         positive, clip, negative, seed = compose_fn(item, visual_style)
 
+        # Pre-compose the full prompt locally: caller's subject + the world's
+        # positive_suffix from visual_style.yaml. Bypasses the daemon's
+        # catalog composer — that path expects the legacy portrait_manifest
+        # schema (`id`/`descriptions[LOD]`/`culture`) which no shipping world
+        # uses anymore. All worlds now author portrait manifests with
+        # scene-based `appearance` + `culture_aesthetic` strings, and the
+        # batch `compose_fn` already aggregates those into `positive`.
+        suffix = visual_style.get("positive_suffix", "")
+        full_positive = f"{positive}, {suffix}" if suffix else positive
+
         if output_dir:
             out_dir = output_dir / item["genre"]
         else:
@@ -419,8 +429,12 @@ async def render_batch(
             print(f"Genre: {item['genre']}  World: {item['world']}")
             print(f"Name: {item['name']}")
             print(f"Seed: {seed}")
-            print(f"\nPositive prompt ({estimate_tokens(positive)} tokens):")
+            print(f"\nSubject ({estimate_tokens(positive)} tokens):")
             print(f"  {positive}")
+            print(f"\nStyle suffix:")
+            print(f"  {suffix or '(none)'}")
+            print(f"\nFull positive prompt sent to daemon ({estimate_tokens(full_positive)} tokens):")
+            print(f"  {full_positive}")
             print(f"\nCLIP prompt:")
             print(f"  {clip}")
             print(f"\nNegative prompt:")
@@ -430,16 +444,6 @@ async def render_batch(
 
         try:
             lora_paths, lora_scales = resolve_lora_args(visual_style)
-            # Pre-compose the full prompt locally: caller's subject + the
-            # world's positive_suffix from visual_style.yaml. Bypasses the
-            # daemon's catalog composer — that path expects the legacy
-            # schema (portrait_manifest `id`/`descriptions[LOD]`/`culture`)
-            # which no shipping world uses anymore. All worlds now author
-            # portrait manifests with scene-based `appearance` and
-            # `culture_aesthetic` strings, and the batch `compose_fn`
-            # already aggregates those into `positive`.
-            suffix = visual_style.get("positive_suffix", "")
-            full_positive = f"{positive}, {suffix}" if suffix else positive
             result = await send_render(
                 tier, full_positive, clip, negative, seed, steps,
                 lora_paths=lora_paths,

@@ -94,10 +94,13 @@ def compose_prompt(creature: dict, visual_style: dict) -> tuple[str, str, str, i
 def main():
     parser = argparse.ArgumentParser(description="Generate creature images from creatures.yaml")
     parser.add_argument("--genre", help="Only process this genre")
+    parser.add_argument("--world", help="Only process this world (requires --genre)")
     parser.add_argument("--dry-run", action="store_true", help="Preview prompts without rendering")
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS, help="Inference steps")
     parser.add_argument("--force", action="store_true", help="Regenerate existing images")
     args = parser.parse_args()
+    if args.world and not args.genre:
+        parser.error("--world requires --genre")
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -112,6 +115,8 @@ def main():
     for genre_dir in genre_dirs:
         visual_style = load_visual_style(genre_dir, tier="portrait")
         creatures = collect_creatures(genre_dir)
+        if args.world:
+            creatures = [c for c in creatures if c.get("world") == args.world]
         for c in creatures:
             c["_visual_style"] = visual_style
         all_creatures.extend(creatures)
