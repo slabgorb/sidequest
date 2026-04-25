@@ -335,13 +335,15 @@ stories:
     title: Session-to-job mapping for render_broadcast — job_id to session_id not persisted at enqueue, daemon renders are dropped with 'no session mapping'; fixes missing portrait initials too
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     assigned_to: keith.avery@1898andco.io
     started: '2026-04-19'
     repos: api
     workflow: wire-first
+    completed: '2026-04-25'
     type: bug
     branch: feat/37-30-session-to-job-mapping
+    review_verdict: approved
   - id: 37-31
     title: Region population on opening rooms — map_update_skipped because state.current_region is blank on turn 1; require region in world.yaml or inherit default so Map tab is load-bearing from turn 1
     points: 2
