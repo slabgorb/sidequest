@@ -1018,3 +1018,25 @@ async def run_dashboard_server(
                 console.print(f"[dim]Watcher proxy disconnected: {e} — reconnecting in 2s[/dim]")
                 await asyncio.sleep(2)
 
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="SideQuest OTEL dashboard server.")
+    parser.add_argument("--dashboard-port", type=int, default=9765,
+                        help="Port for the HTTP dashboard (default: 9765).")
+    parser.add_argument("--api-host", default="localhost",
+                        help="Game server host (default: localhost).")
+    parser.add_argument("--api-port", type=int, default=8765,
+                        help="Game server WebSocket port (default: 8765).")
+    parser.add_argument("--otlp-port", type=int, default=None,
+                        help="OTLP receiver port (default: dashboard-port+2).")
+    args = parser.parse_args()
+
+    asyncio.run(run_dashboard_server(
+        api_host=args.api_host,
+        api_port=args.api_port,
+        dashboard_port=args.dashboard_port,
+        otlp_port=args.otlp_port,
+    ))
+

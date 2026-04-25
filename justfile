@@ -186,7 +186,7 @@ check-all: server-check client-lint client-test daemon-lint
 
 # OTEL dashboard — browser-friendly /ws/watcher viewer
 otel port="9765":
-    python3 {{root}}/scripts/playtest.py --dashboard-only --dashboard-port {{port}}
+    uv run python3 {{root}}/scripts/playtest_dashboard.py --dashboard-port {{port}}
 
 # Headless playtest driver (uses the running server)
 playtest *flags:
