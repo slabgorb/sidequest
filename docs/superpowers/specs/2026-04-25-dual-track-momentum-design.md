@@ -21,7 +21,7 @@ Three structural failures compound:
 
 The current `outcome` is `f"resolved at beat {n}"`, which carries no win/loss information for the narrator or the consequence pipeline to act on.
 
-A fourth issue — `BEAT_APPLIED` watcher events not being persisted to the `events` table — is real but **out of scope** for this spec. The save's `events` rows are all `kind='NARRATION'`; the OTEL spans are emitted in the engine but never flow into the projection store. That is a watcher/storage problem and gets its own spec.
+A fourth issue compounds the first three: the save's `events` rows are all `kind='NARRATION'`. The OTEL spans the engine emits today (`encounter.beat_applied`, `encounter.resolved`, etc. — see `sidequest-server/sidequest/telemetry/spans.py`) and the watcher events `_watcher_publish` produces for state transitions are not surviving as queryable events the GM panel can read post-hoc. The GM panel is the lie-detector this project depends on per CLAUDE.md's OTEL Observability Principle — without it the engine can claim "encounter resolved player_victory at beat 5" while the prose shouts "Sam is on his knees" and nobody can tell which is true. **This is in scope.** Every change in this spec emits observable, queryable telemetry, and the regression playtest must demonstrate the GM panel rendering the corrected beat-by-beat flow against the existing save.
 
 ## Design summary
 
@@ -223,6 +223,57 @@ Story 3 begins with a `rg -n "metric:" sidequest-content/genre_packs/*/rules.yam
 
 Per-pack edits: split single `metric` → `player_metric` + `opponent_metric`; convert `risk:` flavor for failure penalties into structured `failure_metric_delta`; re-tune `defend`-style beats to use `opponent_metric_delta` where the intent is "set them back" rather than "advance my win." Content authors decide the tuning; engine just routes the numbers.
 
+## Telemetry
+
+Every decision point in the new engine emits an OTEL span **and** a watcher event, and the watcher event is persisted to the save's `events` table as a typed row. Per CLAUDE.md's OTEL Observability Principle, the GM panel is the lie-detector: it must be able to render the full beat-by-beat history of any encounter from the saved events alone, without consulting in-memory state. Today the panel cannot do that for momentum because the only `kind` the `events` table stores is `NARRATION`.
+
+### Span inventory
+
+Existing spans (`sidequest-server/sidequest/telemetry/spans.py`) extended:
+
+| Span | New / changed attributes |
+|---|---|
+| `encounter.confrontation_initiated` | `player_metric_threshold`, `opponent_metric_threshold`, `player_actor_count`, `opponent_actor_count`, `neutral_actor_count` |
+| `encounter.beat_applied` | `actor_side`, `metric_target` (`player`/`opponent`/`both`), `own_delta`, `opponent_delta`, `dice_failed` |
+| `encounter.beat_failure_branch` | `actor_side`, `failure_own_delta`, `failure_opponent_delta` |
+| `encounter.resolved` | `outcome` (structured: `player_victory`/`opponent_victory`/`resolution_beat:<id>`), `final_player_metric`, `final_opponent_metric`, `triggering_side` |
+| `combat.tick` | `player_metric_current`, `opponent_metric_current` |
+
+New spans:
+
+| Span | Attributes | Fires when |
+|---|---|---|
+| `encounter.beat_skipped` | `reason` ∈ {`neutral_actor`, `encounter_resolved`, `dice_replay_turn`, `unknown_beat_id`}, `actor`, `actor_side`, `beat_id` | A beat selection is dropped instead of applied. Promotes the existing `logger.info` at `narration_apply.py:289-298` into a span. |
+| `encounter.invalid_side` | `actor_name`, `declared_side`, `valid_set` | Narrator declared a side outside the closed enum. Span fires *before* the `ValueError` is raised so the panel sees the failure even though the turn errors. |
+| `encounter.metric_advance` | `side` (`player`/`opponent`), `delta_kind` (`own`/`cross`), `delta`, `before`, `after` | Inside `_apply_beat`, once per side that changed. Lets the panel render per-dial movement independent of the beat that drove it. |
+| `encounter.resolution_signal_emitted` | `outcome`, `final_player_metric`, `final_opponent_metric` | When `pending_resolution_signal` is set on session data after `enc.resolved` flips true. |
+| `encounter.resolution_signal_consumed` | Same as above | When the next narrator turn's prompt assembler injects the `[ENCOUNTER RESOLVED]` zone and clears the slot. |
+
+### Watcher publish parity
+
+Every span above is paired with a `_watcher_publish` call carrying the same attributes under a `state_transition` event with `field="encounter"` and an `op` matching the span's local name (e.g., `op="beat_applied"`, `op="metric_advance"`, `op="resolution_signal_emitted"`). This is the existing pattern at `narration_apply.py:506-518` and elsewhere — the spec just extends it to every new decision point so the live GM panel receives the same view as the post-hoc replay.
+
+### Persistence: new event kinds
+
+The save's `events` table (`sidequest/game/persistence`) accepts arbitrary `kind` strings. The watcher publish handler is extended so `state_transition` events whose `field` is `"encounter"` are written to `events` as typed rows alongside `NARRATION`:
+
+| `events.kind` | Source span | Payload contents |
+|---|---|---|
+| `ENCOUNTER_STARTED` | `encounter.confrontation_initiated` | encounter type, both metric thresholds, actor list with side, turn |
+| `ENCOUNTER_BEAT_APPLIED` | `encounter.beat_applied` | actor, actor_side, beat_id, deltas, dice_failed, turn |
+| `ENCOUNTER_METRIC_ADVANCE` | `encounter.metric_advance` | side, delta, before, after, turn |
+| `ENCOUNTER_BEAT_SKIPPED` | `encounter.beat_skipped` | reason, actor, beat_id, turn |
+| `ENCOUNTER_RESOLVED` | `encounter.resolved` | outcome, final metrics, triggering_side, beat count |
+| `ENCOUNTER_RESOLUTION_SIGNAL` | both `signal_emitted` and `signal_consumed` (distinguished by an `op` field in the payload) | outcome, final metrics, turn |
+
+Per-player projection (`projection_cache`) inherits the existing `visible_to: "all"` policy for combat events — the entire encounter timeline is shared world state in v1, matching how `NARRATION` already handles the `_visibility` field. (Per-player asymmetric encounter views are a separate concern under ADR-028.)
+
+### GM panel verification
+
+The GM panel already renders rows from the `events` table. Adding new `kind` values means the panel handler grows cases for each new kind to render an encounter timeline: a side-by-side dial view of `player_metric` and `opponent_metric` over the encounter's beats, with each `ENCOUNTER_BEAT_APPLIED` row labeling which dial moved and which actor moved it, terminating at the `ENCOUNTER_RESOLVED` row. **No fix in this spec is considered complete until the panel can render this view for the regression save replay.** That is the lie-detector check — if the dial says player_victory and the prose says KO, the panel must show the row-by-row evidence.
+
+If the existing panel rendering pipeline doesn't yet read non-`NARRATION` rows, that wiring is part of Story 1 — wire-it-up, not reinvent. Existing handlers should be extended; no parallel pipeline is created.
+
 ## Testing
 
 **Unit (`sidequest-server/tests/server/test_narration_apply.py` + `tests/server/dispatch/test_dice.py`):**
@@ -246,27 +297,39 @@ Per-pack edits: split single `metric` → `player_metric` + `opponent_metric`; c
 
 - One end-to-end test that goes through the live `SessionHandler` path with a stub Claude returning a scripted `NarrationTurnResult`. Assert `_apply_beat` is called for each selection, that `pending_resolution_signal` is read on the next turn, and that the prompt assembler short-circuits the active-encounter zone when `enc.resolved`.
 
+**Telemetry (`tests/server/test_encounter_telemetry.py`):**
+
+- For each new and extended span, a unit test asserts the span fires with the documented attributes. Use the existing in-memory span recorder pattern.
+- For each new `events.kind`, an integration test asserts the watcher publish path writes a row to the events table with the documented payload shape.
+- One end-to-end test loads a fresh save db, runs a 3-beat encounter, queries `SELECT kind, payload_json FROM events WHERE kind LIKE 'ENCOUNTER_%' ORDER BY seq`, and asserts the timeline contains: `ENCOUNTER_STARTED`, three `ENCOUNTER_BEAT_APPLIED` rows with correct `actor_side` values, the corresponding `ENCOUNTER_METRIC_ADVANCE` rows, and (if threshold crossed) `ENCOUNTER_RESOLVED` with structured outcome.
+- An invalid-side test asserts `encounter.invalid_side` span fires *before* `ValueError` propagates, so the panel observation is preserved through the failure.
+
 **Regression playtest:**
 
 - Replay the `2026-04-25-dungeon_survivor` save's 5 beats against the new engine using the new `caverns_and_claudes` pack. Assert `outcome == "opponent_victory"`. The current save's narration becomes consistent with the dial.
+- After the replay, query the events table for the encounter timeline and assert the GM panel can render the beat-by-beat view: every beat attributed to its actor, every dial movement attributed to its side, terminating at the structured outcome. This is the lie-detector check — without it, the fix is unverifiable and the spec is not done.
 
 ## Story breakdown
 
 One epic, three stories, sequential.
 
-1. **Engine + schema.**
+1. **Engine + schema + telemetry.**
    - `EncounterMetric`/`StructuredEncounter` reshape, `EncounterActor.side`, `BeatSelection` actor lookup.
    - `_apply_beat` rewrite, structured outcomes, deletion of `MetricDirection` and the legacy `apply_encounter_updates` path and the `hostile_keywords` block.
    - Pack loader: parse `player_metric`/`opponent_metric`, `opponent_metric_delta`, `failure_opponent_metric_delta`, `side` on actor declarations; reject the old single-`metric` shape with a clear error.
    - `caverns_and_claudes` `rules.yaml` migrated as the canary content for unit + integration tests (other packs follow in story 3).
-   - Tests: unit + integration + wiring per the test plan above.
+   - Span set extended/added per the Telemetry section, with watcher publish parity.
+   - Watcher → events-table persistence wiring for `ENCOUNTER_*` kinds (extending the existing `_watcher_publish` path; no new pipeline).
+   - GM panel handler extended to render the new event kinds as an encounter timeline.
+   - Tests: unit + integration + wiring + telemetry per the test plan above.
 
 2. **Narrator awareness.**
    - `pending_resolution_signal` slot on `_SessionData`.
    - `[ENCOUNTER RESOLVED]` prompt zone, active-encounter zone short-circuit on `enc.resolved`.
-   - Drop-with-telemetry behavior for beat_selections emitted after resolution.
+   - Drop-with-telemetry behavior for beat_selections emitted after resolution (`encounter.beat_skipped` with `reason=encounter_resolved`).
+   - `encounter.resolution_signal_emitted` and `encounter.resolution_signal_consumed` spans + `ENCOUNTER_RESOLUTION_SIGNAL` events-table rows (signal_emitted is wired by Story 1's resolution path; this story adds signal_consumed when the prompt zone fires).
    - Narrator output-schema docs in `agents/narrator.py` extended to require `side` per NPC.
-   - Tests: integration + regression playtest against the dungeon_survivor save.
+   - Tests: integration + regression playtest against the dungeon_survivor save, with the lie-detector panel render assertion.
 
 3. **Content migration.**
    - All shipping packs' `rules.yaml` migrated. Per-pack tuning pass with content notes.
@@ -277,7 +340,6 @@ Stories 1 and 3 must land together (engine breaks old schema). Story 2 can land 
 
 ## Out of scope
 
-- **OTEL persistence.** `BEAT_APPLIED` and `ENCOUNTER_RESOLVED` watcher events not landing in the `events` table is a real bug. Separate spec.
 - **Mid-encounter side mutation.** Charm, turncoat, ally betrayal. v2 — data model supports it, prompt and engine logic don't.
 - **Three-way encounters.** Party + city guard + bandits as three distinct sides. v1 keeps two sides and rolls neutrals into prose-only actors.
 - **Party-size threshold scaling.** A multi-PC playgroup hits `opponent_metric` faster than solo. v1 leaves the per-pack threshold fixed; content authors tune. Engine adjustment lands later if playtest demands it.
