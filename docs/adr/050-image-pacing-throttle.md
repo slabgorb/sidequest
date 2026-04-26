@@ -15,6 +15,8 @@ implementation-pointer: null
 # ADR-050: Image Pacing Throttle
 
 > Retrospective — documents a decision already implemented in the codebase.
+>
+> **Implementation notes (2026-04-26):** The Rust impl referenced in §Decision did not survive ADR-082's Python port and was re-implemented as a 1:1 Python port (Story B of the S4-PERF playtest follow-up). The current implementation lives at `sidequest-server/sidequest/server/image_pacing.py` and is wired into `WebSocketSessionHandler._maybe_dispatch_render` BEFORE render-id allocation, so suppressed renders never reach the daemon. Both the `allow` and `suppress` branches publish a `render.throttle_decision` watcher event so the GM panel can verify the throttle is engaged. Mid-session slider UI (`ImagePacingSlider.tsx`) and per-genre cooldown tuning are deferred to follow-up stories — defaults are 30s solo / 60s MP per §Decision.
 
 ## Context
 Image generation is triggered server-side when narration passes the BeatFilter's drama-weight threshold (a separate concern from this ADR). Without rate limiting at the delivery layer, rapid mechanical turn sequences — combat rounds, skill checks, quick back-and-forth dialogue — can dispatch multiple image render requests in seconds. The client receives images faster than they can be meaningfully absorbed, and the daemon wastes GPU cycles on renders that are immediately superseded.
