@@ -305,12 +305,21 @@ async def send_render(
         params["clip_prompt"] = clip
 
     if lora_paths:
+        # The Z-Image MLX worker rejects lora_paths/lora_scales since the
+        # post-MLX renderer dropped LoRA support entirely (see
+        # sidequest_daemon/media/workers/zimage_mlx_worker.py: "LoRA support
+        # has been removed from the renderer"). visual_style.yaml files
+        # still carry `loras:` blocks for documentation / future re-enable;
+        # the script must skip them here, not silently pretend they applied.
         if lora_scales is None or len(lora_scales) != len(lora_paths):
             raise ValueError(
                 "lora_scales must be provided with the same length as lora_paths"
             )
-        params["lora_paths"] = list(lora_paths)
-        params["lora_scales"] = list(lora_scales)
+        log.warning(
+            "send_render.lora_skipped count=%d daemon_dropped_support=true tier=%s",
+            len(lora_paths),
+            tier,
+        )
     if variant:
         params["variant"] = variant
 
