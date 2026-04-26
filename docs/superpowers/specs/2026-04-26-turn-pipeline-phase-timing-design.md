@@ -77,7 +77,7 @@ The class is a passive accumulator. It does not interpret, threshold, log, or al
 ### Surface integrations
 
 - `sidequest/game/turn.py::TurnContext` — gain a `phase_timings: PhaseTimings` field. Default to `PhaseTimings.NULL` so legacy fixtures and partial mocks continue to work.
-- `sidequest/server/session_handler.py::_run_narration_turn` — instantiate a real `PhaseTimings` at entry; call `.mark_done()` after the last `outbound.append(...)`; pass through to `TurnRecord`.
+- `sidequest/server/session_handler.py::_execute_narration_turn` — instantiate a real `PhaseTimings` at entry; call `.mark_done()` after the last `outbound.append(...)`; pass through to `TurnRecord`.
 - `sidequest/agents/orchestrator.py::Orchestrator.process_action` — read `turn_context.phase_timings` and use the same `with timings.phase(...):` API for the phases it owns internally.
 
 ### Data-shape changes
@@ -117,7 +117,7 @@ Ten phases, one per existing call-site seam:
 ```
 session.player_action received
   │
-  └─ _run_narration_turn() {
+  └─ _execute_narration_turn() {
        timings = PhaseTimings(action_received_monotonic=time.monotonic())
        turn_context.phase_timings = timings
 
@@ -188,9 +188,9 @@ The timer must never crash a turn. Telemetry is auxiliary.
 1. **Phase block raises an exception.** `__exit__` records elapsed time in a `try/finally`; the exception itself propagates unchanged. "Phase X took 90 s and then crashed" is the most diagnostically valuable signal we have.
 2. **Phase never enters (early return / branch skip).** Missing key in `phase_durations_ms`. Frontend renders absent phases as `–` not `0`. `_unaccounted_ms` absorbs the gap. No assertion that all ten phases must appear.
 3. **Phase entered twice in one turn.** Additive accumulation: `_totals[name] += elapsed`, `phase_call_counts[name] += 1`. Last-write-wins would hide retries.
-4. **`mark_done()` never called** (exception escapes `_run_narration_turn`). A `try/finally` at the bottom of `_run_narration_turn` submits a partial `TurnRecord` with `is_degraded=True` and a real `total_duration_ms`. Better than no record.
+4. **`mark_done()` never called** (exception escapes `_execute_narration_turn`). A `try/finally` at the bottom of `_execute_narration_turn` submits a partial `TurnRecord` with `is_degraded=True` and a real `total_duration_ms`. Better than no record.
 5. **Validator queue full.** Already handled (`telemetry/validator.py:347`); record dropped, `validation_warning` published. No change.
-6. **Time-monotonic skew.** `time.monotonic()` is process-local and never goes backward. `_run_narration_turn` is single-process. Safe.
+6. **Time-monotonic skew.** `time.monotonic()` is process-local and never goes backward. `_execute_narration_turn` is single-process. Safe.
 7. **`PhaseTimings` reused across turns.** Contract is one-instance-per-turn. After `mark_done()` the instance is finalized; subsequent `.phase()` calls raise `RuntimeError("PhaseTimings already finalized")`. Loud failure beats silent contamination.
 8. **`turn_context.phase_timings` not present** (older fixtures, partial mocks). `PhaseTimings.NULL` singleton with no-op `phase()` keeps call-sites clean. The orchestrator never branches on `if timings is not None:`.
 
@@ -211,7 +211,7 @@ New file: `sidequest-server/tests/telemetry/test_phase_timing.py`.
 
 In existing files: `tests/server/test_session_handler.py`, `tests/telemetry/test_validator.py`.
 
-- `test_run_narration_turn_records_all_named_phases` — drive `_run_narration_turn` through one happy-path turn against an in-process orchestrator with stubbed LLM clients. Assert that the resulting `TurnRecord.phase_durations_ms` contains every expected phase key. Lie-detector for "did we actually instrument all ten seams?" — a future refactor that removes a `with timings.phase(...):` wrapper fails here.
+- `test_execute_narration_turn_records_all_named_phases` — drive `_execute_narration_turn` through one happy-path turn against an in-process orchestrator with stubbed LLM clients. Assert that the resulting `TurnRecord.phase_durations_ms` contains every expected phase key. Lie-detector for "did we actually instrument all ten seams?" — a future refactor that removes a `with timings.phase(...):` wrapper fails here.
 - `test_validator_emits_phase_durations_in_turn_complete` — submit a `TurnRecord` with phase data; assert `turn_complete` event payload contains `phase_durations_ms` map and a real `total_duration_ms` distinct from `agent_duration_ms`. Catches alias regression.
 - `test_total_duration_ms_is_not_aliased_to_agent` — explicit guard: `TurnRecord` where `total_duration_ms != agent_duration_ms` preserves the distinction through to the event.
 
@@ -230,7 +230,7 @@ In existing files: `tests/server/test_session_handler.py`, `tests/telemetry/test
 Steps 1–4 ship as one server PR. Step 5 ships independently.
 
 1. Land `PhaseTimings` module + Layer-1 unit tests + Layer-3 property test. Pure addition; no call-sites.
-2. Wire phases 1, 7, 8, 9, 10 in `_run_narration_turn`. `total_duration_ms` becomes honest.
+2. Wire phases 1, 7, 8, 9, 10 in `_execute_narration_turn`. `total_duration_ms` becomes honest.
 3. Wire phases 2–6 in `Orchestrator.process_action`.
 4. Update `TurnRecord` shape + `Validator._validate` emission. Layer-2 wiring tests pass.
 5. (Separate UI PR) GM panel ingests `phase_durations_ms`. Display: stacked bar per turn or simple two-column table.
