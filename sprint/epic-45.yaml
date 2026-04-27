@@ -1,0 +1,545 @@
+id: '45'
+type: epic
+title: "Playtest 3 Closeout — MP Correctness, State Hygiene, and Post-Port Cleanup"
+description: |-
+  Successor epic to Epic 37, which accreted four playtests' worth of fixes
+  plus port-drift residue from ADR-082 (Rust → Python). Epic 45 absorbs 37's
+  open backlog, splits the 5-8pt grab-bag stories (37-38, 37-39, 37-40, 37-41)
+  into tight single-AC stories, and re-scopes the sidequest-api references
+  to the current Python tree per ADR-085.
+
+  Three lanes:
+
+    (A) Sprint-2-aligned MP correctness — sealed-letter shared-world delta,
+        turn-barrier fix, momentum sync. Ships in Sprint 2 alongside the
+        sealed-letter goal.
+
+    (B) State write-back hygiene — playtest 3 (2026-04-19) revealed bookkeeping
+        counters and resolution handshakes that fire but never persist. Each
+        sub-item gets its own OTEL span on the write path.
+
+    (C) UI/cleanup tax + tuning + render observability — the rest of 37's
+        open work, prioritized to defer below Lane A/B. Tuning (G) and render
+        observability (H) are P2/P3; they should not displace correctness work.
+
+  Convention: every story names its source 37-N sub-item in the description
+  for traceability.
+
+priority: p1
+status: backlog
+repos: server,ui,content,daemon
+
+stories:
+  # ─────────────────────────────────────────────────────────────────
+  # Lane A — MP correctness (Sprint 2 goal aligned)
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-1
+    title: "Sealed-letter world-state handshake — shared-world delta between turns (port-drift re-scope of 37-37)"
+    description: |-
+      Re-scopes 37-37 to the Python tree (ADR-085). After each player turn,
+      emit a minimal shared-world delta (current location, active encounter
+      id, party formation/adjacency) that seeds the next player's turn so
+      narrator stops fabricating physical separations to explain party-mate
+      absence. Playtest 3 (2026-04-19): Orin's save invented a 'collapsed
+      corridor' separating him from Blutka because Orin's game_state had no
+      ground-truth that Blutka was in the same room. Canonical: location,
+      encounter presence, adjacency. Perceived (stays POV): mood, tactics,
+      what the peer is feeling. OTEL span on handshake merge with
+      conflict-resolution events. Blocked on no upstream — ready now.
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-2
+    title: "Turn barrier counts active turn-takers, not lobby connections (was 37-42)"
+    description: |-
+      Playtest 3 (2026-04-19) evropi session: 4 saves clustered at 16:30-16:31
+      UTC; only Rux played, but the structured-mode turn barrier waited on all
+      4 lobby connections. Rux hit barriers mid-solo because phantom lobby
+      peers never took their turns. Fix dimensions to evaluate: drop barrier
+      slots for players who haven't submitted a turn within N seconds, OR only
+      count players whose characters have advanced past round 0, OR explicit
+      lobby joined-vs-playing states, OR chargen-abandonment cancels the
+      lobby slot. OTEL must emit lobby_participant_count vs active_turn_count
+      on every barrier wait so GM panel shows which count drives the block.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-3
+    title: "Momentum readout state sync — UI subscribes to BEAT_RESOLVED (was 37-32)"
+    description: |-
+      UI momentum value lags server BEAT_RESOLVED. Confirm snapshot field
+      updates on resolution, ensure UI subscribes to the right message kind,
+      and verify ConfrontationOverlay reads the live momentum off the state
+      mirror. Sebastien (mechanical-first player) is the audience — a
+      momentum dial that lags the actual beat is a lie-detector miss.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server,ui
+    workflow: wire-first
+    type: bug
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane B — Chargen / template / slot reuse (split from 37-40)
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-4
+    title: "Strip {{generated at session start}} placeholder leaks from world history.yamls (split from 37-40 sub-3)"
+    description: |-
+      All evropi/long_foundry/flickering_reach world history.yamls carry
+      world_history[0].character.name='{{generated at session start}}'
+      unresolved, polluting narrator context every turn. Either resolve the
+      template at session start (preferred — wire it to chargen output) or
+      remove the literal placeholder so the narrator never sees the curly
+      braces. Files: heavy_metal/evropi/history.yaml:182,
+      heavy_metal/long_foundry/history.yaml:123,
+      mutant_wasteland/flickering_reach/history.yaml:114.
+    points: 1
+    priority: p0
+    status: backlog
+    repos: content,server
+    workflow: trivial
+    type: bug
+
+  - id: 45-5
+    title: "Stale-slot reuse on session reinit blocks turn 1 (split from 37-40 sub-1)"
+    description: |-
+      Playtest 3 evropi: prot_thokk and hant saves created 2026-04-19T16:31
+      UTC but narrative_log held a single entry dated 2026-04-18; session
+      never fired Turn 1 (last_played == created_at, turn_manager frozen at
+      round=0/interaction=2). Prior-day narrative survived session reinit
+      because DB row wasn't cleared. Session lifecycle must either clear old
+      rows on reinit OR refuse to write over a populated slot. Relates 37-29,
+      37-1.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+
+  - id: 45-6
+    title: "Chargen partial-completion path leaves resolved_archetype=NULL (split from 37-40 sub-2)"
+    description: |-
+      Playtest 3 evropi: pumblestone_sweedlewit had resolved_archetype=NULL,
+      no hp/ac, never advanced past opening. Chargen pipeline has a success
+      path that skips archetype binding. Identify the path and require
+      archetype resolution before chargen can complete. Relates 37-7.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-7
+    title: "Race-aware character description template (split from 37-40 sub-4)"
+    description: |-
+      Playtest 3 evropi: every save shipped 'A Human {class}' regardless of
+      race (prot_thokk Half-Orc, hant Antman, pumblestone Gnome, rux Kobold).
+      Chargen sets description from a human-assumed template before race
+      substitution. Wire the template to actual race output, or restructure
+      so race is interpolated correctly.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server,content
+    workflow: trivial
+    type: bug
+
+  - id: 45-8
+    title: "Notorious-party gating on session player_count (split from 37-40 sub-5)"
+    description: |-
+      Playtest 3 evropi: Rux leaked into pumblestone's solo narrative prose
+      (narrator referenced him by name) because world config seeds a
+      known-party context regardless of player count. Gate notorious-party
+      seeding on session player_count > 1.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane C — State write-back hygiene (split from 37-38)
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-9
+    title: "total_beats_fired counter increments on every beat fire + OTEL (split from 37-38 sub-1)"
+    description: |-
+      Playtest 3: total_beats_fired frozen at 0 across 3 saves despite real
+      beat fires (Orin had 5 fired beats including a Resolved extraction_panic
+      trope). Counter is defined at session.py:400 but never incremented
+      anywhere — confirmed via codebase audit 2026-04-27 (zero += matches).
+      Increment in _apply_encounter_beats() on every beat fire; emit OTEL
+      span with current counter value. Any beat-gated unlock perpetually
+      blocks today.
+    points: 1
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  - id: 45-10
+    title: "Scrapbook backfill detection on save resume (split from 37-38 sub-3)"
+    description: |-
+      Playtest 3: Orin scrapbook covered 10 of 29 rounds — subsystem blind to
+      rounds 11-29 for context injection. When a save is carried forward,
+      detect gaps between scrapbook round coverage and narrative_log max_round;
+      either backfill or warn loudly with an OTEL span on detection.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+
+  - id: 45-11
+    title: "turn_manager.round invariant against narrative_log.max_round (split from 37-38 sub-4)"
+    description: |-
+      Playtest 3 Felix: turn_manager.round=65 but narrative_log max=72, 7-round
+      gap. Round-keyed gating operates on stale round data. turn_manager.round
+      must not lag narrative_log.max_round at end of turn; add invariant check
+      with OTEL span every tick. Investigate the divergence root cause —
+      likely a missed write-back somewhere in the resolution pipeline.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane D — Inventory lifecycle (split from 37-39)
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-12
+    title: "Chargen double-init dedup of starting kit (split from 37-39 sub-1)"
+    description: |-
+      Playtest 3 Blutka: starting kit double-initialised — 24 items including
+      6 torches, 2 waterskins, 4 rations, 2 chalk, 2 ten-foot poles. First 11
+      are stub-batch ('Starting equipment (x): Y') and next 13 are catalogue
+      entries, both appended without dedup. Character init runs twice on
+      first-turn path. Dedup on append, OR prevent the double-init.
+      Relates 37-29.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+
+  - id: 45-13
+    title: "Container/object retrieved-state on room re-entry (split from 37-39 sub-3)"
+    description: |-
+      Playtest 3 Orin: knocked the same tin box off the same wall in rounds
+      10 and 16, retrieving identical contents both times. Object-state not
+      flagged as already-retrieved on room re-entry. Add a per-object
+      retrieved flag and gate narrator content on it.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-14
+    title: "Discarded weapon transitions out of state=Carried (split from 37-39 sub-4)"
+    description: |-
+      Playtest 3 Blutka: 'abandons the spear where it stands — shaft quivering
+      in scavenger meat' (round 9) but spear still showed state=Carried in
+      final inventory. Narrator-extracted discard verbs must move item state
+      to Discarded (or remove from inventory). Wire the discard path through
+      the same narration_apply pipeline as items_lost.
+    points: 1
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  - id: 45-15
+    title: "Consumed-state items removed from inventory (split from 37-39 sub-5)"
+    description: |-
+      Playtest 3 Felix: maintenance_kit.state=Consumed after patch-foam use
+      rounds 14-16 and foil-strip tear round 48, but kit remained in inventory
+      list with quantity=1. Extractor writes Consumed but removal pass never
+      runs. Either drop items with state=Consumed at end-of-turn, OR don't
+      set Consumed without also removing.
+    points: 1
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane E — State completeness (split from 37-41)
+  # Sub-items (1) and (10) already landed via 37-31 and 37-44 per ADR-085 audit.
+  # Remaining 8 sub-items split below.
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-16
+    title: "Reject non-room entries from discovered_regions (split from 37-41 sub-2)"
+    description: |-
+      Playtest 3 Felix: discovered_regions had '(aside — narrator brief)'
+      registered as traversable region alongside legitimate rooms. Aside
+      rounds leak into region graph. Reject non-room entries at write; emit
+      OTEL span on rejection so GM panel can see the filter fired.
+    points: 1
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  - id: 45-17
+    title: "Region slug normalization at write (split from 37-41 sub-3)"
+    description: |-
+      Playtest 3 Felix: discovered_regions had two entries for the same room
+      ('The crew quarters of a beat-up freighter…' and 'The Crew Quarters —
+      Freighter Unpaid Debt'). Canonicalize region identifiers to slug form
+      at write, dedup human-name variants of same slug.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  - id: 45-18
+    title: "encounter.actors registers all combatants, not just player (split from 37-41 sub-4)"
+    description: |-
+      Playtest 3 Orin: encounter.actors=[Orin only] through 6 rounds of combat
+      with Crawling Scavenger. Per-actor damage/momentum tracking impossible.
+      Encounter-start handshake must register every combatant (NPC + player)
+      in the actors array.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-19
+    title: "world_history arcs extend past turn 30 (split from 37-41 sub-5)"
+    description: |-
+      Playtest 3 Felix: 4 arcs covering turns 1-30 only despite session
+      reaching turn 72. Turns 31-72 had no arc context; campaign_maturity
+      injection operated on 30-turn-old snapshot. Arc generation must run
+      on interval past session cap; OTEL span on arc generation tick.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-20
+    title: "Resolved tropes write quest_log entry + active_stakes update (split from 37-41 sub-6)"
+    description: |-
+      Playtest 3 Orin: extraction_panic Resolved and hireling_mutiny at 0.255,
+      yet quest_log={} and active_stakes='' (empty string). Resolution
+      pipeline doesn't seed durable record. Write quest_log entry on
+      resolution, update active_stakes; OTEL span on resolution handshake.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-21
+    title: "NPC registry HP/max_hp populated from combat stats (split from 37-41 sub-7)"
+    description: |-
+      Playtest 3 Orin: Crawling Scavenger registered but combat stats never
+      written, HP=0/max_hp=0 on registry entry — HP-check sees always-dead
+      creature. Write HP/max_hp when combat stats emitted; entry cannot
+      report HP=0 unless actually dead.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  - id: 45-22
+    title: "Player turns logged with author=player (split from 37-41 sub-8)"
+    description: |-
+      Playtest 3 Felix: 71 entries all author='narrator', zero player-turn
+      entries. Subsystem engagement not verifiable from log authorship.
+      Append player turns to narrative_log with author=player (or character
+      name).
+    points: 1
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+
+  - id: 45-23
+    title: "world_history arc embedding pipeline writes back to narrative_log/lore (split from 37-41 sub-9)"
+    description: |-
+      Playtest 3 Felix: world_history arc embedded narrative_log and lore
+      empty despite 71 turns of dense story — arc-embedding pipeline either
+      not running or not writing back. Wire the pipeline to fire on arc
+      generation and persist to narrative_log/lore; OTEL span on each
+      embedding write.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane F — UI / cleanup tax
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-24
+    title: "Retry button aria-describedby on slug-mode metadata-error (was 37-50)"
+    description: |-
+      Wire aria-describedby on the Retry button at src/App.tsx:1056 to point
+      to the role=alert paragraph so screen readers associate the
+      failed-to-load message with the retry affordance. Minor a11y
+      improvement; non-blocking for playgroup but the cost is trivial.
+    points: 1
+    priority: p3
+    status: backlog
+    repos: ui
+    workflow: trivial
+    type: chore
+
+  - id: 45-25
+    title: "Replace 300ms setTimeout with effect-based readyState=OPEN wait (was 37-51)"
+    description: |-
+      Replace MP-01 slug-connect 300ms setTimeout workaround with an
+      effect-based readyState === OPEN wait. App.tsx:1260 currently spaces
+      the SESSION_EVENT connect send behind an arbitrary 300ms timer to work
+      around the socket not yet being OPEN after connect(). Cleaner fix: an
+      effect that listens for the readyState transition to OPEN and sends
+      the connect message then. Works today, not a bug, but arbitrary timers
+      in WS handshake paths tend to regress under load.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: tdd
+    type: refactor
+
+  - id: 45-26
+    title: "Delete legacy /api/saves/* endpoints + (genre, world, player) save-path helper (was 37-52)"
+    description: |-
+      Clean-up after MP-03 has landed. Delete legacy /api/saves/* REST routes
+      (rest.py:283/365/418, all marked deprecated) and the old (genre, world,
+      player) save-path helper in sidequest-server/sidequest/game/persistence.py.
+      Acceptance:
+        - Legacy /api/saves/* routes removed from rest.py.
+        - Old (genre, world, player)-tuple save-path helper in persistence.py
+          removed.
+        - No call sites remain (grep is clean).
+        - All existing tests pass; legacy-helper tests deleted or retargeted.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: chore
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane G — Tuning (text-tuning lane, deferable)
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-27
+    title: "Trope progression cooldown + simultaneous-active cap (was 37-43)"
+    description: |-
+      Playtest 3 Felix: mid-session pile-up of trope progressions caused
+      narrative thread confusion (Sebastien reported it directly).
+      Tuning dimensions: dial back per-tick progression rates, cap
+      simultaneously-active tropes at 2-3 (queue the rest), foreground
+      load-bearing tropes in narrator prompt and background the rest, stagger
+      fire-readiness, add cooldown after a trope fires before a new one
+      activates. OTEL must emit active_trope_count, progression_max,
+      progression_avg per turn so GM panel shows tempo. Telemetry-improves
+      after 45-9 (total_beats_fired) lands.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: chore
+
+  - id: 45-28
+    title: "Markov namegen min-pool guard + thin-corpus audit (was 37-45)"
+    description: |-
+      Playtest 3: 'Frandrew Andrew' generated by Markov namegen — classic
+      too-small-corpus stem-repetition artifact. Fix:
+        (a) audit corpus word-list sizes per culture; flag any below threshold.
+        (b) min-pool guard in namegen — fail loud (warn + OTEL) when corpus
+            drops below N entries rather than silently emitting stem-repeats.
+        (c) expand thin culture corpora for aureate_span source cultures.
+        (d) unit test that no generated name has identical prefix and suffix
+            stems.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: wire-first
+    type: bug
+
+  # ─────────────────────────────────────────────────────────────────
+  # Lane H — Render pipeline observability (low priority)
+  # ─────────────────────────────────────────────────────────────────
+  - id: 45-29
+    title: "Daemon span-context per-call art_style scoping (was 37-34)"
+    description: |-
+      Stale art_style from prior session leaks onto embed spans across
+      sessions; scope attributes per call or clear on session boundary.
+    points: 2
+    priority: p3
+    status: backlog
+    repos: daemon
+    workflow: trivial
+    type: bug
+
+  - id: 45-30
+    title: "Render trigger policy contract + OTEL render.trigger reasons (was 37-46)"
+    description: |-
+      Playtest 3 Felix: 71-turn session produced ~6-8 renders out of 71
+      scrapbook rows; selection looked arbitrary, not policy-driven. Define
+      explicit trigger contract — always render on beat fire / scene change /
+      named-NPC introduction / resolved-encounter; skip on banter/aside/quiet
+      turns. Expose trigger reasoning in OTEL span (render.trigger
+      reason=beat_fire|scene_change|npc_intro|resolved|none_policy). Optional:
+      session-level density target with backpressure-aware enforcement.
+      UI indicator for skipped-but-eligible vs requested-but-failed.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: wire-first
+    type: bug
+
+  - id: 45-31
+    title: "Daemon worker heartbeat + render-unavailable degradation (was 37-47)"
+    description: |-
+      Playtest 3 Felix: last render landed 14:43 EDT but session played to
+      14:56 EDT — last 13 minutes produced zero renders for rows that policy
+      should have fired on. No way to tell from save whether render failed,
+      was dropped, or was never requested. Fix scope:
+        (a) daemon emits OTEL heartbeat on ready/busy/paused per queue.
+        (b) enqueue path warns loud when queue depth exceeds threshold or
+            returns back-pressure.
+        (c) graceful degradation — daemon unresponsive → 'render unavailable'
+            marker in scrapbook row, not silent miss.
+        (d) post-session worker state logging for diagnosis.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,daemon
+    workflow: wire-first
+    type: bug
