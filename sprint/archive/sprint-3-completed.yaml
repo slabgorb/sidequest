@@ -1,0 +1,19 @@
+# Sprint Unknown Sprint - Completed Work
+# Jira Sprint ID: 
+# Archived: 2026-04-27
+
+sprint:
+  name: "Unknown Sprint"
+  number: 3
+  jira_sprint_id: 
+  jira_sprint_name: "Unknown Sprint"
+  goal: Playtest 3 closeout — MP correctness, state hygiene, post-port cleanup
+  start_date: 2026-04-27
+  end_date: 2026-05-10
+  status: active
+
+completed_epics: []
+  # Epic shard files live in sprint/archive/epic-{ref}.yaml
+
+completed_stories: []
+  # Orphan stories not belonging to an epic

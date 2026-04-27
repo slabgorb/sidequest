@@ -64,12 +64,15 @@ stories:
       on every barrier wait so GM panel shows which count drives the block.
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     started: '2026-04-27'
     repos: server
     workflow: wire-first
+    completed: '2026-04-27'
     branch: feat/45-2-turn-barrier-active-turn-takers
     type: bug
+    review_findings: 3 HIGH (mp.round_dispatched.player_count divergence at session_handler.py:3302; missing wire-first test for chargen→barrier seam; LobbyState docstring lies about CLAIMING_SEAT observability) + 4 MEDIUM (lobby_participant_count includes ABANDONED; stale solo-room comment; is_paused docstring inaccurate; missing transition_to_playing OTEL test). Total ~5-line code fix + 3-4 test additions + 3 doc edits.
+    review_verdict: approved
   - id: 45-3
     title: "Momentum readout state sync — UI subscribes to BEAT_RESOLVED (was 37-32)"
     description: |-
@@ -490,3 +493,25 @@ stories:
     repos: server,daemon
     workflow: wire-first
     type: bug
+  - id: 45-32
+    title: Post-review cleanup for 45-2 (test docstrings, lint, vacuous assertion, framing)
+    description: |-
+      Address the 8 non-blocking findings from Reviewer round 2 of Story 45-2 (see .session/archive/45-2-session.md "Reviewer Assessment (round 2)" table).
+
+      3 MEDIUM (in test files only):
+        - tests/server/test_mp_turn_barrier_active_turn_count.py:430 — replace stale "RED today" docstring on now-GREEN test_mp_round_dispatched_player_count_matches_barrier_predicate with a GREEN statement
+        - tests/server/test_mp_turn_barrier_active_turn_count.py:508 — update assertion message to reference current line ~3311 instead of the stale 3302
+        - tests/server/test_45_2_chargen_to_playing_wire.py:123 — replace bare truthy `assert out, "..."` with `assert any(getattr(m, 'type', None) == 'SESSION_CONNECTED' for m in out)` to actually verify the message type
+
+      5 LOW (lint + cosmetic):
+        - uv run ruff check --fix tests/server/test_45_2_chargen_to_playing_wire.py tests/server/test_lobby_state_machine.py (clears F401 unused-imports + I001 import order; auto-fixable)
+        - sidequest/server/session_room.py:405 — non_abandoned_player_count docstring: replace "filters in the other direction (only PLAYING)" with "requires `state == PLAYING`; a CHARGEN seat is counted here but not there"
+        - tests/server/test_lobby_state_machine.py:471, 474 — tighten from_state/to_state OR-clause assertions to exact lowercase equality (StrEnum is authoritative)
+
+      Estimated effort: <30 minutes. All mechanical, zero behavior changes. Production code from 45-2 is correct and approved as-is.
+    points: 1
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: chore

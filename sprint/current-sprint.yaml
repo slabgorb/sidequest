@@ -1,9 +1,9 @@
 sprint:
   name: "3"
-  number: 3
   goal: "Playtest 3 closeout — MP correctness, state hygiene, post-port cleanup"
   start_date: "2026-04-27"
   end_date: "2026-05-10"
   status: active
+  number: 3
 epics:
   - '45'
