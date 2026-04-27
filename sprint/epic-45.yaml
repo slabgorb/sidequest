@@ -64,9 +64,11 @@ stories:
       on every barrier wait so GM panel shows which count drives the block.
     points: 3
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-04-27'
     repos: server
     workflow: wire-first
+    branch: feat/45-2-turn-barrier-active-turn-takers
     type: bug
   - id: 45-3
     title: "Momentum readout state sync — UI subscribes to BEAT_RESOLVED (was 37-32)"
