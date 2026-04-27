@@ -48,10 +48,13 @@ stories:
     description: Per-world visual configs may reference LoRA triggers or weights left over from ADR-083's lora_triggers block (see the_real_mccoy/visual_style.yaml explicit_exclude). Strip those fields; migrate the visual intent as text into the new GENRE → WORLD → SCENE cascade (ADR-086).
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: content
     workflow: trivial
+    completed: '2026-04-27'
     type: chore
+    review_verdict: approved
   - id: 43-5
     title: Daemon single-spawn + worker singleton — dedupe justfile recipes, delete vestigial ZImageMLXWorker.main(), enforce one-instance invariant
     description: |
