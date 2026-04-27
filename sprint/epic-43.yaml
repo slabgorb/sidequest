@@ -24,10 +24,13 @@ stories:
     description: 'Strip lora_path / lora_scale handling from PromptComposer clip-prompt substitution and daemon Flux1 model construction. Delete the lora_trigger vs positive_suffix fork. Preserve Z-Image text-prompt path as the single composition flow. Wiring test: render succeeds on a genre with no lora fields present.'
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: server,daemon
     workflow: trivial
+    completed: '2026-04-27'
     type: refactor
+    review_verdict: approved
   - id: 43-3
     title: Archive LoRA training scripts, specs, plans, and trained .safetensors artifacts — cancelled per ADR-070 supersession
     description: 'Move to archive: scripts/lora_*.py, docs/superpowers/specs/2026-04-20-lora-pipeline-design.md, docs/superpowers/plans/2026-04-20-lora-pipeline.md. Delete any committed .safetensors under genre_packs/*/lora/. ~/lora-runs/ is user-local, not committed — out of scope. Keep one reference trained LoRA off-repo as a cautionary artifact.'
