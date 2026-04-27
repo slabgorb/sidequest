@@ -3,7 +3,7 @@ type: epic
 title: Dead Code Cleanup
 description: Remove code and assets left stranded by superseded ADRs. Kick-off target is the LoRA pipeline (ADRs 032/083/084 superseded by ADR-070 on 2026-04-24). Each story targets a single surface so the cleanup is reviewable and reversible — no big-bang deletion PRs.
 priority: p2
-status: backlog
+status: done
 repos: server,daemon,content
 stories:
   - id: 43-1
@@ -95,7 +95,11 @@ stories:
           only production caller of `load_model()` (grep-based test is fine).
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: orchestrator,daemon
     workflow: trivial
+    completed: '2026-04-27'
     type: refactor
+    review_verdict: approved
+completed: '2026-04-27'

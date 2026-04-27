@@ -38,16 +38,23 @@ client *flags:
     cd {{root}}/sidequest-ui
     npm run dev -- {{flags}} 2>&1 | tee "$log"
 
-# Media daemon (Flux/Z-Image renderer) with warmup
+# Private: spawn the daemon (caller handles output redirection / flags).
+# Extracted per Story 43-5 so `daemon` and `up` share one source of truth
+# for the daemon invocation — a flag change updates both call sites.
+_daemon-cmd *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{root}}/sidequest-daemon
+    SIDEQUEST_GENRE_PACKS={{content}} \
+        exec uv run sidequest-renderer --warmup {{flags}}
+
+# Media daemon (Z-Image renderer) with warmup
 daemon *flags:
     #!/usr/bin/env bash
     set -euo pipefail
     log={{logdir}}/sidequest-daemon.log
     : > "$log"
-    cd {{root}}/sidequest-daemon
-    SIDEQUEST_GENRE_PACKS={{content}} \
-        uv run sidequest-renderer --warmup {{flags}} 2>&1 \
-        | tee "$log"
+    just _daemon-cmd {{flags}} 2>&1 | tee "$log"
 
 # ---------------------------------------------------------------------------
 # `just up` — boot all three in the background, tail the merged log stream.
@@ -72,9 +79,7 @@ up:
     done
 
     echo "▶ daemon  (warmup)  → $dmn"
-    ( cd {{root}}/sidequest-daemon && \
-        SIDEQUEST_GENRE_PACKS={{content}} \
-        uv run sidequest-renderer --warmup >"$dmn" 2>&1 ) &
+    ( just _daemon-cmd >"$dmn" 2>&1 ) &
     echo $! > {{logdir}}/sidequest-daemon.pid
 
     echo "▶ server  (:8765)   → $srv"
