@@ -1,0 +1,13 @@
+# Sprint TO Sprint 2618 - Completed Stories
+# Jira Sprint ID: 0
+# Archived: 2026-04-27
+
+sprint:
+  name: "TO Sprint 2618"
+  number: 2618
+  jira_sprint_id: 0
+  jira_sprint_name: "TO Sprint 2618"
+  goal: Playtest 3 closeout — MP correctness, state hygiene, post-port cleanup
+
+completed:
+  # Completed stories will be appended here by pf sprint archive

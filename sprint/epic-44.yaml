@@ -33,7 +33,7 @@ stories:
       - T5 tokenizer + visual_budget.yaml CI gate (ADR-086 story 1 — plan's closing note calls this out as the next logical follow-on)
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: daemon,content
     workflow: tdd
     acceptance_criteria:

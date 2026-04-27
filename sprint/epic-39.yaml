@@ -63,21 +63,21 @@ stories:
     title: Heavy_metal pact push currencies (content) — add three ResourcePools (voice/flesh/ledger, voluntary, no auto-refill); change pact_working category from social to ritual; add resource_deltas to all five pact_working beats (invoke/commit_cost/steady_the_rite/force_completion/close_the_book); add prompt conditional in unified narrator for confrontation.category=='ritual' (mirrors in_combat). Content from heavy_metal/_drafts/edge-advancement-content.md §3+§4
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: content
     workflow: trivial
   - id: 39-7
     title: Save migration + UI composure sheet + real wiring test — Sqlite schema bump in sidequest-game/src/persistence.rs with legacy HP->Edge synthesis (base_max=class_base/2); React character sheet rework reading edge/max_edge/composure_state declaratively; rewrite beat_dispatch_wiring_story_28_5_tests.rs from regex-source-match to real DispatchContext + apply_beat_dispatch + assert mutation (fixes false-positive wiring test)
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: api,ui
     workflow: wire-first
   - id: 39-8
     title: Playtest heavy_metal with full new system (acceptance gate) — author heavy_metal advancement tree (mechanical_effects on Iron/Pact/Court/Ruin/Craft/Lore tiers per draft §2); rewrite confrontations[type=combat] beats with edge_delta/target_edge_delta values; run 3 sample pacts (Frost-Letter/Borrowed-Year/Ledger-Refused) as playtest fixtures; verify GM panel OTEL trail (creature.edge_delta + advancement.effect_applied + composure_break events with full causality); SOUL §12 test — narrator never describes player damage they didn't ask for
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: content
     workflow: trivial
     type: chore
