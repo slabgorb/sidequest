@@ -43,10 +43,13 @@ stories:
       conflict-resolution events. Blocked on no upstream — ready now.
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: server
     workflow: wire-first
+    completed: '2026-04-27'
     type: bug
+    review_verdict: approved
   - id: 45-2
     title: "Turn barrier counts active turn-takers, not lobby connections (was 37-42)"
     description: |-
