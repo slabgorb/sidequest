@@ -36,10 +36,13 @@ stories:
     description: 'Move to archive: scripts/lora_*.py, docs/superpowers/specs/2026-04-20-lora-pipeline-design.md, docs/superpowers/plans/2026-04-20-lora-pipeline.md. Delete any committed .safetensors under genre_packs/*/lora/. ~/lora-runs/ is user-local, not committed — out of scope. Keep one reference trained LoRA off-repo as a cautionary artifact.'
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: pennyfarthing
     workflow: trivial
+    completed: '2026-04-27'
     type: chore
+    review_verdict: approved
   - id: 43-4
     title: Strip LoRA triggers and explicit_exclude blocks from per-world visual_style.yaml (e.g. the_real_mccoy) — migrate visual intent into ADR-086 text cascade
     description: Per-world visual configs may reference LoRA triggers or weights left over from ADR-083's lora_triggers block (see the_real_mccoy/visual_style.yaml explicit_exclude). Strip those fields; migrate the visual intent as text into the new GENRE → WORLD → SCENE cascade (ADR-086).
