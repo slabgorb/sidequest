@@ -1,0 +1,645 @@
+id: '37'
+type: epic
+title: Playtest 2 Fixes — Multi-Session Isolation
+description: 'Bugs from second production playtest (2026-04-12): cross-session state leakage when multiple games share one server. Resume markers and image delivery need session-scoped isolation.'
+priority: p0
+status: done
+repos: api,daemon
+jira: '37'
+stories:
+  - id: 37-1
+    title: Session-scoped resume markers — scope catch-up logic by game session ID to prevent cross-game state leakage on shared server
+    points: 2
+    priority: p0
+    status: done
+    repos: api
+    workflow: trivial
+    completed: '2026-04-12'
+    type: bug
+    branch: feat/37-1-session-scoped-resume-markers
+  - id: 37-2
+    title: Session-scoped image routing — discriminate renderer responses by session ID so players receive only their own generated images
+    points: 2
+    priority: p0
+    status: done
+    repos: api,daemon
+    workflow: trivial
+    completed: '2026-04-12'
+    type: bug
+  - id: 37-3
+    title: Inventory extraction misses explicit pickup actions — two-pass extractor and game_patch both failed to register 'picks up X and pockets it' as item acquisition
+    points: 2
+    priority: p1
+    status: done
+    repos: api
+    workflow: tdd
+    completed: '2026-04-13'
+    type: bug
+    review_findings: clippy missing-docs on two pub functions, OTEL_MUTATION_MISSED doc mismatch, log message conflates event name with description
+    review_verdict: approved
+  - id: 37-4
+    title: Gold overspend — state_mutations clamps negative balance to zero instead of rejecting or adjusting transactions that exceed current gold
+    points: 2
+    priority: p1
+    status: done
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-16'
+    type: bug
+    review_verdict: approved
+  - id: 37-5
+    title: Daemon embed endpoint broken — /embed returns Unknown error, RAG semantic search degraded entire playtest session
+    points: 2
+    priority: p0
+    status: done
+    repos: daemon,api
+    workflow: tdd
+    completed: '2026-04-13'
+    type: bug
+    branch: feat/37-5-daemon-embed-endpoint
+  - id: 37-6
+    title: Spaghetti western LoRA missing — pack.yaml references spaghetti_western_style.safetensors that does not exist, 112 errors per session
+    description: 'Errors silenced by fallback commits 0d26260 + 313f262 — when LoRA file is missing, render path reverts to positive_suffix full-art description. 112 errors/session eliminated. NOTE: this is a silent-fallback (CLAUDE.md violation); a follow-up story should actually ship spaghetti_western_style.safetensors weights under Epic 32. Closed via audit 2026-04-15.'
+    points: 1
+    priority: p1
+    status: done
+    repos: content
+    workflow: trivial
+    completed: '2026-04-15'
+    type: bug
+  - id: 37-7
+    title: Chargen back button not wired — UI sends CHARACTER_CREATION action:back but server payload schema does not accept it
+    points: 2
+    priority: p2
+    status: done
+    repos: api,ui
+    workflow: wire-first
+    completed: '2026-04-16'
+    type: bug
+    branch: feat/37-7-chargen-back-button
+    review_verdict: approved
+  - id: 37-8
+    title: World materialization fails for dust_and_lead — null history chapters in spaghetti_western world YAML
+    points: 1
+    priority: p1
+    status: done
+    repos: content
+    workflow: trivial
+    completed: '2026-04-12'
+    type: bug
+  - id: 37-9
+    title: Dungeon room graph no_exit warnings — narrator moves players to rooms without exits in caverns_and_claudes, ~40 occurrences
+    description: Fixed by e5d44d4 (room graph / narrator location contract unification) + a469f35 (jaquayed layout validation). Room IDs injected into narrator prompt; stay-in-room on unresolved IDs; layout cycle detection in validate CLI. Closed via audit 2026-04-15.
+    points: 3
+    priority: p1
+    status: done
+    repos: api,content
+    workflow: tdd
+    completed: '2026-04-15'
+    type: bug
+  - id: 37-10
+    title: Inventory extraction failures — extractor crashed on 5 turns during playtest
+    points: 2
+    priority: p1
+    status: done
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-18'
+    type: bug
+    review_findings: 'Both blocking issues fixed in commit 9c554386 and merged via sidequest-api PR #475.'
+    review_verdict: approved
+  - id: 37-11
+    title: action_rewrite and action_flags wiring — narrator emits these fields inconsistently (absent 99/~120 turns), prompt needs firmer contract
+    points: 2
+    priority: p1
+    status: done
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-17'
+    type: bug
+    branch: feat/37-11-action-rewrite-flags-wiring
+    review_findings: "HIGH: cargo fmt fails; OTEL regression at assemble_turn merge (no source-tagged tracing); downstream wiring gap (result.action_rewrite/action_flags never read in production); misleading 'preprocessor keyword-based' comment (preprocessor is actually Default::default()); 'ALWAYS include this' prompt contract unenforced; 4 stale creature_smith references. Rework pass 2 approved."
+    review_verdict: approved
+  - id: 37-12
+    title: Narrator never re-declares confrontation after first emission — emits once at encounter open, silent through gunfight and scene transitions, leaving structured state stuck on stale encounter type while prose describes new one
+    points: 3
+    priority: p0
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-14'
+    repos: api
+    workflow: tdd
+    completed: '2026-04-14'
+    type: bug
+  - id: 37-13
+    title: Encounter creation gate silently drops new confrontation type when an unresolved encounter is active — dispatch/mod.rs:1768-1814 only creates when is_none or resolved, no else-branch, no OTEL warning, no transition path (silent fallback violation)
+    points: 2
+    priority: p0
+    status: done
+    started: '2026-04-14'
+    repos: api
+    workflow: tdd
+    completed: '2026-04-14'
+    type: bug
+    branch: feat/37-13-encounter-gate-silent-drop
+    review_findings: '3 HIGH: non_exhaustive doc lies about intra-crate enforcement, Case B missing source assertion, _gate_outcome aspirational comment. Plus 2 MEDIUM test coverage gaps.'
+    review_verdict: approved
+  - id: 37-14
+    title: Beat dispatch silently no-ops when beat_id is not in active encounter beat library — narrator emitted 2-3 beat_selections per turn for 20 minutes, zero encounter.beat_applied events fired, no OTEL span marks the drop (lie-detector gap)
+    description: Fixed by 610f479. Beat dispatch now emits encounter.beat_id.unknown OTEL event with ValidationWarning severity when beat_id is not in active confrontation library (dispatch/beat.rs:42-66). Also emits encounter.escalation_failed. No more silent drops. Closed via audit 2026-04-15.
+    points: 2
+    priority: p0
+    status: done
+    started: '2026-04-15'
+    repos: api
+    workflow: tdd
+    completed: '2026-04-15'
+    type: bug
+    branch: feat/37-14-beat-dispatch-silent-drop
+    review_findings: 'Pass-3b: all 8 pass-2 HIGH fixes verified + 8 pass-3 review findings fixed in place. 12/12 tests green, full server + game sweep + clippy clean.'
+    review_verdict: approved
+  - id: 37-15
+    title: Trope completion has no handshake with encounter lifecycle — the_standoff.progression reached 1.0 while poker encounter stayed resolved=false; trope engine knows the arc ended but encounter engine does not; narrator gets no prompt hint to declare the confrontation over
+    points: 3
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-16'
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-17'
+    pr: 477
+    type: bug
+    branch: feat/37-15-trope-encounter-handshake
+    review_findings: 'Half-wired: resolve_from_trope has zero non-test callers, dispatch/tropes.rs unmodified, auto-resolve missing OTEL WatcherEvent. Rework branch opened as PR #477 2026-04-17 — YAML was prematurely marked done on 2026-04-16 but rework never merged to develop. Re-review needed.'
+  - id: 37-16
+    title: session.reconnect mints a new player UUID — rolling_player identity changed mid-session across a reconnect (cfa15925… → 234acfc0…) in single-player game; reconnect should restore prior player identity, not generate a fresh one
+    description: Closed as false alarm 2026-04-15. Player identity is keyed by player_name in SQLite, which is stable across reconnect. The rolling_player UUID in logs was a per-connection session ID, not a persistent player identifier. Audit confirmed no downstream consumer relies on UUID stability. Barrier state reconnect fixes (5cab02a, 9ee06f8) already handle the real reconnect concerns.
+    points: 2
+    priority: p0
+    status: canceled
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-17
+    title: Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another; canonicalize stat naming on the request path before it hits any case-sensitive lookup
+    description: 'Stat name casing drift in DiceRequest — narrator dispatch emits stat as CamelCase (Influence) in one session and UPPERCASE (NERVE, CUNNING) in another. FIX SCOPE (rescoped 2026-04-15): (1) introduce explicit Stat enum in sidequest-protocol with serde case-insensitive deserialization and canonical serialization, (2) update narrator prompt contract to declare the enum variants explicitly so the model emits canonical forms at the source, (3) DiceRequestPayload.stat becomes Stat enum, not String. This fixes the root cause (narrator prompt ambiguity) and provides type-level enforcement — no dispatch-boundary normalization needed.'
+    points: 1
+    priority: p2
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-18'
+    repos: api
+    workflow: trivial
+    completed: '2026-04-18'
+    type: bug
+    branch: feat/37-17-stat-name-casing-drift
+  - id: 37-18
+    title: 'pending_dice_request not persisted in game_state snapshot — dice requests live in in-memory session state only, any server restart mid-roll orphans the request (observed: 3 unresolved requests during 2026-04-13 spaghetti_western playtest, all lost at save); snapshot must include outstanding dice request so client can re-prompt on reconnect'
+    points: 2
+    priority: p1
+    status: canceled
+    repos: api
+    workflow: tdd
+    type: bug
+  - id: 37-19
+    title: Phantom-player dedup on resume — duplicate party entry drives player_count to 2, structured-mode auto-promotion creates barrier that deadlocks waiting on ghost; dedup at resume boundary
+    points: 3
+    priority: p0
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-18'
+    type: bug
+    review_findings: 'Round 2 APPROVED. All 12 round-1 findings resolved. Three non-blocking MEDIUM/LOW items logged for follow-up: AC-11 doesn''t assert pending_dice_requests eviction; barrier.remove_player Err silently swallowed via .is_ok(); AC-8 title overpromises scope. Fmt drift resolved in commit 5d736fda.'
+    review_verdict: approved
+  - id: 37-20
+    title: Dice-request request_id lifecycle — server becomes single issuer, client echoes server-issued id, add retry/recovery so lost request does not wedge session (lost nat 20 on defend)
+    points: 5
+    priority: p0
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
+    repos: api,ui
+    workflow: wire-first
+    completed: '2026-04-18'
+    type: bug
+  - id: 37-21
+    title: Template placeholder leak in Space Opera chargen-confirm — {name}/{class}/{race} render literally; template engine mismatch or missing context keys
+    points: 1
+    priority: p0
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
+    repos: content,api
+    workflow: trivial
+    completed: '2026-04-18'
+    type: bug
+    review_findings: "Round 3 APPROVED. Round-2 HIGH (multi-token silent drop, OR-disjunct test, drain sleep) all closed. Round-3 findings (vacuous severity loop when warns empty, pub(crate) visibility too wide, 2 misleading comments, missing negative test, filename convention) are quality refinements — flagged as delivery findings, not blockers. Tests 7/7 green, clippy + fmt clean, Rule 14/17/18 PASS."
+    review_verdict: approved
+  - id: 37-22
+    title: POI manifest wiring — bind generated POI landscape images across 5 genre packs so world lobby stops showing 'the page is faded' placeholder and WARN cover_poi_missing stops spamming
+    points: 2
+    priority: p1
+    status: done
+    repos: content
+    workflow: trivial
+    completed: '2026-04-18'
+    type: bug
+  - id: 37-23
+    title: Split daemon render_lock into render_lock + embed_lock — Flux renders serialize 10ms embeds behind 5-60s image gens, 30+ms contention tax on embed path
+    points: 2
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
+    repos: daemon
+    workflow: wire-first
+    completed: '2026-04-18'
+    type: bug
+    review_findings: 'Round 2: OTEL obligation CLOSED. New findings: render span missing error attrs (HIGH), embed span bypasses CancelledError (HIGH), render path missing log.exception (HIGH), tracer comment misattributes CLAUDE.md principle (HIGH). ~15 line fix in daemon.py only, no test changes required.'
+    review_verdict: approved
+  - id: 37-24
+    title: NPC mechanical turn + stealth/trope check — narrator currently weaves enemy/stealth outcomes with zero OTEL; emit npc.turn and trope handshake spans, surface minimal UI cue, close Illusionism gap
+    points: 5
+    priority: p1
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-18'
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-18'
+    type: bug
+  - id: 37-25
+    title: Target number shown before the roll — display DC/mod/need on ability click, persist through dice animation, resolve color against known target, make consistent across all abilities
+    points: 2
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-18'
+    repos: ui
+    workflow: trivial
+    completed: '2026-04-18'
+    type: bug
+    branch: feat/37-25-target-number-shown-before-roll
+  - id: 37-26
+    title: WebSocket auto-reconnect on navigation — add backoff + visible reconnect banner in useWebSocket.ts, gate input-disabled on explicit WS status
+    points: 3
+    priority: p1
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-19'
+    repos: ui
+    workflow: wire-first
+    completed: '2026-04-19'
+    type: bug
+    review_findings: 'Round 3 APPROVED. Preflight GREEN (tests+lint+tsc), 6/8 specialists clean or returning follow-up-only findings, edge-hunter''s HIGH finding dismissed (premised on setReadyState firing from cleanup — it doesn''t, detachHandlers is called first). Dual ref+state on intentionalClose verified necessary (sync read + reactive derivation). Follow-ups: comment clarity, 5 test polish items, pre-existing disconnect-before-open race — none blocking.'
+    review_verdict: approved
+  - id: 37-27
+    title: Character snapshot on scene-enter — cross-genre blank Character tab until turn 1; emit character state on session-start/scene-enter not just turn-update
+    points: 2
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-19'
+    repos: api
+    workflow: trivial
+    completed: '2026-04-19'
+    type: bug
+    branch: feat/37-27-character-snapshot-scene-enter
+  - id: 37-28
+    title: Scrapbook image persistence across session resume — image bytes lost on reload while metadata survives; persist to stable path and rehydrate manifest on resume
+    points: 3
+    priority: p1
+    status: done
+    started: '2026-04-19'
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-19'
+    type: bug
+    branch: feat/37-28-scrapbook-image-persistence
+    review_verdict: approved
+  - id: 37-29
+    title: Chargen standard-kit narration-vs-state mismatch — narrator references a parchment inventory list the UI never renders; align narration to actual emitted payload or emit the loadout
+    description: 'DONE via reverse port-drift audit 2026-04-23: chargen standard-kit wiring delivered incidentally by story 37-23 (chargen dispatch port). apply_starting_loadout() in sidequest-server/sidequest/server/dispatch/chargen_loadout.py:89-144, called from session_handler.py:1602 at chargen confirmation, appends class-specific inventory_config.starting_equipment to character.core.inventory.items. Narrator-vs-state mismatch no longer reproduces. See ADR-085.'
+    points: 2
+    priority: p1
+    status: done
+    repos: api,ui
+    workflow: wire-first
+    completed: '2026-04-23'
+    type: bug
+  - id: 37-30
+    title: Session-to-job mapping for render_broadcast — job_id to session_id not persisted at enqueue, daemon renders are dropped with 'no session mapping'; fixes missing portrait initials too
+    points: 3
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-19'
+    repos: api
+    workflow: wire-first
+    completed: '2026-04-25'
+    type: bug
+    branch: feat/37-30-session-to-job-mapping
+    review_verdict: approved
+  - id: 37-31
+    title: Region population on opening rooms — map_update_skipped because state.current_region is blank on turn 1; require region in world.yaml or inherit default so Map tab is load-bearing from turn 1
+    points: 2
+    priority: p1
+    status: done
+    started: '2026-04-22'
+    repos: content,api
+    workflow: trivial
+    completed: '2026-04-22'
+    type: bug
+    branch: feat/37-31-region-population-opening-rooms
+  - id: 37-32
+    title: Momentum readout state sync — UI momentum value lags server BEAT_RESOLVED; ensure snapshot field updates and UI subscribes
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-3.'
+    points: 2
+    priority: p1
+    status: canceled
+    repos: api,ui
+    workflow: wire-first
+    type: bug
+  - id: 37-33
+    title: Lore embed worker timeout / circuit breaker tripping — verify 37-23 lock split closes this; if not, widen timeout or warm embed path
+    points: 1
+    priority: p2
+    status: done
+    assigned_to: slabgorb@gmail.com
+    started: '2026-04-23'
+    repos: daemon,api
+    workflow: trivial
+    completed: '2026-04-23'
+    type: bug
+    branch: feat/37-33-lore-embed-worker-timeout
+    review_findings: 'Round-5 closed every binding round-4 HIGH and Medium finding. +28 tests; full suite 1667 passed / 0 failed / 25 skipped. session_handler.py lint count dropped from 12 to 4 (pre-existing). Branch c919704 pushed. User-directed rework limit after round 4; round-5 landed the full punch list.'
+    review_verdict: approved
+  - id: 37-34
+    title: Daemon span-context lifecycle — stale art_style from prior session leaks onto embed spans across sessions; scope attributes per call or clear on session boundary
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-29.'
+    points: 2
+    priority: p2
+    status: canceled
+    repos: daemon
+    workflow: trivial
+    type: bug
+  - id: 37-35
+    title: Low-priority bundle — location slug in resume recap, location header one-cycle lag, dispatcher no_exit WARN on conversation, intent:Exploration on Attack button, empty src warnings, Rajdhani-Regular 404, wrong empty-state copy on genre select
+    description: 'CLOSURE 2026-04-27: Closed via Epic 45. Rajdhani-Regular 404 verified resolved (no font in sidequest-ui/public, only test-literal CSS reference). Other sub-items in this bundle (location-slug recap, header lag, no_exit WARN on conversation, intent:Exploration on Attack, empty src warnings, wrong empty-state copy on genre select) deferred to backlog grooming — split into individual stories before re-prioritizing.'
+    points: 2
+    priority: p2
+    status: canceled
+    repos: api,ui,content
+    workflow: trivial
+    type: bug
+  - id: 37-36
+    title: "Party-peer identity packet in game_state — canonical name/pronouns/race/class/level of other party members injected into each player's game_state so narrator references party-mates with stable pronouns across sealed-letter turns (playtest 3 2026-04-19: Blutka he/him in own save drifted to she/her in Orin's save because peer had zero canonical presence in Orin's game_state). Perception layer stays POV; physical identity is canonical. OTEL span on peer injection."
+    description: |-
+      Party-peer identity packet in game_state — canonical name/pronouns/race/class/level of other party members injected into each player's game_state so narrator references party-mates with stable pronouns across sealed-letter turns (playtest 3 2026-04-19: Blutka he/him in own save drifted to she/her in Orin's save). Perception layer stays POV; physical identity is canonical. OTEL span on peer injection.
+
+      PORT-DRIFT REOPEN 2026-04-23 (per ADR-085 audit of Epic 37): this story was previously marked done against the Rust sidequest-api tree (Rust session shipped + reviewer approved). The fix did NOT survive the ADR-082 port to Python. Current sidequest-server has no PartyPeer type, no inject_party_peers() call, and no peer dossier injection into narrator prompts — the bug the story closed is back in production. Re-opening at backlog per ADR-085 rule 2 (port-drift reopens, does not fork a new story). Rust session archive retained as design spec; port implementation is the new body of work. Blocks 37-37 (sealed-letter world-state handshake).
+    points: 3
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-24'
+    repos: sidequest-server
+    workflow: tdd
+    completed: '2026-04-24'
+    branch: feat/37-36-party-peer-identity
+    type: bug
+    review_verdict: approved
+  - id: 37-37
+    title: "Sealed-letter world-state handshake between turns — after each player turn, emit a minimal shared-world delta (current location, active encounter id, party formation/adjacency) that seeds the next player's turn so narrator stops fabricating physical separations to explain party-mate absence. Playtest 3 2026-04-19: Orin's save invented a 'collapsed corridor' separating him from Blutka because Orin's game_state had no ground-truth that Blutka was in the same room fighting the same scavengers. Canonical: location, encounter presence, adjacency. Perceived (stays POV): mood, tactics, what the peer is feeling. OTEL span on handshake merge with conflict-resolution events."
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-1 (re-scoped per ADR-085 to sidequest-server).'
+    points: 5
+    priority: p1
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-38
+    title: 'State write-back hygiene — bookkeeping counters and handshakes run but never persist (playtest 3 2026-04-19): (1) total_beats_fired frozen at 0 across all 3 saves despite real beat fires — Orin had 5 fired beats including a fully-Resolved extraction_panic trope (beats 0.3/0.6/1.0) yet counter stayed 0; any beat-gated unlock perpetually blocks (relates 37-14). (2) encounter.outcome=null on both resolved Mawdeep encounters (Blutka resolved=true beat=6, Orin resolved=true beat=1) — resolution handshake never writes outcome back so reload may re-enter stale encounter (relates 37-12). (3) Scrapbook entries not backfilled when prior save carried forward — Orin scrapbook covers 10 of 29 rounds, subsystem blind to rounds 11-29 for context injection. (4) turn_manager.round lags narrative_log max_round — Felix turn_manager.round=65 but narrative max=72, 7-round gap so round-keyed gating operates on stale round data. (5) NPC.last_seen_turn stale — Orin Scavenger last_seen_turn=3 but creature appeared and died rounds 19-28. Add OTEL spans on each write-back so GM panel shows which handshakes fire. Common root: write-back paths exist in individual handlers but trunk state fields are never updated by the resolution/tick pipeline.'
+    description: |-
+      State write-back hygiene — bookkeeping counters and handshakes run but never persist (playtest 3 2026-04-19).
+
+      Original sub-items:
+      (1) total_beats_fired frozen at 0 despite real beat fires — any beat-gated unlock perpetually blocks (relates 37-14).
+      (2) encounter.outcome=null on resolved encounters — resolution handshake never writes outcome back so reload may re-enter stale encounter (relates 37-12).
+      (3) Scrapbook entries not backfilled when prior save carried forward — subsystem blind to missed rounds for context injection.
+      (4) turn_manager.round lags narrative_log max_round — round-keyed gating operates on stale round data.
+      (5) NPC.last_seen_turn stale — creature appeared/died but counter never updated.
+
+      ADR-085 REVERSE PORT-DRIFT AUDIT 2026-04-23: sub-items (2) and (5) landed incidentally in the Python port.
+        - (2) encounter.outcome write-back: sidequest-server/sidequest/server/session_handler.py:2828 now sets snapshot.encounter.outcome to beat_def.id on resolution.
+        - (5) NPC.last_seen_turn: session_handler.py:2596/2622 updates last_seen_turn when NPC is mentioned.
+
+      REMAINING SCOPE — tight AC for the re-scoped story:
+        - (1) total_beats_fired counter must increment in _apply_encounter_beats() on every beat fire; OTEL span emits current counter value.
+        - (3) scrapbook backfill: when a save is carried forward, detect gaps between scrapbook round coverage and narrative_log max_round; backfill or warn loudly.
+        - (4) turn_manager.round must not lag narrative_log max_round by more than 0 rounds at end of turn; add invariant check + OTEL span on every tick.
+
+      Common root still stands: write-back paths exist in individual handlers but trunk state fields are never updated by the resolution/tick pipeline. Each remaining sub-item still needs an OTEL span marking the write path fired so GM panel can surface drift.
+
+      CLOSURE 2026-04-27: Split into Epic 45 successors per PM grooming 2026-04-27. Sub-items (2) and (5) already landed via Python port (encounter.outcome write-back at session_handler.py:2828 and NPC.last_seen_turn updates at session_handler.py:2596/2622). Remaining sub-items (1) total_beats_fired increment → 45-9; (3) scrapbook backfill → 45-10; (4) turn_manager.round invariant → 45-11.
+    points: 5
+    priority: p1
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-39
+    title: "Inventory lifecycle — items persist through consume/discard and containers re-populate on revisit (playtest 3 2026-04-19): (1) Blutka starting kit double-initialised — 24 items including 6 torches, 2 waterskins, 4 rations, 2 chalk, 2 ten-foot poles; first 11 are stub-batch ('Starting equipment (x): Y') and next 13 are catalogue entries, both appended without dedup. Character init runs twice on first-turn path. (2) Consumables not removed on use — Orin drank vial round 12 but glass_vial remained in inventory; second vial appeared as distinct item glass_vial_dark_liquid after re-entering same room round 18. Two live vial items in final inventory. (3) Same container re-openable — Orin knocked the same tin box off the same wall in rounds 10 and 16, retrieving identical contents both times. Object-state not flagged as already-retrieved on room re-entry. (4) Weapon.state=Carried after explicit narrative discard — Blutka 'abandons the spear where it stands — shaft quivering in scavenger meat' (round 9) but spear still shows state=Carried in final inventory. (5) Consumed-state set but item not removed — Felix maintenance_kit.state=Consumed after patch-foam use rounds 14-16 and foil-strip tear round 48, but kit remains in inventory list with quantity=1. Extractor writes Consumed but removal pass never runs. All five symptoms converge on state_mutations.rs inventory write path — post-narration item lifecycle needs consume/discard/dedup enforcement with OTEL on every mutation. Relates 37-3, 37-10."
+    description: 'CLOSURE 2026-04-27: Split into Epic 45 successors per PM grooming 2026-04-27. Sub-item (2) consumables removed on use is incidentally addressed by narration_apply.py items_lost path (pop_item at line 296). Remaining sub-items split: (1) chargen double-init dedup → 45-12; (3) container re-open prevention → 45-13; (4) state=Carried after discard → 45-14; (5) Consumed item still in inventory → 45-15.'
+    points: 5
+    priority: p1
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-40
+    title: "Chargen + template + slot-reuse — evropi session blockers (playtest 3 2026-04-19): (1) Stale-slot reuse kills sessions — prot_thokk and hant saves created 2026-04-19T16:31 UTC but narrative_log holds a single entry dated 2026-04-18; session never fired Turn 1 (last_played == created_at, turn_manager frozen at round=0/interaction=2). Prior-day narrative survived session reinit because DB row wasn't cleared. Session lifecycle must either clear old rows on reinit or refuse to write over a populated slot (relates 37-29, 37-1). (2) Chargen completes partially — pumblestone_sweedlewit has resolved_archetype=NULL, no hp/ac, and never advanced past opening. Chargen pipeline has a success path that skips archetype binding (relates 37-7). (3) Template placeholder leak — all 6 evropi saves carry world_history[0].character.name='{{generated at session start}}' unresolved, polluting narrator context on every turn (relates 37-21). (4) Hardcoded description template — 'A Human {class}' written regardless of race (prot_thokk Half-Orc, hant Antman, pumblestone Gnome, rux Kobold). Chargen sets description from a human-assumed template before race substitution. (5) Notorious-party mechanic fires in solo sessions — Rux leaked into pumblestone's solo narrative prose (narrator referenced him by name) because world config seeds a known-party context regardless of player count. Session count needs to gate notorious-party seeding. Common thread: chargen/session init writes templated defaults that never get overwritten with real values, and slot reuse doesn't clean prior state."
+    description: "CLOSURE 2026-04-27: Split into Epic 45 successors per PM grooming 2026-04-27: (1) stale-slot reuse → 45-5; (2) chargen partial-completion → 45-6; (3) {{generated at session start}} placeholder leak → 45-4 (P0, content + server, hot — bug shipping today); (4) hardcoded 'A Human {class}' → 45-7; (5) notorious-party in solo → 45-8."
+    points: 5
+    priority: p1
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-41
+    title: "State completeness bundle — subsystems write partial or skipped state (playtest 3 2026-04-19): (1) current_region='' empty string across both Mawdeep saves — should be 'mouth' slug; region-conditional logic (atmosphere, trope region-filter, no-exit routing) silently misses on falsy check. (2) discovered_regions pollution — Felix save has '(aside — narrator brief)' registered as a traversable region alongside legitimate room names; aside rounds leak into region graph. (3) current_region freetext-vs-slug dedup — Felix discovered_regions contains both 'The crew quarters of a beat-up freighter docked at a station you can't afford to stay at' and 'The Crew Quarters — Freighter Unpaid Debt' as separate regions for the same room; needs slug normalization at write. (4) encounter.actors missing non-player combatants — Orin encounter.actors=[Orin only] through 6 rounds of combat with Crawling Scavenger; per-actor damage/momentum tracking impossible. (5) world_history arcs freeze at turn 30 — Felix has 4 arcs (fresh 1-5, early 6-12, mid 13-20, veteran 21-30) covering turns 1-30 only, session reached turn 72; turns 31-72 have no arc context, campaign_maturity injection operates on 30-turn-old snapshot. (6) Resolved tropes don't write quest_log or active_stakes — Orin extraction_panic Resolved and hireling_mutiny at 0.255, yet quest_log={} and active_stakes='' (empty string everywhere). Resolution pipeline doesn't seed durable record. (7) NPC registry HP=0/max_hp=0 — Orin Crawling Scavenger registered but combat stats never written, HP-check on registry entry sees always-dead creature. (8) Player turns not persisted to narrative_log — Felix 71 entries all author='narrator', zero player-turn entries; subsystem engagement not verifiable from log authorship. (9) world_history arc embedded narrative_log and lore all empty despite 71 turns of dense story — arc-embedding pipeline either not running or not writing back. (10) NPC auto-registration missing — Blutka hireling Pell introduced rounds 2-3 never added to npc_registry; future references would treat him as hallucination. Shared theme: state subsystems have write paths but the trunk dispatch doesn't invoke them, or invokes them with partial data. Each sub-item needs an OTEL span marking the write path fired so GM panel can surface drift."
+    description: |-
+      State completeness bundle — subsystems write partial or skipped state (playtest 3 2026-04-19).
+
+      Original sub-items:
+      (1) current_region='' empty string across both Mawdeep saves.
+      (2) discovered_regions pollution — Felix save has '(aside — narrator brief)' registered as traversable region.
+      (3) current_region freetext-vs-slug dedup — same room as two entries with different human names.
+      (4) encounter.actors missing non-player combatants.
+      (5) world_history arcs freeze at turn 30 — session reached turn 72 without arc updates.
+      (6) Resolved tropes don't write quest_log or active_stakes.
+      (7) NPC registry HP=0/max_hp=0 — combat stats never written to registry entry.
+      (8) Player turns not persisted to narrative_log — all entries author='narrator'.
+      (9) world_history arc embedded narrative_log and lore empty despite 71 turns.
+      (10) NPC auto-registration missing — hireling introduced in prose never added to npc_registry.
+
+      ADR-085 REVERSE PORT-DRIFT AUDIT 2026-04-23: sub-items (1) and (10) landed incidentally.
+        - (1) current_region populated via 37-31: sidequest-server/sidequest/game/region_init.py init_region_location() wired into _chargen_confirmation at session_handler.py:1318-1325 with region.initialized OTEL span.
+        - (10) NPC auto-registration landed via 37-44: narrator-mentioned NPCs now auto-register with canonical pronouns/role/name (core.py:346 register_npc_roster_section, drift detector at session_handler.py:1623-1631).
+
+      REMAINING SCOPE — 8 sub-items, each needs its own tight AC:
+        - (2) discovered_regions pollution: reject non-room entries (aside/narrator-brief) at write; add OTEL span on rejection.
+        - (3) slug normalization: canonicalize region identifiers to slug form at write; dedup human-name variants of same slug.
+        - (4) encounter.actors non-player inclusion: encounter start handshake must register all combatants (NPC + player) in actors array; per-actor damage/momentum tracking becomes possible.
+        - (5) world_history arcs must extend beyond turn 30 — arc generation runs on interval past session cap.
+        - (6) Resolved tropes write quest_log entry + active_stakes update; OTEL span on resolution handshake.
+        - (7) NPC registry HP/max_hp written when combat stats emitted; entry cannot report HP=0 unless actually dead.
+        - (8) Player turns appended to narrative_log with author=player (or character name); subsystem engagement verifiable from log authorship.
+        - (9) world_history arc embedding pipeline must run and write back to narrative_log/lore; OTEL span on arc embedding fire.
+
+      Given the remaining 8 sub-items and 8pt size, PM may prefer to split this bundle into 2-3 tighter stories (state-write-hygiene, npc-registry-hygiene, world-history-arcs). Defer split decision to next sprint grooming.
+
+      CLOSURE 2026-04-27: Split into Epic 45 successors per PM grooming 2026-04-27. Sub-items (1) current_region and (10) NPC auto-registration already landed (via 37-31 region_init wiring and 37-44 register_npc_roster_section). Remaining 8 sub-items split: (2) discovered_regions pollution → 45-16; (3) region slug normalization → 45-17; (4) encounter.actors all combatants → 45-18; (5) world_history arcs past turn 30 → 45-19; (6) Resolved tropes write quest_log → 45-20; (7) NPC registry HP/max_hp → 45-21; (8) Player turns logged with author=player → 45-22; (9) world_history arc embedding writes back → 45-23.
+    points: 8
+    priority: p2
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-42
+    title: "Turn barrier counts lobby connections not active-turn-takers — playtest 3 2026-04-19 evropi session: 4 saves created within 41 seconds (pumblestone_sweedlewit 16:30:36, rux 16:30:46, hant 16:31:04, prot_thokk 16:31:17) indicating a 4-player lobby. Only Rux actually played (advanced to round=9 over 8 minutes). The other 3 test-account clients logged in but never advanced past chargen (hant/prot_thokk stuck at round=0; pumblestone stuck at round=1). Every save individually has turn_manager.player_count=1 — the per-save field reflects characters-in-that-save, not lobby-participants. But the server's in-memory lobby state counted all 4 connected clients, and the structured-mode turn barrier waited for all 4 to submit turns on every Rux turn. Result from the table: 'turn blockers fired which was very confusing' — Rux kept hitting barriers mid-solo-session because phantom lobby peers never took their turns. Related 37-19 (phantom-player dedup on resume) which targeted the resume boundary; this is the lobby-join variant. Fix directions to evaluate: (a) drop barrier slots for players who haven't submitted a turn within N seconds, (b) only count players whose characters have advanced past round 0, (c) lobby gates 'joined' vs 'playing' states explicitly, (d) chargen-abandonment cancels the player's lobby slot. OTEL must emit lobby_participant_count vs active_turn_count on every barrier wait so GM panel shows which count is driving the block. Evidence in saves: 4 sessions clustered at 16:30-16:31 UTC with all non-Rux saves frozen at round 0-1 while Rux progressed normally but reported barrier-wait confusion."
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-2.'
+    points: 3
+    priority: p1
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: bug
+  - id: 37-43
+    title: "Trope progression tuning — too many tropes too fast cause narrative thread confusion (playtest 3 2026-04-19 Felix Surrone aureate_span session): table feedback — mid-session the GM panel showed one trope just fired and several others nearly at fire threshold simultaneously. Sebastien (playing) reported the narrative getting confusing shortly after. Final save state shows 3 tropes progressing at 0.03/0.048/0.06 (low) suggesting a reset on fire, but mid-session pile-up is the problem. Narrator being asked to weave 5 simultaneous trope arcs into the same scene loses the thread. The engine is working — arguably too well. Tuning dimensions to evaluate: (a) dial back per-tick progression rates across all tropes, (b) cap simultaneously-active tropes at 2 or 3 (queue the rest), (c) tune narrator prompt to foreground the one or two most load-bearing tropes and keep the rest as background flavor not explicit beats, (d) stagger fire-readiness so tropes don't cluster at threshold, (e) add cooldown after a trope fires before a new one activates. OTEL must emit active_trope_count, progression_max, progression_avg per turn so GM panel shows tempo. This is a tuning/design story, not a wiring bug — trope engine is healthy but dramaturgically too busy. Primary evidence: Sebastien's table-side reaction during a 71-turn session; secondary evidence: no save-side trope-fire log because scenario_archive write-back doesn't fire (covered by 37-38). Data fidelity for this story will improve once 37-38 lands archived trope-fire events."
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-27.'
+    points: 3
+    priority: p1
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+    type: chore
+  - id: 37-44
+    title: "NPC identity drift across turns — canonical traits (pronouns, role, appearance) reinvented by narrator every turn because NPCs introduced narratively never land in game_state.npc_registry (playtest 3 2026-04-19 Felix Surrone aureate_span): Frandrew introduced round 17 as 'she/her, captain-level — gives orders: Bridge, prep undock we are leaving now'; round 21 the narrator's own aside demoted her to 'your junior/assistant, grease monkey'; by round 22 the snapshot had shifted to 'Prefect Frandrew Andrew (grease monkey, on the ladder)'; later rounds use 'he/him, his usual brightness, scratches his neck'. Frandrew went from female captain to male grease monkey over ~10 turns. Structural root cause: npc_registry=[] and npcs=[] in Felix's save across 71 turns despite Frandrew appearing in 33 narrative entries, Vey 25x, Marrien 6x, Prefect But 2x, Tchesla 1x. Zero auto-registration means no canonical data, narrator reinvents each turn. This is the NPC-side parallel to 37-36 (party-peer identity packet for players). Fix pattern: when narrator introduces a new named NPC (detected via structured output or post-narration extraction), auto-register with canonical pronouns/role/name/appearance; inject a party-visible 'NPC dossier' block into game_state so every subsequent turn's context has the ground truth. Perception stays POV (what Felix thinks of Frandrew's mood) but physical identity is canonical. OTEL span on npc.auto_registered and npc.reinvented (warn when narrator uses pronouns inconsistent with registry). Related 37-41 sub-item 10 (NPC auto-registration missing — root cause) and 37-36 (same pattern, player side)."
+    description: "DONE via commit afc2142 'feat: multiplayer session foundation + 37-44 NPC drift fix (#20)'. Reviewer approved per sprint/archive/37-44-session.md. Delivered: NPC auto-registration from narrator mentions, identity-drift detector emitting npc.reinvented OTEL WARN on pronoun/role mismatch, additive-only guard preventing drifted values from overwriting canonical fields (session_handler.py:1623-1631), register_npc_roster_section NPC dossier injection into narrator prompt (core.py:346), 19 tests passing. Session archive already filed; tracker status corrected per ADR-085 audit 2026-04-23."
+    points: 5
+    priority: p1
+    status: done
+    repos: sidequest-api
+    workflow: wire-first
+    completed: '2026-04-23'
+    type: bug
+  - id: 37-45
+    title: "Markov namegen pool undersized — stem-repetition artifacts surface ridiculous names (playtest 3 2026-04-19 Felix Surrone aureate_span): NPC 'Frandrew Andrew' generated by Markov namegen is the 'Andrew' stem repeated twice — a classic too-small-corpus artifact where the transition graph has insufficient divergence and name prefix/suffix collapse into the same token. Culture corpora for aureate_span (and likely other space_opera worlds) need expansion. Fix scope: (a) audit corpus word-list sizes per culture — count unique tokens and flag any culture below a minimum threshold, (b) add a minimum-pool guard in namegen that fails loud (warn + OTEL) when a culture's corpus drops below N entries rather than silently generating stem-repeat artifacts, (c) expand thin culture corpora for aureate_span's source cultures (Hegemonic core, voidborn, Makhani, Jambiendo/Zkęd equivalents if shared), (d) unit test that asserts no generated name has identical prefix and suffix stems. This is a conlang/namegen content + code story — corpus additions live in content, guard code lives in sidequest-namegen crate. Related: sq-voice / conlang skill work on culture-to-corpus bindings."
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-28.'
+    points: 3
+    priority: p2
+    status: canceled
+    repos: sidequest-api,sidequest-content
+    workflow: wire-first
+    type: bug
+  - id: 37-46
+    title: "Scrapbook render trigger rate policy — image generation is arbitrary and sparse, no visible density contract (playtest 3 2026-04-19): Felix's 71-turn aureate_span session produced only 6-8 renders during the playtest window out of 71 scrapbook rows. Effective rate ~1 render per 11 turns across all 3 concurrent sessions. SOUL.md's 'Cost Scales with Drama' says renders should be selective — quiet walk cheap, dramatic beat expensive — but current behavior looks arbitrary, not policy-driven. There is no inspectable contract for 'when does a scrapbook entry get a render', no OTEL span showing the trigger decision, no density target per session. Fix scope: (a) define explicit trigger contract — e.g. always render on beat fire, on scene/location change, on named-NPC introduction, on resolved-encounter; skip render on banter/aside/quiet-check turns, (b) expose trigger reasoning in OTEL span (render.trigger reason=beat_fire|scene_change|npc_intro|resolved|none_policy) so GM panel shows density and cause, (c) session-level density target (e.g. 'at least one render per 3 turns on average' or 'every scene change') and backpressure-aware enforcement, (d) UI indicator in scrapbook tab when a row was eligible but skipped vs requested-but-failed. Relates 37-30 (session-to-job mapping — NULL image_url linkage), 37-33 (embed worker timeout). This is the trigger layer; 37-30 is the delivery layer."
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-30.'
+    points: 3
+    priority: p2
+    status: canceled
+    repos: sidequest-api
+    workflow: wire-first
+  - id: 37-47
+    title: "Daemon renders halt mid-session — render pipeline goes silent before session ends (playtest 3 2026-04-19): last render landed 14:43 EDT but Felix's aureate_span session played through 14:56 EDT — last 13 minutes and ~10+ turns produced zero new renders even for rows that the trigger policy should have fired on. Root cause candidates: (a) daemon worker crashed or circuit-breaker tripped silently (relates 37-33 embed circuit breaker), (b) queue saturation with no backpressure surfaced — enqueue path silently drops, (c) OOM / GPU memory leak in Flux pipeline accumulating across session, (d) orphaned locks (37-23 split render/embed locks, but render_lock itself can still deadlock), (e) network/IPC timeout between sidequest-server and daemon not retried. Fix scope: (a) daemon emits OTEL heartbeat on ready/busy/paused per queue so GM panel shows worker health live, (b) enqueue path warns loud when queue depth exceeds threshold or when enqueue returns back-pressure, (c) graceful degradation — if daemon unresponsive, surface 'render unavailable' marker in scrapbook row rather than silently missing, (d) post-session worker state logging so we can diagnose why it stopped (crash? memory? lock?). This is observability + resilience: today there is no way to tell from the save whether a render failed, was dropped, or was never requested. Relates 37-30 (session-to-job mapping), 37-33 (embed timeout), and the new render-trigger-policy story."
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-31.'
+    points: 5
+    priority: p1
+    status: canceled
+    repos: sidequest-api,sidequest-daemon
+    workflow: wire-first
+    type: bug
+  - id: 37-48
+    title: Test-lock run_narration_turn builds TurnContext with npc_registry
+    points: 1
+    priority: p1
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-04-22'
+    repos: sidequest-api
+    workflow: trivial
+    completed: '2026-04-22'
+    type: chore
+  - id: 37-49
+    title: "Fix @react-three/fiber useLoader mock — unblock 5 pre-existing dice test failures (character-creation-wiring, confrontation-wiring, dice-overlay-wiring-34-5, deterministicReplay, DiceOverlay). D20Mesh at src/dice/DiceScene.tsx:198 uses useLoader which is not mocked; 45 tests fail with 'useLoader is not a function' style errors. Surfaced during MP-01 fix-forward review (PR #151) but predates it. Fix the shared test mock so all 5 files go green."
+    points: 1
+    priority: p2
+    status: done
+    started: '2026-04-27'
+    repos: ui
+    workflow: trivial
+    completed: '2026-04-27'
+    type: chore
+    review_verdict: approved
+  - id: 37-50
+    title: MP-01 slug-mode metadata-error retry button a11y polish — wire aria-describedby on the Retry button at src/App.tsx:1056 to point to the role=alert paragraph so screen readers associate the failed-to-load message with the retry affordance. Minor a11y improvement; non-blocking for playgroup but the cost is trivial.
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-24.'
+    points: 1
+    priority: p3
+    status: canceled
+    repos: ui
+    workflow: trivial
+    type: chore
+  - id: 37-51
+    title: 'Replace MP-01 slug-connect 300ms setTimeout workaround with effect-based readyState === OPEN wait — src/App.tsx:842 currently spaces the SESSION_EVENT connect send behind an arbitrary 300ms timer to work around the socket not yet being OPEN after connect(). Cleaner fix: an effect that listens for the readyState transition to OPEN and sends the connect message then. Works today, not a bug, but arbitrary timers in WS handshake paths tend to regress under load. Surfaced during MP-01 fix-forward code review (PR #151).'
+    description: 'CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-25.'
+    points: 2
+    priority: p2
+    status: canceled
+    repos: ui
+    workflow: tdd
+    type: refactor
+  - id: 37-52
+    title: Delete legacy /api/saves/* endpoints and (genre, world, player) save-path helper
+    description: |-
+      Clean-up after MP-03 lands. Delete legacy /api/saves/* endpoints (from MP-01 Task 10) and the old (genre, world, player) save-path helper in sidequest-server/sidequest/game/persistence.py. MP-03 plan footnote flags this as mergeable once Plan 03 ships. See docs/superpowers/plans/2026-04-22-mp-03-filtered-sync-and-projections.md, final section.
+
+      CLOSURE 2026-04-27: Moved to Epic 45 (post-port closeout). Successor: 45-26.
+    points: 2
+    priority: p2
+    status: canceled
+    repos: pennyfarthing
+    workflow: tdd
+    acceptance_criteria:
+      - Legacy /api/saves/* REST routes removed from sidequest-server/sidequest/server (handlers + route registration).
+      - Old (genre, world, player)-tuple save-path helper in persistence.py removed.
+      - No call sites remain referencing either the legacy endpoints or the old helper (grep is clean).
+      - All existing tests pass; any tests that exercised the legacy helpers are deleted or retargeted at the session-scoped replacement.
+    type: chore
+  - id: 37-53
+    title: Verify playtest 2026-04-23 fixes — slug-connect player_name + watcher reload-safety end-to-end
+    points: 1
+    priority: p1
+    status: done
+    repos: ui,server
+    workflow: trivial
+    completed: '2026-04-23'
+    type: chore
+    branch: feat/37-53-playtest-verify-2026-04-23
+    review_findings: AC 2, AC 3, AC 4 incomplete — Family A (orthogonal to Family B finding) needs Playwright verification. Dev's Family B finding accepted as delivery finding. Send back for AC 2 + AC 3 + AC 4 verification.
+    review_verdict: approved
+  - id: 37-54
+    title: 'Family B scope correction — remove inert watcher reload code from PR #31, keep hello-frame guard, rewrite AC for symptom-based verification'
+    description: 'CLOSURE 2026-04-27: Closed as absorbed by ADR-082 Python port (verified 2026-04-27). The PR #31 watcher.reload + hello-frame guard scope referenced in this story does not exist in the current Python tree — no watcher.reload, hello-frame symbols anywhere in sidequest-server/sidequest/. Inert code is gone. No further work needed.'
+    points: 2
+    priority: p2
+    status: canceled
+    repos: server
+    workflow: tdd
+    type: refactor
+completed: '2026-04-27'

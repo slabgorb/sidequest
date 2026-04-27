@@ -24,15 +24,10 @@ description: |-
 
   Convention: every story names its source 37-N sub-item in the description
   for traceability.
-
 priority: p1
 status: backlog
 repos: server,ui,content,daemon
-
 stories:
-  # ─────────────────────────────────────────────────────────────────
-  # Lane A — MP correctness (Sprint 2 goal aligned)
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-1
     title: "Sealed-letter world-state handshake — shared-world delta between turns (port-drift re-scope of 37-37)"
     description: |-
@@ -52,7 +47,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-2
     title: "Turn barrier counts active turn-takers, not lobby connections (was 37-42)"
     description: |-
@@ -71,7 +65,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-3
     title: "Momentum readout state sync — UI subscribes to BEAT_RESOLVED (was 37-32)"
     description: |-
@@ -86,10 +79,6 @@ stories:
     repos: server,ui
     workflow: wire-first
     type: bug
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane B — Chargen / template / slot reuse (split from 37-40)
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-4
     title: "Strip {{generated at session start}} placeholder leaks from world history.yamls (split from 37-40 sub-3)"
     description: |-
@@ -107,7 +96,6 @@ stories:
     repos: content,server
     workflow: trivial
     type: bug
-
   - id: 45-5
     title: "Stale-slot reuse on session reinit blocks turn 1 (split from 37-40 sub-1)"
     description: |-
@@ -124,7 +112,6 @@ stories:
     repos: server
     workflow: tdd
     type: bug
-
   - id: 45-6
     title: "Chargen partial-completion path leaves resolved_archetype=NULL (split from 37-40 sub-2)"
     description: |-
@@ -138,7 +125,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-7
     title: "Race-aware character description template (split from 37-40 sub-4)"
     description: |-
@@ -153,7 +139,6 @@ stories:
     repos: server,content
     workflow: trivial
     type: bug
-
   - id: 45-8
     title: "Notorious-party gating on session player_count (split from 37-40 sub-5)"
     description: |-
@@ -167,10 +152,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane C — State write-back hygiene (split from 37-38)
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-9
     title: "total_beats_fired counter increments on every beat fire + OTEL (split from 37-38 sub-1)"
     description: |-
@@ -187,7 +168,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
   - id: 45-10
     title: "Scrapbook backfill detection on save resume (split from 37-38 sub-3)"
     description: |-
@@ -201,7 +181,6 @@ stories:
     repos: server
     workflow: tdd
     type: bug
-
   - id: 45-11
     title: "turn_manager.round invariant against narrative_log.max_round (split from 37-38 sub-4)"
     description: |-
@@ -216,10 +195,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane D — Inventory lifecycle (split from 37-39)
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-12
     title: "Chargen double-init dedup of starting kit (split from 37-39 sub-1)"
     description: |-
@@ -235,7 +210,6 @@ stories:
     repos: server
     workflow: tdd
     type: bug
-
   - id: 45-13
     title: "Container/object retrieved-state on room re-entry (split from 37-39 sub-3)"
     description: |-
@@ -249,7 +223,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-14
     title: "Discarded weapon transitions out of state=Carried (split from 37-39 sub-4)"
     description: |-
@@ -264,7 +237,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
   - id: 45-15
     title: "Consumed-state items removed from inventory (split from 37-39 sub-5)"
     description: |-
@@ -279,12 +251,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane E — State completeness (split from 37-41)
-  # Sub-items (1) and (10) already landed via 37-31 and 37-44 per ADR-085 audit.
-  # Remaining 8 sub-items split below.
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-16
     title: "Reject non-room entries from discovered_regions (split from 37-41 sub-2)"
     description: |-
@@ -298,7 +264,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
   - id: 45-17
     title: "Region slug normalization at write (split from 37-41 sub-3)"
     description: |-
@@ -312,7 +277,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
   - id: 45-18
     title: "encounter.actors registers all combatants, not just player (split from 37-41 sub-4)"
     description: |-
@@ -326,7 +290,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-19
     title: "world_history arcs extend past turn 30 (split from 37-41 sub-5)"
     description: |-
@@ -340,7 +303,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-20
     title: "Resolved tropes write quest_log entry + active_stakes update (split from 37-41 sub-6)"
     description: |-
@@ -354,7 +316,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-21
     title: "NPC registry HP/max_hp populated from combat stats (split from 37-41 sub-7)"
     description: |-
@@ -368,7 +329,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
   - id: 45-22
     title: "Player turns logged with author=player (split from 37-41 sub-8)"
     description: |-
@@ -382,7 +342,6 @@ stories:
     repos: server
     workflow: trivial
     type: bug
-
   - id: 45-23
     title: "world_history arc embedding pipeline writes back to narrative_log/lore (split from 37-41 sub-9)"
     description: |-
@@ -397,10 +356,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane F — UI / cleanup tax
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-24
     title: "Retry button aria-describedby on slug-mode metadata-error (was 37-50)"
     description: |-
@@ -414,7 +369,6 @@ stories:
     repos: ui
     workflow: trivial
     type: chore
-
   - id: 45-25
     title: "Replace 300ms setTimeout with effect-based readyState=OPEN wait (was 37-51)"
     description: |-
@@ -431,7 +385,6 @@ stories:
     repos: ui
     workflow: tdd
     type: refactor
-
   - id: 45-26
     title: "Delete legacy /api/saves/* endpoints + (genre, world, player) save-path helper (was 37-52)"
     description: |-
@@ -450,10 +403,6 @@ stories:
     repos: server
     workflow: tdd
     type: chore
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane G — Tuning (text-tuning lane, deferable)
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-27
     title: "Trope progression cooldown + simultaneous-active cap (was 37-43)"
     description: |-
@@ -472,7 +421,6 @@ stories:
     repos: server
     workflow: wire-first
     type: chore
-
   - id: 45-28
     title: "Markov namegen min-pool guard + thin-corpus audit (was 37-45)"
     description: |-
@@ -490,10 +438,6 @@ stories:
     repos: server,content
     workflow: wire-first
     type: bug
-
-  # ─────────────────────────────────────────────────────────────────
-  # Lane H — Render pipeline observability (low priority)
-  # ─────────────────────────────────────────────────────────────────
   - id: 45-29
     title: "Daemon span-context per-call art_style scoping (was 37-34)"
     description: |-
@@ -505,7 +449,6 @@ stories:
     repos: daemon
     workflow: trivial
     type: bug
-
   - id: 45-30
     title: "Render trigger policy contract + OTEL render.trigger reasons (was 37-46)"
     description: |-
@@ -523,7 +466,6 @@ stories:
     repos: server
     workflow: wire-first
     type: bug
-
   - id: 45-31
     title: "Daemon worker heartbeat + render-unavailable degradation (was 37-47)"
     description: |-

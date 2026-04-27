@@ -11,10 +11,14 @@ stories:
     description: Drop lora, lora_trigger, lora_scale, lora_path from VisualStyle (server) and any genre_packs/*/visual_style.yaml or pack.yaml entries that reference them. Superseded by ADR-070/086 — genre style is now text-only. Verify no callers remain before removing (grep lora_ across server + daemon).
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: server,content
     workflow: tdd
+    completed: '2026-04-27'
     type: refactor
+    review_findings: 'Wiring test never exercises load_genre_pack on a pack with legacy lora keys; bare truthy assertions violate Python lang-review #6; parametrized test redundant with per-field tests; misleading dict-key fallback comment; missing __pydantic_extra__ assertion. All in test files; production schema removal is approved as-is. Hand back to TEA for red-phase rework.'
+    review_verdict: approved
   - id: 43-2
     title: Remove LoRA wiring from PromptComposer clip-prompt fork and daemon Flux1 model construction — Z-Image text-prompt path only
     description: 'Strip lora_path / lora_scale handling from PromptComposer clip-prompt substitution and daemon Flux1 model construction. Delete the lora_trigger vs positive_suffix fork. Preserve Z-Image text-prompt path as the single composition flow. Wiring test: render succeeds on a genre with no lora fields present.'
@@ -22,7 +26,7 @@ stories:
     priority: p2
     status: backlog
     repos: server,daemon
-    workflow: tdd
+    workflow: trivial
     type: refactor
   - id: 43-3
     title: Archive LoRA training scripts, specs, plans, and trained .safetensors artifacts — cancelled per ADR-070 supersession
@@ -84,5 +88,5 @@ stories:
     priority: p3
     status: backlog
     repos: orchestrator,daemon
-    workflow: tdd
+    workflow: trivial
     type: refactor
