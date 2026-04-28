@@ -220,9 +220,11 @@ stories:
       likely a missed write-back somewhere in the resolution pipeline.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: wire-first
+    completed: '2026-04-28'
     type: bug
   - id: 45-12
     title: "Chargen double-init dedup of starting kit (split from 37-39 sub-1)"
