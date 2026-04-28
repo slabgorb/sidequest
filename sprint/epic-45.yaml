@@ -100,10 +100,13 @@ stories:
       mutant_wasteland/flickering_reach/history.yaml:114.
     points: 1
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-04-27'
     repos: content,server
     workflow: trivial
+    completed: '2026-04-27'
     type: bug
+    review_verdict: approved
   - id: 45-5
     title: "Stale-slot reuse on session reinit blocks turn 1 (split from 37-40 sub-1)"
     description: |-
