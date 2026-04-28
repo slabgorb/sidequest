@@ -590,3 +590,44 @@ stories:
     repos: server
     workflow: tdd
     type: bug
+  - id: 45-34
+    title: ADR-051 amendment + architecture.md update for 45-11 lockstep collapse
+    description: |-
+      Westley's deeper post-merge review of 45-11 (PR #101 already merged)
+      flagged a silent contradiction with ADR-051 that needs to be made
+      explicit before the next architecture audit.
+
+      **Background:** 45-11 chose Strategy A — `record_interaction()` now
+      advances both `interaction` and `round` in lockstep. ADR-051
+      ("Two-Tier Turn Counter") explicitly states `round` should advance
+      "only on meaningful narrative beats: location changes, chapter
+      markers, and trope escalations" and that the single-counter model
+      was REJECTED. Reality on disk: `advance_round()` had zero production
+      callers — the two-tier model was aspirational, never wired.
+      Strategy A consolidates the model in practice.
+
+      **Tasks:**
+      1. Amend ADR-051 (or supersede it) to reflect the new lockstep
+         semantics. Document the historical drift (advance_round() never
+         called; narrative_log.round_number was always = interaction).
+         Reference 45-11 PR #101 as the cutover.
+      2. Update `docs/architecture.md` line 191 (cross-reference to
+         ADR-051) to match the amended ADR text.
+      3. (Non-blocking nice-to-have from Westley point #4) Add
+         `lookup_failed=True` attribute to `turn_manager.round_invariant`
+         span when `max_narrative_round()` raises, so the GM panel can
+         distinguish instrument failure from divergence. Currently the
+         except block falls back to 0 which produces a misleading
+         "ahead by N" violation row in the dashboard. Defensible as-is
+         until GM-panel UI lands; tighten when it does.
+
+      **Out of scope:** any reconsideration of Strategy A itself
+      (i.e., backing out lockstep and wiring real narrative-beat
+      triggers). That's a much bigger story / probably its own epic
+      and was not the choice made in 45-11.
+    points: 1
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: chore
