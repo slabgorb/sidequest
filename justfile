@@ -189,9 +189,11 @@ daemon-install:
 
 check-all: server-check client-lint client-test daemon-lint
 
-# OTEL dashboard — browser-friendly /ws/watcher viewer
-otel port="9765":
-    uv run python3 {{root}}/scripts/playtest_dashboard.py --dashboard-port {{port}}
+# OTEL dashboard — opens the browser-friendly /ws/watcher viewer
+# served by sidequest-server itself. Server must already be running
+# (e.g. via `just up` or `just server`).
+otel:
+    uv run python3 -m webbrowser http://localhost:8765/dashboard
 
 # Headless playtest driver (uses the running server)
 playtest *flags:
