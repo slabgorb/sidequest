@@ -237,7 +237,7 @@ flowchart TD
 
 **Beat filter gates:** narrative weight (>0.4), cooldown (2-4 turns), burst rate (max 2/turn), SHA256 dedup.
 
-**Render tiers:** portrait (768×1024), landscape (1024×768), scene_illustration (768×768), tactical_sketch (1024×1024), cartography (1024×1024), text_overlay (768×512).
+**Render tiers:** portrait (768×1024), portrait_square (1024×1024), landscape (1024×768), scene_illustration (1024×768), text_overlay (768×512), fog_of_war (1024×1024). The `cartography` tier was removed 2026-04-28 along with the rest of the live world-map subsystem (ADR-019 superseded). The `tactical_sketch` tier was retired separately under ADR-086.
 
 **Handout classification:** Discovery scenes and dialogue portraits flagged as `handout: true` → persisted in player journal.
 

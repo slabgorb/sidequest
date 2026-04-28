@@ -41,7 +41,7 @@ These features work from player input through to rendered output.
 
 | Feature | API | UI | Daemon | Notes |
 |---------|-----|-----|--------|-------|
-| Image generation | Subject extractor → Render queue | IMAGE display | Flux.1 (schnell + dev) via MLX | Multiple tiers: scene, portrait, landscape, text, cartography, tactical |
+| Image generation | Subject extractor → Render queue | IMAGE display | Flux.1 (schnell + dev) via MLX | Tiers: scene_illustration, portrait, portrait_square, landscape, text_overlay, fog_of_war (cartography removed 2026-04-28 — ADR-019 superseded) |
 | Beat filter | Suppress low-drama renders | — | — | drama_weight threshold |
 | Speculative prerender | Queue against turn boundaries | — | — | Hash-based cache dedup (ADR-044) |
 | Music direction | Mood extraction from narration | useAudioCue | Audio library backend | AUDIO_CUE messages → pre-rendered ACE-Step tracks |
@@ -186,7 +186,7 @@ Room graph navigation & resource pressure.
 
 ### Narrator Prompt Architecture (Epic 23, 6/10 done)
 
-Template, RAG, universal cartography.
+Template, RAG, world topology config (room graph + region).
 
 ### Wiring Audit Remediation (Epic 26, 3/9 done)
 

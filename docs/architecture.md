@@ -170,7 +170,7 @@ All player text passes through `sanitize_player_text()` at the protocol layer �
 - **Faction agendas:** Goals + urgency, injected into scenes per turn
 - **World materialization:** Campaign maturity levels (fresh/early/mid/veteran)
 - **Trope engine:** Genre-defined narrative pacing via lifecycle management (ADR-018)
-- **Cartography:** Graph-based topology with fog of war (ADR-019)
+- **Room graph navigation:** Per-room topology for dungeon-crawl worlds (ADR-055). Region/route world-topology config still lives in `world.cartography.yaml` (`CartographyConfig`) and seeds `snap.current_region` at chargen; the live world-map / fog-of-war runtime view (originally ADR-019) was removed 2026-04-28 — see ADR-019 superseded.
 
 ### Pacing & Drama
 - **TensionTracker:** Dual-track model — gambler's ramp + HP stakes + event spikes
@@ -245,6 +245,16 @@ Architecture Decision Records govern the system. See [docs/adr/README.md](adr/RE
 ## Wiring Diagrams
 
 For end-to-end signal traces showing every feature's path from UI input through server layers to storage, see [docs/wiring-diagrams.md](wiring-diagrams.md). Covers all 15 feature areas with Mermaid flowcharts, file paths, and function names.
+
+## Sequence Diagrams
+
+Pipeline-level sequences for cross-process flows live in [`docs/sequence/`](sequence/):
+
+- [Solo turn](sequence/solo-turn.md) — one action turn end-to-end
+- [Multiplayer sealed turns](sequence/multiplayer-sealed-turns.md) — concurrent submission + claim election
+- [Confrontations and scenarios](sequence/confrontations-and-scenarios.md) — beat-based encounter resolution
+- [Lore storage and retrieval](sequence/lore-storage-and-retrieval.md) — knowledge indexing and prompt injection
+- [Image rendering](sequence/image-rendering.md) — narrator visual_scene through daemon to UI gallery (ADR-035, 050, 070)
 
 ## History
 

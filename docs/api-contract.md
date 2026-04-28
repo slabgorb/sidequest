@@ -58,7 +58,6 @@ Server → Client:
   PARTY_STATUS        Full party snapshot
   CHARACTER_SHEET     Full character details for sheet overlay
   INVENTORY           Full inventory snapshot
-  MAP_UPDATE          World map state for map overlay
   COMBAT_EVENT        Combat state for combat overlay
   CONFRONTATION       Confrontation engine state (resource pools)
   RENDER_QUEUED       Image render queued notification
@@ -340,22 +339,6 @@ Full inventory snapshot.
 }
 ```
 
-### MAP_UPDATE
-World map state for the map overlay.
-```json
-{
-  "type": "MAP_UPDATE",
-  "payload": {
-    "current_location": "Dark Cave",
-    "region": "Shadowlands",
-    "explored": [
-      { "name": "Dark Cave", "x": 100, "y": 200, "type": "dungeon", "connections": ["Forest Path"] }
-    ],
-    "fog_bounds": { "width": 500, "height": 400 }
-  }
-}
-```
-
 ### COMBAT_EVENT
 Combat state for the combat overlay. Send `in_combat: false` to dismiss.
 ```json
@@ -389,7 +372,7 @@ Image delivery (portraits, handouts, scene art).
 }
 ```
 - `handout: true` → added to journal
-- `tier`: "portrait", "scene", "landscape", "abstract", "text", "cartography", "tactical"
+- `tier`: "scene_illustration", "portrait", "portrait_square", "landscape", "text_overlay", "fog_of_war"
 - `scene_type`: "combat", "dialogue", "exploration", etc.
 
 ### AUDIO_CUE
@@ -460,7 +443,7 @@ Background music, sound effects, and ambience control.
    - Server sends THINKING
    - Server sends NARRATION (complete text) followed by NARRATION_END
      (turn completion marker carrying the final StateDelta)
-   - Server may send: PARTY_STATUS, MAP_UPDATE, COMBAT_EVENT, IMAGE,
+   - Server may send: PARTY_STATUS, COMBAT_EVENT, IMAGE,
      AUDIO_CUE, CHAPTER_MARKER
 6. Multiplayer turn flow (STRUCTURED mode):
    - All players submit PLAYER_ACTION independently
@@ -508,17 +491,16 @@ Client maintains a `ClientGameState` by replaying all deltas. Characters are mer
 
 ## Server-Side Slash Commands
 
-Commands starting with `/` are intercepted before intent classification. Responses use existing message types (NARRATION, CHARACTER_SHEET, INVENTORY, MAP_UPDATE, ERROR).
+Commands starting with `/` are intercepted before intent classification. Responses use existing message types (NARRATION, CHARACTER_SHEET, INVENTORY, ERROR).
 
 | Command | Response Type | Description |
 |---------|--------------|-------------|
 | `/status` | CHARACTER_SHEET | Full character sheet |
 | `/inventory` | INVENTORY | Full inventory snapshot |
-| `/map` | MAP_UPDATE | Current map state |
 | `/save` | NARRATION | Save confirmation |
 | `/help` | NARRATION | Available commands |
 | `/tone <axis> <value>` | NARRATION | Adjust genre alignment axes |
 | `/gm set <prop> <val>` | NARRATION | GM: modify game state |
-| `/gm teleport <loc>` | NARRATION + MAP_UPDATE | GM: move party |
+| `/gm teleport <loc>` | NARRATION | GM: move party |
 | `/gm spawn <npc>` | NARRATION | GM: create NPC |
 | `/gm dmg <target> <amt>` | NARRATION + COMBAT_EVENT | GM: deal damage |

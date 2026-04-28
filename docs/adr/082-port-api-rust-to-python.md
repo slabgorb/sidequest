@@ -4,7 +4,7 @@ title: "Port `sidequest-api` from Rust back to Python"
 status: accepted
 date: 2026-04-19
 deciders: [Keith Avery (Bossmang), Naomi Nagata (Architect, design mode)]
-supersedes: []
+supersedes: [19]
 superseded-by: null
 related: [85]
 tags: [project-lifecycle]
