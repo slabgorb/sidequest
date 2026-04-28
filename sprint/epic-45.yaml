@@ -83,10 +83,14 @@ stories:
       momentum dial that lags the actual beat is a lie-detector miss.
     points: 2
     priority: p1
-    status: backlog
+    status: in_review
+    started: '2026-04-28'
     repos: server,ui
     workflow: wire-first
     type: bug
+    branch: feat/45-3-momentum-readout-sync
+    review_findings: "AC2 OTEL coverage incomplete: the new encounter.momentum_broadcast span is wired only at the dice_throw emit site; the post-narration emit at session_handler.py:3464 was named in context-story-45-3.md AC2 (source=narration_apply) but has no span wrap. The span helper docstring claims both sites are wired (lying docstring). Three test-quality issues: (a) ordering vs NARRATION_END is structurally untested in test_dice_throw_mid_turn_confrontation_arrives_before_narration_end, (b) AC5 regression test (test_post_narration_confrontation_emit_path_unchanged) is tautological per Dev's own deviation log — does not exercise the post-narration emit, (c) UI source-grep tests for AC4/AC5 couple to source formatting and pass under refactor. Plus 5 minor rule/doc findings (truthy-list asserts, dynamic node:fs imports, redundant inline import, missing genre_slug docstring, stale broadcast comment). Functional implementation is correct; lint clean; zero regressions."
+    review_verdict: approved
   - id: 45-4
     title: "Strip {{generated at session start}} placeholder leaks from world history.yamls (split from 37-40 sub-3)"
     description: |-
