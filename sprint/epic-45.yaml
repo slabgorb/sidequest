@@ -146,9 +146,11 @@ stories:
       so race is interpolated correctly.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server,content
     workflow: trivial
+    completed: '2026-04-28'
     type: bug
   - id: 45-8
     title: "Notorious-party gating on session player_count (split from 37-40 sub-5)"
@@ -175,9 +177,11 @@ stories:
       blocks today.
     points: 1
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: trivial
+    completed: '2026-04-28'
     type: bug
   - id: 45-10
     title: "Scrapbook backfill detection on save resume (split from 37-38 sub-3)"
@@ -244,9 +248,11 @@ stories:
       the same narration_apply pipeline as items_lost.
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: trivial
+    completed: '2026-04-28'
     type: bug
   - id: 45-15
     title: "Consumed-state items removed from inventory (split from 37-39 sub-5)"
@@ -258,9 +264,11 @@ stories:
       set Consumed without also removing.
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: trivial
+    completed: '2026-04-28'
     type: bug
   - id: 45-16
     title: "Reject non-room entries from discovered_regions (split from 37-41 sub-2)"
