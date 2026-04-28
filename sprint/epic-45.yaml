@@ -124,10 +124,13 @@ stories:
       37-1.
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: tdd
+    completed: '2026-04-28'
     type: bug
+    review_verdict: approved
   - id: 45-6
     title: "Chargen partial-completion path leaves resolved_archetype=NULL (split from 37-40 sub-2)"
     description: |-
