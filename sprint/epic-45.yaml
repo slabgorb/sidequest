@@ -140,10 +140,14 @@ stories:
       archetype resolution before chargen can complete. Relates 37-7.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: wire-first
+    completed: '2026-04-28'
     type: bug
+    review_findings: "10 findings: 2 HIGH (raw_pair_unresolved test gap + missing logger.warning on BLOCKED_PARTIAL — python.md rule 4), 2 HIGH-DOC (stale 'non-fatal' claim + lying 'resolver_raised flag' docstring), 4 MEDIUM (weak wiring test, brittle '/' discriminator, OTEL hint-granularity loss, missing legacy-event negative check), 2 LOW (truthy assert + noqa: E402 + stale line numbers). All four enabled subagents returned. Send to red phase for test rework, then green for logger + docstring fixes."
+    review_verdict: approved
   - id: 45-7
     title: "Race-aware character description template (split from 37-40 sub-4)"
     description: |-
