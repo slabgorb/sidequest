@@ -317,9 +317,11 @@ stories:
       in the actors array.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: wire-first
+    completed: '2026-04-28'
     type: bug
   - id: 45-19
     title: "world_history arcs extend past turn 30 (split from 37-41 sub-5)"
