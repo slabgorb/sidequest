@@ -83,10 +83,12 @@ stories:
       momentum dial that lags the actual beat is a lie-detector miss.
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
     repos: server,ui
     workflow: wire-first
     type: bug
+    started: '2026-04-28'
+    branch: feat/45-3-momentum-readout-sync
   - id: 45-4
     title: "Strip {{generated at session start}} placeholder leaks from world history.yamls (split from 37-40 sub-3)"
     description: |-
