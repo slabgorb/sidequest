@@ -212,10 +212,6 @@ status:
     @echo "=== daemon ==="        && cd {{root}}/sidequest-daemon  && git status --short
     @echo "=== content ==="       && cd {{root}}/sidequest-content && git status --short
 
-# Sync shared CLAUDE.md preamble to all subrepos
-sync-claude-md:
-    python3 {{root}}/scripts/sync-claude-preamble.py
-
 # First-time setup — install deps for every subrepo
 setup:
     #!/usr/bin/env bash
