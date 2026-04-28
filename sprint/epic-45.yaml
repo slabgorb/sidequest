@@ -173,9 +173,11 @@ stories:
       seeding on session player_count > 1.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: wire-first
+    completed: '2026-04-28'
     type: bug
   - id: 45-9
     title: "total_beats_fired counter increments on every beat fire + OTEL (split from 37-38 sub-1)"
