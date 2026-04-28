@@ -540,3 +540,46 @@ stories:
     repos: server
     workflow: trivial
     type: chore
+  - id: 45-33
+    title: Sealed-letter bypass test + empty-fallback intent for 45-18
+    description: |-
+      Two adversarial-review findings from Westley on 45-18 (PR #98 already
+      merged). Both are correctness gaps in `_registry_fallback_npcs` /
+      `instantiate_encounter_from_trigger` (sidequest/server/dispatch/encounter_lifecycle.py).
+
+      **Finding 1 — Sealed-letter bypass has zero test coverage.**
+      The diff guards `if not npcs_present and cdef.resolution_mode != ResolutionMode.sealed_letter_lookup:`
+      to keep registry NPCs from leaking into a sealed-letter (red/blue duel)
+      encounter. A regression that flips `!=` to `==` or deletes the guard
+      would compile, lint, pass all 2685 tests, and silently break the
+      dogfight duel by pulling bystander NPCs into the actors list.
+      Add `test_sealed_letter_does_not_consume_registry_fallback`: fixture
+      with sealed-letter confrontation, snapshot with NPC at player's
+      location in registry, narrator emits empty `npcs_present`. Assert
+      registry NPC is NOT in actors.
+
+      **Finding 2 — Empty + empty produces original bug shape.**
+      When narrator's `npcs_present == []` AND `_registry_fallback_npcs`
+      returns `[]` (no NPCs at player location, or `snapshot.location is None`),
+      encounter still instantiates with `actors=[player only]` — the exact
+      Playtest 3 bug we just shipped a fix for. Per CLAUDE.md No Silent
+      Fallbacks, decide intent:
+        (a) by-design graceful degradation — drop a code comment, add an
+            assertion test that `actor_count == 1` with that path, confirm
+            `encounter_empty_actor_list_span` carries the lie-detector signal.
+        (b) accidental hole — add a no-opponent guard in
+            `instantiate_encounter_from_trigger` that raises (with OTEL span)
+            when category=combat resolves to zero opponents post-fallback.
+
+      **Out of scope (defer to a separate story if needed):**
+      - Side-classification heuristic too coarse (registry NPCs default to
+        `side=opponent` for combat, ignoring `entry.role` — risks
+        mis-registering allies in mixed-presence combat).
+      - `encounter_empty_actor_list_span` warning text reads "actors=empty"
+        even when fallback will populate. Minor wording fix.
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
