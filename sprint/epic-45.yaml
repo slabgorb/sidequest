@@ -358,10 +358,13 @@ stories:
       report HP=0 unless actually dead.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: trivial
+    completed: '2026-04-28'
     type: bug
+    branch: feat/45-21-npc-registry-hp-from-combat-stats
   - id: 45-22
     title: "Player turns logged with author=player (split from 37-41 sub-8)"
     description: |-
