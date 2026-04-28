@@ -631,3 +631,41 @@ stories:
     repos: server
     workflow: trivial
     type: chore
+  - id: 45-35
+    title: Remove legacy chargen HP system (post-EdgePool migration)
+    description: |-
+      Follow-up to the OTEL stub-wiring pass (PR #102) and the HP→EdgePool migration. HP was replaced by EdgePool in the player-facing composure mechanic (ADR-014 / ADR-078, see `websocket_session_handler.py:1262`). The chargen-side HP machinery was dead-coded — `base_hp` computed and immediately discarded via `_ = (base_hp, ac)` — but still shipped span events and consumed pack-rules fields. This story removes it.
+
+      Originally filed as 45-33; renumbered to 45-35 because the original 45-33 slot was reused upstream for the sealed-letter bypass test follow-up.
+
+      ## Shipped
+
+      sidequest-server (PR #103, merged 2026-04-28):
+      - HP-resolution block in `CharacterBuilder.build()` (both `chargen.hp_formula_evaluated` and `chargen.hp_fallback` literal emissions)
+      - `_evaluate_hp_formula` + `_eval_simple_arithmetic` + `_ArithmeticParseError`
+      - `InvalidHpFormulaError` + `BuilderError.InvalidHpFormula` alias
+      - `_hp_formula`, `_class_hp_bases`, `_default_hp`, `_default_ac` builder fields
+      - `hp_formula`, `class_hp_bases`, `default_hp`, `default_ac` fields on `RulesConfig`
+      - `SPAN_CHARGEN_HP_FORMULA` constant; `creature.py` file (only contained `SPAN_CREATURE_HP_DELTA`)
+      - All HP-related tests (`TestEvaluateHpFormula`, `TestEvalSimpleArithmetic`, `TestHpResolution`, `InvalidHpFormulaError` aliases)
+
+      sidequest-content (PR #144, merged 2026-04-28):
+      - Stripped HP fields from 6 active genre packs (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `spaghetti_western`, `victoria`) and 4 workshopping packs
+
+      ## Out of scope (live, untouched)
+
+      - `NpcRegistryEntry.hp/max_hp` combat HP (Story 45-21)
+      - `WorldStatePatch.hp_changes` / `GameSnapshot._apply_hp_change` narrator-emitted alias (funnels into `apply_edge_delta` — misnaming is real but path is live)
+
+      ## Result
+      - 12 files changed in sidequest-server: +16 / -487
+      - 10 files changed in sidequest-content: -101 lines
+      - All 2693 server tests pass
+    points: 3
+    priority: p3
+    status: done
+    started: '2026-04-28'
+    completed: '2026-04-28'
+    repos: server,content
+    workflow: trivial
+    type: chore
