@@ -206,10 +206,13 @@ stories:
       either backfill or warn loudly with an OTEL span on detection.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: tdd
+    completed: '2026-04-28'
     type: bug
+    review_verdict: approved
   - id: 45-11
     title: "turn_manager.round invariant against narrative_log.max_round (split from 37-38 sub-4)"
     description: |-
