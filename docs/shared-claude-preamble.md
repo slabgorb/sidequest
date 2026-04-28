@@ -104,7 +104,7 @@ or modifying a subsystem, check the relevant ADR:
 | Agent system | 010 (intent routing — **superseded by 067**), 011 (JSON patches), 012 (session mgmt), 013 (lazy extraction — superseded by 057), 057 (narrator-crunch separation), 059 (monster manual server-side pregen), 067 (unified narrator agent) |
 | Characters | 007 (unified model), 014 (diamonds/coal), 015 (builder FSM), 016 (three-mode chargen) |
 | Encounters | 017 (cinematic chase — superseded by 033), 033 (confrontation engine + resource pools), 071 (tactical ASCII grids — proposed) |
-| World / NPCs | 018 (trope engine), 019 (cartography), 020 (NPC disposition), 022 (world maturity), 055 (room graph navigation) |
+| World / NPCs | 018 (trope engine), 020 (NPC disposition), 022 (world maturity), 055 (room graph navigation) |
 | Progression | 021 (four-track progression), 052 (narrative axis system) |
 | Narrative pacing | 024 (dual-track tension), 025 (pacing detection), 050 (image pacing throttle), 051 (two-tier turn counter) |
 | Session persistence | 023 (state + recap) |

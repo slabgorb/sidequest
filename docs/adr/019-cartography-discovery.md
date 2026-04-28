@@ -1,14 +1,14 @@
 ---
 id: 19
 title: "Cartography Discovery"
-status: accepted
+status: superseded
 date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: []
+superseded-by: 82
+related: [55, 82]
 tags: [game-systems]
-implementation-status: live
+implementation-status: retired
 implementation-pointer: null
 ---
 
@@ -16,7 +16,35 @@ implementation-pointer: null
 
 > Ported from sq-2. Language-agnostic world topology.
 
-## Decision
+## Status
+
+**Superseded 2026-04-28.** The live cartography subsystem — render tier
+`cartography`, `MAP_UPDATE` wire message, `MapUpdatePayload`,
+`CartographyMetadata` wire DTO, `MapOverlay` / `MapWidget` UI, and the
+daemon Z-Image cartography tier — did not survive the Rust → Python port
+formalized in [ADR-082](082-port-sidequest-api-rust-to-python.md). After
+the port, only protocol shells (the `MAP_UPDATE` enum and a stub
+`MapUpdatePayload`) remained; the construction sites, the daemon tier
+config, and the live UI consumers were re-implemented as port-debt slices
+but never wired into a turn-by-turn flow that delivered useful map state
+to players.
+
+This ADR is retired in full. The implementation has been removed across
+the four repos (server, daemon, UI, docs) on 2026-04-28. Region-and-route
+*world authoring* — `world.cartography.yaml`, `CartographyConfig`, the
+`world.cartography.starting_region` chargen seed, and the room graph
+config — is unaffected; that surface is owned by
+[ADR-055](055-room-graph-navigation.md), which uses the same
+`CartographyConfig` pydantic model purely as a static world-topology
+config and does not depend on any of the runtime delivery machinery
+removed here.
+
+If a future story revives a live world map, it should be designed
+fresh against the current architecture, not by porting the original
+sketch below.
+
+## Original decision (historical)
+
 World is a directed graph of regions connected by routes, defined in `topology.yaml`.
 
 ### Graph Structure

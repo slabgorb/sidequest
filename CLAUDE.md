@@ -246,8 +246,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Agent System (011, 012, 066, 067)**
 - 011 World State JSON Patches · 012 Agent Session Management · 066 Persistent Opus Narrator Sessions · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session**
 
-**Game Systems (014, 015, 016, 018, 019, 020, 021, 022, 023, 024, 025, 080)**
-- **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(drift)* · 019 Cartography Discovery · 020 NPC Disposition System *(drift)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 080 Unified Narrative Weight Trait
+**Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 080)**
+- **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(drift)* · 020 NPC Disposition System *(drift)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 080 Unified Narrative Weight Trait
 
 **Frontend / Protocol (026, 027, 079)**
 - 026 Client-Side State Mirror · 027 Reactive State Messaging · 079 Genre Theme System Unification

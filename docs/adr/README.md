@@ -97,7 +97,6 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-015: Character Builder State Machine](015-character-builder-state-machine.md) | ✓ accepted | live |
 | [ADR-016: Three-Mode Character Creation](016-three-mode-chargen.md) | ✓ accepted | live |
 | [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-019: Cartography Discovery](019-cartography-discovery.md) | ✓ accepted | live |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | **drift** → ADR-087 |
 | [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | live |
 | [ADR-022: WorldBuilder Maturity](022-world-builder-maturity.md) | ✓ accepted | live |
@@ -240,6 +239,7 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | [ADR-010: Intent-Based Agent Routing](010-intent-based-agent-routing.md) | ✗ superseded | [ADR-067](067-unified-narrator-agent.md) |
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |
 | [ADR-017: Cinematic Chase Engine](017-cinematic-chase-engine.md) | ✗ superseded | [ADR-033](033-confrontation-engine-resource-pools.md) |
+| [ADR-019: Cartography Discovery](019-cartography-discovery.md) | ✗ superseded | [ADR-082](082-port-api-rust-to-python.md) |
 | [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 | [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
 | [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |

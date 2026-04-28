@@ -26,6 +26,10 @@
 - [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) — superseded
 - [ADR-084: Compositional-Dimension Specialization for Style LoRAs](084-lora-composition-dimension.md) — superseded
 
+### Superseded by [ADR-082: Port `sidequest-api` from Rust back to Python](082-port-api-rust-to-python.md)
+
+- [ADR-019: Cartography Discovery](019-cartography-discovery.md) — superseded
+
 ### Superseded by [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md)
 
 - [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) — superseded
