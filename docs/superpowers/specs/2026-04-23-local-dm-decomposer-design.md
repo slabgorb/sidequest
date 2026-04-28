@@ -1,3 +1,5 @@
+> **Superseded 2026-04-28** — see [`2026-04-28-localdm-offline-only-design.md`](2026-04-28-localdm-offline-only-design.md). This spec's "LocalDM is on the live critical path" assumption no longer holds; LocalDM is now dormant on the live turn and used offline only via the corpus miner.
+
 # Local DM Decomposer — Design
 
 **Date:** 2026-04-23

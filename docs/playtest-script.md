@@ -202,6 +202,49 @@ The SOUL principle "Diamonds and Coal" means not every moment is epic. Test this
 
 ---
 
+## Localdm-Offline Latency Verification
+
+**Success criterion:** Solo turn `total_ms` median drops by 5+ seconds over a 10-turn
+benchmark after removing LocalDM from the live critical path (spec: `docs/superpowers/specs/2026-04-28-localdm-offline-only-design.md`).
+
+No automated benchmark runner exists — this is a manual procedure:
+
+### Procedure
+
+1. **Capture a baseline (pre-change) if not already done:**
+   - On a save or fresh session, play 10 turns back-to-back with normal actions.
+   - Open the GM watcher panel (`:9765` or `just otel`) during the session.
+   - Record `phase_durations_ms.total_ms` from each `TURN_COMPLETE` span for all 10 turns.
+   - Note the median `total_ms` across the 10 turns.
+
+2. **Capture the post-change measurement (branch: `localdm-offline`):**
+   - Start a fresh session on the `localdm-offline` server build.
+   - Play 10 turns using the same action pattern (simple exploration, no slash commands).
+   - Record `phase_durations_ms.total_ms` from each `TURN_COMPLETE` span.
+   - Note the median `total_ms` across the 10 turns.
+
+3. **Compare medians:**
+   - Criterion MET: post median < (pre median − 5000 ms).
+   - Criterion MISSED: flag as a regression — LocalDM may have contributed less latency
+     than the 5 s estimate in the spec (acceptable outcome; document the delta).
+
+### Reading OTEL spans
+
+In the GM watcher (`just otel`), look for spans tagged:
+- `sq.turn.total_ms` — whole-turn wall time
+- `sq.preprocess_llm.duration_ms` — expected to be ABSENT on the post-change build
+  (LocalDM dormant). If present, LocalDM is on the path — raise as a bug.
+
+### Notes
+
+- Run both measurements on the same hardware and network to minimize noise.
+- If `preprocess_llm.duration_ms` is absent in both pre- and post-change watcher
+  output, the baseline was already post-LocalDM and the latency measurement is
+  not meaningful — check that the pre-change build is actually an older commit.
+- This checklist locks **success criterion #1** of the localdm-offline-only spec.
+
+---
+
 ## Feature Coverage Checklist
 
 After completing the playtest, verify these systems were exercised:

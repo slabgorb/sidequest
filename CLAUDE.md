@@ -62,7 +62,7 @@ sidequest-content/            # Genre packs — single source of truth (subrepo)
 
 sidequest-server/             # Python FastAPI backend (subrepo, uv-managed)
 ├── sidequest/
-│   ├── agents/               # Claude CLI subprocess orchestration (narrator, preprocessor)
+│   ├── agents/               # Claude CLI subprocess orchestration (narrator; LocalDM preprocessor dormant per 2026-04-28 spec)
 │   ├── cli/                  # Standalone CLIs (encountergen, loadoutgen, namegen, promptpreview, validate)
 │   ├── daemon_client/        # Client for Python media daemon
 │   ├── game/                 # State, characters, encounters, tropes, turns, persistence

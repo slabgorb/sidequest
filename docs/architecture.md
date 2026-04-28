@@ -3,7 +3,7 @@
 > System design for the SideQuest AI Narrator engine.
 > Python package composition, narrator-primary agent model, three turn modes.
 >
-> **Last updated:** 2026-04-23 (post-ADR-082 cutover)
+> **Last updated:** 2026-04-28 (LocalDM preprocessor moved off live turn path)
 
 ## Architectural Layers
 
@@ -45,6 +45,9 @@
 │  Unified narrator    │ │  inventory, NPCs, OCEAN, lore, conlang,    │
 │  + auxiliary agents  │ │  faction agendas, world materialization,   │
 │  + prompt_framework  │ │  music direction, barriers, dice resolve   │
+│  LocalDM: DORMANT    │ │                                             │
+│  (offline corpus     │ │                                             │
+│  only, 2026-04-28)   │ │                                             │
 └──────────────────────┘ └──────────────┬─────────────────────────────┘
                                         │
          ┌──────────────────────────────┤
@@ -100,6 +103,8 @@ sidequest.server
 ### ADR-001 / ADR-067: Claude CLI Only, Unified Narrator
 
 All LLM calls use `claude -p` subprocess via `asyncio.create_subprocess_exec`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery. Per **ADR-067** (Unified Narrator Agent), the narrator is the primary agent — it handles exploration, dialogue, combat narration, and chase narration through a persistent Opus session. Auxiliary agents (`world_builder`, `troper`, `resonator`) run for specialist tasks outside the per-turn critical path. The original multi-agent dispatch (ADR-010: creature_smith, dialectician, ensemble) is superseded. `intent_router` remains as state-override classification (`in_combat` → Combat, `in_chase` → Chase, default → Exploration).
+
+**LocalDM preprocessor — DORMANT as of 2026-04-28:** The `local_dm` decomposer (designed to pre-process player input into structured dispatch packages before narrator invocation) is **not on the live turn critical path**. It is wired for offline-only corpus extraction via `sidequest.corpus.miner`. Six modules carry DORMANT marker docstrings (`local_dm/`, `dispatch_bank/`). The original design spec is at `docs/superpowers/specs/2026-04-23-local-dm-decomposer-design.md`; the offline-only decision spec is at `docs/superpowers/specs/2026-04-28-localdm-offline-only-design.md`.
 
 ### ADR-002: Typed Protocol
 
