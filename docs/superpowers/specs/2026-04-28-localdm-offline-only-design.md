@@ -2,7 +2,12 @@
 
 **Date:** 2026-04-28
 **Author:** Architect (Leonard of Quirm)
-**Status:** Draft — pending implementation plan
+**Status:** Approved — pending implementation
+**Revision:** 2026-04-28 — Pivoted §Components item 5: dropped the
+proposed runtime `turn_records.py` writer. The existing
+`sidequest/corpus/` module already mines training pairs from saves; the
+training corpus is an offline extraction concern, not a runtime write
+path. See updated §Data Flow, §Storage, §Testing, §Success Criteria.
 
 ## Context
 
@@ -86,8 +91,13 @@ PLAYER_ACTION
       → narrator Opus                              (15-30s)  ← only Claude CLI
   → state apply, persist, validator.submit
   → NARRATION frame
-  → asyncio.create_task(_record_turn_for_corpus)              (fire-and-forget)
 ```
+
+The training corpus is mined offline from existing SQLite saves — no
+runtime write path is added. The save's `events` table already captures
+`PLAYER_ACTION` payloads and the `narrative_log` already captures
+narration; `sidequest/corpus/miner.py` extracts `TrainingPair` JSONL on
+demand.
 
 The dispatch bank does not run on the live turn. It survives in code for
 offline use and for the day a fast local router replaces LocalDM inline.
@@ -140,26 +150,21 @@ ADR-073 (or undoing this design); update both ends.
 """
 ```
 
-5. **New:** `sidequest/game/turn_records.py`
-   - Append-only JSONL writer. One file per save:
-     `~/.sidequest/saves/<session>/turn_records.jsonl`.
-   - Schema (one row per turn):
-     ```
-     {
-       "turn_n": int,
-       "timestamp": iso8601,
-       "genre_slug": str,
-       "world_slug": str,
-       "player_action": str,
-       "game_state": dict,             # full snapshot
-       "narration_excerpt": str        # first ~500 chars
-     }
-     ```
-   - Sync write inside `asyncio.to_thread` to keep the event loop clean.
+5. **No new live writer.** The training corpus is mined offline from
+   existing saves. `sidequest/corpus/` already provides:
+   - `save_reader.py` — read-only iteration over `events` and
+     `narrative_log` tables.
+   - `miner.py` — extracts `TrainingPair` rows from a save.
+   - `writer.py` — atomic JSONL emit.
+
+   Implementation must verify the existing miner output is sufficient
+   for offline LocalDM evaluation. If a field LocalDM needs is missing
+   from the save's events/narrative_log, extend the **save schema** or
+   the **miner**, not add a parallel runtime writer.
 
 6. **OTEL spans**
    - Remove: `local_dm.decompose` span.
-   - Add: `turn_record.write` span (success/failure/elapsed_ms).
+   - No new spans added (no runtime corpus writer to instrument).
 
 ### Files that survive untouched
 
@@ -182,31 +187,26 @@ ADR-073 (or undoing this design); update both ends.
    - Narrator Opus subprocess runs.
 6. State apply, persistence, validator submit (unchanged).
 7. NARRATION frame emitted.
-8. **`asyncio.create_task(_record_turn_for_corpus(...))`** — JSONL write
-   off the critical path.
 
-### Offline corpus path (out of scope for this story's runtime)
+The existing persistence layer already writes `PLAYER_ACTION` to the
+`events` table and narration to `narrative_log` — no additional
+runtime corpus path is needed.
 
-A future tool (`sidequest/cli/localdm_replay.py`, separate story) reads
-`turn_records.jsonl` and runs LocalDM (or eventually the ADR-073 local
-model) against each row to produce DispatchPackages for evaluation. The
-JSONL fields are sufficient to reconstruct what LocalDM would have seen.
+### Offline corpus path (existing infrastructure)
+
+`sidequest/corpus/miner.py` reads saves via `SaveReader` and emits
+`TrainingPair` JSONL. A future LocalDM offline runner consumes the
+miner output. This story's responsibility is verifying the miner output
+is sufficient — extending the miner or save schema if not.
 
 ### Storage
 
-- Path: `~/.sidequest/saves/<session>/turn_records.jsonl`
-- Format: append-only JSONL.
-- Rotation: tied to save lifecycle. No separate rotation policy needed.
-- Size: ~MB-scale per long session. Acceptable. If it grows, compress
-  on session close (out of scope).
+Saves live at `~/.sidequest/saves/<genre>/<world>/<player>/save.db` per
+existing convention. Corpus JSONL is mined into a separate output path
+chosen at mining time (the corpus writer refuses any path under the
+saves root by design).
 
 ## Error Handling
-
-### Corpus write fails
-
-Caught and logged via OTEL `turn_record.write_failed`. The turn already
-emitted; player sees no impact. Next turn tries again. No retry, no
-buffering — if the disk is gone, larger problems exist.
 
 ### Narrator fails
 
@@ -235,19 +235,19 @@ No alert. Surface via playtest only.
 - `test_turn_does_not_invoke_local_dm` — patch `LocalDM.decompose` to
   raise; run a full turn; assert turn completes successfully. Catches
   latent re-introduction.
-- `test_turn_record_jsonl_written_per_turn` — run N turns; assert N
-  rows in the corpus file with the expected schema.
+- `test_miner_extracts_action_and_narration_from_post_change_save` —
+  run N turns against a real session, then run the corpus miner on
+  the resulting save and assert N `TrainingPair` rows with non-empty
+  `input_text` (player actions) and `output_text` (narration).
 
 ### Unit tests
 
 - `test_build_narrator_prompt_with_none_dispatch_package` — assert no
   `redact_dispatch_package` call, no dispatch bank execution, no
   exceptions.
-- `test_turn_record_writer_handles_disk_failure` — patch `open`/`write`
-  to raise; assert turn completes, OTEL event emitted.
 - Update existing `TurnContext` tests that depend on `dispatch_package`
   being populated. Either rewrite to test the dormant path explicitly
-  or mark with the project's dormant-code convention.
+  or keep them as live unit tests of the dormant module.
 
 ### Latency benchmark
 
@@ -308,8 +308,9 @@ schema is intentionally rich enough to support it.
 1. Solo turn `total_ms` median drops by 5+ seconds over a 10-turn
    benchmark (baseline captured during implementation).
 2. `local_dm.decompose` OTEL span no longer appears in live turn traces.
-3. `turn_records.jsonl` contains one row per turn with the documented
-   schema.
+3. The existing corpus miner, run against a post-change session save,
+   emits one `TrainingPair` row per played turn with non-empty
+   `input_text` (action) and `output_text` (narration).
 4. All existing tests pass except those explicitly updated to reflect
    the dormant path.
 5. Playtest of one full session (10+ turns) shows no narration-quality
