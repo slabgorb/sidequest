@@ -304,10 +304,13 @@ stories:
       OTEL span on rejection so GM panel can see the filter fired.
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-29'
     repos: server
     workflow: trivial
+    completed: '2026-04-29'
     type: bug
+    review_verdict: approved
   - id: 45-17
     title: "Region slug normalization at write (split from 37-41 sub-3)"
     description: |-
