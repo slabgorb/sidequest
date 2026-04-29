@@ -668,7 +668,43 @@ stories:
     priority: p3
     status: done
     started: '2026-04-28'
-    completed: '2026-04-28'
     repos: server,content
     workflow: trivial
+    completed: '2026-04-28'
+    type: chore
+  - id: 45-36
+    title: 45-10 follow-up — reviewer cleanup (logger, vacuous test, doc fixes)
+    description: |-
+      Bundles the 14 non-blocking findings from Reviewer's audit of 45-10 (sidequest-server#106). All Medium/Low — none behavioral defects. Single chore-PR, ~30 lines of changes total.
+
+      Source: see `sprint/archive/45-10-session.md` → "Reviewer (code review)" delivery findings + "Reviewer Assessment" findings table.
+
+      Most-substantive items:
+      - python.md rule #4: scrapbook_coverage.py has no logger; gap path emits OTEL but no logger.warning() (server stdout/journald is blind when GM panel is disconnected)
+      - python.md rule #6: test_module_imports_cleanly is vacuous (no assertion)
+      - Test coverage gap: empty-store path doesn't assert silence on gap span + watcher event
+      - python.md rule #11: _row_count uses f-string SQL (test-internal, non-exploitable)
+      - python.md rule #10: import json as _json inside loop bodies (×2)
+
+      Plus 4 doc/comment cleanups and 1 cross-cutting otel_capture fixture flakiness note (also affects test_dice_throw_momentum_span.py).
+    points: 1
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    acceptance_criteria:
+      - Add module logger + logger.warning() on the gap branch in sidequest/game/scrapbook_coverage.py:120 with format 'scrapbook.coverage_gap_detected genre=%s world=%s slug=%s gap_count=%d gap_rounds=%s'
+      - Fix vacuous test_module_imports_cleanly at tests/server/test_scrapbook_coverage.py:177 — either merge into the immediately-following test_helper_function_exported, or add 'assert hasattr(mod, "detect_scrapbook_coverage_gaps")'
+      - Add silence assertion at tests/server/test_scrapbook_coverage.py:456 — assert _spans_named(otel_capture, 'scrapbook.coverage_gap_detected') == [] AND assert watcher_capture == [] on the empty-store path
+      - Strengthen substring check at tests/server/test_scrapbook_coverage.py:363 — replace 'assert "11" in gap_str and "29" in gap_str' with tuple(gap_rounds_attr) == tuple(range(11, 30)) when sequence-typed, with string-parse fallback for SDK-serialised case
+      - Add SpanRoute.extract invocation tests in TestSpanRouting — construct fake span with known attributes and assert each route.extract returns the expected dict shape (currently only route.component is asserted)
+      - 'Add edge-case test: non-contiguous gap pattern (rounds 1-5 + 8-10 covered, expecting gap_rounds == [6, 7])'
+      - 'Add edge-case test: out-of-range scrapbook rows (turn_id=0 and turn_id=max_round+5) — assert WHERE filter excludes them'
+      - Whitelist or inline _row_count f-string SQL at tests/server/test_scrapbook_coverage.py:606 — either 'assert table in {"narrative_log", "scrapbook_entries"}' before the query, or inline the two queries directly at their callers
+      - Move 'import json as _json' to fixture/module top in tests/server/test_scrapbook_coverage.py:119 and tests/server/test_scrapbook_coverage_resume_wire.py:294
+      - Fix stale fixture comment at tests/server/test_scrapbook_coverage.py:436 — replace 'production join goes through narrative_log.round_number' (no join exists) with 'production uses max_narrative_round() to bound the range and queries scrapbook_entries.turn_id directly'
+      - Rename 'Stub snapshot' comment at tests/server/test_scrapbook_coverage.py:184 to 'Minimal snapshot fixture' — the fixture creates a real GameSnapshot, not a test double
+      - Replace 'Felix's solo sessions' persona reference at sidequest/handlers/connect.py:907-908 with technical phrasing ('genre+world+player triple saves without a slug')
+      - Expand module docstring at sidequest/game/scrapbook_coverage.py:16-19 to explain that narrative_log.round_number is written from turn_manager.interaction at the narration site (websocket_session_handler._execute_narration_turn) — the lockstep invariant is non-obvious otherwise
+      - Address otel_capture fixture flakiness in tests/server/conftest.py:917 — SimpleSpanProcessor.shutdown() does not deregister from the global TracerProvider; processors accumulate across the session. Reset the global provider on each fixture setup. Same defect in tests/server/test_dice_throw_momentum_span.py:60 (45-3 work) — fix both for consistency
     type: chore
