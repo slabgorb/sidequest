@@ -439,12 +439,14 @@ stories:
       in WS handshake paths tend to regress under load.
     points: 2
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-04-29'
     repos: ui
     workflow: tdd
+    completed: '2026-04-29'
     type: refactor
-    started: '2026-04-29'
     branch: feat/45-25-settimeout-readystate-wait
+    review_verdict: approved
   - id: 45-26
     title: "Delete legacy /api/saves/* endpoints + (genre, world, player) save-path helper (was 37-52)"
     description: |-
