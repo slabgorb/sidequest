@@ -411,16 +411,21 @@ async def render_batch(
         visual_style = item.pop("_visual_style")
         positive, clip, negative, seed = compose_fn(item, visual_style)
 
-        # Pre-compose the full prompt locally for the legacy fallback path:
-        # caller's subject + the world's positive_suffix from visual_style.yaml.
-        # When catalog_compose is True and the item is catalog-eligible
-        # (has slug + non-empty visual_prompt) we send a `where:` ref instead
-        # and let the daemon's PromptComposer apply all style layers.
         suffix = visual_style.get("positive_suffix", "")
         full_positive = f"{positive}, {suffix}" if suffix else positive
 
-        use_catalog = bool(catalog_compose and item.get("catalog_ref"))
-        catalog_subject = item.get("catalog_ref", "") if use_catalog else ""
+        if catalog_compose:
+            catalog_subject = item.get("catalog_ref", "")
+            if not catalog_subject:
+                raise ValueError(
+                    f"render_batch: catalog_compose=True requires non-empty "
+                    f"catalog_ref on every item; got empty for "
+                    f"{item.get('genre')}/{item.get('world')}/{item.get('name')}"
+                )
+            use_catalog = True
+        else:
+            use_catalog = False
+            catalog_subject = ""
 
         if output_dir:
             out_dir = output_dir / item["genre"]

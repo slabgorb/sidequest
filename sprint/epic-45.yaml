@@ -730,3 +730,27 @@ stories:
       - Expand module docstring at sidequest/game/scrapbook_coverage.py:16-19 to explain that narrative_log.round_number is written from turn_manager.interaction at the narration site (websocket_session_handler._execute_narration_turn) — the lockstep invariant is non-obvious otherwise
       - Address otel_capture fixture flakiness in tests/server/conftest.py:917 — SimpleSpanProcessor.shutdown() does not deregister from the global TracerProvider; processors accumulate across the session. Reset the global provider on each fixture setup. Same defect in tests/server/test_dice_throw_momentum_span.py:60 (45-3 work) — fix both for consistency
     type: chore
+  - id: 45-37
+    title: Image pipeline silent-fallback teardown — kill SF1-SF7 + render.completed lie detector
+    description: 'Image pipeline has seven silent fallbacks layered such that when the visual_style.yaml decomposition (sidequest-content PR #149) broke the topmost gate, every gameplay scene_illustration silently bypassed the composer. Z-Image now receives raw narration prose with zero style — symptom: photoreal CG with prose-bleed text on shipboard scenes, Coyote Reach world. Per CLAUDE.md No-Silent-Fallbacks rule, every fallback below must be DELETED, not hardened. Lie detector (world_style_applied) was emitted inside the skipped composer, so it never fires. The lie detector got bypassed by the lie. Three-repo coordinated change: server (participant injection), daemon (delete SF1-SF6 + relocated render.completed lie detector), orchestrator scripts (delete SF7).'
+    points: 8
+    priority: p1
+    status: backlog
+    repos: server,daemon,orchestrator
+    workflow: tdd
+    acceptance_criteria:
+      - "SERVER (sidequest-server/sidequest/server/websocket_session_handler.py ~L2497): for tier=='scene_illustration', set params['participants']=[f'pc:{slug}'] and params['pc_descriptor']=descriptor (mirroring the existing portrait branch). Wiring test asserts dispatch includes both fields."
+      - "SF1 (daemon.py:454): replace silent gate 'if subject and world and genre and not positive_prompt:' — when any required field is missing, raise RenderConfigError('missing field: <name>'); emit OTEL compose.gate_short_circuit. No fall-through."
+      - 'SF2 (zimage_mlx_worker.py:169-191 try_compose_prompt_for): delete broad except Exception. ValidationError and CatalogMissError surface as RenderConfigError. Function either returns ComposedPrompt or raises.'
+      - "SF3 (zimage_mlx_worker.py:419-441 _compose_prompt fallback branch): DELETE the no-style-injection fallback. If worker is reached without params['positive_prompt'], raise RenderConfigError('compose pipeline failed to produce a prompt'). No styleless render path exists."
+      - 'SF4/SF5/SF6 (catalogs.py:267-322 get_world / get_genre / _load_world / _load_genre): raise StyleMissError on absent key OR empty positive_suffix. Emit one OTEL signal per failure: style_catalog.miss kind=world|genre genre=X world=Y reason=missing|empty. Worlds without visual_style.yaml or with empty positive_suffix become unrenderable — confirmed contract.'
+      - 'SF7 (orchestrator scripts/render_common.py:422): delete script-local pre-composed fallback. catalog_compose=True is required; catalog_ref empty is a hard error, not a fall-through.'
+      - "RELOCATED LIE DETECTOR: emit OTEL render.completed { genre, world, world_style_applied, genre_style_applied } at the worker level after prompt is finalized — outside the composer that may not run. world_style_applied=True iff the world's positive_suffix substring appears in the final prompt going to Z-Image."
+      - 'TESTS — daemon test_composer.py: test_compose_raises_on_unknown_world_style, test_compose_raises_on_empty_world_positive_suffix, test_worker_raises_on_missing_composed_prompt.'
+      - 'TESTS — daemon test_daemon.py (or dispatch): test_render_fails_loudly_on_missing_world, test_render_fails_loudly_on_validation_error.'
+      - 'TESTS — server: wiring test that scene_illustration dispatch includes participants and pc_descriptor.'
+      - 'TESTS — orchestrator: smoke test that scripts/render_common.render_batch raises when catalog_ref is empty and catalog_compose=True.'
+      - VERIFICATION — Coyote Reach POI render shows McQuarrie/Berkey/Leone painterly styling end-to-end (no prose-bleed CG) before declaring done. Production daemon log /tmp/sidequest-daemon.log shows zero compose.skipped warnings.
+      - 'PRECONDITION (manual verification, not automated gate): sidequest-content PR #152 release-sync includes the per-world visual_style.yaml decomposition. Verify before merging the daemon teardown PR — otherwise prod content lacks the per-world files and every render breaks.'
+      - 'OPEN-DECISION DEFERRED — scene_illustration with no on-screen player character (cutscene of villain alone, place-of-action). Current ship: participants=[pc:slug] always. Follow-up filed only if/when a cutscene case surfaces.'
+    type: bug
