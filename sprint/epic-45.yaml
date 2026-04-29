@@ -492,10 +492,12 @@ stories:
             stems.
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-04-29'
     repos: server,content
     workflow: wire-first
     type: bug
+    branch: feat/45-28-markov-namegen-min-pool-guard
   - id: 45-29
     title: "Daemon span-context per-call art_style scoping (was 37-34)"
     description: |-
