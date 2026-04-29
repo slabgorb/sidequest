@@ -257,9 +257,11 @@ stories:
       retrieved flag and gate narrator content on it.
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-29'
     repos: server
     workflow: wire-first
+    completed: '2026-04-29'
     type: bug
   - id: 45-14
     title: "Discarded weapon transitions out of state=Carried (split from 37-39 sub-4)"
