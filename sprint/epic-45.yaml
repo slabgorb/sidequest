@@ -320,10 +320,13 @@ stories:
       at write, dedup human-name variants of same slug.
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-29'
     repos: server
     workflow: trivial
+    completed: '2026-04-29'
     type: bug
+    review_verdict: approved
   - id: 45-18
     title: "encounter.actors registers all combatants, not just player (split from 37-41 sub-4)"
     description: |-
