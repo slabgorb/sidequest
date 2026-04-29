@@ -240,10 +240,14 @@ stories:
       Relates 37-29.
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-28'
     repos: server
     workflow: tdd
+    completed: '2026-04-28'
     type: bug
+    branch: feat/45-12-chargen-double-init-dedup
+    review_verdict: approved
   - id: 45-13
     title: "Container/object retrieved-state on room re-entry (split from 37-39 sub-3)"
     description: |-
