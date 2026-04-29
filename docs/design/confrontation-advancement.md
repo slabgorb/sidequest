@@ -122,7 +122,8 @@ These are the structural advancement outputs available to confrontation branches
 | Output type | Description | Decay |
 |---|---|---|
 | `level_up` | Genre-traditional level (caverns_and_claudes OSR, elemental_harmony tier 1→2) | None |
-| `pact_tier` | Plugin-specific tier within a magic system | None |
+| `pact_tier` | Depth of relationship with a magic source (bargained / divine / learned). See three-axis note below. | None |
+| `control_tier` | Innate-only: discipline over the wild thing the character *is*. Higher tier = less involuntary expression, more aim. | None |
 | `faction_standing` | +/− with a named faction | None |
 | `bond` | New relationship (NPC, item, place, spirit) | None |
 | `bond_broken` | Existing bond severed | N/A |
@@ -169,6 +170,20 @@ Several output types specify a target. The `target_kind` field disambiguates:
 Some confrontation outcomes advance the character along a *different* plugin's track. Example: The Severance in `bargained_for_v1` clear_win includes an optional `pact_tier` output with `target_plugin: another_plugin` — breaking the pact opens the door to a new path (an Innate awakening, an Item adoption, a Divine calling). Item Legacy's Renunciation has the same shape.
 
 Cross-plugin outputs are a feature, not a hack. They are how characters move between magic systems through the natural arc of confrontation outcomes. Schema: `target_plugin: <plugin_id>`.
+
+### Three tier-axes coexist intentionally
+
+`pact_tier`, `control_tier`, and `discipline_tier` (the last not yet registered — it lands when a learned-using world ships) measure different things on the same character sheet, and a character may have any subset simultaneously:
+
+| Axis | What it measures | Plugin owners |
+|---|---|---|
+| `pact_tier` | depth of relationship with the magic source | bargained, divine, learned |
+| `control_tier` | discipline over the wild thing the character *is* | innate |
+| `discipline_tier` | mastery within a taught tradition (deferred — registers when first learned-using world ships) | learned |
+
+A voidborn at `control_tier 3` may have *no* `pact_tier` — there is no source to bond with; the character *is* the source. A bargained_for character with `pact_tier 3` may have no `control_tier` — they don't have to control anything; the patron does the work. Collapsing these into a single `pact_tier` would require every confrontation outcome to disambiguate "which tier" with a `target_axis` field, and the player-facing panel would say "Tier: 3" without telling them *which kind of three*. The split keeps the readout legible.
+
+**Architect call: 2026-04-29 (magic-system-coyote-reach-v1 architect addendum).** `control_tier` registers in v1 (Coyote Reach uses `innate_v1.control_tier`). `discipline_tier` registers when a learned-using world ships — additive work, no retrofit on `pact_tier`-using plugins.
 
 ### Output catalog stability
 
