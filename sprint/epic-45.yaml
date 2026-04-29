@@ -390,10 +390,13 @@ stories:
       name).
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-29'
     repos: server
     workflow: trivial
+    completed: '2026-04-29'
     type: bug
+    review_verdict: approved
   - id: 45-23
     title: "world_history arc embedding pipeline writes back to narrative_log/lore (split from 37-41 sub-9)"
     description: |-
