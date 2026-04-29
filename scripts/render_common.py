@@ -366,6 +366,7 @@ async def render_batch(
     steps: int = 15,
     force: bool = False,
     output_dir: Path | None = None,
+    catalog_compose: bool = False,
 ) -> None:
     """Generic batch render loop for any image type.
 
@@ -379,6 +380,12 @@ async def render_batch(
         steps: Inference steps.
         force: Regenerate even if image exists.
         output_dir: Override output directory.
+        catalog_compose: When True and an item has a `catalog_ref` (e.g.
+            `where:<world>/<slug>` for POIs, `npc:<slug>` for portraits),
+            route through the daemon's PromptComposer so all style layers
+            (genre + world + casting + culture + camera) apply. Items
+            without `catalog_ref` fall back to the legacy local-composition
+            path so worlds with no catalog-ready content still render.
     """
     import time
 
@@ -404,15 +411,16 @@ async def render_batch(
         visual_style = item.pop("_visual_style")
         positive, clip, negative, seed = compose_fn(item, visual_style)
 
-        # Pre-compose the full prompt locally: caller's subject + the world's
-        # positive_suffix from visual_style.yaml. Bypasses the daemon's
-        # catalog composer — that path expects the legacy portrait_manifest
-        # schema (`id`/`descriptions[LOD]`/`culture`) which no shipping world
-        # uses anymore. All worlds now author portrait manifests with
-        # scene-based `appearance` + `culture_aesthetic` strings, and the
-        # batch `compose_fn` already aggregates those into `positive`.
+        # Pre-compose the full prompt locally for the legacy fallback path:
+        # caller's subject + the world's positive_suffix from visual_style.yaml.
+        # When catalog_compose is True and the item is catalog-eligible
+        # (has slug + non-empty visual_prompt) we send a `where:` ref instead
+        # and let the daemon's PromptComposer apply all style layers.
         suffix = visual_style.get("positive_suffix", "")
         full_positive = f"{positive}, {suffix}" if suffix else positive
+
+        use_catalog = bool(catalog_compose and item.get("catalog_ref"))
+        catalog_subject = item.get("catalog_ref", "") if use_catalog else ""
 
         if output_dir:
             out_dir = output_dir / item["genre"]
@@ -438,27 +446,43 @@ async def render_batch(
             print(f"Genre: {item['genre']}  World: {item['world']}")
             print(f"Name: {item['name']}")
             print(f"Seed: {seed}")
-            print(f"\nSubject ({estimate_tokens(positive)} tokens):")
-            print(f"  {positive}")
-            print(f"\nStyle suffix:")
-            print(f"  {suffix or '(none)'}")
-            print(f"\nFull positive prompt sent to daemon ({estimate_tokens(full_positive)} tokens):")
-            print(f"  {full_positive}")
-            print(f"\nCLIP prompt:")
-            print(f"  {clip}")
-            print(f"\nNegative prompt:")
-            print(f"  {negative}")
+            if use_catalog:
+                print(f"\nMode: catalog-composed (daemon applies GENRE + WORLD + CASTING + LOCATION + camera)")
+                print(f"Catalog ref: {catalog_subject}")
+            else:
+                print(f"\nMode: local pre-composed prompt (legacy fallback)")
+                print(f"\nSubject ({estimate_tokens(positive)} tokens):")
+                print(f"  {positive}")
+                print(f"\nStyle suffix:")
+                print(f"  {suffix or '(none)'}")
+                print(f"\nFull positive prompt sent to daemon ({estimate_tokens(full_positive)} tokens):")
+                print(f"  {full_positive}")
+                print(f"\nCLIP prompt:")
+                print(f"  {clip}")
+                print(f"\nNegative prompt:")
+                print(f"  {negative}")
             print(f"\nOutput: {out_path}")
             continue
 
         try:
             lora_paths, lora_scales = resolve_lora_args(visual_style)
-            result = await send_render(
-                tier, full_positive, clip, negative, seed, steps,
-                lora_paths=lora_paths,
-                lora_scales=lora_scales,
-                variant=visual_style.get("preferred_model", ""),
-            )
+            if use_catalog:
+                result = await send_render(
+                    tier, "", "", negative, seed, steps,
+                    subject=catalog_subject,
+                    genre=item["genre"],
+                    world=item["world"],
+                    lora_paths=lora_paths,
+                    lora_scales=lora_scales,
+                    variant=visual_style.get("preferred_model", ""),
+                )
+            else:
+                result = await send_render(
+                    tier, full_positive, clip, negative, seed, steps,
+                    lora_paths=lora_paths,
+                    lora_scales=lora_scales,
+                    variant=visual_style.get("preferred_model", ""),
+                )
             if "error" in result:
                 log.error("  FAILED: %s", result["error"])
                 failed += 1
