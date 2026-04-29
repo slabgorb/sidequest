@@ -735,7 +735,8 @@ stories:
     description: 'Image pipeline has seven silent fallbacks layered such that when the visual_style.yaml decomposition (sidequest-content PR #149) broke the topmost gate, every gameplay scene_illustration silently bypassed the composer. Z-Image now receives raw narration prose with zero style — symptom: photoreal CG with prose-bleed text on shipboard scenes, Coyote Reach world. Per CLAUDE.md No-Silent-Fallbacks rule, every fallback below must be DELETED, not hardened. Lie detector (world_style_applied) was emitted inside the skipped composer, so it never fires. The lie detector got bypassed by the lie. Three-repo coordinated change: server (participant injection), daemon (delete SF1-SF6 + relocated render.completed lie detector), orchestrator scripts (delete SF7).'
     points: 8
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-04-29'
     repos: server,daemon,orchestrator
     workflow: tdd
     acceptance_criteria:
@@ -753,4 +754,5 @@ stories:
       - VERIFICATION — Coyote Reach POI render shows McQuarrie/Berkey/Leone painterly styling end-to-end (no prose-bleed CG) before declaring done. Production daemon log /tmp/sidequest-daemon.log shows zero compose.skipped warnings.
       - 'PRECONDITION (manual verification, not automated gate): sidequest-content PR #152 release-sync includes the per-world visual_style.yaml decomposition. Verify before merging the daemon teardown PR — otherwise prod content lacks the per-world files and every render breaks.'
       - 'OPEN-DECISION DEFERRED — scene_illustration with no on-screen player character (cutscene of villain alone, place-of-action). Current ship: participants=[pc:slug] always. Follow-up filed only if/when a cutscene case surfaces.'
+    completed: '2026-04-29'
     type: bug
