@@ -183,6 +183,12 @@ daemon-lint:
 daemon-install:
     cd {{root}}/sidequest-daemon && pip install -e ".[dev]"
 
+# Style-only prompt preview — show GENRE/WORLD/CULTURE styling for a world
+preview-style genre world:
+    cd {{root}}/sidequest-daemon && \
+        SIDEQUEST_GENRE_PACKS={{content}} \
+        uv run sidequest-promptpreview style --genre {{genre}} --world {{world}}
+
 # ---------------------------------------------------------------------------
 # Cross-repo + utilities
 # ---------------------------------------------------------------------------

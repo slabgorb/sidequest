@@ -15,6 +15,8 @@ import asyncio
 import logging
 from pathlib import Path
 
+import re
+
 from render_common import (
     GENRE_PACKS_DIR,
     TOKEN_LIMIT,
@@ -25,6 +27,15 @@ from render_common import (
     render_batch,
     truncate_to_tokens,
 )
+
+
+def _slugify_name(name: str) -> str:
+    """Mirror sidequest_daemon.media.catalogs._slugify_name so the script
+    derives the same `npc:<slug>` ref the daemon's CharacterCatalog uses
+    when reading portrait_manifest.yaml entries that lack an explicit `id`."""
+    lowered = name.strip().lower()
+    collapsed = re.sub(r"\s+", "_", lowered)
+    return re.sub(r"[^a-z0-9_-]", "", collapsed)
 
 DEFAULT_STEPS = 15
 log = logging.getLogger(__name__)
@@ -41,10 +52,14 @@ def collect_characters(genre_dir: Path) -> list[dict]:
         world = rel.parts[1] if len(rel.parts) > 2 and rel.parts[0] == "worlds" else "default"
 
         for char in data.get("characters", []):
+            name = char.get("name", "unknown")
+            slug = char.get("id") or _slugify_name(name)
             characters.append({
                 "genre": genre_name,
                 "world": world,
-                "name": char.get("name", "unknown"),
+                "name": name,
+                "slug": slug,
+                "catalog_ref": f"npc:{slug}",
                 "role": char.get("role", ""),
                 "type": char.get("type", "npc_major"),
                 "appearance": char.get("appearance", ""),
@@ -124,6 +139,7 @@ async def main() -> None:
         steps=args.steps,
         force=args.force,
         output_dir=args.output_dir,
+        catalog_compose=True,
     )
 
 

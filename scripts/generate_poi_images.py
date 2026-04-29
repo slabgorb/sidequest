@@ -45,14 +45,33 @@ def collect_pois(genre_dir: Path) -> list[dict]:
             chapter_label = chapter.get("label", chapter_id)
 
             for poi in chapter.get("points_of_interest", []):
+                # visual_prompt schema migrated from string → {solo, backdrop}.
+                # Landscape POI renders use solo (place fills the frame).
+                vp = poi.get("visual_prompt", "")
+                if isinstance(vp, dict):
+                    visual_prompt = vp.get("solo", "")
+                else:
+                    visual_prompt = vp or ""
+
+                # catalog_ref is set only when the POI is eligible for the
+                # daemon's PlaceCatalog (has slug + visual prose). Worlds that
+                # haven't authored visual_prompt entries fall back to the
+                # legacy local-composition path inside render_batch.
+                slug = poi.get("slug", "")
+                catalog_ref = (
+                    f"where:{world}/{slug}" if slug and visual_prompt else ""
+                )
+
                 pois.append({
                     "genre": genre_name,
                     "world": world,
+                    "slug": slug,
                     "chapter_id": chapter_id,
                     "chapter_label": chapter_label,
                     "name": poi.get("name", "unknown"),
                     "description": poi.get("description", ""),
-                    "visual_prompt": poi.get("visual_prompt", ""),
+                    "visual_prompt": visual_prompt,
+                    "catalog_ref": catalog_ref,
                     "region": poi.get("region", ""),
                     "type": poi.get("type", ""),
                 })
@@ -139,6 +158,7 @@ async def main() -> None:
         steps=args.steps,
         force=True,  # POIs don't have --force flag, always regenerate
         output_dir=args.output_dir,
+        catalog_compose=True,
     )
 
 
