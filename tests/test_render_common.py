@@ -256,3 +256,134 @@ def test_resolve_lora_args_empty_resolved_falls_through_to_legacy() -> None:
     paths, scales = resolve_lora_args(style)
     assert paths == ["/old.ckpt"]
     assert scales == [0.7]
+
+
+# ─── Story 45-38: high-fidelity tier wiring (AC2) ─────────────────────
+
+
+def test_send_render_accepts_fidelity_kwarg() -> None:
+    """Story 45-38 AC2: send_render exposes a `fidelity` kwarg so callers
+    can request the base-1.0 / 20-step / CFG 4 path for pre-gen, while
+    in-session callers omit it and stay on Turbo (AC3)."""
+    sig = inspect.signature(send_render)
+    assert "fidelity" in sig.parameters
+
+
+def test_send_render_default_fidelity_is_turbo() -> None:
+    """AC3: callers that don't pass `fidelity` get Turbo — preserves the
+    in-session live-narration latency budget without behavioral change."""
+    sig = inspect.signature(send_render)
+    assert sig.parameters["fidelity"].default == "turbo"
+
+
+def test_render_batch_accepts_fidelity_kwarg() -> None:
+    """The batch loop must thread fidelity through to each send_render call."""
+    from scripts.render_common import render_batch
+
+    sig = inspect.signature(render_batch)
+    assert "fidelity" in sig.parameters
+
+
+def test_render_batch_default_fidelity_is_turbo() -> None:
+    """Default behavior unchanged — pre-gen scripts must opt into HF explicitly."""
+    from scripts.render_common import render_batch
+
+    sig = inspect.signature(render_batch)
+    assert sig.parameters["fidelity"].default == "turbo"
+
+
+SCRIPTS_DIR = Path(__file__).resolve().parents[1] / "scripts"
+
+
+def test_generate_portrait_script_routes_to_high_fidelity_by_default() -> None:
+    """AC2: generate_portrait_images.py defaults to the high-fidelity tier
+    for genre-pack pre-gen.
+
+    This is a source-level wiring assertion — the script's render_batch call
+    must specify ``fidelity="high_fidelity"``. The test deliberately accepts
+    either quoting style so Dev's formatter choice doesn't break the check.
+    """
+    src = (SCRIPTS_DIR / "generate_portrait_images.py").read_text()
+    assert (
+        'fidelity="high_fidelity"' in src
+        or "fidelity='high_fidelity'" in src
+    ), (
+        "generate_portrait_images.py must call render_batch with "
+        "fidelity='high_fidelity' to default pre-gen to base Z-Image 1.0"
+    )
+
+
+def test_generate_poi_script_routes_to_high_fidelity_by_default() -> None:
+    """AC2: generate_poi_images.py defaults to the high-fidelity tier."""
+    src = (SCRIPTS_DIR / "generate_poi_images.py").read_text()
+    assert (
+        'fidelity="high_fidelity"' in src
+        or "fidelity='high_fidelity'" in src
+    ), (
+        "generate_poi_images.py must call render_batch with "
+        "fidelity='high_fidelity' to default pre-gen to base Z-Image 1.0"
+    )
+
+
+def test_send_render_fidelity_propagates_to_request_payload(monkeypatch) -> None:
+    """Wiring test (CLAUDE.md mandate): the fidelity kwarg must reach the
+    JSON-RPC params dict the daemon receives — not just sit in the function
+    signature dead.
+
+    Without this, send_render could accept the kwarg, satisfy the signature
+    test, and still drop it before serialization — passing tests, broken
+    production. The mock captures the line written to the unix socket and
+    asserts ``fidelity`` survives the trip.
+    """
+    import asyncio
+    import json
+    from scripts import render_common
+
+    captured: dict = {}
+
+    class _FakeWriter:
+        def __init__(self) -> None:
+            self.buffer = bytearray()
+
+        def write(self, data: bytes) -> None:
+            self.buffer.extend(data)
+
+        async def drain(self) -> None:
+            return None
+
+        def close(self) -> None:
+            return None
+
+        async def wait_closed(self) -> None:
+            return None
+
+    class _FakeReader:
+        async def readline(self) -> bytes:
+            return (json.dumps({"id": "x", "result": {"image_path": "/tmp/x"}}) + "\n").encode()
+
+    async def fake_open_unix_connection(path):
+        writer = _FakeWriter()
+        captured["writer"] = writer
+        return _FakeReader(), writer
+
+    monkeypatch.setattr(
+        "scripts.render_common.asyncio.open_unix_connection",
+        fake_open_unix_connection,
+    )
+
+    asyncio.run(
+        render_common.send_render(
+            tier="portrait",
+            positive="x", clip="y", negative="z", seed=42, steps=20,
+            fidelity="high_fidelity",
+        )
+    )
+
+    line = bytes(captured["writer"].buffer).decode().strip()
+    assert line, "send_render must write a request line to the socket"
+    payload = json.loads(line)
+    assert payload["params"].get("fidelity") == "high_fidelity", (
+        "send_render must propagate fidelity to the JSON-RPC params dict; "
+        "otherwise the daemon never sees it. Got params="
+        f"{payload['params']!r}"
+    )
