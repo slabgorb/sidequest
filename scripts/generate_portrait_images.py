@@ -140,6 +140,7 @@ async def main() -> None:
         force=args.force,
         output_dir=args.output_dir,
         catalog_compose=True,
+        fidelity="high_fidelity",
     )
 
 

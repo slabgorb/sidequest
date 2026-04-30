@@ -159,6 +159,7 @@ async def main() -> None:
         force=True,  # POIs don't have --force flag, always regenerate
         output_dir=args.output_dir,
         catalog_compose=True,
+        fidelity="high_fidelity",
     )
 
 

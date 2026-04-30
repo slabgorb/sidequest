@@ -1,20 +1,18 @@
 # Ping-Pong File Protocol
 
-Cross-workspace coordination between OQ-2 (playtest driver) and OQ-1 (fix team).
+Cross-workspace coordination between playtest driver and fix agent.
 
 ## File Locations
 
 | Resource | Path |
 |----------|------|
-| Ping-pong file | `/Users/keithavery/Projects/sq-playtest-pingpong.md` |
-| Screenshots | `/Users/keithavery/Projects/sq-playtest-screenshots/` |
-| Archive | `/Users/keithavery/Projects/sq-playtest-archive/` |
+| Ping-pong file | `../Projects/sq-playtest-pingpong.md` |
 
-These are siblings to `oq-1/` and `oq-2/` under `Projects/`, accessible to both workspaces.
+These are siblings to `bugfix agent/` and `playtest/` under `Projects/`, accessible to both workspaces.
 
 ## Write Ownership
 
-| Action | OQ-2 (playtest) | OQ-1 (fixes) |
+| Action | playtest (playtest) | bugfix agent (fixes) |
 |--------|-----------------|---------------|
 | Add new task | YES | NO |
 | Set status → `in-progress` | NO | YES |
@@ -31,8 +29,8 @@ These are siblings to `oq-1/` and `oq-2/` under `Projects/`, accessible to both 
 ```
 open → in-progress → fixed → verified
  │                      │
- └── (OQ-2 adds)       └── (OQ-2 verifies)
-       (OQ-1 picks up)       (OQ-1 fixes)
+ └── (playtest adds)       └── (playtest verifies)
+       (bugfix agent picks up)       (bugfix agent fixes)
 ```
 
 ## Task Tags
@@ -46,22 +44,22 @@ open → in-progress → fixed → verified
 
 ## Blocking Bug Signal
 
-When OQ-2 adds a blocking bug, it prepends this to the Tasks section:
+When playtest adds a blocking bug, it prepends this to the Tasks section:
 
 ```markdown
-> **ATTENTION OQ-1**: Blocking bug added — {brief description}. Please prioritize.
+> **ATTENTION bugfix agent**: Blocking bug added — {brief description}. Please prioritize.
 ```
 
-OQ-1 removes the attention line when it sets the task to `in-progress`.
+bugfix agent removes the attention line when it sets the task to `in-progress`.
 
 ## Server Restart Coordination
 
-When OQ-1 fixes a bug that requires a server restart:
-1. OQ-1 adds `- **Needs restart:** yes` to the task entry
-2. OQ-1 sets status to `fixed`
-3. OQ-2 sees the `fixed` status and `Needs restart` flag
-4. OQ-2 pulls latest code and restarts the affected service
-5. OQ-2 re-tests and sets status to `verified`
+When bugfix agent fixes a bug that requires a server restart:
+1. bugfix agent adds `- **Needs restart:** yes` to the task entry
+2. bugfix agent sets status to `fixed`
+3. playtest sees the `fixed` status and `Needs restart` flag
+4. playtest pulls latest code and restarts the affected service
+5. playtest re-tests and sets status to `verified`
 
 ## Task Entry Template
 
@@ -71,7 +69,6 @@ When OQ-1 fixes a bug that requires a server restart:
 - **Found by:** SM | UX Designer
 - **Repro:** {step-by-step reproduction}
 - **Status:** open | in-progress | fixed | verified
-- **Screenshot:** /Users/keithavery/Projects/sq-playtest-screenshots/{NNN}.png
 - **Notes:** {additional context}
-- **Needs restart:** no (set by OQ-1 if fix requires service restart)
+- **Needs restart:** no (set by bugfix agent if fix requires service restart)
 ```
