@@ -201,6 +201,71 @@ check-all: server-check client-lint client-test daemon-lint
 otel:
     uv run python3 -m webbrowser http://localhost:8765/dashboard
 
+# ---------------------------------------------------------------------------
+# Jaeger v2 — local trace collector + query UI for raw OTLP spans.
+#
+# Sits alongside the WatcherHub / GM dashboard; the watcher feed is the
+# in-game "lie detector" for players, Jaeger is post-hoc forensics for the
+# dev box. Spans flow to both when SIDEQUEST_OTLP_ENDPOINT=localhost:4317.
+# ---------------------------------------------------------------------------
+
+# Start Jaeger v2 all-in-one in the background. Badger storage at
+# /tmp/sidequest-jaeger/, 7-day TTL. UI: http://localhost:16686.
+jaeger:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    log={{logdir}}/sidequest-jaeger.log
+    pidfile={{logdir}}/sidequest-jaeger.pid
+    if [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
+        echo "Jaeger already running (pid $(cat "$pidfile")). UI: http://localhost:16686"
+        exit 0
+    fi
+    if ! command -v jaeger >/dev/null 2>&1; then
+        echo "ERROR: jaeger binary not on PATH. Install to ~/.local/bin/jaeger"
+        echo "       (jaeger v2 binary from https://github.com/jaegertracing/jaeger/releases)"
+        exit 1
+    fi
+    : > "$log"
+    mkdir -p /tmp/sidequest-jaeger/keys /tmp/sidequest-jaeger/values
+    ( jaeger --config=file:{{root}}/infra/jaeger/config.yaml >"$log" 2>&1 ) &
+    echo $! > "$pidfile"
+    echo "▶ jaeger  (:4317 OTLP, :16686 UI)  → $log"
+    echo "  Set SIDEQUEST_OTLP_ENDPOINT=localhost:4317 in the server env to export spans."
+
+# Stop the background Jaeger started by `just jaeger`.
+jaeger-stop:
+    #!/usr/bin/env bash
+    pidfile={{logdir}}/sidequest-jaeger.pid
+    if [[ -f "$pidfile" ]]; then
+        pid=$(cat "$pidfile")
+        if kill -0 "$pid" 2>/dev/null; then
+            kill "$pid" && echo "stopped jaeger (pid $pid)"
+        fi
+        rm -f "$pidfile"
+    else
+        echo "no jaeger pidfile; nothing to stop"
+    fi
+
+# Open the Jaeger UI.
+jaeger-ui:
+    uv run python3 -m webbrowser http://localhost:16686
+
+# Boot all services with OTLP export wired to local Jaeger AND every
+# watcher event mirrored as a synthetic OTEL span. Requires `just jaeger`
+# already running. Without SIDEQUEST_WATCHER_AS_SPANS, Jaeger only sees
+# spans from `tracer().start_as_current_span(...)`; with it, every
+# `publish_event(...)` call becomes a child span too — full semantic stream.
+up-traced:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! curl -sSf -o /dev/null --max-time 1 http://localhost:16686 2>/dev/null; then
+        echo "ERROR: Jaeger UI not reachable at :16686. Run 'just jaeger' first."
+        exit 1
+    fi
+    SIDEQUEST_OTLP_ENDPOINT=localhost:4317 \
+    SIDEQUEST_WATCHER_AS_SPANS=1 \
+        just up
+
 # Headless playtest driver (uses the running server)
 playtest *flags:
     python3 {{root}}/scripts/playtest.py {{flags}}
