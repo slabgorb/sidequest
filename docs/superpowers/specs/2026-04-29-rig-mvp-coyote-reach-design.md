@@ -1,8 +1,8 @@
-# Rig MVP — Coyote Reach Vertical Slice
+# Rig MVP — Coyote Star Vertical Slice
 
 **Date:** 2026-04-29
 **Status:** Design — pre-implementation
-**Target playtest:** Keith solo, fresh Coyote Reach session, Kestrel speaking
+**Target playtest:** Keith solo, fresh Coyote Star session, Kestrel speaking
 **Companion docs:**
 - `docs/design/rig-taxonomy.md` (framework)
 - `docs/design/magic-plugins/item_legacy_v1.md` (subsystems are item-legacy items)
@@ -13,7 +13,7 @@
 
 Stand up the rig framework far enough that **Kestrel speaks in narration with bond-tier-correct name-forms, and `the_tea_brew` runs end-to-end with bond delta, span emission, GM-panel visibility, and cliché-judge enforcement**. Vertical slice — one class, one chassis, one confrontation. Everything else (Bright Margin, Tide-Singer, Hegemonic patrol cruiser, hardpoints, subsystems, damage history, registration, dogfight wiring, ancillary model, crew_awareness, UI sheet) is explicitly deferred.
 
-The slice is graded against the 2026-04-26 Coyote Reach playthrough's central observation: Kestrel was the dominant register in 13 of 18 turns, name-forms upgraded across the session, and the chassis-as-speaker felt mechanically real even though there was no mechanical backing. This slice puts mechanical backing under that one register and proves the framework can carry it.
+The slice is graded against the 2026-04-26 Coyote Star playthrough's central observation: Kestrel was the dominant register in 13 of 18 turns, name-forms upgraded across the session, and the chassis-as-speaker felt mechanically real even though there was no mechanical backing. This slice puts mechanical backing under that one register and proves the framework can carry it.
 
 ## Approach
 
@@ -25,7 +25,7 @@ The slice is graded against the 2026-04-26 Coyote Reach playthrough's central ob
 - **Magic plugin scaffold** (`sidequest/magic/plugins/item_legacy_v1.py`) — pattern reused for chassis-state plugin lookups; bond ledger reuses `LedgerBar` (`sidequest/magic/state.py:32`).
 - **Confrontation dispatch** (`sidequest/server/dispatch/confrontation.py`) — `the_tea_brew` is one more entry in the existing dispatch path.
 - **OTEL span infrastructure** (`sidequest/telemetry/spans/`) — new `rig.py` joins existing `npc.py` and `magic.py`.
-- **Confrontations.yaml in coyote_reach world** — already loads; add one entry, do not fork the file.
+- **Confrontations.yaml in coyote_star world** — already loads; add one entry, do not fork the file.
 - **Room movement** (`sidequest/game/room_movement.py`) — used unchanged; Galley is a room.
 
 The slice is implementable in a single coherent change because most of the work is wiring, not new infrastructure.
@@ -41,7 +41,7 @@ Per CLAUDE.md, weighed against the actual playgroup:
 ## Locked decisions (this brainstorm)
 
 1. **Scope = thin vertical slice (option c).** One class (`voidborn_freighter`), one chassis (Kestrel), one confrontation (`the_tea_brew`), no hardpoints/subsystems/damage/registration. Genre-complete and world-complete options deferred to follow-on specs.
-2. **Existing `the_salvage` collision deferred.** Coyote Reach's existing `the_salvage` (item-discovery shape) stays untouched in this slice. The taxonomy's rig-shaped `the_salvage` (subsystem-strip shape) lands when subsystems land. The slice's `the_tea_brew` is additive only.
+2. **Existing `the_salvage` collision deferred.** Coyote Star's existing `the_salvage` (item-discovery shape) stays untouched in this slice. The taxonomy's rig-shaped `the_salvage` (subsystem-strip shape) lands when subsystems land. The slice's `the_tea_brew` is additive only.
 3. **Chassis state lives in its own container (option a) with a projection into `npc_registry` for narrator prompt continuity.** Chassis registry is the source of truth (typed, schema-rich); npc_registry receives a projected entry for each chassis at world-load and on every chassis state mutation. No dual-write — one writer, one reader path.
 4. **Pre-bonded at world-load.** Kestrel ships with `bond_strength: 0.45, bond_tier: trusted` in `rigs.yaml`. Without a non-zero seed, the name-form-upgrade demo doesn't fire in a single session. This matches the playthrough's reference state (Zee had been her captain "for at least three jumps' worth of patch kits").
 5. **Tone axis backport is minimal.** `confrontation-advancement.md` gains an optional `register: dramatic | intimate | domestic | quiet` field. Existing confrontations are NOT retrofitted — `register` defaults to `dramatic` if absent. The_tea_brew is the first authored `intimate` confrontation; future confrontations declare register at authoring time.
@@ -109,11 +109,11 @@ classes:
 
 **Deferred classes:** `prospector_skiff`, `hegemonic_patrol_cruiser`, `fighter`, `station_hull`, `courier_skiff`. Their absence is documented in a `coverage:` block at the file head.
 
-### `worlds/coyote_reach/rigs.yaml` — slice scope
+### `worlds/coyote_star/rigs.yaml` — slice scope
 
 ```yaml
 version: "0.1.0"
-world: coyote_reach
+world: coyote_star
 genre: space_opera
 chassis_instances:
   - id: kestrel
@@ -141,7 +141,7 @@ chassis_instances:
 
 **Deferred instances:** Bright Margin, Tide-Singer, Hegemonic patrol cruisers. Their absence is documented in a `coverage:` block at the file head.
 
-### `worlds/coyote_reach/confrontations.yaml` — additive entry
+### `worlds/coyote_star/confrontations.yaml` — additive entry
 
 Append to existing file (do not rewrite, do not fork):
 
@@ -291,7 +291,7 @@ Cliché-judge already reads world state; this is one more rule in its prompt. No
 
 Per CLAUDE.md "Every Test Suite Needs a Wiring Test." Three required:
 
-1. **End-to-end Galley fixture test** — `tests/integration/test_rig_kestrel_tea_brew.py`. Loads coyote_reach world fixture, advances player into Galley, asserts the_tea_brew auto-fires, asserts bond_strength_chassis_to_character increased by 0.06, asserts a `rig.bond_event` span fired with correct attributes, asserts the projected npc_registry entry still resolves Kestrel by name.
+1. **End-to-end Galley fixture test** — `tests/integration/test_rig_kestrel_tea_brew.py`. Loads coyote_star world fixture, advances player into Galley, asserts the_tea_brew auto-fires, asserts bond_strength_chassis_to_character increased by 0.06, asserts a `rig.bond_event` span fired with correct attributes, asserts the projected npc_registry entry still resolves Kestrel by name.
 2. **Voice resolver wiring test** — `tests/unit/test_chassis_voice.py`. Loads Kestrel at `bond_tier_chassis = trusted` for a fixture character with first_name "Zee", asserts `resolve_chassis_name_form` returns `"Zee"`. Drops bond_strength below the trusted threshold via `apply_bond_event`, asserts the next call returns `"Mr. {last_name}"` form. Tests the name-form *change* mechanism on a single boundary the slice authors (familiar ↔ trusted), not the `fused` boundary which has no nickname source in the slice.
 3. **Span-firing wiring test** — `tests/integration/test_rig_spans_emit.py`. Triggers a synthetic the_tea_brew outcome, asserts all three rig spans fired (bond_event, voice_register_change *if tier crossed*, confrontation_outcome) with correct attribute sets.
 
@@ -301,7 +301,7 @@ The end-to-end test is the load-bearing one — it's the one that catches "schem
 
 What "done" looks like, played through:
 
-1. Keith starts a fresh Coyote Reach session (`just up`, new save).
+1. Keith starts a fresh Coyote Star session (`just up`, new save).
 2. World loads. `chassis_registry` has Kestrel; `npc_registry` projection has Kestrel as a `ship_ai`. Bond ledger is at `0.45 / 0.45, trusted / trusted`.
 3. Narrator's first prose mentions Kestrel; chassis-as-speaker fires; Kestrel addresses Keith by `"{first_name}"` (her current trusted-tier form).
 4. Keith navigates into Galley (room movement).
@@ -337,7 +337,7 @@ The following are **named here so they do not creep into this slice**. Each beco
 This slice is one spec → one implementation plan → one PR. The follow-on roadmap (named here for orientation, not committed):
 
 1. **rigs MVP slice** — *this spec*.
-2. **Coyote Reach world-complete** — Bright Margin, Tide-Singer, Hegemonic patrol cruisers; remaining intimate confrontations (`the_engineers_litany`, `the_shared_watch`, `the_long_quiet`); registration friction + `the_customs_inspection`.
+2. **Coyote Star world-complete** — Bright Margin, Tide-Singer, Hegemonic patrol cruisers; remaining intimate confrontations (`the_engineers_litany`, `the_shared_watch`, `the_long_quiet`); registration friction + `the_customs_inspection`.
 3. **Hardpoints + subsystems** — locked decision S2 lights up; `installed_in` pointers; the rig-shaped `the_salvage` rewrite; `rig.subsystem_install`/`remove` spans; cliché-judge hooks 5/6.
 4. **Dogfight wiring** — `rig.damage_resolution` spans from the dogfight scene-mechanic; per-location HP routing; damage_history ledger; `the_wrecking` and `the_heroic_stand` confrontations.
 5. **Magic plugin chassis interfaces** — innate_v1 place-locus, bargained_for_v1 patron-scope, learned_v1 prerequisite_gate against chassis-state.

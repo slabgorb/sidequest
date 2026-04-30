@@ -1,4 +1,4 @@
-# Magic System Coyote Reach v1 — Architect Review Addendum
+# Magic System Coyote Star v1 — Architect Review Addendum
 
 **Date:** 2026-04-29
 **Reviewer:** Leonard of Quirm (Architect)
@@ -55,7 +55,7 @@ the cleanest moment to split.
 
 ### Concrete decisions for the plan
 
-1. **Add `control_tier` to the output catalog now.** Coyote Reach uses
+1. **Add `control_tier` to the output catalog now.** Coyote Star uses
    `innate_v1.control_tier`. The plan's Phase 1 already covers innate's tier
    mechanics; adding the catalog entry is one extra row in
    `docs/design/confrontation-advancement.md` §Output Type Catalog and one extra
@@ -64,7 +64,7 @@ the cleanest moment to split.
    cost is trivial and avoids a back-edit when `learned_v1` ships.
 
 2. **`discipline_tier` registration is deferred until a learned-using world ships.**
-   Coyote Reach has no learned plugin in v1. Registering an unused output type would
+   Coyote Star has no learned plugin in v1. Registering an unused output type would
    violate the plan's "no stubbing" principle (CLAUDE.md). The first learned-world
    story claims `discipline_tier` registration as part of its scope.
 
@@ -157,8 +157,8 @@ sidequest-server/sidequest/genre/
 
 sidequest-content/genre_packs/
   space_opera/magic.yaml
-  space_opera/worlds/coyote_reach/magic.yaml
-  space_opera/worlds/coyote_reach/confrontations.yaml
+  space_opera/worlds/coyote_star/magic.yaml
+  space_opera/worlds/coyote_star/confrontations.yaml
 ```
 
 ### Forward impact
@@ -337,7 +337,7 @@ These surfaced during the grounding pass. Each is small; none rewrite the plan.
 ### 5.1 Plugin contract YAML composition order
 
 The plan §2f shows plugin `.yaml` containing `narrator_register` defaults. World
-`magic.yaml` *also* has a `narrator_register` (the Coyote Reach paragraph in spec
+`magic.yaml` *also* has a `narrator_register` (the Coyote Star paragraph in spec
 §1 "Narrator register"). Composition order should be:
 
 1. Plugin's `.yaml` provides the **default** narrator_register (the genre-neutral
@@ -346,7 +346,7 @@ The plan §2f shows plugin `.yaml` containing `narrator_register` defaults. Worl
 3. World `magic.yaml` MAY override (world-flavored plugin voice).
 
 Last-writer-wins per field. Loader assembles in this order; `WorldMagicConfig`
-holds the materialized result. Coyote Reach uses (3) — it sets a world-specific
+holds the materialized result. Coyote Star uses (3) — it sets a world-specific
 register that wins over the plugin default.
 
 **Plan action:** Phase 1 Task 1.6 (`Magic loader`) should make this composition
@@ -436,7 +436,7 @@ work concrete and avoid known-shape pitfalls.
 
 ## 7. What I am NOT signing off on
 
-- **The Coyote Reach `magic.yaml` content itself.** That is GM lane (writer),
+- **The Coyote Star `magic.yaml` content itself.** That is GM lane (writer),
   not architect. The schema is sound; whether `sanity 0.40 → Bleeding-Through`
   is the right tuning for the playgroup is a writer/playtest call.
 - **Phase 5 confrontation orchestration.** Spec §5d rightly defers
@@ -461,7 +461,7 @@ Phase 1 is the highest-risk iteration (the spec correctly identifies
 "content authoring surfaces schema gaps" as the #1 risk). Stopping at Phase 1
 cut-point — `pytest sidequest/magic` passes, no game integration — is the
 right machine-verifiable boundary before committing to Phases 2-3. If
-Coyote Reach `magic.yaml` authoring (Task 1.7) surfaces schema gaps, fix
+Coyote Star `magic.yaml` authoring (Task 1.7) surfaces schema gaps, fix
 them in Phase 1 and re-emit the PR. Phases 2+ stay clean.
 
 Recommended next session sequence:

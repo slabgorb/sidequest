@@ -23,7 +23,7 @@ workflow: "tdd"
 
 ## Description
 
-Image pipeline has seven silent fallbacks layered such that when the visual_style.yaml decomposition (sidequest-content PR #149) broke the topmost gate, every gameplay scene_illustration silently bypassed the composer. Z-Image now receives raw narration prose with zero style — symptom: photoreal CG with prose-bleed text on shipboard scenes, Coyote Reach world.
+Image pipeline has seven silent fallbacks layered such that when the visual_style.yaml decomposition (sidequest-content PR #149) broke the topmost gate, every gameplay scene_illustration silently bypassed the composer. Z-Image now receives raw narration prose with zero style — symptom: photoreal CG with prose-bleed text on shipboard scenes, Coyote Star world.
 
 Per CLAUDE.md No-Silent-Fallbacks rule, every fallback below must be DELETED, not hardened. Lie detector (world_style_applied) was emitted inside the skipped composer, so it never fires. The lie detector got bypassed by the lie.
 
@@ -88,8 +88,8 @@ Three-repo coordinated change:
 ### AC10: ORCHESTRATOR TESTS — Smoke test for script error path
 - [ ] `scripts/render_common.py` smoke test that `render_batch()` raises when `catalog_ref` is empty and `catalog_compose=True`
 
-### AC11: VERIFICATION — Coyote Reach POI render
-- [ ] Coyote Reach POI render shows McQuarrie/Berkey/Leone painterly styling end-to-end (no prose-bleed CG)
+### AC11: VERIFICATION — Coyote Star POI render
+- [ ] Coyote Star POI render shows McQuarrie/Berkey/Leone painterly styling end-to-end (no prose-bleed CG)
 - [ ] Production daemon log `/tmp/sidequest-daemon.log` shows zero `compose.skipped` warnings
 
 ### AC12: PRECONDITION — sidequest-content sync
@@ -114,7 +114,7 @@ The image render pipeline (daemon) composes styled prompts for Z-Image based on 
 5. **SF7 (orchestrator scripts):** Script-local fallback provides pre-composed prompt when catalog lookup fails
 6. **Missing lie detector:** `world_style_applied` OTEL signal was emitted inside the composer (which got skipped), so it never fired. The lie detector was inside the broken path.
 
-**Symptom observed:** Coyote Reach POI renders show photoreal CG with raw prose-bleed text (no styling). Same narration text appears verbatim in image, indicating style composition was completely bypassed.
+**Symptom observed:** Coyote Star POI renders show photoreal CG with raw prose-bleed text (no styling). Same narration text appears verbatim in image, indicating style composition was completely bypassed.
 
 ### Integration Points
 - **Content:** visual_style.yaml per-world configs (sidequest-content PR #152) must be present before daemon changes land

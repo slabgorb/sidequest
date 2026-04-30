@@ -16,7 +16,7 @@
 | caverns_and_claudes | 5 (grimvault, mawdeep, primetime, dungeon_survivor, horden) | 25 | 26 | 97 | 1 | Most worlds; reference pack |
 | elemental_harmony | 2 (burning_peace, shattered_accord) | 21 | 252 | 39 | 1 | Most music; gold-standard variation coverage |
 | mutant_wasteland | 1 (flickering_reach) | 23 | 212 | 25 | 1 | Mutation/flickering theme |
-| space_opera | 2 (aureate_span, coyote_reach) | 23 | 85 | 52 | 2 | Two worlds, neither has full archetype/trope set |
+| space_opera | 2 (aureate_span, coyote_star) | 23 | 85 | 52 | 2 | Two worlds, neither has full archetype/trope set |
 | victoria | 1 (blackthorn_moor) | 23 | 42 | 18 | 1 | Curated public-domain classical music |
 | **heavy_metal** ⚠️ | none in production | **0** | 0 | 0 | shell | **State inconsistency:** workshop README says promoted; production has only empty `images/` + `worlds/` directories. Actual content still in `genre_workshopping/heavy_metal/`. |
 | **spaghetti_western** ⚠️ | none in production | **0** | 0 | 0 | shell | **State inconsistency:** workshop README says promoted; production directory is empty. Actual content still in `genre_workshopping/spaghetti_western/`. |
@@ -89,7 +89,7 @@ Required: `world.yaml`, `lore.yaml`. Optional: `history`, `cartography`,
 | elemental_harmony/shattered_accord | + | + | + | — | + | — | + |
 | mutant_wasteland/flickering_reach | — | + | + | — | — | — | + |
 | space_opera/aureate_span | + | + | + | — | — | — | + |
-| space_opera/coyote_reach | + | + | + | — | — | — | + |
+| space_opera/coyote_star | + | + | + | — | — | — | + |
 | victoria/blackthorn_moor | + | + | + | + | + | + | + |
 
 **Fully complete worlds (all optional files):** grimvault, mawdeep, primetime,
@@ -230,7 +230,7 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 - 25 images — needs more POI generation. 212 audio tracks (strong).
 
 ### space_opera (production)
-- Two worlds (aureate_span, coyote_reach), both missing archetypes/tropes.
+- Two worlds (aureate_span, coyote_star), both missing archetypes/tropes.
 - Ship Block mechanic mirrors road_warrior's Rig HP pattern. Both ride on the absent chase engine.
 - 85 tracks, 52 images — adequate but could use a variation pass.
 

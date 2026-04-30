@@ -1,8 +1,8 @@
-# Rig MVP — Coyote Reach Vertical Slice — Implementation Plan
+# Rig MVP — Coyote Star Vertical Slice — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship Kestrel speaking with bond-tier-correct name-forms in Coyote Reach, with `the_tea_brew` running end-to-end (bond delta, three OTEL spans, GM-panel visibility, one cliché-judge hook).
+**Goal:** Ship Kestrel speaking with bond-tier-correct name-forms in Coyote Star, with `the_tea_brew` running end-to-end (bond delta, three OTEL spans, GM-panel visibility, one cliché-judge hook).
 
 **Architecture:** New chassis-state container (own pydantic + game-state + projection into `npc_registry`); voice resolver wired into the narrator prompt; bond mutation path that emits the three slice spans; one new auto-fire confrontation appended to the existing world `confrontations.yaml`. Reuses `LedgerBar`-shaped patterns from magic, `NpcRegistryEntry` for narrator continuity, `watcher_hub` for OTEL emission, `room_movement` post-hook for the auto-fire trigger.
 
@@ -33,7 +33,7 @@ If the operator wants the slice's full demo path now, magic Phase 5 must ship fi
 | Path | Responsibility |
 |---|---|
 | `sidequest-content/genre_packs/space_opera/chassis_classes.yaml` | Genre-layer chassis catalog (one class: `voidborn_freighter`) |
-| `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/rigs.yaml` | World-layer chassis instances (one: Kestrel) |
+| `sidequest-content/genre_packs/space_opera/worlds/coyote_star/rigs.yaml` | World-layer chassis instances (one: Kestrel) |
 | `sidequest-server/sidequest/genre/models/chassis.py` | Pydantic for `chassis_classes.yaml` (genre layer) |
 | `sidequest-server/sidequest/genre/models/rigs_world.py` | Pydantic for `rigs.yaml` (world layer) |
 | `sidequest-server/sidequest/game/chassis.py` | Game-state `ChassisInstance`, bond ledger, `apply_bond_event`, `apply_chassis_lineage_intimate`, tier derivation, `npc_registry` projection |
@@ -51,7 +51,7 @@ If the operator wants the slice's full demo path now, magic Phase 5 must ship fi
 
 | Path | Change |
 |---|---|
-| `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml` | Append `the_tea_brew` entry |
+| `sidequest-content/genre_packs/space_opera/worlds/coyote_star/confrontations.yaml` | Append `the_tea_brew` entry |
 | `docs/design/confrontation-advancement.md` | Three new outputs + optional `register` field |
 | `sidequest-server/sidequest/genre/loader.py` | `load_chassis_classes(genre_path)`; integrate into `load_genre_pack` |
 | `sidequest-server/sidequest/game/world_materialization.py` | Load `rigs.yaml`, materialize `chassis_registry`, project into `npc_registry` |
@@ -160,7 +160,7 @@ Expected: ImportError — `sidequest.genre.models.chassis` does not exist.
 """Genre-layer chassis catalog pydantic models.
 
 Mirrors `chassis_classes.yaml` shape per docs/design/rig-taxonomy.md.
-Slice scope: only fields used by Coyote Reach's voidborn_freighter +
+Slice scope: only fields used by Coyote Star's voidborn_freighter +
 the_tea_brew. Hardpoints, chassis_death, full provenance vocabulary
 are deferred to follow-on specs.
 """
@@ -289,7 +289,7 @@ from sidequest.genre.models.rigs_world import RigsWorldConfig
 
 SAMPLE = textwrap.dedent("""
     version: "0.1.0"
-    world: coyote_reach
+    world: coyote_star
     genre: space_opera
     chassis_instances:
       - id: kestrel
@@ -312,7 +312,7 @@ SAMPLE = textwrap.dedent("""
 
 def test_rigs_yaml_loads() -> None:
     cfg = RigsWorldConfig.model_validate(yaml.safe_load(SAMPLE))
-    assert cfg.world == "coyote_reach"
+    assert cfg.world == "coyote_star"
     assert len(cfg.chassis_instances) == 1
     inst = cfg.chassis_instances[0]
     assert inst.id == "kestrel"
@@ -1255,16 +1255,16 @@ station_hull, courier_skiff) deferred to follow-on."
 
 ---
 
-### Task 7: Author rigs.yaml for Coyote Reach
+### Task 7: Author rigs.yaml for Coyote Star
 
 **Files:**
-- Create: `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/rigs.yaml`
+- Create: `sidequest-content/genre_packs/space_opera/worlds/coyote_star/rigs.yaml`
 
 - [ ] **Step 1: Write the file**
 
 ```yaml
-# sidequest-content/genre_packs/space_opera/worlds/coyote_reach/rigs.yaml
-# World-layer chassis instances for Coyote Reach.
+# sidequest-content/genre_packs/space_opera/worlds/coyote_star/rigs.yaml
+# World-layer chassis instances for Coyote Star.
 # Slice scope (2026-04-29): one instance — Kestrel.
 #
 # Deferred instances (see rig MVP follow-on roadmap):
@@ -1275,7 +1275,7 @@ station_hull, courier_skiff) deferred to follow-on."
 # Spec: docs/superpowers/specs/2026-04-29-rig-mvp-coyote-reach-design.md
 
 version: "0.1.0"
-world: coyote_reach
+world: coyote_star
 genre: space_opera
 
 coverage:
@@ -1322,7 +1322,7 @@ import yaml
 from pathlib import Path
 from sidequest.genre.models.rigs_world import RigsWorldConfig
 
-p = Path('../sidequest-content/genre_packs/space_opera/worlds/coyote_reach/rigs.yaml')
+p = Path('../sidequest-content/genre_packs/space_opera/worlds/coyote_star/rigs.yaml')
 cfg = RigsWorldConfig.model_validate(yaml.safe_load(p.read_text()))
 print(f'OK: {len(cfg.chassis_instances)} chassis instance(s)')
 "
@@ -1334,8 +1334,8 @@ Expected: `OK: 1 chassis instance(s)`.
 
 ```bash
 cd sidequest-content
-git add genre_packs/space_opera/worlds/coyote_reach/rigs.yaml
-git commit -m "content(coyote_reach): rigs.yaml — Kestrel
+git add genre_packs/space_opera/worlds/coyote_star/rigs.yaml
+git commit -m "content(coyote_star): rigs.yaml — Kestrel
 
 Pre-bonded at trusted tier (0.45) per spec §1. Bright Margin, Tide-Singer,
 Hegemonic patrol cruisers deferred."
@@ -1487,10 +1487,10 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
 @pytest.mark.integration
-def test_coyote_reach_load_materializes_kestrel(coyote_reach_snapshot) -> None:
-    """coyote_reach_snapshot fixture lives in conftest.py — see existing magic
+def test_coyote_star_load_materializes_kestrel(coyote_star_snapshot) -> None:
+    """coyote_star_snapshot fixture lives in conftest.py — see existing magic
     integration tests for the shape; reuse the same fixture pattern."""
-    snap = coyote_reach_snapshot
+    snap = coyote_star_snapshot
     # World materialization should have already run — assert state.
     assert "kestrel" in snap.chassis_registry
     kestrel = snap.chassis_registry["kestrel"]
@@ -1503,16 +1503,16 @@ def test_coyote_reach_load_materializes_kestrel(coyote_reach_snapshot) -> None:
 
 - [ ] **Step 3: Add a fixture if missing**
 
-Check `sidequest-server/tests/conftest.py` for an existing `coyote_reach_snapshot` fixture. If absent, add:
+Check `sidequest-server/tests/conftest.py` for an existing `coyote_star_snapshot` fixture. If absent, add:
 
 ```python
 # in sidequest-server/tests/conftest.py
 @pytest.fixture
-def coyote_reach_snapshot(tmp_path):
-    """Load a fresh Coyote Reach world snapshot for integration tests."""
+def coyote_star_snapshot(tmp_path):
+    """Load a fresh Coyote Star world snapshot for integration tests."""
     from sidequest.game.world_materialization import materialize_world
     from sidequest.game.persistence import new_snapshot_for_world  # use whatever the existing helper is
-    snap = new_snapshot_for_world(genre="space_opera", world="coyote_reach")
+    snap = new_snapshot_for_world(genre="space_opera", world="coyote_star")
     materialize_world(snap, chapters=[])
     return snap
 ```
@@ -1823,7 +1823,7 @@ git commit -m "feat(rig): narrator prompt — chassis voice section with bond-ti
 ```python
 # Append to tests/integration/test_kestrel_chassis_registry.py
 @pytest.mark.integration
-def test_kestrel_voice_section_renders_in_prompt(coyote_reach_snapshot) -> None:
+def test_kestrel_voice_section_renders_in_prompt(coyote_star_snapshot) -> None:
     """End-of-Phase-A: world load → chassis_registry → voice section in prompt."""
     from sidequest.agents.prompt_framework.core import build_chassis_voice_section
 
@@ -1834,7 +1834,7 @@ def test_kestrel_voice_section_renders_in_prompt(coyote_reach_snapshot) -> None:
         nickname = None
 
     section = build_chassis_voice_section(
-        chassis_registry=coyote_reach_snapshot.chassis_registry,
+        chassis_registry=coyote_star_snapshot.chassis_registry,
         active_character=_PC(),
     )
     assert "Kestrel" in section
@@ -1876,9 +1876,9 @@ git commit -m "test(rig): Phase A smoke — world load → chassis voice in prom
 cd /Users/slabgorb/Projects/oq-2 && just up
 ```
 
-- [ ] **Step 2: Start a fresh Coyote Reach session in the UI (port 5173)**
+- [ ] **Step 2: Start a fresh Coyote Star session in the UI (port 5173)**
 
-Pick `space_opera`/`coyote_reach`, walk through chargen with first_name "Zee" last_name "Jones" (or any). Begin play.
+Pick `space_opera`/`coyote_star`, walk through chargen with first_name "Zee" last_name "Jones" (or any). Begin play.
 
 - [ ] **Step 3: Verify GM panel shows Kestrel in chassis state**
 
@@ -1960,7 +1960,7 @@ Default when absent: `dramatic`. This axis governs:
   off the larger `bond_strength` step-change output.
 
 Existing confrontations are not retrofitted. The first authored
-intimate-register confrontation is `the_tea_brew` (Coyote Reach,
+intimate-register confrontation is `the_tea_brew` (Coyote Star,
 docs/superpowers/specs/2026-04-29-rig-mvp-coyote-reach-design.md).
 ```
 
@@ -2000,10 +2000,10 @@ The pseudocode in Tasks 15–19 below assumes the magic-Phase-5 outcome handler 
 
 ---
 
-### Task 15: Append `the_tea_brew` to coyote_reach confrontations.yaml
+### Task 15: Append `the_tea_brew` to coyote_star confrontations.yaml
 
 **Files:**
-- Modify: `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml`
+- Modify: `sidequest-content/genre_packs/space_opera/worlds/coyote_star/confrontations.yaml`
 
 - [ ] **Step 1: Append (do not rewrite existing entries)**
 
@@ -2043,7 +2043,7 @@ After the existing five confrontations, add:
 cd sidequest-server && uv run python -c "
 # Adjust import to the magic-Phase-5 loader name once it's known
 from sidequest.magic.confrontations import load_world_confrontations  # likely
-cfg = load_world_confrontations('space_opera', 'coyote_reach')
+cfg = load_world_confrontations('space_opera', 'coyote_star')
 ids = {c.id for c in cfg.confrontations}
 assert 'the_tea_brew' in ids
 print('OK')
@@ -2056,8 +2056,8 @@ If the import fails, find the actual loader (`grep -rn "def load.*confront" side
 
 ```bash
 cd sidequest-content
-git add genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml
-git commit -m "content(coyote_reach): append the_tea_brew confrontation
+git add genre_packs/space_opera/worlds/coyote_star/confrontations.yaml
+git commit -m "content(coyote_star): append the_tea_brew confrontation
 
 First intimate-register confrontation; bond + lineage outputs.
 Auto-fires on Galley entry with bond_tier ≥ familiar."
@@ -2087,8 +2087,8 @@ from sidequest.telemetry.spans import (
 
 
 @pytest.mark.integration
-def test_clear_win_runs_outputs(coyote_reach_snapshot, captured_spans):
-    snap = coyote_reach_snapshot
+def test_clear_win_runs_outputs(coyote_star_snapshot, captured_spans):
+    snap = coyote_star_snapshot
     # Assume magic-Phase-5 entrypoint is named apply_world_confrontation_outcome.
     # Adjust to actual name.
     from sidequest.magic.confrontations import apply_world_confrontation_outcome
@@ -2255,8 +2255,8 @@ import pytest
 
 
 @pytest.mark.integration
-def test_galley_entry_triggers_tea_brew(coyote_reach_snapshot):
-    snap = coyote_reach_snapshot
+def test_galley_entry_triggers_tea_brew(coyote_star_snapshot):
+    snap = coyote_star_snapshot
     from sidequest.game.room_movement import move_player_to_room  # actual fn name may differ
 
     # Pre: Kestrel bond at trusted (0.45 from world-load).
@@ -2270,8 +2270,8 @@ def test_galley_entry_triggers_tea_brew(coyote_reach_snapshot):
 
 
 @pytest.mark.integration
-def test_galley_entry_respects_cooldown(coyote_reach_snapshot):
-    snap = coyote_reach_snapshot
+def test_galley_entry_respects_cooldown(coyote_star_snapshot):
+    snap = coyote_star_snapshot
     from sidequest.game.room_movement import move_player_to_room
 
     move_player_to_room(snap, "kestrel:galley")
@@ -2439,9 +2439,9 @@ from sidequest.telemetry.spans import (
 
 
 @pytest.mark.integration
-def test_kestrel_tea_brew_full_loop(coyote_reach_snapshot, captured_spans):
+def test_kestrel_tea_brew_full_loop(coyote_star_snapshot, captured_spans):
     """The slice's demo path, end-to-end."""
-    snap = coyote_reach_snapshot
+    snap = coyote_star_snapshot
     from sidequest.game.room_movement import move_player_to_room
 
     # 1. World loaded, Kestrel materialized, npc_registry projection done.
@@ -2505,7 +2505,7 @@ just up
 ```
 
 In the UI:
-1. Fresh Coyote Reach session, character first_name=Zee last_name=Jones.
+1. Fresh Coyote Star session, character first_name=Zee last_name=Jones.
 2. Verify narrator addresses player as "Zee" in chassis dialogue (trusted tier).
 3. Navigate to Galley.
 4. Verify `the_tea_brew` fires (narrator describes the offering ritual).

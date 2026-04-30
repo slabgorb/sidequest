@@ -13,7 +13,7 @@ A unified framework for **rigs** — ships, vehicles, mechs, war-rigs, cycles, a
 
 The framework exists because every prior digital RPG that handled vehicles either treated them as inventory (a sword in your hand) or as scenery (a backdrop you walked past). SideQuest's narrator prose pulls every playgroup into a different register — the *Wayfarer* register, where the ship has a voice, the truck has a name, and the mech remembers the pilot before this one. The rig framework's job is to **catch and reinforce that emergent register** with mechanical depth: bond ledgers, named-frame damage history, registration paperwork, hardpoint salvage, crew-role schemas, OCEAN-bearing chassis voice. Otherwise the prose is producing engagement the system can't honor.
 
-The framework was designed against a real playtest: the 2026-04-26 Coyote Reach solo run, in which the player spent thirteen of eighteen turns inside their named ship *Kestrel* doing maintenance, taking jobs, and being judged dryly by the ship's AI — before any dramatic action ever happened. Every schema decision in this document is graded against whether it would have caught and reinforced what was already happening in that play.
+The framework was designed against a real playtest: the 2026-04-26 Coyote Star solo run, in which the player spent thirteen of eighteen turns inside their named ship *Kestrel* doing maintenance, taking jobs, and being judged dryly by the ship's AI — before any dramatic action ever happened. Every schema decision in this document is graded against whether it would have caught and reinforced what was already happening in that play.
 
 ## How to Read This
 
@@ -27,7 +27,7 @@ Read in this order:
 6. **Advancement Outputs** — additions to the output catalog
 7. **OTEL Span Specification** — the lie-detector layer
 8. **Schema Sketches** — concrete YAML shape for each primitive
-9. **Worked Examples** — Coyote Reach (space_opera) as the flagship; road_warrior chassis as cross-genre validation
+9. **Worked Examples** — Coyote Star (space_opera) as the flagship; road_warrior chassis as cross-genre validation
 10. **Open Issues** — questions deferred for later passes
 11. **Cliché-Judge Hooks** — what the agent should flag in rig-narration
 
@@ -49,7 +49,7 @@ These were ratified during the 2026-04-28 brainstorming session and should not b
 
 A **chassis** is a first-class named entity in the world: identity, OCEAN scores, demands, refusal eligibility, accumulated history. It is *not* a character's inventory item. It is *not* a sheet-property. It exists independently of any single character's relationship to it; multiple characters can crew it; it persists past the death of any pilot; its history continues whether or not a player is on board.
 
-This generalizes Locked Decision #17 from the magic framework ("Items are NPCs"). Chassis are larger items — even more deserving of first-class identity. The npc_registry already pre-validates this empirically: the 2026-04-26 Coyote Reach save classified *Kestrel* as `ship_ai` and *Bright Margin* (the freighter being escorted) as `ally`, both at the same registry layer as named human NPCs. The rig framework is not adding chassis-as-NPCs; it is formalizing what already happens.
+This generalizes Locked Decision #17 from the magic framework ("Items are NPCs"). Chassis are larger items — even more deserving of first-class identity. The npc_registry already pre-validates this empirically: the 2026-04-26 Coyote Star save classified *Kestrel* as `ship_ai` and *Bright Margin* (the freighter being escorted) as `ally`, both at the same registry layer as named human NPCs. The rig framework is not adding chassis-as-NPCs; it is formalizing what already happens.
 
 A chassis instance has:
 
@@ -211,7 +211,7 @@ Not every chassis class declares a voice. A Hegemonic patrol cruiser without an 
 
 Habitable chassis declare `interior_rooms:` as a list of named locations that participate in the room-graph (ADR-055). Each room declares `id`, `display_name`, `narrative_register`, `default_occupants` (which crew roles spend time here), `bond_eligible_for` (which intimate-tier confrontations can be sited here).
 
-The Coyote Reach playthrough showed `Kestrel — Deck Three Corridor` and `Kestrel — Cockpit` as discoverable regions. These are first-class places the player navigates; movement between them is a normal room-graph operation, not a chassis-specific mechanic. Non-habitable chassis (cycles, mechs, single-seat fighters) declare `interior_rooms: []` and the framework skips room-graph integration.
+The Coyote Star playthrough showed `Kestrel — Deck Three Corridor` and `Kestrel — Cockpit` as discoverable regions. These are first-class places the player navigates; movement between them is a normal room-graph operation, not a chassis-specific mechanic. Non-habitable chassis (cycles, mechs, single-seat fighters) declare `interior_rooms: []` and the framework skips room-graph integration.
 
 The room-graph integration is what makes the Chambers register *navigable*. The Tea Brew is sited in `Galley`. The Engineer's Litany is sited in `Engineering`. The Long Quiet is sited in `Cockpit` during transit. Without rooms, these confrontations have no place to happen.
 
@@ -242,7 +242,7 @@ Separate from current per-location HP, each chassis instance carries a **damage 
 - `patch_quality: optional<enum>` — `none | improvised | proper | bespoke` if patched; null if untouched
 - `narrative_seed: string` — short prose seed for narrator callback ("the hairline kiss across the weld", "the Frame Twelve patch breathing again")
 
-Damage history is **distinct from current HP** for the same reason chassis lineage is distinct from current state: history accumulates, is referenced by the narrator across sessions, and *patches tire and re-open* (the Coyote Reach playthrough showed Kestrel's Frame Twelve patch breathing again after a previous patch event the player had no direct recollection of).
+Damage history is **distinct from current HP** for the same reason chassis lineage is distinct from current state: history accumulates, is referenced by the narrator across sessions, and *patches tire and re-open* (the Coyote Star playthrough showed Kestrel's Frame Twelve patch breathing again after a previous patch event the player had no direct recollection of).
 
 This pattern backports to `item_legacy_v1` items in general — any damaged item carries history, not just current state. That backport is flagged in Open Issues.
 
@@ -282,13 +282,13 @@ Innate-flavor magic already uses place-loci to amplify or modulate workings (fli
 - When an innate-flavor character executes a working from a hardpoint operation or while bonded to a chassis with declared resonance, the innate_v1 working span fires with `place_locus_id: <chassis_id>` and `amplification_factor:` populated from the chassis's resonance.
 - Cross-session psi-history accumulates on the chassis: a chassis that has been a vessel for psionic work for many sessions develops chassis-level resonance growth (the chassis "remembers" the psi-work, future workings amplify further). This is captured in the chassis's `damage_history:` field as a sibling sub-list (`psi_history:`) — same shape, different ledger.
 
-Coyote Reach example: the *Tide-Singer* (voidborn freighter) is `psi_resonance: receptive` to innate-flavor `void_singing`. A Tsveri-touched human captain's innate workings amplify when performed at the *Tide-Singer*'s bridge. After 20 sessions of accumulated psi-work, the chassis's resonance has grown — the next captain who happens to be psionic finds the bridge already attuned.
+Coyote Star example: the *Tide-Singer* (voidborn freighter) is `psi_resonance: receptive` to innate-flavor `void_singing`. A Tsveri-touched human captain's innate workings amplify when performed at the *Tide-Singer*'s bridge. After 20 sessions of accumulated psi-work, the chassis's resonance has grown — the next captain who happens to be psionic finds the bridge already attuned.
 
 ### `item_legacy_v1` — Installed-In Pointer (Already Covered by S2)
 
 This is the simplest interface: every subsystem is an item_legacy item; the `installed_in: {chassis_id, location_id}` pointer is the entire interface. Item-legacy spans (`item_legacy.refusal`, `item_legacy.ocean_drift`, `item_legacy.history_entry`) fire normally for installed subsystems. Cross-chassis movement is setting the pointer.
 
-Coyote Reach example: a Tsveri-touched single-shot alien weapon, salvaged from an outer-system anomaly, is an item_legacy item with skittish OCEAN, vengeful demands, refusal eligibility. When installed in the *Kestrel*'s ventral hardpoint, the framework just sets `installed_in`. The weapon's existing item_legacy refusal mechanic handles the "won't fire on demand" register without any rig-specific code.
+Coyote Star example: a Tsveri-touched single-shot alien weapon, salvaged from an outer-system anomaly, is an item_legacy item with skittish OCEAN, vengeful demands, refusal eligibility. When installed in the *Kestrel*'s ventral hardpoint, the framework just sets `installed_in`. The weapon's existing item_legacy refusal mechanic handles the "won't fire on demand" register without any rig-specific code.
 
 ### `bargained_for_v1` — Chassis as Patron, and Chassis as Patron-Scope
 
@@ -300,7 +300,7 @@ The npc_registry already classifies chassis at the same layer as humans (the Kes
 
 **Chassis as patron-scope.** When a non-chassis patron grants effects bound to a specific chassis (Hegemonic Customs Authority's `cooperative` status applied to a ship's papers), the patron's scope_id can be a chassis_id. The patron's standing register controls effects on that specific chassis.
 
-Coyote Reach examples:
+Coyote Star examples:
 - *Tide-Singer* as patron — Captain offers tea-rituals on the bridge, the *Tide-Singer* grants navigational intuition and refuses to take her into asteroid drift she doesn't trust. Bargained_for_v1 patron taxonomy with `patron_type: chassis_pact`.
 - Hegemonic Customs as patron with chassis-scope — Customs grants `cooperative` status to the Kestrel specifically; this status affects the Kestrel's Grand Gate transit but not any other ship the captain might subsequently fly.
 
@@ -311,7 +311,7 @@ Learned disciplines already use prerequisite_gates to constrain who can practice
 - Voidborn star-reading discipline's `prerequisite_gate:` may declare `must_be_operating_chassis_with_class: voidborn_freighter and hardpoint of function: void_singing`. The discipline only fires when the character is operating from a qualifying chassis.
 - A discipline may declare `prerequisite_gate: bonded_to_chassis with bond_tier >= trusted` — only deeply-bonded crew can practice it.
 
-Coyote Reach example: Clan Moana-Teru void-songs (learned discipline) require operating from a voidborn-built chassis with a `void_singing` hardpoint occupied by an appropriate subsystem (a hand-built singing-engine). Two prerequisite terms, both chassis-state, gating discipline activation.
+Coyote Star example: Clan Moana-Teru void-songs (learned discipline) require operating from a voidborn-built chassis with a `void_singing` hardpoint occupied by an appropriate subsystem (a hand-built singing-engine). Two prerequisite terms, both chassis-state, gating discipline activation.
 
 ### `divine_v1` — Chassis as Sacred Site
 
@@ -320,13 +320,13 @@ Divine workings already use sacred-sites as amplification loci. Chassis IDs are 
 - A chassis declared as a god's barque, a relic-vessel, or a temple-on-the-move publishes `sacred_to:` (a deity id) and `sanctity_tier:` (an amplification level). Divine workings performed on or from the chassis benefit.
 - This is most relevant for heavy_metal worlds (a covenant-peoples reading might venerate certain chassis) and for space-religious sub-genres of space_opera (the Star Trek Defiant register, the Battlestar Galactica Pegasus register).
 
-Coyote Reach is *not* a divine-rich world (cosmology is secular-rationalist Hegemonic + practical-frontier + voidborn-cultural; the Tsveri are religious in their own register but not a known deity-system). The interface point exists but is unused in this world.
+Coyote Star is *not* a divine-rich world (cosmology is secular-rationalist Hegemonic + practical-frontier + voidborn-cultural; the Tsveri are religious in their own register but not a known deity-system). The interface point exists but is unused in this world.
 
 ### `obligation_scales_v1` — Chassis as Scale Contributor
 
 Obligation-scales' `debited_scales` attribute on `magic.working` spans accepts chassis-state contributions. A chassis can be a co-actor in scale propagation: the *Tide-Singer*'s decisions accumulate communal-scale movement; the *Vaskov*'s registration paperwork breaches contribute to covenant-scale tension.
 
-This is most relevant to heavy_metal-style worlds with active obligation_scales tracking. Coyote Reach does not run obligation_scales (Firefly-register doesn't carry that weight); the interface is documented for cross-genre completeness.
+This is most relevant to heavy_metal-style worlds with active obligation_scales tracking. Coyote Star does not run obligation_scales (Firefly-register doesn't carry that weight); the interface is documented for cross-genre completeness.
 
 ## Damage and Salvage
 
@@ -539,7 +539,7 @@ classes:
 
 ```yaml
 version: "0.1.0"
-world: coyote_reach
+world: coyote_star
 chassis_instances:
   - id: kestrel
     name: "Kestrel"
@@ -603,7 +603,7 @@ chassis_instances:
 
 ## Worked Examples
 
-### Coyote Reach — Kestrel (voidborn freighter, flagship reference)
+### Coyote Star — Kestrel (voidborn freighter, flagship reference)
 
 The full schema sketch above. Notable design choices validated by the playthrough:
 
@@ -613,7 +613,7 @@ The full schema sketch above. Notable design choices validated by the playthroug
 - **Registration is dirty** — safety chit four months expired, transponder valid, customs cooperative. This pre-loads narrative friction for the inevitable Grand Gate transit confrontation.
 - **Voice block fully populated** — *Kestrel* speaks in 13 of 18 turns of the playthrough; the framework declares her register so the narrator can match it consistently across sessions.
 
-### Coyote Reach — Bright Margin (escort target, secondary reference)
+### Coyote Star — Bright Margin (escort target, secondary reference)
 
 Bright Margin is also a chassis (a bulk freighter being escorted), classified `ally` in the npc_registry. She has her own captain (Ortuño), her own provenance ("frontier-trained, voidborn cadence — she's worked this run before"), her own implicit voice. The framework treats her as a peer chassis instance, not as scenery — the player can interact with her via comms, the relationship can grow, and a future *Heroic Stand* confrontation could see Kestrel and Bright Margin defending each other.
 
@@ -768,7 +768,7 @@ classes:
 
 | Genre | `chassis_classes.yaml` status | Notes |
 |---|---|---|
-| space_opera | ⏳ TODO author | Coyote Reach is flagship; classes: voidborn_freighter, prospector_skiff, hegemonic_patrol_cruiser, fighter, station_hull, courier_skiff |
+| space_opera | ⏳ TODO author | Coyote Star is flagship; classes: voidborn_freighter, prospector_skiff, hegemonic_patrol_cruiser, fighter, station_hull, courier_skiff |
 | road_warrior | ⏳ TODO + genre bootstrap | Genre is in `genre_workshopping/`; needs full pack before chassis_classes can land |
 | mutant_wasteland | ⏳ TODO author | Classes: brittle_truck, scavenger_cycle, prospector_skiff (atmospheric variant), drift_walker (pre-collapse mech) |
 | heavy_metal | ⏳ TODO author | Classes: stratigraphic_delver (Long Foundry signature), pilgrim_carriage, foundry_drake (a chassis-mech hybrid), patron_relic (chassis-as-relic for divine integration) |
@@ -862,11 +862,11 @@ This document defines the rig framework as a sibling to `magic-taxonomy.md`. The
 - Crew model is a per-class spectrum (`single_pilot | strict_roles | flexible_roles`).
 - Bond is per-character per-chassis, bidirectional, gates confrontations, does not decay.
 - Magic plugins reuse existing extension points with chassis-state as a valid input — no new contracts.
-- Voice, interior rooms, registration, and damage history are first-class schema fields, validated by the 2026-04-26 Coyote Reach playthrough.
+- Voice, interior rooms, registration, and damage history are first-class schema fields, validated by the 2026-04-26 Coyote Star playthrough.
 - The Chambers / Wayfarer register is the framework's primary register, not an alternative one.
 - The framework recognizes three explicit register-poles: **MechWarrior** (hardpoints + salvage + per-location HP + paperwork — lethal and metallic), **Wayfarer** (voice + interior_rooms + Chambers confrontations + bond as primary engine — warm and slow), **Ancillary** (distributed embodiment + asymmetric bond + crew interior awareness — vast and asymmetric). Each demands different schema affordances; the framework supports all three through explicit class-level declarations rather than register-flavor narration.
 - OTEL spans are mandatory; without them the framework is decorative.
 
-The next pieces of work: ratify advancement-output catalog additions and tone-axis backport into `confrontation-advancement.md`; author Coyote Reach as the flagship instantiation (`space_opera/chassis_classes.yaml`, `space_opera/magic.yaml`, `space_opera/confrontations.yaml`, `worlds/coyote_reach/rigs.yaml`, `worlds/coyote_reach/magic.yaml`); architect review pass before any implementation begins.
+The next pieces of work: ratify advancement-output catalog additions and tone-axis backport into `confrontation-advancement.md`; author Coyote Star as the flagship instantiation (`space_opera/chassis_classes.yaml`, `space_opera/magic.yaml`, `space_opera/confrontations.yaml`, `worlds/coyote_star/rigs.yaml`, `worlds/coyote_star/magic.yaml`); architect review pass before any implementation begins.
 
 — Count Rugen, taking meticulous notes
