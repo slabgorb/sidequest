@@ -768,7 +768,8 @@ stories:
     description: 'Daemon Z-Image config (sidequest-daemon/sidequest_daemon/media/zimage_config.py) pins Turbo at 8 steps, CFG 0, 768x1024 portrait. Same prompt in Draw Things using base Z-Image 1.0 at 20 steps, CFG 4, 1024x1024 produces visibly more painterly output — McQuarrie/Berkey concept-art adherence crystallizes only at higher step counts on the non-distilled variant. Diagnosed during Coyote Reach picker-portrait authoring; reference image at ~/Desktop/0_painted_sci_fi_concept_art_..._3447260204.png. Two paths: (a) flip globally to base — ~3x wall-clock for all renders; (b) add high-fidelity tier for content pre-gen, keep Turbo for in-session live conjure. (b) preferred — speed matters for live narration, fidelity matters for picker assets.'
     points: 3
     priority: p3
-    status: backlog
+    status: in_review
+    started: '2026-04-30'
     repos: daemon
     workflow: tdd
     acceptance_criteria:
@@ -778,3 +779,34 @@ stories:
       - Regenerated picker_voidborn_medic_m01.png shows visibly more painterly brushwork than current 8-step Turbo version, comparable to Draw Things reference
       - OTEL render.prompt_composed emits model_variant and steps so the GM panel shows which tier ran
     type: bug
+  - id: 45-39
+    title: Worker swap — load base z-image when SIDEQUEST_DAEMON_FIDELITY=high_fidelity
+    points: 2
+    priority: p2
+    status: backlog
+    repos: daemon
+    workflow: tdd
+    depends_on: 45-38
+    type: bug
+    description: >-
+      Architect/Reviewer follow-up to 45-38. The 45-38 wiring layer threads
+      fidelity from script → JSON-RPC params → StageCue.metadata →
+      RenderTarget.fidelity → composer OTEL span, but ZImageMLXWorker still
+      hardcodes class-level MODEL_VARIANT='z-image-turbo' and a turbo-only
+      TIER_CONFIGS dict. Result- HF render requests get the right OTEL
+      span attributes (model_variant='z-image', steps=20) but the actual
+      mflux inference uses the loaded turbo model — AC4 of 45-38 (visibly
+      more painterly portraits) cannot be met until this lands.
+      Recommended approach (option (c) from 45-38 Dev findings, endorsed
+      by Architect and Reviewer)- env var SIDEQUEST_DAEMON_FIDELITY read
+      at worker init (default 'turbo'); picks model alias accordingly;
+      daemon rejects requests with mismatched fidelity via structured
+      COMPOSE_FAILED-style error (no silent fallbacks per CLAUDE.md).
+      Alternatives rejected- (a) dual-model load at startup ~2x VRAM;
+      (b) lazy reload ~30s+ latency on every fidelity flip.
+    acceptance_criteria:
+      - SIDEQUEST_DAEMON_FIDELITY env var honored at worker init
+      - HF daemon mode loads base z-image with 20-step / CFG-4 config from ZIMAGE_HIGH_FIDELITY_TIER_CONFIGS
+      - Mismatched-fidelity request returns structured error (turbo daemon receiving fidelity=high_fidelity, or vice versa) — no silent fallback
+      - Worker model.variant OTEL span attribute reflects actually-loaded variant (composer-vs-worker span divergence is the diagnostic signal for misconfiguration)
+      - Manual eyeball verification of 45-38 AC4 succeeds — regenerated picker_voidborn_medic_m01.png at SIDEQUEST_DAEMON_FIDELITY=high_fidelity shows visibly more painterly brushwork than 8-step turbo output, comparable to ~/Desktop/0_painted_sci_fi_concept_art_..._3447260204.png Draw Things reference
