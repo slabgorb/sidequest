@@ -18,162 +18,18 @@ Otherwise, proceed with the full-stack flow.
 
 **Architecture (full-stack):**
 
-- OQ-2 (this workspace): drives the playtest — SM + UX Designer + Playwright browser
-- OQ-1 (other workspace): fixes bugs from the shared ping-pong file — SM + Dev + Architect
-
-**Architecture (headless):**
-
-- OQ-2 (this workspace): drives the playtest — SM + Python driver via WebSocket
-- OQ-1 (other workspace): fixes bugs from the shared ping-pong file — SM + Dev + Architect
-- No UI, no daemon, no Playwright, no UX Designer
+- this workspace: drives the playtest — SM + UX Designer + Playwright browser
+- other workspace: fixes bugs from the shared ping-pong file — SM + Dev + Architect
 
 Read `sq-playtest/pingpong.md` in this skill directory for the full coordination protocol.
 
 ---
 
-## Headless Mode
-
-Use this when testing game loop, narration quality, combat, multiplayer, genre packs, or any backend behavior that doesn't need the UI or media rendering.
-
-### H1. Launch headless server
-
-```bash
-pf tmux run "cd /Users/keithavery/Projects/oq-2 && just playtest-server 2>&1 | tee /tmp/sq-headless.log" --title headless-server
-```
-
-Poll for startup:
-
-```bash
-pf tmux read headless-server
-```
-
-Look for `"SideQuest Server starting"` with `headless=true`. Timeout: 120s (compile time).
-
-### H2. Initialize ping-pong file
-
-Same as Phase 2c in the full-stack flow — create or reset the ping-pong file at `/Users/keithavery/Projects/sq-playtest-pingpong.md`.
-
-### H3. Choose driver mode
-
-**Interactive** (human drives gameplay):
-
-```bash
-pf tmux run "cd /Users/keithavery/Projects/oq-2 && python3 scripts/playtest.py --genre {genre} --world {world} 2>&1 | tee /tmp/sq-driver.log" --title playtest-driver
-```
-
-**Scripted** (YAML scenario):
-
-```bash
-pf tmux run "cd /Users/keithavery/Projects/oq-2 && just playtest-scenario {scenario_name} 2>&1 | tee /tmp/sq-driver.log" --title playtest-driver
-```
-
-**Multiplayer** (N concurrent players):
-
-```bash
-pf tmux run "cd /Users/keithavery/Projects/oq-2 && python3 scripts/playtest.py --players {N} --genre {genre} --world {world} 2>&1 | tee /tmp/sq-driver.log" --title playtest-driver
-```
-
-Ask the user which mode and genre/world unless they specified.
-
-### H4. Headless playtest loop
-
-Repeat until the user says to stop:
-
-1. **Read driver output** — check `pf tmux read playtest-driver` for narration, state changes, errors
-2. **Read server logs** — check `pf tmux read headless-server` for tracing spans:
-   - `render_pipeline_headless_skip` — render hook fired (verify tier, prompt)
-   - `orchestrator.process_action` — narration pipeline
-   - Any `ERROR` level spans — bugs to triage
-3. **Monitor ping-pong file** — same cycle as Phase 3e (check for `fixed` tasks, verify, update)
-4. **Triage findings** — append bugs to ping-pong file using the standard tag format (`[BUG]`, `[GAP]`, etc.)
-5. **Check trace file** — for post-mortem analysis:
-   ```bash
-   ls -la /Users/keithavery/Projects/oq-2/sidequest-api/trace-*.json
-   ```
-   The trace can be loaded in Perfetto (`chrome://tracing`) for flame-chart analysis.
-
-**What to look for in headless mode:**
-
-- Narration quality — does the narrator stay consistent? Does state drift?
-- Combat flow — do combat events fire correctly? Turn resolution?
-- Inventory/item acquisition — does structured extraction work?
-- Multiplayer — do turn barriers coordinate? Party status updates?
-- Genre-specific behavior — do tropes, lore, and pacing match the genre?
-- Error spans — any panics, timeouts, or daemon-connect-failed (shouldn't happen in headless)
-
-### H5. Headless sync & restart
-
-When OQ-1 pushes API fixes:
-
-```bash
-cd /Users/keithavery/Projects/oq-2/sidequest-api && git pull origin develop
-pf tmux close headless-server
-pf tmux run "cd /Users/keithavery/Projects/oq-2 && just playtest-server 2>&1 | tee /tmp/sq-headless.log" --title headless-server
-# Wait for startup, then restart driver
-pf tmux close playtest-driver
-# Re-launch driver (same command as H3)
-```
-
-### H6. Headless teardown
-
-```bash
-pf tmux close playtest-driver
-pf tmux close headless-server
-```
-
-Then run the standard teardown: archive ping-pong file (Phase 5d) and print summary (Phase 5e).
-
----
-
-## Full-Stack Mode
-
-The original full-stack playtest with UI, daemon, Playwright, and UX Designer.
-
----
-
 ## Phase 1: Stack Launch (Full-Stack)
 
-### 1a. Check pane capacity
+Poll for services- if services are not up, ask the user to start them.
 
-```bash
-pf tmux list
-```
-
-If at the 5-pane limit, close idle worker panes first:
-
-```bash
-pf tmux close <idle-pane-ref>
-```
-
-### 1b. Launch services in tmux panes
-
-Launch all three services. Use absolute paths from the orchestrator root.
-
-```bash
-pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-api && cargo run 2>&1 | tee /tmp/sq-api.log" --title api-server
-pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-ui && npm run dev 2>&1 | tee /tmp/sq-ui.log" --title ui-dev
-pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-daemon && SIDEQUEST_GENRE_PACKS=/Users/keithavery/Projects/oq-2/sidequest-content/genre_packs sidequest-renderer 2>&1 | tee /tmp/sq-daemon.log" --title daemon
-```
-
-### 1c. Health check
-
-Poll each pane for startup confirmation. Different timeouts per service:
-
-| Pane         | Look for                                    | Timeout             |
-| ------------ | ------------------------------------------- | ------------------- |
-| `api-server` | `"listening"` or `"Listening"` or `"ready"` | 120s (compile time) |
-| `ui-dev`     | `"Local:"` or `"ready in"` (Vite)           | 30s                 |
-| `daemon`     | `"renderer ready"` or `"running"`           | 30s                 |
-
-For each pane, retry every 3 seconds:
-
-```bash
-pf tmux read api-server
-```
-
-If a service fails to show its ready string within the timeout, report the error and ask the user whether to continue or abort.
-
-### 1d. Launch Playwright browser
+Launch Playwright browser
 
 Open a headed browser to the UI:
 
@@ -191,59 +47,10 @@ If the page shows an error (connection refused, blank page), check `pf tmux read
 
 ---
 
-## Phase 2: Agent Setup
+## Phase 2: Setup
 
-### 2a. Create the playtest team
 
-```
-TeamCreate:
-  team_name: "sq-playtest"
-  description: "Interactive playtest — SM drives gameplay, UX Designer evaluates screenshots"
-```
-
-### 2b. Spawn UX Designer
-
-Resolve the UX Designer character from the active theme:
-
-```bash
-THEME=$(yq '.theme' .pennyfarthing/config.local.yaml 2>/dev/null || echo "firefly")
-```
-
-Spawn the UX Designer teammate:
-
-```
-Agent:
-  subagent_type: "general-purpose"
-  model: "sonnet"
-  team_name: "sq-playtest"
-  name: "ux-observer"
-  prompt: |
-    You are a UX Designer evaluating a live game UI during an interactive playtest.
-
-    ## Your Workflow
-
-    Wait for the SM to send you screenshots via SendMessage. For each screenshot:
-
-    1. **Read the image** using the Read tool (the SM sends the file path)
-    2. **Analyze** what you see. Focus on:
-       - Visual bugs — broken layouts, overlapping elements, missing assets
-       - Usability — can the player understand what to do next?
-       - Accessibility — contrast, font size, color-only indicators
-       - Feedback — does the UI confirm actions? Show loading states? Display errors clearly?
-       - Game feel — does the UI support immersion or break it?
-    3. **Respond** via SendMessage to the SM with categorized findings:
-       - `[BUG]` — something is visually broken or non-functional
-       - `[BUG-LOW]` — cosmetic issue, not blocking gameplay
-       - `[UX]` — usability improvement opportunity
-       - `[GAP]` — expected feature or feedback is missing
-
-    Be specific. Reference exact elements ("the HP bar in the top-left", "the submit button
-    below the text input"). Include a concrete suggestion, not just the problem.
-
-    If the screenshot looks good, say so briefly and wait for the next one.
-```
-
-### 2c. Initialize ping-pong file and screenshots directory
+### Initialize ping-pong file 
 
 ```bash
 mkdir -p /Users/keithavery/Projects/sq-playtest-screenshots
@@ -302,31 +109,14 @@ mcp__playwright__browser_press_key(...)
 
 Describe what you're doing before each action ("Clicking 'New Game' button").
 
-### 3b. Observe
 
-Take a screenshot directly into the shared screenshots directory. **Always pass `filename` with an absolute path — if you omit it, Playwright drops the PNG into the current working directory (the oq-1 or oq-2 repo root), which pollutes git status and leaks the file out of the playtest session.**
+### 3b. Check logs (in /tmp)
 
-```
-mcp__playwright__browser_take_screenshot(filename="/Users/keithavery/Projects/sq-playtest-screenshots/{NNN}-{slug}.png")
-```
-
-Use a 3-digit sequential `NNN` and a short kebab slug describing the moment (`005-post-begin`, `022-attack`). Multiplayer naming is covered in the multiplayer section below.
-
-### 3c. Evaluate with UX Designer
-
-Send the screenshot to the UX Designer:
-
-```
-SendMessage:
-  to: "ux-observer"
-  content: "Screenshot {NNN}: {brief description of what just happened}. Image at /Users/keithavery/Projects/sq-playtest-screenshots/NNN.png"
-```
-
-Wait for the UX Designer's response.
+### 3c. Open the otel dashboard and check it
 
 ### 3d. Triage findings
 
-For each finding from the UX Designer (or your own observations):
+For each finding:
 
 1. Determine the tag: `[BUG]`, `[BUG-LOW]`, `[UX]`, or `[GAP]`
 2. Determine priority: `blocking`, `high`, `medium`, `low`
@@ -398,125 +188,6 @@ If a service has crashed:
 **The SM is the single owner of git pull/push for both repos in this workspace.**
 OQ-1 pushes fixes to remote. The SM pulls them, rebuilds, restarts, and verifies.
 
-### Sync & Restart Cycle
-
-This is the core flow when OQ-1 has fixed something:
-
-```bash
-# 1. Pull latest from all affected repos
-cd /Users/keithavery/Projects/oq-2/sidequest-api && git pull origin develop
-cd /Users/keithavery/Projects/oq-2/sidequest-ui && git pull origin develop
-# (daemon only if OQ-1 touched it)
-cd /Users/keithavery/Projects/oq-2/sidequest-daemon && git pull origin develop
-```
-
-```bash
-# 2. Restart the affected service(s)
-pf tmux close api-server
-pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-api && cargo run 2>&1 | tee /tmp/sq-api.log" --title api-server
-```
-
-Same pattern for `ui-dev` and `daemon` if their repos were updated.
-
-```bash
-# 3. Wait for health check (api may need to recompile)
-pf tmux read api-server   # retry until "listening" appears
-```
-
-```bash
-# 4. Refresh the browser
-```
-
-```
-mcp__playwright__browser_navigate(url="http://localhost:5173")
-```
-
-```bash
-# 5. Re-test the fixed issue and update ping-pong file
-```
-
-**When to trigger this cycle:**
-
-- You see `fixed` + `Needs restart: yes` in the ping-pong file
-- A service pane shows a crash and you suspect OQ-1 pushed breaking changes
-- The user tells you OQ-1 has pushed a fix
-- You notice the browser showing stale behavior after OQ-1 reports `fixed`
-
-### Restart a single service (no git pull)
-
-For crashes or hangs that don't involve code changes:
-
-```bash
-pf tmux close api-server
-pf tmux run "cd /Users/keithavery/Projects/oq-2/sidequest-api && cargo run 2>&1 | tee /tmp/sq-api.log" --title api-server
-```
-
-### Read logs
-
-```bash
-pf tmux read <title>       # Current visible content in the pane
-cat /tmp/sq-api.log         # Full log history (api)
-cat /tmp/sq-ui.log          # Full log history (ui)
-cat /tmp/sq-daemon.log      # Full log history (daemon)
-```
-
-### Push findings for OQ-1
-
-If you discover something in the logs that OQ-1 needs to know (stack traces, error messages), copy the relevant log snippet into the ping-pong file task entry under `Notes:`.
-
----
-
-## Phase 5: Teardown
-
-When the user says the playtest is done:
-
-### 5a. Shut down UX Designer
-
-```
-SendMessage:
-  to: "ux-observer"
-  type: "shutdown_request"
-  content: "Playtest complete, shutting down"
-```
-
-Wait for acknowledgment, then:
-
-```
-TeamDelete:
-  team_name: "sq-playtest"
-```
-
-### 5b. Close service panes
-
-```bash
-pf tmux close api-server
-pf tmux close ui-dev
-pf tmux close daemon
-```
-
-### 5c. Close browser
-
-```
-mcp__playwright__browser_close()
-```
-
-### 5d. Archive ping-pong file
-
-```bash
-TIMESTAMP=$(date +%Y-%m-%d-%H%M%S)
-mkdir -p /Users/keithavery/Projects/sq-playtest-archive
-cp /Users/keithavery/Projects/sq-playtest-pingpong.md /Users/keithavery/Projects/sq-playtest-archive/$TIMESTAMP.md
-```
-
-### 5e. Summary
-
-Read the ping-pong file and print a summary:
-
-- Total findings by category (`[BUG]`, `[BUG-LOW]`, `[UX]`, `[GAP]`)
-- Findings by status (open, in-progress, fixed, verified)
-- Blocking bugs still open (if any)
-
----
 
 ## Multiplayer Mode
 
@@ -525,7 +196,7 @@ to simulate multiple players connecting to the same game session.
 
 ### Setup
 
-Create two browser contexts (each gets independent cookies/session state):
+Create multiple contexts (each gets independent cookies/session state):
 
 ```js
 // Playwright MCP supports multiple tabs — open a second tab for Player 2
@@ -533,62 +204,25 @@ mcp__playwright__browser_navigate((url = "http://localhost:5173")); // Tab 1 = P
 // Use browser_tabs to manage multiple tabs
 ```
 
-### Player management
 
-- **Player 1:** Primary tab — controlled by SM as usual
-- **Player 2:** Second tab — SM alternates between tabs to drive both players
-- Use `mcp__playwright__browser_tabs` to list and switch between tabs
-- Each player gets a unique name (e.g., "Kael" and "Mira")
-- Both players should select the same genre/world to join the same session
+### Hosts File
 
-### Multiplayer verification checklist
+Hosts file entries allow for protection of state
+player1.local
+player2.local
+player3.local
+player4.local
 
-Test these scenarios:
-
-1. **Both players connect** — party pane shows both names
-2. **Player 1 acts** — Player 2 sees the narration update
-3. **Player 2 acts** — Player 1 sees the narration update
-4. **Disconnect/reconnect** — one player refreshes, verify they rejoin the session
-5. **Concurrent actions** — both players submit actions close together, verify no crash
-
-### Screenshots
-
-Take screenshots from both tabs for each significant moment. **Always pass `filename` with the absolute shared-dir path** — never let Playwright drop into cwd:
-
-```
-mcp__playwright__browser_take_screenshot(filename="/Users/keithavery/Projects/sq-playtest-screenshots/{NNN}-p1.png")
-mcp__playwright__browser_take_screenshot(filename="/Users/keithavery/Projects/sq-playtest-screenshots/{NNN}-p2.png")
-```
-
-Naming convention:
-
-- `NNN-p1.png` — Player 1's view
-- `NNN-p2.png` — Player 2's view
-
-Compare both views to verify state synchronization.
 
 </run>
 
 <output>
-Interactive playtest session with two modes:
+Interactive playtest session:
 
-**Headless mode** (`/sq-playtest headless`):
-
-- API server with `--headless` flag (no daemon, no TTS, no rendering)
-- Python driver (`scripts/playtest.py`) — interactive, scripted, or multiplayer
-- OTEL tracing spans for render/audio hooks (verify pipeline without media)
-- Chrome trace export for Perfetto flame-chart analysis
-
-**Full-stack mode** (default):
-
-- 3 SideQuest services in tmux panes (api-server, ui-dev, daemon)
 - Headed Playwright browser for gameplay interaction
-- UX Designer teammate evaluating screenshots
 - Multiplayer mode with dual Playwright tabs for concurrent player testing
 
-**Both modes:**
-
-- Cross-workspace bug coordination via ping-pong file at /Users/keithavery/Projects/sq-playtest-pingpong.md
+- Cross-workspace bug coordination via ping-pong file at ../Projects/sq-playtest-pingpong.md
 - Service restart and log reading capability
   </output>
 
