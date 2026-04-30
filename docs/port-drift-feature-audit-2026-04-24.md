@@ -1,10 +1,10 @@
 # Port-Drift Feature Audit — Rust → Python
 
-**Date:** 2026-04-24
+**Date:** 2026-04-24 (initial pass) · **Last appended:** 2026-04-30 (§9 follow-up)
 **Author:** Architect (Leonard of Quirm persona)
 **Scope:** Subsystem-level comparison of `~/Projects/sidequest-api` (Rust reference, archived read-only) against `~/Projects/oq-2/sidequest-server` (live Python).
-**Governing ADRs:** ADR-082 (port decision, 1:1 structural mapping mandate), ADR-085 (port-drift tracker hygiene, cutover+1 sprint audit window).
-**Status:** First pass. Not a tracker reconciliation — an inventory for PM/SM to drive tracker work against.
+**Governing ADRs:** ADR-082 (port decision, 1:1 structural mapping mandate), ADR-085 (port-drift tracker hygiene, cutover+1 sprint audit window), **ADR-087 (post-port subsystem restoration plan — verdict and tier per non-parity row below)**.
+**Status:** First pass + 2026-04-30 follow-up appended as §9. Verdicts now live in ADR-087; this audit remains the inventory of record.
 
 ---
 
@@ -194,4 +194,94 @@ If forced to rank the §5 items for restoration:
 
 ---
 
-*Modo would say: "Mr. Leonard's been counting things, has he?" Yes, Modo. Twelve subsystems of counting.*
+## 9. 2026-04-30 Follow-Up — Six Days On
+
+The original audit (§§1–8 above) was written 2026-04-24. This follow-up is appended six days later to capture (a) verdicts assigned by ADR-087, (b) one factual correction, and (c) which silent-drift rows have moved.
+
+### 9.1 — One factual correction to §5.3
+
+The audit listed **patch legality checking** as absent from Python ("Absent — patches are applied without systematic legality gate"). That was wrong.
+
+`patch_legality_check` exists in `sidequest-server/sidequest/telemetry/validator.py`, registered by `register_check(patch_legality_check)` and invoked on every `TurnRecord`. Implementation is partial — it's a telemetry-side gate, not the agent-layer module the Rust tree had — but the *concern* is not dark. Status should be **partial**, not absent. ADR-087's "RESTORE P1" verdict still applies because the check is not yet structurally aligned with the Rust agent-layer design, but the floor is higher than the audit implied.
+
+### 9.2 — ADR-087 verdict assignment (the audit's main consumer)
+
+ADR-087 (`docs/adr/087-post-port-subsystem-restoration-plan.md`, dated 2026-04-24, status Proposed) consumed every row in §§4–5 and assigned a verdict + tier. The mapping:
+
+| Audit row | ADR-087 verdict | Tier |
+|-----------|------------------|------|
+| §5.4 ADR-059 pregen dispatch | RESTORE | **P0** |
+| §5.4 sidequest-namegen | REWIRE | **P0** |
+| §5.4 sidequest-encountergen | RESTORE | **P0** |
+| §5.4 sidequest-loadoutgen | RESTORE | **P0** |
+| §5.5 fixture hydrator (ADR-069) | RESTORE | **P0** |
+| Confrontation Engine / Epic 28 (not in original audit; flagged in ADR-087) | VERIFY → likely RESTORE | **P0** |
+| §5.1 Trope engine | RESTORE | P1 |
+| §5.1 NPC disposition (Attitude) | RESTORE | P1 |
+| §5.2 sealed-letter dispatch | RESTORE | P1 |
+| §5.3 continuity validator | RESTORE | P1 |
+| §5.3 patch legality (see §9.1 correction) | RESTORE | P1 |
+| §5.3 subsystem coverage tracker | RESTORE | P1 |
+| §5.4 sidequest-promptpreview | RESTORE | P1 |
+| §5.3 inventory extractor | VERIFY → likely RESTORE | P1 |
+| §5.1 gossip engine, accusation logic | RESTORE | P2 |
+| §5.1 genie wish engine | RESTORE | P2 |
+| §5.1 OCEAN shift proposals | RESTORE | P2 |
+| §5.1 chase engine | RESTORE | P2 |
+| §5.2 catch-up dispatch | RESTORE | P2 |
+| §5.3 lore filter | RESTORE | P2 |
+| §5.1 speculative prerendering | RESTORE | P2 |
+| §5.4 sidequest-validate | RESTORE | P2 |
+| §5.1 scene relevance validator | **REDESIGN** | P2 (under ADR-086 image-composition taxonomy) |
+| §5.1 conlang morpheme glossary | RESTORE | P3 |
+| §5.1 beat filter | RESTORE | P3 |
+| §5.5 test-support helpers | VERIFY | P3 |
+| §4 affinity progression, advancement/XP, dogfight, Edge/Composure rituals, tactical grid engine, 3D dice | DEFER (markers confirmed) | — |
+| §5.1 merchant / transactions | DEFER (no ADR; write one first) | — |
+| §5.1 theme rotator | **SUPERSEDE** | — |
+| §5.1 scrapbook persistent store | COLLAPSE into daemon, then VERIFY | P2 |
+| §5.3 separate narrator/troper/resonator/world_builder | SUPERSEDE (already, per ADR-067) | — |
+| §5.3 14-tool abstraction | SUPERSEDE (already, per ADR-059) | — |
+
+### 9.3 — Sprint movement against the audit
+
+Sprint 3 opened 2026-04-27 (Epic 45: Playtest 3 Closeout — MP Correctness, State Hygiene, and Post-Port Cleanup). The first three completed stories landed in this window:
+
+- **Story 45-1** — sealed-letter shared-world delta (re-scope of pre-port 37-37). Closes a slice of the §5.2 sealed-letter handler gap *for shared-world state*; the dispatch handler itself is still **dark**.
+- **Story 45-2** — turn barrier counts active turn-takers, not lobby connections. Adjacent to but not the same as §5.2 sealed-letter restoration.
+- **Story 45-3** — momentum readout state sync (UI subscribes to `BEAT_RESOLVED`). Surfaces engine-side momentum tracking from §6's Python-era extensions.
+
+None of the §§5.1, 5.4, 5.5 rows are claimed yet. ADR-087's P0 tier (pregen dispatch, namegen rewire, encountergen, loadoutgen, fixture hydrator, Epic 28 verify) is the pending dispatch.
+
+### 9.4 — Tree drift since 2026-04-24
+
+A handful of additions to `sidequest-server/sidequest/` since the audit, not all named in §6:
+
+| Module | Effect on audit |
+|--------|-----------------|
+| `cli/corpusdiff/`, `cli/corpuslabel/`, `cli/corpusmine/` | New CLI lane; corpus extraction tools added (likely tied to LocalDM dormancy decision per ADR-082-era spec). Independent of §5.4's pregen CLI gap. |
+| `game/shared_world_delta.py` | Closes part of the §5.2 sealed-letter gap (story 45-1 wiring). |
+| `game/region_init.py`, `game/region_validation.py` | Cartography-config-as-chargen-seed (the residual world.cartography.yaml load after ADR-019 supersession). Not on audit; counts as Python-era extension. |
+| `game/resolution_signal.py` | Handshake plumbing for momentum/beat resolution (story 45-3 adjacent). Python-era extension. |
+| `agents/encounter_render.py` | New agent helper. Not on audit. |
+| `agents/lethality_arbiter.py` (was on audit) | Continues to live in §6 as a positive Python-era extension. |
+| `handlers/`, `magic/`, `audio/`, `media/`, `renderer/` packages | Top-level package additions outside the original `agents/`-`game/`-`server/`-`telemetry/` quadrant. **Not yet inventoried** — flagged for the next audit pass; some may reflect ADR-086 image-taxonomy work and ADR-090 OTEL dashboard restoration. |
+
+### 9.5 — Genre pack drift (out of original audit scope but consequential)
+
+Five packs that appeared in the §1 implicit landscape have been moved into `sidequest-content/genre_workshopping/` (staging tree, not loaded by the server): `low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`, plus duplicate workshop copies of `heavy_metal` and `spaghetti_western`. The latter two also have **empty production directories** (`genre_packs/heavy_metal/` and `genre_packs/spaghetti_western/`) — promotion stalled half-way. Loadable production packs are 5: caverns_and_claudes, elemental_harmony, mutant_wasteland, space_opera, victoria. See `docs/genre-pack-status.md` for the breakdown.
+
+This is not port-drift in the ADR-082 sense — it's content-curation drift — but it affects how `road_warrior`'s missing chase engine (§5.1) lands in user terms: the pack itself is also not in production.
+
+### 9.6 — Methodology delta (next pass)
+
+Four things to add when this audit is re-run:
+
+1. **Test-tree parity.** ADR-082 mandated test-along-with-code; original audit deferred. Owed before claiming RESTORE on §5.3 helpers.
+2. **The five new packages** under `sidequest-server/sidequest/` (`audio/`, `handlers/`, `magic/`, `media/`, `renderer/`) need a Python-vs-pre-port comparison. Some may be new domains; some may absorb subsystems counted as drift in §5.
+3. **OTEL span coverage** against the lie-detection promise in CLAUDE.md (_"The GM panel is the lie detector"_). ADR-090 is restoring the dashboard surface; pair the next audit with a span-by-subsystem check.
+4. **Protocol byte-wire fidelity** against Rust captures, listed as out-of-scope in §8. Becomes load-bearing once ADR-082 §Protocol Compatibility risk gets retired or reaffirmed.
+
+---
+
+*Modo would say: "Mr. Leonard's been counting things, has he?" Yes, Modo. Twelve subsystems of counting on Friday, an addendum on the following Wednesday. The counting is iterative.*
