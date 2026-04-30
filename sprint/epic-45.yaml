@@ -351,10 +351,13 @@ stories:
       on interval past session cap; OTEL span on arc generation tick.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-30'
     repos: server
     workflow: wire-first
+    completed: '2026-04-30'
     type: bug
+    review_verdict: approved
   - id: 45-20
     title: "Resolved tropes write quest_log entry + active_stakes update (split from 37-41 sub-6)"
     description: |-
