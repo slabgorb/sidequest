@@ -763,3 +763,18 @@ stories:
       - 'OPEN-DECISION DEFERRED — scene_illustration with no on-screen player character (cutscene of villain alone, place-of-action). Current ship: participants=[pc:slug] always. Follow-up filed only if/when a cutscene case surfaces.'
     completed: '2026-04-29'
     type: bug
+  - id: 45-38
+    title: Z-Image config — add high-fidelity tier (base 1.0) for genre-pack pre-gen
+    description: 'Daemon Z-Image config (sidequest-daemon/sidequest_daemon/media/zimage_config.py) pins Turbo at 8 steps, CFG 0, 768x1024 portrait. Same prompt in Draw Things using base Z-Image 1.0 at 20 steps, CFG 4, 1024x1024 produces visibly more painterly output — McQuarrie/Berkey concept-art adherence crystallizes only at higher step counts on the non-distilled variant. Diagnosed during Coyote Reach picker-portrait authoring; reference image at ~/Desktop/0_painted_sci_fi_concept_art_..._3447260204.png. Two paths: (a) flip globally to base — ~3x wall-clock for all renders; (b) add high-fidelity tier for content pre-gen, keep Turbo for in-session live conjure. (b) preferred — speed matters for live narration, fidelity matters for picker assets.'
+    points: 3
+    priority: p3
+    status: backlog
+    repos: daemon
+    workflow: tdd
+    acceptance_criteria:
+      - 'New high-fidelity tier wired into mflux config: base Z-Image 1.0, 20 steps, CFG 4, 1024x1024'
+      - scripts/generate_portrait_images.py and generate_poi_images.py route to the new tier by default for genre-pack pre-gen
+      - In-session render path (live narration) continues to use Turbo for latency
+      - Regenerated picker_voidborn_medic_m01.png shows visibly more painterly brushwork than current 8-step Turbo version, comparable to Draw Things reference
+      - OTEL render.prompt_composed emits model_variant and steps so the GM panel shows which tier ran
+    type: bug
