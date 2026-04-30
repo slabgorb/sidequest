@@ -417,10 +417,13 @@ stories:
       embedding write.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-30'
     repos: server
     workflow: wire-first
+    completed: '2026-04-30'
     type: bug
+    branch: feat/45-23-world-history-arc-embedding-pipeline
   - id: 45-24
     title: "Retry button aria-describedby on slug-mode metadata-error (was 37-50)"
     description: |-
