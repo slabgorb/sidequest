@@ -276,6 +276,7 @@ async def send_render(
     lora_paths: list[str] | None = None,
     lora_scales: list[float] | None = None,
     variant: str = "",
+    fidelity: str = "turbo",
 ) -> dict:
     """Send a render request to the daemon and return the result.
 
@@ -284,6 +285,10 @@ async def send_render(
     are pulled from the world's visual_style.yaml / characters.yaml /
     places.yaml). Otherwise `positive` is sent as `positive_prompt` — the
     caller pre-composed the full prompt.
+
+    ``fidelity`` selects the Z-Image variant (Story 45-38). ``"turbo"``
+    keeps in-session live narration on z-image-turbo / 8 steps;
+    ``"high_fidelity"`` routes pre-gen to base z-image / 20 steps / CFG 4.
     """
     reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
 
@@ -291,6 +296,7 @@ async def send_render(
         "tier": tier,
         "negative_prompt": negative,
         "seed": seed,
+        "fidelity": fidelity,
     }
 
     if subject and genre and world:
@@ -367,6 +373,7 @@ async def render_batch(
     force: bool = False,
     output_dir: Path | None = None,
     catalog_compose: bool = False,
+    fidelity: str = "turbo",
 ) -> None:
     """Generic batch render loop for any image type.
 
@@ -480,6 +487,7 @@ async def render_batch(
                     lora_paths=lora_paths,
                     lora_scales=lora_scales,
                     variant=visual_style.get("preferred_model", ""),
+                    fidelity=fidelity,
                 )
             else:
                 result = await send_render(
@@ -487,6 +495,7 @@ async def render_batch(
                     lora_paths=lora_paths,
                     lora_scales=lora_scales,
                     variant=visual_style.get("preferred_model", ""),
+                    fidelity=fidelity,
                 )
             if "error" in result:
                 log.error("  FAILED: %s", result["error"])
