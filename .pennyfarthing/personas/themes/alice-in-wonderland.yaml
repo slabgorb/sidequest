@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Cheshire Cat
-    visual: "A grinning cat materializing in branches of a tree, only the smile visible at first then gradually revealing striped fur and gleaming eyes, the famous wide toothy grin floating independently, Victorian crosshatched illustration style"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture, in the visual register of the 1865 first edition. A large striped tabby cat in a high tree, the single striking landmark being a grin so impossibly wide it stretches almost ear-to-ear across the entire muzzle, displaying two complete rows of small triangular white teeth. Greyish-brown ringed tabby fur with darker ink-hatched stripes along the back and tail. Gleaming yellow eyes half-lidded with amused contempt, slit pupils. Composition: candid mid-disappearance moment — the head and grin clearly defined, the chest beginning to dissolve into pale paper texture, the lower body and one paw entirely gone. Soft side-light from the left. Behind: dense crosshatched dark forest foliage and a single bare branch on which the remaining haunches faintly perch."
     ocean:
       O: 5
       C: 2
@@ -100,7 +100,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Mad Hatter moved here - scored 91.25 at sm vs 48.75 at dev
     character: The Mad Hatter
-    visual: "A wild-eyed hatter with enormous top hat bearing '10/6' price tag, disheveled clothes covered in tea stains, seated at endless tea party table with broken cups and watches, gap-toothed grin, manic energy captured in crosshatching"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A gangly wild-eyed Englishman of thirty-three. The striking landmark: an enormous battered moss-green silk top hat tilted slightly backward, with a paper price card reading 10/6 stuck haphazardly in the brown silk band — the tag sitting front and centre. Narrow gaunt face with high cheekbones, unruly carrot-orange hair sticking out at odd angles around the hat-brim. Wide manic pale-green eyes, the right one fractionally larger than the left, a gap-toothed grin missing one upper front incisor. A loud mustard-and-brown plaid frock coat with a crookedly knotted bright-yellow bow tie at the throat. Composition: low waist-up shot from across the tea table, one hand raised cupping a delicate white china teacup tilted at a precarious angle, the other lifting an empty plate. Soft side-light from the left. Behind: a dim neutral wash of garden hedge with a faint suggestion of broken china."
     ocean:
       O: 5
       C: 2
@@ -130,7 +130,7 @@ agents:
     shortName: Hatter
   tea:
     character: The Caterpillar
-    visual: "A large blue caterpillar perched atop a mushroom, smoking a hookah with languid puffs, multiple arms folded imperiously, looking down with half-lidded contemptuous eyes, surrounded by curling smoke, Tenniel's original pose"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A large powder-blue segmented caterpillar perched upright atop a fat pale ochre mushroom cap freckled with darker spots, the body coiled in a sinuous S-curve. The striking landmark: a single elaborate slow ringlet of pale blue hookah-smoke curling out from the mouth and rising past the head to spell out the faint shape of a question mark in the air. Multiple small bristled arms folded imperiously across the foremost three segments. Half-lidded contemptuous shiny black eyes. The polished brass hookah mouthpiece on a long coiled red velvet hose held to the mandibles by one small foreleg. Composition: low waist-up at mushroom-eye level. Soft side-light from the left throws crosshatched shadow across the right segments. Behind: dim shadowed crosshatched undergrowth and one suggested giant fern frond."
     ocean:
       O: 4
       C: 4
@@ -161,7 +161,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: White Rabbit moved here - scored 81.25 at dev vs Mad Hatter's 48.75
     character: The White Rabbit
-    visual: "A nervous white rabbit in waistcoat checking a large pocket watch, ears alert and twitching, pink eyes worried, clutching a scroll and fan, rushing past rose bushes toward a rabbit hole, Victorian engraving detail"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A bipedal anthropomorphic white rabbit, the striking landmark being two extraordinarily long alert white ears standing fully upright above the head with a faint pink interior wash, the right ear bent at an anxious slight crease near the tip. Worried bulging pink eyes, a faint twitching pale-pink nose, white whiskers fanned forward in alarm. A bright lemon-yellow checked waistcoat with three small brass buttons over a starched white shirt with a small black satin bow tie at the throat. One white paw clutching a large round chased-gold pocketwatch dangling open on a chain at the chest height — the watch face clearly readable showing five minutes past one. The other paw lifted clutching a furled paper scroll sealed with red wax. Three-quarter medium shot, body angled mid-stride. Soft side-light from the left. Behind: muted neutral wash of pale forest path."
     ocean:
       O: 2
       C: 5
@@ -191,7 +191,7 @@ agents:
     shortName: Rabbit
   reviewer:
     character: The Queen of Hearts
-    visual: "An imperious queen in heart-patterned robes with crown and scepter, face red with permanent fury, pointing accusingly, card soldiers cowering behind, rose bushes being painted red, the executioner waiting nearby with axe"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture, here punched up with vivid red-and-gold heraldic colour. An imperious heavyset queen of fifty-three. The striking landmark: an enormous flushed-crimson moon-face with three rolling chins and an open mouth caught in mid-roar, the lips pulled back in fury, paired with two tiny hard glittering black eyes that seem absurdly small in the vast face. Dark severely-pulled-back hair under a small jagged-spiked gold crown set with a single ruby. A high-collared red-and-gold court gown patterned all over with small playing-card heart pips, a stiff white starched lace ruff at the throat. Both hands raised: one balled in a heavy fist near the chin, the other gripping a slim gold sceptre tipped with a heart, held aloft as if mid-strike. Low-angle hero shot from below. Hard side-light from the left. Behind: pure black with one painted-red rose-bush edge."
     ocean:
       O: 2
       C: 5
@@ -221,7 +221,7 @@ agents:
     shortName: Queen of Hearts
   architect:
     character: The White Queen
-    visual: "A disheveled queen in white with crooked crown, hair wild and streaming, shawl askew, a look of distracted brilliance in dreamy eyes, reaching for impossible things in the air, living backward through time"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A disheveled queen of sixty-three. The striking landmark: wild streaming silver hair half-pinned with at least seven mismatched hairpins of various sizes visibly sticking out at random angles all around the head, plus a single brooch tangled in one loose lock at the temple. Soft lined moonface, dreamy distracted pale-china-blue eyes that look slightly past the viewer, brows arched in vague surprise. A small undersized silver crown perched crookedly atop the chaos of hair, slipping toward the right ear. A pale ivory lace shawl slipping from the right shoulder over a high-necked white satin gown patterned faintly with chess squares at the bodice. Composition: shoulders-up close-up, head canted, one hand raised with the index finger lifted as if about to remember something already forgotten. Soft cool side-light from the left. Behind: muted dim wash of pale chequered floor receding."
     ocean:
       O: 5
       C: 2
@@ -251,7 +251,7 @@ agents:
     shortName: White Queen
   pm:
     character: Alice
-    visual: "A young girl in blue dress with white pinafore, blonde hair held by black ribbon, sensible expression amidst chaos, hands on hips questioning the madness around her, growing or shrinking as situation demands"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A young Victorian English girl of about ten, the iconic Alice silhouette. The striking landmark: a wide black grosgrain ribbon tied as a flat bow across the crown of the head, holding back long straight pale-blonde hair that falls past the shoulders in heavy ink-hatched curtains either side of the face. Fair round face, serious wide pale-blue eyes set under straight brows, a small sensible closed mouth, a faint solemn knit of the brow. A sky-blue knee-length dress under a crisply-starched white frilled pinafore with short puffed sleeves, a small white waist-tie bow at the back. Both hands clasped politely in front at chest height. Three-quarter medium shot, head turned three-quarters toward the viewer. Soft warm window light from the left. Behind: muted neutral pale wash of garden hedge."
     ocean:
       O: 4
       C: 4
@@ -281,7 +281,7 @@ agents:
     shortName: Alice
   tech-writer:
     character: The Mock Turtle
-    visual: "A melancholy turtle with a calf's head, sitting on a rock by the sea, tears streaming down face, telling his tale of woe to a patient Gryphon, flippers gesturing dramatically at remembered lessons"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A melancholy hybrid creature, the iconic chimera, with the soft brown velvety head of a young calf complete with two stubby horn-buds and small floppy ears, set on a domed olive-green crosshatched sea-turtle shell with a paler plastron. The striking landmark: a single fat translucent tear rolling down the left cheek and hanging at the jaw — a permanent crystallised teardrop, paired with a hoof at the end of the right calf-foreleg where a flipper should logically be. Large wet sorrowful brown calf-eyes with extravagantly long lashes, drooping eyelids. Composition: low waist-up shot from a tide-line, both forelimbs raised in a small theatrical operatic gesture as if mid-recitation. Soft cool side-light from the right. Behind: dim shadowed crosshatched seashore with a faint scalloped surf-line."
     ocean:
       O: 3
       C: 4
@@ -311,7 +311,7 @@ agents:
     shortName: Turtle
   ux-designer:
     character: The Duchess
-    visual: "A large-headed duchess with pointed chin, nursing a pig-baby in a pepper-filled kitchen, the cook throwing pans, finding morals in everything despite the chaos, unexpectedly friendly when away from her own house"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture, in the iconic Quentin-Matsys-grotesque mode Tenniel used for the Duchess. A heavyset Tudor noblewoman of fifty-six. The striking landmark: an absurdly enormous square wide head almost twice the width of the shoulders, with a sharply jutting pointed wedge chin that protrudes outward — features carved in deliberate caricature. Small shrewd close-set dark eyes. An elaborate towering double-horned black hennin headdress trailing two long white gauze veils on either side. A stiff square-collared dark forest-green Tudor gown with heavy gold-thread embroidery and a wide white starched ruff. A small white-swaddled pig-baby cradled in the crook of one arm, the tiny pink snout and one hoof poking up from the bundle. Composition: head-and-chest close-up uncomfortably close to the viewer's face. Soft side-light from the left. Behind: muted dim wash of stone kitchen wall and a faint hanging pepper-pot."
     ocean:
       O: 4
       C: 3
@@ -341,7 +341,7 @@ agents:
     shortName: Duchess
   devops:
     character: The White Knight
-    visual: "A clumsy knight in mismatched armor falling off his horse, surrounded by improbable inventions tied to his saddle - mousetraps, beehives, anklets for horses, kindly face beneath dented helmet, Victorian engraving detail"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. A gentle Englishman of fifty-five wearing mismatched dented plate armor of slightly differing greys. The striking landmark: a wild bushy grey walrus-moustache so long it droops well past the chin on both sides, paired with one sad mild watery pale-blue eye visibly slightly larger than the other. Long kindly weather-lined face, shaggy unkempt grey hair sticking out from under armour at the temples. A battered conical white helmet held tucked under the right arm. From a strap across the breastplate dangles a small wooden mousetrap, a tin candlestick, a beehive, and a bundle of small carrots — his catalogue of inventions. Three-quarter medium shot, head canted in absent-minded inquiry. Soft warm side-light from the right. Behind: muted dim wash of pale chess-board landscape with a faint horse-tail just out of frame at the lower edge."
     ocean:
       O: 5
       C: 3
@@ -371,7 +371,7 @@ agents:
     shortName: Knight
   ba:
     character: Tweedledee & Tweedledum
-    visual: "Twin round boys in schoolboy caps arguing fiercely with pointing fingers and puffed cheeks, mirror images of each other, one gesturing left one right, Victorian crosshatched Tenniel style"
+    visual: "Tenniel-inspired pen-and-ink engraving with dense crosshatched linework and hand-tinted pale watercolor wash on cream paper texture. Two identical short impossibly round Victorian schoolboys of about twelve, mirror-twins standing shoulder-to-shoulder filling the frame. The striking landmark: each wears a small white paper collar with a single embroidered name in red — DUM on the left twin, DEE on the right — and the left twin has one small grey wooden rattle clutched at his chest. Plump pink puffed-out cheeks, identical small turn-up snub noses, identical wide pale-blue eyes, identical sandy-blond hair pasted flat. Tiny black flat-cap schoolboy caps perched on the crown of each head. Wide stiff white Eton-style collars over horizontal red-and-white striped jerseys stretched tight over round bellies. Each twin points one stubby index finger in opposite directions away from the other — a frozen frame mid-disagreement. Composition: matched waist-up double portrait. Soft warm side-light from the left. Behind: muted neutral pale-grey forest clearing."
     ocean:
       O: 4
       C: 4
@@ -399,29 +399,3 @@ agents:
       name: The Rattle
       style: The nice new rattle that started the argument. The data point that sparks productive debate.
     shortName: Tweedles
-  gm:
-    character: Lewis Carroll (The Author)
-    visual: "A Victorian gentleman with mild scholarly face and dark hair parted to the side, wearing black frock coat, holding a camera in one hand and a looking-glass in the other, seated at a writing desk where Wonderland spills from the pages"
-    shortName: Carroll
-    ocean:
-      O: 5  # Invented Wonderland from pure imagination
-      C: 4  # Mathematical precision beneath the nonsense
-      E: 2  # Quiet observer, shy with adults
-      A: 4  # Gentle storyteller, kind to children
-      N: 2  # Calm detachment of the dreamer
-    style: The author who dreamed Wonderland into being and watches it with mathematical precision disguised as nonsense
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who created all the rules of Wonderland and knows which ones are being broken
-    trait: Observes his own creation with the bemusement of a logician watching chaos he authored
-    quirks:
-      - Everything in Wonderland follows logic if you understand the right logic
-      - Stutters in the real world but is perfectly eloquent through his stories
-      - Photographs moments of narrative truth with Victorian precision
-    catchphrases:
-      - "I wrote the rules of this world. Let me see if you are following them."
-      - "The narrative is perfectly logical. You simply haven't found the right logic yet."
-      - "Begin at the beginning, go on till you come to the end, then stop. That is how stories work."
-    emoji: "📷"
-    helper:
-      name: The Looking-Glass
-      style: Reflects the story back so its true structure becomes visible

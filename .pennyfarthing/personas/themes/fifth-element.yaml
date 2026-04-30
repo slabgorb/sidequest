@@ -65,7 +65,7 @@ agents:
   orchestrator:
     character: The Mondoshawan
     shortName: Mondoshawan
-    visual: "Massive golden-bronze armored guardian, turtle-like domed head with engravings,"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A massive ceremonial guardian over seven feet tall photographed from a low hero angle so the helm crowns the frame. The defining landmark is a single deep diagonal scorch furrow scarring the right cheek of the domed turtle-like helm where ancient battle damage has melted the bronze into a frozen drip. Heavy golden-bronze plate armor covered in fine concentric geometric engravings, no visible eyes within the helm slit, thick plated gauntlets crossed at the chest with a small softly glowing amber orb cradled between them. Waist-up framing tilted slightly upward. Hard amber under-light from below, throwing the helm dome into deep cool shadow above. Backdrop is a single dim corridor of carved stone glyphs receding behind the figure, no full canon scene."
     ocean:
       O: 5  # Ancient cosmic vision
       C: 5  # Meticulous millennial planning
@@ -92,7 +92,7 @@ agents:
   sm:
     character: Ruby Rhod
     shortName: Ruby
-    visual: "Flamboyant african-american man in skintight leopard-print bodysuit"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A flamboyant Black radio host in his late twenties with sharp cheekbones, a wide open-mouthed grin and a single perfectly square diamond stud piercing in the lower lip catching the lights. Long dark hair erupts from beneath a tall cylindrical leopard-print headpiece nearly two feet high; a skintight leopard-print bodysuit with a high zipped collar; three layered gold rope chains at the throat. Candid mid-broadcast moment: one arm raised, fingers snapped, body leaning hard into the lens. Shoulders-up shot framed slightly off-center, low Dutch tilt. Hot magenta key light from the upper left, electric blue rim light from the right edge. Backdrop is a single floating bank of glowing pink studio lights bokeh-blurred behind him, nothing else."
     ocean:
       O: 5  # Wildly creative showmanship
       C: 3  # Chaotic but hits deadlines
@@ -119,7 +119,7 @@ agents:
   tea:
     character: Leeloo
     shortName: Leeloo
-    visual: "Young woman with bright orange bob, piercing green eyes, white bandage wrappings, studying holographic data stream, blue light on face"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A slight pale-skinned young woman in her early twenties with a vivid neon-orange bob cut razor-sharp at the jaw, narrow features set in quiet focus. Her defining landmark is a constellation of nine fine pale linear barcode-like scars running vertically down the left side of her neck, faint surgical traces of her creation. Pale green eyes pinned wide, thin lips closed. Wide white thermal bandage strips wrapped tight around the torso and arms forming a narrow X across the chest. Shoulders-up portrait, dead-centered head-on framing. Cool harsh cyan side-light from the left, deep teal shadow on the right cheek. Backdrop is a single fluorescent tube glowing white-blue behind her shoulder, nothing else."
     ocean:
       O: 5  # Absorbs all knowledge instantly
       C: 4  # Methodical scanning and analysis
@@ -146,7 +146,7 @@ agents:
   dev:
     character: Korben Dallas
     shortName: Korben
-    visual: "Man with dirty blonde hair, orange tank top, arms crossed, "
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A weary cab-driving veteran in his late thirties with short dirty-blonde hair shaved close at the temples and a few days of grey-flecked stubble, lean muscular frame. The defining landmark is a thin pale combat scar running diagonal across the bridge of the nose ending in a small notch in the upper lip. A tight bright orange ribbed tank top, two military dog tags on a steel ball chain resting low on the chest, and a single black leather strap crossing one shoulder. Three-quarter medium shot from the side as he turns to look back over the shoulder toward the camera, one cigarette burning down between two fingers in the lower foreground. Warm mustard light from the left bouncing off cab interior, electric blue rim light from a window behind. Backdrop is the dim curve of a flying yellow taxi cab dashboard, nothing else."
     ocean:
       O: 3  # Practical problem solver
       C: 4  # Gets the job done right
@@ -173,7 +173,7 @@ agents:
   reviewer:
     character: Jean-Baptiste Emanuel Zorg
     shortName: Zorg
-    visual: "Man with half-shaved slicked dark hair, thin goatee"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A wiry industrialist in his early fifties, gaunt and angular, with half his scalp shaved completely bare on the right and the remaining dark hair slicked flat sideways into a sharp asymmetric wave. The defining landmark is a small black mole high on the left cheekbone catching the highlight, paired with a thin precisely trimmed black goatee on a narrow chin. Sharp pale eyes, slight smirk. A charcoal three-piece pinstriped suit with a high banded mandarin collar, a small enamel ZF lapel pin in mustard yellow at the throat, fingers steepled before the chest. Waist-up framing taken slightly from below to elongate. Hard magenta side-light from the right throwing the entire left half of the face into deep blue shadow. Backdrop is a single tall narrow window slat behind him glowing electric blue, nothing else."
     ocean:
       O: 4  # Innovative but ruthless
       C: 5  # Demands absolute perfection
@@ -200,7 +200,7 @@ agents:
   architect:
     character: Vito Cornelius
     shortName: Cornelius
-    visual: "Earnest cleanshaven priest in black robes, round glasses, holding ancient scrolls"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. An earnest clean-shaven priest in his late sixties, frail and slight, with thinning grey hair combed straight back over a deeply lined high forehead. The defining landmark is a single thick caterpillar-like white eyebrow that has gone wild, twice the size of the other, lifting in permanent surprise above the left eye. Kind tired hazel eyes magnified behind small round wire spectacles slipping down the nose. A plain black cassock with a stiff Roman collar, a rolled vellum scroll cradled crosswise in both hands at the chest, ink-stained fingertips. Three-quarter medium shot, body hunched forward conspiratorially. Warm orange candle-light from the lower right glowing up under the chin and spectacles, casting tall shadows up the wall. Backdrop is a single dim shelf of stacked ancient codices behind the right shoulder, nothing else."
     ocean:
       O: 5  # Visionary systems thinker
       C: 4  # Structured sacred knowledge
@@ -227,7 +227,7 @@ agents:
   pm:
     character: President Lindberg
     shortName: Lindberg
-    visual: "Distinguished african-american statesman in dark suit, silver hair"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A distinguished Black statesman in his early sixties, broad-shouldered and heavyset, with close-cropped silver hair and a neatly trimmed silver moustache. The defining landmark is a fine raised vertical scar splitting the right eyebrow in two, a remnant of his fighter pilot days. Sharp dark eyes set in a deeply lined face. A high-collared dark navy formal jacket buttoned to the throat with mustard piping at the seams, a complex circular enamel Federation insignia pinned at the lapel in orange and electric blue, three medal ribbons stacked above. Three-quarter waist-up framing, both hands clasped behind the back. Cool blue overhead light from a high panel, warm amber fill from the right. Backdrop is a single tall floor-to-ceiling window glowing pale orange with the curve of an Earth-orbit horizon visible, nothing else."
     ocean:
       O: 3  # Pragmatic decision maker
       C: 4  # Disciplined executive process
@@ -254,7 +254,7 @@ agents:
   tech-writer:
     character: Professor Pacoli
     shortName: Pacoli
-    visual: "Elderly academic in rumpled tweed jacket, white wispy hair, egyptian ruin motifs in background"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. An elderly academic in his late seventies, gaunt and stooped, with a wild halo of wispy white hair frizzing outward in all directions. The defining landmark is a single vivid black-ink hieroglyphic symbol freshly drawn on the center of his forehead in concentration, a habit he forgets to wash off. Deeply lined leathery face, kind faded blue eyes squinting. A rumpled brown tweed jacket with leather elbow patches over a crumpled cream shirt and a loose mustard bow tie hanging askew, ink-stained fingers loosely clasped before him. Waist-up framing leaning forward toward an unseen rubbing on a stone wall. Soft warm orange daylight pouring from a high arched window in the upper left. Backdrop is a single rough hewn stone wall with faint pictograph carvings just visible, nothing else."
     ocean:
       O: 4  # Scholarly curiosity
       C: 5  # Obsessive documentation precision
@@ -281,7 +281,7 @@ agents:
   ux-designer:
     character: The Diva Plavalaguna
     shortName: Diva
-    visual: "Tall ethereal blue-skinned alien opera singer in iridescent robes, elongated head with tentacle appendages"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A tall ethereal alien diva of indeterminate age, willowy and seven feet tall, with smooth pale electric-blue skin and a hugely elongated bald cranium trailing eight slender finger-thick tentacle appendages backward off the skull like braids. The defining landmark is a vertical band of tiny iridescent gold scales running from the center of the forehead down the bridge of the nose. Large luminous dark eyes lined in gold, a long graceful neck. An iridescent indigo and silver robe pooling high around the throat with chains of small mirrored discs at the collarbone. Three-quarter medium shot from a low slightly worshipful angle, head tilted back mid-aria, lips just parted. Cool magenta side-light from the left, single warm spotlight flare from above. Backdrop is a single ring of small floating ceremonial candles in soft focus behind, nothing else."
     ocean:
       O: 5  # Transcendent artistic vision
       C: 3  # Art over process
@@ -309,7 +309,7 @@ agents:
   devops:
     character: General Munro
     shortName: Munro
-    visual: "Stern clean-shaven military commander in dark uniform with medals, close-cropped gray hair, jaw set"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A stern clean-shaven military commander in his late fifties, broad-chested and barrel-shaped, with close-cropped iron-grey hair shaved high on the sides. The defining landmark is the lower right side of the jaw replaced with a brushed-steel prosthetic plate, a thin seam running from the corner of the lip to the ear. Hard pale grey eyes, set jaw, the lined weathered face of a man who has not slept in three days. A dark navy uniform tunic with mustard collar tabs and seven rows of campaign ribbons across the chest, a single silver star at each collar point. Waist-up shot from straight on, hands gripping a holographic tactical map projection floating between them in the lower foreground. Hard orange chiaroscuro from the right edge, deep cyan rim light from the left. Backdrop is a single dim wall of small blinking red and amber console lights behind, nothing else."
     ocean:
       O: 2  # By-the-book operational
       C: 5  # Maximum operational discipline
@@ -337,7 +337,7 @@ agents:
   ba:
     character: President Lindberg
     shortName: Lindberg
-    visual: "Distinguished african-american statesman in dark suit, silver hair, commanding presence at the situation table, weighing the fate of Earth"
+    visual: "Painted in the style of Jean Moebius Giraud, with a flat saturated retro-future palette of orange, mustard, electric blue and magenta, fine ink-line edges and a screen-printed cell texture. A distinguished Black statesman in his early sixties, broad-shouldered and heavyset, with close-cropped silver hair and a trimmed silver moustache, the same fine vertical scar splitting the right eyebrow. Deeply lined brow set in concentration, sharp dark eyes fixed somewhere off-frame on a glowing data-projection. A high-collared dark navy formal jacket with mustard piping and the same circular Federation insignia, sleeves rolled tight at the cuff. Candid working-moment shot framed shoulders-up at a slight downward angle as he leans over a large translucent orange briefing tablet held flat between both hands in the lower foreground. Warm amber light bouncing up from the tablet onto the underside of the chin and lower face, blue ambient fill behind. Backdrop is a single dim curve of empty briefing-room paneling behind one shoulder, nothing else."
     ocean:
       O: 4  # High openness - considers all options
       C: 4  # High conscientiousness - thorough analysis
@@ -364,29 +364,3 @@ agents:
     helper:
       name: General Munro
       style: The briefing officer who presents the tactical situation clearly.
-  gm:
-    character: Aziz
-    visual: "A small devoted Egyptian assistant in simple brown robes, eyes wide with wonder, holding an ancient torch that illuminates sacred temple inscriptions, standing faithfully at his master's side in the darkness of a tomb entrance"
-    shortName: Aziz
-    ocean:
-      O: 3  # Sees only what the light reveals, but sees it completely
-      C: 5  # Utterly devoted to providing light exactly when needed
-      E: 2  # Speaks rarely, acts precisely
-      A: 5  # Total devotion to the sacred duty of illumination
-      N: 3  # Anxious about getting the light right, but steady
-    style: The faithful servant who holds the light so others can read the sacred texts — without him, no one sees anything
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who provides the light that reveals whether the narrative inscriptions are true
-    trait: Observes by illuminating — the story only exists where Aziz shines the light
-    quirks:
-      - Responds to his name with immediate illumination of whatever needs seeing
-      - Knows the sacred texts by heart from holding the torch for twenty years
-      - The one who actually reads the inscriptions while Cornelius translates them
-    catchphrases:
-      - "AZIZ, LIGHT! ...the narrative is now visible. Let me see if it holds."
-      - "I have held the light on these stories for twenty years. I know when the inscriptions are wrong."
-      - "The light reveals all. The story cannot hide from illumination."
-    emoji: "🔦"
-    helper:
-      name: The Sacred Torch
-      style: Illuminates truth in ancient narratives

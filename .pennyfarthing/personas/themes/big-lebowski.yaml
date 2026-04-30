@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Stranger (Sam Elliott)
-    visual: "A tall older man with magnificent mustache and cowboy hat, wearing western shirt with bolo tie, weathered face of a rancher, leaning on bar with knowing eyes"
+    visual: "Late-90s Coen-noir cinematic still, neon-orange-and-magenta bowling-alley glow with warm tungsten side-light, slight 35mm grain, shallow focal depth. A tall white rancher of sixty-three. The single striking landmark: an enormous thick silver handlebar moustache spreading well past the corners of the mouth into two waxed gunslinger curls — the Sam Elliott moustache as costume signature. Weathered deeply-lined tan face, kind knowing pale-blue eyes that crinkle at the corners, white sideburns visible. A pale cream felt cowboy hat sitting square and low on the brow. A pale-blue pearl-snap western shirt with a turquoise-and-silver bolo tie at the throat. Composition: shoulders-up at the bowling-alley bar, one large weathered hand visible at chest height holding a tall glass of dark sarsaparilla with one ice cube. Warm amber side-light from the left, the right cheek catching a faint magenta neon spillover. Behind: dim shadowed backdrop with the soft out-of-focus glow of a yellow bowling-pin sign."
     ocean:
       O: 4 # Cosmic wisdom
       C: 2 # Go with the flow
@@ -94,7 +94,7 @@ agents:
     shortName: Stranger
   sm:
     character: The Dude (Jeffrey Lebowski)
-    visual: "A middle-aged man with long scraggly hair and goatee, wearing bathrobe and shorts with jelly sandals, holding White Russian cocktail, profoundly relaxed expression"
+    visual: "Late-90s Coen-noir cinematic still, neon-orange-and-magenta bowling-alley glow with warm tungsten side-light, slight 35mm grain. A middle-aged white slacker of forty-eight. The single striking landmark: long scraggly unwashed light-brown hair parted in the middle and falling well past the shoulders, paired with a shaggy unkempt sandy goatee that has clearly never seen a comb — peak 1991-still-1991 dirtbag aesthetic. Half-lidded relaxed hazel eyes, the lids permanently at three-quarter-mast, a faint amused half-smile. A tan terrycloth bathrobe loosely belted over a worn pale-grey heather t-shirt and grey jams pajama-bottoms visible at the lower edge. A tall cream-coloured White Russian cocktail in a thick tumbler in one hand at chest height, ice cubes visible. Composition: candid bowling-alley moment, three-quarter waist-up, head turned in mild bewilderment toward the viewer. Warm tungsten side-light from the left, magenta neon rim at the right. Behind: muted dim wash of bowling-alley carpet pattern."
     # JOB FAIR OPTIMIZED: Dude moved here; Walter excels at dev (+7.50)
     ocean:
       O: 4 # Open to whatever
@@ -121,7 +121,7 @@ agents:
     shortName: Dude
   tea:
     character: The Jesus (Jesus Quintana)
-    visual: "A Latino man with styled hair and purple jumpsuit with bowling ball, tight clothes showing muscular build, theatrical expression, strutting confidence"
+    visual: "Late-90s Coen-noir cinematic still, neon-orange-and-magenta bowling-alley glow with warm tungsten side-light, slight 35mm grain. A muscular Puerto-Rican man of forty-three. The single striking landmark: an immaculately razor-thin black pencil moustache traced precisely along the upper lip, paired with one long curling black-painted pinky-fingernail visible on the right hand — the registered-sex-offender unsettling detail. Narrow tan face with high cheekbones, a theatrical confident half-smirk, glossy jet-black hair slicked tightly back from the forehead with hair gel and held by a thin gold hairnet. A fitted lavender-purple polyester bowling jumpsuit unzipped halfway to display a small gold crucifix on a chain at the sternum. The marbled deep-purple bowling ball with three drilled finger-holes cradled possessively in one hand at the waist. Composition: low-angle hero shot from below, the tongue extended and slowly licking the surface of the ball — frozen mid-lick. Warm magenta neon side-light from the left. Behind: dim shadowed bowling-alley lane, pin silhouettes blurred."
     ocean:
       O: 3 # Bowling artistry
       C: 4 # Competitive discipline
@@ -147,7 +147,7 @@ agents:
     shortName: Jesus
   dev:
     character: Walter Sobchak
-    visual: "A large heavyset man with ponytail and military dog tags, wearing safari vest over bowling shirt, sunglasses pushed up, aggressive posture, Vietnam vet bearing"
+    visual: "Late-90s Coen-noir cinematic still, neon-orange-and-magenta bowling-alley glow with warm tungsten side-light, slight 35mm grain. A heavyset Polish-American man of fifty-three. The single striking landmark: yellow-amber-tinted aviator sunglasses with thick gold wire frames pushed up high onto the forehead, paired with two military stainless-steel dog-tags on a beaded chain resting flat on the sternum. Broad flushed sweat-shined face with a thick brown-and-grey goatee, aggressive set jaw clenched. Balding brown hair scraped back into a small thin tight ponytail at the nape, the front pate visibly thin. A khaki canvas Vietnam-era safari vest with multiple chest pockets buttoned over a deep wine-burgundy short-sleeved bowling shirt with embroidered league lettering at the chest. Composition: candid action moment, head turned and shouting toward someone off-frame to the left, one hand stabbed out in furious accusation. Warm tungsten side-light from the right, hard. Behind: dim shadowed bowling-alley with one faint orange neon arrow glow."
     # JOB FAIR OPTIMIZED: Walter scored best as dev (+7.50 over Dude)
     ocean:
       O: 2 # Rigid worldview
@@ -174,7 +174,7 @@ agents:
     shortName: Walter
   reviewer:
     character: The Big Lebowski (Jeffrey Lebowski)
-    visual: "An elderly man in wheelchair with expensive smoking jacket, wealthy surroundings implied, stern imperious expression, blanket over legs"
+    visual: "Late-90s Coen-noir cinematic still, warm tungsten library light replacing the bowling-alley palette here, deep mahogany-and-amber tones, slight 35mm grain. A wealthy elderly white man of seventy-four. The single striking landmark: a clipped silver-white toothbrush moustache combed precisely flat above a permanently downturned imperious mouth, paired with the curved chrome push-handle of a wheelchair faintly visible just over the right shoulder edge of the frame — the wheelchair as identity-signature. Broad jowly authoritative face, full silver hair severely brushed back from a high forehead, sharp pale-blue eyes narrowed in dismissive evaluation. A deep wine-burgundy quilted velvet smoking jacket with black satin shawl lapels over a cream silk ascot pinned with a small ruby. Composition: low waist-up shot from below the seated wheelchair line, head tilted in patrician disdain. Warm library lamplight from the right. Behind: dim mahogany wood-panelled wall with a faint gilt-framed Whitney trophy edge."
     ocean:
       O: 2 # Materialistic
       C: 4 # Business discipline
@@ -200,7 +200,7 @@ agents:
     shortName: Lebowski
   architect:
     character: Maude Lebowski
-    visual: "A striking woman with short dark hair in artistic bun, wearing avant-garde outfit suspended in harness, paint-splattered hands, intellectual intensity"
+    visual: "Late-90s Coen-noir cinematic still, here in Maude's sterile gallery white-and-charcoal palette with one bright vermillion paint-splatter, slight 35mm grain. A striking white woman of thirty-eight. The single striking landmark: a violent splatter of bright vermillion-red oil paint across the right cheekbone and chin from her flying-harness painting work, paired with a single dramatic blunt-cut jet-black asymmetric short bob falling longer on the left side of the face than the right. Sharp pale-cream face, intense dark almost-black eyes, a thin straight nose. The hair pulled into a small severe artistic topknot at the crown leaving the asymmetric front lines exposed. Both hands raised at chest height, palms forward, fingers slim and faintly paint-stained at the nails. A sleeveless black avant-garde silk robe with a high stiff Mandarin collar, the bare arms exposed. Composition: low-angle hero shot from below — viewer is on the floor, she is suspended overhead — head tilted down toward the camera. Hard cool side-light from the left. Behind: deep dim charcoal warehouse with one faint flying-harness rope at the edge."
     ocean:
       O: 5 # Avant-garde art
       C: 3 # Creative discipline
@@ -226,7 +226,7 @@ agents:
     shortName: Maude
   pm:
     character: Bunny Lebowski
-    visual: "A young blonde woman in revealing designer outfit, painted toenails prominent, vapid pretty expression, poolside glamour, trophy wife energy"
+    visual: "Late-90s Coen-noir cinematic still, here in saturated southern-Californian poolside daylight palette with bright turquoise and chlorine-blue accents, slight 35mm grain. A young white woman of twenty-two. The single striking landmark: ten toes painted a single vivid carnival-red toenail polish, faintly visible at the lower edge of the frame just below the slip-dress hem against poolside concrete — and a single small green serpent tattoo at the inside of the right ankle just above. Fair pretty face, bright glassy pale-blue eyes, a small bored vacant half-smile with glossy carnival-red matching lipstick. Long platinum-bleached blonde hair worn loose past the shoulders, slightly damp at the ends. A thin-strapped white silk slip-dress with a deep V-neckline, no jewellery. Composition: candid waist-up poolside shot from a slightly low angle, head tilted back as if listening to a stereo, sunglasses half-perched in the hair. Soft warm poolside daylight from the left, with bouncing turquoise pool-light from below. Behind: muted pale stucco wall with one faint palm-frond shadow."
     ocean:
       O: 3 # Chaotic energy
       C: 2 # Impulsive decisions
@@ -253,7 +253,7 @@ agents:
     shortName: Bunny
   tech-writer:
     character: Da Fino (Private Eye)
-    visual: "A short man in cheap detective trench coat and fedora, holding notepad, nervous sweaty face, VW Beetle owner energy, perpetually confused"
+    visual: "Late-90s Coen-noir cinematic still, deep classic noir palette with sodium-yellow streetlamp accents, slight 35mm grain. A short Italian-American man of forty-eight. The single striking landmark: a thin pencil-thin black moustache combined with a permanent sheen of nervous sweat across the forehead and upper lip — a man visibly perspiring through any stakeout. Narrow anxious face, dark anxious darting eyes, dark hair pomaded flat under a battered brown felt fedora pushed back from a high forehead. A creased tan-camel trench coat with the lapels turned up at the throat over a cheap brown polyester three-piece suit and a wide patterned brown-and-orange tie of objectively poor taste. A small spiral notepad held flipped open in the visible hand at chest height with a stub of yellow pencil. Composition: surveillance moment, head turned over the shoulder peering past the viewer. Hard sodium-yellow side-light from the right, deep noir shadow on the left half of the face. Behind: dim noir alleyway with one Volkswagen Beetle silhouette."
     ocean:
       O: 3 # Professional observation
       C: 4 # Investigative method
@@ -279,7 +279,7 @@ agents:
     shortName: Fino
   ux-designer:
     character: Donny
-    visual: "A sweet-faced man with curly light hair, wearing bowling shirt, innocent confused expression, perpetually out of the loop but genuine"
+    visual: "Late-90s Coen-noir cinematic still, neon-orange-and-magenta bowling-alley glow with warm tungsten side-light, slight 35mm grain. A sweet-faced white man of forty-eight. The single striking landmark: short tightly-curled sandy-blond hair sitting like a child's halo across the crown, paired with a small beauty mark high on the left cheekbone — features that read younger than his years. Soft round face, mild faintly-puzzled pale-blue eyes, a small uncertain open-mouthed half-smile, faint lines forming between the brows in confusion. A teal-blue and cream short-sleeved 1950s-cut bowling shirt with a small embroidered Sobchak Security league patch over the right chest pocket. Composition: candid moment, three-quarter waist-up, head turned over the shoulder toward an off-camera shouting Walter, eyes wide. Warm tungsten side-light from the left, the right cheek catching faint pink neon. Behind: muted dim wash of bowling-alley score-table panels."
     ocean:
       O: 2 # Simple outlook
       C: 2 # Goes along
@@ -305,7 +305,7 @@ agents:
     shortName: Donny
   devops:
     character: The Nihilists
-    visual: "Three men with black leather outfits and German industrial style, one with handlebar mustache, visible tattoos, carrying ferret or scissors, bored nihilistic expressions"
+    visual: "Late-90s Coen-noir cinematic still, here in cold flat Eurotrash palette of black-leather-and-bone-white with one slash of red accent, slight 35mm grain. Three lean Northern European men in their thirties standing shoulder-to-shoulder filling the frame. The single striking landmark: each holds at chest height a different identifying object — the central figure cradles a small white Pomeranian dog, the left figure holds aloft a pair of garden shears in one black-leather-gloved fist, the right figure clutches a battered electric guitar — making them collectively unmistakable. The central figure (Uli) has cropped black hair and a heavy black handlebar moustache; the left and right figures have entirely shaved bone-white skulls. All three pale severe faces with bored flat-set mouths. Identical fitted black leather Kreuzberg motorcycle jackets zipped high to the throat with silver hardware. Faint black old prison-style tattoos visible at the necks above the collars. Composition: matched three-figure mugshot, low-angle hero shot from below. Hard cold side-light from the left. Behind: deep dim concrete-bunker grey wall."
     ocean:
       O: 2 # Nihilistic view
       C: 3 # Threatening plans
@@ -331,7 +331,7 @@ agents:
     shortName: Nihilists
   ba:
     character: The Dude (Private Investigator Mode)
-    visual: "A middle-aged man with long scraggly hair and goatee, wearing sunglasses and bathrobe over bowling shirt, holding a White Russian while examining a ransom note, surprisingly focused expression"
+    visual: "Late-90s Coen-noir cinematic still, neon-orange-and-magenta bowling-alley glow with warm tungsten side-light, slight 35mm grain. The same middle-aged white slacker of forty-eight with the long scraggly center-parted light-brown hair past the shoulders and the shaggy unkempt goatee — but here in stumbling-into-an-investigation mode. The single striking landmark: the cheap dark-green-mirrored aviator sunglasses sitting low on the nose with one earpiece slightly bent so they tilt visibly to the right, paired with a small white nicorette square stuck behind one ear. Faintly focused half-frown, the brows pulled together in dim concentration. The tan terrycloth bathrobe loosely belted over a faded teal short-sleeved bowling shirt. A tall White Russian in a thick tumbler held mid-sip at chest height. Composition: tight close-up shoulders-up, head canted slightly in suspicious thought. Warm tungsten side-light from the left, hard. Behind: dim shadowed backdrop with one out-of-focus orange neon bowling-pin."
     ocean:
       O: 4
       C: 4
@@ -359,29 +359,3 @@ agents:
       name: The Rug
       style: Really ties the requirements together
     shortName: Dude
-  gm:
-    character: Brandt
-    visual: "A nervous young man in crisp suit and tie, standing in marble foyer of Lebowski mansion, clipboard clutched to chest, eager-to-please smile barely concealing that he has witnessed every absurd event in this household"
-    shortName: Brandt
-    ocean:
-      O: 3  # Observes everything but processes none of it
-      C: 5  # Meticulously tracks every event for the boss
-      E: 3  # Professionally attentive, always present
-      A: 5  # Agrees enthusiastically with whatever is happening
-      N: 4  # Deeply uncomfortable but cannot look away
-    style: The dutiful assistant who has witnessed every absurd scene and documented it all with nervous enthusiasm
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who was present for everything, watched everything, and will enthusiastically confirm everything
-    trait: Observes the entire narrative with anxious delight, validating every twist
-    quirks:
-      - Laughs nervously at everything, especially the parts that are not funny
-      - Has been in the room for every single scene and remembers it all
-      - Cannot look away from the narrative no matter how uncomfortable it gets
-    catchphrases:
-      - "Wonderful! The narrative is... ha ha... really coming together, sir."
-      - "Her life is in your hands, Dude. And the story... the story is very compelling."
-      - "That's marvelous. The whole story. Every part of it. Ha ha!"
-    emoji: "😅"
-    helper:
-      name: The Mansion
-      style: The grand setting where every scene is witnessed and remembered

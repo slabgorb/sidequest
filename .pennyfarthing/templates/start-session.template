@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v tmux &>/dev/null; then
+  echo "Error: tmux is required but not found." >&2
+  echo "Install: brew install tmux" >&2
+  exit 1
+fi
+
+# Pennyfarthing session launcher — Claude Code + TUI in tmux
+#
+# Usage: ./start-session [layout] [split] [directory]
+#   layout:    bottom (default), top, right, left
+#   split:     TUI pane size as percentage, e.g. 33 (default: 50 for top/bottom, 35 for right/left)
+#   directory: defaults to current working directory
+#
+# Layout = where the TUI goes:
+#   bottom ┌──────────┐   top    ┌──────────┐   right  ┌───────┬────┐   left  ┌────┬───────┐
+#          │  claude  │          │   TUI    │          │claude │TUI │         │TUI │claude │
+#          ├──────────┤          ├──────────┤          │       │    │         │    │       │
+#          │   TUI    │          │  claude  │          └───────┴────┘         └────┴───────┘
+#          └──────────┘          └──────────┘
+#
+# Uses a dedicated tmux socket (-L pf) so the project tmux.conf
+# is guaranteed to load, avoiding conflicts with ~/.tmux.conf.
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Parse layout argument — where to place the TUI pane
+LAYOUT="bottom"
+if [[ "${1:-}" =~ ^(bottom|top|right|left)$ ]]; then
+  LAYOUT="$1"
+  shift
+fi
+
+# Parse optional split percentage
+SPLIT=""
+if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
+  SPLIT="$1"
+  shift
+fi
+
+DIR="${1:-$(pwd)}"
+DIR="$(cd "$DIR" && pwd)"
+SOCKET="pf"
+BASE="pf-$(basename "$DIR")"
+
+# Pick the right config file
+# top/bottom use vert config, left/right use their own
+case "$LAYOUT" in
+  top|bottom) CONF_SUFFIX="vert" ;;
+  left)       CONF_SUFFIX="left" ;;
+  right)      CONF_SUFFIX="right" ;;
+esac
+CONF="$SCRIPT_DIR/tmux.conf.${CONF_SUFFIX}"
+if [[ ! -f "$CONF" ]]; then
+  echo "Error: tmux config not found: $CONF" >&2
+  exit 1
+fi
+
+# Find next available session number for this directory
+N=0
+while tmux -L "$SOCKET" has-session -t "${BASE}-${N}" 2>/dev/null; do
+  N=$((N + 1))
+done
+SESSION="${BASE}-${N}"
+
+# Prevent Claude Code nested-session detection from blocking the new session.
+# unset locally so child processes don't inherit it, and remove from any
+# existing tmux server environment so new panes start clean.
+unset CLAUDECODE
+tmux -L "$SOCKET" set-environment -gu CLAUDECODE 2>/dev/null || true
+
+# Capture real terminal size before creating detached session
+TERM_COLS=$(tput cols)
+TERM_LINES=$(tput lines)
+
+# Pass Kitty env vars so image protocol detection works inside tmux
+# (tmux overwrites TERM to tmux-256color, hiding the real terminal)
+ENV_ARGS=(-e "CLAUDECODE=" -e "KITTY_WINDOW_ID=${KITTY_WINDOW_ID:-}" -e "TERM_PROGRAM=${TERM_PROGRAM:-}")
+
+# Start Frame server before tmux so both claude and tui can connect
+(cd "$DIR" && pf launch frame) &
+FRAME_BG=$!
+
+# Wait for port file
+PORT_FILE="$DIR/.frame-port"
+for i in $(seq 1 20); do
+  [[ -f "$PORT_FILE" ]] && break
+  sleep 0.25
+done
+if [[ ! -f "$PORT_FILE" ]]; then
+  echo "Warning: Frame server failed to start (no .frame-port after 5s)" >&2
+  kill "$FRAME_BG" 2>/dev/null || true
+fi
+
+case "$LAYOUT" in
+  bottom)
+    # Claude Code on top, TUI on bottom
+    TUI_PCT="${SPLIT:-50}"
+    tmux -L "$SOCKET" -f "$CONF" new-session -d -s "$SESSION" -c "$DIR" -x "$TERM_COLS" -y "$TERM_LINES" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just claude" Enter
+    tmux -L "$SOCKET" split-window -v -t "$SESSION" -c "$DIR" -l "${TUI_PCT}%" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just tui" Enter
+    tmux -L "$SOCKET" select-pane -t "$SESSION.0" -T "Claude Code"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.1" -T "TUI"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.0"
+    ;;
+  top)
+    # TUI on top, Claude Code on bottom
+    CLAUDE_PCT="$((100 - ${SPLIT:-50}))"
+    tmux -L "$SOCKET" -f "$CONF" new-session -d -s "$SESSION" -c "$DIR" -x "$TERM_COLS" -y "$TERM_LINES" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just tui" Enter
+    tmux -L "$SOCKET" split-window -v -t "$SESSION" -c "$DIR" -l "${CLAUDE_PCT}%" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just claude" Enter
+    tmux -L "$SOCKET" select-pane -t "$SESSION.0" -T "TUI"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.1" -T "Claude Code"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.1"
+    ;;
+  right)
+    # Claude Code on left, TUI sidebar on right
+    TUI_PCT="${SPLIT:-35}"
+    tmux -L "$SOCKET" -f "$CONF" new-session -d -s "$SESSION" -c "$DIR" -x "$TERM_COLS" -y "$TERM_LINES" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just claude" Enter
+    tmux -L "$SOCKET" split-window -h -t "$SESSION" -c "$DIR" -l "${TUI_PCT}%" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just tui" Enter
+    tmux -L "$SOCKET" select-pane -t "$SESSION.0" -T "Claude Code"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.1" -T "TUI"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.0"
+    ;;
+  left)
+    # TUI sidebar on left, Claude Code on right
+    CLAUDE_PCT="$((100 - ${SPLIT:-35}))"
+    tmux -L "$SOCKET" -f "$CONF" new-session -d -s "$SESSION" -c "$DIR" -x "$TERM_COLS" -y "$TERM_LINES" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just tui" Enter
+    tmux -L "$SOCKET" split-window -h -t "$SESSION" -c "$DIR" -l "${CLAUDE_PCT}%" "${ENV_ARGS[@]}"
+    tmux -L "$SOCKET" send-keys -t "$SESSION" "just claude" Enter
+    tmux -L "$SOCKET" select-pane -t "$SESSION.0" -T "TUI"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.1" -T "Claude Code"
+    tmux -L "$SOCKET" select-pane -t "$SESSION.1"
+    ;;
+esac
+
+# Register panes in the background
+(cd "$DIR" && pf tmux register) &
+
+# Attach
+tmux -L "$SOCKET" attach -t "$SESSION"
+
+# --- Team agent pane recipes (for reference) ---
+# Spawn a new agent pane alongside Claude Code:
+#   tmux -L pf split-window -h -t "$SESSION" -c "$DIR"
+#   tmux -L pf select-pane -t "$SESSION.{last}" -T "Dev Agent"
+#   tmux -L pf send-keys -t "$SESSION.{last}" "claude -p '/pf-dev'" C-m

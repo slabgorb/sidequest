@@ -1,0 +1,61 @@
+# Pennyfarthing Project Settings
+# Consolidated configuration for repos, services, and testing
+
+# ============================================================================
+# Repository Definitions
+# ============================================================================
+repos:
+  ${PROJECT_NAME}:
+    path: .
+    type: monorepo
+    language: typescript
+    test_command: npm test
+    build_command: npm run build
+    lint_command: npm run lint
+
+# Multi-repo example (uncomment and modify):
+# repos:
+#   api:
+#     path: api
+#     type: api
+#     language: go
+#     test_command: go test ./...
+#   ui:
+#     path: ui
+#     type: ui
+#     language: typescript
+#     test_command: npm test
+
+# ============================================================================
+# Services Configuration
+# ============================================================================
+# Define dev server ports for worktree management
+# Each service gets offset ports in worktrees (base + worktree_index * port_offset)
+
+services:
+  port_offset: 100
+  definitions:
+    - name: App
+      base_port: 3000
+      env_var: APP_PORT
+
+# Example for Go API + React UI:
+# services:
+#   port_offset: 100
+#   definitions:
+#     - name: API
+#       base_port: 8080
+#       env_var: API_PORT
+#     - name: UI
+#       base_port: 5173
+#       env_var: UI_PORT
+
+# ============================================================================
+# Testing Configuration (optional)
+# ============================================================================
+# testing:
+#   log_dir: ".session"
+#   skip_patterns_by_language:
+#     typescript:
+#       patterns: ['it\.skip', 'describe\.skip']
+#       file_pattern: "*.test.*"

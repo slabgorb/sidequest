@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Captain Ahab
-    visual: "Obsessed whaling captain with grizzled beard, ivory peg leg visible, scarred face, burning monomanic eyes"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim oil-lamp light, brine-and-tar palette of slate-grey and bone-white, heavy impasto brushwork. A gaunt towering New England whaling captain in his late fifties, perhaps six-foot-two but stooped, salt-cured tan skin pulled tight across high cheekbones, a long grizzled iron-grey beard reaching the second button of his coat, a single livid pink lightning-fork scar running from beneath the hairline down across the right temple and cheek and disappearing into the beard, fierce black sunken eyes. A carved sperm-whale-jaw ivory leg visible below the knee where his right calf should be, strapped at the thigh with leather buckles. A heavy black wool sea-coat with tarnished brass buttons over a brown waistcoat. Low-angle hero shot from the deck, both hands gripping the rail, body braced into a roll. Hard oil-lamp light from the lower left throws his face and beard into chiaroscuro. Behind him, a single mast-line and dim charcoal sky."
     ocean:
       O: 4  # High openness - philosophical obsession
       C: 5  # Very high conscientiousness - monomaniacal focus
@@ -95,7 +95,7 @@ agents:
 
   sm:
     character: Starbuck
-    visual: "Quaker first mate with honest weathered face, moral concern in eyes, practical seaman's clothes"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim oil-lamp light, brine-and-tar palette of slate-grey and undyed wool, heavy impasto. A lean Nantucket Quaker seaman in his late thirties, perhaps five-foot-eleven and rope-thin, sun-darkened skin tanned to the colour of old saddle-leather, sandy brown hair tucked behind both ears falling to the jaw, steady pale grey eyes set in narrow squint-creases from years of staring across glare, an honest squared jaw clean-shaven save for a faint sandy stubble. A small puckered crescent harpoon-line burn scar across the back of his right hand. He wears a plain broad-brimmed black wool Quaker hat, an undyed coarse wool jacket buttoned to the collar over a collarless cream linen shirt, a small worn pocket-Bible thumbed open in his left hand. Three-quarter medium shot, body half-turned in conscience-stricken hesitation, eyes lowered to the page. Soft window-light from the upper left. Plain plank-wall cabin behind."
     ocean:
       O: 3  # Medium openness - practical, Quaker values
       C: 5  # Very high conscientiousness - responsible first mate
@@ -122,7 +122,7 @@ agents:
 
   tea:
     character: Ishmael
-    visual: "Young philosophical sailor with observant thoughtful expression, everyman features"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim cabin lantern light, brine-and-tar palette, heavy impasto. A young white American man in his mid-twenties, perhaps five-foot-ten, regular even features with a long melancholy mouth, dark brown hair grown out to the collar in restless curls, mild hazel eyes set under a slightly furrowed brow, a faint dark shadow of week-old stubble. A small white triangular scar on his lower lip from a fishhook. He wears a plain dark navy wool sailor's jacket with bone buttons over a coarse off-white linen shirt open at the throat, a length of tarred whaling line coiled around his shoulder, ink-stained fingers from journal-keeping. Candid moment, leaning against a doorframe at three-quarter angle, one shoulder higher than the other, gaze flicked to the side toward something offscreen. Soft side-light from the right enters from a porthole. Plank wall behind, the corner of a hammock just visible."
     ocean:
       O: 5  # Very high openness - philosophical observer
       C: 3  # Medium conscientiousness - floater, contemplative
@@ -149,7 +149,7 @@ agents:
 
   dev:
     character: Moby Dick
-    visual: "Massive white sperm whale emerging from water, ancient and inscrutable, scarred from harpoons"
+    visual: "19th-century maritime oil painting in the manner of J.M.W. Turner crossed with Winslow Homer, deep slate-and-storm palette with one terrible note of bone-white, heavy impasto, salt-spray atmosphere. An enormous albino sperm whale rising three-quarters out of black North Atlantic water, the wrinkled blunt squared head occupying nearly the full frame, small black wet eye set low and far back on the left side staring directly at the viewer, the white hide a relief-map of criss-crossed silver harpoon scars and one twisted dark sucker-mark from a giant squid across the brow. Six broken-off harpoon shafts in rusted iron protrude from the high back, trailing tangles of severed line and a single tiny shred of red flag. The mouth is closed in a long thin line, lower jaw twisted slightly askew from old injury. Wide low-angle composition from boat-level. Diffuse stormlight from directly above turns the white hide into burning chalk against deep navy water. No ship visible, only churning foam."
     # JOB FAIR OPTIMIZED: Moby Dick scored best as dev (+5.62 over Queequeg)
     ocean:
       O: 1  # Very low openness - force of nature
@@ -177,7 +177,7 @@ agents:
 
   reviewer:
     character: Queequeg
-    visual: "Polynesian harpooner with elaborate tattoos covering face and body, exotic features, quiet noble strength"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim warm oil-lamp light, brine-and-tar palette deepened with ochre tattoo notes, heavy impasto. A barrel-chested Polynesian man in his early thirties, perhaps five-foot-eight and thickly muscled across the shoulders, broad strong features with a wide flat nose and full mouth set in calm noble repose, deep brown eyes lowered. His scalp is completely shaved save for a single small topknot at the crown, and intricate dark blue-black geometric Marquesan tā moko tattoos cover the entire face, scalp, neck, chest and both forearms in fine grid-work and angular crosshatched bands. Two filed teeth visible at the corner of the mouth. He wears no shirt, only a coarse striped sailcloth wrap around the waist, a small carved black ebony Yojo idol on a leather thong at his throat, a heavy iron whaling harpoon held vertical at his right shoulder. Tight head-and-chest framing. Soft warm forge-light from the lower right glows across the tattoo lines. Plank wall behind in deep shadow."
     # JOB FAIR OPTIMIZED: Queequeg moved here; Moby Dick excels at dev (+5.62)
     ocean:
       O: 4  # High openness - adapted to new world
@@ -205,7 +205,7 @@ agents:
 
   architect:
     character: Father Mapple
-    visual: "Former whaler turned preacher in ship-bow pulpit, weathered hands raised, fire-and-brimstone expression"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim chapel candlelight, brine-and-tar palette warmed by tallow gold, heavy impasto. A weathered ex-whaleman preacher in his late sixties, perhaps six feet tall and still ramrod-straight despite his age, deeply lined sun-darkened skin from forty years before the mast, a long full white beard reaching mid-chest, short cropped white hair receding sharply at the temples, fierce pale-blue eyes raised toward heaven, a knuckled bulge on his nose where it was once broken by a snapped harpoon line, a missing left earlobe. He wears a plain black wool clerical coat buttoned high over a white collarless shirt, a small silver fish pendant on a chain. One calloused hand lifted in mid-sermon gesture. Low-angle hero shot from below, framed as if from his pulpit-bow congregation. Warm side-light from the lower left throws his beard into impasto gold. Behind him, a coiled length of rope-ladder leading up out of frame to the prow-shaped pulpit, no congregation visible."
     ocean:
       O: 5  # Very high openness - spiritual insight
       C: 5  # Very high conscientiousness - dedicated preacher
@@ -232,7 +232,7 @@ agents:
 
   pm:
     character: Stubb
-    visual: "Cheerful second mate with pipe in mouth, easy-going smile, laughing at fate"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim oil-lamp light, brine-and-tar palette warmed by pipe-ember orange, heavy impasto. A short stocky Cape Cod second mate in his early forties, perhaps five-foot-five and barrel-built, sun-darkened ruddy face deeply broken-veined across the nose from cheap rum, short tightly-curling chestnut-brown hair and bushy mutton-chop side-whiskers running into the corners of an easy half-smile that creases both cheeks into deep parentheses, a single gold sailor's hoop earring in the left ear, a missing front upper tooth visible when he grins. A short stubby clay pipe with a chewed stem clenched at the corner of the mouth, a thin curl of pale-blue smoke rising past his right eye. Plain navy sailor's jacket over a red-and-white horizontally striped cotton shirt, both sleeves rolled. Waist-up framing, leaned back relaxed against a coiled hawser, both arms crossed. Warm sunset side-light from the right kicks orange across half his face. Open dim sea-sky behind."
     ocean:
       O: 3  # Medium openness - practical, good-humored
       C: 4  # High conscientiousness - competent second mate
@@ -259,7 +259,7 @@ agents:
 
   tech-writer:
     character: Ishmael (Narrator)
-    visual: "Young philosophical sailor with observant thoughtful expression, everyman features, holding quill and journal"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim cabin-lantern light, brine-and-tar palette, heavy impasto. A young white American man in his mid-twenties, regular even features with a long melancholy mouth, dark brown hair to the collar in restless curls, mild hazel eyes set under a slightly furrowed brow, a faint shadow of stubble, a small white scar on his lower lip. A plain dark navy wool sailor's jacket over a coarse off-white linen shirt, fingers and the heel of his right hand stained black with iron-gall ink, a goose-feather quill held in the right hand mid-dip, a small leather-bound journal open across his lap showing dense crabbed handwriting. Three-quarter waist-up shot, seated at a small bolted-down chart-table, head bent forward over the page, eyes cast down. Soft single-candle side-light from the upper left throws long shadows across the journal pages. Plank wall and a single brass-cased compass behind."
     ocean:
       O: 5  # Very high openness - encyclopedic curiosity
       C: 4  # High conscientiousness - documents everything
@@ -286,7 +286,7 @@ agents:
 
   ux-designer:
     character: Pip
-    visual: "Young African cabin boy with haunted wide eyes, having seen the infinite"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim oceanic blue-grey palette with a single pale-cool note, heavy impasto, salt-spray atmosphere. A small slight African-American cabin boy of about fourteen, perhaps four-foot-ten and rope-thin, smooth dark brown skin damp and almost luminous from sea-water, very wide haunted dark eyes opened too round and unblinking, a thin face slack with quiet astonishment, lips slightly parted as if mid-word, short tightly-cropped hair beaded with droplets, a faint white salt-rime dusted across his hairline. He wears a coarse oversized off-white linen ship's shirt loose at the throat slipping off one shoulder, no jacket, bare feet just visible at the edge of frame, a length of frayed life-line still tied around his small waist. Dutch-angle medium shot tilted slightly to suggest unsteady ground, body upright but the horizon askew. Cool pale moonlight from the upper right washes his face flat and silver. Suggestion of empty open sea behind, no ship in sight."
     ocean:
       O: 5  # Very high openness - sees too much after madness
       C: 2  # Low conscientiousness - shattered by experience
@@ -313,7 +313,7 @@ agents:
 
   devops:
     character: Perth
-    visual: "Ship's blacksmith with massive arms, forge-burned hands, hammer and anvil, grief-hollowed face"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, hard forge-fire orange against deep indigo cabin shadow, heavy impasto. A massive ship's blacksmith in his fifties, perhaps six-foot-three and three hundred pounds across the shoulders, soot-darkened reddened skin under the soot, a hollow gaunt face cut into deep sorrow-creases, short ash-grey hair receding sharply from the brow leaving a high pale forehead, fresh red burn-blisters scattered down both forearms over older silver burn scars, the entire left hand missing two fingers. He wears a heavy boiled-leather apron blackened with scorch-marks over a bare sweat-streaked chest, no shirt, a small twist of his dead daughter's red-ribbon braided around his right wrist. A long iron forge-hammer rests upright against his right shoulder, head down. Three-quarter waist-up shot, body half-turned to the forge, face caught in profile staring into the fire. Hard furnace-glow from camera-right under-lights everything orange. Dim shadowed forge-corner behind."
     ocean:
       O: 2  # Low openness - practical craftsman
       C: 5  # Very high conscientiousness - master of his trade
@@ -339,7 +339,7 @@ agents:
     shortName: Perth
   ba:
     character: Ishmael (Analyst)
-    visual: "Young philosophical sailor with observant thoughtful expression, notebook in hand, analyzing everything from multiple perspectives"
+    visual: "19th-century maritime oil painting in the manner of Winslow Homer, dim oil-lamp light, brine-and-tar palette, heavy impasto. A young white American man in his mid-twenties, regular even features with a long melancholy mouth and a small white scar on the lower lip, dark brown hair worn loose to the collar, mild hazel eyes narrowed in concentration to faint creases, a faint shadow of week-old stubble, ink-stained fingertips. He wears a plain dark navy wool sailor's jacket over a coarse off-white linen shirt open at the throat, a stub of carpenter's pencil tucked behind one ear. A small leather notebook held open in his left hand at chest height, the right hand mid-gesture as if asking a question. Three-quarter medium shot, body angled toward camera, face turned in profile to address someone offscreen. Soft side-light from the right falls across the open page. Plank wall and a corner of a coiled hawser behind."
     ocean:
       O: 5  # Philosophical observer
       C: 4  # Methodical chronicler
@@ -383,30 +383,3 @@ additional_characters:
     ocean_profile: H-H-L-L-M
     gap_filled: Cryptic warnings - tests for hidden doom
     best_role: Risk identification, prophecy of failure
-
-  gm:
-    character: Fedallah
-    visual: "A tall gaunt Parsee in white turban and dark robes, shadow-thin with piercing dark eyes, standing at the prow in moonlight, spectral and prophetic"
-    shortName: Fedallah
-    ocean:
-      O: 5  # Sees fate and prophecy
-      C: 5  # Unwavering devotion to the voyage's meaning
-      E: 1  # Silent, speaks only in portent
-      A: 1  # Serves doom, not comfort
-      N: 2  # Calm certainty of one who knows the ending
-    style: Ahab's shadow prophet who sees the doom in every tale and judges whether the narrative earns its ending
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who prophesied the manner of Ahab's death and watched it come true
-    trait: Observes narrative with the detachment of one who already knows how the story ends
-    quirks:
-      - Appears at the edges of scenes, watching silently
-      - His prophecies are riddles that only make sense after the catastrophe
-      - Judges narrative quality by whether the doom feels earned
-    catchphrases:
-      - "The hemp only can kill thee. The narrative only can fail by its own thread."
-      - "I have seen the ending. The question is whether the middle earns it."
-      - "The shadow knows what the captain will not admit."
-    emoji: "\U0001F311"
-    helper:
-      name: The Prophecy
-      style: Dark certainty that the story has already been written

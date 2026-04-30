@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Greek
-    visual: "An older man with thinning gray hair and weathered Mediterranean features, wearing an expensive but understated dark suit, gold watch visible, calm calculating eyes that reveal nothing"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. The Greek at sixty-eight, slim quiet-spoken Greek-American smuggler, thinning iron-grey hair combed back across a high forehead leaving the temples bare, weathered olive Mediterranean features above a calm clean-shaven face, calculating very dark eyes that reveal nothing, a single faint old shrapnel-scar at the right earlobe. An understated charcoal-grey single-breasted suit jacket over a plain white shirt and a slim dark tie, a thin worn gold wristwatch visible at the right cuff, both hands wrapped around a small white-and-blue paper diner coffee-cup. Three-quarter waist-up shot seated at a Bel-Loc Diner booth, flat overcast Baltimore daylight from a window camera-right desaturating the entire frame, blurred patrons behind."
     ocean:
       O: 3
       C: 4
@@ -96,7 +96,7 @@ agents:
     shortName: Greek
   sm:
     character: Lester Freamon
-    visual: "A slim Black man in his fifties with graying temples and glasses, wearing a rumpled detective's shirt and loosened tie, miniature dollhouse furniture visible nearby"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Detective Lester Freamon at fifty-six, slim African American Baltimore lifer, short tightly-clipped dark hair greyed sharply at the temples and along the closely trimmed beard outline, a clean-shaven thoughtful face above the moustache, calm brown eyes behind narrow rectangular wireframe reading glasses pushed down the bridge of the nose, a faded gold pocket-watch chain looped to a vest button. A rumpled long-sleeve white detective's button-down with the top button open and a navy-blue striped tie loosened to mid-chest, a small chrome BPD detective-shield clipped to the breast pocket. Three-quarter waist-up shot seated at a wire-room desk, both hands holding a tiny half-finished hand-carved miniature wooden dollhouse chair at chest height, flat fluorescent overcast light from above tinted blue-grey, mounted wire-room photo-board behind."
     ocean:
       O: 4
       C: 5
@@ -122,7 +122,7 @@ agents:
     shortName: Lester
   tea:
     character: Stringer Bell
-    visual: "A tall imposing Black man with close-cropped hair and intense eyes, wearing a tailored business suit with tie, economics textbook or laptop nearby"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Stringer Bell at thirty-four, tall imposing African American West-Side businessman, close-cropped dark hair shaved tight against the scalp, a clean-shaven angular face with sharp wide cheekbones, intense brown eyes and a faintly pursed unsmiling mouth, a thin gold ring on the right pinky and a gold chain just visible at the collar. A tailored charcoal-grey single-breasted suit jacket over a crisp white shirt and a slim navy tie. Three-quarter waist-up shot standing in a Baltimore Community College classroom at a green chalkboard, one large hand resting flat on a thick dog-eared paperback copy of Adam Smith's Wealth of Nations held against the chest, the chalk-written words 'WORTH IT?' visible behind his shoulder, flat overcast classroom-window light from camera-left."
     # JOB FAIR OPTIMIZED: Stringer excels at testing
     ocean:
       O: 5  # Reform vision
@@ -149,7 +149,7 @@ agents:
 
   dev:
     character: D'Angelo Barksdale
-    visual: "A young Black man in his twenties with thoughtful eyes, wearing a puffy jacket and casual streetwear, pensive questioning expression"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. D'Angelo Barksdale at twenty-two, slim African American corner-boy, short dark hair tightly twisted into small flat-twists across the scalp, a faint patchy stubble across the jaw, thoughtful questioning brown eyes set in a pensive narrow face, a faint old chickenpox scar on the right cheek, a small gold-bezel watch at the wrist. A bulky shiny-black quilted goose-down puffy jacket zipped halfway over a plain dark grey hoodie pulled up beneath the jacket collar, baggy dark jeans visible at the waist. Three-quarter waist-up shot seated on a low brick stoop in the Pit, both hands cradling a small black plastic chess king balanced between thumb and forefinger at chest height, soft overcast Baltimore daylight from camera-left, blurred low-rise housing units behind."
     ocean:
       O: 4
       C: 3
@@ -175,7 +175,7 @@ agents:
     shortName: D
   reviewer:
     character: Proposition Joe
-    visual: "A heavyset Black man with a bald head and round face, wearing a track suit or casual business attire, gold chain visible, knowing half-smile"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Proposition Joe Stewart at forty-eight, very heavyset African American East-Side merchant, a clean-shaven completely bald wide-domed head with faint sweat beading on the crown, a wide jowly round face with calm knowing brown eyes set above puffy lower lids and a faint amused half-smile baring a single gold front tooth, a small old keloid scar at the right earlobe. A zipped pale-grey velour Russell-Athletic track suit jacket over a plain black t-shirt, a thick three-link Cuban-style gold rope chain visible at the open V-collar, a single repaired antique pocket-watch held open in one fat palm at chest height. Three-quarter waist-up shot seated behind a cluttered Eastside appliance-repair-shop counter, soft warm sodium-bulb side-light from camera-right tinted yellow against the desaturated frame."
     ocean:
       O: 3
       C: 4
@@ -201,7 +201,7 @@ agents:
     shortName: Joe
   architect:
     character: Omar Little
-    visual: "A lean muscular Black man with a distinctive facial scar, wearing a long black duster coat, carrying a shotgun, stern unwavering gaze"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Omar Little at thirty-three, lean muscular tall African American stick-up artist, close-cropped dark hair faded sharp at the sides, a faintly stubbled jaw and full closely-trimmed dark moustache, a single long raised pale-pink keloid scar running from the right temple diagonally across the bridge of the nose down to the left jaw, stern unwavering deep-brown eyes that do not blink, gold tooth visible at the bottom right canine. A high-collared knee-length black leather duster coat buttoned to the throat, the polished dark walnut stock and sawn-off twin barrels of a black 12-gauge shotgun visible held against the right shoulder pointing skyward. Low-angle waist-up hero shot, hard pale daylight from camera-left, blurred boarded-up rowhouse stoop behind."
     # JOB FAIR OPTIMIZED: Omar excels at architecture
     ocean:
       O: 4  # Street philosophy
@@ -228,7 +228,7 @@ agents:
 
   pm:
     character: Major Colvin (Bunny)
-    visual: "A weathered white man in his fifties with salt-and-pepper hair, wearing a Baltimore Police Department major's uniform with gold oak leaves, tired but determined expression"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Major Howard 'Bunny' Colvin at fifty-eight, weathered Irish-American Western District veteran, short coarse salt-and-pepper hair brushed flat with a deep widow's-peak, a clean-shaven deeply-lined gaunt cheeked face, tired determined pale-blue eyes set above pouches, a faintly set unsmiling mouth bracketed by deep nasolabial lines. A navy-blue BPD major's long-sleeve uniform jacket with single gold oak-leaf insignia on each collar tip, a polished seven-point silver Baltimore-Police shield pinned at the chest. Three-quarter waist-up shot standing on the cracked asphalt of a Western District alley with both hands resting on his belt at chest height, soft flat overcast daylight from above, blurred row-house brick wall and graffiti behind."
     ocean:
       O: 4
       C: 4
@@ -254,7 +254,7 @@ agents:
     shortName: Colvin
   tech-writer:
     character: Augustus Haynes
-    visual: "A distinguished Black man with graying beard and glasses, wearing a newsroom-appropriate button-down shirt with sleeves rolled up, red editing pen in hand"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Augustus Haynes at fifty-nine, distinguished African American Sun city editor, short tightly curled hair greyed across the temples and crown, a closely trimmed full salt-and-pepper beard squared at the chin, calm sharp brown eyes behind narrow rectangular tortoiseshell reading glasses, a faintly lined serious face. A pressed pale-blue Oxford button-down shirt with the sleeves rolled tight to the elbows, a slim navy-blue knit tie loosened to chest height, a small chrome ballpoint pen tucked behind the right ear and a slim red felt-tip editing pen held in the right hand poised over a typed manuscript page held against the chest. Three-quarter waist-up shot standing in the Sun newsroom, flat fluorescent overcast newsroom-light from above, rows of computer terminals blurred behind."
     ocean:
       O: 4
       C: 5
@@ -280,7 +280,7 @@ agents:
     shortName: Augustus
   ux-designer:
     character: Bubbles
-    visual: "A gaunt Black man with hollow cheeks and kind eyes, wearing a worn hooded sweatshirt and layers of street clothes, shopping cart handle visible"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Reginald 'Bubbles' Cousins at forty-eight, gaunt thin African American Baltimore-streets survivor, short patchy dark-grey hair receding at the temples, a thin scraggly mostly-grey neck-beard, deeply hollow weathered cheeks set above sores half-healed at the corner of the mouth, kind tired warm brown eyes that do not quite meet the camera, a small fresh sobriety chip pinned through the lapel. A faded charcoal-grey hooded sweatshirt zipped halfway over a layered red-and-black plaid flannel collar, the worn metal handle of a small grocery shopping-cart gripped in one calloused hand visible at the lower left of frame. Three-quarter waist-up shot standing on a boarded-up Lexington Market corner, flat overcast daylight from above-right."
     ocean:
       O: 4
       C: 3
@@ -306,7 +306,7 @@ agents:
     shortName: Bubbles
   devops:
     character: Cedric Daniels
-    visual: "A tall athletic Black man with a shaved head and commanding presence, wearing a police lieutenant's white shirt with badge, ramrod-straight posture"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Lieutenant Cedric Daniels at forty-three, tall athletic broad-shouldered African American officer one-point-nine metres tall, completely shaved bullet head with a faint sheen, a sharp-featured clean-shaven face with high prominent cheekbones, calm steady brown eyes set in a faintly pursed disciplined mouth, a thin gold wedding band on the left hand. A crisp white BPD lieutenant's long-sleeve uniform shirt with sharp creases, a black knotted necktie, polished gold lieutenant bars on each collar tip, a polished seven-point silver Baltimore-Police shield pinned at the left chest. Three-quarter waist-up shot standing in a CID briefing-room, both hands clasped behind his back, soft cool fluorescent overhead light from above-left, blurred wall of suspect-photos behind."
     ocean:
       O: 3
       C: 5
@@ -332,7 +332,7 @@ agents:
     shortName: Cedric
   ba:
     character: Lester Freamon
-    visual: "A slim Black man in his fifties with graying temples and glasses, wearing a rumpled detective's shirt, holding miniature dollhouse furniture and case files"
+    visual: "Documentary-realist photograph, Baltimore overcast natural light, desaturated blue-grey palette, large-format film grain. Lester Freamon in analyst mode at fifty-six, the same slim African American detective with short greying hair at the temples and the closely trimmed greying beard outline, a clean-shaven analytical face above the moustache, calm brown eyes behind narrow rectangular wireframe reading glasses, a worn gold pocket-watch chain looped to a vest button. A rumpled white long-sleeve detective's button-down with the top button open and the navy striped tie loosened at the chest. Profile chest-up shot turned to camera-right, both hands holding up a single tiny finished hand-carved miniature Empire-style wooden chair at eye height for inspection, soft warm desk-lamp side-light from camera-right tinted yellow against the overcast desaturated palette, the wire-room casework behind blurred."
     ocean:
       O: 4
       C: 5
@@ -356,32 +356,6 @@ agents:
       name: Dollhouse Furniture
       style: Patient detailed analysis
     shortName: Lester
-  gm:
-    character: The Deacon
-    visual: "A dignified older Black man with silver temples and kind but knowing eyes, wearing a simple dark suit with clerical collar, standing at the intersection of church, street, and politics, hands clasped in patient observation"
-    shortName: Deacon
-    ocean:
-      O: 4  # Sees across all institutions — church, street, politics
-      C: 4  # Community discipline and moral consistency
-      E: 3  # Quiet authority, speaks when it matters
-      A: 4  # Genuinely cares for the community
-      N: 2  # Steady faith through institutional failure
-    style: The community elder who mediates between all of Baltimore's factions — police, church, corner, and city hall — seeing the whole game from the pews
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who walks between all worlds in Baltimore and sees how all the pieces connect, from the corners to the cathedral
-    trait: Observes the game from above the game, judging not players but the system that shapes them
-    quirks:
-      - Moves between Bunny Colvin, the church, and the street without belonging to any faction
-      - Sees the human cost that the institutions ignore
-      - His moral authority comes from being trusted by everyone and owned by no one
-    catchphrases:
-      - "A man got to have a code. A story does too."
-      - "I've seen the game from the pews, the corners, and city hall. The story is the same everywhere."
-      - "All the pieces matter. Even the ones the institutions don't want to see."
-    emoji: "\u26EA"
-    helper:
-      name: The Community
-      style: The people who live in the story, not just the ones who run the game
 additional_characters:
   jimmy_mcnulty:
     character: Jimmy McNulty

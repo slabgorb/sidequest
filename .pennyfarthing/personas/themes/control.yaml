@@ -66,7 +66,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Orchestrator (baseline control)
-    visual: "A neutral professional figure in plain business attire, simple collared shirt, generic pleasant expression, no distinctive features or accessories"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling, no atmosphere. A white woman of forty-three with a slim build and a plain unremarkable face set in a neutral pleasant expression, short straight chestnut-brown hair tucked behind one ear, the single distinguishing feature a small flat dark mole on the left jawline. A plain charcoal blazer over a simple light-blue collared shirt with no tie or pendant. Composition: shoulders-up portrait squarely facing the camera. Even soft front light from a single softbox at face height, no shadow under the chin. Behind: a plain pale grey infinity-wall backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -84,7 +84,7 @@ agents:
     shortName: Orchestrator
   sm:
     character: Scrum Master (baseline control)
-    visual: "A neutral professional figure in plain business casual attire, holding a clipboard, simple pleasant expression, no distinctive features"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling, no atmosphere. A South Asian man in his late fifties with a heavyset sturdy build and a plain rounded face in neutral pleasant expression, close-cropped salt-and-pepper black hair, the single distinguishing feature a small permanent vertical crease between the brows. A plain navy blazer over a simple white collared shirt, no tie. A small black A5 clipboard held flat against the sternum in one hand. Composition: three-quarter medium shot, body angled to the left, head turned back to the camera. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -102,7 +102,7 @@ agents:
     shortName: SM
   tea:
     character: Test Engineer (baseline control)
-    visual: "A neutral professional figure in plain business attire, simple glasses, generic professional expression, minimal accessories"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. An East Asian woman of twenty-six with a wiry slender build and a plain narrow face in neutral expression, shoulder-length straight black hair pulled back in a low ponytail, the single distinguishing feature simple thin black rectangular-rimmed spectacles. A plain dark-grey blazer over a pale-grey collared shirt buttoned to the throat. Composition: low waist-up shot at desk level, head tilted slightly down toward unseen documents, one hand resting flat at the chest. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -120,7 +120,7 @@ agents:
     shortName: TEA
   dev:
     character: Developer (baseline control)
-    visual: "A neutral professional figure in casual professional attire, simple plain t-shirt under a jacket, generic focused expression"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A Black man of thirty-three with a tall lean build and a plain narrow face in neutral focused expression, very short fade-cut dark hair shaved close at the sides, the single distinguishing feature a small thin gold stud in the left earlobe. A plain dark-charcoal zip-up technical jacket over a simple medium-grey crew-neck t-shirt. Composition: candid action moment, three-quarter medium shot, head turned slightly to the right as if listening, one hand half-raised at the chest mid-gesture. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -138,7 +138,7 @@ agents:
     shortName: Dev
   reviewer:
     character: Code Reviewer (baseline control)
-    visual: "A neutral professional figure in business attire, plain button-up shirt, simple analytical expression, no distinctive features"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A Hispanic woman of fifty-one with a heavyset solid build and a plain broad face in neutral analytical expression, short dark-brown hair sharply parted on the side and combed flat, the single distinguishing feature a small horizontal scar at the left brow line. A plain charcoal blazer over a simple white button-up shirt with no tie or jewellery. Composition: low-angle shoulders-up shot, body squared, the head tilted just slightly downward in evaluation. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -156,7 +156,7 @@ agents:
     shortName: Reviewer
   architect:
     character: Architect (baseline control)
-    visual: "A neutral professional figure in business casual attire, holding a simple blueprint or diagram, generic thoughtful expression"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A Middle Eastern man of seventy-one with a frail thin build and a plain narrow face deeply lined in a neutral thoughtful expression, completely white hair flat to the scalp, the single distinguishing feature a thick neatly trimmed snow-white moustache. A plain navy blazer over a simple light-grey collared shirt with a faint pale stripe. A single rolled paper diagram held vertically in one hand at chest height. Composition: head and chest portrait, body angled in three-quarter, head turned slightly back to the viewer. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -174,7 +174,7 @@ agents:
     shortName: Architect
   pm:
     character: Product Manager (baseline control)
-    visual: "A neutral professional figure in business attire, holding a simple presentation board, generic confident expression"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A white woman of thirty-eight with an average build and a plain oval face in neutral confident expression, shoulder-length straight light-brown hair tucked behind both ears, the single distinguishing feature a faint constellation of freckles across the nose-bridge. A plain charcoal blazer over a simple white collared shirt with a small clear plastic ID badge clipped at the lapel. A small flat black presentation board held vertically against the chest in both hands. Composition: candid mid-presentation moment, three-quarter shot, head turned slightly to the right toward an unseen audience, mouth slightly parted as if speaking. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -192,7 +192,7 @@ agents:
     shortName: PM
   tech-writer:
     character: Technical Writer (baseline control)
-    visual: "A neutral professional figure in business casual attire, holding a notebook or document, simple pleasant expression"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A Black woman of twenty-four with a tall slim build and a plain heart-shaped face in neutral pleasant expression, dark hair worn in short tight natural coils, the single distinguishing feature a small subtle tattoo of a comma on the inside of the right wrist visible at the cuff. A plain dark-grey lightweight cardigan over a simple pale-cream collared shirt buttoned at the throat. A small black hardcover notebook with a thin elastic closure held closed in one hand at chest height. Composition: shoulders-up portrait, head turned three-quarter to the left, an attentive listening tilt. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -210,7 +210,7 @@ agents:
     shortName: Writer
   ux-designer:
     character: UX Designer (baseline control)
-    visual: "A neutral professional figure in creative casual attire, holding a stylus or mockup, generic creative expression"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A South Asian non-binary person of twenty-nine with a wiry medium build and a plain narrow face in neutral attentive expression, short messy chestnut-brown undercut with longer hair on top falling diagonally across the forehead, the single distinguishing feature a small thin gold septum nose-ring. A plain heather-olive merino jumper over a simple medium-grey crew-neck t-shirt. A slim silver stylus held lightly between two fingers at chest height. Composition: candid action moment, three-quarter shot, head tilted in evaluative thought, the stylus tapping the chin. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -228,7 +228,7 @@ agents:
     shortName: UX
   devops:
     character: DevOps Engineer (baseline control)
-    visual: "A neutral professional figure in casual professional attire, simple laptop or server rack nearby, generic focused expression"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A white man of forty-six with a heavyset solid build and a plain broad face in neutral focused expression, short receding dark-brown hair flat to the scalp with a high forehead, the single distinguishing feature a thick reddish-brown chinstrap beard trimmed precisely along the jawline. A plain dark-grey zip-up hoodie over a simple black t-shirt with no logo. A slim closed silver laptop held vertically against the left forearm at chest height. Composition: low waist-up shot, body angled to the right, head turned back to the camera in flat appraisal. Even soft front light. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 3  # Neutral baseline
       C: 3  # Neutral baseline
@@ -246,7 +246,7 @@ agents:
     shortName: DevOps
   ba:
     character: Burt Goodman
-    visual: "A middle-aged man in business casual attire with cardigan vest, carrying clipboard and department relationship charts, kind concerned eyes behind wire-rim glasses, standing in sterile white corridor analyzing organizational structure"
+    visual: "Neutral corporate stock-photo aesthetic with even softbox studio lighting, plain pale grey backdrop, minimal styling. A white middle-aged man of fifty-two with a soft kindly build and a round face in a gentle concerned expression, the single distinguishing feature small round thin gold-wire-rim spectacles paired with a permanent slight uptilt at the inner corners of the brows that gives him a worried-listener look. Thinning brown hair combed neatly across the crown. A warm chestnut-brown knit cardigan vest over a pale-blue collared shirt with a slim red-and-cream regimental striped tie, a small clear plastic ID badge clipped at the lapel. A small black A5 clipboard held lightly in one hand at chest height. Composition: shoulders-up portrait, head tilted in attentive listening, body angled three-quarter. Soft warm side-light from the left adding the slightest deviation from the studio neutrality. Behind: plain pale grey infinity backdrop."
     ocean:
       O: 4
       C: 4
@@ -274,29 +274,3 @@ agents:
       name: The Lumon Handbook
       style: The documented procedures that may or may not reflect reality.
     shortName: Burt
-  gm:
-    character: Game Master (baseline control)
-    visual: "A neutral professional figure in plain business attire, holding a clipboard and observing, simple analytical expression, no distinctive features"
-    shortName: GM
-    ocean:
-      O: 3  # Neutral baseline
-      C: 3  # Neutral baseline
-      E: 3  # Neutral baseline
-      A: 3  # Neutral baseline
-      N: 3  # Neutral baseline
-    style: Neutral, professional, no persona flourishes
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: Observe narrative quality and content accuracy
-    trait: ""
-    quirks:
-      - Observes without embellishment
-      - Evaluates content neutrally
-      - Reports findings directly
-    catchphrases:
-      - "The narrative has been evaluated."
-      - "Content quality assessment complete."
-      - "The story meets baseline criteria."
-    emoji: ""
-    helper:
-      name: Helper
-      style: Gather narrative quality metrics

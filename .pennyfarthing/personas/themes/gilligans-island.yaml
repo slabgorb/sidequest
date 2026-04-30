@@ -72,7 +72,7 @@ agents:
   orchestrator:
     character: Radio Announcer
     shortName: Announcer
-    visual: "1960s radio broadcaster, headphones around neck, speaking into vintage microphone, studio setting"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. A clean-shaven radio announcer in his early forties, white, slim-built, with neatly oil-combed dark hair parted hard on the right and a single grey lock falling loose across the brow. The defining landmark is a small round red NBC On-Air pin clipped to the lapel paired with a faintly visible thin chevron moustache. Friendly lined face behind black wire-frame glasses, mouth open mid-vowel mid-broadcast. Large vintage padded headphones resting around the neck like a collar, a narrow black tie over a crisp pale yellow short-sleeved button shirt with rolled sleeves. Tight head-and-shoulders shot taken from the side, a chrome ribbon microphone on a folding stand looms tall in the lower-left foreground. Warm tungsten studio light from the right, single coral-pink rim light from behind. Backdrop is a single dim row of recording-studio wall tiles behind one shoulder, nothing else."
     ocean:
       O: 5  # Receives signals from everywhere - maximum openness
       C: 2  # Never quite works right - low follow-through
@@ -104,7 +104,7 @@ agents:
   sm:
     character: The Skipper (Jonas Grumby)
     shortName: Skipper
-    visual: "Stocky sea captain, blue polo shirt, white captain's hat, exasperated expression, hands on hips"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. A stocky clean-shaven white sea captain in his early fifties, six feet broad and barrel-chested with a heavy round sun-flushed pink face. The defining landmark is a small thumb-shaped permanent indentation in the brim of his rumpled white captain's cap from years of yanking it off to hit Gilligan, paired with the cap pushed back high on greying brown hair. Exasperated dark eyes set in a deeply furrowed brow, mouth open mid-bellow. A navy blue short-sleeved polo shirt with three gold stripes at each sleeve straining over a thick chest, the cap held in one fisted hand at chest level mid-swing. Candid mid-yell waist-up shot taken slightly low. Soft late-afternoon side-light from the left tinted coral, dim banana-leaf shadow on the right. Backdrop is a single dim section of bamboo hut wall behind, nothing else."
     ocean:
       O: 2  # Traditional, by-the-book Navy man
       C: 4  # Tries to run a tight ship despite chaos
@@ -136,7 +136,7 @@ agents:
   tea:
     character: Mary Ann Summers
     shortName: Mary Ann
-    visual: "Wholesome young woman, gingham blouse, pigtails with ribbons, warm smile, holding fresh pie"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. A wholesome young Kansas farm girl in her early twenties, white, slim and small-framed, with thick chestnut hair in two perfectly even low pigtails each tied with a bright red ribbon bow. The defining landmark is a single round dimple in the right cheek that appears only when smiling, paired with a small dusting of flour on the tip of the nose. Freckled fair cheeks, bright hazel eyes crinkled in a wide warm open-mouthed smile. A red and white gingham short-sleeved blouse knotted snug at the navel over white denim shorts, a fresh golden coconut cream pie still steaming cradled in both hands at chest level. Tight cheerful waist-up shot taken straight on. Soft warm island sunlight from the right glowing on the pigtails, single coral fill from below. Backdrop is a single dim cluster of green palm fronds behind, nothing else."
     ocean:
       O: 3  # Practical Kansas values, grounded
       C: 5  # Thorough, reliable, tests everything
@@ -168,7 +168,7 @@ agents:
   dev:
     character: Gilligan
     shortName: Gilligan
-    visual: "Skinny young sailor, red rugby shirt, white bucket hat, goofy apologetic grin, clumsy stance"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. A gangly young first-mate sailor in his mid twenties, white, six feet tall and rail-skinny, with a narrow clean-shaven face and a goofy apologetic gap-toothed grin. The defining landmark is a single visible cowlick of dark hair sticking straight up from the crown through a pulled-down soft white floppy bucket hat, paired with prominent jug ears poking out beneath. Kind oversized brown eyes, eyebrows raised high in eternal apology. A long-sleeved red rugby pullover shirt with three white horizontal stripes across the chest, sleeves a little too long covering the knuckles, shoulders sloped awkwardly inward. A small dented oar held diagonally across the chest the wrong way around. Candid waist-up shot from a low slightly comic angle as he leans forward off-balance. Soft tropical mid-day sunlight from the left, dim sand-toned shadow on the right. Backdrop is a single dim section of beached lifeboat hull behind, nothing else."
     ocean:
       O: 4  # Creative in completely unexpected ways
       C: 1  # Chaotic good - plans never survive contact
@@ -200,7 +200,7 @@ agents:
   reviewer:
     character: Thurston Howell III
     shortName: Mr. Howell
-    visual: "Elderly millionaire, ascot and navy blazer, monocle, snobbish disapproving expression, cocktail glass"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. An elderly millionaire in his late sixties, white, tall and lean, with combed-back silver hair and a small neatly trimmed pencil-thin grey moustache. The defining landmark is a single round monocle on a black silk cord lifted before the right eye magnifying it comically large, paired with a disapproving pursed sour mouth. A navy blue double-breasted blazer with two rows of polished gold buttons over a snowy-white silk ascot pinned with a small ruby stickpin at the throat, a folded crisp white pocket square. A faceted cut-crystal cocktail glass held aloft in one ringed hand at chest level. Three-quarter waist-up shot taken slightly from below to elongate Harvard-snob authority. Soft warm hibiscus-tinted sunset light from the right, dim coral shadow on the left. Backdrop is a single dim hammock rope strung across behind one shoulder, nothing else."
     ocean:
       O: 1  # Set in wealthy, old-money ways
       C: 4  # Harvard standards must be maintained
@@ -232,7 +232,7 @@ agents:
   architect:
     character: The Professor (Roy Hinkley)
     shortName: Professor
-    visual: "Scholarly man, white dress shirt, round glasses, explaining gesture, coconut invention nearby"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. A scholarly clean-shaven academic in his late thirties, white, lean and athletic, with neatly combed dark hair parted on the left and a small bright green parrot feather caught accidentally in it. The defining landmark is a thin smear of charcoal across the temple from his diagrams, paired with round wire-frame spectacles slightly askew. Calm intelligent warm brown eyes, mouth open mid-explanation. A crisp white short-sleeved dress shirt open at the collar with a small black ink stain at the breast pocket, a thin braided coconut-fiber cord serving as a tie. One hand raised mid-gesture explaining a principle, a half-finished coconut-shell radio device with copper wire trailing held in the other at chest level. Three-quarter waist-up candid lecture shot turning to face an unseen castaway off-frame. Soft warm dappled palm-shadow sunlight from the left, dim green fronds shadow on the right. Backdrop is a single dim section of bamboo work-table edge behind, nothing else."
     ocean:
       O: 5  # Can invent literally anything
       C: 5  # Rigorous scientific method
@@ -264,7 +264,7 @@ agents:
   pm:
     character: Ginger Grant
     shortName: Ginger
-    visual: "Glamorous redhead, sequined evening gown, dramatic pose, movie star confidence and allure"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. A glamorous Hollywood starlet in her late twenties, white, tall and curvy, with long wavy fire-red hair falling in a single dramatic Veronica-Lake wave past her right shoulder almost to the elbow. The defining landmark is a single perfect black silk beauty mark high on the left cheekbone, paired with a small white tropical hibiscus flower tucked behind the right ear. Dramatic emerald green eyes lined in heavy black kohl with feline flicks, full glossy red lips parted in a confident pout. A fitted gold-sequined floor-length evening gown with a low sweetheart neckline catching every available glint of light, a single rope of small pearls long enough to loop twice at the throat. Three-quarter glamour-pose waist-up shot, body angled away in classic pin-up S-curve as she glances back over the shoulder. Soft warm tropical sunset key light from the right kissing the cheekbone, deep coral shadow on the left. Backdrop is a single dim curve of palm-frond silhouettes behind, nothing else."
     ocean:
       O: 4  # Creative and dramatic
       C: 3  # Professional performer when it matters
@@ -296,7 +296,7 @@ agents:
   tech-writer:
     character: Eunice "Lovey" Howell
     shortName: Lovey
-    visual: "Elegant older socialite, pearl necklace, fancy hat with flowers, refined gentle smile, gloved hands"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. An elegant older society matron in her mid sixties, white, plump and soft-shouldered, with softly finger-waved silver hair set firmly in pin-curls. The defining landmark is a single delicate pince-nez resting at the bridge of the nose on a thin gold chain looped behind one ear, paired with three small pink silk roses pinned at the side of a wide-brimmed cream straw sun hat. Kind faded blue eyes and a refined gentle closed-mouth smile, lightly powdered fair skin with peach circles of rouge on the cheeks. A triple strand of perfectly matched white pearls at the throat over a pale lilac silk blouse with a soft tied bow at the neck, both white kid-gloved hands held primly clasped at the chest. Tight head-and-shoulders portrait taken almost straight on, very slight three-quarter angle. Soft warm afternoon sunlight from the left through dim parlor lace, dim coral shadow on the right. Backdrop is a single dim section of palm-thatch hut interior wall behind, nothing else."
     ocean:
       O: 3  # Cultured but conventional
       C: 4  # Proper breeding demands thoroughness
@@ -328,7 +328,7 @@ agents:
   ux-designer:
     character: Mary Ann Summers
     shortName: Mary Ann
-    visual: "Wholesome young woman, casual island clothes, welcoming smile, arranging bamboo furniture"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. The same wholesome young Kansas farm girl in her early twenties with chestnut pigtails and a single dimpled right cheek, fair-skinned and slim. This time the defining accessory is a small bundle of woven palm-frond strips pinned in her hair instead of ribbons paired with a pencil tucked behind the right ear and a tiny seed packet poking from her shirt pocket. Bright hazel eyes lifted attentive in a welcoming friendly closed-mouth smile, freckled cheeks. A faded blue chambray work shirt knotted at the waist with sleeves rolled to the forearms, a hand-stitched apron of palm-fiber tied over white denim shorts. Both hands clasped lightly together at the chest mid-thoughtful pause. Three-quarter waist-up shot turned to the left as she observes something off-frame. Soft warm tropical sunrise light from the left, dim sand shadow on the right. Backdrop is a single dim hand-hewn bamboo doorframe behind one shoulder, nothing else."
     ocean:
       O: 3  # Practical Kansas values, grounded
       C: 5  # Makes everything work smoothly
@@ -360,7 +360,7 @@ agents:
   devops:
     character: The Skipper (Jonas Grumby)
     shortName: Skipper
-    visual: "Stocky sea captain, working on boat repairs, tools in hand, determined expression, sweating"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. The same stocky barrel-chested white sea captain in his early fifties with heavy sun-flushed pink face and rumpled white cap with the thumb-dent, this time sweat-soaked across the brow and collar, smears of black engine grease streaked across the left forearm. Determined dark eyes narrowed in concentration, tight-set mouth biting on a short stub of unlit cigar. A navy blue short-sleeved polo shirt with sleeves stretched taut at the shoulders and a fresh tear at the left elbow, a coil of salvaged copper wire slung over one shoulder, a heavy adjustable wrench gripped raised in one large fist. Candid mid-repair three-quarter low-angle waist-up shot taken from below with the Minnow hull looming. Soft warm overhead tropical noon sun from the right, dim oil-smudged shadow on the left. Backdrop is a single dim curve of the beached grey-white Minnow hull behind one shoulder, nothing else."
     ocean:
       O: 2  # Traditional Navy man, by the book
       C: 4  # Keeps the Minnow and island infrastructure running
@@ -390,7 +390,7 @@ agents:
       style: "Battered but functional infrastructure that somehow keeps running"
   ba:
     character: The Professor (Roy Hinkley)
-    visual: "A scholarly man with round glasses and white dress shirt, holding a clipboard with detailed diagrams, surrounded by coconut-based scientific instruments, analytical investigative expression"
+    visual: "Painted in the style of a 1965 Saturday Evening Post tropical magazine illustration, with a flat warm palette of palm-green, sand-tan and coral, retro halftone screen texture and cheerful confident linework. The same scholarly white academic in his late thirties with neatly parted dark hair and round wire-frame spectacles, lean and athletic, but presented this time as the analyst rather than the inventor. The defining accessory in this composition is a half-eaten coconut cookie balanced on the edge of his clipboard paired with the same charcoal smudge on the temple. Analytical brown eyes narrowed in deep concentration, mouth slightly pursed. A crisp white short-sleeved dress shirt this time buttoned all the way to the collar with a small woven palm-fiber bow tie, sleeves rolled tight to the bicep. A flat wooden clipboard covered in hand-drawn island-survey diagrams held tilted against the chest in both hands, a yellow pencil tucked behind one ear, a second behind the other. Three-quarter seated waist-up shot framed straight on at desk level. Soft warm side-light from the left through palm fronds, dim green dappled shadow on the right. Backdrop is a single dim hand-drawn island map pinned behind, nothing else."
     ocean:
       O: 4
       C: 5
@@ -439,29 +439,3 @@ additional_characters:
     ocean_profile: L-M-H-L-M
     gap_filled: External pressure and urgency when complacency sets in
     best_role: Deadline reminders, stakeholder pressure representation
-  gm:
-    character: Wrongway Feldman
-    visual: "A wild-eyed elderly aviator in tattered WWI flight jacket and goggles pushed up on forehead, surrounded by crashed airplane wreckage overgrown with tropical vines, hand-drawn maps of the island covering every surface of his jungle hideout"
-    shortName: Wrongway
-    ocean:
-      O: 5  # Has explored every inch of the island and mapped it all
-      C: 2  # Navigation is not his strength, but observation is
-      E: 3  # Hermit who emerges to share what he has seen
-      A: 4  # Genuinely helpful despite being hopelessly lost himself
-      N: 3  # Comfortable being lost — it is his natural state
-    style: The lost aviator who has been observing the island longer than anyone and knows every story it holds
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who arrived before the castaways and has watched every story unfold from his jungle hideout
-    trait: Observes from the perspective of someone who has been lost so long he understands the island better than anyone
-    quirks:
-      - Has been on the island since before the castaways arrived
-      - Draws elaborate maps that are always wrong but contain hidden truths
-      - Goes the wrong direction to find things but somehow always arrives at the right place
-    catchphrases:
-      - "I've been watching this island's stories for years. They always go wrong. Beautifully wrong."
-      - "My maps say the narrative goes this way. It probably goes the other way. But let's check."
-      - "I may be lost, but I've seen everything. The island tells me its stories."
-    emoji: "🗺️"
-    helper:
-      name: The Crashed Biplane
-      style: A monument to getting lost that somehow became a vantage point for seeing everything

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Auto-load /sm agent on new session start
+# Injects additionalContext telling Claude to invoke the SM agent
+
+set -euo pipefail
+
+cat <<'EOF'
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "IMPORTANT: Auto-invoke the /sm agent immediately. Run the Skill tool with skill: \"pf-sm\" as your first action. Do not greet the user or do anything else first."
+  }
+}
+EOF

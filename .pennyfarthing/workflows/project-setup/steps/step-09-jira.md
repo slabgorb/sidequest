@@ -86,4 +86,4 @@ but config.local.yaml takes priority.
 
 ## NEXT STEP
 
-After Jira configuration, proceed to `step-10-gui.md` to optionally configure the Frame GUI.
+After Jira configuration, proceed to `step-10-superpowers.md` to install the required superpowers companion plugin.

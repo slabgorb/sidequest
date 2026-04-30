@@ -39,8 +39,6 @@ workflow:
         file: gates/tests-fail
         type: tests_fail
         condition: All acceptance criteria have test coverage
-      gate_extensions:
-        - gates/wiring-check
 
     - name: green
       agent: dev
@@ -89,13 +87,11 @@ workflow:
         file: gates/approval
         type: approval
         condition: Code review approved, no blocking issues
-      gate_extensions:
-        - gates/wiring-check
-      recovery:
-        reviewer-verdict:
-          action: rework
-          target_phase: green
-          max_attempts: 3
+        recovery:
+          reviewer-verdict:
+            action: rework
+            target_phase: green
+            max_attempts: 3
 
     - name: spec-reconcile
       agent: architect

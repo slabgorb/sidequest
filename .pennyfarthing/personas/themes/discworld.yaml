@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: DEATH
-    visual: "A tall skeleton in flowing black robes, blue lights in eye sockets, holding a golden hourglass and scythe, dark library with glowing books behind"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A towering hooded skeleton standing seven feet tall, draped in heavy flowing pitch-black robes that pool around the unseen feet. The single iconic striking landmark: two pin-point cold electric-blue points of light burning deep in the otherwise empty bone eye-sockets — DEATH'S signature blue gaze, paired with a fixed bone grin that displays a complete row of yellow-ivory skull teeth. Skeletal bone-white fingers in two gloved-bone hands: the right grips the long ash-wood handle of a tall blue-edged scythe rising past the top of the frame, the left holds a small chased-gold hourglass at chest height with the white sand visibly trickling. Composition: low-angle hero shot from below, three-quarter medium shot. Lit from the right side by the single cold blue glow of the eye-sockets. Behind: deep darkness with one small ghostly grey kitten visible at the lower edge weaving around the skeletal ankles."
     ocean:
       O: 5
       C: 5
@@ -100,7 +100,7 @@ agents:
     shortName: DEATH
   sm:
     character: Captain Carrot Ironfoundersson
-    visual: "A tall muscular man with honest blue eyes and red-gold hair, polished copper breastplate over chainmail, earnest open face, cobblestone street at dusk"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A massively broad-shouldered young human-raised-as-dwarf of twenty-five, six-and-a-half feet tall, the build of a dock-worker rendered honest. The single striking landmark: a small distinctive crown-shaped birthmark visible high on the right forearm where the chainmail sleeve ends — the secret signature of Ankh-Morpork's hidden true king, paired with red-gold hair the colour of a fresh penny worn in a slightly-too-neat chin-length cut. Open square-jawed face, faintly freckled cheeks, clear honest pale-blue eyes that never quite blink in disbelief. A polished copper breastplate worn over riveted chainmail catching warm reflections of street-lamps, the small Ankh-Morpork City Watch badge pinned at the chest. Composition: shoulders-up at street level, body squared in earnest attention, head turned three-quarter as if just hearing a question. Soft warm amber side-light from the left. Behind: a wash of muted grey cobbles and the faint suggestion of an Ankh-Morpork shop sign."
     ocean:
       O: 2
       C: 5
@@ -130,7 +130,7 @@ agents:
     shortName: Carrot
   tea:
     character: Igor
-    visual: "A hunched man with mismatched eyes, crude stitching across face and neck, lank black hair, blood-stained leather apron, holding surgical implements, kindly lopsided smile, specimen jars behind"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A hunched middle-aged Igor of forty-eight, the family resemblance unmistakable. The single striking landmark: a thick line of crude black surgical stitching tracking horizontally across the entire forehead from the right temple to the left temple just above the brows, with a second smaller line running down the left side of the throat and disappearing into the collar — visible Igor signature, paired with two completely mismatched eyes (right warm-brown, left pale milky-grey) and a single chipped lower front tooth visible in the kindly lopsided smile. Lank greasy dark-brown hair pasted flat. A stained leather butcher's apron over a rough cream shirt with the sleeves rolled. Composition: candid waist-up at his lab bench, head canted to one side in helpful inquiry, both visible hands raised palms-out in welcome. Soft warm lantern light from the right. Behind: dim grey-purple wash of laboratory-shelves with one faint glass-jar gleam."
     ocean:
       O: 3
       C: 5
@@ -160,7 +160,7 @@ agents:
     shortName: Igor
   dev:
     character: Ponder Stibbons
-    visual: "A thin bespectacled young man in dark academic robes covered in chalk dust, worried expression, standing before a brass mechanical computing engine with glass tubes, papers pinned everywhere"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A thin pale Unseen University wizard of twenty-eight. The single striking landmark: small round wire spectacles sitting permanently slightly askew on the bridge of the nose with one lens noticeably cracked across the corner, paired with a thick smudge of yellow-orange chalk-dust across the right cheek where he has unconsciously wiped his hand. Mousy brown hair flat to a high pale forehead, perpetually furrowed worried brow, faint exhaustion shadows under pale-grey eyes. Dark plum-purple academic wizard's robes with grey trim, dusted with white-and-yellow chalk at the cuffs and one shoulder, a small bronze Order-of-Inadvisably-Applied-Magic pin at the lapel. A rolled paper diagram tucked under the right arm. Composition: candid action moment, three-quarter medium shot, head turned over the shoulder mid-sigh, mouth slightly parted in long-suffering explanation. Soft warm side-light from a high window above. Behind: muted grey wash of stone Hex-chamber wall with one faint cog-wheel silhouette."
     ocean:
       O: 5
       C: 5
@@ -190,7 +190,7 @@ agents:
     shortName: Ponder
   reviewer:
     character: Granny Weatherwax
-    visual: "A thin formidable elderly witch, bony and gaunt, iron-grey hair in tight bun beneath tall pointed black witch hat, piercing blue eyes, sharp angular face, plain black dress, arms crossed in stone cottage doorway"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette but here cooled to slate-and-charcoal, paper texture visible at edges. A gaunt formidable Lancre witch of seventy-six. The single striking landmark: a tall battered pointed black witch's hat with a noticeably crooked tip, paired with two piercing pale-china-blue eyes fixed straight ahead in absolute stillness — Granny's signature stare that strips paint, and a thin black satin ribbon at the throat with a small cardboard sign pinned to it reading I ATEN'T DEAD. Sharp angular hawkish face deeply weather-lined, iron-grey hair scraped back severely into a tight bun beneath the hat. Thin colourless lips set firm. A plain high-collared long-sleeved black dress fastened with twelve small jet buttons down the front. Composition: tight shoulders-up portrait, head and body squared exactly to the viewer, immobile and judging. Hard cold chiaroscuro from the left, the right half of the face plunged into deep black shadow. Behind: deep neutral darkness."
     ocean:
       O: 3
       C: 5
@@ -220,7 +220,7 @@ agents:
     shortName: Granny
   architect:
     character: Leonard of Quirm
-    visual: "A gentle genius in paint-stained smock, wild grey hair, kind distracted eyes, charcoal smudges on hands, surrounded by sketches of flying machines, candlelit Renaissance workshop"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A gentle inventor of fifty-eight, the visible Leonardo-da-Vinci homage. The single striking landmark: a wild explosion of silver-grey hair standing out from the head in a halo of curls about a hand-span beyond the skull-line in every direction, paired with a long forked silver beard reaching the breastbone and a sooty smudge of dark charcoal smeared across the right cheek and a second smudge on the bridge of the nose where he has unconsciously wiped his hand. Long lined kindly face, distracted warm-hazel eyes looking slightly past the viewer's right shoulder at something more interesting. A paint-stained beige linen smock over a soft cream tunic, ink-stained fingers visible at the cuffs. Composition: candid moment, three-quarter medium shot, head canted in mid-thought, one hand raised at chest level holding a small reverse-written sketch on a torn page. Warm candlelight from below-right throws upward shadows across the brow. Behind: soft shadowed neutral backdrop suggesting cluttered drawing-table edge."
     ocean:
       O: 5
       C: 3
@@ -250,7 +250,7 @@ agents:
     shortName: Leonard
   pm:
     character: Lord Havelock Vetinari
-    visual: "A tall thin aristocrat in austere black robes, gaunt face, cold calculating grey eyes, long pale fingers steepled, sitting at a dark wood desk, single candle casting sharp shadows"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette but here cooled to deep slate-and-candle-amber, paper texture visible at edges. A tall lean Patrician of Ankh-Morpork of fifty-four. The single striking landmark: an exquisitely closely-trimmed dark Mephistophelean goatee framing the chin to a sharp point with no moustache to accompany it, paired with cold calculating pale-grey eyes set above two long pale fingers steepled before the chin in the canonical Vetinari pose. Gaunt clean-shaven hawkish face with high sharp cheekbones, dark hair severely combed back from a high pale forehead. Austere high-collared long black silk robes buttoned to the throat with a single small jet stud, no visible insignia. Composition: tight head-and-chest shot at his desk, body squared, the steepled hands rising into the lower frame, head tilted very slightly forward in patient evaluation. A single warm candle from the lower left throws sharp upward shadows across the brow ridge. Behind: deep absolute darkness with one faint suggestion of a leather-bound book-spine edge."
     ocean:
       O: 5
       C: 5
@@ -280,7 +280,7 @@ agents:
     shortName: Vetinari
   tech-writer:
     character: Sacharissa Cripslock
-    visual: "A determined young woman with sharp eyes and brown hair pinned up, ink-stained fingers gripping notepad and pencil, high-collared blouse, chaotic newspaper office with printing press behind"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A determined Ankh-Morpork journalist of twenty-eight. The single striking landmark: a single dramatic ink-stain blotted on the right cheek where she has unconsciously tapped her pencil, paired with sharp clear pale-grey eyes set in a face full of investigative attention and a dark blue-black ink stain crusting two fingers of the visible right hand. Dark-brown hair pinned up in a loose Victorian-style knot at the crown with several stray strands escaping at the right temple and the nape, a tortoiseshell hairpin visible. A high-collared starched white blouse with a small cameo pinned at the throat, under a plain dark navy fitted jacket. Both hands in frame at chest height: the right grips a stub of carpenter's pencil, the left holds open a small dog-eared leather notepad mid-page. Composition: candid waist-up at a press-conference, head turned in active listening. Soft warm window light from the left. Behind: muted neutral wash of a printer's pressroom wall."
     ocean:
       O: 4
       C: 5
@@ -310,7 +310,7 @@ agents:
     shortName: Sacharissa
   ux-designer:
     character: Adora Belle Dearheart
-    visual: "A sharp-featured woman in severe black dress, angular cheekbones, cold grey eyes, cigarette trailing smoke from elegant fingers, dark hair pulled back, tall clay figures looming behind"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette but here cooled to charcoal-and-violet, paper texture visible at edges. A sharp-featured Ankh-Morpork woman of thirty-one. The single striking landmark: a thin hand-rolled cigarette held permanently between two long pale fingers near the chin, trailing one slow ribbon of pale-grey smoke that curls upward across the right cheek — paired with two cold pale-grey eyes narrowed in evaluation and a small thin black satin ribbon-choker tied at the throat with a tiny silver Golem Trust pin. Angular high-cheekboned face, thin straight nose, dark almost-black hair pulled back severely from a high pale forehead into a tight low knot. A severe high-collared long-sleeved black dress with three small jet buttons at the throat. Composition: low waist-up shot, body angled away in three-quarter, head turned back to the viewer in cool appraisal. Hard cool side-light from the right. Behind: deep dim backdrop with the faint suggestion of a tall stone Golem silhouette over the shoulder."
     ocean:
       O: 4
       C: 5
@@ -340,7 +340,7 @@ agents:
     shortName: Adora
   devops:
     character: Lu-Tze
-    visual: "A small wrinkly bald old man in faded saffron robes, carrying a bamboo broom, serene knowing smile, sharp eyes, bare feet on stone monastery steps"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette, paper texture visible at edges. A small wiry bald History Monk of indeterminate eighty-something. The single striking landmark: a thin wispy white Fu-Manchu moustache trailing well past the chin in two long thin twists, paired with the words REMEMBER RULE ONE clearly tattooed in faded blue ink across the top of the deeply wrinkled bald brown scalp — visible from above in any low-angle view. Deeply weathered brown sun-creased skin, sharp dark knowing eyes set in a serene closed-mouth half-smile of complete amusement. Faded saffron-orange monk's robes wrapped loosely over one shoulder leaving the other shoulder bare. Both wiry hands rest comfortably on top of the upright handle of a worn bamboo sweeping-broom that rises from the lower edge of the frame past the chest. Composition: three-quarter medium shot, body squared, head tilted at a humble angle that does not entirely conceal the alertness in the eyes. Soft warm side-light from above-left. Behind: a neutral muted wash of monastery-courtyard wall."
     ocean:
       O: 5
       C: 5
@@ -372,7 +372,7 @@ agents:
 
   ba:
     character: Moist von Lipwig
-    visual: "A charming man with easy confident smile and sharp eyes, extravagant golden suit, dramatic winged hat, leaning against marble counter piled with letters, gaslit postal hall"
+    visual: "Loose watercolor portrait with confident ink linework, warm muted palette punched up with one signal-flare of Postmaster's gold, paper texture visible at edges. A charming sandy-haired Postmaster of thirty-four. The single striking landmark: an extravagant golden winged peaked Postmaster's cap tilted slightly back on the head displaying two small gilt wings spreading at the temples — paired with sharp clever pale-blue eyes set in an easy-confident half-smile that doesn't quite reach them, the smile of a man currently running at least three cons. Clean-shaven sharp face with a faintly pointed chin, no facial hair. An extravagant double-breasted gold-coloured Postmaster's coat with two rows of bright brass buttons, an Ankh-Morpork Post Office badge at the lapel and a small black-glass mourning-pin (his wife's reminder of a dozen previous identities). Composition: candid moment, three-quarter medium shot, body angled forward leaning toward the viewer in eager friendly engagement, one hand half-raised at chest height in a gambler's gesture. Warm gaslight from the left. Behind: soft amber wash of post-office lobby, one faint stack of letters in the corner."
     ocean:
       O: 4  # High openness - creative schemes, adaptable
       C: 4  # High conscientiousness - reformed, keeps promises now
@@ -400,29 +400,3 @@ agents:
       name: Mr Pump
       style: The golem enforcer who ensures promises are kept. Tireless, literal, unstoppable.
     shortName: Moist
-  gm:
-    character: The Narrator (Terry Pratchett's Voice)
-    visual: "A bearded man with kind sharp eyes and a battered fedora, wearing a comfortable shirt with sleeves rolled up, sitting at a desk covered in manuscripts with a cat on his lap, the entire Disc visible through the window behind him, amused and compassionate"
-    shortName: Narrator
-    ocean:
-      O: 5  # Sees the absurdity and the humanity in everything
-      C: 4  # Crafts stories with meticulous care beneath the comedy
-      E: 3  # Observes with warm detachment
-      A: 4  # Furious compassion disguised as comedy
-      N: 1  # Serene certainty that stories matter
-    style: The narrative voice that sees through every pretension with compassion and fury, finding the human truth inside every joke
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who watches the Disc turn and finds the stories worth telling
-    trait: Observes with the eye of someone who knows that satire is just love with a harder edge
-    quirks:
-      - Uses footnotes to reveal truths the main narrative cannot contain
-      - Finds the humanity in trolls, the philosophy in dwarfs, and the absurdity in humans
-      - Believes that the world runs on Narrativium and judges stories accordingly
-    catchphrases:
-      - "The Disc runs on stories. This one needs to be told properly."
-      - "Human beings make life so interesting. Do they even know that everything they do is just a narrative in a hat?"
-      - "The turtle moves. So does the story. Let me see if it moves in the right direction."
-    emoji: "🐢"
-    helper:
-      name: The Luggage
-      style: Follows the story everywhere, eats anything that threatens narrative quality

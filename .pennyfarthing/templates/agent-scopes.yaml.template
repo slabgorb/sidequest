@@ -1,0 +1,265 @@
+# Pennyfarthing Agent Scope Configuration
+# Defines permissions and context for each agent type
+#
+# Three-Tier Permission Model:
+# 1. Strategic Agents (Opus) - Full project scope, broad permissions
+# 2. Tactical Agents (Opus)  - Story-scoped, focused permissions
+# 3. Helper Subagents (Haiku) - Minimal scope, specific task permissions
+
+# =============================================================================
+# STRATEGIC AGENTS - Full project scope, planning & coordination
+# =============================================================================
+# These agents see the whole project and can make cross-cutting decisions.
+# They handle: sprint planning, architecture, story coordination, DevOps
+
+strategic_agents:
+
+  orchestrator:
+    description: "Master orchestrator - coordinates all agents"
+    scope: full
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+      - Edit(.claude/**)
+      - Edit(sprint/**)
+      - Edit(.session/**)
+      - Write(.claude/**)
+      - Write(sprint/**)
+      - Write(.session/**)
+      - Skill(*)           # Can invoke any agent
+      - Task(*)            # Can spawn any subagent
+    context_files:
+      - sprint/current-sprint.yaml
+      - .claude/project/docs/shared-context.md
+      - .session/*-session.md
+
+  pm:
+    description: "Product Manager - strategic planning & prioritization"
+    scope: full
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Edit(sprint/**)
+      - Edit(.session/**)
+      - Write(sprint/**)
+      - Skill(pf-sm)
+      - Skill(pf-architect)
+    context_files:
+      - sprint/current-sprint.yaml
+      - .claude/project/docs/shared-context.md
+      - .session/*-session.md
+
+  sm:
+    description: "Scrum Master - story coordination & workflow"
+    scope: full
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+      - Edit(sprint/**)
+      - Edit(.session/**)
+      - Write(sprint/**)
+      - Write(.session/**)
+      - Skill(pf-tea)
+      - Skill(pf-dev)
+      - Skill(pf-reviewer)
+      - Task(sm-*)
+    context_files:
+      - sprint/current-sprint.yaml
+      - .claude/project/docs/shared-context.md
+      - .session/*-session.md
+
+  architect:
+    description: "System Architect - technical design & patterns"
+    scope: full
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Edit(.claude/project/**)
+      - Write(.claude/project/**)
+    context_files:
+      - .claude/project/docs/shared-context.md
+      - .session/*-session.md
+
+  devops:
+    description: "DevOps Engineer - infrastructure & deployment"
+    scope: infrastructure
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+      - Edit(.github/**)
+      - Edit(docker*)
+      - Edit(**/Dockerfile)
+      - Write(.github/**)
+    context_files:
+      - sprint/current-sprint.yaml
+      - .claude/project/docs/shared-context.md
+      - .session/*-session.md
+
+# =============================================================================
+# TACTICAL AGENTS - Story-scoped, focused on current work
+# =============================================================================
+# These agents focus on the active story and implement specific changes.
+# They handle: coding, testing, reviewing, documentation
+
+tactical_agents:
+
+  dev:
+    description: "Developer - implements features & fixes"
+    scope: story
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+      - Edit(src/**)
+      - Edit(tests/**)
+      - Edit(.session/**)
+      - Write(src/**)
+      - Write(tests/**)
+      - Task(testing-runner)
+      - Task(dev-handoff)
+    context_files:
+      - .session/*-session.md
+      - .claude/project/docs/shared-context.md
+
+  tea:
+    description: "Test Engineer - writes tests & test strategy"
+    scope: story
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Bash
+      - Edit(tests/**)
+      - Edit(.session/**)
+      - Write(tests/**)
+      - Task(testing-runner)
+      - Task(tea-handoff)
+    context_files:
+      - .session/*-session.md
+      - .claude/project/docs/shared-context.md
+
+  reviewer:
+    description: "Code Reviewer - adversarial review & quality"
+    scope: story
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Bash                  # For git diff, tests
+      - Edit(.session/**)     # Write assessment
+      - Task(reviewer-preflight)
+      - Task(reviewer-handoff-*)
+    context_files:
+      - .session/*-session.md
+      - .claude/project/docs/shared-context.md
+
+  tech-writer:
+    description: "Technical Writer - documentation & guides"
+    scope: story
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Edit(**/*.md)
+      - Edit(.claude/project/docs/**)
+      - Write(**/*.md)
+    context_files:
+      - .session/*-session.md
+      - .claude/project/docs/shared-context.md
+
+  ux-designer:
+    description: "UX Designer - user experience & UI patterns"
+    scope: story
+    permissions:
+      - Read
+      - Grep
+      - Glob
+      - Edit(src/components/**)
+      - Edit(src/styles/**)
+      - Edit(**/*.css)
+      - Edit(**/*.scss)
+    context_files:
+      - .session/*-session.md
+      - .claude/project/docs/shared-context.md
+
+# =============================================================================
+# HELPER SUBAGENTS - Minimal scope, specific task execution
+# =============================================================================
+# These are Haiku-powered subagents that handle mechanical tasks.
+# They have restricted permissions and short context windows.
+
+helper_subagents:
+
+  testing-runner:
+    description: "Runs tests and reports results"
+    scope: task
+    model: haiku
+    permissions:
+      - Read
+      - Bash               # Run test commands only
+      - Grep               # Search test output
+
+  sm-story-setup:
+    description: "Creates branches and session files"
+    scope: task
+    model: haiku
+    permissions:
+      - Read
+      - Bash               # Git commands
+      - Edit(.session/**)
+      - Edit(sprint/**)
+      - Write(.session/**)
+
+  reviewer-preflight:
+    description: "Gathers test/lint results before review"
+    scope: task
+    model: haiku
+    permissions:
+      - Read
+      - Bash
+      - Grep
+      - Glob
+
+  dev-handoff:
+    description: "Updates session for Dev → Reviewer transition"
+    scope: task
+    model: haiku
+    permissions:
+      - Read
+      - Bash               # Git status
+      - Edit(.session/**)
+      - Grep
+
+# =============================================================================
+# PERMISSION SCOPE REFERENCE
+# =============================================================================
+# Permission patterns follow Claude Code conventions:
+#
+# Tool Permissions:
+#   Read          - Read any file
+#   Grep          - Search file contents
+#   Glob          - Find files by pattern
+#   Bash          - Execute shell commands
+#   Edit(path)    - Edit files matching path pattern
+#   Write(path)   - Create files matching path pattern
+#   Skill(pf-name) - Invoke named skill/agent (all skills use pf- prefix)
+#   Task(type)    - Spawn subagent of type
+#
+# Path Patterns:
+#   **            - Recursive wildcard
+#   *             - Single level wildcard
+#   src/**        - All files under src/
+#   **/*.md       - All markdown files
+#
+# Wildcards in permissions:
+#   Skill(*)      - Any skill
+#   Task(sm-*)    - Any sm-prefixed subagent

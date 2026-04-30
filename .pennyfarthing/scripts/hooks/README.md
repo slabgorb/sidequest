@@ -10,7 +10,7 @@ Git hooks and Claude Code hooks.
 | `pf hooks context-warning` | Claude hook: warn on high context |
 | `otel-auto-config.sh` | Claude hook: configure OTEL |
 | `post-merge.sh` | Git hook: post-merge actions |
-| `pre-commit.sh` | Git hook: agent validation, sprint YAML validation |
+| `pre-commit.sh` | Git hook: branch protection, agent validation, sprint YAML validation |
 | `pf hooks pre-edit-check` | Claude hook: validate before edit |
 | `pre-push.sh` | Git hook: pre-push validation |
 | `pf hooks session-start` | Claude hook: session start |

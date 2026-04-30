@@ -1,0 +1,37 @@
+# ${AGENT_NAME} Gotchas
+
+Common pitfalls and edge cases encountered during ${AGENT_NAME} work.
+
+## Gotcha Template
+
+Use this format to document lessons learned:
+
+### [Gotcha Title]
+
+**Situation:** When does this happen? What triggers it?
+
+**Problem:** What goes wrong? What's the symptom?
+
+**Prevention:** How to avoid this.
+
+**Fix:** What to do if you hit it anyway.
+
+**Example:**
+```
+real example from experience
+```
+
+---
+
+## Gotchas to Document
+
+Start with things that caused surprises:
+- Confusing error messages
+- Unexpected dependencies
+- Side effects of common operations
+- Environment-specific issues
+- Race conditions or timing issues
+- Configuration gotchas
+- Data loss risks
+
+Keep 5-15 active gotchas. Archive when issues are resolved.

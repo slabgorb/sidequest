@@ -1,0 +1,12 @@
+# Pennyfarthing User Preferences
+# These settings control agent behavior and output formatting.
+# Copy to .pennyfarthing/preferences.yaml and customize.
+
+# Enable character voice in agent responses (themed personas)
+character_voice: true
+
+# Include decision explanations in agent output
+explain_decisions: true
+
+# Automatically commit after phase completion
+auto_commit: false

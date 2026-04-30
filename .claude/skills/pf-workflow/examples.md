@@ -76,7 +76,7 @@ pf workflow fix-phase 56-1 review
 pf workflow fix-phase 56-1 approved
 
 # Using Jira key
-pf workflow fix-phase MSSCI-12190 approved
+pf workflow fix-phase PROJ-12190 approved
 ```
 
 ## Switching Workflow Mid-Session

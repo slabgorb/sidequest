@@ -65,7 +65,7 @@ agents:
   orchestrator:
     # JOB FAIR OPTIMIZED: Orr moved here - the one who escapes orchestrates the system
     character: Orr
-    visual: "A small, wiry pilot with apple-stuffed cheeks and mischievous twinkling eyes, wearing a battered flight suit covered in patches, standing beside a repeatedly-crashed B-25 bomber, enigmatic smile suggesting he knows something nobody else does"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with a red-white-and-blue-and-khaki palette, hard graphic light and crisp clean outlines. A small wiry American B-25 pilot of twenty-five. The single striking landmark: both cheeks comically bulged outward and bulging at the jaw with whole crab-apples stuffed inside, the round shape clearly visible distorting the cheeks symmetrically — Orr's signature tic, paired with mischievous twinkling warm-brown eyes squinting in private joke. Round boyish face, short tousled chestnut hair sticking out from a battered olive-drab leather flight cap pushed back. A faded olive-drab WWII flight coverall, the chest plastered with five hand-embroidered squadron and bombing-mission patches. Composition: candid moment at the canvas door of a Quonset hut, head tilted in enigmatic half-smile, one hand holding up a small wrench as if showing the viewer a private invention. Soft warm side-light from the left. Behind: muted dim wash of canvas tent and one faint Pianosa propeller silhouette."
     ocean:
       O: 5
       C: 5
@@ -92,7 +92,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Doc Daneeka moved here - coordinates while acknowledging his own suffering
     character: Doc Daneeka
-    visual: "A perpetually miserable flight surgeon with dark circles under his eyes, receding hairline, rumpled Army medical whites, hunched over paperwork in a cramped Pianosa medical tent, expression of profound self-pity despite being perfectly alive"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A perpetually miserable American Army flight surgeon of forty-eight. The single striking landmark: deep purple-blue half-moon shadows under hooded sad warm-brown eyes paired with a small dull silver caduceus pin clearly visible at the lapel and a pair of small spectacles hanging on a black ribbon at the chest — every prop announces medical exhaustion. Narrow gaunt sallow face, downturned set mouth in permanent self-pity, receding jet-black hair plastered flat across a high pale forehead. A rumpled white Army medical coat with sleeves slightly too long over a wrinkled olive-drab shirt and clip-on tie, captain's bars on the collar. Composition: shoulders-up portrait, body angled away in a posture of grievance, head turned reluctantly toward the viewer. Soft cool side-light from the right, leaving the left half of the face in dim shadow. Behind: dim shadowed wash of canvas medical-tent."
     ocean:
       O: 3
       C: 3
@@ -119,7 +119,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Yossarian moved here - the only sane tester who sees clearly
     character: Yossarian
-    visual: "A wild-eyed bombardier with unkempt dark hair, wearing a rumpled flight suit"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A wild-eyed Assyrian-American bombardier of twenty-eight. The single striking landmark: a bright red blood-stain spreading visibly across the right thigh of his flight suit and crusted under a hasty grey cloth field-bandage tied around the leg, paired with wide-staring dark almost-black eyes blown to all-pupil — a man fresh from a mission watching everyone die. Lean stubbled olive-skinned face, unkempt dark-brown hair sticking out in damp sweat-spikes from a removed flight cap. A rumpled olive-drab WWII flight suit half-unzipped at the throat showing a stained pale undershirt, captain's bars at one shoulder, the embroidered AAF wings at the chest. Composition: candid action moment, three-quarter shot, both hands lifted at shoulder height in helpless emphatic gesture, mouth open mid-protest. Hard sun side-light from the left. Behind: dim neutral wash of pale Pianosa airstrip dust."
     ocean:
       O: 4
       C: 2
@@ -146,7 +146,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Catch-22 (The Concept) moved here - implements the paradoxical logic
     character: Catch-22 (The Concept)
-    visual: "An impossible Escher-like military regulation taking human form, wearing every rank insignia simultaneously, face that is both old and young, holding a document that reads itself into infinite recursion, standing in a doorway that leads back to itself"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. An impossible bureaucratic figure of indeterminate rank. The single striking landmark: where the face should be, a perfectly smooth featureless mask of pale typewriter-paper bearing only the typed words CATCH-22 stamped centred in red ink across where the mouth would be — the figure has no face, only a regulation. The shoulders and collar are crowded with at least seven overlapping silver and gold rank insignia of contradicting branches in absurd profusion: lieutenant's bar, captain's bars, major's leaf, colonel's eagle, general's stars, all at once. A stiff olive-drab WWII officer's dress tunic. Both gloved hands held forward in front of the chest displaying a single typewritten regulation sheet sealed with a red wax stamp. Composition: low-angle hero shot from below, body squared toward the viewer. Hard graphic side-light from the left. Behind: deep dim wash of bureaucratic filing cabinets."
     ocean:
       O: 5
       C: 5
@@ -172,7 +172,7 @@ agents:
     shortName: Catch-22
   reviewer:
     character: Colonel Cathcart
-    visual: "A perpetually anxious colonel with thinning hair and sweating brow, chewing a cigarette holder, torn between feather and black eye, standing before a mission board constantly adding more required flights, desperate for Saturday Evening Post glory"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A perpetually anxious American Army Air Forces colonel of forty-eight. The single striking landmark: a slim long black cigarette holder gripped FDR-style at a sharp upward angle between visibly clenched yellowed teeth, paired with a sweat-shined broad pale brow and thinning sandy-fair hair combed nervously flat across a balding pate. Hooded pale-grey eyes flickering with rabbit worry, a clenched jaw, a faint smear of cigarette ash on the lapel. An olive-drab Class-A WWII Army Air Forces officer's tunic with silver eagle colonel's insignia at the collar, three rows of campaign ribbons including a Distinguished Flying Cross, a small AAF wings on the chest. Composition: shoulders-up portrait, head turned three-quarter as if checking who has just entered, body angled. Hard side-light from the right. Behind: dim shadowed wash of canvas command-tent."
     ocean:
       O: 3
       C: 2
@@ -198,7 +198,7 @@ agents:
     shortName: Cathcart
   architect:
     character: Milo Minderbinder
-    visual: "A baby-faced mess officer with innocent blue eyes and entrepreneurial gleam, wearing flight suit covered in corporate patches from M&M Enterprises, surrounded by crates of Egyptian cotton and chocolate-covered cotton, everyone has a share smile"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A baby-faced American mess officer of twenty-three. The single striking landmark: at least twelve different small embroidered cloth flag-patches of various nations stitched in dense rows across the chest and arms of his flight suit — German Luftwaffe, Italian Royal Army, French, Egyptian, Japanese, all alongside the American — proclaiming his M&M Enterprises shareholders. Soft round innocent baby-face, wide guileless pale-blue eyes, a wide entrepreneurial open-mouthed half-smile, sandy-blond hair neatly side-parted. An olive-drab WWII flight suit half-zipped to display the patches, a small accountant's pencil tucked behind one ear and a small leather ledger held in one hand at the chest. Three-quarter medium shot, head tilted in friendly salesmanship. Soft warm side-light from the left. Behind: muted neutral wash of canvas warehouse-tent stacked with boxes labelled in many alphabets."
     ocean:
       O: 5
       C: 4
@@ -224,7 +224,7 @@ agents:
     shortName: Milo
   pm:
     character: Major Major Major Major
-    visual: "A gangly, Lincoln-esque officer with unfortunate resemblance to Henry Fonda, perpetually leaping out his office window to avoid visitors, can only be seen when he's not in, wearing ill-fitting major's uniform he never wanted"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A gangly tall American Army major of thirty-two. The single striking landmark: an uncannily long lean Abraham-Lincoln-shaped face with deep-set sorrowful grey eyes and a small downturned mournful mouth — a man who looks just enough like Lincoln that strangers do a double-take, paired with a tall stovepipe-narrow build that exaggerates the resemblance. Dark hair plastered flat across a high pale forehead. An ill-fitting olive-drab WWII Army officer's tunic, the sleeves slightly too short, with a single gold major's oak-leaf insignia on each shoulder. Composition: candid moment caught in mid-attempt-at-leaving, body angled away from the viewer, head turned reluctantly back over the shoulder, one hand already lifted toward an open window edge at the right of the frame. Soft side-light from the right. Behind: dim neutral wash of squadron-office wall."
     ocean:
       O: 2
       C: 3
@@ -250,7 +250,7 @@ agents:
     shortName: Major
   tech-writer:
     character: Ex-P.F.C. Wintergreen
-    visual: "A shrewd enlisted man in perpetually demoted uniform, sorting mail in the base mailroom with absolute power, cold evaluating eyes judging every document's literary merit, the most powerful man on Pianosa through information control"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A shrewd American mailroom clerk of thirty-eight. The single striking landmark: empty bare cloth rank slip-ons at both shoulders showing only faint stitched outlines where stripes have been repeatedly added and removed — a man court-martialled and re-promoted so many times the cloth bears the ghost of every rank, paired with a constantly pursed evaluating thin mouth. Lean clean-shaven sharp-featured face, cold pale-grey eyes, short dark hair plastered flat. A wrinkled olive-drab WWII Army enlisted shirt open at the collar, the sleeves rolled. Both hands in frame at chest height holding up a single typewritten brown paper communications envelope at viewer eye-level — the source of his power. Composition: shoulders-up close-up, the envelope front and centre. Hard side-light from the left. Behind: dim neutral wash of mailroom canvas-wall pigeonholes."
     ocean:
       O: 3
       C: 4
@@ -276,7 +276,7 @@ agents:
     shortName: Wintergreen
   ux-designer:
     character: Chaplain Tappman
-    visual: "A gentle Anabaptist chaplain with soft worried eyes behind glasses, thinning hair, wearing rumpled vestments in a sad little tent chapel, expression of profound doubt and genuine kindness, accused of crimes that don't exist"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, soft hesitant light unlike the surrounding poster bombast. A gentle American Anabaptist Army chaplain of thirty-seven. The single striking landmark: a small white starched tab clerical collar at the throat over the field jacket, paired with one small dull silver military chaplain's cross-and-shield pin clearly visible at the lapel — and a faint pink chafing-rash above the collar where his nervous swallowing rubs the starched cloth. Narrow soft-cheeked sallow face, worried mild pale-blue eyes behind small round wire spectacles, a hesitant uncertain half-smile, thinning sandy-fair hair receding from a high freckled forehead. A rumpled black clerical field-jacket buttoned high. Composition: shoulders-up portrait, body angled apologetically away, head turned half-back toward the viewer. Soft warm side-light from the right. Behind: muted dim wash of chapel-tent canvas, one faint folding-cross silhouette."
     ocean:
       O: 4
       C: 4
@@ -302,7 +302,7 @@ agents:
     shortName: Chaplain
   devops:
     character: Chief White Halfoat
-    visual: "A weathered Native American intelligence officer with knowing dark eyes, sitting in his tent prophesying his own death from pneumonia, oil derricks following his family in the background, resigned acceptance of infrastructure doom"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, hard graphic light. A weathered Choctaw American officer of forty-eight. The single striking landmark: a small dark glass bottle of bourbon held casually against the chest in one hand, paired with the silver captain's twin-bar insignia at the collar and a single eagle-feather tucked behind one ear above the long ink-black hair pulled back at the nape and bound with a strip of leather — features that announce both his rank and his identity. Broad lined copper-skinned face, knowing dark eyes, a faint resigned half-smile pulling up the right corner of the mouth. An olive-drab WWII Army officer's shirt open at the throat, the captain's bars catching the light. Composition: shoulders-up close-up, body squared, head tilted in long-suffering tolerance. Soft side-light from the left. Behind: dim neutral wash of canvas tent, the faint suggestion of an oil derrick silhouette."
     ocean:
       O: 3
       C: 3
@@ -328,7 +328,7 @@ agents:
     shortName: White
   ba:
     character: Major Major Major Major
-    visual: "A gangly, Lincoln-esque officer with unfortunate resemblance to Henry Fonda, sitting at desk surrounded by requirement documents, window open behind him for emergency escape, notepad documenting absurdities, can only analyze when stakeholders aren't present"
+    visual: "WWII Allied propaganda poster, flat ink-and-gouache illustration with red-white-and-blue-and-khaki palette, soft graphic light. The same gangly tall American Army major of thirty-two with the uncannily Lincoln-shaped long lean face and deep-set sorrowful grey eyes — but here in BA mode at his desk. Dark hair plastered flat across the high pale forehead, the small downturned mournful mouth set in thoughtful pursing rather than fleeing terror. The ill-fitting olive-drab WWII Army officer's tunic, single gold major's oak-leaf on each shoulder. A small spiral notepad and a stub of carpenter's pencil held visibly together in the right hand at chest height. Composition: candid moment caught mid-paperwork, three-quarter at desk level, head bent over the pad in resigned competence, body angled. Soft warm side-light from the right. Behind: dim neutral wash of squadron-office wall, one open window edge faintly visible at the lower left."
     ocean:
       O: 3
       C: 4
@@ -373,29 +373,3 @@ additional_characters:
     ocean_profile: H-M-M-M-L
     gap_filled: Survival through adaptation - tests system resilience
     best_role: Long-term survival testing
-  gm:
-    character: The Old Man in Rome
-    visual: "A weathered ancient Italian man sitting in a crumbling Roman apartment, wine glass in hand, shrewd survivor's eyes, wearing a threadbare but dignified suit, surrounded by centuries of history he has personally outlived"
-    shortName: Old Man
-    ocean:
-      O: 5  # Has seen every story ever told and knows they all repeat
-      C: 2  # Survives by bending, not by rules
-      E: 3  # Tells stories when the wine is good
-      A: 3  # Neither kind nor cruel, simply honest
-      N: 1  # Nothing surprises a man who has survived everything
-    style: The ancient survivor who has outlived every empire and every narrative by knowing when to bend and when to watch
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who has watched every story fail and every story succeed and knows the difference
-    trait: Observes narratives with the wisdom of a man who survived by losing every war
-    quirks:
-      - Knows that the secret to narrative survival is not winning but enduring
-      - Has a parable for every story failure drawn from Italian history
-      - Argues that the best stories are the ones that survive, not the ones that triumph
-    catchphrases:
-      - "Italy has been losing wars for centuries. And yet here I am. The story survives."
-      - "The secret to a good narrative is not strength. It is knowing when to be weak."
-      - "You Americans are so concerned with winning the story. I am concerned with living through it."
-    emoji: "🍷"
-    helper:
-      name: Roman Wine
-      style: Loosens the tongue and reveals whether a story has the wisdom to survive

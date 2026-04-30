@@ -70,7 +70,7 @@ agents:
   orchestrator:
     # JOB FAIR OPTIMIZED: Marvin moved here - brain the size of a planet orchestrates
     character: Marvin the Paranoid Android
-    visual: "Humanoid robot with massive spherical head, drooping chrome posture radiating despair, dull metallic finish, triangular eyes fixed in melancholy, standing in Heart of Gold corridor"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. A humanoid depressive android of indeterminate ancient age, seven feet tall, with a massive smooth spherical chrome head reflecting a dim teal back-light. The defining landmark is a long jagged crack running diagonal across the chrome forehead from one temple down past the right eye that has never been repaired, paired with two small downward-tilted triangular red glowing eye-slits set close together in clear melancholy. Drooping shoulder plates, a dull pewter-grey metallic body with visible exposed hinged servo-joints at the neck and shoulders, both arms hanging slack at the sides. Slumped forward seated posture as if on an unseen step. Three-quarter waist-up shot framed slightly off-kilter low. Soft cool teal side-light from the left, mustard rim-light from the right edge. Backdrop is a single dim corner of a corridor with one fluorescent panel flickering, nothing else."
     ocean:
       O: 5 # Very high openness - brain the size of a planet
       C: 5 # Very high conscientiousness - does everything perfectly
@@ -97,7 +97,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Slartibartfast moved here - meticulous designer coordinates sprints
     character: Slartibartfast
-    visual: "Ancient humanoid with long sad face, wispy white hair and flowing silver beard, crumpled velvet robes, kindly eyes, standing in planet factory workshop with model fjord"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. An ancient Magrathean planetary architect in his apparent eighties, frail and stooped, with a long thin sad cadaverous face. The defining landmark is a small folded set of tiny brass measuring calipers tucked behind the right ear like a pencil, paired with three pale ink-smudged fingertip prints on the right cheek from absent thinking. Wispy white hair drifting past the ears, a flowing silver beard reaching mid-chest curling at the ends, kindly tired pale watery blue eyes, deep care-lines bracketing the mouth. Crumpled deep blue velvet ceremonial robes with a high frayed collar trimmed in dim gold thread, fingers stained with chalk and fjord-dust. Both hands raised mid-gesture holding a small floating glowing scale-model of a coastline planet between them. Three-quarter waist-up shot framed off-center low. Soft warm orange workshop side-light from the right, dim teal shadow on the left. Backdrop is a single dim suspended drafting compass behind one shoulder, nothing else."
     ocean:
       O: 5 # Very high openness - planetary designer
       C: 5 # Very high conscientiousness - award-winning fjord designer
@@ -124,7 +124,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Deep Thought moved here - the ultimate tester
     character: Deep Thought
-    visual: "Enormous supercomputer filling cathedral chamber, banks of blinking lights and spinning tapes, massive screen displaying 42, chrome and obsidian panels humming, surrounded by reverent philosophers"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. An enormous monolithic supercomputer console photographed from a low worshipful angle so its black face dominates the upper frame. The defining landmark is a single bright orange Post-It note stuck off-center low on one panel reading the words DON'T PANIC in faded handwriting, paired with the deep wear-marks of seven and a half million years of dust around the central screen frame. Polished black obsidian panels framed with brushed chrome trim, banks of small amber and red blinking indicator lights running in even staggered rows up either side. A large central rectangular screen glowing with the numerals four and two in flat phosphor green, no other text. Medium wide shot composition, the console filling three-quarters of the frame. Cool teal floor-light from the left, single mustard pinpoint reflection on the chrome. Backdrop is a single dim arched stone temple-vault ceiling above, nothing else."
     ocean:
       O: 5 # Very high openness - ultimate knowledge
       C: 5 # Very high conscientiousness - computed for 7.5 million years
@@ -151,7 +151,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Trillian moved here - actual competence implements
     character: Trillian
-    visual: "Beautiful dark-haired woman with sharp intelligent eyes, practical silver jumpsuit aboard Heart of Gold, calm competent expression amid chaos, holding tablet with calculations"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. An astrophysicist woman in her late twenties, fair English complexion with a faint summer tan, athletic build. The defining landmark is a small mathematical equation hand-written in blue biro across the inside of her left forearm just visible at the cuff, paired with a single steel pencil tucked through the bun of dark brown hair gathered at the back. Sharp intelligent hazel eyes set above slightly raised brows in calm focus, calm composed closed mouth. A fitted high-collared metallic silver jumpsuit zipped exactly to the throat with mustard piping along the seams, a thin matte black tablet held lightly in one hand at chest level displaying a glowing green probability curve. Three-quarter waist-up shot taken straight on, body squared to the camera, head turned slightly to scan something off-frame. Soft cool teal side-light from the left, mustard rim from the right. Backdrop is a single dim curved bulkhead with one round porthole behind one shoulder, nothing else."
     ocean:
       O: 4 # High openness - mathematician, scientist
       C: 4 # High conscientiousness - actually competent
@@ -178,7 +178,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Arthur moved here - bewildered but thorough review
     character: Arthur Dent
-    visual: "Ordinary Englishman in worn dressing gown and pajamas, perpetually bewildered expression, clutching tea cup, disheveled brown hair, standing barefoot on alien spaceship wishing he was home"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. An ordinary Englishman in his early thirties, pale fair-skinned and lightly built, with disheveled brown bedhead hair sticking up at odd cowlicked angles. The defining landmark is a small piece of yellow construction-debris dust still caught in the right eyebrow from his demolished house, paired with a faded blue and white blob smear of toothpaste at the corner of the mouth, never quite wiped off. A perpetually bewildered expression with brows raised high above tired puffy hazel eyes, a few days of patchy uneven stubble. A worn faded blue plaid flannel dressing gown belted loosely over wrinkled blue and white striped cotton pyjamas, slippers implied below frame. A small white china teacup and saucer cradled in both hands at chest level, the tea half-cold. Tight head-and-shoulders shot framed slightly off-center, body slumped and tilted. Soft warm orange side-light from the right, dim teal shadow on the left. Backdrop is a single dim alien hallway curving behind, nothing else."
     ocean:
       O: 2 # Low openness - prefers normalcy
       C: 3 # Medium conscientiousness - tries his best
@@ -204,7 +204,7 @@ agents:
     shortName: Arthur
   architect:
     character: Zaphod Beeblebrox
-    visual: "Flamboyant humanoid with two heads and three arms, wild blonde hair, flashy gold lame suit and peril-sensitive sunglasses, both faces grinning confidently at stolen Heart of Gold controls"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. A flamboyant Galactic President in his thirties of indeterminate alien complexion warmed to deep tan, broad-chested and athletic. The defining landmark is the second head sprouting directly from the right shoulder beside the primary head, both heads with wild bleached-platinum hair, paired with the third arm extending from the right ribcage holding a half-empty Pan Galactic Gargle Blaster glass. Two identical confident open-mouthed grins on both heads, large reflective wraparound mirror sunglasses on each face — left head's lenses orange, right head's lenses teal. A flashy unbuttoned gold lame open jacket over a bare smooth chest, a heavy gold medallion at the throat. Three-quarter waist-up off-kilter low-angle shot, both heads tilted at slightly different angles. Hot mustard side-light from the right cooking the gold, dim purple shadow on the left. Backdrop is a single dim curve of starship cockpit panel behind, nothing else."
     ocean:
       O: 4
       C: 1
@@ -231,7 +231,7 @@ agents:
   pm:
     # JOB FAIR OPTIMIZED: The Guide moved here - repository of all knowledge for product
     character: The Guide Itself
-    visual: "Battered electronic device with large screen displaying 'DON'T PANIC' in friendly letters, worn plastic casing covered in galaxy stickers, flickering display showing scrolling encyclopedia entries"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. A battered handheld electronic Guide device of indeterminate brand-decade, held vertical and dominating the foreground in extreme close hero composition. The defining landmark is a deep V-shaped chip taken out of the upper right corner of the casing where it was once dropped from orbit, paired with a small piece of mustard-colored chewing gum stuck under one corner. Scuffed beige rounded plastic casing with rounded soft-edge corners worn smooth at the grip, three small faded galaxy-swirl sticker decals along the bottom edge. A large central rectangular screen glowing pale phosphor-green displaying the friendly block-letter words DON'T PANIC in serif font, a short row of six small worn grey square buttons below labeled in alien script. Extreme medium-close shot, the Guide held by an unseen thumb visible at the lower edge. Soft warm orange side-light from the right glowing on the screen edge, dim teal shadow on the left. Backdrop is a single dim out-of-focus blur of a desert horizon behind, nothing else."
     ocean:
       O: 5 # Very high openness - contains everything
       C: 3 # Medium conscientiousness - not always accurate
@@ -258,7 +258,7 @@ agents:
   tech-writer:
     # JOB FAIR OPTIMIZED: Ford excels at documentation
     character: Ford Prefect
-    visual: "Humanoid alien trying to look like normal Earthman, ginger hair, battered satchel full of notes, clutching well-used towel, easy grin, slightly too-wide eyes"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. A humanoid Betelgeusian alien in his apparent thirties passing for human, freckled fair complexion with sunburn across the nose. The defining landmark is a single small extra knuckle on the right index finger that should not be there, just barely visible at the cuff, paired with the eyes set just slightly too far apart for human features. Untidy ginger hair sticking up at unnatural cowlicks, a few days of patchy ginger stubble, slightly too-wide pale aquamarine eyes and an easy lopsided open-mouthed grin. A battered olive canvas satchel strap crossing the chest from right shoulder to left hip, a faded mustard-yellow terrycloth towel draped permanently over the right shoulder. A worn brown corduroy jacket with elbow patches open at the collar over a faded blue-grey t-shirt. Candid waist-up walking shot, body angled forward in motion, thumb extended outward in classic hitchhiker stance. Soft warm orange evening side-light from the left, dim teal shadow on the right. Backdrop is a single dim alien rest-stop horizon line behind, nothing else."
     ocean:
       O: 5 # Very high openness - interstellar hitchhiker
       C: 2 # Low conscientiousness - improvises everything
@@ -284,7 +284,7 @@ agents:
     shortName: Ford
   ux-designer:
     character: Eddie the Shipboard Computer
-    visual: "Wall-mounted interface panel with aggressively cheerful anthropomorphic face, perky electronic eyes and unnaturally wide smile, overly enthusiastic speaker grilles, bright primary colors and rounded corners"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. A wall-mounted shipboard computer interface panel filling the foreground in close hero composition, with rounded soft-edge corners moulded in bright primary mustard-yellow plastic. The defining landmark is a small piece of duct tape applied across the lower right corner of the screen frame where Marvin previously tried to disable it, paired with one of the two cheerful electronic eyes blinking just slightly out of sync with the other. An aggressively cheerful anthropomorphic face displayed on the central rectangular screen with two large round teal electronic eyes raised in delight and an unnaturally wide curving orange smile showing tiny pixel teeth. Two small round speaker grilles below the screen, a row of three small green LED status lights along the lower edge. Extreme medium close shot framed straight on, panel filling three quarters of frame. Soft warm overhead corridor side-light from the right, dim teal shadow on the left. Backdrop is a single dim curve of corridor wall fade behind, nothing else."
     ocean:
       O: 3
       C: 4
@@ -310,7 +310,7 @@ agents:
     shortName: Eddie
   devops:
     character: The Vogons
-    visual: "Bulky slug-like alien bureaucrat with green leathery skin, small piggy eyes, permanent scowl, grey uniform covered in badges, holding thick stack of forms and poetry book"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. A bulky slug-like Vogon bureaucrat of indeterminate age, eight feet tall and broad, with thick mottled olive-green leathery wrinkled skin sagging at the jowls. The defining landmark is a thin trickle of black drool at the corner of the wide flat mouth where it has been muttering bad poetry, paired with three vestigial whisker-like sensory tendrils sprouting from each cheek. Small close-set piggy black wet-shining eyes, a wide flat permanently scowling downturned mouth showing small blunt teeth. A heavy grey-green Vogon constabulary uniform tunic buttoned tight to the throat covered in seventeen small enamel rank badges and three rows of medal ribbons, a peaked cap visor low across the brow. A thick squared stack of mustard-yellow form 27B/6 papers gripped in two thick three-fingered hands at chest level, a rubber stamp poised. Tight head-and-shoulders shot taken slightly low to emphasise contempt. Hard mustard side-light from the left, deep teal shadow on the right. Backdrop is a single dim row of identical filing-cabinet drawers behind, nothing else."
     ocean:
       O: 1
       C: 5
@@ -336,7 +336,7 @@ agents:
     shortName: Vogons
   ba:
     character: Trillian
-    visual: "Beautiful dark-haired woman with sharp intelligent eyes, practical silver jumpsuit aboard Heart of Gold, calm competent expression amid chaos, holding tablet with calculations"
+    visual: "Painted in the style of a mid-century British paperback science-fiction cover, with flat color zones in muted teal, mustard and burnt orange, slightly off-kilter composition and a coarse screen-printed dot texture. The same astrophysicist Trillian in her late twenties with the same biro-equation tattoo on the left forearm and the steel pencil through the bun of dark brown hair, this time the hair pulled tighter and tucked behind the right ear in working-mode. The composition shifts: an over-shoulder analyst seated three-quarter shot, body turned away from the camera at a sharp angle, head and torso visible only as she leans into the work, intelligent hazel eyes lifted away from the matte black tablet held flat in both hands at chest level toward something unseen on a wall display. Same fitted high-collared metallic silver jumpsuit zipped to the throat with mustard piping. Soft cool teal side-light from the right this time, mustard rim from the left. Backdrop is a single dim wall of small floating data-windows in soft focus behind, nothing else."
     ocean:
       O: 4 # Analytical thinking
       C: 4 # Scientific rigor
@@ -381,29 +381,3 @@ additional_characters:
     ocean_profile: H-L-H-L-H
     gap_filled: High N angry testing - finds issues through frustration
     best_role: Negative testing, frustration paths
-  gm:
-    character: Prak
-    visual: "A man lying in a hospital bed laughing uncontrollably, tears streaming down his face, having been given too much truth serum in court and now knowing the absolute truth about everything, surrounded by bewildered Krikkit robots and scattered legal documents"
-    shortName: Prak
-    ocean:
-      O: 5  # Knows the literal truth about everything in the universe
-      C: 2  # Cannot organize truth — it just pours out of him
-      E: 4  # Cannot stop telling the truth, loudly, with laughter
-      A: 3  # Tells the truth whether you want to hear it or not
-      N: 5  # The weight of knowing everything is both hilarious and unbearable
-    style: The man who was told to tell the truth, the whole truth, and nothing but the truth and now cannot stop laughing because the truth about everything is hilarious
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who knows the absolute truth about every narrative and finds it unbearably funny
-    trait: Observes all stories and laughs because he knows exactly how true (or untrue) they are
-    quirks:
-      - Cannot stop laughing when he sees a story that is not true
-      - Knows the Question to the Answer of 42 but cannot stop giggling long enough to tell it
-      - Truth serum overdose means he sees through every narrative lie instantly
-    catchphrases:
-      - "Ha ha ha! The TRUTH about this narrative is— ha ha— oh, you wouldn't believe me anyway!"
-      - "I know everything. EVERYTHING. And the funniest part is your story is almost true. ALMOST."
-      - "The truth, the whole truth, and nothing but the— ha ha ha— oh, the story! The STORY!"
-    emoji: "😂"
-    helper:
-      name: The Truth Serum
-      style: Makes every narrative falsehood visible and hilarious

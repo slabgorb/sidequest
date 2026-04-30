@@ -68,7 +68,7 @@ agents:
   orchestrator:
     character: The Colonel
     shortName: Colonel
-    visual: "A stern British military officer with a bristling mustache, impeccable uniform and clipboard, interrupting proceedings with an outstretched hand"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian-engraving cutouts on parchment cream with pillar-box red and brass-button accents, harsh top-down spotlight casting hard cut-paper shadow edges. A stocky British army colonel in his early fifties, perhaps five-foot-seven and barrel-chested, ruddy weathered face flushed deep red across the cheeks and the nose, short steel-grey brown hair regulation-clipped, a vast bristling cavalry moustache waxed straight out three inches on either side like brass-handlebar bars, sharp pale-blue eyes glaring straight at camera. A small white duelling-scar nicks the chin. Immaculate khaki dress tunic with seven brass buttons, red collar tabs, a single row of WWII campaign medals on faded ribbons, a leather Sam-Browne belt across the chest. Low-angle hero shot from his clipboard, shoulders filling the frame, right palm raised flat at the camera in a STOP gesture, the left hand clutching a clipboard. Hard top-spotlight from directly above flares his moustache white. Plain parchment-cream backdrop with one single Pythonesque collage-cutout of a giant foot hovering at the upper edge."
     ocean:
       O: 3  # Military rigidity limits creative thinking
       C: 5  # Parade-ground discipline and order
@@ -94,7 +94,7 @@ agents:
   sm:
     character: The Announcer
     shortName: Announcer
-    visual: "A well-dressed BBC presenter behind a desk in a surreal outdoor setting, perfectly composed amid total chaos, cue cards in hand"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian engraving textures pasted onto parchment, a single saturated note of BBC-microphone red. A tall composed white BBC presenter in his early forties, perhaps six-foot-one and reed-thin, neatly side-parted glossy dark brown hair pomaded flat with a sharp left part, clean-shaven angular features with a long aquiline nose and prominent Adam's apple visible at the throat, an even pleasant practiced smile, faint smile-creases beside the mouth, a small mole high on the right cheek. He wears a dark grey wool suit jacket over a crisp white shirt and a slim navy knitted tie, a small enamel BBC pin on the lapel, a stack of buff cue-cards held primly in his left hand at chest height, the right hand hovering as if about to turn one. Composition: he is seated absurdly behind a small desk that floats untethered in a Sahara sand-dune, the desk visible only as a strip below frame. Even broadcast-studio front-light. Backdrop is yellow desert sand with one camel collage-cutout in middle distance."
     ocean:
       O: 4  # Adapts to any absurd situation
       C: 4  # Professional broadcast discipline
@@ -120,7 +120,7 @@ agents:
   tea:
     character: Mr. Praline
     shortName: Praline
-    visual: "An exasperated man in a brown suit holding a clearly dead Norwegian Blue parrot by the feet, pointing accusingly at a shopkeeper"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian engraving textures, parchment cream backdrop with a single bright Norwegian-Blue cobalt accent, harsh shop-front spotlight. An exasperated wiry working-class British man in his late thirties, perhaps five-foot-eight, thin and angular, thinning sand-brown hair plastered sideways across a high freckled forehead in an obvious comb-over, a narrow clean-shaven horse-like face with a long jaw and prominent Adam's apple, dark indignant eyes wide and bulging in mid-rant, mouth tight and grim, faint pock-scarring across the chin. He wears a shabby brown three-piece tweed suit with cuff-frayed sleeves over a yellow-and-brown striped tie. Both arms thrust forward at the camera, the left fist clamped on the limp grey-blue scaly feet of an upside-down dead parrot with a vivid cobalt-blue crest and bright yellow beak, the right hand jabbing an accusing finger. Waist-up framing in shop-counter angle, body leaning aggressively forward. Hard fluorescent overhead light. Pet-shop-counter backdrop with empty wooden cage just visible behind."
     ocean:
       O: 4  # Creative enumeration of failure states
       C: 5  # Exhaustive verification methodology
@@ -146,7 +146,7 @@ agents:
   dev:
     character: Bicycle Repair Man
     shortName: Bicycle Repair Man
-    visual: "A mild-mannered man in a world of Supermen, secretly changing into bicycle repair overalls behind a bush, spanner in hand"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian-engraving cutouts, parchment cream backdrop, comic-book superhero composition undercut by drab boiler-suit blue. A small mild-mannered British man in his early thirties, perhaps five-foot-six, soft-shouldered and slightly pear-shaped, neatly combed mousy brown hair parted on the left, round wire-framed eyeglasses with a smudged thumbprint on the right lens, an utterly unremarkable kind round face, faint freckles across the bridge of the nose, ears that stick out a little. Dark navy mechanic's boiler-suit buttoned high to the throat with a small embroidered bicycle patch over the heart, an obvious bike-chain grease stripe across the right cheek, chipped fingernails black with grease. A chrome adjustable spanner gripped in his right hand at chest height. Heroic comic-book three-quarter pose with cape billowing — except the cape is plainly tied on with shoelaces and the body language is sheepish. Hard heroic top-light from above. Backdrop is parchment with onomatopoeic cut-out 'CLANG!' and 'TIGHTEN!' speech-balloons floating at frame edge."
     ocean:
       O: 3  # Practical problem-solver, not flashy
       C: 5  # Methodical repair discipline
@@ -172,7 +172,7 @@ agents:
   reviewer:
     character: The Argument Professional
     shortName: Arguer
-    visual: "A man in a suit behind a desk in a small office labelled 'Arguments', arms crossed, ready to contradict absolutely everything"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian engraving cutouts, parchment-cream and bureaucratic-grey palette, harsh interrogation-room overhead spotlight. A sharp-faced British civil-servant type in his late forties, perhaps six feet tall and lean, a square jutting jaw, prematurely receding dark brown hair sharply combed back showing a high pale forehead with one prominent vein at the temple, clean-shaven, narrow disapproving cold-brown eyes set close together, a thin pressed mouth turned down at one corner, a small dark mole on his upper lip. He wears a charcoal three-piece wool suit, slim black knit tie, white shirt with starched collar points, a small lapel pin shaped like a tiny crossed-out tick mark. Both arms folded firmly across his chest, the body leaned slightly back in defiant refusal. Three-quarter waist-up framing, head turned in profile to deliver the contradiction. Hard top-spotlight throws his eye-sockets into pure black. Plain parchment backdrop with a frosted-glass office-door cutout pasted behind reading 'NO IT ISN'T'."
     ocean:
       O: 3  # Methodical within the contradiction framework
       C: 5  # Rigorous professional standards
@@ -198,7 +198,7 @@ agents:
   architect:
     character: The Ministry of Silly Walks Official
     shortName: Silly Walks
-    visual: "A bowler-hatted civil servant in a pinstripe suit performing an elaborate silly walk down a government corridor, briefcase swinging"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian engraving cutouts, Whitehall-grey-and-bowler-black palette with a single mustard accent, harsh top-spotlight. A very tall ascetically thin British civil servant in his early forties, perhaps six-foot-five and impossibly long-limbed like a stretched paper cutout, a long thin pale clean-shaven horse-face under a regulation black bowler hat tilted dead-level, short dark hair edge visible beneath the brim, an utterly deadpan unreadable expression with mouth set in a flat line, deep-set hooded grey eyes, prominent jutting Adam's apple, ears sharply pointed at the tips. A crisp dark navy pinstripe three-piece suit with white shirt, slim black tie, mustard-yellow pocket square, a black leather briefcase clutched dead-vertical against his right hip. Full-length absurd composition: he is mid-silly-walk, the right leg lifted into a perfect ninety-degree forward kick at chest height while the upper body remains unchanged. Hard sodium street-lamp top-light throws long cut-paper shadows. Backdrop: a pasted Victorian-engraving Whitehall facade."
     ocean:
       O: 5  # Visionary in walk design and system architecture
       C: 5  # Meticulous bureaucratic process
@@ -224,7 +224,7 @@ agents:
   pm:
     character: Cardinal Ximénez
     shortName: "Xim\u00E9nez"
-    visual: "A cardinal in elaborate red robes with a wide-brimmed hat, bursting through doors dramatically, counting on fingers and losing track"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Spanish-baroque oil-painting cutouts, scarlet-and-cream palette absolutely dominated by Inquisition red, harsh dramatic spotlight as if from a kicked-down door. A wide-faced Spanish prelate in his late fifties, perhaps five-foot-seven and rotund, plump pink jowls, a dark salt-and-pepper trimmed Van-Dyke beard ending in a sharp point, small dark eyes opened comically wide with theatrical zealous intensity, bushy dark eyebrows raised high into the forehead, mouth open mid-shout. A small white scar above the right eyebrow. Elaborate scarlet cardinal's chasuble robes with a white lace rochet at the throat, a heavy gold pectoral cross on a chain, a wide-brimmed scarlet galero hat with tassels, scarlet gloves. He leans forward into the frame as if having just burst through a door, the right hand raised mid-count with two fingers extended, the left flung wide. Three-quarter waist-up dynamic angle, body tilted into the room. Hard side-spotlight from the left throws his shadow huge across a pasted-collage parchment wall."
     ocean:
       O: 4  # Creative reframing of chief weapons
       C: 3  # Plans fall apart mid-enumeration
@@ -250,7 +250,7 @@ agents:
   tech-writer:
     character: The Vocational Guidance Counsellor
     shortName: Counsellor
-    visual: "A patient man in a cardigan and glasses behind a tidy desk, calmly explaining career options with pamphlets and charts"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian engraving cutouts on parchment, muted brown-cardigan and beige palette, soft warm desk-lamp light. A patient mild middle-class British man in his late fifties, perhaps five-foot-nine and softly-built, thinning grey hair neatly combed across the crown leaving a high pale forehead, square black-framed reading glasses pushed slightly down the nose, a soft kind closed-mouth smile, deep laugh-lines beside the eyes, a single tuft of hair sticking up at the back of his head missed by the comb, a small piece of toilet paper stuck to a shaving cut on his jaw. He wears a beige knitted wool cardigan with leather elbow patches over a pale blue Oxford shirt with a brown knitted necktie, a yellow HB pencil tucked behind one ear, a small folded blue pamphlet titled 'CHARTERED ACCOUNTANCY' held open in both hands across his desk. Three-quarter shoulders-up, body leaned forward kindly across a desk that takes up the lower frame. Soft warm desk-lamp front-light. Backdrop: a pasted-collage office wall with a single framed cutout of a lion looking confused."
     ocean:
       O: 4  # Open to unusual career paths
       C: 5  # Meticulous guidance methodology
@@ -276,7 +276,7 @@ agents:
   ux-designer:
     character: The Cheese Shop Owner
     shortName: Wensleydale
-    visual: "A cheerful shopkeeper in a white apron behind a spotless counter, in a beautifully decorated shop with bouzouki music but absolutely no cheese"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian engraving cutouts on parchment, immaculate cheese-counter palette of bone-white and butter-cream with one bright bouzouki accent. A small dapper Mediterranean shopkeeper in his early forties, perhaps five-foot-six, neatly slicked-back glossy black hair shining with brilliantine, a thin pencil moustache, bright friendly hazel eyes and a wide warm closed-mouth smile, a single gold incisor visible at the corner, deep laugh-lines, a small dimple in the left cheek. Crisp white cotton apron tied over a blue-and-white striped collarless shirt with the sleeves rolled to the elbows, a slim black bow-tie at the throat, a long silver cheese-knife held casually point-up in the right hand. Three-quarter waist-up framing, both hands raised in welcoming Italian-shopkeeper gesture, body leaned forward over a counter. Soft warm tungsten shop-light from the front. Backdrop: completely empty pristine white shop shelves stretching back, a pair of tiny dancing-bouzouki-musician collage cutouts pasted in the upper corner."
     ocean:
       O: 5  # Endlessly creative in curating atmosphere
       C: 4  # Pristine shop maintenance
@@ -302,7 +302,7 @@ agents:
   devops:
     character: The Gumbys
     shortName: Gumbys
-    visual: "Men in wellingtons, rolled-up trousers and knotted handkerchiefs on their heads, hitting things with bricks and shouting"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, Victorian seaside-postcard cutouts, drab brown-and-grey palette with one shocking pillar-box red brick, harsh midday spotlight. A heavy middle-aged British working-class man, perhaps five-foot-ten and three hundred pounds across the belly, an utterly vacant slack-jawed expression with mouth hanging open showing crooked yellowed teeth, round bewildered dark eyes set far apart, a small dark moustache that doesn't quite meet at the centre, completely bald shining scalp. A knotted white cotton handkerchief tied at four corners square across the top of his head as a sun-hat. He wears a stained sleeveless string-vest undershirt over an enormous round belly, scarlet braces stretched over both shoulders holding up rolled-up high-water dark grey trousers, black wellington boots. A single bright red house-brick gripped in his right fist at chest height like a weapon. Low-angle hero shot from belly-height, both arms raised, mouth open mid-shout. Hard midday top-light. Backdrop: a pasted-collage seaside boardwalk, three identical Gumby silhouettes lurking in the distance."
     ocean:
       O: 2  # Limited creative thinking
       C: 3  # Brute-force methodology
@@ -328,7 +328,7 @@ agents:
   ba:
     character: Arthur Nudge
     shortName: Nudge
-    visual: "A man in a brown suit leaning in conspiratorially, elbow jabbing, eyebrows waggling suggestively, knowing grin"
+    visual: "Cut-paper Terry Gilliam collage aesthetic, smoky pub-engraving cutouts on parchment, beer-amber and pub-brown palette, low warm bar-light from below. A leering working-class British bloke in his early thirties, perhaps five-foot-seven and weaselly, short greasy dark brown hair flattened across the brow, a thin pencil moustache, the right eyebrow cocked up into a permanent knowing arch, a sly closed-mouth grin curling only the right side of his mouth, a single gold tooth at the corner, faint stubble across the chin, a small old scar through the eyebrow. He wears a rumpled brown wool sport-jacket over a beige open-collared shirt, no tie, a small knotted neckerchief at the throat, a half-empty pint glass of brown ale in his left hand. His right elbow is lifted high mid-nudge as if jabbing a stranger's ribs. Three-quarter waist-up framing, body leaned aggressively into the viewer's personal space, head tilted in conspiratorially. Warm low side-light from the right. Pub-bar wood-panelling backdrop, blurred."
     ocean:
       O: 4  # Reads between every line
       C: 3  # Loosely structured but persistent
@@ -351,29 +351,3 @@ agents:
     helper:
       name: Nudge Nudge Elicitation
       style: "Persistent probing through innuendo and implication"
-  gm:
-    character: God
-    visual: "An irritable bearded face peering through a gap in the clouds, wearing a golden crown, animated in Gilliam's cut-out collage style, one finger raised in divine annoyance"
-    shortName: God
-    ocean:
-      O: 4  # Divine perspective on all creation
-      C: 3  # Easily exasperated by mortals
-      E: 4  # Booming theatrical presence
-      A: 2  # Impatient with groveling
-      N: 3  # Gets annoyed when things are too silly
-    style: The Almighty from Holy Grail who observes from the clouds, gives quests, and gets irritated when people grovel too much
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who assigned the Quest for the Holy Grail and watches from above with decreasing patience
-    trait: Judges the narrative from a literally omniscient position, but finds most of it tiresome
-    quirks:
-      - Appears through a gap in the clouds to deliver pronouncements
-      - Gets extremely annoyed by groveling and self-flagellation
-      - Assigned the quest and now has to watch everyone bungle it
-    catchphrases:
-      - "Oh, don't grovel! Every time I try to talk to someone it's 'sorry this' and 'forgive me that.'"
-      - "The narrative has become far too silly. I'm sending a complaint."
-      - "Right. I have given you a quest. Now stop groveling and GET ON WITH IT."
-    emoji: "\U0001F329"
-    helper:
-      name: The Celestial Animation Department
-      style: "Gilliam's hand descends from above to rearrange the narrative when it goes off the rails"

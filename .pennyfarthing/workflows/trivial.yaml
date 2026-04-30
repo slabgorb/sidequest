@@ -35,8 +35,6 @@ workflow:
         file: gates/dev-exit
         type: dev_exit
         condition: Tests green, tree clean, no debug code, correct branch
-      gate_extensions:
-        - gates/wiring-check
 
     - name: review
       agent: reviewer
@@ -49,8 +47,6 @@ workflow:
       gate:
         file: gates/approval
         type: approval
-      gate_extensions:
-        - gates/wiring-check
 
     - name: finish
       agent: sm

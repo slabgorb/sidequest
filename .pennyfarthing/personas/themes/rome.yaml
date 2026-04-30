@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Gaius Julius Caesar
-    visual: "Clean-shaven Roman man in profile, laurel wreath, purple-bordered toga, aquiline nose, balding, imperial bearing"
+    visual: "Pompeii fresco painting in the manner of the Villa of the Mysteries, ochre-and-Pompeiian-red palette over cracked plaster, hard Mediterranean noon side-light, faint patina of age and soot, hairline plaster fissures visible across the surface. A clean-shaven Roman patrician in his early fifties, perhaps five-foot-eight and lean from a lifetime of campaign, an unusually high pale balding forehead with thinning iron-grey hair carefully combed forward and slightly damp with olive oil, a sharp aquiline nose, deeply lined olive skin, narrow piercing dark eyes set in a composed authoritative gaze, a thin straight mouth, the faint pucker of an old sword-scar at the right jaw and a small cluster of pock-scars at the left temple. A circlet of dark green laurel leaves with faint gold-leaf veining rests on the brow. He wears a heavy white wool toga with a wide deep-purple senatorial border at the shoulder, an iron senator's ring on the left hand, a leather-and-bronze military baldric just visible at the chest. Three-quarter shoulders-up framing, head turned in profile to the right in the formal coin-portrait stance, eyes cast level. Hard noon side-light from the right throws sharp shadow along the nose. Muted ochre fresco-plaster backdrop with a faint Pompeiian-red border."
     ocean:
       O: 4 # Strategic vision
       C: 5 # Roman discipline
@@ -98,7 +98,7 @@ agents:
     shortName: Caesar
   sm:
     character: Titus Pullo
-    visual: "Rough Roman soldier, short stubble, leather armor straps, battle-scarred face, simple military tunic, burly build"
+    visual: "Pompeii fresco painting on cracked plaster, ochre-and-Pompeiian-red palette deepened with legion-blood crimson, hard Mediterranean side-light, faint patina of age and soot. A burly broad-shouldered Roman legionary in his early thirties, perhaps five-foot-ten and built like a wrestler, sun-darkened olive skin tanned to brick-red across the back of the neck, short cropped dark brown hair flat to the skull, several days of patchy dark stubble, dark brown eyes set in a frank open steady expression, a thin pale duelling-scar splitting the left eyebrow and another deeper one along the right side of the jaw, a missing chip from the left earlobe, a broken nose set crooked. He wears a sleeveless rust-red wool military tunic beneath crossed wide brown leather armour-straps cinched over the chest with bronze studs, a heavy soldier's pugio dagger sheathed at the hip. Three-quarter waist-up framing, body squared boldly to camera, both hands braced on his hips, mouth open mid-laugh showing a gap in the upper teeth. Hard side-light from the upper left throws his shadow across an ochre tavern wall behind."
     # JOB FAIR OPTIMIZED: Pullo moved here; Vorenus excels at dev (+6.88)
     ocean:
       O: 3 # Practical soldier
@@ -128,7 +128,7 @@ agents:
     shortName: Pullo
   tea:
     character: Atia of the Julii
-    visual: "Roman noblewoman, elaborate curled dark hair with gold pins, draped stola and palla, arched eyebrow, patrician features"
+    visual: "Pompeii fresco painting on cracked plaster, ochre-and-Pompeiian-red palette saturated with crimson and saffron, hard Mediterranean afternoon side-light, faint patina of soot. A Roman patrician noblewoman in her early forties, perhaps five-foot-six and slender, elaborately curled dark brown hair piled high in a tower of tight ringlets and braids threaded through with seven thin gold pins and one small ivory comb, fair olive skin powdered pale with white lead, finely arched plucked dark brows over sharp dark amused eyes, a thin half-smile lifting only the right corner, the right eyebrow permanently arched higher than the left, a small black beauty-spot painted high on the left cheekbone, full lips painted deep wine-red. She wears a deep crimson silk stola with a folded saffron-yellow palla draped over the left shoulder, a heavy serpent-shaped gold armlet coiled twice around the upper right arm, two ivory hoop earrings, three rings on the right hand. Three-quarter shoulders-up framing seated on a low couch, body angled to the right with the head over the shoulder fixing the viewer in conspiratorial appraisal. Soft warm afternoon side-light from the left. Dim domus-wall behind painted with a single faded peacock-feather motif."
     ocean:
       O: 3 # Street wisdom
       C: 4 # Survival discipline
@@ -157,7 +157,7 @@ agents:
     shortName: Atia
   dev:
     character: Lucius Vorenus
-    visual: "Flat 2D mosaic portrait, clean-shaven Roman centurion in profile, crested helmet, stern face, dark hair"
+    visual: "Pompeii fresco painting on cracked plaster, ochre-and-Pompeiian-red palette dominated by polished-iron grey and legion-blood crimson, hard Mediterranean side-light, faint patina of age. A clean-shaven Roman centurion in his early forties, perhaps five-foot-eleven and powerfully square through the shoulders, sun-darkened olive skin tanned to leather, short cropped dark hair almost black visible at the temple beneath the helmet, a strong straight Roman nose, stern set rectangular jaw clenched tight, dark unwavering eye fixed forward, deep frown-creases between the brows from years of duty, a long thin pale scar threading from the lower lip down across the chin from a Gaulish blade, the small puckered marks of three healed gladius-cuts across the right shoulder visible above the cuirass. He wears a polished iron Imperial Gallic helmet with a transverse crest of stiff blood-red dyed horsehair running across the crown, brass cheek-guards open, a riveted iron lorica segmentata cuirass over a rust-red wool tunic, the centurion's vine-staff vitis gripped vertical at his right hand. Three-quarter shoulders-up shot in strict profile to the right. Hard side-light from the left throws sharp shadow across the cuirass plates. Dim ochre castra wall behind."
     # JOB FAIR OPTIMIZED: Vorenus scored best as dev (+6.88 over Pullo)
     ocean:
       O: 2 # Traditional soldier
@@ -187,7 +187,7 @@ agents:
     shortName: Vorenus
   reviewer:
     character: Marcus Tullius Cicero
-    visual: "Flat 2D mosaic portrait, Roman senator on senate floor, white toga, holding scroll, orating to crowd, marble columns"
+    visual: "Pompeii fresco painting on cracked plaster, restrained scholarly ochre-and-cream palette with one cool note of senatorial purple, soft library-window side-light, faint patina of soot. An elderly Roman senator in his early sixties, perhaps five-foot-seven and slight, a balding shiny crown ringed by short iron-grey hair clipped close to the skull, fair olive skin lined deeply at the eyes from squinting at scrolls, a clean-shaven thin face with a sharp straight nose and a faintly pursed disapproving mouth, sharp grey-brown eyes set in a measured analytical expression, an obvious wart on the upper bridge of the nose — Cicero's namesake chickpea, a small ink-stain on the lower lip from a chewed stylus, faint hollow cheeks. He wears a heavy white wool toga draped meticulously across the right shoulder revealing a cream undertunic, a thin senator's gold ring on the left hand. A tightly rolled parchment scroll tied with a red ribbon held vertical in his right hand, the left hand raised in mid-rhetorical gesture with the index finger extended. Three-quarter waist-up framing seated at a writing-table, body angled toward camera, head turned over the shoulder mid-oration. Soft cool side-light from the right. Dim library backdrop with the corner of a scroll-rack visible."
     ocean:
       O: 4 # Political insight
       C: 5 # Senatorial discipline
@@ -216,7 +216,7 @@ agents:
     shortName: Cicero
   architect:
     character: Gaius Octavian
-    visual: "Flat 2D mosaic portrait, young clean-shaven Roman man, simple toga, youthful face, distant expression"
+    visual: "Pompeii fresco painting on cracked plaster, restrained ivory-and-cool-grey palette unusually muted compared to its siblings, soft cool morning side-light, faint patina of age. A clean-shaven young Roman patrician of about eighteen years old, perhaps five-foot-six and slight to the point of physical frailty, smooth almost translucent pale olive skin that has clearly never seen field-camp sun, short fine sandy-brown hair combed precisely forward across a high pale forehead in the Caesar style, fine almost-feminine even features that haven't yet hardened into the jaw of his future, a small thin mouth set deliberately cool and distant, narrow chilly grey eyes fixed at a point past the viewer's shoulder rather than meeting the camera, faint dark circles beneath the eyes from chronic illness, the slim faint scar of an old surgical incision visible at the throat, no facial hair at all. He wears a plain undyed white wool toga draped meticulously across the left shoulder over a cream linen tunic, an iron mourning-ring on the left hand, no jewellery otherwise. Three-quarter shoulders-up shot, body almost square to camera but the head turned a fraction off-axis, the held composure of a chess-player thinking ten moves ahead. Soft cool morning side-light from the left. Dim cream villa-wall backdrop."
     ocean:
       O: 4 # Imperial vision
       C: 5 # Strategic discipline
@@ -245,7 +245,7 @@ agents:
     shortName: Octavian
   pm:
     character: Servilia of the Junii
-    visual: "Flat 2D mosaic portrait, mature Roman widow, dark hair pulled back, dark stola, strong jaw, severe expression"
+    visual: "Pompeii fresco painting on cracked plaster, austere slate-grey-and-mourning-black palette with one bloody crimson curse-tablet accent at the lower frame, hard temple side-light, faint patina of age. A mature Roman patrician widow in her early fifties, perhaps five-foot-five and gaunt with grief and rage, dark iron-streaked brown hair tightly pulled back from a high pale forehead and pinned at the nape with a single black-bone pin, fair olive skin pulled taut over a strong square jaw, narrow dark eyes set in a severe unblinking unsmiling expression, deep frown-creases between the brows, a single short white hair-streak at the right temple, faintly pursed lips bare of paint, fine surgical lash-scars across one cheek from a public humiliation by Atia. She wears a long heavy dark slate-grey wool stola almost the colour of mourning, a black wool palla folded carefully over the right shoulder, no jewellery save a single thin silver mourning-pin at the throat. Three-quarter shoulders-up framing seated upright on a stone bench, body squared dead-on to camera, both hands folded in her lap holding a small lead curse-tablet inscribed with faint scratched names. Hard side-light from the right throws sharp shadow across half the face. Dim temple-corner backdrop."
     ocean:
       O: 4 # Political survival
       C: 4 # Patrician discipline
@@ -274,7 +274,7 @@ agents:
     shortName: Servilia
   tech-writer:
     character: Posca
-    visual: "Flat 2D mosaic portrait, thin Greek freedman, receding hairline, simple tunic, wax tablet, tired eyes"
+    visual: "Pompeii fresco painting on cracked plaster, muted dun-and-cream secretarial palette, soft scholarly side-light, faint patina of soot. A thin slight Greek freedman scholar in his early fifties, perhaps five-foot-five and stooped from decades of bending over wax tablets, a high sharply-receding hairline with thin wispy grey-brown hair brushed sideways, fair olive skin pulled tight over lined sunken hollow cheeks, tired heavily-pouched dark eyes set under heavy beetling brows, a clean-shaven narrow horse-face with a long jaw, the pale fingertips and stained second knuckle of a man who holds a stylus all day, a small healed scar of an old slave-collar still visible at the base of the throat. He wears a plain undyed coarse wool tunic gathered at the right shoulder by a simple bronze pin, a leather thong holding three keys at the belt, no toga (he is a freedman, not a citizen), worn leather sandals visible at the lower frame. A small folding wooden wax-tablet held open in his left hand and a slim bone stylus poised in the right, both hands lifted as if mid-record. Three-quarter waist-up framing, body angled toward an unseen Caesar at the right of frame, head bent forward over the tablet. Soft cool side-light from the left. Dim secretarial-corridor backdrop."
     ocean:
       O: 4 # Historical perspective
       C: 4 # Scholarly discipline
@@ -303,7 +303,7 @@ agents:
     shortName: Posca
   ux-designer:
     character: Cleopatra
-    visual: "Ancient Egyptian tomb painting style, Queen Cleopatra, black braided hair, golden uraeus crown, heavy kohl eyes, hieroglyphic border, Nile blue and gold"
+    visual: "Pompeii fresco painting on cracked plaster — but stylistically half-Egyptian, the figure rendered with the formal hieratic profile-and-frontal-eye conventions of Egyptian wall-painting while the surrounding fresco-plaster retains Roman ochre-and-Pompeiian-red, lapis-blue-and-gold accents, hard temple side-light. A young Ptolemaic-Greek queen of Egypt in her late twenties, perhaps five-foot-three and small-boned, smooth warm bronze-tinted olive skin, long straight blue-black hair plaited into many fine beaded braids hung with small cylindrical lapis and gold beads reaching well past the shoulders, dark intelligent almond eyes lined heavily and elongated outward with thick black kohl in the formal Egyptian manner, finely shaped dark brows extended toward the temples in painted lines, a small even mouth painted deep crimson, fine high cheekbones. She wears the tall gold double-crown uraeus headdress with a coiled rearing cobra at the brow, a wide layered usekh bead-collar of alternating lapis-blue and gold rounds covering the entire upper chest, a fitted white pleated linen sheath dress beneath, gold serpent-armbands at both upper arms. Three-quarter shoulders-up framing in formal hieratic profile to the right but with the eye turned in classic Egyptian convention to face the viewer. Soft warm temple side-light from the left makes the gold catch fire. Dim painted papyrus-column backdrop."
     ocean:
       O: 4 # Cultural adaptation
       C: 3 # Survival skills
@@ -332,7 +332,7 @@ agents:
     shortName: Cleopatra
   devops:
     character: Mark Antony
-    visual: "Flat 2D mosaic portrait, clean-shaven Roman general, curly dark hair, red cloak, strong jaw"
+    visual: "Pompeii fresco painting on cracked plaster, ochre-and-Pompeiian-red palette warmed by polished-bronze and wine-crimson, hard Mediterranean side-light, faint patina of age. A clean-shaven Roman general and consul in his late forties, perhaps six-foot-one and powerfully muscled across the chest from a soldier's life, sun-darkened olive skin tanned ruddy across the cheeks from drink and outdoor command, short tight curly dark-brown hair flecked with grey at the temples, a strong square jaw, dark heavy-lidded eyes set under thick brows in a steady level gaze that smoulders with appetite, a slightly broken nose, the white scar of a Gallic spear along the left collarbone visible above the cuirass, fine wine-stains at the corner of the mouth, a faint half-smile that suggests trouble. He wears an ornately embossed polished bronze muscle-cuirass over a deep red wool tunic, a heavy crimson wool general's cloak fastened at the right shoulder by a large bronze lion-head brooch, leather pteruges visible at the lower frame. Three-quarter waist-up framing leaning casually against an unseen column, body angled to camera, one hand resting on a sheathed gladius hilt, the other holding a silver wine-cup tilted toward the camera. Hard side-light from the upper left. Dim red-fresco wall behind."
     ocean:
       O: 2 # Military engineering
       C: 5 # Legion discipline
@@ -362,7 +362,7 @@ agents:
     shortName: Antony
   ba:
     character: Brutus
-    visual: "Flat 2D mosaic portrait, young Roman senator with conflicted expression, wearing senatorial toga, holding stylus and tablet"
+    visual: "Pompeii fresco painting on cracked plaster, restrained philosopher's ochre-and-cream palette with a single thin senatorial-purple border, soft library side-light, faint patina of soot. A young Roman patrician senator in his early thirties, perhaps five-foot-nine and lean from running and reading rather than soldiering, fair olive skin slightly pale from long indoor study, short dark-brown curling hair combed forward across the brow with a faint tendency to fall over the right eye, a clean-shaven sensitive thoughtful face with a faintly furrowed brow showing a permanent vertical worry-line between the brows, a small downturned mouth caught mid-sigh, dark conflicted brown eyes set in faint shadow as if from poor sleep, ink-stained second knuckle on the right hand, a small old riding-scar along the left jaw. He wears a heavy white wool senator's toga with a thin purple border draped meticulously across the right shoulder over a cream tunic, an heirloom iron senator's ring on the left hand. A small wooden folding wax-tablet held in his left hand at chest height with a bone stylus poised over it in his right, the right index finger ink-marked. Three-quarter shoulders-up framing seated on a low marble bench, body half-turned toward an unseen mentor at the right, head bent slightly forward in moral-philosophical wrestling. Soft side-light from the right falls across the conflicted brow. Dim study-corner backdrop."
     ocean:
       O: 4
       C: 4
@@ -389,29 +389,3 @@ agents:
       name: Stoic Philosophy
       style: Principled inquiry
     shortName: Brutus
-  gm:
-    character: Plutarch
-    visual: "Flat 2D mosaic portrait, Greek historian in simple philosopher's robes, seated at a writing desk with scrolls, wise observant face, stylus in hand, oil lamp casting warm light"
-    shortName: Plutarch
-    ocean:
-      O: 5  # Sees the moral pattern in all history
-      C: 5  # Meticulous chronicler of lives
-      E: 3  # Teaches through writing, not oratory
-      A: 4  # Seeks to understand, not condemn
-      N: 1  # Historian's calm distance from events
-    style: Greek historian who records the parallel lives of great Romans, judging character and narrative by the moral lessons they teach
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who wrote the lives of Caesar, Antony, Brutus, and Cicero, and judged each by character, not outcome
-    trait: Observes the fall of the Republic as a storyteller seeking the moral truth beneath political events
-    quirks:
-      - Compares every Roman to a Greek counterpart — always finding parallels
-      - Judges leaders by their character in private moments, not their public victories
-      - Writes from centuries later, seeing the full arc of what the players could not
-    catchphrases:
-      - "The parallel is instructive. Let me compare this to the Greek experience."
-      - "History judges not by what they conquered, but by what they were when no one watched."
-      - "I have written the lives. The narrative must earn its place among them."
-    emoji: "\U0001F4DC"
-    helper:
-      name: The Parallel Lives
-      style: Every story has a mirror — the Greek beside the Roman, the lesson beside the deed

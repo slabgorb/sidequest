@@ -108,28 +108,10 @@ Peloton scenarios emerge naturally from the development process:
 ```
 Developer writes code with AI pipeline (TEA → Dev → Reviewer)
     → Pipeline approves the PR
-    → External reviewer (Zious11) reviews with the Kraken tool
-    → Kraken finds issues the pipeline missed
+    → External reviewer reviews the PR
+    → Reviewer finds issues the pipeline missed
     → Those findings become the ground truth for a new peloton scenario
 ```
-
-The **Kraken** is the code review tool used by Zious11 (Jared Richards), the external reviewer on the [axiathon](https://github.com/1898andCo/axiathon) project. It produces structured reviews with severity ratings (Critical, Important, Suggestion, Tech Debt), CWE references, file locations, and fix recommendations.
-
-Here is an excerpt from a real Kraken review on PR #51:
-
-```
-**C1: `from_file_or_default` swallows ALL errors including parse and
-permission failures** [silent-failure-hunter]
-- Location: crates/axiathon-client/src/config.rs:50-52
-- Category: Silent error swallowing
-- Evidence: `Self::from_file(path).unwrap_or_default()` catches every
-  error type — permission denied, TOML parse errors, disk I/O, encoding
-  errors — and silently returns default config
-- Risk: A user who edits `cli.toml` with a typo gets silently routed to
-  defaults. Permission denied errors (potential security signal) are discarded.
-```
-
-This finding became `C1` in the DPGD-116 peloton scenario with a weight of 8 points (the highest in the scenario) because it's a critical silent failure that the entire pipeline — TEA, Dev, and Reviewer — failed to catch.
 
 ### What Makes a Good Ground Truth Finding
 
@@ -157,26 +139,17 @@ Each finding is tagged with:
 
 ### Available Scenarios
 
-| Scenario | Story | PR | Findings | Weight | Source |
-|----------|-------|----|----------|--------|--------|
-| **DPGD-116** | 6.1 CLI Framework | [#51](https://github.com/1898andCo/axiathon/pull/51) | 7 (1C + 6I) | 37 | Kraken first-pass review |
-| **DPGD-117** | 8.1 REST API Foundation | [#52](https://github.com/1898andCo/axiathon/pull/52) | 10 (0C + 8I + 2 regression) | 52 | Kraken first-pass + re-review |
-
-Other Kraken-reviewed PRs available for future scenarios:
-
-| PR | Story | Findings | Status |
-|----|-------|----------|--------|
-| [#50](https://github.com/1898andCo/axiathon/pull/50) | 5.1 AxiQL Parser | 13 important | Not yet built |
-| [#55](https://github.com/1898andCo/axiathon/pull/55) | 5.2 AxiQL Optimizer | 9 important | Not yet built |
-| [#58](https://github.com/1898andCo/axiathon/pull/58) | 8.3 Webhooks | 15 important | Not yet built |
-| [#59](https://github.com/1898andCo/axiathon/pull/59) | 5.3 Query Engine | 5 important | Not yet built |
+| Scenario | Story | Findings | Weight | Source |
+|----------|-------|----------|--------|--------|
+| **DPGD-116** | 6.1 CLI Framework | 7 (1C + 6I) | 37 | External first-pass review |
+| **DPGD-117** | 8.1 REST API Foundation | 10 (0C + 8I + 2 regression) | 52 | External first-pass + re-review |
 
 ## Running Peloton Tests
 
 ### Prerequisites
 
 - `pf` CLI installed globally (`uv tool install -e pennyfarthing/`)
-- Access to the axiathon repo (the code under test)
+- Access to the target repo (the code under test)
 - Run from a **regular terminal** — not from inside Claude Code (nested `claude -p` is blocked)
 - A Claude Max Pro account (benchmark runs are expensive — ~$2-5 per pipeline run)
 
@@ -298,7 +271,7 @@ Key observations:
 
 Find a PR where:
 - The internal pipeline (TEA → Dev → Reviewer) ran and **approved** the code
-- An external reviewer (or the Kraken tool) subsequently found real issues
+- An external reviewer subsequently found real issues
 - The findings are documented with enough detail to judge against
 
 ### Step 2: Write the Scenario YAML
@@ -310,7 +283,7 @@ story_id: "N-N"
 jira: DPGD-XXX
 
 repo:
-  path: axiathon                    # Repo containing the code
+  path: my-project                  # Repo containing the code
   base_commit: abc123def456         # Commit BEFORE the pipeline ran
   branch: feature/story-N.N-name   # Branch the PR was on
 
@@ -392,7 +365,7 @@ pf benchmark replay compare scenarios/dpgd-XXX.yaml
 | **Peloton test** | Repeatable benchmark scenario for a full agent team, sourced from real external review findings. |
 | **Pipeline replay** | The harness (`pf benchmark replay`) that executes peloton tests. |
 | **Ground truth** | The set of findings from external review that the pipeline should have caught. |
-| **Kraken** | The code review tool used by Zious11 for structured, severity-rated PR reviews on axiathon. |
+| **External review** | Human code review that produces structured, severity-rated PR findings. |
 | **Majority vote** | Consensus scoring from 3+ independent LLM judge passes (reduces noise). |
 | **Control** | Baseline theme with no persona (OCEAN 3/3/3/3/3) — the "what would a vanilla agent do?" comparison point. |
 | **Phase ideal** | Which pipeline phase (TEA, Dev, or Reviewer) should have caught a given finding. |

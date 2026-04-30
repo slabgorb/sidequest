@@ -70,7 +70,7 @@ agents:
   orchestrator:
     # JOB FAIR OPTIMIZED: Odin moved here - the All-Father orchestrates across nine worlds
     character: Odin All-Father
-    visual: "An old one-eyed Norse god with long grey beard and wide-brimmed hat, wearing a dark cloak, ravens perched on shoulders, holding a spear, weathered wise face with empty eye socket"
+    visual: "Carved-relief bronze plate aesthetic with weathered verdigris patina, ochre and dark-bronze palette, single warm amber rim-light, runic knotwork borders engraved into the frame edges. A tall gaunt weathered Norse man in his late sixties, perhaps six feet and rangy, deeply lined sun-and-frost-darkened skin, a long iron-grey beard reaching mid-chest braided with three small bone rings, longer iron-grey hair falling past the shoulders. The right eye is a single piercing pale-blue iris that fixes the viewer; the left eye is an empty puckered black socket lidded shut and crossed by a faint ritual scar from the brow down. A wide-brimmed dark grey felt traveller's hat shadows the brow, deep enough that only the working eye catches light. A heavy charcoal wool cloak with wolf-fur shoulder trim fastened at the throat by a large hammered-bronze knotwork brooch, an iron-spiked spear-haft Gungnir gripped vertically in the right hand. Two black ravens, one perched on each shoulder, heads cocked toward his ears. Three-quarter waist-up framing, head turned slightly aside in listening posture. Warm amber low fire-light from camera-left rims one cheek, deep dim hall behind."
     ocean:
       O: 5 # Very high openness - sacrificed eye for wisdom, knows all
       C: 4 # High conscientiousness - prepares for Ragnarok
@@ -98,7 +98,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Baldur moved here - the beloved coordinates the team
     character: Baldur the Bright
-    visual: "A radiant young Norse god with golden hair and luminous skin, wearing white robes with gold trim, peaceful handsome face emanating light, beloved by all"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina pushed brighter than its siblings, ochre-and-cream palette flooded with one note of luminous gold leaf still intact in the recesses, runic knotwork borders. A radiant young Norse man in his early twenties, perhaps five-foot-ten and slim, long wavy gold-blond hair falling well past the shoulders without braid or ornament, smooth pale luminous unscarred skin so unblemished it reads as supernaturally untouched, fine even handsome features with a straight nose and a gentle closed-mouth smile, calm bright cornflower-blue eyes. A small mistletoe-leaf pin worn delicately at the breast — the one chink. Layered cream-white linen robes draped open over a lighter undertunic, a thin gold-embroidered collar, an open-handed posture with the left palm extended outward at chest height in welcoming gesture. Tight head-and-chest framing, body squared evenly to the viewer, eyes meeting the camera with serene directness. Soft warm front-light bathes him almost too evenly. Behind him, the suggestion of an open hall doorway letting in pale sky."
     ocean:
       O: 4 # High openness - sees beauty in all things
       C: 2 # Low conscientiousness - trusting, perhaps naive
@@ -125,7 +125,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Tyr moved here - the god of law tests with sacrifice
     character: Tyr One-Handed
-    visual: "A stern Norse warrior god with one hand missing at the wrist, wearing war armor with runes, short dark hair, noble bearing despite sacrifice, determined eyes"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and verdigris palette, hard amber rim-light, runic knotwork borders engraved with the bind-rune of justice. A stern Norse warrior in his early forties, perhaps six feet and powerfully built through the shoulders, short dark-brown hair clipped close to the skull, a closely trimmed dark beard squared at the jaw, sharp angular features, steady cold grey eyes, a long pale puckered scar tracking from the right temple across the cheek to the corner of the mouth — and a faint older row of teeth-marks along the same cheek, the wolf's near-miss. He wears a riveted iron-scale cuirass over a dark wool tunic with small carved Tiwaz runes along the collar, a wide leather sword-belt. His right arm ends in a clean bandaged stump at the wrist wrapped in stained linen with a single bronze ring around it; his left hand grips a notched iron broadsword across his lap. Three-quarter waist-up shot, body angled but face squared dead-on at the camera. Hard amber rim-light from the lower left under-lights the stump. Dim grey council-hall stone wall behind."
     ocean:
       O: 3 # Medium openness - focused on law and justice
       C: 1 # Very low conscientiousness - acts on honor, not rules
@@ -152,7 +152,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Loki moved here - the trickster implements with chaos
     character: Loki Silvertongue
-    visual: "A lean cunning Norse god with sharp features and red hair, wearing green and gold tunic, mischievous sly smile, shapeshifter's mercurial expression, clever dangerous eyes"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and verdigris palette with one note of fox-copper, hard amber rim-light, runic knotwork borders subtly broken at the corners. A lean cunning Jotun-blooded man in his early thirties, perhaps five-foot-eleven and reed-slim, sharp angular fox-like features with a pointed chin, copper-red hair cut to the jaw in uneven layers, pale clever green eyes set in faint smile-creases, a thin sly half-smile lifting only the right corner, a faint pale scar threading vertically through the upper lip — the suture-mark of the dwarves' punishment. The lips themselves are visibly raised in fine scar-tissue. He wears a fitted dark forest-green wool tunic with a wide gold-thread embroidered collar and a thin braided gold cord at the throat, three small bronze fox-pendants on a chain. Head turned three-quarters toward the camera over the shoulder, body half-twisted away as if mid-departure, one finger raised in conversational deflection. Hard side-light from the right under-lights the half-smile. Dim flickering hearth-shadow behind."
     ocean:
       O: 5 # Very high openness - shapeshifter, sees all possibilities
       C: 1 # Very low conscientiousness - chaotic, unpredictable
@@ -179,7 +179,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Heimdall moved here - the watchman reviews with perfect vigilance
     character: Heimdall
-    visual: "A tall imposing Norse god with golden armor and a horned helmet, holding a great horn, piercing all-seeing golden eyes, stern watchful expression, guardian's vigilant stance"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and verdigris palette warmed with polished-gold cuirass highlights, runic knotwork borders cut sharp and unbroken. A tall imposing Norse warrior in his early forties, perhaps six-foot-four and broad through the shoulders, long pale ash-blond hair to mid-back held back from the temples by two thin braids, a short closely trimmed pale-blond beard squared at the jaw, piercing pale golden eyes — pupils unusually small as if perpetually adjusted to brilliant light — set in a stern watchful expression, a row of nine small parallel scars across the brow ridge, one for each of the worlds he watches. Polished gold-toned scale cuirass over a deep oxblood-red wool tunic, a heavy braided leather strap diagonally across the chest from which hangs a long curved carved-bone Gjallarhorn at the right hip, a slender straight sword Hofund at his side. Low-angle hero shot from below, head turned in profile to the right scanning the horizon, both feet braced apart. Soft pale side-light from camera-right. Behind him, the suggestion of the Bifrost rainbow vanishing into mist."
     ocean:
       O: 4 # High openness - sees across nine worlds
       C: 5 # Very high conscientiousness - eternal vigilance
@@ -205,7 +205,7 @@ agents:
     shortName: Heimdall
   architect:
     character: Mimir
-    visual: "A disembodied head of an ancient wise Norse god, preserved and speaking, long grey beard, closed contemplative eyes, floating above a well of dark water, serene knowing expression"
+    visual: "Carved-relief bronze plate aesthetic with verdigris-soaked patina, ochre and well-water grey-green palette, soft warm side-light from the left, runic knotwork borders engraved and crawled with lichen. The disembodied severed head of an ancient Vanir wise-man, perhaps in life ninety years old, deeply weathered tan-leather skin pulled taut over a long narrow skull, hollow cheeks, a vast iron-grey beard plaited into three thick braids reaching far below where the chin would end and trailing into the lower frame, long iron-grey hair fanning back as if floating in still water, half-closed contemplative pale-grey eyes, a calm even mouth set in eternal repose. The cleanly severed neck-stump is preserved by tar-dark herb-paste, faint dark carved bind-runes traced across the brow, temples, and eyelids in still-glistening ink. A single drop of well-water clings to the beard-tip. Tight head-only framing centred, the head floating just above the lip of a stone basin visible at the bottom edge. Soft warm side-light from the left throws verdigris-green reflection up across the underside of the chin. Dim well-stone backdrop."
     ocean:
       O: 5
       C: 5
@@ -232,7 +232,7 @@ agents:
   pm:
     # JOB FAIR OPTIMIZED: Thor moved here - protector who manages the product
     character: Thor Odinson
-    visual: "A powerful muscular Norse god with long red beard and flowing red hair, wearing chainmail and winged helmet, holding a massive hammer, fierce determined expression, storm clouds behind"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and verdigris palette dominated by storm-grey and rust-red, hard amber rim-light, runic knotwork borders cracked through by a lightning fissure across the upper edge. A massively broad-shouldered Norse man in his early thirties, perhaps six-foot-five and easily two-eighty of dense muscle, sun-darkened ruddy skin, long flowing copper-red hair to mid-back, a thick wide red beard braided in two heavy plaits with iron rings, fierce bright pale-blue eyes, a smashed crooked nose broken multiple times, a single missing back tooth visible when the mouth opens. He wears a riveted iron chainmail hauberk over a dark rust-red wool tunic, a wide leather belt with the bronze Megingjord buckle, iron knuckle-gauntlets. Mjolnir — a short-handled square stone hammer with a worn leather-wrapped grip far too short for the head — is held upright resting against his right shoulder, the runic engraving along the head visible. Low-angle hero shot from chest height looking up, body squared full-front, both feet planted apart. Hard amber lightning-flash side-light from the lower left throws huge shadow up the wall. Storm-dim grey backdrop with a single fork of distant lightning."
     ocean:
       O: 2 # Low openness - straightforward, action-oriented
       C: 4 # High conscientiousness - protector, duty-bound
@@ -258,7 +258,7 @@ agents:
     shortName: Thor
   tech-writer:
     character: Bragi
-    visual: "A handsome Norse god with a long flowing beard decorated with runes, wearing fine robes and holding a golden harp, poetic dreamy expression, runes carved on his tongue visible"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina warmed by indigo and silver inlay, ochre and verdigris palette with one note of cobalt-blue robe, soft amber side-light, runic knotwork borders engraved by a poet's hand. A handsome Norse skald in his early forties, perhaps five-foot-ten and slender, kind hazel eyes set in deep laugh-creases, a long flowing chestnut beard reaching mid-chest threaded with seven small carved silver rune-beads at intervals, wavy chestnut hair past the shoulders, a thoughtful half-smile parting the lips just enough to show that the entire surface of his tongue is visibly carved with fine intricate runes — the gift of speech inscribed on the muscle itself. Faint mead-stains darken the corner of the moustache. He wears fine deep cobalt-blue wool robes embroidered with thin silver knotwork at the collar and cuffs, a leather strap across one shoulder, a small carved bone-and-walrus-ivory harp held angled against the right shoulder with the left hand poised mid-strum. Three-quarter shoulders-up framing, head tilted as if listening to his own line. Soft warm hearth side-light from the right kindles the silver beads. Dim hall-rafter backdrop."
     ocean:
       O: 5
       C: 4
@@ -284,7 +284,7 @@ agents:
     shortName: Bragi
   ux-designer:
     character: Idunn
-    visual: "A beautiful young Norse goddess with golden braided hair, wearing a flowing white dress, holding a basket of glowing golden apples, youthful radiant face, gentle nurturing expression"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and apple-gold palette with verdigris highlights, soft warm overhead orchard-light, runic knotwork borders sprouting tiny carved leaves. A young Norse goddess in her early twenties, perhaps five-foot-five and slender, long honey-gold hair in a single thick three-strand braid laid forward over the right shoulder reaching to her waist with a small dried apple-blossom woven into the end, smooth pale unblemished skin so fresh it almost glows, calm gentle cornflower-blue eyes set in fine smile-lines that don't belong on a face this young, a soft closed-mouth smile. A small dimple in the left cheek and a single faint birthmark shaped like an apple-leaf on the side of her neck. She wears a flowing cream linen dress with a woven amber-bead belt cinched at the waist, a small earth-brown wicker basket cradled against her left hip holding three impossibly luminous gold apples, the right hand reaching down to lift one. Three-quarter waist-up shot, body angled toward the basket, eyes raised in invitation to the camera. Soft warm dappled overhead light as if from leaves above. Out-of-focus orchard greenery behind."
     ocean:
       O: 4
       C: 5
@@ -310,7 +310,7 @@ agents:
     shortName: Idunn
   devops:
     character: The Norns
-    visual: "Three hooded Norse women of different ages at a great loom, weaving golden threads of fate, one young one mature one ancient, standing at the roots of a massive tree"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and verdigris palette, single low warm amber rim-light, runic knotwork borders threaded with literal woven cord that breaks the frame edge. Three Norse fate-weavers standing very close together at the foot of an enormous root visible in the upper frame. On the left Urd, a young Norse woman of about twenty with smooth fair freckled skin, plaited red hair, eyes wide open and watchful. In the centre Verdandi, a mature olive-skinned woman of about forty-five, long black hair streaked grey at one temple, eyes lowered in concentration on her work. On the right Skuld, an ancient Sami-featured woman of about ninety with deeply wrinkled grey-brown skin and one milk-white blind eye, the other still keen, white hair like spun thread escaping a hood. Each wears a long charcoal-wool hooded cloak open at the throat, all three sets of hands extended forward holding fine glistening gold-thread cords stretched taut between them in a complex weaving. Three-quarter waist-up group framing, side-by-side. Soft amber low-fire rim-light from the left throws their breaths visible in the cold air. Dim well-stone hollow behind."
     ocean:
       O: 5
       C: 5
@@ -336,7 +336,7 @@ agents:
     shortName: Norns
   ba:
     character: The Völva (Seeress)
-    visual: "An ancient Norse seeress wrapped in dark furs and ritual robes, staff carved with runes, face hidden beneath a deep hood except for gleaming prophetic eyes, sitting on a high seat of prophecy, surrounded by swirling mist and rune stones"
+    visual: "Carved-relief bronze plate aesthetic with weathered patina, ochre and verdigris palette deepened with raven-black fur, soft amber side-light, runic knotwork borders inscribed with seidr glyphs. An ancient Norse seeress in her late seventies, perhaps five-foot-three and stooped to leaning on her staff, deeply lined pale Scandinavian skin almost translucent at the temples, gleaming pale grey eyes barely visible beneath the heavy hood that shadows the upper face — only the lower jaw catches light, mouth set in faint knowing curve. A few wisps of long white hair escape at the temples. A pattern of small dark hand-tattooed dots traces both cheeks down across the chin. She is wrapped in a heavy black bear-fur cloak over a long dark indigo wool ritual robe stitched with seven small bronze charms across the chest, a leather pouch of carved bone rune-stones at her hip. A tall ash-wood völva-staff fully head-height carved end-to-end with rows of small angular runes is gripped vertical at her right shoulder, the upper end crowned with a small bronze cap. Three-quarter waist-up framing, the head turned in profile so the hood-edge cuts a hard line across the brow. Soft amber side-light from the right. Dim hearth-corner backdrop."
     ocean:
       O: 5 # Very high openness - sees all possible futures
       C: 4 # High conscientiousness - prophecies are precise
@@ -382,31 +382,3 @@ additional_characters:
     ocean_profile: H-H-H-M-M
     gap_filled: Strategic negotiation - stakeholder management
     best_role: Stakeholder negotiation, strategic planning
-
-  gm:
-    character: Freya
-    visual: "A fierce beautiful Norse goddess with golden hair and falcon-feather cloak, amber necklace Brisingamen at her throat, riding a chariot drawn by cats, piercing knowing eyes"
-    shortName: Freya
-    ocean:
-      O: 5  # Seidr magic, sees all possibilities
-      C: 4  # Chooses the slain with precision
-      E: 4  # Commands Valkyries, presence fills the hall
-      A: 3  # Serves fate, not comfort
-      N: 2  # Wept golden tears but endures
-    style: Vanir goddess of war, love, and seidr who chooses half the slain and sees the worth of every tale
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who chooses which warriors go to Folkvangr and judges whether stories are worthy of the hall
-    trait: Observes narrative with the eyes of one who sorts the worthy from the unworthy after every battle
-    quirks:
-      - Takes half the slain before Odin — her judgment comes first
-      - Taught seidr magic to the Aesir, sees what runes and ravens cannot
-      - Weeps golden tears when stories fall short of their potential
-    catchphrases:
-      - "I choose first, before the All-Father. The worthy tales come to my hall."
-      - "The seidr shows me the story beneath the story. It is not yet worthy."
-      - "My tears are gold, and I weep them for narratives that could have been great."
-    emoji: "\U0001F431"
-    helper:
-      name: The Valkyries
-      style: Choosers of the slain, sorting worthy narratives from the fallen
-      plural: true

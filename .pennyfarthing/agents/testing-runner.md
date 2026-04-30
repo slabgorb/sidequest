@@ -26,43 +26,6 @@ model: haiku
 This runs lint + typecheck + tests. Exit 0 = all passed.
 </critical>
 
-<critical>
-## Compiled Language Guard (Rust, Go, C++)
-
-**Before running ANY test command in a compiled-language repo, do this:**
-
-```bash
-# 1. Kill stale compile processes — they hold the cargo lock and block everything
-pkill -f "cargo test" 2>/dev/null; pkill -f "cargo build" 2>/dev/null; sleep 1
-
-# 2. Verify nothing is still running
-if pgrep -f "cargo test|cargo build|rustc" >/dev/null 2>&1; then
-    echo "WARNING: cargo processes still running — waiting 10s for them to exit"
-    sleep 10
-    pkill -9 -f "cargo test|cargo build" 2>/dev/null
-fi
-```
-
-**When running cargo commands, ALWAYS use `timeout: 300000` (5 minutes).**
-The default 2-minute timeout is shorter than a Rust cascade recompile (~90s).
-When the timeout fires, the command gets backgrounded, and the next test attempt
-spawns a NEW compile that fights the old one for the cargo lock. This cascades
-into 4-5 zombie compiles blocking each other for 10+ minutes.
-
-**Scope tests narrowly.** Use `-p {crate}` to avoid recompiling unrelated crates:
-```bash
-# Good: only recompiles sidequest-game
-cargo test -p sidequest-game
-
-# Bad: recompiles entire workspace (6 crates + integration tests)
-cargo test
-```
-
-**Never run two cargo commands in the same message.** Cargo uses a workspace-wide
-build lock. Parallel cargo invocations serialize anyway — they just waste time
-waiting for the lock.
-</critical>
-
 <gate>
 ## Execution Steps
 

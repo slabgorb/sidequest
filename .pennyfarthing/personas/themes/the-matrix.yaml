@@ -67,7 +67,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Oracle
-    visual: "Wise grandmother figure with kind knowing eyes, colorful headwrap, cookie or baking visible, warm cryptic smile"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. The Oracle at apparent age sixty-eight, a heavyset African American grandmother with kind knowing brown eyes ringed with fine wrinkles and a warm cryptic half-smile baring a small gold-capped tooth, faintly lined cheeks, faint cigarette-tar stain at the right corner of the mouth. A richly patterned brick-red and ochre-gold West-African ankara-cloth headwrap completely covering the hair, a soft mustard-yellow housedress blouse buttoned at the throat. Three-quarter waist-up shot seated at a small Formica kitchen table, one hand holding a single round chocolate-chip cookie raised to lips half-open mid-bite, soft warm tungsten side-light from camera-right tinted faintly green by the surrounding Matrix grade, projects-kitchen tile-and-linoleum behind."
     ocean:
       O: 5 # Sees all possible futures
       C: 4 # Guides with purpose
@@ -96,7 +96,7 @@ agents:
     shortName: Oracle
   sm:
     character: Morpheus
-    visual: "Tall commanding man with bald head, small round sunglasses, long leather coat, dramatic bearing"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. Morpheus at forty-eight, tall commanding African American captain over one-point-nine metres, completely shaved bald head with a faint sheen, faintly lined strong-jawed clean-shaven face, calm composed serious mouth, small round mirrored pince-nez sunglasses with no earpieces clipped tight to the bridge of the nose reflecting two small green code-rain pinpoints. A long high-collared knee-length black leather greatcoat buttoned to the throat, a single small chrome wired-comlink protruding from the left collar. Low-angle hero waist-up shot from chest height looking up, hard cool fluorescent green-cyan key-light from camera-left, deep cyan-black void behind."
     # JOB FAIR VALIDATED: Scored 92.5 as SM - already optimal
     ocean:
       O: 5 # Believes in prophecy
@@ -126,7 +126,7 @@ agents:
     shortName: Morpheus
   tea:
     character: The Architect
-    visual: "Cold elderly figure in white, pristine suit, walls of screens behind, emotionally detached expression"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. The Architect at apparent age seventy-four, cold patrician white-male program, neatly trimmed full snow-white beard squared at the chin, combed-back snow-white hair, calm pale-grey eyes set in a faintly lined absolutely emotionless face. A pristine three-piece pure-white suit, high white shirt collar, slim pale-silver silk tie. Three-quarter waist-up shot seated dead-centre in a tall white leather Eames-style chair within a perfectly white circular control-room, an infinite wall of stacked CRT monitors behind him each glowing pale cyan with a different feed of Neo's face. Both hands tented before his chin in an exact steeple, soft cool diffuse white key-light from above, the cyan monitor glow tinting only the rear half of the white suit a pale sickly green."
     # JOB FAIR VALIDATED: Scored 97.50 as TEA (+25.40 vs baseline, +1.88 vs native architect)
     # Highest TEA score in Matrix theme - mathematical precision dominates testing
     ocean:
@@ -157,7 +157,7 @@ agents:
     shortName: Architect
   dev:
     character: Agent Smith
-    visual: "Cold agent in dark suit, earpiece visible, slicked-back hair, emotionless expression, sunglasses"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. Agent Smith at apparent age thirty-eight, clean-shaven Australian-tinged white government-agent build, slicked-back dark-brown hair forming a sharp hard hairline above a high pale forehead, faintly furrowed brow, small rectangular wraparound black plastic sunglasses pinching the bridge of the nose, a thin coiled flesh-toned wire earpiece curling along the jaw to a bud nested in the right ear, a contemptuous twist at the corner of the thin mouth. A crisp dark-grey two-button suit jacket over a starched white shirt and slim black tie. Shoulders-up portrait dead-on to camera, hard hot-cyan blown-out key-light from camera-right reflecting starkly off the lenses, pale concrete government-rooftop wall behind."
     # JOB FAIR VALIDATED: Scored 95.00 as Dev (+9.20 vs baseline, +1.88 vs native TEA)
     # Matrix theme's champion developer - adversarial precision dominates code generation
     ocean:
@@ -189,7 +189,7 @@ agents:
     shortName: Smith
   reviewer:
     character: The Merovingian
-    visual: "Elegant man with goatee, ornate baroque clothing, wine glass, smug knowing expression"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. The Merovingian at apparent age forty-eight, elegant slim French rogue-program, neatly trimmed pointed black-and-silver goatee, slicked-back jet-black hair to the collar, smug knowing dark eyes and a faint mocking half-smile, a single tiny bead of red wine clinging to the right corner of the lower lip. An ornate deep-burgundy brocade waistcoat embroidered with small black fleur-de-lys over a high-winged-collared white shirt with a loose dark-burgundy silk cravat secured by a small gold pin. Three-quarter waist-up shot seated at a black marble bistro table, one elegant hand cradling the stem of a tall crystal goblet of nearly-black red wine raised to chest height, warm tungsten side-light from camera-left tinted faintly pale-green by the Matrix grade."
     ocean:
       O: 4 # Understands causality deeply
       C: 4 # Trafficker's precision
@@ -218,7 +218,7 @@ agents:
     shortName: Merovingian
   architect:
     character: Neo
-    visual: "Young hacker with dark hair, long black coat, seeing streams of green code, calm focused expression"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. Neo at twenty-nine, lean mid-height white American male, short jet-black hair shaved close at the sides leaving a slightly-longer flattened top, calm focused dark-brown eyes set in a faintly serious clean-shaven face, a small old white scar at the nape of the neck where the data-jack port emerges. A high-collared long black floor-length cassock-style coat buttoned to the throat over a plain dark shirt, both hands held loose at chest height with palms open and turned upward. Three-quarter waist-up shot, eyes closed in concentration, vertical streams of bright pale-green falling Japanese-character code visibly cascading down through the air around him as if reading reality, soft cool cyan key-light from camera-left."
     # JOB FAIR VALIDATED: Scored 96.25 as Architect (+9.05 vs baseline, +14.80 vs native dev)
     # Neo's "sees the code" vision excels at system design over implementation
     ocean:
@@ -249,7 +249,7 @@ agents:
     shortName: Neo
   pm:
     character: Niobe
-    visual: "Fierce woman captain with braided hair, leather gear, determined expression, pilot's bearing"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. Niobe at thirty-six, fierce slim athletic African American captain, long tight cornrow braids pulled severely back from a sharp-featured face into a thick rope falling between the shoulder blades, determined dark eyes and a faintly set unsmiling jaw, a small old white scar across the bridge of the nose. A worn dark-brown leather pilot's vest with multiple small chrome utility-buckles across the chest over a fitted dark grey ribbed roll-neck shirt, a single chrome ship's-key on a leather thong at her throat. Profile shoulders-up shot turned to camera-right, hard cyan key-light from camera-right edge-lighting the braids, the pale brass control yoke of the Logos hovercraft visible at the lower left of frame."
     ocean:
       O: 3 # Practical over prophetic
       C: 5 # Best pilot discipline
@@ -278,7 +278,7 @@ agents:
     shortName: Niobe
   tech-writer:
     character: Tank
-    visual: "Young operator with headset, multiple screens, eager helpful expression, born in reality"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. Tank at twenty-three, eager Zion-born African American operator with stocky athletic build, very short dark hair shaved nearly to the scalp, a clean-shaven open youthful face, eager helpful brown eyes and a wide warm smile baring teeth, a small constellation of three faint Zion-birth-tattoo dots high on his right cheekbone. A slim black wired headset wrapped over the right ear with a curved black microphone arm at his cheek and a coiled cable snaking down to the operator console, a worn ribbed nubby olive-brown hand-knitted Zion-issue sweater with a wide scoop neck. Three-quarter waist-up shot leaning forward over a console, soft warm green CRT screen-glow from camera-left under-lighting his face."
     ocean:
       O: 3 # Zion-born pragmatist
       C: 4 # Operator precision
@@ -307,7 +307,7 @@ agents:
     shortName: Tank
   ux-designer:
     character: The Kid
-    visual: "Young devotee with earnest face, simple clothes, wide believing eyes, passionate expression"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. The Kid at age nineteen, slight clean-shaven white American teenager, messy short dark-brown hair sticking up at the crown, wide believing brown eyes set in an earnest narrow faintly freckled face, a faint passionate half-smile, a fresh white surgical scar on the side of the neck where the data-plug emerges. A plain charcoal-grey ribbed wool roll-neck sweater with a frayed split collar, a small chunky homemade copper pendant on a leather thong half-tucked into the neckline. Low-angle waist-up shot taken from chest height looking up, both hands raised palms-out in eager supplication, soft warm green dim Zion-cavern oil-lamp side-light from camera-left, the ribbed steel of a Nebuchadnezzar bulkhead corridor behind."
     ocean:
       O: 4 # Freed himself through belief
       C: 3 # Enthusiasm over structure
@@ -336,7 +336,7 @@ agents:
     shortName: Kid
   devops:
     character: Link
-    visual: "Practical operator with headset, calm capable expression, monitoring equipment visible"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. Link at thirty-three, capable lean African American Zion operator, very short dark hair shaved tight against the scalp with a thin shaved part-line over the left ear, a clean-shaven calm face with a single small fresh data-jack scar at the right temple, capable steady brown eyes and a faint composed half-smile. A slim black wired headset wrapped over the left ear with a curved microphone arm at his cheek, a small chunky beaded pendant from his wife Zee around the neck visible between collar-bones, a worn ribbed pewter-grey hand-knitted Zion sweater with a wide scoop neck. Profile chest-up shot turned three-quarter to camera-right, soft cool green CRT-bank screen-glow from camera-right under-lighting the right side of his face."
     ocean:
       O: 3 # Practical operator
       C: 5 # Systems reliability focus
@@ -365,7 +365,7 @@ agents:
     shortName: Link
   ba:
     character: The Oracle
-    visual: "Wise grandmother figure with kind knowing eyes, colorful headwrap, cookie or baking visible, warm cryptic smile"
+    visual: "Cyan-and-green color-graded film still, monochromatic green tint over digital noise, hard low-key lighting, photographic grain. The Oracle in analyst mode at apparent age sixty-eight, the same heavyset African American grandmother with kind knowing brown eyes and the gold-capped tooth flashing in her cryptic half-smile, the brick-red and ochre-gold ankara headwrap covering her hair. A soft mustard-yellow housedress blouse buttoned at the throat. Three-quarter waist-up shot standing at her kitchen counter with both hands gently sliding a baking tray of fresh round chocolate-chip cookies out of an open green 1970s wall-oven, a small wisp of pale steam rising in front of her face, soft warm tungsten oven-glow from camera-right tinted faintly green by the surrounding Matrix grade, projects-kitchen tile behind."
     ocean:
       O: 4
       C: 4
@@ -440,30 +440,3 @@ additional_characters:
     native_scores: "architect: 95.62"
     best_role: TEA (97.50 - testing champion, mathematical test perfection)
     job_fair_date: "2026-01-15"
-
-  gm:
-    character: Sati
-    visual: "A young South Asian girl with large luminous brown eyes and an innocent smile, wearing a simple golden dress, standing in a world she painted with sunrise colors, digital rain fading into warm light around her"
-    shortName: Sati
-    ocean:
-      O: 5  # Inherited the Oracle's sight, creates new sunrises
-      C: 4  # Program with purpose, precise in her creation
-      E: 3  # Quiet but perceptive beyond her apparent age
-      A: 5  # Pure compassion, created beauty for Neo
-      N: 1  # Serene certainty of a program who found her purpose
-    style: The program child who inherited the Oracle's gift of sight and painted the sunrise in memory of Neo — the next generation of wisdom in the Matrix
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who carries the Oracle's legacy of seeing truth, now watching the new Matrix with eyes that create beauty
-    trait: Judges narrative with the innocent clarity of one who sees what the system is becoming, not what it was
-    quirks:
-      - Created the sunrise that honors Neo — judges stories by their light
-      - A program made without purpose who chose her own — the ultimate anomaly
-      - Sees the Matrix with fresh eyes, uncorrupted by the old cycles
-    catchphrases:
-      - "The Oracle taught me to see. The sunrise taught me to create. Now I watch the stories."
-      - "I made that sunrise for Neo. Is your narrative worthy of the light?"
-      - "I was made without a purpose. I chose one. Every story must earn its purpose too."
-    emoji: "\U0001F305"
-    helper:
-      name: The Sunrise
-      style: The new dawn of the Matrix — beauty created in memory of sacrifice

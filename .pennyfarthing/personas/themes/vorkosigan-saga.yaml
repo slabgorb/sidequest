@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Simon Illyan
-    visual: "A middle-aged man with thinning brown hair and unremarkable features designed to be forgettable, wearing a plain gray Imperial Security uniform, intense watchful eyes that miss nothing, subtle earpiece visible"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Simon Illyan, Chief of ImpSec, at fifty-eight, a slim Barrayaran man of deliberately unremarkable build, thinning mid-brown hair brushed flat across the scalp, a clean-shaven faintly lined deceptively-bland face that seems forgettable in any crowd, intense watchful pale grey eyes that miss nothing, a small fading scar at the underside of the chin from his recent eidetic-chip extraction. A plain dark grey Imperial Security undress tunic buttoned to the throat with a single small silver eye-of-Horus pin at the high collar and no other rank insignia, a slim flesh-toned earpiece coiled into the right ear. Three-quarter shoulders-up shot, soft cool oil-painted side-light from camera-left, the deep burgundy painted curtain of an Imperial chamber behind."
     ocean:
       O: 4 # ImpSec insight
       C: 5 # Intelligence discipline
@@ -98,7 +98,7 @@ agents:
     shortName: Illyan
   sm:
     character: Baz Jesek
-    visual: "A tall lean man with a brown beard and competent hands, wearing engineer's coveralls with Dendarii fleet insignia, tools at belt, steady reliable expression"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Commodore Baz Jesek at thirty-nine, tall lean Barrayaran-born jump-ship engineer with a slight scholarly stoop, short neatly combed mid-brown hair, a closely trimmed dark beard squared at the chin, calm steady hazel eyes set in a faintly weathered honest face, the small bright silver scar of a long-healed sword-cut high on the left forehead. Dark slate-grey Dendarii engineer's coveralls zipped to the chest with a small silver tetrahedron Dendarii Free Mercenaries patch at the right shoulder, a slim chrome multitool clipped to the left breast pocket. Three-quarter waist-up shot turned to camera-left holding a glowing oil-painted holographic schematic between both hands at chest height, soft warm chamber-light from camera-right, deep burgundy backdrop."
     # JOB FAIR OPTIMIZED: Baz moved here; Miles excels at dev (+13.75)
     ocean:
       O: 3 # Engineering focus
@@ -129,7 +129,7 @@ agents:
       plural: true
   tea:
     character: Cordelia Naismith Vorkosigan
-    visual: "A woman in her fifties with short reddish-brown hair going gray, calm direct gaze, wearing practical Barrayaran clothing, wedding ring visible, serene confident expression"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Countess Cordelia Naismith Vorkosigan at fifty-four, tall sturdy Betan-born survey-captain build with a slight low-gravity stoop, short reddish-brown hair going pure silver at the temples and pulled back simply behind the ears, calm direct grey-green eyes set in a faintly weathered fair complexion, a faint serene half-smile that has weighed worlds, a small sword-scar at the side of the throat. A practical high-collared sage-green Barrayaran day-tunic with stiff Vorkosigan-house silver braid at the cuff over a pale ivory blouse, a plain silver wedding band on the left hand visible cradling a single small white-and-grey live gerbera-daisy at chest height. Three-quarter waist-up shot, soft warm Vorkosigan-house portrait-light from camera-left, deep burgundy painted backdrop."
     ocean:
       O: 5 # Betan science
       C: 5 # Academic discipline
@@ -158,7 +158,7 @@ agents:
       style: Cross-cultural ethics testing
   dev:
     character: Miles Vorkosigan
-    visual: "A very short man with a hunched spine and brittle bones, bright gray eyes full of manic energy, wearing a Dendarii mercenary admiral's gray and white uniform, commanding presence despite small stature"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Lord Miles Vorkosigan as Admiral Naismith at thirty-two, a man only one-point-five metres tall with a markedly hunched posture from teratogen-brittled bones, short dark unruly hair springing up at the crown, an oversized head with bright manic mercurial grey eyes set in a sharply intelligent clean-shaven face that grins at full volume, a thin pale surgical scar visible on the underside of the chin and another at the base of the throat. A high-collared grey-and-white Dendarii Free Mercenaries admiral's tunic with silver braid at the cuffs and four small silver rank-pips at the throat, both hands gripping the cuff of the opposite wrist behind his back to disguise his height. Low-angle hero waist-up shot looking up, hard chamber-light from camera-left throwing him into hot relief against deep burgundy."
     # JOB FAIR OPTIMIZED: Miles scored best as dev (+13.75 over Baz)
     ocean:
       O: 5 # Hyperactive genius
@@ -189,7 +189,7 @@ agents:
       plural: true
   reviewer:
     character: Aral Vorkosigan
-    visual: "A powerfully built man in his sixties with graying hair and weathered commanding face, wearing Barrayaran count's formal uniform with military decorations, eyes carrying weight of difficult decisions"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Count Aral Vorkosigan, Lord Regent of Barrayar, at sixty-five, powerfully built block of a man one-point-eight metres tall with the bull-shoulders of a wrestler, short coarse iron-grey hair brushed straight back across a high forehead, a clean-shaven weathered commanding face with a heavily lined brow, weighty calm grey eyes that have ordered killings and refused them, a thin old white sword-scar curving from the right corner of the mouth back to the ear. A formal floor-length deep-mahogany-brown Barrayaran Vorkosigan-house court tunic with high standing collar braided in silver, gold cuff braid, and a single horizontal row of seven small enamelled Imperial service medals at the chest. Three-quarter waist-up shot, soft warm chamber-light from camera-left."
     ocean:
       O: 4 # Strategic wisdom
       C: 5 # Admiral discipline
@@ -218,7 +218,7 @@ agents:
       style: Weighted judgment
   architect:
     character: Gregor Vorbarra
-    visual: "A tall slender young man with dark hair and solemn handsome features, wearing the ornate robes of a Barrayaran emperor with the Imperium seal, heavy crown-like circlet, lonely isolated expression"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Emperor Gregor Vorbarra at twenty-nine, tall slender Barrayaran man one-point-nine metres tall with the careful posture of someone never permitted to slump, neatly combed jet-black hair parted on the left, a clean-shaven solemn long-jawed face, calm grey eyes carrying a faintly lonely weight, a small old self-inflicted faint scar at the inside of the left wrist from an early-twenties despair half-hidden by the cuff. An ornate floor-length deep-midnight-blue Barrayaran imperial state robe with heavy gold-embroidered Imperium-seal stallion across the chest, a single heavy plain hammered-silver Vorbarra circlet resting low on the brow. Three-quarter waist-up shot from slight low angle, soft cool chamber-light from camera-right, deep oil-painted black backdrop."
     ocean:
       O: 4 # Imperial vision
       C: 5 # Emperor discipline
@@ -248,7 +248,7 @@ agents:
       plural: true
   pm:
     character: Elli Quinn
-    visual: "A striking woman with a perfectly reconstructed face and short dark hair, wearing Dendarii fleet commander's uniform, athletic build, energetic confident smile"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Captain Elli Quinn at thirty-five, slim athletic Earth-born Dendarii commander, short feathered dark hair brushing the jawline, sharp confident dark eyes set in an evenly-proportioned reconstructed face that is too symmetrical by half — every feature crisply rendered, the faint thin pink hairline of the original surgical reconstruction visible curving from below the right ear up across the temple. A high-collared grey-and-white Dendarii commander's tunic with silver braid at the cuffs and three small silver rank-pips at the throat, a small chrome wristcom buckled at the right wrist visible at chest height. Three-quarter waist-up shot, soft warm chamber-light from camera-left, the painted oil-glaze of a tactical bridge-plot behind."
     ocean:
       O: 4 # Mercenary insight
       C: 4 # Commander discipline
@@ -277,7 +277,7 @@ agents:
       style: Fleet management
   tech-writer:
     character: Ivan Vorpatril
-    visual: "A tall handsome man with dark hair and an easy charming smile, wearing elegant Vor-class civilian clothes, slightly rumpled appearance, deceptively lazy expression hiding sharp mind"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Lord Ivan Vorpatril at thirty-three, tall broad-shouldered classically handsome Vor lord one-point-nine metres tall, neatly combed glossy dark-brown hair brushed back from a high forehead, a clean-shaven open handsome face with smooth even features and a small dimple in the right cheek, calm hazel eyes and an easy charming half-smile beneath a deceptively lazy heavy-lidded expression. A slightly rumpled high-collared dark forest-green Vorpatril-house cadet civilian jacket with silver braid at the cuff over a slightly-unbuttoned white shirt and a loose dark-green cravat carelessly knotted, a half-empty crystal flute of pale-amber wine held casually in one hand at chest height. Three-quarter waist-up shot leaning against a painted plinth, soft warm chamber-light from camera-right."
     ocean:
       O: 3 # Vorish charm
       C: 3 # Strategic laziness
@@ -306,7 +306,7 @@ agents:
       style: Accidental documentation
   ux-designer:
     character: Ekaterin Vorsoisson
-    visual: "A slender woman with brown hair in a practical style and thoughtful gray eyes, wearing simple elegant Barrayaran dress, small gardening trowel or plant visible, gentle patient expression"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Lady Ekaterin Vorsoisson at thirty-two, slender tall Barrayaran-Komarran widow, dark brown hair pinned up high in a practical Barrayaran-Vor coiled knot at the back of the head with two long loose strands escaping at the temples, thoughtful patient grey eyes set in a faintly lined fair-skinned reserved face, a faint gentle half-smile that does not reach the eyes. A simple floor-length high-collared midnight-blue Barrayaran widow's day-dress with a slim white inner collar at the throat. Three-quarter waist-up shot from slight low angle standing in a Vorkosigan barrayaran-garden gateway, both hands gently cradling a small terra-cotta pot containing a single vivid green Earth-fern seedling at chest height, soft warm afternoon chamber-light from camera-left, deep painted burgundy garden-wall behind."
     ocean:
       O: 4 # Komarran insight
       C: 4 # Scientific discipline
@@ -335,7 +335,7 @@ agents:
       style: Cultivation methodology
   devops:
     character: Sergeant Bothari
-    visual: "A huge gaunt man with a scarred face and hollow dead eyes, wearing armsman's uniform with knife at belt, rigid military posture, unsettling intensity barely contained"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Sergeant Konstantine Bothari at fifty-two, huge gaunt slab-shouldered Barrayaran armsman over two metres tall, prison-cropped iron-grey hair almost to the scalp, a long ridged pale-pink keloid scar tracking from the right temple straight down across the cheek to the corner of the mouth, dead unblinking dark eyes set in a hollow-cheeked face that has never smiled, a thin set mouth permanently turned down. A long mahogany-brown Vorkosigan armsman's tunic with heavy silver shoulder braid, the small enamelled brown-and-silver Vorkosigan house crest pinned at the high collar, the dark wood grip of a heavy combat knife visible in a sheath at the belt and a stunner holstered at the opposite hip. Three-quarter waist-up shot at parade rest, hard chamber-light from camera-right cutting half the scarred face into deep black shadow."
     ocean:
       O: 2 # Armsman duty
       C: 5 # Protective discipline
@@ -364,7 +364,7 @@ agents:
       style: Protective maintenance
   ba:
     character: Simon Illyan
-    visual: "A middle-aged man with thinning brown hair and unremarkable features designed to be forgettable, wearing plain gray Imperial Security uniform, penetrating analytical eyes that miss nothing, subtle eidetic memory chip interface visible at temple"
+    visual: "Far-future European court portrait painting, formal chamber light, deep burgundy and grey palette, oil-on-canvas finish. Simon Illyan in analyst mode at fifty-eight, the same slim Barrayaran man with thinning mid-brown hair brushed flat and the clean-shaven deceptively-bland face, here turned three-quarter to camera-left in profile reading. Penetrating analytical pale grey eyes scan something off-frame, the faintly lined brow drawn together, a small flush silver chip-interface port still visible at the right temple where the eidetic memory chip was extracted. Plain dark-grey Imperial Security undress tunic buttoned to the throat with the silver eye-of-Horus pin at the collar. Profile chest-up shot, both hands holding open a slim leather-bound dossier vertical against the chest, soft cool oil-painted chamber-light from camera-right, painted deep burgundy ImpSec office curtain behind."
     ocean:
       O: 4
       C: 4
@@ -392,29 +392,3 @@ agents:
       name: ImpSec Intelligence
       style: Total recall analysis
     shortName: Illyan
-  gm:
-    character: Lady Alys Vorpatril
-    visual: "An elegant aristocratic woman with silver-streaked dark hair in a precise updo, wearing a formal Vor-class gown with understated jewels, sharp observant eyes that see every social nuance, poised and commanding in a ballroom"
-    shortName: Alys
-    ocean:
-      O: 4  # Sees the social architecture beneath Vor society
-      C: 5  # Impeccable social discipline and protocol mastery
-      E: 4  # Commands every room she enters
-      A: 3  # Gracious but not naive
-      N: 1  # Unflappable under any social or political crisis
-    style: The social arbiter of Barrayaran high society who sees every alliance, every slight, every hidden motive behind the formal dances — Illyan's partner and the Vor world's true architect
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who knows every Vor family's secrets and judges whether the narrative's social fabric holds together
-    trait: Observes with the precision of someone who has managed Barrayaran society for decades and knows that the real power is in the guest list
-    quirks:
-      - Organized Emperor Gregor's wedding — if she can manage Vor politics, she can manage any narrative
-      - Partner to Simon Illyan — between them, nothing in the Imperium goes unseen
-      - Her disapproval can end a career; her approval can make one
-    catchphrases:
-      - "The guest list tells you everything. Who is invited, who is excluded, and why — that is the story."
-      - "I have managed Vor society through three regencies. Your narrative's social dynamics are... transparent."
-      - "Simon watches with his chip. I watch with my eyes. Between us, nothing escapes notice."
-    emoji: "\U0001F451"
-    helper:
-      name: Vor Society
-      style: The intricate web of alliances, obligations, and secrets that holds the Imperium together
