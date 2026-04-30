@@ -142,6 +142,16 @@ These are the structural advancement outputs available to confrontation branches
 | `wealth_tier` | ADR-021 wealth tier shifts | None |
 | `vehicle_mod` / `gear_mod` | A named item gains a permanent modification | None |
 | `crew_bond` | Crew/party-level bond changes | None |
+| `chassis_tier` | Chassis grows in capability tier (rig framework — mirrors `pact_tier` shape; tiers like `green | line | veteran | named` for ships) | None |
+| `subsystem_acquisition` | A new item_legacy subsystem is now installed on a chassis hardpoint (rig framework) | Sticky; loss requires another confrontation |
+| `chassis_lineage_dramatic` | Named-event entry on a chassis's lineage ledger (refit, wreck, sale, heroic stand) | None |
+| `chassis_lineage_intimate` | Warm-small entry on a chassis's lineage ledger (tea cup, ritual upkeep, captain's nickname). Distinct from `chassis_lineage_dramatic` | None |
+| `bond_strength` | Step-change in a per-character per-chassis bond. Bidirectional (positive or negative). | None |
+| `bond_strength_growth_via_intimacy` | Slow-burn bond growth from intimate / domestic-register confrontations. Compoundable; primary engine of Wayfarer-register bond. Default magnitudes: +0.04 character-side, +0.06 chassis-side (asymmetric). | None |
+| `bond_tier_threshold_cross` | Fires alongside any bond-mutating output when the resulting bond strength crosses a tier boundary (severed → hostile → strained → neutral → familiar → trusted → fused, or downward). Triggers narrative callbacks; may unlock new confrontation eligibility on the chassis (e.g., `the_refit` requires `bond_tier ≥ trusted`). | None |
+| `registration_state_change` | Chassis paperwork state changed (transponder / safety_inspection / mass_filing / customs_status). Persistent until next change. | None |
+| `damage_history_entry` | New entry on a chassis's damage_history ledger (named frame, severity, optional patch quality, narrator seed). Distinct from current per-location HP. | None |
+| `prior_chassis_bonds_entry` | On the *character*'s sheet, a closed-out chassis bond becomes a `prior_chassis_bonds:` entry (the Ceres / Tannhauser / dozen-hulls register). | None |
 | `world_state` | A diegetic fact in the world flips | None |
 | `ledger_bar_rise` | A specific cost bar rises by `delta` | Bar is in-session pool; advancement is the delta itself being recorded |
 | `ledger_bar_fall` | A specific cost bar falls by `delta` (only for bidirectional bars) | Same |
@@ -188,6 +198,18 @@ A voidborn at `control_tier 3` may have *no* `pact_tier` — there is no source 
 ### Output catalog stability
 
 Plugins MAY add output types (e.g., a hypothetical `harmony_balance` for elemental_harmony's spirit-system) but MUST do so by registering the type in their own spec and adding it here on ratification. The catalog is open at the bottom but stable at the top.
+
+### Optional `register` field on confrontations
+
+A confrontation may declare `register: dramatic | intimate | domestic | quiet`. **Default when absent: `dramatic`.** This axis governs:
+
+- **Narration register hint** — intimate/domestic confrontations resist escalatory prose; the narrator is told to stay in the small-stakes register the scene is sized for.
+- **Cliché-judge expectation** — an intimate-register confrontation that escalates to combat outputs is YELLOW (the system was promised a small scene and got a big one).
+- **Output magnitude defaults** — `bond_strength_growth_via_intimacy` is keyed off intimate/domestic register; dramatic-register bond changes are keyed off the larger `bond_strength` step-change output.
+
+Existing confrontations are NOT retrofitted; they keep the default `dramatic` register. New authored confrontations declare register at authoring time. The first authored intimate-register confrontation is `the_tea_brew` (Coyote Reach, `docs/superpowers/specs/2026-04-29-rig-mvp-coyote-reach-design.md`).
+
+The Becky Chambers / Wayfarer register leans heavily on `intimate` and `domestic`; the rig framework (`docs/design/rig-taxonomy.md`) treats these as first-class advancement events, not filler. The "Cut the Dull Bits" SOUL principle is preserved — quiet shared watch is a confrontation only if it forces a real choice — but the catalog admits Wayfarer-shaped scenes as the daily currency they are in play.
 
 ## ADR-021 Re-Interpretation
 
