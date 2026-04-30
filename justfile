@@ -211,6 +211,14 @@ otel:
 
 # Start Jaeger v2 all-in-one in the background. Badger storage at
 # /tmp/sidequest-jaeger/, 7-day TTL. UI: http://localhost:16686.
+#
+# Inherited OTEL_EXPORTER_OTLP_* env vars are scrubbed before launch.
+# This shell typically has them set to BikeRack/PF Frame (port 53670) for
+# Claude Code telemetry; without scrubbing, Jaeger's embedded OTel
+# Collector inherits those vars and tries to export its own self-telemetry
+# to BikeRack — BikeRack is HTTP, Jaeger speaks gRPC, the result is a
+# 30-second drumbeat of "frame too large, looked like an HTTP/1.1 header"
+# warnings in the log. Harmless but noisy enough to drown real signal.
 jaeger:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -227,6 +235,9 @@ jaeger:
     fi
     : > "$log"
     mkdir -p /tmp/sidequest-jaeger/keys /tmp/sidequest-jaeger/values
+    unset OTEL_EXPORTER_OTLP_ENDPOINT OTEL_EXPORTER_OTLP_HEADERS \
+          OTEL_EXPORTER_OTLP_PROTOCOL OTEL_EXPORTER_OTLP_TRACES_ENDPOINT \
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
     ( jaeger --config=file:{{root}}/infra/jaeger/config.yaml >"$log" 2>&1 ) &
     echo $! > "$pidfile"
     echo "▶ jaeger  (:4317 OTLP, :16686 UI)  → $log"
@@ -262,6 +273,12 @@ up-traced:
         echo "ERROR: Jaeger UI not reachable at :16686. Run 'just jaeger' first."
         exit 1
     fi
+    # Scrub inherited OTEL_EXPORTER_OTLP_* (typically pointing at
+    # BikeRack/PF Frame for Claude Code telemetry). Only SIDEQUEST_*
+    # vars should drive the server's OTEL setup.
+    unset OTEL_EXPORTER_OTLP_ENDPOINT OTEL_EXPORTER_OTLP_HEADERS \
+          OTEL_EXPORTER_OTLP_PROTOCOL OTEL_EXPORTER_OTLP_TRACES_ENDPOINT \
+          OTEL_EXPORTER_OTLP_METRICS_ENDPOINT OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
     SIDEQUEST_OTLP_ENDPOINT=localhost:4317 \
     SIDEQUEST_WATCHER_AS_SPANS=1 \
         just up
