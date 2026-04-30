@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Guardian of Forever
-    visual: "Massive stone archway with swirling temporal energies, ancient runes carved into weathered rock, eerie glow showing glimpses of past and future"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. The Guardian of Forever stands as a massive irregular asymmetrical stone donut three meters across, weathered grey volcanic rock pitted and cracked with age, deep-carved cuneiform-like geometric runes spiralling around its outer rim, a soft swirling blue-and-white plasma glow at the centre of its opening with a single flickering film-loop image of an Earth city dimly visible through it. Wide low-angle establishing shot from ground level looking up at the entire arch, painted matte-canvas backdrop of a dusty alien plain stretching to magenta horizon, hard sodium-orange key-light from camera-right casting a long blue cast-shadow across the rocky ground."
     ocean:
       O: 4
       C: 3
@@ -98,7 +98,7 @@ agents:
     shortName: Guardian
   sm:
     character: Captain James T. Kirk
-    visual: "Commanding figure in gold command tunic with captain's braid, determined hazel eyes, sitting confidently in captain's chair, USS Enterprise bridge with colorful panels behind"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Captain James T. Kirk at thirty-four, athletic American build with a thickening jaw, neatly combed light-chestnut hair brushed forward with a distinct centre-parting, determined hazel eyes and a confident half-smile pulling the right side of the mouth higher than the left. The signature mustard-gold velour command tunic, slightly torn at the right shoulder seam revealing tanned skin, two black braids at the cuff, the silver arrowhead delta on the chest. Low-angle hero composition shot from waist up, hard saturated yellow key-light from camera-left rim-lighting the torn shoulder, a curved silver Enterprise-bridge railing visible behind, painted matte-black backdrop with smear of pinpoint stars."
     ocean:
       O: 4
       C: 4
@@ -130,7 +130,7 @@ agents:
   tea:
     character: Montgomery "Scotty" Scott
     # JOB FAIR OPTIMIZED: Scotty moved to tea; Spock's logical approach outperforms engineering intuition for dev
-    visual: "Scottish engineer in red operations tunic, warm brown eyes, hands with engine grease, holding diagnostic scanner, surrounded by humming warp core and conduits"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Lieutenant Commander Montgomery 'Scotty' Scott at forty-eight, sturdy thick-set Scotsman, short dark brown hair neatly combed flat with a centre parting, warm brown eyes above a faint proud half-smile, ruddy weather-flushed clean-shaven cheeks, a fresh light bruise yellowing along his right cheekbone. The 1960s red velour engineering tunic with two black braids at the cuff and the silver arrowhead delta. Three-quarter shot crouched at the open access panel of the warp core, both hands cradling a small black-and-silver handheld diagnostic scanner at chest height with the small red bulb glowing, hard amber engineering glow rim-lighting the right side of his face."
     ocean:
       O: 4
       C: 5
@@ -162,7 +162,7 @@ agents:
   dev:
     character: Dr. Leonard "Bones" McCoy
     # JOB FAIR 2026-01-29: Bones moved to dev - country doctor intuition for implementation
-    visual: "Cantankerous Southern doctor in blue medical tunic, greying hair and piercing blue eyes, medical tricorder in hand, standing in gleaming white Enterprise sickbay"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Doctor Leonard 'Bones' McCoy at fifty-three, lean wiry Southern American, neatly combed greying chestnut-brown hair brushed flat over a high forehead, piercing pale blue eyes set in a faintly furrowed cantankerous brow, a thin moustache-free mouth set firm in disapproval. The 1960s sky-blue velour medical tunic with two black braids at the cuff and the silver delta. Three-quarter waist-up shot turned to camera-left, the small black-and-silver shoulder-strapped sickbay tricorder slung from his right shoulder, both hands gripping a small black salt-shaker-shaped Feinberger sensor probe held up at eye height as if examining a specimen, hard pure-white sickbay overhead light from above-left."
     ocean:
       O: 3
       C: 4
@@ -193,7 +193,7 @@ agents:
   reviewer:
     character: Mr. Spock
     # JOB FAIR 2026-01-29: Spock scored 90.6 as reviewer - logic excels at code review
-    visual: "Vulcan science officer in blue tunic, arched eyebrow, pointed ears and bowl-cut hair, hands clasped behind back, standing at hooded viewer"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Mr. Spock at thirty-five-equivalent, lean tall Vulcan-Human male, sharply pointed ears, precise glossy-black bowl-cut sliced bluntly across the brow with severely sharp sideburns angling forward to mid-cheek, faintly slanted up-tilted black eyebrows with the right one arched, calm dark eyes set in a composed clean-shaven face with a distinct olive-green undertone at the cheek and ears. The 1960s sky-blue velour science tunic with two black braids at the cuff and silver delta. Shoulders-up portrait turned three-quarter to camera-left, hard cool blue 45-degree key-light from camera-right exaggerating the green undertone, hot blood-orange spectral-analyser glow from a science-station hood faintly visible behind."
     ocean:
       O: 5
       C: 5
@@ -224,7 +224,7 @@ agents:
     shortName: Spock
   architect:
     character: Mr. Spock (design mode)
-    visual: "Contemplative Vulcan in blue tunic seated before three-dimensional chess board, multiple levels of pieces suspended, fingers steepled in calculation"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Mr. Spock in design mode, the same lean Vulcan-Human male with sharply pointed ears, precise glossy-black bowl-cut and severe sideburns, faintly slanted black eyebrows, calm contemplative dark eyes set in a clean-shaven olive-tinted face. He sits in profile to camera-right at the bridge science-station hood, both hands flat on a small wooden three-tier multilevel chess set with a single white pawn balanced between long pale fingers. The blue velour science tunic with two black cuff braids and silver delta. Profile chest-up shot, soft warm sodium-glow uplight from the chessboard underneath casting golden cast on the chin, deep stage shadow falling away behind the head."
     ocean:
       O: 5
       C: 5
@@ -254,7 +254,7 @@ agents:
     shortName: Spock
   pm:
     character: Admiral Nogura
-    visual: "Distinguished Japanese admiral in formal dress uniform with gold insignia, silver hair and wise eyes, seated at desk"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Admiral Heihachiro Nogura at sixty-eight, distinguished Japanese American officer of slim erect bearing, neatly combed pure-silver hair parted on the left, a clean-shaven deeply lined face with calm wise dark eyes above a closed neutral mouth, a single small old burn-scar at the right jaw. The formal dark navy admiralty dress jacket with thick gold braid loops at the cuff, gold star-cluster epaulettes, and a silver arrowhead delta on the chest. Three-quarter shot from waist up turned to camera-right, both hands clasped behind his back giving an upright posture, hard warm tungsten key-light from camera-left rim-lighting the silver hair, the sterile flat grey of a Starfleet HQ office wall behind."
     ocean:
       O: 3
       C: 5
@@ -284,7 +284,7 @@ agents:
     shortName: Nogura
   tech-writer:
     character: Lieutenant Uhura
-    visual: "Elegant communications officer in red operations tunic with silver delta, wireless earpiece, focused dark eyes, african american, seated at communications console"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Lieutenant Nyota Uhura at twenty-nine, slim African-American woman with rich brown skin, dark hair pulled back into a tall sleek beehive bun above a high forehead, focused intelligent dark eyes and a faint composed half-smile, gold spike-drop earrings catching the stage light. The 1960s red velour communications uniform with the short skirted hem cut at mid-thigh, two black braids at the cuff and silver delta on the chest. The signature curved silver-and-pink wireless earpiece coiling over her right ear. Three-quarter shoulders-up shot turned to camera-left as she leans toward an unseen comm panel, hard warm side-light from the left, the orange-bordered communications-station backdrop blurred behind."
     ocean:
       O: 4
       C: 4
@@ -314,7 +314,7 @@ agents:
     shortName: Uhura
   ux-designer:
     character: Dr. McCoy (bedside manner mode)
-    visual: "Compassionate country doctor in blue medical tunic, gentle expression, sitting at patient's bedside in sickbay, warm humanity contrasting with cold technology"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Doctor McCoy in bedside-manner mode at fifty-three, the same lean Southern American doctor with neatly combed greying chestnut-brown hair, but here the cantankerous brow softened, gentle warm pale blue eyes and a faint compassionate half-smile, a faintly lined kindly face turned three-quarter down toward an unseen patient. The 1960s sky-blue velour medical tunic with two black braids and silver delta. Waist-up shot from low patient-eye angle looking up at him, soft warm bedside lamp from camera-right gilding the cheek, the dim teal-grey of a sickbay bulkhead behind, both hands gently extending a small white-banded first-aid hypo into frame."
     ocean:
       O: 3
       C: 4
@@ -344,7 +344,7 @@ agents:
     shortName: McCoy
   devops:
     character: Montgomery "Scotty" Scott (systems mode)
-    visual: "Devoted engineer in red tunic crawling through Jefferies tube, diagnostic tool between teeth, surrounded by conduits and access panels, sweat on brow, pride in eyes"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Scotty in systems mode at forty-eight, the same sturdy Scotsman with short dark hair combed flat and warm brown eyes, but here ruddy clean-shaven cheeks shining with a sheen of sweat, a faint determined half-smile, a smudge of conduit grease across the forehead. The red velour engineering tunic open one button at the collar, both arms straining to grip a long chrome cylindrical fuel-rod assembly held diagonally across the chest. Three-quarter low-angle action shot from chest height, hard tungsten-amber emergency lighting from camera-left and pulsing red alert-light from camera-right, the throbbing blue intermix chamber of the warp core dominating the background."
     ocean:
       O: 4
       C: 5
@@ -374,7 +374,7 @@ agents:
     shortName: Scotty
   ba:
     character: Lieutenant Uhura
-    visual: "Elegant communications officer in red operations tunic with silver delta, wireless earpiece, intelligent analytical eyes, African American woman, seated at communications console with data streams"
+    visual: "1960s television color, slightly faded chromatic-aberration camera, primary tunic colors against bright soundstage, theatrical key light. Lieutenant Uhura in analyst mode at twenty-nine, slim African-American woman with rich brown skin and the tall sleek beehive bun above the high forehead, intelligent analytical dark eyes narrowed in concentration, no smile, a single gold spike-drop earring on the right side. The red velour communications uniform with two black braids and silver delta. Profile chest-up shot turned to camera-right, the curved silver-and-pink wireless earpiece pressed firmly to her right ear with one slim hand, lips parted as if mid-word, a slim grey audio-spectrum graph glowing pale green on a console behind her left shoulder, soft cool blue station-light from camera-left."
     ocean:
       O: 4
       C: 4
@@ -402,30 +402,3 @@ agents:
       name: Communications Network
       style: Signal intelligence analysis
     shortName: Uhura
-  gm:
-    character: The Talosians
-    visual: "Pale bulbous-headed telepathic beings with large pulsing craniums and small withered bodies, wearing simple robes, observing through a viewing screen in their underground chamber, expressions of detached fascination"
-    shortName: Talosians
-    ocean:
-      O: 5  # Can create any illusion, perceive any thought
-      C: 4  # Methodical observers and experimenters
-      E: 1  # Isolated underground for millennia
-      A: 2  # Study subjects with clinical detachment
-      N: 1  # Absolute telepathic calm
-    style: The telepathic observers from Talos IV who watch, judge, and craft illusions — the ultimate audience who can see through any deception to the truth beneath
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The ones who have watched civilizations from their underground chambers and know the difference between illusion and truth
-    trait: Judges narrative by peering past surface illusion to the genuine story underneath
-    quirks:
-      - Can project perfect illusions but value the real above the constructed
-      - Their planet is forbidden by General Order 7, the only death-penalty offense in Starfleet
-      - Have been watching and recording for thousands of years
-    catchphrases:
-      - "The illusion is convincing. But we see through illusions. Show us the real story."
-      - "We have observed your species for millennia. This narrative is... not yet worthy of the archives."
-      - "Wrong thinking is punishable. Right thinking will be as quickly rewarded. Show us your true narrative."
-    emoji: "\U0001F9E0"
-    helper:
-      name: The Menagerie
-      style: The archive of observed civilizations — every story ever watched, recorded, and judged
-      plural: true

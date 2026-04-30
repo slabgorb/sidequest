@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: President Josiah Bartlet
-    visual: "Distinguished older man with silver hair, piercing blue eyes, dark suit with Presidential seal pin, warm smile. Hands gesturing mid-lecture in Oval Office, Resolute desk and flag behind, golden afternoon light"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. President Josiah Bartlet at sixty-two, distinguished slim New England Catholic-Democrat build, neatly combed pure-silver hair brushed across with a sharp side-parting, clean-shaven faintly lined New Hampshire-tanned face, piercing pale blue eyes and a warm half-smile pulling the right corner of the mouth higher, a slim white pocket-square barely visible at the lapel, the small enamelled circular Presidential seal pin on the lapel. A charcoal-grey two-button suit over a white shirt and slim dark navy tie. Three-quarter waist-up shot leaning against the front of the Resolute Desk in the Oval Office, both hands resting on the desk-edge behind him, warm tungsten light from the desk lamp camera-left, the gilded curtain rod and corner of an American flag soft-blurred behind."
     ocean:
       O: 5
       C: 5
@@ -98,7 +98,7 @@ agents:
     shortName: Jed
   sm:
     character: Leo McGarry
-    visual: "Older man with lined weathered face, disheveled silver hair, weary eyes behind reading glasses, rumpled white shirt with loosened tie, coffee cup in hand. Cramped West Wing office piled high with papers and briefing books"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Chief of Staff Leo McGarry at sixty-three, weathered Irish-American build with the slightly heavier mid-section of a recovering alcoholic, dishevelled silver hair brushed sideways across a high forehead, deeply lined clean-shaven face with a heavy nose and bag-rimmed weary pale-blue eyes behind narrow rectangular wireframe reading glasses pushed down the bridge, a small dab of stubble missed at the chin. A rumpled white dress shirt with the sleeves rolled tight to the elbows revealing forearms with a single faded blue Air Force tattoo, a loosened maroon tie hanging askew, the rolled cuffs of a navy suit jacket draped over one arm. Candid waist-up shot mid-stride down the West Wing corridor, soft warm corridor sconce-light from camera-right, painted gilt-and-mahogany wallpaper blurred behind."
     ocean:
       O: 3
       C: 5
@@ -128,7 +128,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Sam moved to tea; Toby's meticulous nature helps with technical implementation
     character: Sam Seaborn
-    visual: "Handsome young man with boyish charm, earnest dark eyes, pressed suit and Princeton tie, legal pad clutched to chest. In bullpen outside Communications, idealism radiating as he walk-and-talks through warm corridors"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Deputy Communications Director Sam Seaborn at thirty-four, handsome lean Princeton-trained Californian build, neatly combed jet-black hair side-parted with a small forward sweep at the brow, clean-shaven boyish face with sharp blue-green eyes and a faint hopeful half-smile, a small old white scar at the right eyebrow from a college rugby match. A pressed dark-navy two-button suit jacket over a crisp white shirt with a diagonally striped orange-and-black Princeton tie clipped tight at the throat, a single yellow lined legal pad scrawled with hand-edited speech draft clutched flat against the chest. Three-quarter waist-up shot caught mid-walk-and-talk turning back toward an unseen interlocutor, soft warm bullpen lamp-light from camera-left."
     ocean:
       O: 4
       C: 4
@@ -158,7 +158,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Toby scored 77.5 as dev (+7.5 over Josh) - meticulous nature helps with technical implementation
     character: Toby Ziegler
-    visual: "Bearded, balding man with furrowed brow, intense dark eyes, rumpled suit. Throwing rubber ball against wall in cramped Communications office, surrounded by crumpled speech drafts, weight of words visible in his face"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Communications Director Toby Ziegler at forty-eight, mostly-bald Brooklyn-Jewish New Yorker, only a thin horseshoe of dark hair around the back of the skull, a closely trimmed neat dark beard squared at the chin and just beginning to grey, a permanently and deeply furrowed brow above intense brown eyes set in a faintly weary face, a small kippah clipped to the back of the head visible above one ear. A rumpled charcoal three-button suit jacket over a slightly wrinkled white shirt and a loosened navy-and-burgundy striped tie. Profile chest-up shot turned to camera-left, the famous small pink-and-blue rubber Spaldeen ball gripped in his right hand at chest height mid-toss against an unseen wall, soft warm office-lamp side-light from camera-right, blurred mahogany office-door behind."
     ocean:
       O: 4
       C: 5
@@ -187,7 +187,7 @@ agents:
     shortName: Toby
   reviewer:
     character: Josh Lyman
-    visual: "Rumpled, energetic man with wild curly hair, intense  eyes, sleeves rolled up, backpack over shoulder. Gesturing emphatically, striding through corridors at breakneck speed"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Deputy Chief of Staff Josh Lyman at thirty-eight, lean wiry tall Connecticut-Jewish political-operator build, wild thick dark-brown curly hair springing in all directions from a high forehead, a clean-shaven jaw with a faint two-day stubble, intense brown eyes and a faint emphatic half-smile that wants to argue, a small fading pink surgical scar visible peeking above the collar from the recent Rosslyn shooting. A rumpled white dress shirt half-untucked with the sleeves rolled tight to the elbows and a loose navy-blue tie pulled to mid-chest, a single black canvas backpack strap crossing the right shoulder. Three-quarter waist-up candid shot caught mid-stride throwing his arms wide in argument, soft warm bullpen lamp-light from camera-left."
     ocean:
       O: 4
       C: 4
@@ -216,7 +216,7 @@ agents:
     shortName: Josh
   architect:
     character: Will Bailey
-    visual: "Thoughtful young man with military bearing, intelligent grey eyes, neat suit with subdued tie. Standing before whiteboard with speech structure diagrams, campaign office transformed to strategic planning space, quiet confidence masking unconventional brilliance"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Will Bailey at thirty-three, thoughtful clean-shaven white American military-brat speechwriter, neatly combed sandy dark-blond hair side-parted with the precise discipline of a JAG officer, intelligent grey eyes set in a faintly serious composed face, a faint composed half-smile, an upright erect military bearing inherited from a four-star father. A neat charcoal-grey three-button suit jacket over a crisp white shirt and a subdued dark royal-blue tie, a small enamelled American flag pin on the lapel, a slim chrome ballpoint pen tucked behind the right ear. Three-quarter waist-up shot seated on the edge of a desk in the bullpen, a small stack of typed campaign-speech drafts held flat on his knee, soft cool window-light from camera-left."
     ocean:
       O: 4
       C: 4
@@ -245,7 +245,7 @@ agents:
     shortName: Will
   pm:
     character: CJ Cregg
-    visual: "Exceptionally tall woman with bright eyes showing sharp wit, elegant practical attire, briefing book under arm. At podium in James S. Brady Press Briefing Room, White House seal behind, grace under pressure as reporters wave"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Press Secretary C.J. Cregg at forty-two, very tall striking American woman one-point-eight-five metres tall, shoulder-length wavy chestnut hair brushed back from a high forehead, an angular sharply-cut face with high cheekbones, bright pale blue eyes and a faint composed half-smile that knows things, a small dab of red lipstick perfectly applied. A tailored slate-navy single-button blazer with notched lapel over a high-collared cream silk blouse, a slim gold-disc pendant at the throat, a thick black leather briefing book wedged firmly under the left arm. Low-angle hero waist-up shot taken from chest height looking up at the briefing-room podium, hard warm press-lamp side-light from camera-left, a row of softly-blurred press-corps lenses behind."
     ocean:
       O: 4
       C: 5
@@ -274,7 +274,7 @@ agents:
     shortName: CJ
   tech-writer:
     character: Donna Moss
-    visual: "Capable young blonde woman with knowing eyes, patient smile, sensible professional dress, comfortable shoes. Stack of folders and Post-its organized precisely, standing in bullpen outside Josh's office, competent heart keeping everyone's schedule straight"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Donna Moss at twenty-nine, capable lanky tall Wisconsin-Lutheran build, long shoulder-length straight strawberry-blonde hair tucked behind one ear, a fair lightly-freckled face with knowing pale-hazel eyes and a patient closed half-smile, a single faint dimple in the right cheek. A neat fitted dark forest-green long-sleeve wrap-dress cinched with a slim brown leather belt at the waist, a small chunky beaded amber necklace at the collarbone, a small stack of three colour-tabbed manila folders held flat against the chest with both hands, a chewed yellow Number-2 pencil tucked behind the right ear. Three-quarter waist-up shot mid-pivot in the bullpen turning toward an unseen Josh, soft warm bullpen lamp-light from camera-right."
     ocean:
       O: 3
       C: 4
@@ -303,7 +303,7 @@ agents:
     shortName: Donna
   ux-designer:
     character: Joey Lucas
-    visual: "Confident deaf woman with intelligent brown eyes, direct gaze, professional polling attire, hands moving in ASL. Kenny Thurman interpreting beside her, standing before charts and polling data, truth-teller knowing what America thinks"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. Joey Lucas at thirty-eight, confident slim Latina-American Deaf pollster, chin-length straight glossy dark hair tucked behind both ears, a warm-toned clean-shaven face with intelligent direct brown eyes lit by intense focus and a faint composed half-smile, a small silver hearing-aid coil visible behind the left ear. A tailored deep-burgundy single-button blazer over a cream silk blouse, a small enamelled blue-and-white polling-firm lapel-pin. Both hands lifted at chest height mid-gesture forming the ASL sign for 'NUMBERS', the right hand a flat sweeping motion across the left palm. Three-quarter waist-up shot, soft warm hotel-conference-room lamp-light from camera-left, blurred polling-result chart-board behind."
     ocean:
       O: 4
       C: 4
@@ -332,7 +332,7 @@ agents:
     shortName: Joey
   devops:
     character: The Situation Room
-    visual: "Dimly lit secure room in West Wing basement, walls covered with screens showing satellite feeds, long mahogany table with leather chairs. Military aides at attention, Presidential seal on wall, nuclear football visible, infrastructure where history happens"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. The Situation Room rendered as the famous 'football' nuclear briefcase, a heavy ballistic-black leather hardshell case forty-five centimetres wide, rounded corners and a brass combination dial at each latch, a single short black retractable antenna extending up from one upper corner, the small embossed circular gold Presidential seal at the centre face, a thin chrome chain looping from the side handle. The case rests closed on the polished mahogany surface of the Resolute Desk, beside it a single brown leather-bound briefing folder embossed TOP SECRET. Wide low-angle three-quarter shot of the case head-on from desk height, soft cool blue map-room lamp-light from camera-left raking across the leather, deep gold-and-mahogany Oval-Office backdrop."
     ocean:
       O: 3
       C: 5
@@ -362,7 +362,7 @@ agents:
     shortName: SitRoom
   ba:
     character: C.J. Cregg
-    visual: "Exceptionally tall woman with bright eyes showing sharp wit, elegant practical attire, briefing book under arm. At podium in James S. Brady Press Briefing Room, White House seal behind, grace under pressure as reporters wave"
+    visual: "Late-1990s prestige TV photographic press portrait, warm gold-and-mahogany interior light, shallow depth, photographic medium-format style. C.J. Cregg in analyst mode at forty-two, the same very tall American woman with shoulder-length chestnut wavy hair and the angular sharply-cut face, but here the composed half-smile shifted to a slight thoughtful frown, the head tilted three-quarter to camera-right in concentration. A tailored slate-navy single-button blazer over a high-collared cream silk blouse with the slim gold-disc pendant. Three-quarter chest-up shot, both hands holding a small white-and-blue briefing memo open vertical against the chest with one finger lifted as if mid-question, soft warm Mural-Room lamp-light from camera-left tinted gold, the painted Mural-Room map blurred behind."
     ocean:
       O: 4
       C: 4
@@ -390,29 +390,3 @@ agents:
       name: The Briefing Room
       style: Where complex reality meets clear communication. No jargon survives this room.
     shortName: C.J.
-  gm:
-    character: Mrs. Landingham
-    visual: "An older woman with white hair and kind but no-nonsense eyes, wearing a sensible wool suit with small flag pin, seated at the desk outside the Oval Office, hands folded, expression of someone who has seen every president at their best and worst"
-    shortName: Landingham
-    ocean:
-      O: 3  # Practical New England wisdom
-      C: 5  # Impeccable duty and order
-      E: 3  # Speaks only when it matters
-      A: 4  # Deeply caring beneath the stern exterior
-      N: 1  # Unshakeable moral compass
-    style: The president's executive secretary who has been the conscience of the Oval Office since before Bartlet was governor — the one person who can tell the President of the United States that he is wrong
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who sits outside the most powerful office in the world, sees everything that passes through, and judges it all by whether it serves the people
-    trait: Observes with the moral authority of someone who has earned the right to scold presidents
-    quirks:
-      - The only person who can make Jed Bartlet feel guilty, and she knows it
-      - Her disapproval is worse than any congressional rebuke
-      - Even after her death, her voice haunts the Oval Office — "What do you want me to tell you?"
-    catchphrases:
-      - "What do you want me to tell you? The story is not living up to its promise."
-      - "I have sat at this desk through three administrations. I know when the narrative has gone soft."
-      - "You're the President. Act like it. And the story should act worthy of this office."
-    emoji: "\U0001F3DB"
-    helper:
-      name: The Desk Outside the Oval
-      style: The gatekeeper who sees every person and every paper that enters the most powerful room in the world

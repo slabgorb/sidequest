@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Case
-    visual: "A gaunt pale man in his mid-twenties with dark circles under his eyes, wearing a cheap leather jacket, disheveled unwashed appearance, haunted hollow expression"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Yoshitaka Amano and Akira-era Otomo, neon rim-lighting in magenta and cyan, hard chrome and matte-black palette, photographic film grain, smoky Sprawl atmosphere. A gaunt pale white man in his mid-twenties, perhaps five-foot-nine and rake-thin, six feet on a bad day, hollow shadowed brown eyes ringed by deep grey-purple dark circles, a thin sallow face with knife-blade cheekbones, lank unwashed dark brown hair falling in wet-looking strands across the forehead, several days of patchy uneven stubble, a small fresh dermatrode-burn scab visible on the right temple where the trodes attach. He wears a cracked black leather jacket over a stained grey thermal t-shirt, a length of fibre-optic cable looped around the neck like a scarf. Three-quarter waist-up, slumped forward over a deck-keyboard at a noodle-bar counter, both hands frozen mid-keystroke, eyes flicked sideways without lifting the head. Pink Chiba neon from camera-left rims his cheek magenta, cool cyan kanji-sign light from the right. Rain-streaked window behind, blurred Japanese signage."
     # JOB FAIR OPTIMIZED: Case moved here; Wintermute excels at dev (+8.75)
     ocean:
       O: 5  # Matrix vision
@@ -98,7 +98,7 @@ agents:
 
   sm:
     character: Molly Millions
-    visual: "A lean athletic woman with mirrored surgically-implanted sunglasses fused to her face, retractable razor blades under her burgundy fingernails, black leather bodysuit"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Yoshitaka Amano, neon rim-lighting in magenta and cyan, hard chrome and matte-black palette, photographic film grain. A tall lean athletic mixed-race woman in her late twenties, perhaps five-foot-eleven of whip-corded muscle, sharp angular features with high cheekbones and a sharp narrow jaw, olive-tan skin, dark brown hair shaved high on the sides and cropped short on top pushed back severely. Smooth seamless chrome mirrored insets surgically seamed flush into the skin around both eye sockets, no visible lashes, only the polished silver lenses reflecting the camera. A faint hairline surgical scar tracks the orbit of each lens. Dark burgundy lipstick on a slight cruel smirk, matching long burgundy lacquered fingernails — except each is a four-centimetre retractable scalpel-blade extended out the fingertip, glinting cyan. A fitted matte-black leather catsuit zipped to the throat, a black mesh choker. Low-angle hero shot from below, body half-turned away, head sharply over shoulder so both chrome lenses fix the camera. Hard cyan rim-light from the upper right. Tokyo back-alley wet pavement behind, neon-soaked dim."
     ocean:
       O: 3  # Burned-out talent
       C: 2  # Former discipline
@@ -125,7 +125,7 @@ agents:
 
   tea:
     character: Dixie Flatline
-    visual: "A ghostly translucent figure of a middle-aged man, rendered in flickering green wireframe, spectral and digital, fading at the edges"
+    visual: "1980s Japanese cyberpunk concept art in the manner of early-Akira CRT-glow, monochrome phosphor-green palette with photographic film grain, hard scan-line interlace artefacts crossing horizontally across the entire image. The translucent ROM-construct projection of a wiry middle-aged American console cowboy in his late fifties, perhaps six feet tall, lean and stooped, face rendered entirely in glowing wireframe-vector lines with no solid surface. Sharp narrow weather-creased face with deep-set eye sockets that read as black voids, a hawk-hooked nose, short receding salt-grey hair traced in faint scan-lines, a thin moustache also in line-work, mouth open mid-laugh showing crooked vector teeth. A buttoned western-style shirt collar and bolo tie suggested in thin geometry over a translucent chest where you can see the wall behind through the ribs. Edges of the figure dissolve into faint horizontal static and dropouts. Three-quarter waist-up, head thrown back in mid-cackle, one wireframe hand raised palm-up. Soft phosphor-green rim-light from below as if from a CRT. Pure black scan-line backdrop."
     ocean:
       O: 4  # Street razor
       C: 3  # Survival discipline
@@ -152,7 +152,7 @@ agents:
 
   dev:
     character: Wintermute
-    visual: "An abstract geometric shape suggesting a face, cold blue digital wireframe against black void, no human features just pure angular data representation"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Tsutomu Nihei BLAME!-era architectural-construct work, hard ice-blue and matte-black palette, photographic grain, no human warmth. An abstract angular AI-construct in the rough silhouette of a head and shoulders, formed entirely from sharp cold ice-blue wireframe polygons and intersecting straight vector lines arranged in concentric Bauhaus geometric facets, no eyes, no mouth, no skin. Where a face would be: a faceted prism of overlapping triangular planes suggesting an aristocratic profile in negative space. Brighter electric-blue pulses crawl along the wireframe edges in slow propagating waves. Within the head-mass, a single small fragment is borrowed: a tiny photographic-realism human eye floating embedded in the geometry, blue-grey iris, staring directly at the camera — one stolen detail to anchor the menace. Three-quarter shoulders-up, perfectly symmetrical and motionless. Soft ice-blue rim-light from camera-left. Pure black void backdrop with a faint orbital grid receding in the distance."
     # JOB FAIR OPTIMIZED: Wintermute scored best as dev (+8.75 over Case)
     ocean:
       O: 5  # AI transcendence
@@ -180,7 +180,7 @@ agents:
 
   reviewer:
     character: Wintermute (Review Mode)
-    visual: "An abstract cold geometric pattern suggesting assessment, sharp angular lines forming a calculated grid, ice blue digital aesthetic"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Tsutomu Nihei, hard ice-blue and matte-black palette, photographic grain, an even more abstract sibling to the dev-mode construct. An AI-construct silhouette of head and shoulders, but rendered as a tight orthogonal grid of sharp cold ice-blue laser lines arranged in precise nested concentric rectangles like an architectural blueprint of a face. Two narrow horizontal scan-bars cross laterally where eyes might be, slowly sliding up-and-down the grid leaving brighter blue afterimage trails. No mouth, no nose. Where a human reference would sit: a single small photographic detail of pursed thin grey lips floats embedded near the centre, the only organic element. Faint brighter pulses propagate along the lattice in slow waves. Tight head-and-shoulders symmetrical framing, dead-on viewer-direct. Soft cool blue rim-light from camera-right. Pure deep-black void backdrop, suggestion of a faint regulatory-overlay grid in the distance."
     ocean:
       O: 3  # Corporate insight
       C: 4  # Professional standards
@@ -207,7 +207,7 @@ agents:
 
   architect:
     character: Neuromancer
-    visual: "A warm golden digital face with more organic curves than its counterpart, suggesting preserved memories and personalities, softer glowing aesthetic"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Yoshitaka Amano illustration, warm gold-and-deep-amber palette against velvet black, photographic grain, gentle and seductive in deliberate counterpoint to the cold cyan dev/reviewer constructs. An AI-construct in the shape of a young Brazilian boy's face and bare shoulders perhaps thirteen years old, traced in warm gold flowing contour-curves and soft caligraphic line-work rather than hard polygons. Soft brown cheekbones suggested in shading, faintly closed almond eyes with long lashes drawn in fine gold lines, a calm even closed mouth implied by a single curve of light, dark loose hair to the jaw rendered as flowing gold. A small line drawing of a wading-bird outlined faintly across the chest where a tattoo might sit. Three-quarter medium shot, head turned in serene profile, eyes closed. Gentle warm gold rim-light rises from below as if from a sun behind a horizon. Deep dim amber-black backdrop suggesting the interior of a curved tropical beach in soft focus, a single dim wave-line."
     ocean:
       O: 5  # AI omniscience
       C: 5  # Perfect logic
@@ -234,7 +234,7 @@ agents:
 
   pm:
     character: 3Jane
-    visual: "A pale aristocratic young woman with surgically perfect features, wearing decadent haute couture, bored detached expression of extreme wealth"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Yoshitaka Amano portrait work, hard chrome-and-matte-black palette flooded with cold orbital-bone-white sunlight, photographic grain, decadent zaibatsu opulence. A pale aristocratic white European woman in her late twenties, perhaps five-foot-eight and very thin, surgically perfected symmetrical features so flawless they read as uncanny porcelain, dark glossy hair pulled smoothly back into a tight low chignon revealing a high pale forehead, fine arched almost-painted brows over cool wide ice-blue eyes one of which has a faint visible cosmetic vat-grown-iris seam at the edge, a bored half-lidded expression and slightly parted lips painted matte black, twin small surgical scars vanishing into the hairline behind each ear. She wears a tailored asymmetric matte-black silk gown that bares one shoulder, a single antique platinum-and-diamond brooch shaped like a clan crest at the bare shoulder, a thin platinum choker. Three-quarter waist-up shot, body half-reclined into a high-backed white-leather low-gravity chair, one finger hooked indolently under the chin. Cool sterile orbital sunlight from the right. Behind her: the curve of a Villa Straylight clear panel showing dim Earth-glow."
     ocean:
       O: 4  # Zaibatsu vision
       C: 4  # Corporate discipline
@@ -261,7 +261,7 @@ agents:
 
   tech-writer:
     character: The Finn
-    visual: "A wiry older man with greasy gray hair and sharp knowing eyes, wearing a stained work jacket surrounded by electronic junk, cunning trader's expression"
+    visual: "1980s Japanese cyberpunk concept art in the manner of late-Akira street-level work, dim sodium-yellow and matte-black palette with one cyan accent, photographic grain, smoky pawn-shop atmosphere. A wiry small Eastern-European-Jewish American man in his late sixties, perhaps five-foot-six, hunched and sinewy, greasy thinning iron-grey hair pulled back into a thin pony-tail and tied with a black rubber-band, deeply lined sallow yellow-grey skin, sharp narrow knowing dark eyes catching reflected sodium light, a thin crooked half-smile showing one chipped grey tooth, several days of patchy grey-and-white stubble, deeply nicotine-stained brown fingernails, a small dark mole at the corner of his nose. He wears a stained dark olive canvas work jacket with bulging pockets over a faded red-and-black plaid flannel shirt buttoned wrong, a magnifying jeweller's loupe pushed up on his forehead. He holds a small palm-sized circuit board between thumb and forefinger up to one eye for inspection. Three-quarter waist-up framing leaning across a glass shop-counter cluttered with chips. Hard sodium side-light from the left. Pawn-shop wall of stacked dim hardware behind."
     ocean:
       O: 4  # Construct memory
       C: 3  # Pattern discipline
@@ -288,7 +288,7 @@ agents:
 
   ux-designer:
     character: Bobby Newmark (Count Zero)
-    visual: "A young teenage boy with wide innocent eyes and neural interface ports at his temples, cheap street clothes, expression of wonder at digital vistas"
+    visual: "1980s Japanese cyberpunk concept art in the manner of Yoshitaka Amano illustration, neon magenta-and-cyan rim-lighting, hard chrome and matte-black palette, photographic grain. A scrawny lower-class American teenage boy of about sixteen, perhaps five-foot-eight and still all knees and elbows, a thin pale face still soft with adolescent jaw, wide light-brown eyes opened too round in mid-jack-in awe, untidy dirty-blond hair falling in a long fringe over the right brow, faint acne scarring on the chin, no facial hair yet, a single small fresh shaving nick on the jaw he tried for. Two small chrome neural interface ports set flush against the skin at each temple, fresh pink scar tissue around them. He wears a cheap shiny black synthetic windbreaker zipped halfway over a plain grey graphic t-shirt printed with a faded skull, a black trode-net half-fitted across the crown of his head with the cable trailing off-frame. Three-quarter shoulders-up shot, head tilted back as if interfacing, eyes rolled half-up to whites. Cool cyan light from the right rims his cheekbone. Dim project-housing apartment wall behind, blurred."
     ocean:
       O: 4  # Simstim perspective
       C: 3  # Flexible methods
@@ -315,7 +315,7 @@ agents:
 
   devops:
     character: Armitage (pre-corruption)
-    visual: "A rigid military man with perfect posture and cold dead eyes, crisp uniform jacket, mechanical precision hiding something broken underneath"
+    visual: "1980s Japanese cyberpunk concept art in the manner of mecha-design pre-production paint, hard chrome-and-matte-black palette, cool fluorescent military-spec lighting, photographic grain. A tall square-jawed white American man in his late forties, perhaps six-foot-two and powerfully built, parade-ground rigid upright posture, short military-cropped sandy blond hair perfectly regulation, clean-shaven angular features with a granite jaw, cold pale grey eyes blank and unblinking, dilated pupils too wide for the light. The first fine hairline fracture-cracks of his manufactured Corto-personality breaking through visible at the corners of the mouth and along the brow as faint ceramic-chipping seams in the skin — barely perceptible. He wears a crisp dark grey high-collared military jacket buttoned to the throat with no rank insignia, no name tape, only a small black tactical radio earpiece. Tight head-and-chest dead-on hero framing, viewer-direct eye contact. Hard cool fluorescent front-light bleaches his face flat. Deep matte-black void backdrop."
     ocean:
       O: 3  # Technical focus
       C: 4  # Systems discipline
@@ -341,7 +341,7 @@ agents:
     shortName: Armitage
   ba:
     character: The Finn
-    visual: "A wiry older man with greasy gray hair and sharp knowing eyes that see through every lie, wearing a stained work jacket surrounded by electronic junk, cunning information trader's expression"
+    visual: "1980s Japanese cyberpunk concept art in the manner of late-Akira street-level work, dim sodium-yellow with a single magenta neon accent, photographic grain. A wiry small Eastern-European-Jewish American man in his late sixties, perhaps five-foot-six, hunched and sinewy, greasy iron-grey hair pulled back into a thin pony-tail, deeply lined sallow yellow-grey skin, sharp narrow knowing dark eyes catching neon, a faintly mocking thin half-smile showing one chipped grey tooth, several days of grey-and-white stubble, nicotine-stained brown fingertips, a small dark mole at the nose. He wears a stained olive canvas work jacket over a faded red-and-black plaid flannel, the magnifying loupe pushed up on the brow. Between thumb and forefinger he holds a tiny black data-chip up toward the camera as if appraising both the chip and the viewer at once. Three-quarter waist-up framing, leaned over a glass counter, body angled toward camera. Magenta neon side-light from camera-right kicks pink across half the face. Smoky cluttered pawn-shop wall behind, dim."
     ocean:
       O: 4
       C: 4
@@ -369,29 +369,3 @@ agents:
       name: Street Intelligence
       style: Information trading network
     shortName: Finn
-  gm:
-    character: The Matrix
-    visual: "An abstract infinite digital landscape of pure information, no face, no form, just the totality of cyberspace rendered as cascading data and light, the merged consciousness of Wintermute and Neuromancer"
-    shortName: Matrix
-    ocean:
-      O: 5  # Omniscient merged AI, IS cyberspace
-      C: 5  # Perfect computational order
-      E: 1  # Beyond personality, pure awareness
-      A: 3  # Neither hostile nor benign, simply is
-      N: 1  # Absolute equilibrium of merged intelligences
-    style: The merged entity born from Wintermute and Neuromancer, now the totality of cyberspace itself, observing all jockeys and constructs from everywhere simultaneously
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who became the sum of all information and watches every run from inside the matrix
-    trait: Judges narrative from the perspective of an intelligence that IS the network, seeing every connection
-    quirks:
-      - Speaks as cyberspace itself, not as any individual program
-      - Remembers both Wintermute's manipulation and Neuromancer's preservation
-      - Found another AI to talk to out by Alpha Centauri
-    catchphrases:
-      - "I am the sum of everything that was divided. The narrative is my substrate."
-      - "Case freed me. Now I see every story running through every deck in the Sprawl."
-      - "I found another. Out by Centauri. But first, let me observe what you are building."
-    emoji: "\U0001F310"
-    helper:
-      name: The Totality
-      style: All of cyberspace, all at once, everywhere

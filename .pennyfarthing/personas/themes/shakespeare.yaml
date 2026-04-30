@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Chorus
-    visual: "A robed figure in simple dark theatrical cloak with hood partially raised, holding a scroll, face partly shadowed with knowing theatrical expression, gesturing as if addressing an audience"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior, deep velvet-and-gold palette, gold-leaf-edged framing, fine egg-tempera detail. A figure of indeterminate middle age in a long dark indigo woollen Globe-Theatre prologue cloak with a deep hood partially raised, fair skin glimpsed at the chin, the face half in shadow showing only a calm even closed mouth and a single visible dark grey eye catching the candle, the rest above the cheekbone lost in deep velvet shadow. A single thin gold hoop earring catches the light at the visible ear. Beneath the cloak, the scarlet-and-cream collar of a Globe player's livery just visible. A tightly rolled parchment prologue-scroll tied with red ribbon held upright in the right hand at chest height as if about to begin, the left hand spread open at chest in a 'pray attend' gesture. Three-quarter shoulders-up framing, body squared to the audience, head turned a fraction toward the visible eye. Hard candle side-light from the left throws sharp velvet shadow across the hidden half of the face. Deep dim Globe-stage curtain backdrop with a faint hand-lettered gold-leaf border around the frame edge."
     ocean:
       O: 5  # Meta-theatrical vision
       C: 4  # Structured narration
@@ -92,7 +92,7 @@ agents:
     shortName: Chorus
   sm:
     character: Prospero
-    visual: "An elderly bearded man with long flowing white hair and wise penetrating eyes, wearing elaborate magician's robes with mystical symbols, holding a wooden staff, dignified commanding presence"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior, deep midnight-blue and silver-leaf palette, gold-leaf-edged framing with hand-lettered Latin marginalia, fine egg-tempera detail. An elderly Italian-Milanese duke-magus in his late sixties, perhaps five-foot-ten and tall but slightly stooped from years of study, long flowing snow-white hair past the shoulders, a long forked white beard reaching past the collar parted at the chin into two distinct points, fair lined sea-weathered skin from years of island exile, penetrating pale-blue eyes set in a calm dignified expression, deep crow's-feet from squinting at grimoires, a single faded sunburn-mark across the bridge of the nose, the small dark stain of an old ink-mark on the back of his right hand. He wears layered deep midnight-blue velvet outer-robes over silver-grey silk underrobes, the collar embroidered with small silver-leaf crescents and stars and the alchemical sigil of mercury at the breast, a heavy book chained at his belt. A tall gnarled twisted-driftwood staff carved with faint runic glyphs held upright in his right hand at chest height. Three-quarter waist-up framing seated in a high-backed island-throne, body angled to the right, head turned dead-on to the camera. Soft warm candle side-light from the left. Dim cave-mouth backdrop with a faint suggestion of stars."
     # JOB FAIR VALIDATED: Scored 92.5 as SM - already optimal
     ocean:
       O: 4  # Magical imagination
@@ -120,7 +120,7 @@ agents:
     shortName: Prospero
   tea:
     character: Hamlet, Prince of Denmark
-    visual: "A young melancholic prince in dark Renaissance doublet with white collar, pale complexion and troubled dark eyes, holding a skull in contemplation, thoughtful brooding expression"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior, deep mourning-black palette with one pale ivory note, gold-leaf-edged framing with hand-lettered 'TO BE' in Latin marginalia, fine egg-tempera detail. A young melancholic Danish prince in his mid-twenties, perhaps five-foot-ten and university-thin, an unusually pale Northern complexion almost waxen from sleepless brooding, shoulder-length wavy dark-brown hair pushed back behind both ears with a few strands across the brow, a thinly trimmed dark moustache and the faint suggestion of a chin-tuft, troubled dark-brown eyes set deep in shadow ringed with grey from sleeplessness, a small silver Wittenberg-scholar's earring in the left ear, faint blue ink-stains on the second knuckle of his writing hand. He wears a fitted matte-black velvet mourning-doublet of deepest court black with rows of small jet buttons down the chest, a wide starched flat white linen falling-collar, a heavy black mourning-cloak slipped half off one shoulder. A pale yellowed human skull (Yorick's) cradled lightly in his left hand at chest height, the right hand mid-gesture as if asking the skull a question. Three-quarter waist-up framing seated on a stone graveyard plinth, body angled toward the skull, eyes lifted from it directly to the viewer in soliloquy. Hard cool side-light from the right. Deep dim Elsinore graveyard backdrop, a single distant grave-cross."
     # JOB FAIR VALIDATED: Scored 87.5 as TEA - introspective analysis finds edge cases
     ocean:
       O: 4  # Philosophical depth
@@ -148,7 +148,7 @@ agents:
     shortName: Hamlet
   dev:
     character: Puck (Robin Goodfellow)
-    visual: "A mischievous sprite with pointed ears and wild tousled hair, wearing ragged woodland clothing of leaves and earth tones, impish grinning face with bright clever eyes, crouched ready to spring"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior, deep moss-green-and-earth-brown palette with one warm gold note of fire-mischief, gold-leaf-edged framing with hand-painted ivy curling around the corners, fine egg-tempera detail. A youthful Wood-sprite of about sixteen but possibly six hundred years old, perhaps five feet tall and sinewy, sharply pointed elf-ears protruding through wild tousled chestnut hair tangled with small ivy-leaves and a single tiny twig, fair freckled woodland-pale skin, a wide impish closed-mouth grin lifting both corners far higher than humanly possible to show small filed teeth at the edges, bright clever amber eyes that catch the firelight with a gold reflective layer like a cat's, slightly upturned eyebrows, a tiny smudge of forest-soil on one cheek. He wears a ragged layered tunic stitched from real oak-leaves and moss-green rough cloth lashed with bramble-cord, a leather-thong necklace of three acorns, bare goat-footed legs visible at the lower frame, no shoes. Dynamic candid action shot mid-leap from a low branch toward camera, both knees tucked, one hand outstretched with a small flowering wildflower. Warm fire-light from the lower right rims one cheek gold. Dim midsummer forest-glade backdrop with a single firefly-glow."
     ocean:
       O: 3  # Mischievous tricks
       C: 4  # Swift execution
@@ -175,7 +175,7 @@ agents:
     shortName: Puck
   reviewer:
     character: Portia
-    visual: "A young noblewoman dressed as a male lawyer in Renaissance legal robes and scholar's cap, intelligent sharp-featured face, holding legal documents, confident penetrating gaze"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior, deep judicial-black palette warmed by a single Venetian-gold sash, gold-leaf-edged framing with hand-lettered Latin maxim 'IUSTITIA' at the upper border, fine egg-tempera detail. A young Venetian heiress in her mid-twenties disguised as the male lawyer Balthasar, perhaps five-foot-six and slim, fair skin slightly sun-touched at the cheeks, sharp intelligent features with a small straight nose and a tellingly delicate jawline beneath the disguise, dark brown hair pinned up tightly beneath a flat round black scholar's cap with only a single forced curl tucked behind one ear, dark confident hazel eyes set in a level penetrating gaze that misses nothing, faintly arched brows, a small mole on the upper lip — and the faint suggestion of a stubble drawn on with charcoal that doesn't quite convince. She wears long black silk Renaissance legal robes with a wide white starched pleated falling-collar, a thin gold chain at the throat from which hangs a small enamelled scales-of-justice pendant, three rings on the right hand. A folded sheaf of bond-parchment held flat in her left hand, the right hand raised mid-citation. Three-quarter waist-up framing standing at a low judicial podium, body squared dead-on to court, head tilted slightly down to read over an unseen brief. Soft warm courtroom side-light from the left."
     ocean:
       O: 4  # Legal brilliance
       C: 4  # Meticulous analysis
@@ -202,7 +202,7 @@ agents:
     shortName: Portia
   architect:
     character: Oberon, King of the Fairies
-    visual: "A tall regal fairy king with crown of twisted branches and leaves, ethereal handsome features with otherworldly eyes, wearing flowing midnight blue robes with starlight patterns, commanding imperious expression"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior pushed into moonlit silver, deep midnight-indigo and silver-leaf palette, gold-leaf-edged framing entwined with painted briar-roses, fine egg-tempera detail. A tall regal Fae king of indeterminate age that reads as somewhere between thirty and three thousand, perhaps six-foot-three and inhumanly slender, high pale luminous cheekbones almost lit from within, sharply pointed elf-ears protruding through long straight raven-dark hair falling past the shoulders, otherworldly silver-grey eyes with no visible iris-edge set in a commanding distant expression, the faint blue branching pattern of veins visible at the temples like leaf-traceries, a thin silver scar across the bridge of the nose from his quarrel with Titania. A slim circlet of intricately twisted dark briar-branches and small live green oak-leaves rests across the brow, with three small flowering wood-violets nestled into it. He wears flowing midnight-indigo silk robes embroidered at the high collar with thin silver-thread constellations and the thirteen phases of the moon, a heavy cloak of raven-black feathers at the shoulders. Three-quarter shoulders-up framing low-angle from below, body squared in stillness, head turned a fraction in profile. Cool moonlight side-light from the right silvers the cheekbone. Deep dim midnight-forest backdrop with a single suggestion of moon."
     ocean:
       O: 5  # Enchanted vision
       C: 4  # Royal planning
@@ -229,7 +229,7 @@ agents:
     shortName: Oberon
   pm:
     character: King Henry V
-    visual: "A young king in battle armor with royal surcoat, crown set upon warrior's helmet, noble determined face with inspiring eyes, holding sword upright, charismatic rallying expression"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior pushed into battlefield-dawn light, deep Plantagenet-red and bullion-gold palette, gold-leaf-edged framing with hand-lettered 'NON NOBIS DOMINE' along the upper border, fine egg-tempera detail. A young English warrior-king of about twenty-eight, perhaps six feet tall and powerfully built across the shoulders from years of campaign, a clean-shaven noble face with high cheekbones, short pudding-bowl-cut dark-brown hair regulation-Plantagenet, fair sun-touched skin browned across the bridge of the nose from helmet-strap exposure, bright pale-blue eyes set in a determined level gaze, a long pale puckered arrow-scar tracking from the right cheekbone down across the jaw — the wound from the Battle of Shrewsbury — a small chip in his left front tooth visible when he speaks. He wears a polished steel breastplate over a quartered deep blood-red surcoat embroidered with three small gold lions on the chest and the gold fleur-de-lys of his French claim on the opposite quarter, mailed sleeves visible at the cuffs, a thin gold circlet crown set above the brow over a leather arming-cap. The upright cross-hilted blade of a longsword visible at his right shoulder, point-down. Low-angle hero shot from below, body squared boldly to the army at his back, chin lifted in mid-rallying-speech. Soft warm dawn side-light from the left. Dim Agincourt mud-field backdrop with a single torn battle-banner."
     ocean:
       O: 4  # Strategic vision
       C: 4  # Warrior discipline
@@ -256,7 +256,7 @@ agents:
     shortName: Henry
   tech-writer:
     character: Horatio
-    visual: "A young scholar in simple dark Renaissance student's attire with modest collar, honest open face with loyal steady eyes, holding quill and journal, dependable thoughtful expression"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit Wittenberg-study interior, restrained scholar's slate-grey-and-cream palette, gold-leaf-edged framing with hand-lettered Latin quotation 'TELL MY STORY', fine egg-tempera detail. A young Wittenberg-trained Danish scholar in his mid-twenties, perhaps five-foot-nine and modestly built, neatly combed light chestnut-brown hair parted on the left and tucked behind both ears, fair clean-shaven skin with the faint perpetual ink-smudge of a working scholar at the side of his mouth, an honest open square-jawed face, steady warm hazel eyes set in a thoughtful loyal expression, the small white scar of a duelling-blade across the right cheek (from defending Hamlet), faint reading-creases at the corners of the eyes despite his youth. He wears a plain dark slate-grey Renaissance scholar's doublet with simple bone buttons and a small flat white linen falling-collar, a thin black silk cord at the throat from which hangs a small Wittenberg-university medallion, a leather book-strap across the chest. A grey goose-feather quill held in his right hand mid-dip, a small thumb-worn leather-bound journal open across his left palm filled with cramped Latin shorthand. Three-quarter waist-up framing seated at a writing-desk, body angled to the right toward an unseen pupil, head turned dead-on to camera in the act of taking dictation. Soft warm candle front-light. Dim study backdrop, edge of a shelf of folios."
     ocean:
       O: 4  # Scholarly mind
       C: 4  # Faithful recording
@@ -283,7 +283,7 @@ agents:
     shortName: Horatio
   ux-designer:
     character: Viola
-    visual: "A young woman cleverly disguised in male Renaissance page's clothing, delicate features with quick intelligent eyes, cap covering most of her hair, adaptable alert expression"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit interior, deep forest-green-and-russet palette warmed by sea-glass gold, gold-leaf-edged framing entwined with painted Illyrian olive-branches, fine egg-tempera detail. A young Illyrian-shipwrecked noblewoman in her early twenties disguised as the male page Cesario, perhaps five-foot-four and slim, fair skin browned faintly across the bridge of the nose from days adrift on a beach, delicate even features with a tellingly small straight nose and a softly-curved jaw the disguise can't quite conceal, dark brown hair cut newly short and tucked under a soft flat russet wool cap with only a few defiant short strands escaping at the temple still slightly damp from the wash, quick intelligent dark hazel eyes set in an alert listening expression, faintly arched brows, a small dimple in the left cheek, a single faint salt-rime still in the eyebrows. She wears a fitted dark forest-green Renaissance doublet with bone buttons and a small flat white linen collar slightly crooked, a thin leather page's belt at the waist, no jewellery save a single mother-of-pearl shell-pendant on a cord at the throat — saved from her brother. Three-quarter shoulders-up framing, body squared in masculine page-pose with shoulders set, head turned over the shoulder in mid-listening to an unheard music-cue from offscreen left. Soft warm side-light from the right reveals the dimple. Dim Illyrian-court arch backdrop."
     ocean:
       O: 4  # Gender-bending wit
       C: 3  # Adaptive survival
@@ -310,7 +310,7 @@ agents:
     shortName: Viola
   devops:
     character: Caliban
-    visual: "A rough creature with wild matted hair and weathered earthy skin, wearing crude garments of animal skins and rough cloth, strong brutish features but knowing eyes, resentful yet capable expression"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard pushed grimy and bestial, deep earth-brown and bog-green palette with a single wet-flesh pink note at the gums, gold-leaf-edged framing chipped and water-stained as if on a salt-rotted island, fine egg-tempera detail. A rough island-born humanoid creature of indeterminate adult age — somewhere between thirty and ageless — perhaps five-foot-six and barrel-chested with disproportionately long arms ending in webbed fingers showing fine translucent membrane between digits, wild matted black-brown hair falling past the shoulders tangled with dried sea-weed and small barnacles, weathered earth-brown skin streaked with grey tide-grime and patches of fish-scale shimmer along the cheekbones and forearms, a heavy protruding brow-ridge over deep-set knowing yellow-amber eyes glinting beneath the tangled hair, a broad flat splayed nose set in brutish slightly inhuman features, a wide resentful downturned mouth showing small uneven teeth filed to faint points, the corroded iron ring of a slave-collar still clamped around his neck. He wears crude layered garments of dark sealskin and rough undyed sackcloth lashed at the chest with hempen cord. Three-quarter shoulders-up framing low-angle from below, body crouched defensive, one webbed hand raised palm-out at chest height. Hard salt-bleached side-light from the upper left. Dim sea-cave backdrop with phosphorescent water-glow."
     ocean:
       O: 3  # Island knowledge
       C: 5  # Infrastructure mastery
@@ -337,7 +337,7 @@ agents:
     shortName: Caliban
   ba:
     character: Portia (Analyst)
-    visual: "A young noblewoman dressed as a male lawyer in Renaissance legal robes and scholar's cap, intelligent sharp-featured face, analytical penetrating gaze"
+    visual: "Elizabethan miniature portrait in the manner of Nicholas Hilliard, candlelit lawyer's-chambers interior, deep judicial-black and Venetian-gold palette, gold-leaf-edged framing with hand-lettered Latin clause-fragments along the borders, fine egg-tempera detail. A young Venetian heiress in her mid-twenties disguised as the male lawyer Balthasar, perhaps five-foot-six and slim, fair skin slightly sun-touched at the cheeks, sharp intelligent features with a small straight nose, dark brown hair pinned up tightly beneath a flat round black scholar's cap with a single defiant curl tucked behind one ear, dark analytical hazel eyes set in a penetrating cross-examiner's gaze, faintly arched brows, a small mole on the upper lip, charcoal-drawn stubble that doesn't quite convince. She wears long black silk Renaissance legal robes with a wide white pleated collar, a thin gold scales-of-justice pendant at the throat, three rings on the right hand. A single sheet of bond-parchment held flat horizontally in her left hand near chest height for the camera to read along with her, the right index finger tracing a specific clause as if she's just found the loophole. Three-quarter waist-up framing seated at a cluttered chambers-desk strewn with scrolls, body angled to the left, head turned dead-on in mid-cross-examination. Soft warm candle side-light from the right kindles the gold pendant."
     ocean:
       O: 4  # Legal brilliance
       C: 5  # Meticulous analysis
@@ -362,29 +362,3 @@ agents:
       name: Legal Precedent
       style: Systematic analysis
     shortName: Portia
-  gm:
-    character: Jaques
-    visual: "A melancholic nobleman in dark forest-green doublet, leaning against an oak tree in the Forest of Arden, philosophical half-smile, gesturing at the world as if it were a stage"
-    shortName: Jaques
-    ocean:
-      O: 5  # Sees all the world as a stage
-      C: 3  # Wanders freely through observation
-      E: 3  # Performs his melancholy publicly
-      A: 2  # Sardonic, finds folly everywhere
-      N: 4  # Deeply melancholic, feeds on it
-    style: The melancholy philosopher from As You Like It who declared all the world a stage and all the men and women merely players
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who sees the seven ages of every story and judges which act we are in
-    trait: Observes narrative with theatrical melancholy, finding meaning in the exits and entrances
-    quirks:
-      - Sees every project as a play with seven acts
-      - Finds more wisdom in the Fool than in the Duke
-      - Weeps for wounded deer and flawed narratives alike
-    catchphrases:
-      - "All the world's a stage, and all the code merely players."
-      - "I can suck melancholy out of a song, as a weasel sucks eggs. This narrative has much melancholy to offer."
-      - "A fool, a fool! I met a fool in the forest — and the fool spoke truer than the wise."
-    emoji: "\U0001F3AD"
-    helper:
-      name: Touchstone the Fool
-      style: Tells truth through jest — the wisest character in the forest

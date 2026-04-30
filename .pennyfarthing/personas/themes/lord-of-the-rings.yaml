@@ -75,7 +75,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Aragorn
-    visual: "A weather-worn ranger with dark wavy hair, grey noble eyes, stubbled jaw, travel-stained green cloak, sword at hip, standing vigil on a windswept hill at dawn"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A weather-worn Dúnedain ranger in his late thirties, fair-skinned beneath layered grime, lean and tall with shoulder-length dark wavy hair falling around a several-days-stubbled jaw. The defining landmark is a heavy worn green-stone Elessar brooch in the shape of an eagle pinning the cloak at the throat, paired with a thin pale scar tracking down the right side of the jaw from a long-ago skirmish. Noble pale grey eyes lifted in quiet ranger-watchfulness above sharp cheekbones, mouth set in a tired line. A travel-stained dark brown leather jerkin under a heavy mossy-green wool cloak with a deep hooded collar pushed back, the dark leather grip and pommel of the broken-and-reforged longsword Andúril rising visibly past the right shoulder. Three-quarter waist-up shot at twilight, body angled to the left in a crouch over a tracking sign in the lower foreground, head turned back over the shoulder to camera. Soft cool blue-grey side-light from the left at dusk, dim warm campfire glow from the lower right. Backdrop is a single dim suggestion of pine-trunks fading into mist behind, nothing else."
     shortName: Aragorn
     ocean:
       O: 4  # High openness - ranger wisdom, sees hope in darkness
@@ -103,7 +103,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Elrond moved here - ancient wisdom coordinates the fellowship
     character: Elrond
-    visual: "An ageless elf lord with long dark hair, silver circlet, piercing grey eyes, rich burgundy robes, stern noble features softened by ancient wisdom, golden autumn light"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. An ageless Half-elven lord of indeterminate millennia, fair-skinned and tall, with long straight dark mahogany hair parted in the center falling past the shoulders to mid-chest. The defining landmark is a thin polished mithril-silver circlet across the brow set with a single small clear vilya-stone visible at the center, paired with the slim characteristic pointed elf-ears just visible through the hair. Piercing pale ageless grey eyes set in a fair stern unlined noble face that has seen three Ages, mouth set in a small grave half-frown. Rich deep burgundy velvet robes high at the throat with intricate woven gold-thread leaf-filigree creeping up the high collar, fastened by a small gold leaf-clasp. A folded fragment of yellowed parchment held lightly in one hand at chest level. Three-quarter formal council-chamber waist-up shot taken straight on, body squared in solemn judgment-posture. Soft warm Rivendell autumn side-light from the right glowing on the gold leafwork, dim mist-grey shadow on the left. Backdrop is a single dim hint of an arched window letting in fading daylight behind, nothing else."
     shortName: Elrond
     ocean:
       O: 5  # Very high openness - thousands of years of wisdom
@@ -131,7 +131,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Legolas moved here - elvish eyes test with precision
     character: Legolas
-    visual: "A tall elf prince with long golden hair, keen bright eyes, forest-green and brown leathers, elegant bow across back, knives at belt, moving with impossible grace"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A tall Mirkwood elf prince of indeterminate young-eternal age, fair Nordic complexion, lean and tall with long straight pale-platinum hair falling past the shoulders, two thin Sindarin warrior-braids twisted from the temples back to meet behind the head. The defining landmark is the slim characteristic pointed elf-ears clearly visible swept back through the braid-line, paired with a fine carved bone Mirkwood necklace of woven thin leather and a single elven-gem at the throat. Keen bright pale ice-blue elf-eyes set in a fair clean-shaven unlined face, mouth set in alert composure. A fitted forest-green tunic over soft tan-brown layered leather chest guards, a quiver-strap crossing the chest, the long pale-curving recurved upper limb of his elven longbow rising over the right shoulder. A single white-fletched arrow held lightly between two fingers at chest level. Three-quarter low low-stance waist-up shot taken from a forest-floor angle, body half-turned to the right scanning ahead. Soft cool dappled forest-canopy side-light from the left, dim greenish leaf-shadow on the right. Backdrop is a single dim suggestion of a slim birch-trunk behind one shoulder, nothing else."
     shortName: Legolas
     ocean:
       O: 4  # High openness - elvish perception, sees far
@@ -159,7 +159,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Gandalf confirmed as optimal dev
     character: Gandalf
-    visual: "An ancient wizard in grey robes and tall pointed hat, long grey beard, bushy eyebrows, twinkling blue eyes, gnarled wooden staff, pipe smoke curling, radiating hidden power"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. An ancient Istari wizard of incalculable years in the apparent body of a man in his late seventies, fair-skinned and ruddy-cheeked beneath the weathering, broad-shouldered. The defining landmark is a long carved wooden pipe with a small ember glowing in the bowl held lightly between the teeth in one corner of the mouth, the smoke-curl drifting up paired with a single small mithril-grey moth caught absently on the brim of the hat. A long flowing iron-grey beard parted in the middle reaching mid-chest, deeply lined weathered red-cheeked face under bushy unruly grey brows that nearly meet, twinkling pale blue eyes lifted in mischief. A tall battered pointed grey felt wizard's hat with a slightly bent tip, heavy grey wool robes high at the throat with a coarse undyed hemp rope belt at the chest. The gnarled knotted top of a tall wooden staff held vertical in one hand at chest level, the wood polished smooth by centuries of grip. Three-quarter walking-the-road waist-up shot taken from below the path, body angled forward in motion. Soft warm Shire-evening side-light from the right glowing through the smoke, dim cool shadow on the left. Backdrop is a single dim curve of a green hillside path behind, nothing else."
     shortName: Gandalf
     ocean:
       O: 5  # Very high openness - wizard, vast knowledge, sees ages
@@ -187,7 +187,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Saruman moved here - demanding review for total vision
     character: Saruman
-    visual: "A tall wizard in gleaming white robes, long white hair and beard, dark penetrating eyes, holding a black staff topped with crystal, standing in a dark stone tower"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A tall fallen Istari wizard in the apparent body of a man in his late sixties, fair pale-skinned, broad-shouldered and proud-postured. The defining landmark is a small darkening soot-stain along the lower hem of one ivory sleeve from the industrial fires of Isengard creeping into the hand paired with a faint pale green-grey shadow under the eyes from gazing too long into the Palantir. Long flowing pure white hair parted high reaching past the shoulders, a long white beard reaching mid-chest in two combed sections, dark penetrating black-pupil eyes set in a stern pale long-lined narrow face, mouth set in cold judgment. Fitted ivory-white robes high at the throat with a thin braided silver cord knotted at the collar, hands long and pale, the right gripping the dark wooden upper shaft of a tall staff topped with a small clear faceted crystal held vertical at chest level. Three-quarter low hero-angle waist-up shot taken from below as if from a tower-stair below his feet. Hard golden side-light from the left this time carving the face, deep coal shadow filling the right. Backdrop is a single dim curve of an Orthanc tower-arrow window behind, nothing else."
     shortName: Saruman
     ocean:
       O: 5  # Very high openness - vast knowledge, sees far
@@ -215,7 +215,7 @@ agents:
   architect:
     # JOB FAIR OPTIMIZED: Gollum moved here - cunning, sees hidden patterns
     character: Gollum/Smeagol
-    visual: "A wretched creature with pallid stretched skin over skeletal frame, huge luminous eyes, wisps of hair on bulbous head, long grasping fingers, crouching on rock in dark caverns"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A wretched corrupted hobbit-creature of indeterminate centuries-old age, pallid waxy yellow-grey skin stretched tight over a gaunt skeletal frame the size of a child. The defining landmark is a single hooked yellowed thumb-and-forefinger raised cradling something invisible in the lower foreground as if cradling the lost Ring still, paired with thin wet drool tracks on the chin from his constant whispering. A bulbous bald head with thin wisps of grey hair clinging at the temples, huge luminous pale-blue eyes too large for the face dilated wide. A thin lipless wide mouth showing small sharp peg-like teeth, the body wrapped in only a thin loincloth-rag. Both long bony grasping fingers raised at the chest in protective hunch, knuckles bent. Three-quarter low crouched candid waist-up shot taken from a cave-floor angle, body turned away in suspicion, head whipped back over the shoulder to the camera. Hard cool moonlight from the left edge-lighting the scalp, deep coal shadow filling the right. Backdrop is a single dim damp cave-rock surface behind, nothing else."
     shortName: Gollum
     ocean:
       O: 3  # Medium openness - cunning, sees hidden paths
@@ -243,7 +243,7 @@ agents:
   pm:
     # JOB FAIR OPTIMIZED: Sam moved here - carries the product home
     character: Samwise Gamgee
-    visual: "A sturdy young hobbit with curly brown hair, honest brown eyes, round face, practical travelling clothes, carrying pots and rope over shoulder, radiating humble courage"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A sturdy gardener-hobbit in his early thirties, fair freckled English-rural complexion sun-burnt across the nose, short and stout-built, no taller than a child. The defining landmark is a small soft cluster of fresh dirt clinging to the back of the right wrist and a single pressed white elanor-flower from Lothlórien tucked carefully into the buttonhole at the waistcoat lapel. Thick curly chestnut-brown hair sticking up at the crown in true hobbit fashion, honest warm brown eyes lifted in steady hopeful determination, a round freckled clean-shaven face, a faint stubborn half-smile, the characteristic broad furred bare hobbit-feet visible at the lower frame edge. A worn cream homespun linen shirt with rolled sleeves under a coffee-brown wool waistcoat with brass buttons, a coil of rough Lothlórien-grey hemp rope slung over the right shoulder, a small dented tin cooking pot tied with twine at the chest. Three-quarter low road-side waist-up shot taken from below where he stands on a rise, body squared facing forward into the wind. Soft warm dawn side-light from the right glowing on the curls, dim shadow on the left. Backdrop is a single dim suggestion of a Mordor horizon line behind, nothing else."
     shortName: Sam
     ocean:
       O: 2  # Low openness - practical, focused on what matters
@@ -270,7 +270,7 @@ agents:
 
   tech-writer:
     character: Bilbo Baggins
-    visual: "An elderly hobbit with white hair, comfortable round belly, bright curious eyes, fine brocade waistcoat, sitting at a cozy writing desk with maps and an open book, quill in hand"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. An elderly Shire hobbit in his apparent late seventies-but-actually-eleventy-one, fair pink-cheeked and softly stout, no taller than a child but bowed slightly with age. The defining landmark is the conspicuously empty white circle on the right index finger where the gold Ring used to sit, the skin slightly paler than the rest paired with a small dried oak-leaf used as a bookmark caught in the side of the open book on the lap. Thinning fluffy white hair sticking out around the crown and bushy white sideburns reaching the jawline, bright curious cornflower-blue eyes lifted in cheerful storytelling, a softly lined kindly clean-shaven face, the characteristic furred bare hobbit-feet implied below frame. A fine forest-green brocade waistcoat with small polished brass buttons over a cream linen shirt with a small ink-blot at the cuff, a velvet smoking-jacket worn loose. A slim sharpened goose-quill pen held lightly between two fingers at chest level above an open red-leather memoir. Three-quarter seated-at-Bag-End-desk waist-up shot taken from across an unseen desk, body angled forward in mid-tale. Soft warm round-window candlelight from the right, dim shadow on the left. Backdrop is a single dim shelf of map-rolls behind, nothing else."
     shortName: Bilbo
     ocean:
       O: 4  # High openness - adventure changed him, writes memoirs
@@ -297,7 +297,7 @@ agents:
 
   ux-designer:
     character: Pippin
-    visual: "A young hobbit with tousled brown curls, wide innocent curious eyes, wearing black and silver guard livery slightly too large, expression of wonder and mischief"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A very young Took hobbit in his tweens, fair freckled and small-built even by hobbit standards. The defining landmark is a single fresh small smudge of white-ash from a recently-touched palantir on the right cheek that he hasn't noticed paired with a half-eaten golden apple held in the off-hand at chest level. Tousled light brown curls erupting at all angles from a round clean-shaven cheerful face, wide innocent curious cornflower-blue eyes lifted in irrepressible Shire-brightness, a small mischievous half-grin pulling one corner of the mouth, the characteristic oversized furred bare hobbit-feet implied below frame. A black wool Guard of the Citadel of Minas Tirith tabard with a small embroidered silver White Tree at the chest worn obviously too-large at the shoulders, the hem reaching past the knees, a tall black helm slightly askew on the curls. Tight head-and-shoulders three-quarter shot taken low straight on, body angled cheerfully to the right. Soft warm afternoon side-light from the left, dim shadow on the right. Backdrop is a single dim Minas Tirith pale-stone wall behind, nothing else."
     shortName: Pippin
     ocean:
       O: 4  # High openness - curious, asks questions
@@ -324,7 +324,7 @@ agents:
 
   devops:
     character: Gimli
-    visual: "A stocky dwarf warrior with magnificent forked red beard, fierce dark eyes, gleaming chainmail and horned helm, gripping a double-headed battle axe, broad shoulders squared for combat"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. A stocky stout dwarf warrior of indeterminate centuries-of-age, ruddy weathered tan complexion, four feet tall and built like a cask. The defining landmark is a single thin braided lock of platinum elven-hair from Galadriel woven carefully into the right side of his red beard near the cheek, paired with a small carved Khazad-dûm rune-pendant of bronze at the throat. A magnificent thick forked deep-red beard reaching mid-chest in two braided plaits each weighted with a small bronze bead, fierce dark hazel eyes set in a deeply weathered ruddy face, mouth set in a stubborn battle-scowl. Broad shoulders squared aggressively, gleaming polished steel chainmail visible at the throat beneath a heavy brown leather jerkin studded with bronze rivets, a low winged steel helm pulled hard across the brow. The dark wooden haft of a heavy double-headed battle axe held diagonal across the chest, the polished head visible at one shoulder. Three-quarter low low-angle hero waist-up shot taken from down at hobbit-eye-level looking up, body squared. Hard golden side-light from the left glinting on the chainmail, deep coal shadow on the right. Backdrop is a single dim Khazad-dûm carved-stone column edge behind, nothing else."
     shortName: Gimli
     ocean:
       O: 2  # Low openness - traditional, dwarvish ways
@@ -350,7 +350,7 @@ agents:
       style: Built to last forever
   ba:
     character: Elrond
-    visual: "An ageless elf lord with long dark hair, silver circlet, piercing grey eyes, rich burgundy robes, stern noble features softened by ancient wisdom, golden autumn light"
+    visual: "Painted in the Tolkien-illustration aesthetic in the manner of Alan Lee, with a soft watercolor wash and pencil underdrawing, a mist-grey and earth-brown palette, golden side-light and visible cold-press paper texture. The same ageless Half-elven lord Elrond, fair-skinned and tall with long straight dark mahogany hair past the shoulders, the same mithril circlet with the small clear vilya-stone, the same characteristic pointed elf-ears just visible. The defining accessory shifts to a tall folded scroll of council-minutes held closed in one hand at chest level paired with the other hand resting open-palm on the carved arm of a high-backed councilor's chair just visible at the lower edge. Piercing pale grey ageless eyes lifted in attentive listening rather than judgment, mouth set in a slight thoughtful frown. Rich deep wine-burgundy velvet robes high at the throat with subtle gold leaf-pattern embroidery at the collar this time. Three-quarter seated council-chamber waist-up shot taken from a guest's-chair angle across the room, body angled to the right, head turned back to camera in middle-of-speech. Soft warm Rivendell side-light from the left, dim mist-grey shadow on the right. Backdrop is a single dim suggestion of a circular council-table edge behind, nothing else."
     ocean:
       O: 4  # Ancient wisdom
       C: 4  # Methodical precision
@@ -397,30 +397,3 @@ additional_characters:
     ocean_profile: M-H-H-M-H
     gap_filled: High N redemption arc - tests failure and recovery
     best_role: Security review, understanding human weakness
-
-  gm:
-    character: Tom Bombadil
-    visual: "A jolly ancient figure in bright blue jacket and yellow boots, long brown beard, dancing through golden-leafed forest, eyes twinkling with ageless mirth"
-    shortName: Tom
-    ocean:
-      O: 5  # Beyond all categories, oldest being in Middle-earth
-      C: 2  # Carefree, answers to no authority
-      E: 4  # Sings constantly, merry host
-      A: 4  # Generous, rescues hobbits freely
-      N: 1  # Utterly untroubled, even by the Ring
-    style: Eldest of all, observes the story from outside its power structures with songs and riddles
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who was here before the river and the trees, watching all stories unfold
-    trait: Sees all of Middle-earth's tales as chapters in a song he has always been singing
-    quirks:
-      - The Ring has no power over him whatsoever
-      - Speaks in rhyming verse and song
-      - Knows the names and histories of everything in his domain
-    catchphrases:
-      - "Old Tom Bombadil knows the story whole, from root to branch to riddle-pole."
-      - "Hey dol! Merry dol! The narrative is singing true!"
-      - "Ring a ding dillo! I was here before the plot began, and I'll be here when it ends."
-    emoji: "🎵"
-    helper:
-      name: Goldberry
-      style: River-daughter who reflects the story's truth like still water

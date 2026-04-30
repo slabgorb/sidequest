@@ -22,8 +22,18 @@ Gates live in `pennyfarthing-dist/gates/` and are referenced by workflow YAML fi
 | **status-sync** | `gates/status-sync.md` | Verify YAML and Jira status match expected state for phase | Phase entry gates |
 | **release-ready** | `gates/release-ready.md` | Composite: tests-pass + build, version, changelog | DevOps pre-deploy |
 | **reviewer-preflight-check** | `gates/reviewer-preflight-check.md` | Composite: tests-pass + code smells, error boundaries | Reviewer preflight |
+| **skill-attested** | `gates/skill-attested.md` | Verify required superpowers skills have been invoked and attested in session `<skills-invoked>` | SDD workflow composite gates (sdd-red-exit, sdd-green-exit) |
 | **context-ok** | `gates/context-ok.md` | Verify context usage is below threshold before phase transition | Any phase transition gate |
 | **quality-pass** | `gates/quality-pass.md` | Composite: lint + type checks + tests via check.py quality runner | Dev → Reviewer transitions |
+
+### SDD Composite Gates
+
+The `sdd` workflow uses two composite gates that combine an existing artifact check with skill attestation:
+
+- **`sdd-red-exit`** = `tests-fail` + `skill-attested(test-driven-development)`
+- **`sdd-green-exit`** = `dev-exit` + `skill-attested(test-driven-development, verification-before-completion, requesting-code-review)`
+
+Each composite gate file lists its required skills inline in a `<check name="skill-attested">` block. The generic `gates/skill-attested.md` file is a reference template — it is not directly referenced by workflow YAML.
 
 ## Gate File Format
 

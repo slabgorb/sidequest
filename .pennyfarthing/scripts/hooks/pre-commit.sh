@@ -1,10 +1,12 @@
 #!/bin/bash
-# pre-commit.sh - Git hook for agent and sprint validation
+# pre-commit.sh - Git hook to enforce branch protection and agent validation
 #
 # Checks:
-# 1. Validates agent files when pennyfarthing-dist/agents/*.md is modified
-# 2. Validates file references when pennyfarthing-dist/ files are modified (warn only)
-# 3. Validates sprint YAML files when sprint/*.yaml is modified
+# 1. Prevents direct commits to protected branches (main, develop)
+#    Exception: sprint/ folder commits allowed on protected branches
+# 2. Validates agent files when pennyfarthing-dist/agents/*.md is modified
+# 3. Validates file references when pennyfarthing-dist/ files are modified (warn only)
+# 4. Validates sprint YAML files when sprint/*.yaml is modified
 #
 # Installation:
 #   End-user projects: pf setup (copies to .git/hooks/)
@@ -25,7 +27,48 @@ else
 fi
 
 # =============================================================================
-# Check 1: Agent File Validation
+# Check 1: Branch Protection
+# =============================================================================
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+PROTECTED_BRANCHES="^(main|develop)$"
+
+if [[ $BRANCH =~ $PROTECTED_BRANCHES ]]; then
+    # Special case: Allow sprint/ folder commits on protected branches
+    # (orchestrator uses trunk-based on main; pennyfarthing uses gitflow on develop)
+    STAGED_FILES=$(git diff --cached --name-only)
+    NON_SPRINT_FILES=$(echo "$STAGED_FILES" | grep -v "^sprint/")
+
+    # If all staged files are in sprint/, allow the commit
+    if [ -z "$NON_SPRINT_FILES" ] && [ -n "$STAGED_FILES" ]; then
+        # Continue to agent validation check
+        :
+    else
+        echo ""
+        echo "COMMIT BLOCKED"
+        echo ""
+        echo "You are trying to commit directly to: $BRANCH"
+        echo "This violates the git workflow rules."
+        echo ""
+        echo "Protected branches: main, develop"
+        echo ""
+        echo "What to do:"
+        echo "1. Create a feature branch:"
+        echo "   git checkout -b <type>/<epic-story>-<description>"
+        echo ""
+        echo "2. Example:"
+        echo "   git checkout -b feat/8-2-add-authentication"
+        echo ""
+        echo "3. Then commit your changes on the feature branch"
+        echo ""
+        echo "Exception: Sprint tracking files (sprint/*) can be committed directly"
+        echo ""
+        exit 1
+    fi
+fi
+
+# =============================================================================
+# Check 2: Agent File Validation
 # =============================================================================
 
 STAGED_FILES=$(git diff --cached --name-only 2>/dev/null || true)
@@ -58,7 +101,7 @@ if [[ -n "$AGENT_FILES" ]]; then
 fi
 
 # =============================================================================
-# Check 2: File Reference Validation (warn only)
+# Check 3: File Reference Validation (warn only)
 # =============================================================================
 
 DIST_FILES=$(echo "$STAGED_FILES" | grep "^pennyfarthing-dist/" || true)
@@ -82,7 +125,7 @@ if [[ -n "$DIST_FILES" || -n "$SCRIPT_FILES" ]]; then
 fi
 
 # =============================================================================
-# Check 3: Sprint YAML Validation
+# Check 4: Sprint YAML Validation
 # =============================================================================
 
 SPRINT_YAML_FILES=$(git diff --cached --name-only -- 'sprint/*.yaml' 'sprint/archive/*.yaml' 2>/dev/null \

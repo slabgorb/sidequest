@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# implementation-readiness-workflow-import.test.sh - Tests for Story <PROJECT-KEY>
+# implementation-readiness-workflow-import.test.sh - Tests for Story PROJ-12138
 #
 # These tests verify that the BMAD implementation-readiness workflow is correctly
 # imported into Pennyfarthing's stepped workflow format.
@@ -491,7 +491,7 @@ test_ac6_description_mentions_prd_or_architecture() {
 
 echo ""
 echo "=============================================="
-echo "Story <PROJECT-KEY>: Import Implementation-Readiness Workflow Tests"
+echo "Story PROJ-12138: Import Implementation-Readiness Workflow Tests"
 echo "=============================================="
 echo ""
 

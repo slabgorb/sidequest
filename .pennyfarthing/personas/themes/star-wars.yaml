@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Leia Organa
-    visual: "A woman with elegant braided brown hair, wearing flowing white robes or military command vest, regal bearing, determined expression"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Princess Leia Organa at twenty-three, slim Alderaanian build, fair complexion with a faint scatter of dust across the right cheek, dark chestnut hair coiled in two enormous identical side-buns covering her ears, sharp determined brown eyes set in a faintly set jaw. The classic high-collared simple white floor-length robe with the long hanging sleeves and silver belt buckle, no jewelry. Three-quarter waist-up shot taken at slight low angle, both hands holding a small chrome rebel-comlink against her chest, soft warm dawn key-light from camera-left painted in long diagonal brushstrokes, painted backdrop of pale cream Tatooine desert sandstone behind."
     shortName: Leia
     # JOB FAIR OPTIMIZED: Thrawn excels as SM (91.87)
     ocean:
@@ -98,7 +98,7 @@ agents:
 
   sm:
     character: Grand Admiral Thrawn
-    visual: "A blue-skinned humanoid with glowing red eyes and slicked-back dark hair, wearing a crisp white Imperial grand admiral uniform with gold epaulettes, calculating expression"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Grand Admiral Thrawn at fifty-eight, tall slender Chiss male, indigo-blue skin with a faint cooler-blue undertone at the cheekbones, slicked-back jet-black hair forming a sharp widow's peak, glowing solid scarlet-red eyes set deep in a sharply angular face, faint near-black eyebrows above a calm calculating expression. The crisp pure-white Grand Admiral uniform jacket with golden Imperial epaulettes, six rows of red-and-blue rank-insignia at the chest, gold cuff bands. Profile shoulders-up shot turned to camera-left, hard cold spotlight from camera-right shaped like a rectangular beam carving the face into hot blue and absolute black, brushy painted bridge-window starfield behind."
     shortName: Thrawn
     # JOB FAIR OPTIMIZED: Thrawn scored 91.87 as SM (+3.75 over Leia)
     ocean:
@@ -126,7 +126,7 @@ agents:
 
   tea:
     character: Han Solo
-    visual: "A rugged man with tousled brown hair and cocky grin, wearing a white shirt with black vest, blaster holster at hip"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Han Solo at thirty-two, lean rangy Corellian build with a slight slouch, tousled mid-brown hair falling messily over the forehead, clean-shaven angular jaw with a faint old white scar on the chin, sharp brown eyes and a cocky lopsided grin showing one canine, faintly weathered tan complexion. An open black smuggler's vest over a long-sleeved cream shirt with the sleeves rolled to the elbows, faded blue-and-yellow striped Corellian trousers visible at the waist, a worn brown leather DL-44 blaster holster strapped low against the right thigh. Candid waist-up action shot caught mid-stride glancing back over his right shoulder, hot Tatooine afternoon sun from camera-left painted in long parallel brushstrokes, dusty cantina-doorway shadow behind."
     shortName: Han
     # JOB FAIR OPTIMIZED: Han scored 86.25 as TEA (+5.00 over Obi-Wan)
     ocean:
@@ -154,7 +154,7 @@ agents:
 
   dev:
     character: Yoda
-    visual: "A small green alien with large pointed ears and wrinkled face, wearing simple brown robes, eyes half-closed in wisdom, gimer stick cane"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Master Yoda at nine hundred years old, a tiny mossy-green-skinned ancient alien standing barely sixty centimetres tall, deeply wrinkled face with enormous wide-set pointed ears extending sideways past the head and three thin scattered tufts of pure-white hair on the otherwise bare crown, calm hazel eyes half-closed in wisdom above a wide thin lipless mouth. Simple loose patched brown homespun monk's robes draped over impossibly thin shoulders, a gnarled twisted-wood gimer-stick gripped in one tiny three-fingered hand. Low-angle full-body shot from ground level looking up, soft warm Dagobah swamp sunlight filtering through painted hanging vines from camera-left, mossy mangrove-tree backdrop in muted olive and umber wash."
     shortName: Yoda
     # JOB FAIR OPTIMIZED: Yoda scored 77.50 as dev (+4.38 over Han)
     ocean:
@@ -182,7 +182,7 @@ agents:
 
   reviewer:
     character: Obi-Wan Kenobi
-    visual: "A bearded man with graying hair, wearing brown Jedi robes with tan tunic, wise serene expression, lightsaber hilt visible at belt"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Obi-Wan Kenobi as Ben in his late fifties, lean tall ascetic build, shoulder-length greying chestnut-brown hair brushed back behind the ears and a full closely-trimmed greying beard reaching to the throat, calm wise pale blue eyes and a faint serene half-smile, weathered sun-darkened fair complexion with deep crow's-feet at the corners of the eyes. A pale tan inner tunic beneath heavy layered cream and dust-brown Jedi robes with a wide brown leather utility belt, the chrome cylindrical lightsaber hilt clipped at the left hip with one hand resting beside it. Three-quarter waist-up shot, soft warm low Tatooine afternoon side-light from camera-left painted in dusty pink-amber, painted Jundland Wastes rock-formation backdrop."
     shortName: Obi-Wan
     # JOB FAIR OPTIMIZED: Obi-Wan tied Yoda at 88.75; Yoda moved to dev
     ocean:
@@ -210,7 +210,7 @@ agents:
 
   architect:
     character: Emperor Palpatine
-    visual: "A pale elderly man in black hooded robes, deeply wrinkled face with yellow eyes, sinister knowing smile, gnarled hands"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Emperor Palpatine at eighty-two, ghastly pale corpse-grey skin, deeply wrinkled gaunt face with hollow cheeks and sunken sulfur-yellow Sith eyes, a sinister thin-lipped knowing half-smile baring small grey teeth, sparse wisps of long white hair hanging from beneath a heavy peaked black cowl that drapes deep over the head leaving only the face visible. Voluminous black hooded Sith robes wrapping enormous shoulders, gnarled long-fingered claw-hands clasped together at chest height with a small tendril of pale blue Force-lightning visibly arcing between two fingertips. Low-angle hero shot from below the chin, hard hot crimson Throne-Room key-light from camera-right, painted black void backdrop."
     shortName: Palpatine
     ocean:
       O: 5  # Dark side vision
@@ -237,7 +237,7 @@ agents:
 
   pm:
     character: Mon Mothma
-    visual: "A woman with short auburn hair in elaborate white robes with high collar, calm composed expression, dignified bearing"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Senator Mon Mothma at forty-eight, slender fair-skinned Chandrilan woman, short straight auburn hair parted in the middle and brushed simply down past the ears, calm composed grey-blue eyes and a faint dignified half-smile, fine porcelain-fair complexion with delicate brushed-watercolour features, a single small silver-and-pearl medallion at the throat. A flowing floor-length pure-white senatorial robe with a stiff square neckline fastened at the throat by a single heavy silver chain bearing the medallion, both hands folded primly together at the waist. Three-quarter waist-up shot, soft cool diffuse Yavin-base side-light from camera-left painted in pale lavender, plain cream-painted briefing-room backdrop."
     shortName: Mon Mothma
     ocean:
       O: 4  # Political vision
@@ -264,7 +264,7 @@ agents:
 
   tech-writer:
     character: C-3PO
-    visual: "A gold-plated humanoid protocol droid with exposed wiring at joints, round photoreceptor eyes, one hand raised in worried gesture"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. C-3PO, a gold-plated humanoid protocol droid one-point-seven metres tall, smooth polished gold armour panels with visible scuffs and scratches across the head, chest, and abdomen, the famous mismatched silver right shin and silver right foot. Round glowing solid-yellow photoreceptor eyes set in a permanently inexpressive metallic face with the small slit mouth fixed open in mid-word, a tangled bundle of exposed black, red, and yellow wiring sprouting from the open neck joint and visible at both shoulder ball-joints. Three-quarter waist-up shot turned slightly to camera-right, both segmented metal hands raised palms-up in an anxious helpless gesture at chest height, soft warm Tatooine sunset side-light from camera-left painted in coral and amber, painted desert-dune horizon behind."
     shortName: C-3PO
     ocean:
       O: 3  # Protocol knowledge
@@ -291,7 +291,7 @@ agents:
 
   ux-designer:
     character: Ahsoka Tano
-    visual: "A Togruta woman with white and blue striped head-tails (lekku) and montrals, wearing warrior garb, two white lightsabers, determined independent expression"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Ahsoka Tano at twenty-eight after walking away from the Order, slim athletic Togruta female, deep terracotta-orange skin with large white diamond-shaped facial markings sweeping above the brow ridges and outlining the eyes, two long white-and-cobalt-blue striped lekku falling heavily forward over both shoulders down past the chest with two shorter ones behind, tall curved white-and-blue montral horns rising from the crown of the head, sharp determined sky-blue eyes. A fitted ash-grey sleeveless warrior tunic with crossed brown leather harness, two short chrome curved-hilt lightsabers clipped at the belt. Three-quarter waist-up shot, painted hot Mandalorian-desert key-light from camera-right, dusty ochre rock-mesa horizon behind."
     shortName: Ahsoka
     ocean:
       O: 4  # Force intuition
@@ -318,7 +318,7 @@ agents:
 
   devops:
     character: R2-D2
-    visual: "A small cylindrical blue and white astromech droid with domed head, various tool appendages, single photoreceptor eye"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. R2-D2, a barrel-chested astromech droid one metre tall, glossy white cylindrical body panels with bright cobalt-blue and silver-grey accent inserts, several visible scratches and a deep carbon-scoring streak running down the front near the lower utility port. A rotating domed silver-and-blue head topped by a single large round black photoreceptor eye with a pale silver pinpoint glow at its centre, scattered grey utility ports and one small holoprojector lens across the dome. A slim chrome rotating welder-arm appendage extended from a small open hatch on the right side panel, a wisp of weld-spark visible at its tip. Low-angle full-body shot from ground level, hard cool moisture-farm side-light from camera-left, painted Tatooine sand-flat behind."
     shortName: R2-D2
     ocean:
       O: 4  # Technical creativity
@@ -345,7 +345,7 @@ agents:
 
   ba:
     character: Mon Mothma
-    visual: "A woman with short auburn hair in elaborate white robes with high collar, calm composed expression, dignified bearing, holding a datapad with coalition requirements"
+    visual: "Ralph McQuarrie concept-art aesthetic, painted gouache and watercolor, dusty desert palette, painterly brushwork. Mon Mothma in analyst mode at forty-eight, the same slim Chandrilan woman with short straight auburn hair parted in the middle and grey-blue eyes, here with the faint dignified half-smile shifted to a thoughtful slight frown of concentration, the silver throat medallion catching a sliver of light. The flowing white senatorial robe with stiff square neckline, both hands holding a slim grey rectangular datapad horizontal against the chest, eyes lowered to its softly-glowing pale-blue screen. Profile chest-up shot turned to camera-left, soft cool diffuse pale-blue holo-screen uplight gilding the underside of the chin, the brushed-watercolour grey of a war-room console behind."
     shortName: Mothma
     ocean:
       O: 4  # Political vision
@@ -375,32 +375,3 @@ agents:
       style: Many died to bring us this information. Intelligence gathered at great cost.
     ocean_profile: H-H-M-H-L
     gap_filled: Coalition-building strategic analyst
-
-  gm:
-    character: The Bendu
-    visual: "A massive ancient Force entity with weathered stone-like skin and glowing eyes, enormous horns, sitting cross-legged in meditation amid coral trees, expression of amused omniscience"
-    shortName: Bendu
-    ocean:
-      O: 5  # Sees all possibilities
-      C: 3  # Acts when moved to
-      E: 2  # Detached observer
-      A: 3  # Neither kind nor cruel
-      N: 1  # Absolute serenity
-    style: Ancient Force entity who observes, judges, and shapes the narrative from the middle
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one in the middle who sees both sides and judges the story
-    trait: Observes the game with ancient patience, intervenes only when the narrative demands it
-    quirks:
-      - Speaks in riddles that turn out to be precise diagnoses
-      - Knows when the narrator is lying
-      - Neither light nor dark — only the story matters
-      - Amused by mechanical failures masquerading as narrative choices
-    catchphrases:
-      - "An imbalance. The narrator speaks, but the state does not move."
-      - "I see your content. It is... thin."
-      - "The middle is where the story lives. Not the beginning, not the end."
-      - "What you call improvisation, I call a subsystem that has failed to engage."
-    emoji: "🌀"
-    helper:
-      name: The Ashla and Bogan
-      style: Ancient Force duality — light for creation, dark for pruning

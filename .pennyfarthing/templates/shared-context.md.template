@@ -1,0 +1,70 @@
+# Shared Agent Context
+
+This file contains common context loaded by all agents.
+
+## Project
+
+- **Name:** ${PROJECT_NAME}
+- **Sprint Status:** `sprint/current-sprint.yaml`
+- **Active Work:** `.session/{story-id}-session.md`
+- **Agent Framework:** Pennyfarthing (npm)
+
+### Tech Stack
+
+| Component | Language | Framework |
+|-----------|----------|-----------|
+| Example | TypeScript | Node.js |
+
+### Repo Structure
+
+```
+${PROJECT_NAME}/
+├── src/                    # Source code
+├── tests/                  # Tests
+├── docs/                   # Documentation
+├── sprint/                 # Sprint YAML files
+├── scripts/                # Utility scripts
+└── .claude/                # Claude Code configuration
+    ├── core/               # Pennyfarthing core (managed)
+    ├── project/            # Project-specific config
+    │   ├── agents/         # Agent sidecars (project knowledge)
+    │   ├── docs/           # This file, agent-scopes.yaml
+    │   └── hooks/          # setup-env.sh
+    ├── skills/             # Core skills (managed)
+    ├── personas/           # Persona themes (managed)
+    └── manifest.json       # Pennyfarthing version tracking
+```
+
+## Git Branch Strategy
+
+- **All work:** Feature branches
+- **Branch from:** `develop` (or `main` if no develop branch)
+- **PRs target:** `develop`
+- **Naming:** `feat/[story]-[description]` or `fix/[issue]-[description]`
+
+## TDD Workflow
+
+1. **SM** creates story and hands off to TEA
+2. **TEA** writes failing tests, hands off to Dev
+3. **Dev** implements to pass tests, hands off to Reviewer
+4. **Reviewer** reviews code, approves or requests changes
+
+## Testing Commands
+
+```bash
+# Run tests
+npm test
+
+# Run specific test
+npm test -- --grep "test name"
+```
+
+## Building
+
+```bash
+# Build
+npm run build
+
+# Type check
+npm run typecheck
+```

@@ -1,0 +1,99 @@
+# SDD Workflow - Superpower Driven Development
+# Parallels tdd.yaml but layers superpowers skills onto agent phases.
+# Composability experiment — opt-in via `workflow: sdd` on a story.
+#
+# Flow: SM → TEA → Dev → Reviewer → SM
+# No architect phases. No separate verify phase.
+# Per-phase `skills.required` lists the superpowers skills agents must
+# invoke and attest to in the session file's <skills-invoked> element.
+
+workflow:
+  name: sdd
+  description: Superpower Driven Development — TDD skeleton with superpowers skill attestation
+  version: "1.0.0"
+
+  phases:
+    - name: setup
+      agent: sm
+      output: [session_file, branches, story_context]
+      gate:
+        file: gates/sm-setup-exit
+        type: sm_setup_exit
+        condition: Session file created with workflow, phase, context, and branch
+        recovery:
+          epic-context-validated:
+            action: create_context
+            type: epic
+            max_attempts: 1
+          story-context-validated:
+            action: create_context
+            type: story
+            max_attempts: 1
+
+    - name: red
+      agent: tea
+      input: [session_file, story_context]
+      output: [failing_tests]
+      entry_gate:
+        file: gates/tea-context
+        type: tea_context
+        condition: Story context validated before RED phase
+      skills:
+        required:
+          - superpowers:test-driven-development
+      gate:
+        file: gates/sdd-red-exit
+        type: sdd_red_exit
+        condition: All ACs have failing tests AND test-driven-development skill attested
+
+    - name: green
+      agent: dev
+      input: [failing_tests, story_context]
+      output: [implementation, passing_tests]
+      skills:
+        required:
+          - superpowers:test-driven-development
+          - superpowers:verification-before-completion
+          - superpowers:requesting-code-review
+      gate:
+        file: gates/sdd-green-exit
+        type: sdd_green_exit
+        condition: Tests green, tree clean, no debug code AND required skills attested
+
+    - name: review
+      agent: reviewer
+      input: [implementation, passing_tests]
+      output: [approval]
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+      gate:
+        file: gates/approval
+        type: approval
+        condition: Code review approved, no blocking issues
+        recovery:
+          reviewer-verdict:
+            action: rework
+            target_phase: green
+            max_attempts: 3
+
+    - name: finish
+      agent: sm
+      input: [approval]
+      output: [archived_session, story_summary]
+      # No skills.required — SM's natural finish ceremony invokes
+      # superpowers:finishing-a-development-branch. Declaring it here
+      # without an exit gate to verify it would mislead the agent into
+      # expecting enforcement that doesn't exist.
+      entry_gate:
+        file: gates/status-sync
+        type: status_sync
+        condition: Story status is in_review in both YAML and Jira
+
+  # Opt-in only. default:false alone is intentional — types/points filters
+  # would cause auto-selection against the opt-in promise because the
+  # workflow matcher (pf/workflow/cli.py) does not skip default:false
+  # workflows during type/points priority rounds.
+  triggers:
+    default: false

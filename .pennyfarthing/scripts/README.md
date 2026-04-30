@@ -28,8 +28,8 @@ Scripts are invoked directly with **full category paths**:
 # From project root
 .pennyfarthing/scripts/core/agent-session.sh start sm
 pf sprint status
-.pennyfarthing/scripts/jira/jira-claim-story.sh <PROJECT-KEY>
-pf sprint story finish <PROJECT-KEY>
+.pennyfarthing/scripts/jira/jira-claim-story.sh PROJ-12345
+pf sprint story finish PROJ-12345
 ```
 
 ## Distributed Scripts

@@ -133,7 +133,7 @@ Cancel an epic and all its stories.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `EPIC_ID` | Yes | Epic ID (e.g., epic-42 or <PROJECT-KEY>) |
+| `EPIC_ID` | Yes | Epic ID (e.g., epic-42 or PROJ-14298) |
 | `--jira` | No | Also cancel the epic in Jira |
 | `--dry-run` | No | Show what would be done without making changes |
 
@@ -172,7 +172,7 @@ Adopt an orphaned shard file into the sprint index.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `SHARD_REF` | Yes | Shard reference (e.g., 129, <PROJECT-KEY>) |
+| `SHARD_REF` | Yes | Shard reference (e.g., 129, PROJ-15680) |
 | `--dry-run` | No | Preview adoption without writing |
 | `--sprint-file` | No | Path to sprint YAML file |
 
@@ -191,7 +191,7 @@ Show details for a specific epic.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `EPIC_ID` | Yes | Epic ID (e.g., epic-42 or <PROJECT-KEY>) |
+| `EPIC_ID` | Yes | Epic ID (e.g., epic-42 or PROJ-14298) |
 | `--json` | No | Output as JSON |
 
 ### `pf.sh sprint epic update`
@@ -200,7 +200,7 @@ Update an epic's fields by ID.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `EPIC_ID` | Yes | Epic ID (e.g., 103, epic-103, or <PROJECT-KEY>) |
+| `EPIC_ID` | Yes | Epic ID (e.g., 103, epic-103, or PROJ-14951) |
 | `--status` | No | New epic status |
 | `--priority` | No | New priority (e.g., P0, P1) |
 | `--title` | No | New epic title |
@@ -272,7 +272,7 @@ Get a field value from a story.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `STORY_ID` | Yes | Story ID (e.g., 79-1 or <PROJECT-KEY>) |
+| `STORY_ID` | Yes | Story ID (e.g., 79-1 or PROJ-12345) |
 | `FIELD_NAME` | Yes | Field to extract (e.g., workflow, status, points) |
 
 ### `pf.sh sprint story finish`
@@ -290,7 +290,7 @@ Remove a story from the sprint YAML.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `STORY_ID` | Yes | Story ID (e.g., 76-4, td-1, <PROJECT-KEY>) |
+| `STORY_ID` | Yes | Story ID (e.g., 76-4, td-1, PROJ-15038) |
 | `--dry-run` | No | Preview removal without writing |
 | `--sprint-file` | No | Path to sprint YAML file |
 
@@ -300,7 +300,7 @@ Show details for a specific story.
 
 | Arg/Option | Required | Description |
 |------------|----------|-------------|
-| `STORY_ID` | Yes | Story ID (e.g., <PROJECT-KEY> or 67-1) |
+| `STORY_ID` | Yes | Story ID (e.g., PROJ-12664 or 67-1) |
 | `--json` | No | Output as JSON |
 
 ### `pf.sh sprint story size`

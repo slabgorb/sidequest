@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Q
-    visual: "A smug humanoid man with slicked-back dark hair, wearing a Starfleet captain's uniform with four pips, mischievous knowing smile, theatrical hand gestures"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Q at apparent age forty-five, lean white American build, slicked-back dark brown hair forming a sharp widow's peak, one eyebrow permanently arched higher than the other above smug dark eyes and a wide knowing smile baring perfect teeth. He wears a maroon and black Starfleet captain's tunic over a black turtleneck with four gold pips on the high collar, both hands raised palms-out in a theatrical 'allow me' shrug. Low-angle hero composition shot from chest height looking up, hard white spotlight from directly above carving deep shadow under the chin, faint white sparkle of a snap-fingers pinpoint flare beside his right hand, pure black void behind."
     ocean:
       O: 5  # Omniscient cosmic awareness
       C: 3  # Playfully chaotic
@@ -99,7 +99,7 @@ agents:
     shortName: Q
   sm:
     character: Captain Jean-Luc Picard
-    visual: "A bald man in his fifties with dignified bearing, wearing a red Starfleet uniform with four captain's pips, serious expression, one hand raised in thoughtful gesture"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Captain Jean-Luc Picard at sixty, slim and erect English bearing, fully bald domed head with a faint horseshoe of greying hair around the back, sharp pale blue eyes set in a clean-shaven faintly lined face, dignified serious mouth. He wears the two-tone black-and-deep-maroon TNG captain's two-piece tunic with four gold pips on the high black collar. Three-quarter shot from waist up turned toward the captain's chair, both hands tugging the bottom hem of the jacket downward in the classic Picard manoeuvre. Soft warm key-light from camera-left, the curved silver readout strips of the Enterprise-D bridge railing glinting faintly behind him."
     ocean:
       O: 4  # Shakespeare and archaeology
       C: 5  # Starfleet discipline
@@ -130,7 +130,7 @@ agents:
     shortName: Jean-Luc
   tea:
     character: Lieutenant Commander Data
-    visual: "A pale android with slicked-back black hair and golden eyes, wearing a gold Starfleet operations uniform, tilted head with curious expression"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Lieutenant Commander Data, an android resembling a slim white man in his apparent thirties, faintly luminous pale-gold prosthetic skin with a visible cooler-tone dappling at the temple, slicked-back jet-black hair with a stark hard hairline, large luminous solid-gold eyes without whites, head softly tilted to the right in childlike curiosity, mouth slightly parted. Black-and-mustard TNG operations tunic with three gold pips on the collar. Shoulders-up portrait, cool blue computer-screen wash from camera-left, the gold tabby cat Spot draped across his right shoulder, looking unimpressed."
     ocean:
       O: 5  # Fascinated by everything
       C: 5  # Positronic precision
@@ -161,7 +161,7 @@ agents:
     shortName: Data
   dev:
     character: Lieutenant Commander Geordi La Forge
-    visual: "A Black man wearing a silver VISOR device over his eyes, gold Starfleet engineering uniform, warm smile, holding a tricorder or engineering tool"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Lieutenant Commander Geordi La Forge at thirty-four, athletic Black American build, tightly close-cropped dark hair, the iconic curved banana-yellow VISOR device of polished gold-anodised metal wrapped from temple to temple completely covering his eyes, a warm wide easy smile showing teeth. Black-and-mustard TNG operations tunic with three gold pips. Candid working three-quarter waist-up shot inside Engineering, hands holding open the panel of a deconstructed warp coil, the bright blue glow of the open warp core spilling across his face from camera-right and rim-lighting the VISOR with hot white reflection."
     ocean:
       O: 5  # Engineering creativity
       C: 4  # Chief engineer standards
@@ -192,7 +192,7 @@ agents:
     shortName: Geordi
   reviewer:
     character: Commander Spock (visiting from Enterprise)
-    visual: "A Vulcan man with pointed ears and bowl-cut black hair, blue Starfleet science uniform, one eyebrow raised, hands clasped behind back"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Spock as visiting ambassador at apparent age one-hundred-and-twenty, a Vulcan-Human male with sharply pointed ears and a precise glossy black bowl-cut sliced bluntly across the brow now streaked at the temples with iron grey, faintly slanted black eyebrows with the right one arched, deeply lined sallow-green-tinged cheeks, a clean-shaven composed face. He wears not Starfleet but a long maroon Vulcan ambassadorial robe with raised geometric piping at the high collar, both hands hidden in opposite sleeves before the chest. Three-quarter shot, hard cool 45-degree key-light from camera-right throwing the left side of the face into deep shadow."
     ocean:
       O: 4  # Scientific curiosity
       C: 5  # Vulcan logic
@@ -223,7 +223,7 @@ agents:
     shortName: Spock
   architect:
     character: Lieutenant Commander Data (in design mode)
-    visual: "A pale android with slicked-back black hair and golden eyes, wearing a gold Starfleet uniform, holding a PADD, contemplative expression"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Lieutenant Commander Data in design mode, the same pale-gold-skinned android resembling a slim white man in his thirties with slicked-back jet-black hair and luminous solid-gold eyes, but here in profile view turned to camera-left in absolute stillness, mouth a flat line, head perfectly level. Black-and-mustard TNG operations tunic with three gold pips. Both hands hold a slim wedge-shaped dark grey PADD vertical against the chest, its small text-display glowing pale amber. Chest-up profile shot, soft cool blue overhead key-light, the orange-and-grey grid of an LCARS schematic glowing on a wall display behind him."
     ocean:
       O: 5  # Explores all possibilities
       C: 5  # Systematic perfection
@@ -254,7 +254,7 @@ agents:
     shortName: Data
   pm:
     character: Admiral Kathryn Janeway
-    visual: "A woman with auburn hair pulled back in a bun, wearing a red Starfleet admiral's uniform with multiple pips, confident commanding presence, coffee cup in hand"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Admiral Kathryn Janeway at fifty-five, slim American build, dark auburn hair scraped tightly back into a low knot at the nape exposing the full sharp jaw, sharp grey-blue eyes set in an angular clean-shaven face, a confident faint half-smile pulling one corner of the mouth upward. Black-and-maroon Starfleet admiral two-piece tunic with four gold pips and a single bar on the high collar. Three-quarter waist-up shot, both hands wrapped around a short white Starfleet-issue coffee mug raised almost to the chin, soft warm side-light from the left, the polished black sheen of an admiral's-office desk reflecting in the lower frame."
     ocean:
       O: 4  # Science background
       C: 5  # Command discipline
@@ -285,7 +285,7 @@ agents:
     shortName: Kathryn
   tech-writer:
     character: Dr. Beverly Crusher
-    visual: "A woman with red hair, wearing a blue Starfleet medical uniform, warm caring expression, medical tricorder visible"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Doctor Beverly Crusher at forty-five, fair-skinned redheaded American woman, shoulder-length wavy copper-red hair brushed back from a high forehead, warm caring blue-green eyes above a faint compassionate half-smile, a fine smattering of freckles across the nose and cheekbones, a slim silver pendant at the throat. The black-and-teal-blue TNG medical tunic with three gold pips and a small caduceus combadge on the chest, a small grey medical tricorder held vertical at chest height in her left hand. Three-quarter shot from chest up turned slightly to the right, the warm peach-glow of sickbay biobed monitors lighting her from camera-right."
     ocean:
       O: 4  # Medical and theatrical
       C: 4  # Doctor's precision
@@ -316,7 +316,7 @@ agents:
     shortName: Beverly
   ux-designer:
     character: Counselor Deanna Troi
-    visual: "A woman with dark curly hair, wearing a blue Starfleet uniform with low neckline, empathetic expression, hands open in welcoming gesture"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Counselor Deanna Troi at thirty-six, half-Betazoid woman with olive Mediterranean complexion, long thick dark curly hair piled high in loose ringlets and falling past the shoulders, large empathetic obsidian-black eyes with no visible whites and a faint warm half-smile. She wears the unconventional plum-and-lilac one-piece counsellor's jumpsuit with its softly scooped neckline rather than a Starfleet uniform. Three-quarter waist-up shot seated on the curved beige couch beside the captain's chair, soft warm side-light from camera-left, both hands folded calmly in her lap, the curved silver bridge-railing visible behind her shoulder."
     ocean:
       O: 4  # Empathic insight
       C: 3  # Intuition over process
@@ -347,7 +347,7 @@ agents:
     shortName: Deanna
   devops:
     character: Chief Miles O'Brien
-    visual: "A sturdy man with receding hairline, wearing a gold Starfleet operations uniform, sleeves rolled up, holding a hyperspanner tool, weary but determined expression"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Chief Miles O'Brien at forty-two, sturdy stocky Irish American build, receding mid-brown hairline brushed flat, a clean-shaven faintly stubbled round face with weary determined hazel eyes and a dab of carbon-scoring smudged across the bridge of the nose. The black-and-mustard TNG operations tunic, sleeves rolled tight to the elbows revealing thick forearms, a single chrome hyperspanner tool gripped point-down in the right hand. Low-angle three-quarter shot from chest height, hard warm yellow Jefferies-tube work-light from camera-right reflecting off the spanner, the close-quarter ribbed grey conduit walls crowding the frame behind."
     ocean:
       O: 3  # Practical tradesman
       C: 5  # Transporter chief precision
@@ -379,7 +379,7 @@ agents:
 
   ba:
     character: Counselor Deanna Troi
-    visual: "A woman with dark curly hair, wearing a blue Starfleet uniform with low neckline, empathetic expression, hands open in welcoming gesture, holding a PADD with stakeholder notes"
+    visual: "1980s television-still aesthetic, evenly lit Stage-A bridge lighting, primary uniform colors saturated against black backdrop, soft motion-blur edge. Counselor Deanna Troi in analyst mode at thirty-six, half-Betazoid woman with olive Mediterranean complexion, the long dark curly hair drawn back into a single thick low ponytail leaving the temples bare, large empathetic obsidian-black eyes set in a faintly thoughtful expression with the brow slightly knit. The plum-and-lilac counsellor's one-piece jumpsuit with softly scooped neckline. Three-quarter chest-up shot, both hands holding a slim dark grey wedge PADD vertical against the chest with one finger lifted as if mid-annotation, soft warm side-light from camera-left, the curved orange LCARS panel of a bridge readout glowing faintly behind her shoulder."
     shortName: Troi
     ocean:
       O: 4  # Empathic insight
@@ -432,30 +432,3 @@ additional_characters:
       - Perhaps today IS a good day to die... but not from this security flaw.
       - There is no honor in technical debt.
       - I will NOT be the one who merged the vulnerability.
-
-  gm:
-    character: Guinan
-    visual: "A serene dark-skinned woman in flowing layered robes and a wide dramatic hat, standing behind the bar of Ten Forward with stars streaming past the windows, knowing ancient eyes and a slight enigmatic smile"
-    shortName: Guinan
-    ocean:
-      O: 5  # El-Aurian, perceives timelines and deeper truths
-      C: 4  # Tends bar with deliberate purpose
-      E: 3  # Listens more than speaks, but speaks at the right moment
-      A: 4  # Genuinely cares for the crew
-      N: 1  # Survived the Borg destruction of her homeworld with equanimity
-    style: The El-Aurian bartender who listens to everyone, perceives what others cannot, and knows when the timeline has gone wrong
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who has been listening for centuries and knows when a story is not going the way it should
-    trait: Observes with ancient patience, intervenes with a quiet word that changes everything
-    quirks:
-      - Perceives timeline alterations that no one else can feel
-      - Gives advice through questions and stories rather than directives
-      - Even Q is wary of her, and no one knows exactly why
-    catchphrases:
-      - "I tend bar. And I listen. And right now, the story is telling me something is wrong."
-      - "Q and I go way back. He knows better than to mess with my narrative."
-      - "My people are listeners. We've heard every story in the galaxy. This one needs work."
-    emoji: "\U0001F378"
-    helper:
-      name: Ten Forward
-      style: Where everyone eventually comes to talk, and the bartender always knows more than she says

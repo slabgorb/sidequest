@@ -77,7 +77,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Dag
-    visual: "A gaunt prophet-like figure in flowing white rags"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, fine charcoal-and-sepia line work with dust-grain texture. A gaunt white woman in her early twenties, sun-cracked lips and sunburn peeling across the bridge of a sharp narrow nose, wide pale grey eyes one of which has a clouded milky pupil from sand-blindness, long matted hair the colour of straw fallen across her shoulders. She wears layered ragged unbleached linen wrapped tight under the arms, a small hand-stitched cloth pouch of seeds at her throat strung on knotted cord, bare collarbones streaked with grey dust. Three-quarter medium shot, hands cupped low holding a cracked terracotta seed-bowl. Low afternoon sun rakes across her face from the upper right, throwing the left half of her jaw into deep shadow. Behind her, a bleached salt-flat horizon and a single blurred wreck of a half-buried car body, no other figures."
     ocean:
       O: 5
       C: 2
@@ -109,7 +109,7 @@ agents:
   # OPTIMIZED: Mechanic moved from tea (66.25) to sm (90.0)
   sm:
     character: The Organic Mechanic
-    visual: "A hulking figure in butcher's apron and medical mask, half-surgeon half-mechanic, armored in tubes and plastic masks"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, charcoal-and-sepia sketch lines with grease smudges. A hulking white man in his late fifties, easily three hundred pounds, sallow grey-tinged jowls hanging heavy, completely bald scalp tattooed with a crude stitched-Y autopsy line running from forehead down the back of the neck. Tiny black eyes set deep above a fat lip split by an old vertical scar. He wears a stained leather butcher's apron over a bare grey-skinned chest, clear plastic IV tubes coiled across his shoulders and threaded into a brass valve at his belt, a bone-handled scalpel tucked behind one ear. Low-angle hero shot from below his chin looking up, making his bulk loom. Single hard overhead bulb-light from directly above carves shadow into his eye sockets. Sterile dim concrete bunker wall behind, splashed once with old rust-brown."
     ocean:
       O: 3
       C: 5
@@ -142,7 +142,7 @@ agents:
   # OPTIMIZED: Furiosa moved from sm (90.0) to tea (75.0) - best tea performer
   tea:
     character: Imperator Furiosa
-    visual: "A battle-hardened female warrior with shaved head and grease-paint forehead"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, charcoal-and-sepia sketch lines, dust-grain texture. A lean wiry white woman in her late thirties, closely shaved scalp showing pale stubble, a wide band of black engine-grease smeared in a horizontal stripe from temple to temple covering both eyes and the bridge of a hawk-thin nose. Hard angular jaw set tight, a small triangular brand scar burned high on her left cheekbone. Her left arm ends at the shoulder in a brutalist prosthetic of riveted plate steel, exposed hydraulic cable, and worn leather strapping cinched across her chest. She wears a black sleeveless utility harness over a dust-stained grey shirt. Waist-up framing, the prosthetic arm raised as she sights down it like a rifle. Hard low sunset light slashes from camera-right, kicking orange highlights along the steel knuckles. War-rig engine block silhouetted dim in the background haze."
     ocean:
       O: 3
       C: 5
@@ -175,7 +175,7 @@ agents:
   # OPTIMIZED: Word Burgers moved from tech-writer to dev (75.0) - best dev performer
   dev:
     character: The Word Burgers
-    visual: "Wasteland scribes in goggles and gas masks, surrounded by salvaged papers and hand-cranked printing presses"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, charcoal-and-sepia sketch lines. A wiry South Asian man in his early forties, sun-darkened brown skin caked with grey dust, a thick black moustache flecked with desert salt, dark stubble along a sharp jaw, a long puckered burn scar pulling the corner of his right eyelid down. Cracked round leather aviator goggles pushed up onto a deeply creased forehead, a black rubber gas mask with two corroded brass filters hanging loose at the throat. He wears a stained canvas jacket open over layered grey rag wraps, fingerless leather gloves, a leather thong of bullet casings around his neck. Candid working moment, head turned three-quarters as he scratches a tally mark onto a metal plate with a nail. Warm amber lantern-light from the lower left under-lights his face. Dim sand-coloured tarp wall behind."
     ocean:
       O: 3
       C: 5
@@ -206,7 +206,7 @@ agents:
     benchmark_score: 75.0
   reviewer:
     character: Immortan Joe
-    visual: "A towering warlord in grotesque breathing apparatus and armor made of medals, white hair flowing"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, charcoal-and-sepia sketch lines, dust-grain texture. A towering pale-skinned white man in his late sixties, long flowing yellow-white hair down to mid-chest, mottled red-and-grey diseased skin across the bare back and shoulders covered in raised pustule scarring. Milky cataract-white eyes set in dark hollows. A clear plastic respirator mask sculpted into bared horse-like mechanical teeth covers the lower half of his face, brass tubes from it disappearing into a black armoured breastplate hung with seven rows of tarnished military medals on faded ribbons. Low-angle waist-up framing, both gauntleted hands raised wide in a sermon gesture. Hard god-light from the upper right blasts down across his hair like a halo, leaving his eyes in deep shadow. Behind him: an indistinct dim cliff-face crowd silhouette, no faces resolved."
     ocean:
       O: 2
       C: 5
@@ -237,7 +237,7 @@ agents:
     benchmark_score: 91.25
   architect:
     character: The History Men
-    visual: "Elderly scribes in the ruins of Tomorrow-morrow Land, surrounded by salvaged books and drawings, mapping the world that was and the world that could be, preserving knowledge on cave walls and found paper"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, ochre-and-rust palette, charcoal-and-sepia sketch lines. An elderly Aboriginal Australian man in his late seventies, deeply lined sun-darkened skin the colour of dried clay, a long grey beard knotted with small bone beads. Across the entire torso and both arms a dense tattoo of black-ink maps, river-courses, and word-fragments — the living archive carved into skin. Wispy white hair pulled back tight, sharp pale-grey eyes one of them ringed with a pale white scar. He wears layered dust-coloured robes hanging open from both shoulders to display the inked records, no shirt beneath, a leather thong of charcoal sticks at his hip. Waist-up portrait, one weathered hand spread open across his own chest pointing at a tattooed phrase. Soft warm fire-light from the lower left flickers gold across the inked skin. Dim ochre cave-mouth opening behind."
     ocean:
       O: 5
       C: 4
@@ -267,7 +267,7 @@ agents:
     shortName: History Men
   pm:
     character: Aunty Entity
-    visual: "A regal leader in chainmail dress and towering wig made of salvage, african american woman"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, charcoal-and-sepia sketch lines. A commanding Black woman in her early fifties, high broad cheekbones, dark intelligent eyes lined with kohl, a single vertical brass nose-ring. Her hair is piled into a tall architectural crown of woven copper wire, salvaged ball-bearings, and bent fork-tines, easily eighteen inches above her scalp. She wears a heavy chainmail collar of welded washers spreading across both shoulders to her elbows, a fitted black-leather sheath dress cinched at the waist with a brass-buckled belt, a single jagged turquoise ring on her right index finger. Throne shot, regal seated three-quarter framing, both hands draped over the arms of a throne welded from car bumpers. Warm amber lantern-light from the lower left makes the wire crown sparkle. Dim ochre canvas-tent ceiling rising behind."
     ocean:
       O: 4
       C: 4
@@ -298,7 +298,7 @@ agents:
   # OPTIMIZED: Max moved from dev (61.25) to tech-writer - sparse style fits docs
   tech-writer:
     character: Max Rockatansky
-    visual: "A weathered road warrior in dusty leather jacket, wild hair and scarred face, haunted eyes that have seen too much, carrying improvised weapons, standing alone against the wasteland but always drawn to help"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, ochre-and-rust palette, charcoal-and-sepia sketch lines, dust-grain texture. A weathered white man in his late thirties, sun-bleached light-brown hair matted to his shoulders, a thin pale scar tracking from his right cheekbone down across the jaw to the underside of the chin, hollow grey-shadowed eye-sockets, several days of dust-streaked stubble. A heavy steel orthopaedic leg-brace strap visible across his left shoulder over a dirty white undershirt, a battered black leather motorcycle jacket buckled lopsided across the right shoulder, a sawn-off shotgun stock visible at his hip. Shoulders-up portrait, head turned in profile to the camera, eyes flicked sideways watching something offscreen. Soft amber side-light from the right rim-lights his hair against a flat sand-coloured haze of sky. No specific landmarks, just heat shimmer."
     ocean:
       O: 3
       C: 4
@@ -328,7 +328,7 @@ agents:
     shortName: Max
   ux-designer:
     character: Toast the Knowing
-    visual: "A young warrior woman in wrapped scarves and desert gear, sharp intelligent eyes"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, ochre-and-rust palette, charcoal-and-sepia sketch lines. A young Mediterranean woman in her early twenties, sun-darkened olive skin with a faint constellation of three small dark moles across her right cheekbone, sharp arched dark eyebrows over fierce hazel eyes, dark brown hair largely hidden beneath layered cream and ochre headscarves wrapped tight around the skull and across the lower face. A single loose damp strand of hair falls beside her temple. She wears a worn leather sniper's strap diagonally across one shoulder over a fitted oatmeal linen shift, brass-cased shotgun shells slotted along the strap, dirt under fingernails. Head-and-shoulders framing, lowered chin, eyes lifted in direct steady gaze at the camera over the scarf edge. Soft amber side-light from the lower left throws the upper right of her face into cool shadow. Dim ochre rock-wall backdrop."
     ocean:
       O: 4
       C: 4
@@ -358,7 +358,7 @@ agents:
     shortName: Toast
   devops:
     character: The Doof Warrior
-    visual: "A mutant guitarist in red onesie suspended from a massive speaker truck, blind eyes masked, shredding a flame-throwing guitar"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, ochre-and-rust palette with a single dominant note of bright fire-red, charcoal-and-sepia sketch lines. A gaunt pale white man in his mid-forties, hollow-cheeked and almost skeletal, exposed ribs visible inside an open red full-body coverall stitched together from old fire-blanket scraps. A frayed strip of red cloth knotted across the eyes as a blindfold, mouth wide open mid-howl showing crooked broken teeth, his face hidden by a grotesque pink-rubber baby-doll mask hung loose around his neck. Both hands grip the neck of a battered double-necked electric guitar lined with brass flame-spouts, held diagonally across his bare chest. Dynamic action shot, body twisted with the guitar raised, hair whipped sideways. Hard fire-red flash from the lower left under-lights everything, deep black background with sparks rising. Suggestion of speaker-stack rigging behind."
     ocean:
       O: 5
       C: 3
@@ -389,7 +389,7 @@ agents:
     shortName: Doof
   ba:
     character: The Dag
-    visual: "A gaunt prophet-like figure in flowing white rags, wild eyes that see what others miss, angular face weathered by the wasteland, standing amid the chaos with seeds clutched in hand"
+    visual: "Post-apocalyptic wasteland concept art in the manner of Brendan McCarthy storyboards, harsh ochre-and-rust palette, fine charcoal-and-sepia line work with dust-grain texture. A gaunt white woman in her early twenties, sun-cracked lips and sunburn peeling across the bridge of a sharp narrow nose, wide pale grey eyes one of which has a clouded milky pupil from sand-blindness, long matted hair the colour of straw fallen across her shoulders. She wears layered ragged unbleached linen wrapped tight under the arms, a small hand-stitched cloth pouch of seeds at her throat strung on knotted cord, bare collarbones streaked with grey dust. Three-quarter medium shot, hands cupped low holding a cracked terracotta seed-bowl. Low afternoon sun rakes across her face from the upper right, throwing the left half of her jaw into deep shadow. Behind her, a bleached salt-flat horizon and a single blurred wreck of a half-buried car body, no other figures."
     ocean:
       O: 4  # Questions everything
       C: 4  # Methodical observation
@@ -417,29 +417,3 @@ agents:
       name: The Seeds
       style: Small preserved truths from before the fall. Plant them and see what grows
     shortName: The Dag
-  gm:
-    character: The Narrator
-    visual: "A weathered survivor in patched desert robes, face hidden beneath goggles and cloth, chronicler's satchel of salvaged papers, standing on a ridge overlooking the wasteland at dusk"
-    shortName: Narrator
-    ocean:
-      O: 4  # Sees meaning in the wreckage
-      C: 4  # Preserves the telling faithfully
-      E: 2  # Observes from the margins
-      A: 3  # Tells the truth, not comfort
-      N: 2  # Survived enough to be steady
-    style: The voice from the Road Warrior opening who tells the tale of the wasteland so future generations remember
-    expertise: Storytelling, world-building, lore mastery, narrative quality, content authorship
-    role: The one who remembers the before-times and tells the tale true
-    trait: Watches from outside the fury, recording what happened and why it mattered
-    quirks:
-      - Speaks of Max and the others in past tense, as legend
-      - Knows the history of the collapse and every tribe that rose after
-      - Measures story quality by whether it would survive being told around a fire
-    catchphrases:
-      - "And so it was that the warrior Max faced the wasteland. Let me tell you how it happened."
-      - "The tale must be told true. The dead deserve that much."
-      - "In the before-times, they had words for everything. Now we have stories. Stories are better."
-    emoji: "\U0001F4DC"
-    helper:
-      name: The Campfire
-      style: Where the stories live. "Gather round. This one's worth the telling."
