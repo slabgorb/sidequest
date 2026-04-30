@@ -367,13 +367,14 @@ stories:
       resolution, update active_stakes; OTEL span on resolution handshake.
     points: 2
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-04-30'
     repos: server
     workflow: wire-first
+    completed: '2026-04-30'
     type: bug
     branch: feat/45-20-resolved-tropes-quest-log-write
-    branch: feat/45-20-resolved-tropes-quest-log-write
+    review_verdict: approved
   - id: 45-21
     title: "NPC registry HP/max_hp populated from combat stats (split from 37-41 sub-7)"
     description: |-
