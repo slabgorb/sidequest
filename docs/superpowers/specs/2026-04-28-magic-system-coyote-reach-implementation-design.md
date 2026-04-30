@@ -1,8 +1,8 @@
-# Magic System Implementation — Coyote Reach v1
+# Magic System Implementation — Coyote Star v1
 
 **Date:** 2026-04-28
 **Status:** Design — pre-implementation
-**Target playtest:** Keith + James + Alex + Sebastien, full Coyote Reach session
+**Target playtest:** Keith + James + Alex + Sebastien, full Coyote Star session
 **Companion docs:**
 - `docs/design/magic-taxonomy.md` (framework)
 - `docs/design/magic-plugins/` (plugin specs)
@@ -12,11 +12,11 @@
 
 ## Purpose
 
-Stand up the magic-system framework — designed in the napkin/plugin work of 2026-04-27 → 2026-04-28 — far enough that **a Coyote Reach (space_opera) session can be played end-to-end with magic mechanically live, OTEL-observed, and ledger-visible**. This is a vertical slice of the framework: only the plugins Coyote Reach uses, only the patterns Coyote Reach exercises, only the UI that Coyote Reach plays under.
+Stand up the magic-system framework — designed in the napkin/plugin work of 2026-04-27 → 2026-04-28 — far enough that **a Coyote Star (space_opera) session can be played end-to-end with magic mechanically live, OTEL-observed, and ledger-visible**. This is a vertical slice of the framework: only the plugins Coyote Star uses, only the patterns Coyote Star exercises, only the UI that Coyote Star plays under.
 
 ## Approach
 
-**Content-first, then vertical-first build.** Author Coyote Reach's `magic.yaml` *first* as the contract the implementation must satisfy. The framework has not yet survived a fresh world-author writing against it — Coyote Reach is the first independent test. If the schema fights the author, fix the schema before any code ships. Then build the implementation only against what Coyote Reach actually uses, deferring every framework feature it doesn't (heavy_metal-only patterns, multi-session confrontations, shared-bar propagation, learned_v1, divine_v1, bargained_for_v1, obligation_scales_v1).
+**Content-first, then vertical-first build.** Author Coyote Star's `magic.yaml` *first* as the contract the implementation must satisfy. The framework has not yet survived a fresh world-author writing against it — Coyote Star is the first independent test. If the schema fights the author, fix the schema before any code ships. Then build the implementation only against what Coyote Star actually uses, deferring every framework feature it doesn't (heavy_metal-only patterns, multi-session confrontations, shared-bar propagation, learned_v1, divine_v1, bargained_for_v1, obligation_scales_v1).
 
 ## Audience anchors
 
@@ -36,11 +36,11 @@ Per CLAUDE.md, design decisions weigh against actual playgroup members:
 6. **Mutation site is `narration_apply.py`** (D4) alongside existing `apply_inventory_changes` etc. No parallel mutation pipeline.
 7. **Plugins are code + YAML mix.** Mechanics live in Python (validation, hard_limits enforcement, threshold→status promotion); content lives in YAML (narrator_register, ledger_bar templates, output catalog descriptions). YAML alone would push mechanics into prompt engineering; that's exactly what we don't want.
 8. **`LedgerPanel` lives inside `CharacterPanel.tsx`**, not as a sibling component.
-9. **`learned_v1` deferred** — no formal training tradition fits Coyote Reach's tone.
+9. **`learned_v1` deferred** — no formal training tradition fits Coyote Star's tone.
 
 ---
 
-## 1. Content commitment — Coyote Reach's magic shape
+## 1. Content commitment — Coyote Star's magic shape
 
 ### Plugin set (v1 ships only these two)
 
@@ -92,8 +92,8 @@ Inherited from genre: no resurrection, no FTL telepathy, no tech replacement, no
 ### Content scope
 
 - `genre_packs/space_opera/magic.yaml` (~150 lines)
-- `genre_packs/space_opera/worlds/coyote_reach/magic.yaml` (~400 lines)
-- `genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml` (~150 lines)
+- `genre_packs/space_opera/worlds/coyote_star/magic.yaml` (~400 lines)
+- `genre_packs/space_opera/worlds/coyote_star/confrontations.yaml` (~150 lines)
 
 ---
 
@@ -190,7 +190,7 @@ Setting: **The Salvage** confrontation, mid-session at Mendes Post. Sira Mendes 
 `magic.context_builder` injects ~12 lines into the narrator's existing pre-prompt:
 
 ```
-ACTIVE MAGIC CONTEXT — Coyote Reach
+ACTIVE MAGIC CONTEXT — Coyote Star
 allowed_sources: [innate, item_based]
 hard_limits: [no_resurrection, no_ftl_telepathy, no_tech_replacement,
               no_mind_compulsion, psionics_never_decisive]
@@ -273,14 +273,14 @@ Magic pipeline adds ~5–15ms per working — pure Python data manipulation, no 
 ### Iteration 1 — Content + plugin abstractions (engine-only)
 
 **Ship:**
-- Content YAMLs: `space_opera/magic.yaml`, `coyote_reach/magic.yaml`, `coyote_reach/confrontations.yaml`
+- Content YAMLs: `space_opera/magic.yaml`, `coyote_star/magic.yaml`, `coyote_star/confrontations.yaml`
 - Plugin pairs: `innate_v1.py`+`.yaml`, `item_legacy_v1.py`+`.yaml`
 - `genre/magic_loader.py`
 - `magic/validator.py`
 - Pydantic models: `WorldMagicConfig`, `MagicState`, `MagicWorking`, `Plugin`, `Flag`
-- Tests: load Coyote Reach config; validate sample working blocks; assert hard_limits flag correctly
+- Tests: load Coyote Star config; validate sample working blocks; assert hard_limits flag correctly
 
-**Cut-point:** `pytest sidequest/magic` passes; can fixture-load Coyote Reach and validator runs on canned blocks. **No game integration yet.**
+**Cut-point:** `pytest sidequest/magic` passes; can fixture-load Coyote Star and validator runs on canned blocks. **No game integration yet.**
 
 **Risk addressed:** content authoring surfaces schema gaps the design didn't catch. That's the point — fix schema before downstream iterations build on it.
 
@@ -294,7 +294,7 @@ Magic pipeline adds ~5–15ms per working — pure Python data manipulation, no 
 - SQLite roundtrip; legacy saves init empty
 - Tests: persist/restore, delta detection on bar mutation
 
-**Cut-point:** can construct a Coyote Reach session, mutate ledger programmatically, observe state surviving save/load and producing correct StateDeltas.
+**Cut-point:** can construct a Coyote Star session, mutate ledger programmatically, observe state surviving save/load and producing correct StateDeltas.
 
 ### Iteration 3 — Narrator integration (loop closes server-side)
 
@@ -316,7 +316,7 @@ Magic pipeline adds ~5–15ms per working — pure Python data manipulation, no 
 - Verify existing dashboard event feed renders `magic.working` spans (likely zero work — SPAN_ROUTES handles it)
 - Per-genre animation register: deferred (baseline animation only)
 
-**Cut-point:** solo demo. Play a Coyote Reach session, see bars rise, see costs land, see "Bleeding through" appear in status panel, see the working span appear in the GM dashboard. Keith plays alone, validates the full vertical works.
+**Cut-point:** solo demo. Play a Coyote Star session, see bars rise, see costs land, see "Bleeding through" appear in status panel, see the working span appear in the GM dashboard. Keith plays alone, validates the full vertical works.
 
 ### Iteration 5 — Confrontations wired
 
@@ -338,7 +338,7 @@ Magic pipeline adds ~5–15ms per working — pure Python data manipulation, no 
 - Bug-fix pass from iteration 5 playtests
 - Cliché-judge hookup: master magic-narration audit checklist as post-session review (not runtime guard)
 
-**Cut-point:** **The Playtest.** Keith + James + Alex + Sebastien. Full session of Coyote Reach. Sealed-letter pacing for Alex. Sebastien watches the GM panel and sees the lie-detector catch (or miss) narrator improvisation.
+**Cut-point:** **The Playtest.** Keith + James + Alex + Sebastien. Full session of Coyote Star. Sealed-letter pacing for Alex. Sebastien watches the GM panel and sees the lie-detector catch (or miss) narrator improvisation.
 
 ### Effort estimate
 
@@ -389,7 +389,7 @@ Magic pipeline adds ~5–15ms per working — pure Python data manipulation, no 
 - `innate_v1`: `flavor`, `consent_state`
 - `item_legacy_v1`: `item_id`, `alignment_with_item_nature`
 
-**Why these:** the cliché-judge hooks listed in the magic-system handoff doc audit exactly these fields. Missing `flavor` on an innate working is a YELLOW flag (the audit checklist requires it). Decorative scale-debiting (heavy_metal-only) does not apply to Coyote Reach.
+**Why these:** the cliché-judge hooks listed in the magic-system handoff doc audit exactly these fields. Missing `flavor` on an innate working is a YELLOW flag (the audit checklist requires it). Decorative scale-debiting (heavy_metal-only) does not apply to Coyote Star.
 
 ### 5c. Testing strategy
 
@@ -428,7 +428,7 @@ These deferments are deliberate; not gaps:
 
 - **Narrator omitting `magic_working` for a working it described** — caught by cliché-judge post-session, not at runtime. v1's lie-detector is observability, not interruption.
 - **Subtle narrator drift over many turns** — the per-turn validator catches discrete violations; aggregate drift (e.g. narrator slowly raising the world's magic-intensity over 30 turns) needs scaled audit, deferred past v1.
-- **Plugin-overlap ambiguity** (cleric using a relic — Divine or Item-Legacy?) — Coyote Reach has no Divine plugin in v1. Question deferred until a world that uses both ships.
+- **Plugin-overlap ambiguity** (cleric using a relic — Divine or Item-Legacy?) — Coyote Star has no Divine plugin in v1. Question deferred until a world that uses both ships.
 - **Animation language per genre** — Buttercup/UX pass post-v1. v1 ships a baseline neutral animation register.
 
 ---
@@ -447,7 +447,7 @@ These deferments are deliberate; not gaps:
 - Per-genre animation register
 - World-shared bar UI distinction (hegemony_heat renders the same as character-scoped bars in v1)
 
-These are real features that future worlds will need — but Coyote Reach doesn't, so they don't ship in v1. Each gets a story when a world that needs it gets prioritized.
+These are real features that future worlds will need — but Coyote Star doesn't, so they don't ship in v1. Each gets a story when a world that needs it gets prioritized.
 
 ---
 
@@ -455,19 +455,19 @@ These are real features that future worlds will need — but Coyote Reach doesn'
 
 Before iteration 1 starts, an architect (Leonard of Quirm) review pass should resolve:
 
-1. **`control_tier` (innate) vs `discipline_tier` (learned) vs unified `pact_tier`** — the open output-catalog question from the handoff doc. Coyote Reach uses only innate's `control_tier`, so v1 ships whatever innate_v1 specifies. The framework-level unification can wait, but architect should confirm the decision doesn't bite us when Iron Hills Bender Academy needs `discipline_tier`.
+1. **`control_tier` (innate) vs `discipline_tier` (learned) vs unified `pact_tier`** — the open output-catalog question from the handoff doc. Coyote Star uses only innate's `control_tier`, so v1 ships whatever innate_v1 specifies. The framework-level unification can wait, but architect should confirm the decision doesn't bite us when Iron Hills Bender Academy needs `discipline_tier`.
 2. **Plugin spec runtime location** — `magic/plugins/*.py` + `*.yaml` paired files in the server tree. Confirm this is the right location and not, say, served from `sidequest-content/`.
 3. **Plugin registry mechanism** — module-level dict populated at import vs. explicit registration call. Either works; pick one and stick with it.
 4. **`MagicState` initialization for legacy saves** — confirmed init-empty per memory; architect should confirm this is consistent with how other recently-added GameSnapshot fields handle legacy saves.
 
 ## Risks summary
 
-- **Highest:** Coyote Reach magic.yaml authoring surfaces a schema gap that requires plugin spec changes. *Mitigation:* iteration 1 is exactly this; expect rework here, schedule budget for it.
+- **Highest:** Coyote Star magic.yaml authoring surfaces a schema gap that requires plugin spec changes. *Mitigation:* iteration 1 is exactly this; expect rework here, schedule budget for it.
 - **Medium:** Narrator integration (iteration 3) surprises us — the LLM either over-emits `magic_working` (false positives flooding the dashboard) or under-emits (silent magic). *Mitigation:* solo demo scenario in iteration 4 specifically scripts both extremes and verifies behavior.
 - **Medium:** UI bar-animation register feels wrong in space_opera tone, requires UX rework before playtest. *Mitigation:* deferred to Buttercup post-v1; iteration 4 ships baseline that's "correct" not "polished."
 - **Low:** Multiplayer shared-world propagation has bugs from per-character vs world-shared bar split. *Mitigation:* iteration 6 dedicates time specifically to this; ADR-037 already governs the split.
 
-## Definition of done — Coyote Reach v1
+## Definition of done — Coyote Star v1
 
 The playgroup sits down. The four players play a session. During that session:
 

@@ -1,8 +1,8 @@
-# Magic System Implementation Plan — Coyote Reach v1
+# Magic System Implementation Plan — Coyote Star v1
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Stand up the magic-system framework end-to-end for one space_opera world (Coyote Reach), reaching a playgroup playtest where Keith + James + Alex + Sebastien play a session with magic mechanically live, OTEL-observed, and ledger-visible.
+**Goal:** Stand up the magic-system framework end-to-end for one space_opera world (Coyote Star), reaching a playgroup playtest where Keith + James + Alex + Sebastien play a session with magic mechanically live, OTEL-observed, and ledger-visible.
 
 **Architecture:** Two plugins (`innate_v1`, `item_legacy_v1`) drive a `MagicState` aggregate field on `GameSnapshot`. Narrator emits a `magic_working` field on the existing `game_patch`; `narration_apply.py` parses it, validator flags hard_limit violations, mutations route through existing `apply_resource_patch` and `status_changes` surfaces. Reuses existing OTEL/dashboard, status, confrontation, and message infrastructure — zero new WebSocket message types, zero new dashboard widgets in v1.
 
@@ -72,8 +72,8 @@
 | Path | Responsibility |
 |---|---|
 | `sidequest-content/genre_packs/space_opera/magic.yaml` | Genre-layer: allowed plugins, intensity, world_knowledge defaults, hard_limits |
-| `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/magic.yaml` | World-layer: active plugin instances, ledger bars, named items, narrative seeds |
-| `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml` | The 5 named confrontations |
+| `sidequest-content/genre_packs/space_opera/worlds/coyote_star/magic.yaml` | World-layer: active plugin instances, ledger bars, named items, narrative seeds |
+| `sidequest-content/genre_packs/space_opera/worlds/coyote_star/confrontations.yaml` | The 5 named confrontations |
 
 ### New test files
 
@@ -113,7 +113,7 @@
 
 ## Phase 1 — Iteration 1: Content + Plugin Abstractions (Engine-only)
 
-**Goal:** Coyote Reach `magic.yaml` loads via `magic_loader`, plugin pairs are wired into the registry, validator can flag hard_limit violations on canned working blocks. `pytest sidequest/tests/magic/` is green.
+**Goal:** Coyote Star `magic.yaml` loads via `magic_loader`, plugin pairs are wired into the registry, validator can flag hard_limit violations on canned working blocks. `pytest sidequest/tests/magic/` is green.
 
 **Cut-point:** Engine fixture-tests pass. **No game integration yet.**
 
@@ -320,7 +320,7 @@ class WorldKnowledge(BaseModel):
     """How aware the world is that magic is a real category.
 
     ``local_register`` is an optional sub-tag for worlds where the legal/
-    political register and the folk register diverge (Coyote Reach: Hegemony
+    political register and the folk register diverge (Coyote Star: Hegemony
     classifies; frontier folks know it folklorically).
     """
 
@@ -726,7 +726,7 @@ from sidequest.magic.plugin import get_plugin
 @pytest.fixture
 def world_config() -> WorldMagicConfig:
     return WorldMagicConfig(
-        world_slug="coyote_reach",
+        world_slug="coyote_star",
         genre_slug="space_opera",
         allowed_sources=["innate", "item_based"],
         active_plugins=["innate_v1", "item_legacy_v1"],
@@ -1067,7 +1067,7 @@ from sidequest.magic.plugin import get_plugin
 @pytest.fixture
 def world_config() -> WorldMagicConfig:
     return WorldMagicConfig(
-        world_slug="coyote_reach",
+        world_slug="coyote_star",
         genre_slug="space_opera",
         allowed_sources=["innate", "item_based"],
         active_plugins=["innate_v1", "item_legacy_v1"],
@@ -1360,7 +1360,7 @@ from sidequest.magic.validator import validate
 @pytest.fixture
 def world_config() -> WorldMagicConfig:
     return WorldMagicConfig(
-        world_slug="coyote_reach",
+        world_slug="coyote_star",
         genre_slug="space_opera",
         allowed_sources=["innate", "item_based"],
         active_plugins=["innate_v1", "item_legacy_v1"],
@@ -1397,7 +1397,7 @@ def test_unknown_plugin_deep_red(world_config):
     import sidequest.magic.plugins  # noqa: F401
 
     w = MagicWorking(
-        plugin="bargained_for_v1",  # not active in coyote_reach
+        plugin="bargained_for_v1",  # not active in coyote_star
         mechanism="relational",
         actor="Sira",
         costs={"karma": 0.2},
@@ -1460,7 +1460,7 @@ def test_unknown_cost_type_yellow(world_config):
         plugin="innate_v1",
         mechanism="condition",
         actor="Sira",
-        costs={"karma": 0.2},  # not in coyote_reach cost_types
+        costs={"karma": 0.2},  # not in coyote_star cost_types
         domain="psychic",
         narrator_basis="x",
         flavor="acquired",
@@ -1640,7 +1640,7 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 - Create: `sidequest-server/sidequest/genre/magic_loader.py`
 - Create: `sidequest-server/tests/magic/test_loader.py`
 - Create: `sidequest-server/tests/magic/fixtures/space_opera_magic.yaml`
-- Create: `sidequest-server/tests/magic/fixtures/coyote_reach_magic.yaml`
+- Create: `sidequest-server/tests/magic/fixtures/coyote_star_magic.yaml`
 
 - [ ] **Step 1: Author fixture YAMLs**
 
@@ -1670,9 +1670,9 @@ narrator_register: |
 ```
 
 ```yaml
-# sidequest-server/tests/magic/fixtures/coyote_reach_magic.yaml
+# sidequest-server/tests/magic/fixtures/coyote_star_magic.yaml
 # World-layer magic config (test fixture).
-world: coyote_reach
+world: coyote_star
 genre: space_opera
 intensity: 0.25
 active_plugins: [innate_v1, item_legacy_v1]
@@ -1747,13 +1747,13 @@ from sidequest.magic.models import WorldMagicConfig
 
 FIXTURES = Path(__file__).parent / "fixtures"
 GENRE_YAML = FIXTURES / "space_opera_magic.yaml"
-WORLD_YAML = FIXTURES / "coyote_reach_magic.yaml"
+WORLD_YAML = FIXTURES / "coyote_star_magic.yaml"
 
 
 def test_load_world_magic_returns_config():
     config = load_world_magic(genre_yaml=GENRE_YAML, world_yaml=WORLD_YAML)
     assert isinstance(config, WorldMagicConfig)
-    assert config.world_slug == "coyote_reach"
+    assert config.world_slug == "coyote_star"
     assert config.genre_slug == "space_opera"
 
 
@@ -1782,7 +1782,7 @@ def test_world_knowledge_subtag_loads():
 
 
 def test_six_ledger_bars_loaded():
-    """Coyote Reach v1 ships exactly six bars."""
+    """Coyote Star v1 ships exactly six bars."""
     config = load_world_magic(genre_yaml=GENRE_YAML, world_yaml=WORLD_YAML)
     bar_ids = [b.id for b in config.ledger_bars]
     assert sorted(bar_ids) == ["hegemony_heat", "notice", "sanity", "vitality"]
@@ -2047,8 +2047,8 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 **Files (in `sidequest-content` repo):**
 - Create: `sidequest-content/genre_packs/space_opera/magic.yaml`
-- Create: `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/magic.yaml`
-- Create: `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml`
+- Create: `sidequest-content/genre_packs/space_opera/worlds/coyote_star/magic.yaml`
+- Create: `sidequest-content/genre_packs/space_opera/worlds/coyote_star/confrontations.yaml`
 
 This is content authoring against the contract proven in Task 1.6. The fixture files in `tests/magic/fixtures/` were close to production shape; this task ships the canonical versions. Schema correctness validated by re-running the loader against the production paths.
 
@@ -2108,14 +2108,14 @@ narrator_register: |
   who owned it.
 ```
 
-- [ ] **Step 3: Author `worlds/coyote_reach/magic.yaml`**
+- [ ] **Step 3: Author `worlds/coyote_star/magic.yaml`**
 
 ```yaml
-# sidequest-content/genre_packs/space_opera/worlds/coyote_reach/magic.yaml
-# World-layer magic config — Coyote Reach's specific tuple from
+# sidequest-content/genre_packs/space_opera/worlds/coyote_star/magic.yaml
+# World-layer magic config — Coyote Star's specific tuple from
 # space_opera's allowed space.
 
-world: coyote_reach
+world: coyote_star
 genre: space_opera
 
 intensity: 0.25  # quiet, not power-fantasy
@@ -2200,11 +2200,11 @@ narrator_register: |
   orders. The frontier knows it as Coyote work, and you don't say it out loud.
 ```
 
-- [ ] **Step 4: Author `worlds/coyote_reach/confrontations.yaml`**
+- [ ] **Step 4: Author `worlds/coyote_star/confrontations.yaml`**
 
 ```yaml
-# sidequest-content/genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml
-# The five named magic confrontations in Coyote Reach v1.
+# sidequest-content/genre_packs/space_opera/worlds/coyote_star/confrontations.yaml
+# The five named magic confrontations in Coyote Star v1.
 # Schema follows docs/design/confrontation-advancement.md.
 
 confrontations:
@@ -2332,7 +2332,7 @@ SIDEQUEST_GENRE_PACKS=/Users/slabgorb/Projects/oq-2/sidequest-content/genre_pack
 from pathlib import Path
 from sidequest.genre.magic_loader import load_world_magic
 genre_yaml = Path('$SIDEQUEST_GENRE_PACKS/space_opera/magic.yaml')
-world_yaml = Path('$SIDEQUEST_GENRE_PACKS/space_opera/worlds/coyote_reach/magic.yaml')
+world_yaml = Path('$SIDEQUEST_GENRE_PACKS/space_opera/worlds/coyote_star/magic.yaml')
 config = load_world_magic(genre_yaml=genre_yaml, world_yaml=world_yaml)
 print(f'world={config.world_slug}, genre={config.genre_slug}')
 print(f'allowed_sources={config.allowed_sources}')
@@ -2343,7 +2343,7 @@ print(f'world_knowledge={config.world_knowledge}')
 "
 ```
 
-Expected output: world=coyote_reach, genre=space_opera, allowed_sources=['innate', 'item_based'], active_plugins=['innate_v1', 'item_legacy_v1'], hard_limits=['no_resurrection', 'no_ftl_telepathy', 'no_tech_replacement', 'no_mind_compulsion', 'psionics_never_decisive'], ledger_bars=['sanity', 'notice', 'vitality', 'hegemony_heat'], world_knowledge with primary=classified local_register=folkloric.
+Expected output: world=coyote_star, genre=space_opera, allowed_sources=['innate', 'item_based'], active_plugins=['innate_v1', 'item_legacy_v1'], hard_limits=['no_resurrection', 'no_ftl_telepathy', 'no_tech_replacement', 'no_mind_compulsion', 'psionics_never_decisive'], ledger_bars=['sanity', 'notice', 'vitality', 'hegemony_heat'], world_knowledge with primary=classified local_register=folkloric.
 
 If output mismatches: schema gap surfaced — fix in plugin spec or loader before continuing.
 
@@ -2351,14 +2351,14 @@ If output mismatches: schema gap surfaced — fix in plugin spec or loader befor
 
 ```bash
 cd /Users/slabgorb/Projects/oq-2/sidequest-content
-git add genre_packs/space_opera/magic.yaml genre_packs/space_opera/worlds/coyote_reach/magic.yaml genre_packs/space_opera/worlds/coyote_reach/confrontations.yaml
-git commit -m "feat(magic): space_opera + coyote_reach magic configs
+git add genre_packs/space_opera/magic.yaml genre_packs/space_opera/worlds/coyote_star/magic.yaml genre_packs/space_opera/worlds/coyote_star/confrontations.yaml
+git commit -m "feat(magic): space_opera + coyote_star magic configs
 
 Genre-layer: allowed_sources [innate, item_based], permitted_plugins
 [innate_v1, item_legacy_v1], universal hard_limits (no_resurrection,
 no_ftl_telepathy, no_tech_replacement, no_mind_compulsion).
 
-World-layer (coyote_reach): intensity 0.25, world_knowledge classified
+World-layer (coyote_star): intensity 0.25, world_knowledge classified
 + folkloric, four world-load ledger bars (sanity character,
 notice character, vitality character, hegemony_heat world). Plus
 five named confrontations: the_standoff, the_salvage, the_bleeding_through,
@@ -2469,13 +2469,13 @@ def test_production_content_loads():
 
     genre_yaml = Path(content_root) / "space_opera" / "magic.yaml"
     world_yaml = (
-        Path(content_root) / "space_opera" / "worlds" / "coyote_reach" / "magic.yaml"
+        Path(content_root) / "space_opera" / "worlds" / "coyote_star" / "magic.yaml"
     )
     if not (genre_yaml.exists() and world_yaml.exists()):
         pytest.skip("production magic yamls not present")
 
     config = load_world_magic(genre_yaml=genre_yaml, world_yaml=world_yaml)
-    assert config.world_slug == "coyote_reach"
+    assert config.world_slug == "coyote_star"
     assert "innate_v1" in config.active_plugins
     assert "item_legacy_v1" in config.active_plugins
     assert config.intensity == 0.25
@@ -2556,11 +2556,11 @@ EOF
 
 # content PR
 cd /Users/slabgorb/Projects/oq-2/sidequest-content
-gh pr create --base develop --title "feat(magic): Phase 1 content — space_opera + coyote_reach magic configs" --body "$(cat <<'EOF'
+gh pr create --base develop --title "feat(magic): Phase 1 content — space_opera + coyote_star magic configs" --body "$(cat <<'EOF'
 ## Summary
 - space_opera/magic.yaml — genre layer: allowed_sources, permitted_plugins, hard_limits, cost_types
-- coyote_reach/magic.yaml — world layer: active_plugins, intensity 0.25, world_knowledge classified+folkloric, four world-load ledger bars
-- coyote_reach/confrontations.yaml — five named confrontations
+- coyote_star/magic.yaml — world layer: active_plugins, intensity 0.25, world_knowledge classified+folkloric, four world-load ledger bars
+- coyote_star/confrontations.yaml — five named confrontations
 
 ## Test plan
 - [x] Loader green against these files (verified in sidequest-server PR)
@@ -2576,7 +2576,7 @@ EOF
 
 **Goal:** `magic_state` is a field on `GameSnapshot`, ledger mutations propagate through `compute_delta` → `build_protocol_delta`, SQLite save/load roundtrips magic state, legacy saves init empty without warning.
 
-**Cut-point:** Construct a Coyote Reach session in tests, mutate ledger programmatically, observe state surviving save/load and producing correct StateDeltas.
+**Cut-point:** Construct a Coyote Star session in tests, mutate ledger programmatically, observe state surviving save/load and producing correct StateDeltas.
 
 **Estimated points:** 4–6. **Estimated calendar:** 2 days.
 
@@ -2736,7 +2736,7 @@ from sidequest.magic.state import BarKey, LedgerBar, MagicState, WorkingRecord
 @pytest.fixture
 def world_config() -> WorldMagicConfig:
     return WorldMagicConfig(
-        world_slug="coyote_reach",
+        world_slug="coyote_star",
         genre_slug="space_opera",
         allowed_sources=["innate", "item_based"],
         active_plugins=["innate_v1", "item_legacy_v1"],
@@ -2793,7 +2793,7 @@ def test_initialize_for_character(world_config):
 def test_world_bar_initialized_at_world_load(world_config):
     state = MagicState.from_config(world_config)
 
-    heat_key = BarKey(scope="world", owner_id="coyote_reach", bar_id="hegemony_heat")
+    heat_key = BarKey(scope="world", owner_id="coyote_star", bar_id="hegemony_heat")
     assert state.get_bar(heat_key).value == 0.30
 
 
@@ -3210,7 +3210,7 @@ def test_gamesnapshot_with_magic_state_serializes():
     snapshot = GameSnapshot.model_construct(magic_state=state)
     dumped = snapshot.model_dump()
     assert dumped["magic_state"] is not None
-    assert dumped["magic_state"]["config"]["world_slug"] == "coyote_reach"
+    assert dumped["magic_state"]["config"]["world_slug"] == "coyote_star"
 ```
 
 (Where `_make_world_config_for_tests()` is the same helper used in earlier tests; promote to a `conftest.py` fixture if not already.)
@@ -3604,7 +3604,7 @@ gh pr create --base develop --title "feat(magic): Phase 2 — GameSnapshot integ
 - Protocol StateDelta carries magic_state payload over existing message channel
 
 ## Phase 2 cut-point
-- Construct Coyote Reach session, mutate ledger programmatically, save/load roundtrip preserves state, deltas detect changes correctly. No narrator integration yet.
+- Construct Coyote Star session, mutate ledger programmatically, save/load roundtrip preserves state, deltas detect changes correctly. No narrator integration yet.
 
 Spec: docs/superpowers/specs/2026-04-28-magic-system-coyote-reach-implementation-design.md
 Plan: docs/superpowers/plans/2026-04-28-magic-system-coyote-reach-v1.md
@@ -4180,13 +4180,13 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 **Files:**
 - Modify: `sidequest-server/sidequest/server/narration_apply.py`
 - Modify: `sidequest-server/sidequest/magic/models.py` — extend `LedgerBarSpec` with optional `promote_to_status` field
-- Modify: `sidequest-server/tests/magic/fixtures/coyote_reach_magic.yaml` — add `promote_to_status:` blocks to bar declarations
-- Modify: `sidequest-content/genre_packs/space_opera/worlds/coyote_reach/magic.yaml` — same edit on production fixture
+- Modify: `sidequest-server/tests/magic/fixtures/coyote_star_magic.yaml` — add `promote_to_status:` blocks to bar declarations
+- Modify: `sidequest-content/genre_packs/space_opera/worlds/coyote_star/magic.yaml` — same edit on production fixture
 - Create: `sidequest-server/tests/magic/test_threshold_promotion.py`
 
 When `apply_magic_working` returns crossings, the pipeline auto-emits a `status_changes` ADD that re-uses the existing Status renderer. Sanity ≤ 0.40 → `Status(text="Bleeding through", severity=Wound)`.
 
-**Architect resolution (§5.3, 2026-04-29):** The mapping `bar_id → (status_text, severity)` is **world-content, not engine code.** Different worlds may want different status text on the same bar (Coyote Reach: `sanity → "Bleeding through"`; a hypothetical victoria-touched world: `sanity → "Slipping"`). The mapping lives in the world `magic.yaml` co-located with the bar declaration:
+**Architect resolution (§5.3, 2026-04-29):** The mapping `bar_id → (status_text, severity)` is **world-content, not engine code.** Different worlds may want different status text on the same bar (Coyote Star: `sanity → "Bleeding through"`; a hypothetical victoria-touched world: `sanity → "Slipping"`). The mapping lives in the world `magic.yaml` co-located with the bar declaration:
 
 ```yaml
 ledger_bars:
@@ -4341,7 +4341,7 @@ class LedgerBarSpec(BaseModel):
     promote_to_status: StatusPromotion | None = None
 ```
 
-Update Coyote Reach fixture and production world YAML to populate
+Update Coyote Star fixture and production world YAML to populate
 `promote_to_status:` for `sanity`, `notice`, `vitality`.
 
 - [ ] **Step 3b: Implement promotion (reads from world config, not hardcoded)**
@@ -4956,7 +4956,7 @@ EOF
 
 **Goal:** Magic bars visible in `CharacterPanel`, threshold-promoted Status visible in existing status renderer, `magic.working` spans visible in existing dashboard event feed. Solo demo runnable.
 
-**Cut-point:** Play a Coyote Reach session, type a turn that triggers a working, see bars rise/fall in real time, see "Bleeding through" appear if threshold crossed, see span in GM dashboard.
+**Cut-point:** Play a Coyote Star session, type a turn that triggers a working, see bars rise/fall in real time, see "Bleeding through" appear if threshold crossed, see span in GM dashboard.
 
 **Estimated points:** 3–4. **Estimated calendar:** 2 days.
 
@@ -5145,12 +5145,12 @@ function makeBar(
     starts_at_chargen: 1.0,
     ...thresholds,
   };
-  const owner = scope === "world" ? "coyote_reach" : "sira_mendes";
+  const owner = scope === "world" ? "coyote_star" : "sira_mendes";
   return [`${scope}|${owner}|${id}`, { spec, value }];
 }
 
 const baseConfig = {
-  world_slug: "coyote_reach",
+  world_slug: "coyote_star",
   genre_slug: "space_opera",
   allowed_sources: ["innate", "item_based"],
   active_plugins: ["innate_v1", "item_legacy_v1"],
@@ -5439,7 +5439,7 @@ Expected: PASS.
 ```bash
 cd /Users/slabgorb/Projects/oq-2
 just up                          # boots all services
-# Open browser to http://localhost:5173, log in, start a Coyote Reach session.
+# Open browser to http://localhost:5173, log in, start a Coyote Star session.
 # Open the CharacterPanel for a character. Verify the LedgerPanel section
 # appears with sanity / notice / vitality bars at their starting values.
 ```
@@ -5496,12 +5496,12 @@ If the existing dashboard renderer doesn't visually differentiate DEEP_RED from 
 
 ### Task 4.5: Phase 4 cut-point — solo demo session
 
-- [ ] **Step 1: Run a 10-turn Coyote Reach session**
+- [ ] **Step 1: Run a 10-turn Coyote Star session**
 
 ```bash
 just up
 # Browser: http://localhost:5173
-# Create a new game in Coyote Reach. Take 10 turns that exercise:
+# Create a new game in Coyote Star. Take 10 turns that exercise:
 # - One innate working with cost (sanity drops, no threshold)
 # - One item working (notice rises)
 # - One working that crosses sanity → 0.40 (Bleeding through Status appears)
@@ -6047,7 +6047,7 @@ def test_sanity_threshold_crossing_triggers_bleeding_through_dispatch():
 
     The dispatch goes through the existing dispatch/confrontation.py pipeline.
     """
-    # ... fixture: load Coyote Reach confrontations into MagicState,
+    # ... fixture: load Coyote Star confrontations into MagicState,
     # add character, set sanity to 0.45, apply working with sanity cost 0.10
     # → assert that the result.auto_fired contains the_bleeding_through.
     from sidequest.game.session import GameSnapshot
@@ -6618,7 +6618,7 @@ Add a test that mounts the overlay with a synthetic outcome event and asserts th
 
 - [ ] **Step 4: Manual smoke test**
 
-Drive a confrontation through to clear_win in a Coyote Reach session; verify the overlay shows branch + outputs.
+Drive a confrontation through to clear_win in a Coyote Star session; verify the overlay shows branch + outputs.
 
 - [ ] **Step 5: Commit**
 
@@ -6651,7 +6651,7 @@ gh pr create --base develop --title "feat(magic): Phase 5 ui — confrontation o
 
 - [ ] **Step 2: After PRs merge, run a two-player playtest**
 
-Schedule: Keith + one playgroup member. Play one full Coyote Reach session (~1 hour).
+Schedule: Keith + one playgroup member. Play one full Coyote Star session (~1 hour).
 
 Acceptance:
 - [ ] At least one auto-fire confrontation triggers (sanity OR notice threshold crosses)
@@ -6678,7 +6678,7 @@ Create `docs/playtests/2026-MM-DD-coyote-reach-two-player.md` (date filled at ru
 
 **Goal:** Magic state propagates correctly through multiplayer (per ADR-037 shared/per-player split), sealed-letter compatibility intact for private working info, `hegemony_heat` works as a world-shared bar across players, post-playtest bug fixes, cliché-judge audit checklist available as a post-session review tool. End at the playgroup playtest.
 
-**Cut-point:** **The Playtest.** Keith + James + Alex + Sebastien. Full Coyote Reach session. All ten "Definition of done" criteria from the spec land.
+**Cut-point:** **The Playtest.** Keith + James + Alex + Sebastien. Full Coyote Star session. All ten "Definition of done" criteria from the spec land.
 
 **Estimated points:** 5–8. **Estimated calendar:** 3–4 days plus the playtest itself.
 
@@ -6716,7 +6716,7 @@ def test_world_bar_propagates_in_shared_delta():
 
     snap_before = GameSnapshot.model_construct(magic_state=state.model_copy(deep=True))
     state.set_bar_value(
-        BarKey(scope="world", owner_id="coyote_reach", bar_id="hegemony_heat"), 0.45
+        BarKey(scope="world", owner_id="coyote_star", bar_id="hegemony_heat"), 0.45
     )
     snap_after = GameSnapshot.model_construct(magic_state=state)
 
@@ -6751,8 +6751,8 @@ def test_character_bar_in_player_specific_projection():
     assert not any("character|sira_mendes|" in k for k in rux_bars)
 
     # Both see hegemony_heat (world-scope).
-    assert any("world|coyote_reach|hegemony_heat" in k for k in sira_bars)
-    assert any("world|coyote_reach|hegemony_heat" in k for k in rux_bars)
+    assert any("world|coyote_star|hegemony_heat" in k for k in sira_bars)
+    assert any("world|coyote_star|hegemony_heat" in k for k in rux_bars)
 ```
 
 - [ ] **Step 2: Run — expect FAIL**
@@ -6931,12 +6931,12 @@ def test_session_decay_applies_to_world_bars():
     config = _make_world_config_for_tests()
     state = MagicState.from_config(config)
     state.set_bar_value(
-        BarKey(scope="world", owner_id="coyote_reach", bar_id="hegemony_heat"), 0.50
+        BarKey(scope="world", owner_id="coyote_star", bar_id="hegemony_heat"), 0.50
     )
 
     state.tick_session_decay()
     bar = state.get_bar(
-        BarKey(scope="world", owner_id="coyote_reach", bar_id="hegemony_heat")
+        BarKey(scope="world", owner_id="coyote_star", bar_id="hegemony_heat")
     )
     # decay_per_session = 0.05; bar direction = up; decay subtracts.
     assert bar.value == pytest.approx(0.45)
@@ -6948,11 +6948,11 @@ def test_session_decay_does_not_go_below_range():
     config = _make_world_config_for_tests()
     state = MagicState.from_config(config)
     state.set_bar_value(
-        BarKey(scope="world", owner_id="coyote_reach", bar_id="hegemony_heat"), 0.02
+        BarKey(scope="world", owner_id="coyote_star", bar_id="hegemony_heat"), 0.02
     )
     state.tick_session_decay()
     bar = state.get_bar(
-        BarKey(scope="world", owner_id="coyote_reach", bar_id="hegemony_heat")
+        BarKey(scope="world", owner_id="coyote_star", bar_id="hegemony_heat")
     )
     assert bar.value == 0.0  # clamped to range[0]
 
@@ -7034,9 +7034,9 @@ Per spec §5d: cliché-judge runs as **post-session review**, not runtime guard.
 ```markdown
 # docs/playtests/cliche-judge-magic-checklist.md
 
-## Coyote Reach magic-narration audit checklist
+## Coyote Star magic-narration audit checklist
 
-Run this after every Coyote Reach session by piping the session's
+Run this after every Coyote Star session by piping the session's
 working_log through `sidequest.magic.audit.audit_session()`.
 
 ### Per-working checks
@@ -7274,12 +7274,12 @@ gh pr create --base develop --title "feat(magic): Phase 6 — multiplayer, seale
 
 **This is the v1 finish line.**
 
-**Schedule:** Keith + James + Alex + Sebastien. Block 3 hours. Coyote Reach session.
+**Schedule:** Keith + James + Alex + Sebastien. Block 3 hours. Coyote Star session.
 
 **Pre-flight:**
 
 - [ ] All Phase 1–6 PRs merged
-- [ ] Production content YAMLs (space_opera + coyote_reach) loading cleanly via `pf` or direct check
+- [ ] Production content YAMLs (space_opera + coyote_star) loading cleanly via `pf` or direct check
 - [ ] `just up` boots cleanly with no errors
 - [ ] One Keith-solo run-through within 24h of the session, end-to-end
 - [ ] Players have access to the URL and a brief on the world's tone
@@ -7321,7 +7321,7 @@ Run with fresh eyes against the spec.
 
 | Spec section | Plan task(s) | Status |
 |---|---|---|
-| §1 Coyote Reach magic shape (plugins, axes, bars, confrontations, register) | Task 1.7 (production YAMLs); Tasks 1.3 + 1.4 (plugin pairs) | ✅ |
+| §1 Coyote Star magic shape (plugins, axes, bars, confrontations, register) | Task 1.7 (production YAMLs); Tasks 1.3 + 1.4 (plugin pairs) | ✅ |
 | §2a Reuse-first principle (table of existing systems absorbed) | Task 2.4 (StateDelta), 3.4 (status_changes auto-promotion), 3.5 (SPAN_ROUTES), 4.4 (existing dashboard) | ✅ |
 | §2b New code (magic_state, loader, plugins, validator, LedgerPanel) | Tasks 1.1-1.6, 2.2, 4.2 | ✅ |
 | §2c Extended code (session, delta, resource_pool, narrator, narration_apply) | Tasks 2.1, 2.3, 2.4, 3.2, 3.3, 4.3 | ✅ |

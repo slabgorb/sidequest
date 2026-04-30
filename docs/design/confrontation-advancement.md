@@ -193,7 +193,7 @@ Cross-plugin outputs are a feature, not a hack. They are how characters move bet
 
 A voidborn at `control_tier 3` may have *no* `pact_tier` — there is no source to bond with; the character *is* the source. A bargained_for character with `pact_tier 3` may have no `control_tier` — they don't have to control anything; the patron does the work. Collapsing these into a single `pact_tier` would require every confrontation outcome to disambiguate "which tier" with a `target_axis` field, and the player-facing panel would say "Tier: 3" without telling them *which kind of three*. The split keeps the readout legible.
 
-**Architect call: 2026-04-29 (magic-system-coyote-reach-v1 architect addendum).** `control_tier` registers in v1 (Coyote Reach uses `innate_v1.control_tier`). `discipline_tier` registers when a learned-using world ships — additive work, no retrofit on `pact_tier`-using plugins.
+**Architect call: 2026-04-29 (magic-system-coyote-star-v1 architect addendum).** `control_tier` registers in v1 (Coyote Star uses `innate_v1.control_tier`). `discipline_tier` registers when a learned-using world ships — additive work, no retrofit on `pact_tier`-using plugins.
 
 ### Output catalog stability
 
@@ -207,7 +207,7 @@ A confrontation may declare `register: dramatic | intimate | domestic | quiet`. 
 - **Cliché-judge expectation** — an intimate-register confrontation that escalates to combat outputs is YELLOW (the system was promised a small scene and got a big one).
 - **Output magnitude defaults** — `bond_strength_growth_via_intimacy` is keyed off intimate/domestic register; dramatic-register bond changes are keyed off the larger `bond_strength` step-change output.
 
-Existing confrontations are NOT retrofitted; they keep the default `dramatic` register. New authored confrontations declare register at authoring time. The first authored intimate-register confrontation is `the_tea_brew` (Coyote Reach, `docs/superpowers/specs/2026-04-29-rig-mvp-coyote-reach-design.md`).
+Existing confrontations are NOT retrofitted; they keep the default `dramatic` register. New authored confrontations declare register at authoring time. The first authored intimate-register confrontation is `the_tea_brew` (Coyote Star, `docs/superpowers/specs/2026-04-29-rig-mvp-coyote-star-design.md`).
 
 The Becky Chambers / Wayfarer register leans heavily on `intimate` and `domestic`; the rig framework (`docs/design/rig-taxonomy.md`) treats these as first-class advancement events, not filler. The "Cut the Dull Bits" SOUL principle is preserved — quiet shared watch is a confrontation only if it forces a real choice — but the catalog admits Wayfarer-shaped scenes as the daily currency they are in play.
 
