@@ -1,263 +1,236 @@
 # SideQuest Feature Inventory
 
-**Last updated:** 2026-04-13
-**Sprint 1:** Bootstrap Rust workspace (completed)
-**Sprint 2:** Multiplayer Works For Real (active — 1537/1797 points)
+**Last updated:** 2026-04-30
+**Sprint 3:** Playtest 3 closeout — MP correctness, state hygiene, post-port cleanup (active 2026-04-27 → 2026-05-10)
+**Sprint 3 progress:** 24/37 stories done · 55/84 points
+**Sprint 3 epic:** Epic 45 (single epic; rolls up Epic 37's open backlog plus port-drift residue)
+
+> **Post-port snapshot.** This inventory describes the **Python** backend
+> (`sidequest-server`) live since the ADR-082 cutover (2026-04-23). The
+> language-level Rust → Python port is complete; subsystem-level drift is
+> tracked separately. For the comprehensive non-parity inventory and
+> verdicts, see:
+>
+> - `docs/port-drift-feature-audit-2026-04-24.md` — what landed in Python and what didn't
+> - `docs/adr/087-post-port-subsystem-restoration-plan.md` — verdict + tier per non-parity subsystem
+> - `docs/adr/README.md` — port-era reading guide and Rust → Python translation table
 
 ## Legend
 
-- **Done & Wired** — Implemented and connected end-to-end (API + UI + Daemon)
-- **Done (API only)** — Implemented in Rust but not yet exercised in a live session
-- **In Progress** — Current sprint work
-- **Planned** — Backlog, not yet started
+- **Live & Wired** — Implemented in Python, reachable from real session traffic, OTEL-emitting
+- **Live (partial)** — Wired but not fully exercised, or has a known gap flagged by ADR-087
+- **Dark** — Concept ported to Python data model only; engine missing (per ADR-087 RESTORE roster)
+- **Deferred** — Intentional phased scope; marker present or covered by Proposed ADR
+- **Workshop only** — Genre content lives in `sidequest-content/genre_workshopping/` and is not selectable in the UI
 
-**Wiring diagrams:** See [`docs/wiring-diagrams.md`](wiring-diagrams.md) for end-to-end signal traces (Mermaid) showing every feature's path from UI to storage.
+**Wiring diagrams:** See [`docs/wiring-diagrams.md`](wiring-diagrams.md) for end-to-end signal traces (Mermaid) showing each feature's path from UI to storage.
 
 ---
 
-## Done & Wired (End-to-End Working)
+## Live & Wired (Post-Port)
 
-These features work from player input through to rendered output.
+These features are wired end-to-end in the Python tree and exercise OTEL spans during real sessions.
 
-### Core Game Loop (Epics 1-2, complete)
+### Core Game Loop
 
-| Feature | API | UI | Daemon | Notes |
-|---------|-----|-----|--------|-------|
-| WebSocket connection | sidequest-server | useGameSocket | — | Real-time bidirectional |
-| REST genres endpoint | /api/genres | ConnectScreen | — | Genre + world selection |
-| Session lifecycle | Session actor | ConnectScreen → GameLayout | — | Connect → Create → Play |
-| Character creation | CharacterBuilder state machine | CharacterCreation component | — | Multi-scene, genre-driven |
-| Orchestrator turn loop | Intent → Agent → Patch → Broadcast | NarrativeView | — | Full turn cycle |
-| Intent classification | State-override (ADR-067) | — | — | in_combat/in_chase/default |
-| Agent dispatch | Unified narrator + auxiliary (Resonator, Troper, WorldBuilder) | — | — | Claude CLI subprocess |
-| State patching | JSON delta patches | useStateMirror | — | Combat/chase/world |
-| Narration delivery | NARRATION + NARRATION_END (ADR-076) | NarrativeView (markdown) | — | DOMPurify sanitized |
-| SQLite persistence | Save/load GameSnapshot | — | — | Session recovery |
-| Trope engine | Tick progression, beat injection | — | — | World + genre tropes |
-| Genre pack loading | sidequest-genre crate | ThemeProvider (CSS vars) | — | 11 packs, validated |
-| CORS support | axum middleware | Vite proxy | — | Dev + prod |
+| Feature | Server module | UI | Notes |
+|---------|---------------|----|-------|
+| WebSocket transport | `sidequest.server.websocket` | `useGameSocket` | FastAPI WS upgrade, reader/writer task split (ADR-038) |
+| REST genres endpoint | `sidequest.server.rest` | `ConnectScreen` | `/api/genres` — pack discovery |
+| Session lifecycle | `sidequest.server.session_handler` | `ConnectScreen → GameLayout` | Connect → Create → Play, pydantic-validated |
+| Multiplayer rooms | `sidequest.server.session_room` | shared-world state | `SessionRoom` keyed by `genre:world` (ADR-036/037) |
+| Character creation | `sidequest.game.builder` + `character` | `CharacterCreation` | Genre-driven scene state machine, three modes (ADR-016) |
+| Orchestrator turn loop | `sidequest.agents.orchestrator` | `NarrativeView` | Intent → Narrator → Patches → Broadcast |
+| Intent classification | `sidequest.agents.orchestrator` (state-override) | — | `in_combat`/`in_chase`/default; no LLM call (ADR-067) |
+| Unified narrator | `sidequest.agents.narrator` | — | Single persistent Opus session via `claude -p` (ADR-067 supersedes multi-agent ADR-010) |
+| Auxiliary agents | `sidequest.agents.subsystems/` (resonator, troper, world_builder) | — | Off the live turn critical path |
+| Sidecar tool patches | `sidequest.agents.orchestrator.assemble_turn` | — | Narrator emits prose; sidecar tools write JSONL for items/mood/intent/SFX (ADR-039 / ADR-057 / ADR-059) |
+| State delta computation | `sidequest.game.delta` (`compute_delta`) | `useStateMirror` | Wire-efficient state diff per turn |
+| Projection filter (per-player view) | `sidequest.game.projection_filter` + `projection/` | per-client `INITIAL_STATE`/deltas | Python-era extension; OTEL `projection_decide_span` |
+| Narration delivery | `sidequest.protocol.messages.NARRATION` + `NARRATION_END` | `NarrativeView` (markdown, DOMPurify) | Two-message atomic state commit (ADR-076 retired the streaming chunk leg) |
+| SQLite persistence | `sidequest.game.persistence` | — | `sqlite3` via `asyncio.to_thread`; one DB per save |
+| Trope state | `sidequest.game.session.TropeState` | — | **Data ported; engine `apply_trope_engagement` is dark** (ADR-087 RESTORE P1) |
+| Genre pack loading | `sidequest.genre.loader` + `models/` + `resolver` | `ThemeProvider` | YAML → pydantic; lazy bind on connect (ADR-004) |
+| CORS | FastAPI middleware | Vite proxy | Dev + prod |
 
-### Media Pipeline (Epic 4, complete)
+### Multiplayer & Pacing
 
-| Feature | API | UI | Daemon | Notes |
-|---------|-----|-----|--------|-------|
-| Image generation | Subject extractor → Render queue | IMAGE display | Flux.1 (schnell + dev) via MLX | Tiers: scene_illustration, portrait, portrait_square, landscape, text_overlay, fog_of_war (cartography removed 2026-04-28 — ADR-019 superseded) |
-| Beat filter | Suppress low-drama renders | — | — | drama_weight threshold |
-| Speculative prerender | Queue against turn boundaries | — | — | Hash-based cache dedup (ADR-044) |
-| Music direction | Mood extraction from narration | useAudioCue | Audio library backend | AUDIO_CUE messages → pre-rendered ACE-Step tracks |
-| 2-channel audio | Music + SFX commands | AudioStatus component | pygame mixer | No voice/TTS channel after 2026-04 removal |
-| Theme rotation | Anti-repetition track selection | — | Audio rotator | Mood-based |
-| ~~TTS voice synthesis~~ | **Removed 2026-04** — Kokoro TTS pipeline removed; see ADR-076 | | | |
-| ~~Character voice mapping~~ | **Removed 2026-04** alongside TTS | | | |
+| Feature | Module | Notes |
+|---------|--------|-------|
+| Turn barrier (sealed-letter window) | `sidequest.server.session_room.TurnBarrier` | Adaptive timeout (3s for 2-3, 5s for 4+); claim-election prevents duplicate narrator calls |
+| Active-turn-takers vs lobby count | story 45-2 | Closed Sprint 3 (was 37-42); barrier no longer waits on phantom lobby peers |
+| Shared-world delta handshake | `sidequest.game.shared_world_delta` | Closed Sprint 3 (story 45-1, re-scope of 37-37); seeds next player's turn with location/encounter/adjacency ground truth |
+| Three turn modes | `sidequest.game.session.TurnMode` | FREE_PLAY, STRUCTURED, CINEMATIC (ADR-036) |
+| Party action composition | `sidequest.agents.orchestrator` | Multi-character PARTY ACTIONS block in narrator prompt |
+| Perception rewriter | `sidequest.agents.perception_rewriter` | Per-player narration variants based on status effects (ADR-028) |
+| Two-tier turn counter | `sidequest.game.turn` | Interaction (monotonic) vs Round (narrative) — ADR-051 |
+| TensionTracker | `sidequest.game.tension_tracker` | Dual-track model — gambler's ramp + HP stakes + event spikes |
+| Drama-aware delivery | `sidequest.protocol.messages.NARRATION_END` consumers | INSTANT / SENTENCE / STREAMING (drama_weight thresholds) |
+| Quiet turn detection | `sidequest.game.tension_tracker` | Escalation beat injection after sustained low drama |
+| Genre-tunable thresholds | `pacing.yaml` per pack | Per-pack drama breakpoints |
+| Momentum readout sync | story 45-3 | UI ConfrontationOverlay reads live momentum off state mirror |
 
-### Observability (Epic 3, complete)
+### Knowledge & Lore
 
-| Feature | API | UI | Daemon | Notes |
-|---------|-----|-----|--------|-------|
-| Agent telemetry | #[instrument] spans | GM Mode panel | — | JSON tracing subscriber |
-| TurnRecord pipeline | mpsc channel | — | — | Async validation |
-| Patch legality checks | Deterministic rule validation | — | — | Catches bad patches |
-| Entity reference validation | Narration ↔ GameSnapshot | — | — | Catches hallucinations |
-| Subsystem exercise tracker | Agent invocation histogram | — | — | Coverage gaps |
-| Watcher endpoint | /ws/watcher | useWatcherSocket | — | Streaming telemetry |
-| GM Mode | — | GMMode component | — | Event stream, trope timeline, state inspector |
+| Feature | Module | Notes |
+|---------|--------|-------|
+| KnownFact accumulation | `sidequest.game.character.KnownFact` | Tiered injection by relevance |
+| Footnote protocol | `sidequest.protocol.messages.NarrationPayload.footnotes` | Discovery / callback styling, fact_id callbacks |
+| Lore store | `sidequest.game.lore_store` | In-memory indexed collection, persisted via SQLite |
+| Lore RAG (embedding cosine sim) | `sidequest.game.lore_embedding` (cross-process via daemon, ADR-048) | Ported intact |
+| Lore seeding from packs | `sidequest.game.lore_seeding` | Bootstrap from genre/world YAML |
 
-### Player UI (from sidequest-ui)
+### NPC & World Systems
+
+| Feature | Module | Notes |
+|---------|--------|-------|
+| OCEAN profiles (data) | `sidequest.genre.models.ocean` | Five floats 0.0–10.0 on every archetype |
+| OCEAN behavioral summary | `sidequest.genre.models.ocean.OceanProfile.behavioral_summary()` | Scores → prompt text |
+| Narrator reads OCEAN | `sidequest.agents.prompt_framework` | Voice/behavior adjustment per NPC |
+| OCEAN shift proposals | — | **Dark** — model present, evolution pipeline not ported (ADR-087 RESTORE P2) |
+| Disposition (scalar) | `sidequest.game.character.npc.disposition` | Reduced to scalar int with clamping; **Attitude enum + transitions are dark** (ADR-087 RESTORE P1) |
+| Faction agendas | `sidequest.game.faction_agenda` (data ported), narrator injection live | Goals + urgency feed scene directives |
+| Scene directives | `sidequest.agents.prompt_framework` (early-zone) | Mandatory weave |
+| Trope ticks (data) | `sidequest.game.session.TropeState` progression | Progresses each turn; **engine that fires beats from progression is dark** (ADR-087 RESTORE P1) |
+| World materialization | `sidequest.game.world_materialization` | Campaign maturity (fresh/early/mid/veteran) |
+| Belief state (multi-source credibility) | `sidequest.game.belief_state` | Ported intact |
+| Scenario / clue graph | `sidequest.game.scenario_state` | Bottle episodes, whodunit data |
+| Room-graph navigation | `sidequest.game.room_movement` | Per-room topology for dungeon worlds (ADR-055) |
+| Region init / validation | `sidequest.game.region_init`, `region_validation` | Seed `snap.current_region` from world `cartography.yaml` (ADR-019 supersession residual) |
+| Resource pool | `sidequest.game.resource_pool` | Thresholds + decay; underpins genre-typed resources (humanity, heat, fuel, etc.) |
+
+### Media Pipeline
+
+| Feature | Module | Notes |
+|---------|--------|-------|
+| Image generation | `sidequest.daemon_client` → `sidequest-daemon` (Flux / Z-Image, MLX) | ADR-070 |
+| Render tiers | per `visual_style.yaml` | scene_illustration, portrait, portrait_square, landscape, text_overlay, fog_of_war (cartography retired 2026-04-28; tactical_sketch retired under ADR-086) |
+| Subject extraction | narrator `visual_scene` (preferred) + regex fallback | — |
+| Image pacing throttle | `sidequest.media` | 30s solo, 60s multiplayer (ADR-050); DM override |
+| Render queue with content dedup | `sidequest.media` (SHA256) | — |
+| Speculative prerender | — | **Dark** — `prerender.rs` did not port (ADR-087 RESTORE P2 / ADR-044) |
+| Beat filter (drama gate) | inline in orchestrator (no standalone module) | Standalone module dark (ADR-087 RESTORE P3) |
+| Scene relevance validator | — | **Dark** — REDESIGN under ADR-086 image-composition taxonomy (ADR-087 P2) |
+| Music director | `sidequest.audio` (mood classify + theme select) | Mood-indexed pre-rendered ACE-Step tracks |
+| Audio cue messages | `sidequest.protocol.messages.AUDIO_CUE` | `useAudioCue` on client |
+| 2-channel audio | `sidequest-daemon` (pygame mixer) | Music + SFX only (no voice/TTS — ADR-076) |
+| Theme rotator (anti-repetition) | — | **Superseded** per ADR-087 (no evidence of value over TensionTracker + ADR-080 narrative-weight traits) |
+| Mood-keyed tracks (string-keyed) | per `audio.yaml` | 7 core moods + per-pack `mood_aliases` |
+
+### Observability
+
+| Feature | Module | Notes |
+|---------|--------|-------|
+| OTEL span catalog | `sidequest.telemetry.spans` | 40+ named spans (vs. ~10 Rust-side); includes `local_dm_*`, `projection_*`, `mp_*` |
+| OTEL leak audit | `sidequest.telemetry.leak_audit` | Python-era addition; verifies span hygiene |
+| Validator pipeline | `sidequest.telemetry.validator` | `patch_legality_check`, `entity_reference_check`, etc. registered checks |
+| Watcher endpoint | `/ws/watcher` | Streaming telemetry to GM Mode |
+| GM Mode dashboard | UI `GMMode` component + `/dashboard` | **Restoration in progress** under ADR-090 |
+| TurnRecord pipeline | telemetry validator | Async TurnRecord delivery to validator subscribers |
+| Subsystem coverage tracker | partial — `sidequest.agents.subsystems/` framework only | `CoverageGap` watcher event **dark** (ADR-087 RESTORE P1) |
+
+### Player UI
 
 | Feature | Component | Notes |
 |---------|-----------|-------|
-| Party status panel | PartyPanel | Portraits, HP bars, status effects |
-| Character sheet | CharacterSheet | Stats, abilities, backstory |
-| Inventory panel | InventoryPanel | Items by type, equipped state, gold |
-| Map overlay | MapOverlay | SVG nodes, connections, fog of war |
-| Journal/handouts | JournalView | Thumbnail grid, lightbox viewer |
-| Combat overlay | CombatOverlay | Enemy HP, turn order |
-| Slash commands | useSlashCommands | /inventory, /character, /quests, /journal, /help |
-| Keyboard shortcuts | GameLayout | P/C/I/M/J toggles, Space, Escape |
-| Responsive layout | useBreakpoint | Mobile/tablet/desktop |
-| Genre theming | ThemeProvider + useGenreTheme | CSS vars from pack config |
-| Audio controls | AudioStatus | Per-channel volume, mute, now playing |
-| Auto-reconnect | ConnectScreen | localStorage session persistence |
+| Party status panel | `PartyPanel` | Portraits, HP bars, status effects |
+| Character sheet | `CharacterSheet` | Narrative-voiced per ADR-040 |
+| Inventory panel | `InventoryPanel` | Items by type, equipped, gold |
+| Map overlay | `MapOverlay` | Region nodes/connections (live world-map fog-of-war retired 2026-04-28) |
+| Journal/handouts | `JournalView` | KnownFacts by category + handout thumbnails |
+| Combat overlay | `CombatOverlay` | Enemy HP, turn order |
+| Confrontation overlay | `ConfrontationOverlay` | Momentum, beats; reads live state mirror (story 45-3) |
+| Slash commands | `useSlashCommands` | /inventory, /character, /quests, /journal, /help |
+| Server-side slash router | `sidequest.game.commands` | /status, /inventory, /map, /save, /tone, /gm suite (Python-era home, was server dispatch in Rust) |
+| Keyboard shortcuts | `GameLayout` | P/C/I/M/J toggles, Space, Escape |
+| Responsive layout | `useBreakpoint` | Mobile/tablet/desktop |
+| Genre theming | `ThemeProvider` + `useGenreTheme` | CSS vars from pack config (ADR-079) |
+| Audio controls | `AudioStatus` | Per-channel volume/mute/now-playing |
+| Auto-reconnect | `ConnectScreen` | localStorage session persistence |
 
-### Multiplayer (Epic 8, complete)
+### Input Handling & Safety
 
-| Feature | Story | Notes |
-|---------|-------|-------|
-| Multi-client sessions | 8-1 | player_id mapping |
-| Turn barrier | 8-2 | Wait for all players (ADR-036) |
-| Adaptive action batching | 8-3 | 3s for 2-3, 5s for 4+ |
-| Party action composition | 8-4 | Multi-character PARTY ACTIONS block |
-| Turn modes | 8-5 | FREE_PLAY, STRUCTURED, CINEMATIC (ADR-036) |
-| Perception rewriter | 8-6 | Per-character narration variants (ADR-028) |
-| Guest NPC players | 8-7 | Human-controlled NPCs |
-| Catch-up narration | 8-8 | Mid-session join snapshot |
-| Turn reminders | 8-9 | Idle player timeout |
-
-### Pacing & Drama (Epic 5, complete)
-
-| Feature | Story | Notes |
-|---------|-------|-------|
-| TensionTracker (dual-track) | 5-1 | Gambler's ramp + HP stakes |
-| Combat event classification | 5-2 | Boring/dramatic categorization |
-| Drama weight computation | 5-3 | max(action, stakes) + spike decay |
-| Pacing hint generation | 5-4 | drama_weight → sentence count |
-| Drama-aware delivery | 5-5 | INSTANT/SENTENCE/STREAMING modes |
-| Quiet turn detection | 5-6 | Escalation beat injection |
-| Pacing wired to orchestrator | 5-7 | drama_weight flows through turn pipeline |
-| Genre-tunable thresholds | 5-8 | Per-pack drama breakpoints |
-| Intent classification | 5-9 | State-override routing (ADR-067 superseded two-tier) |
-| Prompt framework wiring | 5-10 | ContextBuilder replaces format! concat |
-
-### Active World (Epic 6, complete)
-
-| Feature | Story | Notes |
-|---------|-------|-------|
-| Scene directive formatter | 6-1 | Fired beats + hints + stakes |
-| MUST-weave instruction | 6-2 | Narrator prompt positioning |
-| Engagement multiplier | 6-3 | Trope progression scaling |
-| FactionAgenda model | 6-4 | Faction goals + urgency |
-| Wire faction agendas | 6-5 | Scene injection |
-| World materialization | 6-6 | Campaign maturity levels |
-| Faction agendas (mutant_wasteland) | 6-7 | Genre pack content |
-| Faction agendas (elemental_harmony) | 6-8 | Genre pack content |
-| Wire scene directives to orchestrator | 6-9 | Per-turn injection |
-
-### Character Depth (Epic 9, complete)
-
-| Feature | Story | Status | Notes |
-|---------|-------|--------|-------|
-| AbilityDefinition model | 9-1 | Done | Genre-voiced descriptions |
-| Ability perception | 9-2 | Done | Involuntary triggers in narrator |
-| KnownFact model | 9-3 | Done | Play-derived knowledge |
-| Known facts in prompt | 9-4 | Done | Tiered injection by relevance |
-| Narrative character sheet | 9-5 | Done | Genre-voiced display |
-| Slash command router (server) | 9-6 | Done | Server-side /command intercept |
-| Core slash commands (server) | 9-7 | Done | /status, /inventory, /map, /save |
-| GM commands | 9-8 | Done | /gm set, teleport, spawn, dmg |
-| Tone command | 9-9 | Done | Adjust genre axes |
-| Wire to React client | 9-10 | Done | CHARACTER_SHEET message |
-| Structured footnote output | 9-11 | Done | NarrationPayload with footnotes[] |
-| Footnote rendering | 9-12 | Done | Superscript markers, discovery/callback styling |
-| Journal browse view | 9-13 | Done | KnownFacts by category with genre voice |
-
-### NPC Personality (Epic 10, complete)
-
-| Feature | Story | Notes |
-|---------|-------|-------|
-| OCEAN profile fields | 10-1 | Five floats on NPC (0.0-10.0) |
-| Genre archetype baselines | 10-2 | Default profiles per archetype |
-| Behavioral summary | 10-3 | Scores → prompt text |
-| Narrator reads OCEAN | 10-4 | Voice/behavior adjustment |
-| OCEAN shift log | 10-5 | Personality change tracking |
-| Agent proposes shifts | 10-6 | Event-driven evolution (ADR-042) |
-| Agreeableness → Disposition | 10-7 | Feeds existing disposition system |
-| Backfill genre packs | 10-8 | OCEAN profiles on all archetypes |
-
-### Lore & Language (Epic 11, complete)
-
-| Feature | Story | Notes |
-|---------|-------|-------|
-| LoreFragment model | 11-1 | Indexed narrative facts |
-| LoreStore | 11-2 | In-memory indexed collection |
-| Lore seed | 11-3 | Bootstrap from genre pack |
-| Lore in agent prompts | 11-4 | Relevant fragment injection |
-| Lore accumulation | 11-5 | World state writes new fragments |
-| Semantic retrieval | 11-6 | Embedding-based RAG (ADR-048) |
-| Morpheme glossary | 11-7 | Conlang morphemes (ADR-043) |
-| Name bank generation | 11-8 | Glossed names from language rules |
-| Narrator name injection | 11-9 | Consistent naming |
-| Language as KnownFact | 11-10 | Transliteration growth |
+| Feature | Module | Notes |
+|---------|--------|-------|
+| Input sanitization | `sidequest.protocol.sanitize` + `sidequest.agents.prompt_redaction` | Strips injection attempts at protocol boundary (ADR-047) |
+| Lethality arbiter | `sidequest.agents.lethality_arbiter` | Policy-driven verdict on lethality claims (Python-era addition; not in Rust) |
+| LocalDM decomposer | `sidequest.agents.local_dm` (DORMANT on live path) | Six modules carry DORMANT marker docstrings; offline-only corpus extraction via `sidequest.corpus.miner` (decision dated 2026-04-28) |
 
 ---
 
-## In Progress (Sprint 2)
+## Dark / Partial (ADR-087 Restoration Roster)
 
-### Sealed Letter Turn System (Epic 13, 7/11 done)
+Per `docs/port-drift-feature-audit-2026-04-24.md` §5 and ADR-087, the following had working Rust implementations and did not port. Each carries a verdict and tier.
 
-Simultaneous input collection with player visibility.
+### P0 — this sprint or next
 
-### Scenario System (Epic 7, 7/10 done)
+| Subsystem | ADR-087 verdict |
+|-----------|------------------|
+| ADR-059 pregen dispatch (server invokes namegen/encountergen/loadoutgen) | RESTORE |
+| `sidequest-namegen` rewire (entry point + dispatch integration) | REWIRE |
+| `sidequest-encountergen` (currently empty stub) | RESTORE |
+| `sidequest-loadoutgen` (currently empty stub) | RESTORE |
+| Scene fixture hydrator (ADR-069) | RESTORE |
+| Confrontation Engine / Epic 28 port-drift | VERIFY → likely RESTORE |
 
-Bottle episodes, whodunit, belief state — core mechanics wired.
+### P1 — within current epic window
 
-### Dungeon Crawl Engine (Epic 19, 7/10 done)
+Trope engine, NPC disposition Attitude transitions, sealed-letter dispatch handler, continuity validator, patch legality gate (currently *partial* in `telemetry/validator.py` — see audit §9.1), subsystem coverage tracker, `sidequest-promptpreview` CLI, inventory extractor (VERIFY first).
 
-Room graph navigation & resource pressure.
+### P2 — design-ready, next-epic candidate
 
-### Narrator Prompt Architecture (Epic 23, 6/10 done)
+Gossip engine, accusation logic, genie wish consequence engine, OCEAN shift proposals, chase engine (ADR-017 — affects road_warrior and space_opera Ship Block), catch-up dispatch handler, lore filter, speculative prerendering, `sidequest-validate` CLI expansion, scene relevance validator (REDESIGN under ADR-086).
 
-Template, RAG, world topology config (room graph + region).
+### P3 — flavor / low urgency
 
-### Wiring Audit Remediation (Epic 26, 3/9 done)
+Conlang morpheme glossary, beat filter, test-support helpers (VERIFY).
 
-Unwired modules, protocol gaps, OTEL blind spots.
+### Deferred — markers confirmed
 
-### Portrait Identity Consistency (Epic 17, 0/6 done)
+Affinity progression (P6-deferred at `game/character.py:55-64`), advancement/XP pipeline (ADR-081 Proposed), dogfight (ADR-077 Proposed), Edge/Composure rituals (ADR-078 Proposed), tactical grid engine (ADR-071 Proposed — protocol live), 3D dice (ADR-075 Proposed — protocol live), merchant system (no ADR; write one before porting).
 
-Tiered character recognition pipeline.
+### Superseded / collapsed
 
-### Seed Tropes (Epic 22, 0/6 done)
-
-Narrative variety via Schrödinger's gun.
-
-### Procedural World-Grounding Systems (Epic 24, 0/9 done)
-
-Server-side pre-generation pipeline.
-
-### Completed This Sprint (archived)
-
-- **Epic 14:** Multiplayer Session UX (10/10)
-- **Epic 15:** Playtest Debt Cleanup (32/32)
-- **Epic 16:** Genre Mechanics Engine — Confrontations & Resources (17/17)
-- **Epic 18:** OTEL Dashboard — Granular Instrumentation (9/9)
-- **Epic 20:** Narrator Crunch Separation — Tool-Based Mechanics (14/14)
-- **Epic 21:** Claude Subprocess OTEL Passthrough (5/5)
-- **Epic 25:** UI Redesign — Character Panel, Layout Modes (11/11)
+Theme rotator (no demonstrated value; SUPERSEDED), separate narrator/troper/resonator/world_builder agents (collapsed under ADR-067 Unified Narrator), 14-tool abstraction (collapsed under ADR-059 direct structured output), live world-map / fog-of-war runtime view (ADR-019 superseded 2026-04-28; cartography YAML lives on as chargen seed only), Kokoro TTS pipeline (retired Epic 27 / ADR-076).
 
 ---
 
-## Planned (Not Started)
+## Sprint 3 (Active) — Epic 45 Snapshot
+
+Single-epic sprint absorbing Epic 37's open backlog plus port-drift residue. Three lanes:
+
+- **(A) MP correctness** — sealed-letter shared-world delta, turn-barrier fix, momentum sync
+- **(B) State write-back hygiene** — bookkeeping counters and resolution handshakes that fire but never persist; each owns an OTEL span on the write path
+- **(C) UI/cleanup tax + tuning + render observability** — the rest of 37's open work, prioritized below A/B
+
+Stories landed (so far): 45-1 (sealed-letter delta), 45-2 (turn barrier active turn-takers), 45-3 (momentum readout sync). 21 more carried from Epic 37 reach into placeholder cleanup, content drift triage, and OTEL/tuning work; backlog of 13 remains as of 2026-04-30.
 
 ---
 
-## Summary
+## Genre Pack Status (Pointer)
 
-| Category | Done | Total | Completion |
-|----------|------|-------|------------|
-| Epic 1: Workspace Scaffolding | 15/15 | 15 | 100% |
-| Epic 2: Core Game Loop | 10/10 | 10 | 100% |
-| Epic 3: Game Watcher | 10/10 | 10 | 100% |
-| Epic 4: Media Integration | 13/13 | 13 | 100% |
-| Epic 5: Pacing & Drama | 11/11 | 11 | 100% |
-| Epic 6: Active World | 10/10 | 10 | 100% |
-| Epic 7: Scenario System | 7/10 | 10 | 70% |
-| Epic 8: Multiplayer | 10/10 | 10 | 100% |
-| Epic 9: Character Depth | 13/13 | 13 | 100% |
-| Epic 10: OCEAN Personality | 9/9 | 9 | 100% |
-| Epic 11: Lore & Language | 11/11 | 11 | 100% |
-| Epic 12: Cinematic Audio | 4/4 | 4 | 100% |
-| Epic 13: Sealed Letter Turns | 7/11 | 11 | 64% |
-| Epic 14: Session UX | 10/10 | 10 | 100% |
-| Epic 15: Playtest Debt | 32/32 | 32 | 100% |
-| Epic 16: Genre Mechanics Engine | 17/17 | 17 | 100% |
-| Epic 17: Portrait Identity | 0/6 | 6 | 0% |
-| Epic 18: OTEL Dashboard | 9/9 | 9 | 100% |
-| Epic 19: Dungeon Crawl Engine | 7/10 | 10 | 70% |
-| Epic 20: Narrator Crunch Sep. | 14/14 | 14 | 100% |
-| Epic 21: Claude OTEL Passthrough | 5/5 | 5 | 100% |
-| Epic 22: Seed Tropes | 0/6 | 6 | 0% |
-| Epic 23: Narrator Prompt Arch. | 6/10 | 10 | 60% |
-| Epic 24: Procedural World | 0/9 | 9 | 0% |
-| Epic 25: UI Redesign | 11/11 | 11 | 100% |
-| Epic 26: Wiring Audit | 3/9 | 9 | 33% |
-| **Total** | **272/307** | **307** | **89%** |
+7 pack directories in `sidequest-content/genre_packs/` but only **5 are functionally loadable**: `caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `victoria`. The `heavy_metal` and `spaghetti_western` production directories are empty shells; their YAMLs live in `genre_workshopping/`. Four other packs (`low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`) are workshop-only.
 
-### What's Playtest-Ready Today
+Full pack-by-pack breakdown lives at [`docs/genre-pack-status.md`](genre-pack-status.md).
 
-The full game loop is wired end-to-end: connect → create character → play → narrate → render images → play music. Multiplayer works with turn barriers, adaptive batching, and party action composition across all three turn modes. The GM watcher dashboard is live with granular OTEL instrumentation. All 11 genre packs load with OCEAN personality profiles, confrontation engines, and resource tracking.
+---
 
-Narrator crunch separation is complete — mechanical state changes (items, quests, mood, SFX, resource deltas) are handled by sidecar tools during narration, not extracted from prose. The UI has been redesigned with new character panels, layout modes, and chrome.
+## Pre-Port Inventory (Historical)
 
-**Best playtest experience:** Multiplayer session in any genre pack. Full media pipeline. Faction-driven world. OCEAN personality on NPCs. Footnoted narration with journal. Pacing engine shapes delivery speed and narrator length. Confrontation engine with genre-specific resource pools.
+Earlier revisions of this document tabulated Sprint 1/Sprint 2 work against Epics 1–26 of the **Rust** workspace (`sidequest-api`). That tracker context is preserved in the sprint archive (`sprint/archive/`) and in the Rust-tree commit history at <https://github.com/slabgorb/sidequest-api>. Subsystem-level mapping from those epics to the current Python tree lives in:
 
-**Sprint 2 remaining:** Sealed letter turn polish, scenario system wiring, dungeon crawl engine, narrator prompt architecture, portrait identity pipeline, seed tropes, procedural world grounding, and wiring audit remediation.
+- `docs/adr/README.md` (Rust → Python translation table)
+- `docs/port-drift-feature-audit-2026-04-24.md` (per-subsystem landing audit)
+- `docs/adr/087-post-port-subsystem-restoration-plan.md` (verdict + tier for each non-parity row)
+
+---
+
+## What's Playtest-Ready Today (Post-Port)
+
+The full game loop is wired end-to-end in Python: connect → create character → play → narrate → render images → play music. Multiplayer works with turn barriers, adaptive batching, party action composition, perception rewriting, and the post-Sprint-3 sealed-letter shared-world delta. The unified narrator (ADR-067) handles exploration, dialogue, combat narration, and chase narration through one persistent Opus session; auxiliary agents run off the critical path. Pacing engine shapes delivery speed and narrator length via TensionTracker. Lore RAG, OCEAN profiles, footnoted narration with journal callback, and projection-filtered per-player views are all live.
+
+OTEL coverage is the strongest it has ever been — 40+ named spans, leak audit, validator pipeline. The GM Mode dashboard is being restored against the new span catalog under ADR-090.
+
+The biggest known gaps for Keith-as-player and Sebastien (mechanics-first) are on the ADR-087 restoration roster: trope engine, disposition transitions, continuity validator, and pregen dispatch. Each of those is what makes the difference between a narrator that improvises convincingly and a narrator the GM panel can actually keep honest. CLAUDE.md says it plain: _"The GM panel is the lie detector."_ Sprint 3 is closing the playtest debt; the next sprint inherits ADR-087's P0 tier.
+
+**Best playtest experience today:** Multiplayer session in `caverns_and_claudes` (most worlds), `elemental_harmony` (richest audio), or `victoria` (most distinctive mechanics + curated music). Full media pipeline. Faction-driven world. OCEAN-flavored NPCs. Footnoted narration with journal. Confrontation engine with genre-typed resource pools where wired.
