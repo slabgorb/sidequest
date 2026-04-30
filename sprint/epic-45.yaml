@@ -803,10 +803,13 @@ stories:
       (b) lazy reload ~30s+ latency on every fidelity flip.
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-04-30'
+    completed: '2026-04-30'
     repos: daemon
     workflow: tdd
     depends_on: 45-38
+    branch: feat/45-39-z-image-base-worker-swap
     acceptance_criteria:
       - SIDEQUEST_DAEMON_FIDELITY env var honored at worker init
       - HF daemon mode loads base z-image with 20-step / CFG-4 config from ZIMAGE_HIGH_FIDELITY_TIER_CONFIGS
