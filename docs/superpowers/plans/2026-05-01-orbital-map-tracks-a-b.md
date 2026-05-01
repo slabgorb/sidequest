@@ -830,7 +830,47 @@ unit choice. Pure function; engine returns hours, formatter formats."
 
 ---
 
-## Task 5: Wire beat advances into rest + encounter flows
+## Task 5: Wire beat advances into scene-end flows (revised — superseded by strangler plan)
+
+**This task has been replaced by a separate strangler-fig plan:**
+
+→ **`docs/superpowers/plans/2026-05-01-session-aggregate-strangler.md`**
+
+→ **Spec:** `docs/superpowers/specs/2026-05-01-session-aggregate-design.md`
+
+### Why revised
+
+The original Task 5 below assumed a `Session` class with `Session.empty()`, `session.handle_rest()`, and `session.end_scene()` — none of which existed in the post-port server. Discovery during execution surfaced that:
+
+- `sidequest/game/session.py` is misnamed (contains `GameSnapshot`, not `Session`).
+- Scene-end is a free function `clear_scratch_on_scene_end()` called from three sites (`narration_apply.py`, `dispatch/yield_action.py`, `handlers/dice_throw.py`) plus one location-change site that intentionally stays put.
+- No rest-as-a-behavior implementation exists in the post-port server (only an unconsumed `on_long_rest: RecoveryBehaviour` config field).
+- The new orbital `BeatKind` would have collided cognitively with the existing combat-momentum `BeatKind` in `sidequest/game/beat_kinds.py`.
+
+### Scope changes from the original Task 5
+
+- Adds a strangler-fig `Session` class (in `sidequest/server/session.py`) to give the orbital aggregate a real Python home before any wiring.
+- Migrates *only* scene-end (encounter resolution) sites; rest-beat emission is deferred until rest-as-a-behavior exists in the post-port server.
+- Renames orbital `BeatKind`/`Beat` → `StoryBeatKind`/`StoryBeat` to disambiguate.
+- Adds a `clock_t_hours: float` field to `GameSnapshot` as the persistence boundary.
+
+### Status
+
+The strangler plan has been fully executed on `feat/orbital-map-tracks-a-b`:
+- 9 commits in `sidequest-server` (Pre-task 0 through Task G)
+- ~22 new tests; full server suite at 3312 passed + 3 pre-existing failures
+- All three scene-end production sites wired through `room.session.end_scene()`
+- One E2E integration test in `tests/integration/test_session_clock_e2e.py` proves the WebSocket message router → Session.end_scene chain end-to-end
+
+### Resume point
+
+Task 6 (Pydantic models for `orbits.yaml` + `chart.yaml`) and onward continue from the original plan body below. The `Session` class is now live and `room.session.advance_via_beat()` is the canonical way to advance story-time from any future task.
+
+---
+
+> **Original Task 5 body preserved below for historical reference.**
+
+### Original Task 5 body (do not implement — superseded)
 
 Add a `Clock` to per-session state and emit `Beat`s at the existing rest and scene-end flow points.
 
