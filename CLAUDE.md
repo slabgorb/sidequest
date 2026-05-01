@@ -264,8 +264,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **NPC / Character Systems (041, 042, 043, 053)**
 - 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 043 Conlang Morpheme System *(drift)* · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(drift)*
 
-**Media / Audio / Rendering (044, 045, 048, 050, 070)**
-- 044 Speculative Prerendering During TTS Playback *(drift)* · 045 Client Audio Engine *(partial)* · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
+**Media / Audio / Rendering (045, 048, 050, 070)**
+- 045 Client Audio Engine *(partial)* · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
 
 **Turn Management (051)**
 - 051 Two-Tier Turn Counter (Interaction vs. Round)

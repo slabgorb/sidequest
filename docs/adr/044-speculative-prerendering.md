@@ -1,18 +1,28 @@
 ---
 id: 44
 title: "Speculative Prerendering During TTS Playback"
-status: accepted
+status: superseded
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: []
+superseded-by: 76
+related: [76]
 tags: [media-audio]
-implementation-status: drift
-implementation-pointer: 87
+implementation-status: retired
+implementation-pointer: null
 ---
 
 # ADR-044: Speculative Prerendering During TTS Playback
+
+> **Superseded 2026-05-01** — TTS has been removed from SideQuest. The
+> entire premise of this ADR (use the TTS playback window as free GPU
+> render time) no longer applies because there is no playback window to
+> hide behind. The `PrerenderScheduler` / `WasteTracker` are not part of
+> the Python port. Player-perceived image latency is now sequential
+> (narration arrives → image lazy-loads after the daemon round-trip)
+> and is addressed via direct render-pipeline tuning rather than
+> speculation. See [ADR-076](076-narration-protocol-collapse-post-tts.md)
+> for the post-TTS protocol cleanup.
 
 > Retrospective — documents a decision already implemented in the codebase.
 

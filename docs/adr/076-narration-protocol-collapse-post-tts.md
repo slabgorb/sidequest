@@ -4,7 +4,7 @@ title: "Narration Protocol Collapse Post-TTS Removal"
 status: proposed
 date: 2026-04-10
 deciders: [Keith]
-supersedes: []
+supersedes: [44]
 superseded-by: null
 related: [65]
 tags: [narrator-migration, narrator]

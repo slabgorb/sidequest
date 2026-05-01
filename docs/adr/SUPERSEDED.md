@@ -26,6 +26,10 @@
 - [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) — superseded
 - [ADR-084: Compositional-Dimension Specialization for Style LoRAs](084-lora-composition-dimension.md) — superseded
 
+### Superseded by [ADR-076: Narration Protocol Collapse Post-TTS Removal](076-narration-protocol-collapse-post-tts.md)
+
+- [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) — superseded
+
 ### Superseded by [ADR-082: Port `sidequest-api` from Rust back to Python](082-port-api-rust-to-python.md)
 
 - [ADR-019: Cartography Discovery](019-cartography-discovery.md) — superseded
