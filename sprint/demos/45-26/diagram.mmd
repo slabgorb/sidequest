@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant UI as React Client
+    participant WS as WebSocket Handler
+    participant REST as REST API
+    participant DB as SQLite (slug-keyed)
+
+    rect rgb(240, 220, 220)
+        note over UI,DB: BEFORE (legacy path — now deleted)
+        UI->>REST: GET /api/saves?genre=X&world=Y&player=Z
+        REST->>DB: open saves/X/Y/Z/save.db
+        DB-->>REST: snapshot
+        REST-->>UI: { saves: [...] }
+        UI->>WS: connect { genre_slug, world_slug, player_name }
+        WS->>DB: db_path_for_session(genre, world, player)
+        DB-->>WS: snapshot
+        WS-->>UI: game state
+    end
+
+    rect rgb(220, 240, 220)
+        note over UI,DB: AFTER (slug-only path)
+        UI->>REST: POST /api/games
+        REST-->>UI: { game_slug: "swift-dragon-42" }
+        UI->>WS: connect { game_slug: "swift-dragon-42" }
+        WS->>DB: db_path_for_slug("swift-dragon-42")
+        DB-->>WS: snapshot (or None → first connect)
+        alt first connect (saved is None)
+            WS-->>UI: opening scene narration
+        else resume
+            WS-->>UI: resume from last save
+        end
+    end

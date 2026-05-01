@@ -471,10 +471,13 @@ stories:
         - All existing tests pass; legacy-helper tests deleted or retargeted.
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-01'
     repos: server
     workflow: tdd
+    completed: '2026-05-01'
     type: chore
+    review_verdict: approved
   - id: 45-27
     title: "Trope progression cooldown + simultaneous-active cap (was 37-43)"
     description: |-
@@ -805,15 +808,15 @@ stories:
     priority: p2
     status: done
     started: '2026-04-30'
-    completed: '2026-04-30'
     repos: daemon
     workflow: tdd
     depends_on: 45-38
-    branch: feat/45-39-z-image-base-worker-swap
     acceptance_criteria:
       - SIDEQUEST_DAEMON_FIDELITY env var honored at worker init
       - HF daemon mode loads base z-image with 20-step / CFG-4 config from ZIMAGE_HIGH_FIDELITY_TIER_CONFIGS
       - Mismatched-fidelity request returns structured error (turbo daemon receiving fidelity=high_fidelity, or vice versa) — no silent fallback
       - Worker model.variant OTEL span attribute reflects actually-loaded variant (composer-vs-worker span divergence is the diagnostic signal for misconfiguration)
       - Manual eyeball verification of 45-38 AC4 succeeds — regenerated picker_voidborn_medic_m01.png at SIDEQUEST_DAEMON_FIDELITY=high_fidelity shows visibly more painterly brushwork than 8-step turbo output, comparable to ~/Desktop/0_painted_sci_fi_concept_art_..._3447260204.png Draw Things reference
+    completed: '2026-04-30'
+    branch: feat/45-39-z-image-base-worker-swap
     type: bug
