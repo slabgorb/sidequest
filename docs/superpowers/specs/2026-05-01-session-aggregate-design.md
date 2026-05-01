@@ -70,7 +70,7 @@ clear_scratch_on_scene_end(snapshot, reason=reason, turn=turn)
 self.advance_via_beat(StoryBeat(kind=ENCOUNTER, trigger=f"scene-{reason}"))
 ```
 
-Scratch sweep first (existing semantics preserved), beat emit second. The OTEL dashboard sees both spans for every scene-end: `encounter.scratch_clear` (existing) and `clock.advance` (new).
+Scratch sweep first (existing semantics preserved), beat emit second. The scratch sweep emits one `encounter.status_cleared` span *per scene-bounded status cleared* (zero spans on a snapshot with no characters carrying Scratch/Boon — that's not a regression, just truthful telemetry). The new `clock.advance` span fires once per scene-end regardless. Together: GM panel sees both signals when a real game is running, neither when nothing happened.
 
 ### Persistence
 
@@ -227,7 +227,7 @@ Rename, in `sidequest/orbital/beats.py` and `tests/orbital/test_beats.py`:
 - **Read-only invariant:** `session.clock.advance(99)` then `session.clock.t_hours` returns the *original* value.
 - `session.advance_via_beat(StoryBeat(ENCOUNTER, "test"))` advances `snapshot.clock_t_hours` by 1.0.
 - `session.advance_via_beat(...)` emits `clock.advance` span.
-- `session.end_scene("scene_end", turn=1)` emits **both** `encounter.scratch_clear` and `clock.advance` spans, with `clock.advance` carrying `trigger="scene-scene_end"`.
+- `session.end_scene("scene_end", turn=1)` emits one `clock.advance` span with `trigger="scene-scene_end"`. (The scratch-sweep `encounter.status_cleared` spans only fire if the snapshot has Characters carrying scene-bounded statuses; that path is exercised by `tests/server/test_status_clear.py` and the Task F E2E test, not here — `Session` unit tests construct bare `GameSnapshot()` instances.)
 - Malformed beat propagates `ValueError`.
 
 ### SessionRoom lifecycle tests — `tests/server/test_session_room.py` (new or extended)
@@ -252,7 +252,7 @@ Drive a `WebSocketSessionHandler` through a real scene-end (e.g. dice-resolved e
 
 - `room._snapshot.clock_t_hours` advanced from `0.0` to `1.0`.
 - `otel_capture` recorded one `clock.advance` span (`beat_kind="encounter"`, `trigger="scene-scene_end"`).
-- `otel_capture` recorded one `encounter.scratch_clear` span (existing signal still fires).
+- `otel_capture` recorded at least one `encounter.status_cleared` span (existing signal still fires; one span per cleared scene-bounded status, so the realistic E2E session — which has Characters carrying Scratch — produces ≥1).
 
 This is the mandated wiring test — proves the strangler-fig is wired into a production code path, not just tested in isolation.
 
@@ -312,4 +312,4 @@ Add the three front-door wiring tests + the e2e integration test from §Testing.
 - **Small.** One new file (~50 lines), one new field on `GameSnapshot`, one back-reference on `_SessionData`, three function signature changes, three call site changes, one rename. ~150 lines of net change.
 - **Honest.** No fictional `Session.empty()`, no `handle_rest()` without a caller, no rest behavior we don't have. Matches the post-port reality.
 - **Strangler-fig.** Existing tier untouched in shape; future migrations move behavior inward one method at a time. The pattern is set: per-slug aggregate over the room, methods over free functions.
-- **GM-panel honest.** Every scene-end fires `clock.advance` *and* the existing `encounter.scratch_clear`. Both visible. No "did the system advance time, or did Claude narrate that it did" ambiguity.
+- **GM-panel honest.** Every scene-end fires a `clock.advance` span; the pre-existing per-status `encounter.status_cleared` spans continue to fire (one per Scratch/Boon swept). The GM panel sees both signals during real play. No "did the system advance time, or did Claude narrate that it did" ambiguity.

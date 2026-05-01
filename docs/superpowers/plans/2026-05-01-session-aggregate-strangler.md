@@ -369,15 +369,20 @@ def test_session_end_scene_advances_clock_by_one_hour(otel_capture):
     assert spans[0].attributes["trigger"] == "scene-scene_end"
 
 
-def test_session_end_scene_emits_both_spans(otel_capture):
-    """end_scene fires encounter.scratch_clear (existing) + clock.advance (new)."""
-    snap = GameSnapshot()
-    session = Session(snap)
-    session.end_scene("scene_end", turn=1)
-    span_names = {s.name for s in otel_capture.get_finished_spans()}
-    assert "clock.advance" in span_names
-    assert "encounter.scratch_clear" in span_names
 ```
+
+> **Note (added 2026-05-01 during execution):** The original plan included a 10th test
+> `test_session_end_scene_emits_both_spans` asserting that `end_scene` emits *both*
+> `encounter.scratch_clear` AND `clock.advance` spans. That test was dropped during
+> implementation because:
+> 1. The real span name is `encounter.status_cleared`, not `encounter.scratch_clear`.
+> 2. The status-cleared span fires *per cleared scene-bounded status*, not once per call —
+>    a bare `GameSnapshot()` has no Characters and produces zero spans.
+> 3. The "scratch sweep was invoked" invariant is already covered by
+>    `tests/server/test_status_clear.py`. The dual-span emission against a realistic
+>    snapshot is exercised by Task F's E2E test.
+>
+> **Net:** Task B implements 9 unit tests, not 10.
 
 - [ ] **Step 2: Add `otel_capture` fixture to `tests/server/conftest.py` if not already accessible from new test file**
 
@@ -480,9 +485,12 @@ coordination; reads/writes through GameSnapshot.clock_t_hours. No
 own state — the snapshot is the persistence boundary.
 
 end_scene calls clear_scratch_on_scene_end (existing free function)
-then emits an ENCOUNTER StoryBeat. Both spans (encounter.scratch_clear
-and clock.advance) fire on every scene-end so the GM panel sees a
-complete signal.
+then emits an ENCOUNTER StoryBeat. The scratch sweep emits per-status
+encounter.status_cleared spans (zero on a snapshot with no characters
+— covered by tests/server/test_status_clear.py); the new clock.advance
+span fires once per scene_end. The "both signals visible to the GM
+panel" invariant is exercised in the Task F E2E test against a
+realistic snapshot.
 
 Per spec docs/superpowers/specs/2026-05-01-session-aggregate-design.md
 §Components and §Testing.
@@ -851,7 +859,12 @@ def test_handle_yield_advances_session_clock(tmp_path, otel_capture):
     assert snap.clock_t_hours == 1.0
     span_names = {s.name for s in otel_capture.get_finished_spans()}
     assert "clock.advance" in span_names
-    assert "encounter.scratch_clear" in span_names
+    # NOTE: encounter.status_cleared spans only fire if the snapshot has
+    # Characters carrying scene-bounded statuses (Scratch/Boon). The bare
+    # encounter constructed here has no such statuses; the scratch-sweep
+    # behavior itself is covered by tests/server/test_status_clear.py.
+    # The dual-span emission ("did the system advance time AND sweep the
+    # scratch?") is exercised in Task F's E2E test.
 ```
 
 If the encounter / actor field shapes differ from what's shown (the StructuredEncounter / EncounterActor signatures are inferred from earlier recon), inspect the actual classes:
@@ -966,9 +979,10 @@ handlers/yield_action.py passes sd._room, with a structured error
 guard for the (theoretically-impossible-in-slug-connect) None path.
 
 Replaces the direct clear_scratch_on_scene_end call with
-room.session.end_scene("scene_end", turn=...) so every yield-out
-encounter resolution emits both encounter.scratch_clear (existing)
-and clock.advance (new).
+room.session.end_scene("scene_end", turn=...). Every yield-out
+encounter resolution now emits a clock.advance span (new); the
+existing per-status encounter.status_cleared spans continue to fire
+inside the sweep.
 
 Per spec docs/superpowers/specs/2026-05-01-session-aggregate-design.md
 §Components and §Testing.
@@ -1081,9 +1095,12 @@ def test_narration_apply_does_not_advance_clock_on_location_change(tmp_path, ote
     assert snap.clock_t_hours == 0.0
     span_names = {s.name for s in otel_capture.get_finished_spans()}
     assert "clock.advance" not in span_names
-    # encounter.scratch_clear DOES still fire on location_change because
-    # clear_scratch_on_scene_end is called directly at line 654.
-    assert "encounter.scratch_clear" in span_names
+    # The scratch-sweep at line 654 still runs (clear_scratch_on_scene_end
+    # is called directly), but the encounter.status_cleared span only
+    # fires per cleared scene-bounded status. With a bare snapshot there
+    # are no statuses to sweep — that's not a regression, it's truthful
+    # telemetry. The scratch-sweep behavior is verified by
+    # tests/server/test_status_clear.py against realistic fixtures.
 ```
 
 - [ ] **Step 3: Run the tests to verify they fail**
@@ -1415,8 +1432,10 @@ Create `sidequest-server/tests/integration/test_session_clock_e2e.py`. Use the e
 Drives a real WebSocketSessionHandler through a scene-end-producing
 event (yield, dice resolution, or narrator beat resolution — whichever
 has the simplest harness in the existing integration tests). Asserts
-the snapshot clock advanced and both clock.advance and
-encounter.scratch_clear spans fired.
+the snapshot clock advanced and the clock.advance span fired. If the
+test scenario sets up a Character with a scene-bounded status (Scratch
+or Boon) before the scene-end, also asserts the existing
+encounter.status_cleared span fires (per cleared status).
 
 Mandated wiring test per CLAUDE.md ("Every Test Suite Needs a Wiring
 Test"): proves the Session strangler-fig is reachable from production
@@ -1442,8 +1461,11 @@ async def test_session_clock_advances_through_yield_e2e(otel_capture, tmp_path):
         "test_dogfight_playtest_smoke or similar. Drive a YIELD message "
         "through the WebSocketSessionHandler flow and assert: "
         "(1) room._snapshot.clock_t_hours == 1.0; "
-        "(2) clock.advance span recorded; "
-        "(3) encounter.scratch_clear span recorded."
+        "(2) clock.advance span recorded with beat_kind=encounter and "
+        "trigger=scene-scene_end; "
+        "(3) if the scenario gives a Character a Scratch status before "
+        "the yield, encounter.status_cleared span recorded (one per "
+        "cleared status)."
     )
 ```
 
@@ -1453,11 +1475,21 @@ Map the fixture pattern from the existing integration test, then replace the ski
 assert room._snapshot.clock_t_hours == pytest.approx(1.0)
 span_names = {s.name for s in otel_capture.get_finished_spans()}
 assert "clock.advance" in span_names
-assert "encounter.scratch_clear" in span_names
 
 clock_span = next(s for s in otel_capture.get_finished_spans() if s.name == "clock.advance")
 assert clock_span.attributes["beat_kind"] == "encounter"
 assert clock_span.attributes["trigger"] == "scene-scene_end"
+
+# If the test scenario set up a Character carrying a Scratch status
+# pre-yield (recommended — it makes this test exercise the full GM-panel
+# signal), assert the sweep span fired:
+status_cleared = [s for s in otel_capture.get_finished_spans()
+                  if s.name == "encounter.status_cleared"]
+assert len(status_cleared) >= 1, (
+    "Scratch sweep emitted no encounter.status_cleared spans — likely "
+    "the test scenario didn't put a scene-bounded status on any Character. "
+    "Add one: it makes this test the canonical wiring proof."
+)
 ```
 
 - [ ] **Step 3: Run the integration test to verify it passes**
@@ -1477,8 +1509,9 @@ test(session): E2E wiring test — scene-end through Session
 
 Drives a real WebSocketSessionHandler through a scene-end via the YIELD
 path (simplest of the three migrated handlers — no narrator round-trip).
-Asserts clock_t_hours moved and both clock.advance + encounter.scratch_clear
-spans fired.
+Asserts clock_t_hours moved and clock.advance fired. If the test fixture
+seeds a Character with a Scratch status, also asserts the existing
+encounter.status_cleared span fires (one per cleared status).
 
 Mandated wiring test per CLAUDE.md: proves the Session strangler-fig is
 reachable from production code paths, not just unit-tested in isolation.
