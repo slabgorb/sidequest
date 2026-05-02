@@ -7,6 +7,6 @@
     "lint": "echo 'Orchestrator lint clean (YAML/Markdown validation skipped)'"
   },
   "devDependencies": {
-    "yaml": "^2.8.3"
+    "yaml": "^2.8.4"
   }
 }
