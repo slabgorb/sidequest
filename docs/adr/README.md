@@ -66,7 +66,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | ADR | Status | Impl |
 |-----|--------|------|
 | [ADR-001: Claude CLI Only](001-claude-cli-only.md) | ✓ accepted | live |
-| [ADR-002: SOUL Principles](002-soul-principles.md) | ✓ accepted | — |
+| [ADR-002: SOUL Principles](002-soul-principles.md) | ✓ accepted | live |
 | [ADR-003: Genre Pack Architecture](003-genre-pack-architecture.md) | ✓ accepted | live |
 | [ADR-004: Lazy Genre Binding](004-lazy-genre-binding.md) | ✓ accepted | live |
 | [ADR-005: Background-First Pipeline](005-background-first-pipeline.md) | ✓ accepted | live |
