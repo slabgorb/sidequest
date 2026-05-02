@@ -1,14 +1,14 @@
 ---
 id: 86
 title: "Image-Composition Taxonomy — Portraits, POIs, Illustrations"
-status: proposed
+status: accepted
 date: 2026-04-24
 deciders: [Keith Avery]
-supersedes: [34, 71]
+supersedes: [34, 71, 89]
 superseded-by: null
 related: [70]
 tags: [media-audio]
-implementation-status: deferred
+implementation-status: live
 implementation-pointer: null
 ---
 
@@ -32,6 +32,12 @@ cascade layer in this ADR is a text-token layer.
   enough that runtime model conditioning is unnecessary.
 - **ADR-071** (Tactical ASCII Grid Maps) — ASCII rendering is removed;
   tactical maps go through ILLUSTRATION + CAMERA.TOPDOWN_90.
+- **ADR-089** (Pre-Rendered Cavern Battle Maps via Cellular Automata) —
+  competing same-day proposal (also 2026-04-24) to fix the broken-ASCII-
+  renderer problem with a separate procedural authoring pipeline. This
+  ADR's ILLUSTRATION + CAMERA.TOPDOWN_90 recipe path shipped instead;
+  ADR-089's cellular-automata pipeline was never built. Supersession
+  recorded retroactively 2026-05-02.
 
 ## Operating Premise
 
@@ -431,3 +437,74 @@ from (3) and benefits from the OTEL layer-breakdown from (1).
 - `daemon/renderer/models.py` — `RenderTier`, `StageCue`
 - `content/genre_packs/*/visual_style.yaml` — genre cascade today
 - `content/genre_packs/*/portrait_manifest.yaml` — PC/NPC metadata today
+
+## Implementation status (2026-05-02)
+
+Promoted from `proposed`/`deferred` to `accepted`/`live` during the
+deferred-bucket sweep. The recipe + catalog + camera trifecta this ADR
+specified is wired up in `sidequest-daemon`. Source of truth for the
+current visual pipeline is the daemon's `media/` package — not the
+sketch in this ADR's prose.
+
+### Recipe system
+
+- `sidequest-daemon/sidequest_daemon/media/recipe_loader.py` — `RecipeLoader`
+  with `from_file()` / `from_dict()` constructors.
+- `sidequest-daemon/sidequest_daemon/media/recipes.py:154` — `Recipe`
+  Pydantic model (`direction_camera`, plus per-recipe slot defaults).
+- Loaded at daemon startup from `recipes.yaml` — call sites at
+  `media/preview.py:35`, `media/workers/zimage_mlx_worker.py:79`,
+  `media/daemon.py:1066–1069`.
+
+### Catalog system (LOD-keyed tokens)
+
+- `sidequest-daemon/sidequest_daemon/media/catalogs.py` — Character,
+  Place, Style catalogs. Loaded at startup, fail-loud on miss. Header
+  comment: *"Catalogs — Character, Place, Style. Load at startup. Fail-
+  loud on miss."*
+- LOD types from `media/recipes.py`: `LOD`, `PlaceLOD`. Miss-error types:
+  `CatalogMissError`, `StyleMissError`. The "catalog-resolved per-character
+  LOD-keyed tokens" §Operating Premise specified.
+
+### Cascade slot composition
+
+`sidequest-daemon/sidequest_daemon/media/prompt_composer.py`:
+
+- Lines 85–96 declare slot order: `DIRECTION_CAMERA`, `ART_SENSIBILITY.GENRE`,
+  `ART_SENSIBILITY.WORLD` (plus CULTURE per inline comments).
+- Lines 227–230 split art sensibility: GENRE/WORLD go early in the prompt,
+  CULTURE goes late. The "layer discipline" §Operating Premise specified.
+- Lines 481–489 retrieve a recipe per render kind and resolve a
+  `CameraPreset` from `recipe.direction_camera`.
+- Header comment at line 2 cites the design spec:
+  `docs/superpowers/specs/2026-04-24-explicit-visual-recipes-design.md`.
+
+### Camera presets
+
+- `sidequest-daemon/sidequest_daemon/media/camera_specs.py` —
+  `CameraPreset` model loaded from `cameras.yaml`.
+
+### Sibling supersessions confirmed
+
+- ADR-034 (Portrait Identity Consistency) — `superseded` by 86, retired.
+  The img2img + IP-Adapter approach is gone; per-character identity now
+  flows through Catalog-resolved LOD-keyed tokens through this ADR's
+  recipe system.
+- ADR-071 (Tactical ASCII Grid Maps) — `superseded` by 86, retired.
+  ASCII rendering is gone; tactical maps go through ILLUSTRATION recipe
+  with `CAMERA.TOPDOWN_90` direction-camera preset.
+
+### Source of truth
+
+- **Recipes:** `sidequest-daemon/sidequest_daemon/media/recipe_loader.py`,
+  `recipes.py`, `recipes.yaml` at daemon root.
+- **Catalogs:** `sidequest-daemon/sidequest_daemon/media/catalogs.py`.
+- **Cameras:** `sidequest-daemon/sidequest_daemon/media/camera_specs.py`,
+  `cameras.yaml` at daemon root.
+- **Prompt composition:** `sidequest-daemon/sidequest_daemon/media/prompt_composer.py`.
+- **Design spec the ADR captures:** `docs/superpowers/specs/2026-04-24-explicit-visual-recipes-design.md`.
+
+The "Token Budget Discipline" routine prompt audits this ADR mentions
+are an operational practice, not a code surface, and live in
+`sidequest-content/PROMPTING_Z_IMAGE.md` style discipline rather than as
+an automated gate.

@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [media-audio]
-implementation-status: partial
-implementation-pointer: 76
+implementation-status: live
+implementation-pointer: null
 ---
 
 # ADR-045: Client Audio Engine
@@ -51,3 +51,44 @@ Implemented in `sidequest-ui/src/audio/AudioEngine.ts`, `Ducker.ts`, `Crossfader
 - AudioContext autoplay gate requires careful initialization sequencing; errors surface only at runtime in new browser versions.
 - Two-channel graph is hand-wired — adding a third channel (e.g., ambient) requires manual graph surgery.
 - Volume persistence in localStorage is lost in private browsing mode.
+
+## Implementation status (2026-05-02)
+
+Audited during the post-port hygiene sweep. The ADR's specified surface is
+fully live; the 2026-04 TTS-removal subtraction (Ducker, voice channel, PCM
+streaming) is complete with no dead code remaining.
+
+**Live elements (file/line pointers):**
+
+- Singleton AudioEngine — `sidequest-ui/src/audio/AudioEngine.ts:44`
+  (`getInstance()` autoplay-gate pattern at lines 46–66).
+- Two-channel Web Audio graph (music + sfx) — `channels: Record<ChannelName,
+  GainNode>` at line 68; `masterGain` at line 69; volumes shape
+  `{music, sfx, master}` at line 71.
+- Crossfader — `sidequest-ui/src/audio/Crossfader.ts:3`, invoked from
+  `playMusic` at `AudioEngine.ts:129`.
+- AudioContext autoplay handling — `resume()` at line 97, `ensureResumed()`
+  at line 108.
+- Visibility-change resume — `registerVisibilityHandler()` at line 117 calls
+  `ctx.resume()` when the tab returns to visible state from suspended.
+- Volume persistence — `STORAGE_KEY` / `loadVolumes()` / `saveVolumes()` at
+  lines 1–43, with silent-catch on private-browsing localStorage failure.
+- App wiring — `sidequest-ui/src/hooks/useAudio.ts:9` consumes the
+  singleton; per `sidequest-ui/CLAUDE.md`, audio is wired through `useAudio`
+  at the App level rather than via a context provider.
+
+**TTS-removal subtraction confirmed clean:** `grep -rn Ducker sidequest-ui/src/`
+returns zero hits. The body's `Note (2026-04)` callout describes the current
+state.
+
+**Additive surface (not specified by this ADR, intentional):**
+
+- `sidequest-ui/src/audio/AudioCache.ts` — caches decoded `AudioBuffer`
+  instances to avoid redundant fetch + decode. Held at `AudioEngine.ts:74`,
+  consulted at `playMusic` line 130. Optimization that landed after the ADR.
+- `sidequest-ui/src/hooks/useAudioCue.ts` — convenience hook for SFX cues.
+  Routes through the unified mixer channels per its own header comment;
+  does not bypass the AudioEngine.
+
+Neither is part of the ADR's scope; both are listed here so future readers
+do not flag them as drift.

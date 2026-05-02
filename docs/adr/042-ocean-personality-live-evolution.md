@@ -14,7 +14,7 @@ implementation-pointer: 87
 
 # ADR-042: OCEAN Personality Live Evolution
 
-> Retrospective — documents a decision already implemented in the codebase.
+> Retrospective at write-time (2026-04-01) — documented an implementation already live in the Rust era. The implementation did not survive the 2026-04 port to Python; see _Implementation status_ below.
 
 ## Context
 NPC personalities in SideQuest were initially static YAML configuration — a set of OCEAN dimension scores (Openness, Conscientiousness, Extraversion, Agreeableness, Neuroticism) defined at world-build time. Static personalities produce NPCs who feel like props: they don't grow, adapt, or remember what happened to them. A merchant who witnessed a betrayal in scene 2 behaves identically in scene 8. This was acceptable for early development but incompatible with the core narrative consistency goal — the game world must feel like it has memory and consequence.
@@ -65,3 +65,28 @@ Implemented in: `sidequest-game/src/ocean_shift_proposals.rs`, `sidequest-game/s
 - Evolution depends on the narrator correctly identifying and emitting personality events. If the narrator misses a significant moment, the shift doesn't happen — no mechanical backstop.
 - OCEAN dimension shifts are additive deltas applied to a float profile; there's no decay or stabilization mechanic. Long-running sessions can produce NPCs with extreme profiles if the same event type repeats.
 - `ocean_summary` regeneration produces a new text blob each time — there's no guarantee of narrative continuity in how the summary describes personality across multiple shifts. The GM panel must verify the summary reads coherently.
+
+## Implementation status (2026-05-02)
+
+The Rust era (`sidequest-api/crates/sidequest-game/src/ocean.rs` + `ocean_shift_proposals.rs`) implemented this ADR in full: the `PersonalityEvent` enum, the `OceanShiftProposal` type, the narrator-emit pipeline, the engine that mapped events to dimension deltas, and the regeneration of `ocean_summary` from the updated profile.
+
+The 2026-04 port carried the **data shape** only. From `sidequest/genre/models/ocean.py:3` (porter's own note): _"Port of sidequest-genre/src/models/ocean.rs (data shape only — no random/jitter/shift methods)."_
+
+What landed:
+
+- `OceanProfile`, `OceanDimension`, `OceanShift`, `OceanShiftLog` models in `sidequest/genre/models/ocean.py`.
+- `summarize_ocean(profile)` in `sidequest/cli/namegen/namegen.py:649`, called **once at character-generation time**.
+- `ocean_summary` field exists on the API surface but is hardcoded `None` in `sidequest/server/rest.py:333`.
+
+What is dark — the entire live-evolution loop:
+
+- The `PersonalityEvent` enum.
+- The `OceanShiftProposal` type and its construction from narrator output.
+- Narrator emission of personality events (the `NarratorStructuredBlock` does not carry them).
+- The engine that maps events → shifts and applies them.
+- Re-rendering of `ocean_summary` after a shift.
+- Re-injection of the updated summary into the next narrator prompt.
+
+The static profile path (used at archetype/namegen time) works. The evolution path — the decision this ADR is fundamentally about — is 0/5 wired.
+
+Restoration is scheduled as **P2 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md) and depends on trope-engine restoration (ADR-018 P1) per the ADR-087 dependency notes. The decision in this ADR stands.

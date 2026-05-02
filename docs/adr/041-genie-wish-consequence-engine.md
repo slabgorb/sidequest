@@ -14,7 +14,7 @@ implementation-pointer: 87
 
 # ADR-041: Genie Wish / Consequence Engine
 
-> Retrospective — documents a decision already implemented in the codebase.
+> Retrospective at write-time (2026-04-01) — documented an implementation already live in the Rust era. The implementation did not survive the 2026-04 port to Python; see _Implementation status_ below.
 
 ## Context
 Players in open-ended narrative games frequently attempt power-grab actions: "I kill all the enemies," "I teleport to the treasure," "I summon a weapon that defeats everyone." A system that hard-rejects these breaks immersion and punishes player creativity. A system that silently ignores them trains players that ambition has no consequence. A system that passes them to the narrator without mechanical scaffolding produces inconsistent outcomes — Claude will sometimes grant wishes freely, sometimes refuse, with no coherent world logic behind either choice. The game needed a principled way to honor player agency while maintaining world integrity and tonal consistency.
@@ -55,3 +55,24 @@ Implemented in: `sidequest-game/src/consequence.rs` — `GenieWish`, `WishStatus
 - Rotation is session-scoped; across multiple sessions players may notice the pattern if they track it deliberately.
 - The four categories are fixed in code. Adding a fifth type (e.g., "Delay") requires a code change. Genre packs cannot customize consequence types via YAML.
 - Classification of actions as `GenieWish` vs. ambitious-but-legal is a judgment call made upstream (by the intent classifier). Misclassification either over-punishes normal play or lets genuine power-grabs through without consequence.
+
+## Implementation status (2026-05-02)
+
+The Rust era (`sidequest-api/crates/sidequest-game/src/consequence.rs`) implemented this ADR in full: `WishStatus`, `ConsequenceCategory` with the Backfire→Attention→Cost→Curse rotation, `GenieWish.consequence_category`, a power-grab classifier, and `build_prompt_context()` injecting the consequence directive into the narrator prompt.
+
+The 2026-04 port to Python carried over only a placeholder skeleton:
+
+- `GenieWish` (Pydantic, `sidequest/game/session.py:300`) with three string fields: `wish_text`, `consequence`, `status`.
+- A `genie_wishes: list[GenieWish]` field on the snapshot.
+- An inline `# genie_wishes: P5-deferred (consequence engine)` marker in the snapshot model.
+
+Missing:
+
+- The `ConsequenceCategory` and `WishStatus` enums.
+- The mechanical rotation counter and `from_rotation()` selector.
+- The classifier that detects power-grab actions and creates wish records.
+- The `build_prompt_context()` that turns a wish into a narrator directive.
+
+No production code path populates `genie_wishes` and the narrator receives no consequence directive. CLAUDE.md's "Rule of Cool" — and SOUL.md's _"the genie grants the wish literally. The plasma rifle fires once, at the worst possible moment, at the thing you needed alive."_ — currently rely on the LLM improvising consequence in-character, which is exactly the failure mode this ADR's _Pure LLM judgment_ alternative was rejected for.
+
+Restoration is scheduled as **P2 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md). The decision in this ADR stands.

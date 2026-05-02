@@ -1,14 +1,14 @@
 ---
 id: 78
 title: "Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals"
-status: proposed
+status: accepted
 date: 2026-04-15
 deciders: [Keith]
 supersedes: []
 superseded-by: null
-related: [21]
+related: [14, 21, 33]
 tags: [game-systems]
-implementation-status: deferred
+implementation-status: partial
 implementation-pointer: 87
 ---
 
@@ -323,3 +323,74 @@ GM authored a heavy_metal content draft at `sidequest-content/genre_packs/heavy_
 - False-positive wiring test: `sidequest-api/tests/beat_dispatch_wiring_story_28_5_tests.rs`
 - `gold_delta` template pattern: `sidequest-server/src/dispatch/beat.rs:319-337`
 - ResourcePool delta pipeline: `sidequest-server/src/dispatch/state_mutations.rs:328-407`
+
+## Implementation status (2026-05-02)
+
+Promoted from `proposed`/`deferred` to `accepted`/`partial` during the
+deferred-bucket sweep. The Edge primitive landed; the §5 advancement
+effects' wiring is deferred to Epic 39; push-currency content lives
+in workshopping rather than production. Source of truth for the live
+Edge contract is `sidequest-server/sidequest/game/creature_core.py`
+and the `apply_edge_delta` call sites — not the Rust code samples in
+the body above.
+
+### Live (§1, §2, §3, §5 data shapes)
+
+- **Edge as first-class CreatureCore field** (§1): `EdgePool` and
+  `EdgeThreshold` exported from `sidequest-server/sidequest/game/__init__.py:44, 127`.
+  Apply call: `core.apply_edge_delta(delta)`.
+  - Production call sites: `sidequest-server/sidequest/server/dispatch/yield_action.py:43`
+    (yield refund), `sidequest-server/sidequest/game/session.py:884, 888`
+    (per-character + per-NPC application).
+- **Shared threshold helper** (§2): `mint_threshold_lore` and crossing-
+  detection logic extracted into `sidequest-server/sidequest/game/thresholds.py`.
+  Both `ResourcePool.apply_and_clamp` (float-valued) and `EdgePool.apply_delta`
+  (int-valued) call it. The §Reuse-first refactor landed.
+- **BeatDef edge_delta field** (§3): `genre/models/rules.py:105` —
+  `edge_delta: int | None = None` parallels the existing `gold_delta`.
+- **Advancement effect data shapes** (§5): `genre/models/advancement.py:89–106`
+  carries `edge_delta_mod`, `target_edge_delta_mod`, beat-discount-style
+  effects as Pydantic models. The data layer is loaded by the genre pack
+  loader; the wiring of effects to per-character beat costs is
+  Epic 39 (see Pending below).
+- **HP→Edge transition acknowledged**: `sidequest-server/sidequest/server/websocket_session_handler.py:1510`:
+  *"ADR-014 / ADR-078: HP was removed in favor of EdgePool (composure)."*
+
+### Dark / pending
+
+- **`composure_break` OTEL span (§4)**: zero hits in the codebase.
+  The §4 "engine-derived resolution on composure break" — `if char.core.edge.current <= 0:` followed by
+  `encounter.resolved = true` and OTEL emit — is not wired. Players
+  can drain to zero, but the mechanical resolution at zero is owed.
+- **Per-class edge config wiring (Epic 39)**: `world_materialization.py:325`
+  is explicit: *"placeholder EdgePool stays as-is (Epic 39 wires
+  per-class edge config)."* Today every character gets the same
+  default EdgePool; the §5 advancement effects that should mutate
+  per-character beat costs and edge capacity at level-up are loaded
+  but not applied.
+- **Push-currency rituals are in workshopping, not production**:
+  `pact_working` confrontation type and `commit_cost` beat live in
+  `sidequest-content/genre_workshopping/heavy_metal/rules.yaml:276, 298` —
+  that's the staging tree, not production `genre_packs/`. Same for
+  the `commit_cost` resource-cost authoring in
+  `worlds/evropi/_drafts/character-progression/th_rook.yaml`. The
+  rituals are designed but not shipped to a playable pack.
+- **Vestigial HP fields linger in unrelated paths**: `tension_tracker.py:340–350`
+  (`update_stakes(current_hp, max_hp)` raises on `max_hp <= 0`),
+  `history_chapter.py:64` (`max_hp: int | None = None`), `session.py:151`
+  (Story 45-21 still writes hp/max_hp under some path). Per the project
+  memory `[HP removed per ADR-014]`, these are stale-schema bugs awaiting
+  cleanup — not strictly an ADR-078 gap, but they live alongside.
+
+### Source of truth
+
+- **Edge primitive:** `sidequest-server/sidequest/game/creature_core.py`
+- **Apply path:** `sidequest-server/sidequest/game/session.py:884–888`,
+  `sidequest-server/sidequest/server/dispatch/yield_action.py:43`
+- **Threshold helper:** `sidequest-server/sidequest/game/thresholds.py`
+- **BeatDef field:** `sidequest-server/sidequest/genre/models/rules.py:105`
+- **Advancement effects (data, not yet wired):** `sidequest-server/sidequest/genre/models/advancement.py:89–106`
+
+The Rust code samples above and the `### References` Rust paths are
+historical illustration — the implementation crossed into Python
+during the 2026-04 port ([ADR-082](082-port-sidequest-api-back-to-python.md)).

@@ -1,18 +1,27 @@
 ---
 id: 83
 title: "Multi-LoRA Stacking and Verification Pipeline"
-status: proposed
+status: historical
 date: 2026-04-20
 deciders: [Keith Avery (Bossmang), Margaret Houlihan (Architect)]
 supersedes: []
 superseded-by: null
-related: []
+related: [32, 70, 84, 86]
 tags: [media-audio]
-implementation-status: deferred
+implementation-status: retired
 implementation-pointer: null
 ---
 
 # ADR-083: Multi-LoRA Stacking and Verification Pipeline
+
+> **HISTORICAL 2026-05-02 — feature canceled, frontmatter relabeled
+> from `proposed` to `historical` to match this body callout.**
+>
+> Sibling LoRA ADRs (032, 084) were superseded by ADR-070 (MLX Image
+> Renderer); this ADR is *not* superseded by ADR-070 because it was
+> proposed *after* ADR-070 (2026-04-20 vs 2026-04-07) as a planned
+> extension on top of MLX. The cancellation is a standalone abandonment,
+> not a replacement, hence `historical` rather than `superseded`.
 
 LoRA support is being dropped from the SideQuest visual pipeline.
 Z-Image follows text-prompt art direction substantially better than

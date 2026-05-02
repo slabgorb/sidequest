@@ -1,11 +1,11 @@
 ---
 id: 44
 title: "Speculative Prerendering During TTS Playback"
-status: superseded
+status: historical
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: 76
+superseded-by: null
 related: [76]
 tags: [media-audio]
 implementation-status: retired
@@ -14,15 +14,33 @@ implementation-pointer: null
 
 # ADR-044: Speculative Prerendering During TTS Playback
 
-> **Superseded 2026-05-01** — TTS has been removed from SideQuest. The
-> entire premise of this ADR (use the TTS playback window as free GPU
-> render time) no longer applies because there is no playback window to
-> hide behind. The `PrerenderScheduler` / `WasteTracker` are not part of
+> **HISTORICAL 2026-05-02 — TTS DEPRECATED, FEATURE GONE.**
+>
+> TTS has been completely deprecated in SideQuest. The entire premise
+> of this ADR (use the TTS playback window as free GPU render time)
+> no longer applies because there is no playback window to hide
+> behind. The `PrerenderScheduler` / `WasteTracker` are not part of
 > the Python port. Player-perceived image latency is now sequential
 > (narration arrives → image lazy-loads after the daemon round-trip)
 > and is addressed via direct render-pipeline tuning rather than
-> speculation. See [ADR-076](076-narration-protocol-collapse-post-tts.md)
-> for the post-TTS protocol cleanup.
+> speculation.
+>
+> **Re-labeled from `superseded` to `historical` 2026-05-02.** The
+> original re-label cited ADR-076 as superseder, but ADR-076 (post-
+> TTS protocol cleanup) does not replace this ADR's design — it just
+> happened to land in the same TTS-removal sweep. Per ADR-088: the
+> correct label is `historical` ("describes a feature that no longer
+> exists"), not `superseded` (which requires a successor that
+> replaces the design). ADR-076's `supersedes: [44]` claim has been
+> dropped to match.
+>
+> If post-TTS speculative prerendering ever becomes interesting
+> again — e.g., predicting renders during the gap between narration
+> turns regardless of audio — write a fresh ADR with current context.
+> Do not revive this one.
+>
+> See [ADR-076](076-narration-protocol-collapse-post-tts.md) for the
+> post-TTS protocol cleanup that surrounded this re-labeling.
 
 > Retrospective — documents a decision already implemented in the codebase.
 

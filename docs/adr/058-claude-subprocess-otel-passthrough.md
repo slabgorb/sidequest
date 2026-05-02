@@ -1,14 +1,14 @@
 ---
 id: 58
 title: "Claude Subprocess OTEL Passthrough"
-status: proposed
+status: accepted
 date: 2026-04-02
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [31, 90]
 tags: [observability]
-implementation-status: deferred
+implementation-status: live
 implementation-pointer: null
 ---
 
@@ -148,3 +148,61 @@ New tab (⑧ Claude) in the browser dashboard showing:
 | Couple to BikeRack Frame | Wrong dependency direction. Playtest dashboard must be self-contained. |
 | Full OTEL collector (Jaeger, etc.) | Overkill for a personal project. Adds operational complexity. |
 | Embed OTLP receiver in Rust backend | Mixes observability infrastructure into the game engine. Playtest dashboard is the right home. |
+
+## Implementation status (2026-05-02)
+
+All four design pillars of this ADR are live in Python. The Rust code
+sample in §Decision step 2 (lines 86–96) is preserved as historical
+illustration; the 2026-04 port to Python ([ADR-082](082-port-sidequest-api-back-to-python.md))
+adopted the same design unchanged.
+
+### §1 OTLP receiver — live
+
+`scripts/playtest_otlp.py` runs the lightweight HTTP receiver. Routes
+registered at lines 154–156:
+
+- `POST /v1/logs` → `parse_log_records` (parses `claude_code.tool_result` events)
+- `POST /v1/metrics` → `parse_metric_records` (parses `claude_code.token.usage` metrics)
+- `POST /v1/traces` → `parse_trace_spans`
+
+Entry point: `run_otlp_receiver` (called from `playtest_dashboard.py:983`).
+
+### §2 OTEL env injection — live
+
+`sidequest-server/sidequest/agents/claude_client.py`:
+
+- `otel_endpoint: str | None = None` constructor parameter at line 173,
+  stored at line 178; property accessor at line 194.
+- Env-var injection block at line 337 — when `_otel_endpoint` is truthy,
+  the spawn command receives `CLAUDE_CODE_ENABLE_TELEMETRY=1`,
+  `OTEL_LOGS_EXPORTER=otlp`, `OTEL_METRICS_EXPORTER=otlp`,
+  `OTEL_EXPORTER_OTLP_PROTOCOL=http/json`,
+  `OTEL_EXPORTER_OTLP_ENDPOINT=<self._otel_endpoint>`,
+  `OTEL_LOG_TOOL_CONTENT=1`, `OTEL_LOG_TOOL_DETAILS=1`. When unset, no
+  env vars are added — the zero-overhead "no telemetry configured" path
+  this ADR §Consequences §Positive specified.
+- `ClaudeClientBuilder.otel_endpoint(endpoint)` builder at lines 481–486.
+
+### §3 playtest.py split — live
+
+All four modules from the design table exist in `scripts/`:
+
+- `playtest.py` — CLI, `main()`, mode dispatch
+- `playtest_dashboard.py` — HTML/JS dashboard, WebSocket server, HTTP serving
+- `playtest_otlp.py` — OTLP receiver, parsing, broadcast integration
+- `playtest_messages.py` — message styles, rendering, construction helpers
+
+### §4 Dashboard Claude tab — live
+
+The browser dashboard's Claude tab consumes `claude_otel`-source events
+(tool_result, token_usage, span) — see `scripts/tests/test_claude_tab.py:4, 295–301`
+which assert `dispatch()` routes events with `source === "claude_otel"`
+to the Claude tab and updates the `tab7-badge` element.
+
+### Cross-reference
+
+[ADR-090 (OTEL Dashboard Restoration after Python Port)](090-otel-dashboard-restoration.md) —
+`accepted`/`live`, dated 2026-04-25 — explicitly cites this ADR via
+`related: [31, 58, 82]` and is the load-bearing record that the
+passthrough design survived the port intact. ADR-058 is the original
+design; ADR-090 is its post-port confirmation.

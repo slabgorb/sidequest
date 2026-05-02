@@ -1,15 +1,15 @@
 ---
 id: 77
 title: "Dogfight Subsystem via StructuredEncounter Extension"
-status: proposed
+status: accepted
 date: 2026-04-11
 deciders: [Keith]
 supersedes: []
 superseded-by: null
-related: [33]
+related: [33, 67, 74]
 tags: [game-systems]
-implementation-status: deferred
-implementation-pointer: 87
+implementation-status: live
+implementation-pointer: null
 ---
 
 # ADR-077: Dogfight Subsystem via StructuredEncounter Extension
@@ -494,3 +494,80 @@ rather than reinventing it.
 ---
 
 **Stamp:** `ARCHITECTURALLY APPROVED — PENDING COMMITTEE REVIEW`
+
+## Implementation status (2026-05-02)
+
+Promoted from `proposed`/`deferred` to `accepted`/`live` during the
+deferred-bucket sweep. The architectural question §The architectural
+question raised was answered by shipping: **StructuredEncounter
+specialization via a new `ResolutionMode.sealed_letter_lookup` variant**,
+with cross-product lookup tables loaded from content. The "Net new Rust
+code" footer was correct in shape — what landed in Python is a single
+enum variant, content YAML loading via `_from:` sub-file syntax, and a
+single dispatch branch.
+
+### Content shipping
+
+`sidequest-content/genre_packs/space_opera/dogfight/`:
+- `descriptor_schema.yaml` — per-pilot scene descriptor
+- `maneuvers_mvp.yaml` — maneuver menu
+- `interactions_mvp.yaml` — cross-product lookup table
+- `interactions_tail_chase.yaml` — tail-chase variant table
+- `pilot_skills.yaml` — affinity → skill tier mapping
+- `playtest/` — playtest scaffolds
+
+### Rules-side wiring
+
+`sidequest-content/genre_packs/space_opera/rules.yaml:324` declares
+`confrontations: - type: dogfight` and at line 374 includes the
+cross-product table via `_from: dogfight/interactions_mvp.yaml` —
+the `_from:` sub-file pattern from §Genre YAML loading is alive.
+
+### Server dispatch
+
+`sidequest-server/sidequest/server/narration_apply.py:1176` is the
+production sealed-letter resolution path. The branch fires when
+`cdef.resolution_mode == ResolutionMode.sealed_letter_lookup`, builds
+`commits: dict[str, str]` from gated selections (re-using
+`beat_selections[].beat_id` as the maneuver commit per the content
+convention that maneuver IDs and beat IDs share a namespace), and
+dispatches via cross-product cell lookup. Raises explicit `ValueError`
+when commits are missing a role or when a maneuver isn't in
+`maneuvers_consumed` — no silent fallback.
+
+Edge-case handling:
+
+- **Exclusive of legacy beat loop.** Comment block at line 1184: "Sealed-
+  letter resolution is EXCLUSIVE of the legacy beat loop — because
+  maneuver IDs collide with beat IDs by content design, falling through
+  to apply_beat would double-apply mechanics." Branch returns early.
+- **SOUL gate exclusion.** `_gate_applies_to_encounter` at
+  `narration_apply.py:55–73` skips sealed-letter encounters. Comment:
+  "Sealed-letter dispatch (dogfight) is itself an explicit secret-
+  commit UI — both pilots' commits arrive via that flow, not via prose
+  extraction." Avoids breaking the dogfight production path while still
+  locking the legacy beat-loop against the [S2-BUG] failure mode.
+
+### Confrontation type routing
+
+`sidequest-server/sidequest/agents/orchestrator.py:445–447, 1111–1121` —
+narrator routing knows to pick `dogfight` vs `combat` (Firefight) for
+starship encounters based on scale (capital vs fighter).
+
+### Test coverage
+
+`tests/genre/test_dogfight_content_loading.py::test_dogfight_beats_cover_every_consumed_maneuver`
+asserts the content invariant that dogfight beats cover every
+`maneuvers_consumed` entry. Referenced inline at `narration_apply.py:1183`.
+
+### Story trail
+
+`rules.yaml:328` references story 38-4 ("Sealed-letter simultaneous-
+commit dogfight"). The `narration_apply.py:1176` "T5, dogfight port"
+comment indicates this was the final-task port of the dogfight subsystem
+during the 2026-04 port sweep ([ADR-082](082-port-sidequest-api-back-to-python.md)).
+
+The `Stamp: ARCHITECTURALLY APPROVED — PENDING COMMITTEE REVIEW` line
+above is preserved as historical record. The committee review happened
+implicitly via the port and subsequent production playtest use; this
+implementation-status section is the formal accept-and-ship marker.

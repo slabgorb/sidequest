@@ -1,16 +1,48 @@
 ---
 id: 72
 title: "System/Milieu Decomposition — Separating Mechanics from Aesthetic"
-status: proposed
+status: historical
 date: 2026-04-08
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [3]
 tags: [codebase-decomposition]
-implementation-status: deferred
+implementation-status: retired
 implementation-pointer: null
 ---
+
+> **HISTORICAL 2026-05-02 — NOT BUILDING.**
+>
+> Carried as `proposed` for four+ weeks with zero implementation traction
+> in a project where similar-shape decomposition ADRs (ADR-060, ADR-065)
+> landed or were committed in comparable timeframes. The motivating use
+> cases (pirate mechanics × Spelljammer milieu, gangster territory ×
+> pulp noir, dueling × Revolutionary France) are speculative and not on
+> any playtest backlog. The 11 monolithic genre packs work for the
+> current playgroup; the ~22-chore migration cost was never scheduled.
+>
+> **Source of truth for current content layout:** `sidequest-content/genre_packs/`
+> remains the canonical location. Each pack is monolithic, owning its own
+> rules/progression/tropes/archetypes (mechanics) plus visual_style/audio/
+> cultures/personas (aesthetic) plus worlds (instances). The implicit
+> inheritance/merge between genre and world layers — which this ADR named
+> as a problem — is the running design.
+>
+> **If combinatorial reuse becomes a real need** (Victoria gothic
+> mechanics serving a non-Brontë setting; pirate mechanics joining a
+> Spelljammer-aesthetic pack; etc.) **write a fresh ADR with current
+> post-port context — do not revive this one.** ADR-082 (Python port)
+> and the Victoria social-first work weren't yet known when this was
+> drafted; they shift the trade-offs enough that re-proposal is more
+> honest than restoration.
+>
+> Marked `historical` rather than `superseded` per the schema definition
+> (no successor; design was abandoned by inaction, not replaced). The
+> body below preserves the original 2026-04-08 sketch as historical
+> record. ADR-003 ("Genre Pack Architecture", `accepted`/`live`) governs
+> the running directory shape; this ADR's claim that ADR-003 is
+> "superseded for directory structure" is dropped — ADR-003 stands.
 
 # ADR-072: System/Milieu Decomposition — Separating Mechanics from Aesthetic
 

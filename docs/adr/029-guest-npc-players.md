@@ -1,16 +1,37 @@
 ---
 id: 29
 title: "Guest NPC Players"
-status: proposed
+status: historical
 date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [28]
 tags: [multiplayer]
-implementation-status: deferred
+implementation-status: retired
 implementation-pointer: null
 ---
+
+> **HISTORICAL 2026-05-02 — NOT BUILDING.**
+>
+> Carried as `proposed` for six weeks with zero implementation traction.
+> The dependency this design named ([ADR-028 PerceptionRewriter](028-perception-rewriter.md))
+> went live in that period; ADR-029 did not follow. Marked historical
+> rather than `deprecated` per the schema definition (deprecated requires
+> a prior `accepted` state — this never advanced past `proposed`).
+>
+> The only code fingerprint of this design is a dead type-alias literal:
+> `AllScope = Literal["protagonists", "party_plus_guest_npcs"]` at
+> `sidequest-server/sidequest/genre/models/visibility.py:23`. The literal
+> `"party_plus_guest_npcs"` has no consumer in the codebase and should be
+> removed in a future cleanup pass — leaving it in is the same anticipatory-
+> typing-as-drift pattern flagged on `mood_aliases` during the ADR-033 audit.
+>
+> The body below preserves the original 2026-03-25 sketch as historical
+> record. If guest-NPC asymmetric-info gameplay is revisited, a fresh ADR
+> with real protocol design — sealed-letter mechanics, NPC-side prompt
+> shape, action-budget rules, godmoding prevention — should be written
+> rather than reviving this one.
 
 # ADR-029: Guest NPC Players
 

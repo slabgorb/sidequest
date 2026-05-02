@@ -1,14 +1,14 @@
 ---
 id: 76
 title: "Narration Protocol Collapse Post-TTS Removal"
-status: proposed
+status: accepted
 date: 2026-04-10
 deciders: [Keith]
-supersedes: [44]
+supersedes: []
 superseded-by: null
-related: [65]
+related: [44, 65]
 tags: [narrator-migration, narrator]
-implementation-status: deferred
+implementation-status: live
 implementation-pointer: null
 ---
 
@@ -258,3 +258,61 @@ This ADR becomes **Accepted** only when:
    apply atomically with their narration text, not as a second render.
 
 Until all four gates pass, the ADR remains Proposed.
+
+## Implementation status (2026-05-02)
+
+Promoted from `proposed`/`deferred` to `accepted`/`live` during the
+deferred-bucket sweep. The protocol-collapse atomic-PR work this ADR
+specified is done; a regression test enforces it. The Implementation
+Gate above was satisfied on the path through the 2026-04 port and the
+cleanup that followed.
+
+### Protocol cleanup — done
+
+- **`NarrationChunk` / `NarrationChunkPayload` removed.** `grep -rn
+  NarrationChunk` across `sidequest-server/sidequest/` and
+  `sidequest-ui/src/` returns zero production hits.
+- **`handleBinaryMessage` removed.** Regression test at
+  `sidequest-ui/src/__tests__/narration-chunk-deletion-27-9.test.ts`
+  (Story 27-9) actively asserts the deletion: tests check that
+  `App.tsx` does not define the callback and no production file
+  references it. This is the strongest signal the cleanup will not
+  silently regress.
+- **`narrationBufferRef` / `watchdogTimer` removed.** Zero hits in
+  `App.tsx`.
+- **Voice-related payloads gone.** `TtsStartPayload`, `TtsChunkPayload`,
+  `VoiceSignalPayload`, `VoiceTextPayload` — zero hits in current
+  protocol or UI.
+
+### Two-message narration shape — running
+
+Per §Narration Flow, Formalized: `GameMessage::Narration` (full text
++ optional state delta) and `GameMessage::NarrationEnd` (turn-completion
+marker carrying the final state delta) are the only two narration-stream
+messages. The `NarrationEnd` doc comment carries its current
+turn-completion semantics rather than the original stream-terminator
+framing.
+
+### Cosmetic doc rot remaining (not blocking)
+
+Two docstrings in `sidequest-server/sidequest/genre/models/audio.py`
+still describe their classes as "TTS":
+
+- Line 136: `VoiceConfig` — "A single TTS voice configuration."
+- Line 147: `VoicePresets` — "TTS voice preset configuration."
+
+These models are **not dead** — they are loaded by the genre pack
+loader at `genre/loader.py:820–821` (reads `voice_presets.yaml`) and
+declared on `genre/models/pack.py:168`. Whether the *content* (genre-
+declared narrator voice config) is meaningful post-TTS is a separate
+audit owed; not in scope for this ADR. The docstrings should be
+updated when that audit happens.
+
+### Rust-era documentation cleanup — moot
+
+§Documentation Cleanup specified rewrites to `sidequest-game/src/prerender.rs`
+and `sidequest-server/src/extraction.rs`. Both files no longer exist —
+they were Rust-era and did not survive the 2026-04 port to Python
+([ADR-082](082-port-sidequest-api-back-to-python.md)). Python analogs
+may have analogous docstring rot, but auditing them is out of scope
+for this ADR.

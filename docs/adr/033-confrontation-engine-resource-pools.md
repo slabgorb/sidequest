@@ -216,6 +216,12 @@ but current is 1, the engine rejects the patch. PatchLegality (already exists,
 
 ### Pillar 3: Mood Extension (MusicDirector)
 
+> **Implementation note (2026-05-02):** Step 4 (`StructuredEncounter.mood_override` →
+> MusicDirector) is live. Steps 1–3 (the `mood_aliases` lookup table and the
+> alias-chain fallback during track selection) are dead data — the field is on
+> the Pydantic model and one content pack declares aliases, but no consumer fires
+> the chain. See **§Implementation status (2026-05-02)** at the bottom of this ADR.
+
 **Finding:** MusicDirector already uses string-keyed mood_tracks internally.
 The Mood enum is only used for classification. The fix is smaller than expected.
 
@@ -296,3 +302,69 @@ The whole point is YAML-declarable mechanics.
 Considered for the quick win (story 16-1). Not sufficient long-term: the LLM
 can still produce contradictory state without engine validation. Prompt injection
 is step 1, not the architecture.
+
+## Implementation status (2026-05-02)
+
+Audited during the post-port hygiene sweep. Pillars 1 and 2 shipped through
+the 2026-04 port to Python ([ADR-082](082-port-sidequest-api-back-to-python.md))
+intact. Pillar 3 is partial — the encounter-driven `mood_override` flow is
+live, but the `mood_aliases` lookup table is dead data.
+
+**Pillar 1 — StructuredEncounter, ConfrontationDef, `apply_beat`: live.**
+
+- `sidequest/game/encounter.py` defines `StructuredEncounter` with the
+  `encounter_type`, `metric`, `actors`, `secondary_stats`, `mood_override`,
+  and `narrator_hints` fields the ADR specified.
+- `apply_beat` lives in `sidequest/game/beat_kinds.py`; called from
+  `sidequest/server/narration_apply.py:1367` and `:1573`.
+- ConfrontationDef matching: `sidequest/server/session_helpers.py:412`
+  (`find_confrontation_def`) routes the narrator's confrontation hint to the
+  pack's declared encounter types.
+- Encounter render → narrator: `sidequest/agents/encounter_render.py`.
+- Lifecycle dispatch: `sidequest/server/dispatch/encounter_lifecycle.py`,
+  `sidequest/server/dispatch/confrontation.py`,
+  `sidequest/server/websocket_session_handler.py:1733–2233`.
+
+**Pillar 2 — ResourcePool, threshold → KnownFact: live.**
+
+- `sidequest/game/resource_pool.py` carries `ResourcePool`, `ResourceThreshold`,
+  `ResourcePatch`, `ResourcePatchOp`, `ResourcePatchResult`, plus typed errors
+  (`UnknownResource`, `NotVoluntary`).
+- `resources: dict[str, ResourcePool]` is on the snapshot at
+  `sidequest/game/session.py:529`.
+- Legacy `resource_state` saves migrate via the Pydantic validator at
+  `sidequest/game/session.py:564–614` — old saves with the flat
+  `dict[str, float]` shape get hydrated into `ResourcePool` entries.
+- The threshold → LoreStore/KnownFact pipeline this ADR specified is wired:
+  `mint_threshold_lore(result.crossed_thresholds, lore_store, turn)` in
+  `sidequest/server/dispatch/encounter_lifecycle.py:435`. Helper raises
+  `UnknownResource` strictly; the session-handler caller wraps in try/except
+  to keep narration turns resilient to LLM typos (strict helper, lenient
+  caller — explicit comment at `encounter_lifecycle.py:420`).
+- `init_resource_pools` (`session.py:990ff`) refreshes pack metadata onto
+  saved pools without clobbering player progress, re-clamping `current` if
+  bounds change.
+
+**Pillar 3 — Mood Extension: partial.**
+
+- ✓ `StructuredEncounter.mood_override` → MusicDirector flow is live.
+  Consumed at `sidequest/agents/encounter_render.py:40`,
+  `sidequest/server/dispatch/confrontation.py:39–42`, populated at
+  `sidequest/server/dispatch/encounter_lifecycle.py:301` from `cdef.mood`.
+  When a standoff is active, the mood string flows through to track
+  selection regardless of narration keywords — exactly as the ADR §Pillar 3
+  Step 4 prescribed.
+- ✗ `mood_aliases` is dead data. `sidequest/genre/models/audio.py:120`
+  declares `mood_aliases: dict[str, str]`. One content pack declares
+  aliases (`sidequest-content/genre_workshopping/heavy_metal/audio.yaml:94`).
+  No consumer fires the alias chain. The track-selection fallback the ADR
+  §Pillar 3 Step 3 described — "look up the classified mood string in
+  mood_tracks; if not found, follow the alias chain" — was never written
+  in Python.
+
+**Restoration scope.** The remaining gap is small and bounded: implement
+alias-chain lookup in the music director's track-selection path, then
+audit the heavy_metal `audio.yaml` declarations against actual mood-track
+keys. Tracked in [ADR-087](087-post-port-subsystem-restoration-plan.md).
+The Epic 28 / Confrontation Engine port-drift audit is complete; what
+remains is a polish item, not a port-casualty.

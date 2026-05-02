@@ -1,18 +1,26 @@
 ---
 id: 69
 title: "Scenario Fixtures — Pre-configured World States for Testing"
-status: accepted
+status: superseded
 date: 2026-04-06
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: []
+superseded-by: 92
+related: [87, 92]
 tags: [code-generation]
-implementation-status: drift
-implementation-pointer: 87
+implementation-status: retired
+implementation-pointer: 92
 ---
 
 # ADR-069: Scenario Fixtures — Pre-configured World States for Testing
+
+> **Superseded by [ADR-092](092-scene-harness-http-endpoint.md)** (2026-05-02).
+> The CLI-driven fixture flow specified here was never built in Python; a
+> dev-gated HTTP endpoint was wired in its place during the 2026-04 port.
+> ADR-092 ratifies that pivot. The **fixture YAML schema** and **hydration
+> rules** below remain canonical and are reused unchanged by the successor;
+> the CLI binary, `--player` flag, and `sidequest-promptpreview --fixture`
+> integration are retired and will not be built.
 
 **Context:** Epic 24 (Procedural World-Grounding), prompt preview tooling
 
@@ -239,3 +247,26 @@ non-deterministic.
 | `fixture:` + `strategy: restore` in playtest driver | ~30 LOC | orchestrator |
 | 5 starter fixtures | Content | orchestrator |
 | Justfile recipes (`just fixture-load`, `just fixture-list`) | Trivial | orchestrator |
+
+## Implementation status (2026-05-02)
+
+The Rust era implemented this ADR — the `sidequest-fixture` crate exists at `sidequest-api/crates/sidequest-fixture/` with `hydrate.rs`, `schema.rs`, `error.rs`, and a `scene_harness_wiring` test. The 2026-04 port to Python did not carry the crate forward, but a **partial restoration was attempted with a meaningfully different design**, then left half-wired.
+
+What is live:
+
+- 4 fixture YAMLs in `scenarios/fixtures/` (`combat_test.yaml`, `dogfight.yaml`, `negotiation.yaml`, `poker.yaml`), schema-conformant to this ADR, all dated 2026-04-21.
+- UI scene-harness in `sidequest-ui/src/App.tsx:1183–1213`: when the URL contains `?scene=NAME`, the client `POST /dev/scene/:name`, expects a `{slug}` response, and navigates to `/solo/:slug`. Fixture YAML headers document the expected URL form: `http://localhost:5173/?scene=combat_test (requires DEV_SCENES=1)`.
+
+What is dark:
+
+- The server `/dev/scene/{name}` endpoint — does not exist in `sidequest-server`. The UI POSTs into the void.
+- A fixture hydrator function reading fixture YAML into a `GameSnapshot` — absent.
+- The `sidequest-fixture` CLI binary — never created. `sidequest/cli/` contains namegen / encountergen / loadoutgen / validate / corpus* but no fixture module.
+- `playtest.py` `fixture:` key handling — absent. The `strategy: restore` flag the ADR specifies is not parsed.
+- `sidequest-promptpreview --fixture` — and indeed `promptpreview` itself — does not exist as a CLI module.
+
+**Design pivot (resolved 2026-05-02).** The ADR specified a CLI-driven flow: `sidequest-fixture load X` writes `save.db`, then `dispatch_connect()` restores it. What was actually wired (UI side only) is an HTTP-endpoint flow: `POST /dev/scene/X` stages a save, returns a slug, UI navigates to `/solo/:slug`. These were meaningfully different shapes; the half-built UI suggested the project drifted toward the HTTP design without a recording ADR.
+
+[**ADR-092**](092-scene-harness-http-endpoint.md) ratifies the HTTP shape and supersedes this ADR. The fixture YAML schema and hydration rules above are reused unchanged. The CLI binary, the `--player` flag, and the promptpreview `--fixture` integration described in this ADR are retired.
+
+Restoration is tracked as **P0 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md). The remaining gap (server-side `POST /dev/scene/{name}` endpoint + fixture hydrator) is now scoped against ADR-092's design, not this one. ADR-087's row for this ADR is owed an update on its next pass.

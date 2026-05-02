@@ -1,22 +1,48 @@
 ---
 id: 89
 title: "Pre-Rendered Cavern Battle Maps via Ported Cellular Automata"
-status: proposed
+status: superseded
 date: 2026-04-24
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
+superseded-by: 86
 related: [71, 86]
 tags: [media-audio, room-graph]
-implementation-status: drift
-implementation-pointer: null
+implementation-status: retired
+implementation-pointer: 86
 ---
 
 # ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata
 
+> **Superseded by [ADR-086](086-image-composition-taxonomy.md) (2026-05-02).**
+>
+> ADR-086 and ADR-089 were written on the same day (2026-04-24) as
+> competing answers to the broken-ASCII-renderer problem ADR-071's
+> tactical-grid system surfaced. ADR-086's solution — tactical maps go
+> through the standard ILLUSTRATION recipe with `CAMERA.TOPDOWN_90`
+> preset — shipped: recipe loader, catalogs, camera presets, and
+> prompt cascade are all wired in `sidequest-daemon/sidequest_daemon/media/`.
+> ADR-089's solution — port `maze-maker`'s Cellular algorithm to
+> Python, build an authoring-time tool that emits pre-rendered PNG
+> battle maps — was never built. No `sidequest-content/tools/`
+> directory, no `Cellular` Python code, no `battle_maps/` asset
+> directories.
+>
+> The cellular-automata approach is preserved here as historical
+> record. The advantages it claimed (mechanically structured cavern
+> shapes vs. prompt-interpreted ones) are real but were not strong
+> enough to justify a separate authoring pipeline alongside ADR-086's
+> recipe system. If/when mechanically grounded battle-map generation
+> becomes interesting again — e.g., for tactical-grid LOS / movement
+> work that ADR-086's prompt path cannot serve — write a fresh ADR
+> with current context. Do not revive this one.
+>
+> Same supersession pattern as ADR-071 → ADR-086: both ASCII rendering
+> and procedural cavern rendering yielded to the unified recipe pipeline.
+
 ## Status
 
-Proposed
+Proposed (now superseded — see callout above)
 
 ## Context
 

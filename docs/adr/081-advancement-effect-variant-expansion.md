@@ -1,7 +1,7 @@
 ---
 id: 81
 title: "Advancement Effect Variant Expansion (v1)"
-status: proposed
+status: accepted
 date: 2026-04-18
 deciders: [Keith Avery, Major Houlihan (Architect)]
 supersedes: []
@@ -149,3 +149,63 @@ enum ConditionExpr {
 - `docs/superpowers/specs/2026-04-18-evropi-starting-kits-design.md` — driving spec
 - `sidequest-content/genre_packs/heavy_metal/worlds/evropi/_drafts/character-progression/prot_thokk.yaml` — `AllyEdgeIntercept` consumer (Lil' Sebastian Stands)
 - `sidequest-content/genre_packs/heavy_metal/worlds/evropi/_drafts/character-progression/th_rook.yaml` — `ConditionalEffectGating` consumer (The Dose Helps)
+
+## Implementation status (2026-05-02)
+
+Promoted from `proposed`/`deferred` to `accepted`/`deferred` during the
+deferred-bucket sweep. The two new variants this ADR specifies are not
+built; the upstream parent ADR (ADR-078) is itself `accepted`/`partial`
+with Epic 39 owed for per-class edge config wiring.
+
+### Live (the upstream baseline from ADR-078)
+
+The base 5 `AdvancementEffect` variants this ADR extends are alive in
+Python:
+
+- `AdvancementEffectEdgeMaxBonus` — `genre/models/advancement.py:69`
+- `AdvancementEffectEdgeRecovery` — line 78
+- `AdvancementEffectBeatDiscount` — line 88
+- `AdvancementEffectLeverageBonus` — line 99
+- `AdvancementEffectLoreRevealBonus` — line 109
+- Discriminated union: `AdvancementEffect = Annotated[…]` at line 118.
+
+These are the baseline this ADR's two new variants attach to.
+
+### Dark — this ADR's surface
+
+- `AdvancementEffectAllyEdgeIntercept` — zero hits in the codebase.
+- `AdvancementEffectConditionalEffectGating` — zero hits.
+- `ConditionExpr` (`ResourceAbove`/`ResourceAtOrBelow`) — zero hits.
+- `advancement.ally_edge_intercept` and
+  `advancement.conditional_effect_gating` OTEL spans — zero emit sites.
+
+### Content waiting on this ADR
+
+The Evropi starting-kit drafts are real character design work blocked
+on these variants. Path moved during the heavy_metal-to-workshopping
+shuffle — current location:
+`sidequest-content/genre_workshopping/heavy_metal/worlds/evropi/_drafts/character-progression/`.
+Files include `prot_thokk.yaml` (needs `AllyEdgeIntercept` for "Lil'
+Sebastian Stands"), `th_rook.yaml` (needs `ConditionalEffectGating`
+for "The Dose Helps"), plus `hant.yaml`, `ludzo.yaml`, `rux.yaml`,
+`pumblestone_sweedlewit.yaml`. The references list above points at
+the original `genre_packs/heavy_metal/...` paths; those files moved
+to `genre_workshopping/` since this ADR was written.
+
+### Upstream dependency
+
+This ADR's two variants ride on top of ADR-078's per-class edge config
+wiring, which is owed to Epic 39 (see [ADR-078 Implementation status](078-edge-composure-advancement-rituals.md#implementation-status-2026-05-02)).
+ADR-081 cannot ship before that wiring lands; both ADRs are bundled
+under the ADR-087 P2 item *"Edge/Composure Epic 39 wiring + push-currency
+rituals"* — when Epic 39 ships, ADR-081's variants land alongside the
+ADR-078 production wiring.
+
+### Why `accepted` rather than kept-`proposed`
+
+The motivating characters (Prot'Thokk, Th'rook) are concrete Evropi
+design work, not speculative. The variant designs are detailed (full
+enum shape with `ally_whitelist` / `max_redirect`, OTEL span names,
+`ConditionExpr` v1 scope notes excluding boolean composition). The
+work is upstream-blocked, not abandoned. Two weeks since proposal
+(2026-04-18) is recent — not stale.

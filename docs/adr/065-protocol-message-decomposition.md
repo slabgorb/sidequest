@@ -1,7 +1,7 @@
 ---
 id: 65
 title: "Protocol Message Decomposition — Split message.rs by Domain"
-status: proposed
+status: accepted
 date: 2026-04-04
 deciders: [Keith]
 supersedes: []
