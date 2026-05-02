@@ -2,6 +2,51 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+## Status (2026-05-02)
+
+Tracks A + B are **shipped end-to-end through Task 17**. Task 18 (manual smoke check) is the only remaining step and is user-driven (boot the stack, click around, watch OTEL).
+
+| Task | PR(s) | Notes |
+|---|---|---|
+| 0–5 | shipped pre-2026-05-01 (orchestrator PR #154; sidequest-content #162→develop after gitflow recovery) | rename, clock, beats, span, display, scene-end wiring |
+| 6  | sidequest-server #155 | Pydantic models for `orbits.yaml` + `chart.yaml` |
+| 7  | sidequest-server #156 | `load_orbital_content()` loader |
+| 8  | sidequest-content #166 | `cartography.yaml` → `orbits.yaml` + `chart.yaml` (Coyote Star) |
+| 9  | sidequest-server #158 | SVG renderer skeleton + engraved layer |
+| 10 | sidequest-server #159 | Renderer flavor + party-marker layers |
+| 11 | sidequest-server #160 | `chart.render` OTEL span |
+| 12 | sidequest-server #161 | Drill-in cluster glyphs + drill-out edge indicator |
+| 13 | sidequest-server #162 | SVG snapshot tests + `--update-snapshots` flag |
+| 14 | sidequest-server #163 + sidequest-ui #188 | Wire protocol (Python `OrbitalIntent` + TS types) |
+| 15a | sidequest-server #164 | Pure `handle_orbital_intent` function + Session/Room state plumbing |
+| 15b | sidequest-server #165 | `MessageType.ORBITAL_INTENT` / `ORBITAL_CHART` + handler module |
+| 16 | sidequest-ui #189 | `OrbitalChartView` replaces `OrreryView`; Orrery folder deleted |
+| 17 | sidequest-server #166 | E2E integration test (drill cycle + clock advance OTEL) |
+| 18 | _pending — manual smoke_ | `just up`; load Coyote Star; drill in/out; verify spans on `just otel` |
+
+### Plan-vs-reality adaptations applied during execution
+
+These were resolved at implementation time and are not blockers — recording them here so the next reader doesn't re-discover the gaps:
+
+- **Task 12 — `Scope` API**: plan suggested `Scope.body(body_id=...)` factory; implementation uses `Scope(center_body_id="...")` directly. The class is a frozen dataclass with one field and a `system_root()` classmethod; no factory needed.
+- **Task 13 — `--update-snapshots` flag location**: plan offered "root conftest.py or local conftest under tests/orbital/"; chose root `tests/conftest.py` because it's the only existing conftest at that level and there was no other `pytest_addoption` to merge with.
+- **Task 14 — `Union` discouraged**: ruff `UP007` requires PEP 604 `X | Y` over `Union[X, Y]` for the discriminated annotation. Cosmetic, no behavior change.
+- **Task 15 — Session API**: the plan was authored against a Rust-era `Session.empty()` constructor that didn't survive ADR-082 (Rust → Python port) and the 2026-05-01 strangler-fig rewrite. Per design call recorded in chat 2026-05-02, the post-port shape is:
+  - `orbital_content` lives on `SessionRoom`, exposed via `room.session.orbital_content` (option 1a).
+  - `party_body_id: str | None` is a new field on `GameSnapshot`, distinct from the free-text `location` (option 2a).
+  - `orbital_scope` is transient on `Session`, defaults to system root, not persisted on the snapshot (option 3a).
+  - Wire format is a top-level `MessageType.ORBITAL_INTENT` / `ORBITAL_CHART` pair (option 4).
+  - Task 15 was split into 15a (pure function + state plumbing) and 15b (WS dispatch + message types) for review-size reasons.
+- **Task 17 — `capture_spans` fixture**: plan referenced a `capture_spans()` fixture that doesn't exist; codebase uses `otel_capture` (returns an `InMemorySpanExporter`). The fixture is duplicated locally in `tests/integration/test_orbital_e2e.py` because pytest fixtures don't cross test packages and there's no shared version yet.
+- **Task 17 — `Beat` / `BeatKind` rename**: plan used `Beat` / `BeatKind`; actual classes are `StoryBeat` / `StoryBeatKind` in `sidequest.orbital.beats`.
+
+### Pre-existing breakage flagged but out of scope
+
+- The **canned-openings story** (orchestrator merge `94fb13d`) added a hard requirement that every world ship `openings.yaml` with at least one solo entry. The test fixtures `tests/fixtures/packs/caverns_and_claudes/worlds/{flickering_reach,dungeon_survivor}/` don't have one, and several `tests/server/test_session_handler_slug_connect.py` + `tests/integration/test_session_clock_e2e.py` tests fail at `loader.load(genre_slug)` as a result. Unrelated to orbital work; orbital PRs all confirmed the failures pre-date the diff.
+- The **2026-04-28 cartography removal** left `cartography.yaml` references in `sidequest/genre/loader.py` (line ~526). Tests against `space_opera/coyote_star` see "no such file" once the world bind tries to load `cartography.yaml`. This was the root cause of the 23 failures noted in the Task 12 review.
+
+---
+
 **Goal:** Ship a deterministic story-time clock with beat-driven advances, a server-rendered engraved orbital chart for the Coyote Star world (with party marker and drill-in to Red Prospect's moon system), and the intent-message protocol that connects them. Track C (orbital math, plotter, danger beats) is a follow-up plan.
 
 **Architecture:** Server is authoritative; UI is a thin SVG display layer. `sidequest/orbital/` is the new server module owning the clock, beat dispatch, content models, content loader, and SVG renderer. UI's `MapWidget` already routes `coyote_star` to a chart component (`OrreryView`); this plan replaces that client-side renderer with a server-fetched SVG host (`OrbitalChartView`) that adds pan/zoom (CSS) and click-intent routing back via WebSocket. Existing `cartography.yaml` data (1215 authored lines) migrates into the new `orbits.yaml` (mechanics) + `chart.yaml` (flavor) split.
