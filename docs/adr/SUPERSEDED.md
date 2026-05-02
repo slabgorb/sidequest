@@ -39,6 +39,10 @@
 - [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) — superseded
 - [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) — superseded
 
+### Superseded by [ADR-091: Culture-Corpus + Markov Naming](091-culture-corpus-markov-naming.md)
+
+- [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) — superseded
+
 ## Historical — no successor
 
 These ADRs describe features or decisions that were cut without direct replacement.

@@ -261,8 +261,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Narrator / Text (040, 049, 052, 057)**
 - 040 Narrative Character Sheet (No Raw Stats) · 049 Narrator Verbosity and Vocabulary (Two-Axis Text Tuning) · 052 Narrative Axis System (/tone Command) · 057 Narrator Crunch Separation — LLM Narrates, Scripts Crunch *(partial)*
 
-**NPC / Character Systems (041, 042, 043, 053)**
-- 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 043 Conlang Morpheme System · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(partial)*
+**NPC / Character Systems (041, 042, 053, 091)**
+- 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(partial)* · 091 Culture-Corpus + Markov Naming
 
 **Media / Audio / Rendering (045, 048, 050, 070)**
 - 045 Client Audio Engine *(partial)* · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX

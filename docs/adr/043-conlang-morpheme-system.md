@@ -1,11 +1,11 @@
 ---
 id: 43
 title: "Conlang Morpheme System"
-status: accepted
+status: superseded
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
+superseded-by: 91
 related: []
 tags: [npc-character]
 implementation-status: retired
@@ -74,4 +74,4 @@ The Rust era (`sidequest-api/crates/sidequest-game/src/conlang.rs`, 1015 LOC) im
 
 The SOUL-level goal of this ADR — names that share roots because they share conceptual ground — is met by the corpus model: corpora are curated per culture, so names sampled from them inherit phonetic/morphological coherence without an explicit morpheme abstraction.
 
-**Status:** `implementation-status: retired`. ADR-087's P3 "RESTORE" verdict for this ADR was written assuming namegen was unwired; that assumption no longer holds. A successor ADR documenting the culture-corpus + Markov approach is queued; on its acceptance this ADR's `status` field will move to `superseded` with `superseded-by` pointing at it. Until then the decision recorded here is preserved as historical reference.
+**Status:** `superseded` by [ADR-091: Culture-Corpus + Markov Naming](091-culture-corpus-markov-naming.md), which documents the live system. ADR-087's P3 "RESTORE" verdict for this ADR was written assuming namegen was unwired; that assumption no longer holds and ADR-091 makes the supersession explicit. The decision recorded here is preserved as historical reference.

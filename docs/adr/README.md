@@ -152,8 +152,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | ✓ accepted | **drift** → ADR-087 |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | ✓ accepted | — |
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-091: Culture-Corpus + Markov Naming](091-culture-corpus-markov-naming.md) | ✓ accepted | live |
 
 ## Media / Audio / Rendering
 
@@ -242,6 +242,7 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 | [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
 | [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |
+| [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | ✗ superseded | [ADR-091](091-culture-corpus-markov-naming.md) |
 | [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) | ✗ superseded | [ADR-076](076-narration-protocol-collapse-post-tts.md) |
 | [ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)](054-webrtc-voice-chat-disabled.md) | ✗ historical | — |
 | [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) | ✗ superseded | [ADR-059](059-monster-manual-server-side-pregen.md) |
