@@ -17,7 +17,7 @@ implementation-pointer: null
 - **Input:** `docs/port-drift-feature-audit-2026-04-24.md` (audit that fed this ADR)
 - **Governing:** ADR-082 (1:1 port mandate), ADR-085 (port-drift tracker hygiene)
 - **Consolidation context:** ADR-067 (Unified Narrator Agent — explains why several agent helpers are intentionally gone)
-- **Amended/acknowledged:** ADR-017, 018, 020, 041, 042, 043, 044, 053, 059, 069 (their implementations are missing or partial in Python; this ADR schedules their restoration without reopening the original decisions)
+- **Amended/acknowledged:** ADR-017, 018, 020, 041, 042, 044, 053, 059, 069 (their implementations are missing or partial in Python; this ADR schedules their restoration without reopening the original decisions). _ADR-043 was originally in this list; it has since been superseded by ADR-091 and dropped from the restoration scope._
 - **Explicit restraint:** ADR-071, 074, 075, 077, 078, 081 (Proposed — not executed in Rust either; stay deferred)
 
 > This ADR is not a redesign. It is a **scheduling verdict** on every subsystem
@@ -71,7 +71,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 | Genie wish consequence engine | ADR-041 Accepted | **RESTORE** | P2 | `GenieWish` tracking in `session.py` has no engine behind it. SOUL.md "Rule of Cool" explicitly requires the monkey's paw mechanism — currently absent. |
 | OCEAN shift proposals (trope-driven personality) | ADR-042 Accepted | **RESTORE** | P2 | Depends on trope engine. Model in `genre/models/ocean.py`, pipeline missing. |
 | Chase engine (`chase_depth`, terrain, rig, phase) | ADR-017 Accepted | **RESTORE** | P2 | Zero implementation; protocol hint in `encounter.py` only. Narrative-weight feature — ADR-014/080 promise a dramatic chase. |
-| Conlang morpheme glossary | ADR-043 Accepted | **RESTORE** | P3 | Zero occurrences. Affects name-gen flavor + dialogue color. Low urgency; can piggy-back on namegen CLI restoration. |
+| Conlang morpheme glossary | ADR-043 Superseded | **SUPERSEDE** (already) | — | Superseded by ADR-091 (culture-corpus + Markov naming, retrospective of live system). The original RESTORE verdict was written before the Python tree was audited at the naming layer; production has the Markov + culture-corpus approach in `sidequest/genre/names/` (~604 LOC, every genre pack ships `corpus/` + `cultures.yaml`). No restoration needed; bringing morphemes back would mean demoting a working system. |
 | Beat filter (conditional narration gating) | — | **RESTORE** | P3 | Small utility module; restoration is one-for-one. |
 | Scene relevance validator | — | **REDESIGN** | P2 | Belongs inside the ADR-086 image-composition taxonomy, not as a free-floating Rust module. Fold into image pipeline design rather than port. |
 | Theme rotator | — | **SUPERSEDE** | — | Unclear value from static inspection; tension tracker + narrative-weight traits (ADR-080) likely cover the same pacing surface. If a pacing gap surfaces later, design fresh. |
@@ -122,7 +122,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 
 | Subsystem | Prior ADR | Verdict | Tier | Notes |
 |-----------|-----------|---------|------|-------|
-| Scene fixture hydrator (`hydrate_fixture`, `load_fixture`, `Fixture` schema) | ADR-069 Accepted | **RESTORE** | **P0** | Zero occurrences in Python. Contradicts ADR-082's own justification (iteration speed is the product). Highest-leverage restoration outside ADR-059. |
+| Scene fixture hydrator (`hydrate_fixture`, `load_fixture`, `Fixture` schema) | ADR-069 Accepted | **RESTORE** | **P0** | "Zero occurrences" was true at original write-time but is now stale. Landed since: UI scene-harness in `sidequest-ui/src/App.tsx:1183` + 4 fixture YAMLs in `scenarios/fixtures/`. Remaining gap: server `/dev/scene/{name}` endpoint + fixture→snapshot hydrator. **Design pivot unresolved:** ADR-069 specifies a CLI-driven flow (`sidequest-fixture load X` → save.db); the half-wired UI side targets an HTTP endpoint. Restoration must pick one — amend ADR-069 or write a successor — before building. Still highest-leverage iteration-speed work outside ADR-059. |
 | Scrapbook persistent image store | — | **COLLAPSE** into daemon, then **VERIFY** | P2 | One ref in `persistence.py`. Image persistence likely lives in `sidequest-daemon` now; if so, supersede the standalone concept and point at the daemon. |
 | `sidequest-test-support` equivalent (MockClaudeClient, SpanCapture) | — | **VERIFY** | P3 | Not inventoried. Pytest fixtures may cover. If not, thin helper module. |
 
@@ -158,10 +158,11 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 23. `sidequest-validate` CLI expansion
 24. Scene relevance validator (**REDESIGN** under ADR-086 taxonomy)
 
-### P3 — flavor / low urgency (3 items)
-25. Conlang morpheme glossary (ADR-043)
-26. Beat filter
-27. Test-support helpers (**VERIFY** first)
+### P3 — flavor / low urgency (2 items)
+25. Beat filter
+26. Test-support helpers (**VERIFY** first)
+
+> _Conlang morpheme glossary (ADR-043) was originally listed here at P3 RESTORE. Removed: ADR-043 has been superseded by ADR-091 (culture-corpus + Markov naming, already live). No restoration owed._
 
 ### Deferred (marker confirmed or added) (8 items)
 - Affinity progression (P6-deferred, existing marker)
@@ -182,7 +183,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 ## What this ADR does **not** do
 
 - **Does not reconcile the sprint tracker.** That is PM/SM work per ADR-085 §Rule 1 and §4. This ADR gives them the verdict column they need to drive reconciliation; it does not re-open stories itself.
-- **Does not redesign any accepted ADR.** ADR-017/018/020/041/042/043/044/053/059/069 all stand. The work scheduled here is implementation, not design.
+- **Does not redesign any accepted ADR.** ADR-017/018/020/041/042/044/053/059/069 all stand. The work scheduled here is implementation, not design. (ADR-043 was in this list at original write-time; it has since been superseded by ADR-091 and is no longer part of the restoration scope.)
 - **Does not finalize Epic 28 scope.** Item P0-6 is explicitly `VERIFY` → likely `RESTORE`. The audit did not have time for a per-story Epic 28 port-drift pass; that is a follow-on from this ADR and from ADR-085 §Audit procedure.
 - **Does not commit to the P3 tier landing.** P3 items are the first to be cut if any P0/P1 restoration exposes a deeper design problem.
 
@@ -200,13 +201,13 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 - Several restorations (trope engine, disposition, gossip, OCEAN shift) chain on each other — ordering matters, and ADR-087 intentionally does not hard-sequence the P1/P2 items because the chain depends on Epic 28 outcome.
 
 ### Neutral
-- Prior ADRs' status is unchanged. Readers of ADR-017/018/020/041/042/043/044/053/059/069 should be directed here for implementation status via the ADR README cross-reference (pending update).
+- Prior ADRs' status is unchanged for the active set. Readers of ADR-017/018/020/041/042/044/053/059/069 should be directed here for implementation status via the ADR README cross-reference (pending update). ADR-043 has been superseded by ADR-091 and is out of scope.
 
 ## Follow-on tasks
 
 1. **PM/SM:** Run ADR-085 §Audit procedure against each P0/P1/P2 row. Open/re-open stories with code-backed status.
 2. **Architect (me, next pass):** Epic 28 port-drift audit — list Epic 28 stories, cross-check against Python `sidequest/game/encounter.py` + `server/dispatch/encounter_lifecycle.py` + `server/dispatch/confrontation.py`.
-3. **Architect (me, next pass):** Update `docs/adr/README.md` so ADR-017/018/020/041/042/043/044/053/059/069 each reference ADR-087 for current implementation status.
+3. **Architect (me, next pass):** Update `docs/adr/README.md` so ADR-017/018/020/041/042/044/053/059/069 each reference ADR-087 for current implementation status. (ADR-043 was originally on this list; superseded by ADR-091, out of scope.)
 4. **Dev (eventual):** Take the P0 list as a delivery queue; each row becomes a story.
 
 ---
