@@ -246,11 +246,11 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Agent System (011, 012, 013, 066, 067)**
 - 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction · 066 Persistent Opus Narrator Sessions · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session**
 
-**Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 080)**
-- **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(partial)* · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 080 Unified Narrative Weight Trait
+**Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 074, 077, 078, 080, 081)**
+- **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(partial)* · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 074 Dice Resolution Protocol — Player-Facing Rolls via WebSocket · 077 Dogfight Subsystem via StructuredEncounter Extension · 078 Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals *(partial)* · 080 Unified Narrative Weight Trait · 081 Advancement Effect Variant Expansion (v1) *(deferred)*
 
-**Frontend / Protocol (026, 027, 079)**
-- 026 Client-Side State Mirror · 027 Reactive State Messaging · 079 Genre Theme System Unification
+**Frontend / Protocol (026, 027, 075, 079)**
+- 026 Client-Side State Mirror · 027 Reactive State Messaging · 075 3D Dice Rendering — Three.js + Rapier Physics Overlay *(partial)* · 079 Genre Theme System Unification
 
 **Multiplayer (028, 036, 037)**
 - 028 Perception Rewriter · 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State Split
@@ -264,29 +264,32 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **NPC / Character Systems (041, 042, 053, 091)**
 - 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(partial)* · 091 Culture-Corpus + Markov Naming
 
-**Media / Audio / Rendering (045, 048, 050, 070)**
-- 045 Client Audio Engine · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
+**Media / Audio / Rendering (045, 048, 050, 070, 086)**
+- 045 Client Audio Engine · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX · 086 Image-Composition Taxonomy — Portraits, POIs, Illustrations
 
 **Turn Management (051)**
 - 051 Two-Tier Turn Counter (Interaction vs. Round)
 
+**Room Graph / Dungeon Crawl (055)**
+- 055 Room Graph Navigation *(partial)*
+
 **Code Generation / Tooling (059, 092)**
 - **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 092 Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures *(partial)*
 
-**Observability (090)**
-- 090 OTEL Dashboard Restoration after Python Port
+**Observability (058, 090)**
+- 058 Claude Subprocess OTEL Passthrough · 090 OTEL Dashboard Restoration after Python Port
 
-**Codebase Decomposition (060, 061, 062, 063, 064, 068, 088)**
-- 060 Genre Models Decomposition — Split models.rs by Domain · 061 Lore Module Decomposition — Split lore.rs by Responsibility · 062 Server lib.rs Extraction — Route Groups, State, and Watcher Events · 063 Dispatch Handler Splitting — By Pipeline Stage · 064 Game Crate Domain Modules — Organize 69 Flat Files · 068 Magic Literal Extraction — Domain-Scoped Constants · **088 ADR Frontmatter Schema and Auto-Generated Indexes**
+**Codebase Decomposition (060, 061, 062, 063, 064, 065, 068, 088)**
+- 060 Genre Models Decomposition — Split models.rs by Domain · 061 Lore Module Decomposition — Split lore.rs by Responsibility · 062 Server lib.rs Extraction — Route Groups, State, and Watcher Events · 063 Dispatch Handler Splitting — By Pipeline Stage · 064 Game Crate Domain Modules — Organize 69 Flat Files · 065 Protocol Message Decomposition — Split message.rs by Domain *(deferred)* · 068 Magic Literal Extraction — Domain-Scoped Constants · **088 ADR Frontmatter Schema and Auto-Generated Indexes**
 
-**Narrator Architecture (073)**
-- 073 Local Fine-Tuned Model Architecture
+**Narrator Architecture (073, 076)**
+- 073 Local Fine-Tuned Model Architecture · 076 Narration Protocol Collapse Post-TTS Removal
 
 **Genre Mechanics (031, 033)**
 - 031 Game Watcher — Semantic Telemetry for AI Agent Observability · 033 Genre Mechanics Engine — Confrontations & Resource Pools *(partial)*
 
-**Project Lifecycle / Meta (082, 085)**
-- **082 Port `sidequest-api` from Rust back to Python** · **085 Tracker hygiene during the Rust→Python port — handling port-drift**
+**Project Lifecycle / Meta (082, 085, 087)**
+- **082 Port `sidequest-api` from Rust back to Python** · **085 Tracker hygiene during the Rust→Python port — handling port-drift** · 087 Post-Port Subsystem Restoration Plan
 
 **Conventions:** Bold = load-bearing for current architecture. `drift`/`partial`/`deferred` in a line means the ADR is accepted but implementation is not fully live — see [DRIFT.md](docs/adr/DRIFT.md). Superseded/historical ADRs are filtered from this view — see [SUPERSEDED.md](docs/adr/SUPERSEDED.md).
 

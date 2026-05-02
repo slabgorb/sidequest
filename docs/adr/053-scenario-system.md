@@ -4,9 +4,9 @@ title: "Scenario System (Clue Graph, Belief State, Gossip Propagation)"
 status: accepted
 date: 2026-04-01
 deciders: [Keith Avery]
-supersedes: []
+supersedes: [30]
 superseded-by: null
-related: []
+related: [30]
 tags: [npc-character]
 implementation-status: partial
 implementation-pointer: 87

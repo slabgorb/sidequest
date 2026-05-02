@@ -1,14 +1,14 @@
 ---
 id: 74
 title: "Dice Resolution Protocol — Player-Facing Rolls via WebSocket"
-status: proposed
+status: accepted
 date: 2026-04-09
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [75]
 tags: [game-systems, frontend-protocol]
-implementation-status: deferred
+implementation-status: live
 implementation-pointer: null
 ---
 
@@ -206,3 +206,60 @@ gesture. Loses the tactile satisfaction that motivated the feature.
 ### Dice on every check (rejected)
 Rolling for perception, saves, NPC actions. Slows the game, dilutes the dramatic
 impact. Backend rolls silently for non-player checks.
+
+## Implementation status (2026-05-02)
+
+All three protocol layers are live in Python and wired end-to-end. The
+Rust code samples in §Decision are preserved as historical illustration;
+the 2026-04 port to Python adopted the same shape unchanged.
+
+### Protocol payloads + messages
+
+`sidequest-server/sidequest/protocol/__init__.py`:
+
+- Lines 13–21: `DiceRequestPayload`, `DiceResultPayload`, `DiceThrowPayload`,
+  `DieSpec`, `RollOutcome`, `ThrowParams`.
+- Lines 51–53: `DiceRequestMessage`, `DiceResultMessage`, `DiceThrowMessage`
+  wire types (the three new `GameMessage` variants this ADR added).
+
+### Server dispatch
+
+`sidequest-server/sidequest/server/dispatch/dice.py` — full module
+implementing the §Turn flow pipeline:
+
+- `DiceThrowOutcome` class at line 80 wraps a request/result pair.
+- The request side at line 154 builds `DiceRequestPayload` from a
+  beat selection (DC + stat + modifier).
+- Server-authoritative resolution: client `DiceThrow` carries gesture
+  params only; server generates the cryptographic seed and determines
+  faces from RNG (the §Server authority model contract).
+- Dispatch comment at line 7 documents the full flow:
+  *"Rolling client clicks a confrontation beat, UI builds
+  `DiceRequestPayload`..."*.
+
+### UI subsystem (3D dice tray)
+
+`sidequest-ui/src/dice/` ships:
+
+- Per-die meshes: `d4.ts`, `d6.ts`, `d10.ts`, `d12.ts`, `d20.ts`.
+- React components: `DiceOverlay.tsx`, `DiceScene.tsx`,
+  `InlineDiceTray.tsx`, `DiceSpikePage.tsx`.
+- `useDiceThrowGesture.ts` — the flick-gesture hook that produces
+  `ThrowParams`.
+- `replayThrowParams.ts` — deterministic Rapier replay from
+  seed + throw_params per the §Server authority model.
+- `diceTheme.ts` — visual styling.
+
+### UI protocol surface
+
+`sidequest-ui/src/types/protocol.ts:41–43` declares `DICE_REQUEST`,
+`DICE_THROW`, `DICE_RESULT`. Payload types and type guards at
+`types/payloads.ts:464–474, 581–589`.
+
+### Sibling ADR
+
+ADR-075 (3D Dice Rendering — Rapier physics + mesh design) is the
+visual-rendering ADR for the dice tray and remains `proposed`. The
+two ADRs are *not* the same: ADR-074 is the wire protocol, ADR-075
+is the client-side rendering polish. ADR-087 line 93 captures this:
+"Protocol ported; client-side UI work out of server scope."

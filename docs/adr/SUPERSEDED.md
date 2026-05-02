@@ -8,6 +8,10 @@
 
 - [ADR-017: Cinematic Chase Engine](017-cinematic-chase-engine.md) — superseded
 
+### Superseded by [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md)
+
+- [ADR-030: Scenario Packs](030-scenario-packs.md) — superseded
+
 ### Superseded by [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md)
 
 - [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) — superseded
@@ -21,10 +25,6 @@
 - [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) — superseded
 - [ADR-084: Compositional-Dimension Specialization for Style LoRAs](084-lora-composition-dimension.md) — superseded
 
-### Superseded by [ADR-076: Narration Protocol Collapse Post-TTS Removal](076-narration-protocol-collapse-post-tts.md)
-
-- [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) — superseded
-
 ### Superseded by [ADR-082: Port `sidequest-api` from Rust back to Python](082-port-api-rust-to-python.md)
 
 - [ADR-019: Cartography Discovery](019-cartography-discovery.md) — superseded
@@ -33,6 +33,7 @@
 
 - [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) — superseded
 - [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) — superseded
+- [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) — superseded
 
 ### Superseded by [ADR-091: Culture-Corpus + Markov Naming](091-culture-corpus-markov-naming.md)
 
@@ -46,4 +47,8 @@
 
 These ADRs describe features or decisions that were cut without direct replacement.
 
+- [ADR-029: Guest NPC Players](029-guest-npc-players.md) — historical
+- [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) — historical
 - [ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)](054-webrtc-voice-chat-disabled.md) — historical
+- [ADR-072: System/Milieu Decomposition — Separating Mechanics from Aesthetic](072-system-milieu-decomposition.md) — historical
+- [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) — historical

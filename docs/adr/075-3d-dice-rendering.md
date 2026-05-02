@@ -1,15 +1,15 @@
 ---
 id: 75
 title: "3D Dice Rendering — Three.js + Rapier Physics Overlay"
-status: proposed
+status: accepted
 date: 2026-04-09
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [74]
 tags: [frontend-protocol]
-implementation-status: deferred
-implementation-pointer: null
+implementation-status: partial
+implementation-pointer: 87
 ---
 
 # ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay
@@ -225,3 +225,95 @@ obviously canned after a few rolls. Defeats the purpose.
 Matter.js or similar 2D engine with top-down view. Technically simpler but loses
 the 3D tumble that makes physical dice exciting. The whole point is the third
 dimension.
+
+## Implementation status (2026-05-02)
+
+The technology stack landed exactly as specified; two architecture
+sections of this ADR diverged during implementation and one feature is
+not shipping. **Source of truth for current dice rendering** is
+`sidequest-ui/src/dice/InlineDiceTray.tsx`,
+`sidequest-ui/src/dice/DiceScene.tsx`, and
+`sidequest-ui/src/components/ConfrontationOverlay.tsx` — not the §Overlay
+architecture diagram or §Interaction: drag-and-throw section above.
+
+### Live (matches spec)
+
+- **Dependencies installed** per §Decision: `three@0.183.2`,
+  `@react-three/fiber@9.5.0`, `@react-three/rapier@2.2.0`,
+  `@react-three/drei@10.7.7`, `@react-spring/three@10.0.3` (all in
+  `sidequest-ui/package.json`).
+- **R3F Canvas + Rapier RigidBody wiring** —
+  `sidequest-ui/src/dice/DiceScene.tsx:14, 18–22, 84` mounts a Canvas,
+  imports `RigidBody` and `RapierRigidBody`, sets fixed-type ground
+  with `friction={10}` and `restitution={0.3}`. Drei `Text` for face
+  numbers at line 24.
+- **Per-die meshes** — `sidequest-ui/src/dice/d4.ts`, `d6.ts`,
+  `d10.ts`, `d12.ts`, `d20.ts`. (`d8` is not needed by the current
+  game systems.)
+- **Deterministic replay** infrastructure — `replayThrowParams.ts`
+  exists; the §Deterministic replay seed-based contract is honored.
+
+### Architecture pivot 1: overlay → inline tray
+
+§Overlay architecture specified a fixed-position full-screen Canvas at
+`z-index: 1000` with toggled `pointer-events`. **That design was
+implemented and then removed.** Per `sidequest-ui/src/App.tsx:44–45`:
+
+> "DiceOverlay overlay removed — dice now render inline in the
+> Confrontation panel via InlineDiceTray. The DiceOverlay component
+> and DiceSpikePage are retained..."
+
+Current rendering: `ConfrontationOverlay.tsx:325` mounts `InlineDiceTray`
+directly inside the confrontation panel. The Canvas stays mounted as
+long as the confrontation is active (avoiding WebGL context churn) and
+becomes visible only when a `DiceRequest` is in flight. The
+full-screen overlay design is dead spec; `DiceOverlay.tsx` is retained
+as a component but is not the production rendering path.
+
+### Architecture pivot 2: gesture → click-and-auto-roll
+
+§Interaction: drag-and-throw specified a `pointerdown`/`pointermove`/
+`pointerup` flick-gesture pipeline with `ThrowParams` computed from
+the player's gesture. **That design was abandoned.** Per the
+`InlineDiceTray.tsx:1–11` header docstring:
+
+> "No gestures, no drag-to-throw. The die sits idle in the tray.
+> When a beat button is clicked (which creates a DiceRequest), the
+> die auto-rolls with random physics params. Settle → face reported
+> → result shown inline."
+
+The motivating "tactile flick" concept that opened this ADR is gone —
+replaced by a button click and automated roll. `useDiceThrowGesture.ts`
+exists but is not wired through `InlineDiceTray`. The throw params
+the server still wants per ADR-074 are now generated automatically,
+not from a player gesture.
+
+### Dark / restoration owed (tracked in [ADR-087](087-post-port-subsystem-restoration-plan.md))
+
+- **Genre-pack `dice.yaml` theming.** §Genre-pack theming spec'd a
+  per-genre `material` (bone | chrome | brass | obsidian | neon | wood
+  | crystal), `surface`, `glow`, `color_primary`, `color_accent`,
+  `font` config feeding PBR textures from the pack's asset directory.
+  `find sidequest-content -name dice.yaml` returns **zero** hits —
+  not shipping in any genre pack. Polish gap, not load-bearing.
+- **Cinematic moments / accessibility / reduced-motion / keyboard
+  fallback** — §Cinematic moments and §Accessibility specified
+  slow-motion crit treatments, `aria-live` announcements,
+  `prefers-reduced-motion` snap-to-result, and keyboard-spacebar
+  throw fallback. Implementation status of each is **TBD on next
+  deeper audit** — they require detailed UI inspection beyond this
+  hygiene pass.
+
+### Source of truth
+
+For the current dice-rendering contract, defer to:
+
+- **Active rendering:** `sidequest-ui/src/dice/InlineDiceTray.tsx`
+- **Scene:** `sidequest-ui/src/dice/DiceScene.tsx`
+- **Mount point:** `sidequest-ui/src/components/ConfrontationOverlay.tsx:325`
+- **Deterministic replay:** `sidequest-ui/src/dice/replayThrowParams.ts`
+
+Not the §Overlay architecture diagram or §Interaction prose above.
+ADR text is the original 2026-04-09 design intent; the running
+implementation has diverged on the architecture sections while
+preserving the technology choice and protocol contract.
