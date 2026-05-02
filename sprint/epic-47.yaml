@@ -1,0 +1,35 @@
+id: '47'
+type: epic
+title: Magic System Coyote Reach v1
+description: 'Coyote Star magic system implementation per docs/superpowers/plans/2026-04-28-magic-system-coyote-reach-v1.md. Phases 1-3 shipped (engine, GameSnapshot integration, narrator integration). Phase 4 (UI) and Phase 5 (confrontations) remain. Phase 6 is multiplayer playtest. Total estimate: 35-50 SP. Unblocks Rig MVP Phase C downstream.'
+priority: p2
+status: in_progress
+repos: ui,server,content
+stories:
+  - id: 47-1
+    title: Magic Phase 4 — Verification + cut-point smoke (Tasks 4.4-4.5)
+    description: 'Magic Phase 4 was already shipped on develop via PR #183 (Tasks 4.1-4.3). This story closes Tasks 4.4-4.5: install worktree deps, run vitest, run just up, perform 10-turn Coyote Star solo demo per AC1-AC5, file findings. Plan ref: docs/superpowers/plans/2026-04-28-magic-system-coyote-reach-v1.md (Phase 4 Task 4.5 cut-point at line 5497).'
+    points: 2
+    priority: p2
+    status: done
+    started: '2026-05-02'
+    repos: ui
+    workflow: trivial
+    completed: '2026-05-02'
+  - id: 47-2
+    title: Magic Phase 4 — Playtest smoke verification (AC1-AC5)
+    description: "Followup to 47-1. Manual 10-turn Coyote Star smoke deferred during 47-1 (Option 2: defer-with-followup). Requires Keith at the keyboard. Run plan Task 4.5 cut-point: innate working with cost (AC1), item working (AC1), threshold-cross to Bleeding through (AC1+AC2), save/load roundtrip (AC3), DEEP_RED-triggering working (AC4+AC5). Dashboard verified via 'just otel'. Captures playgroup-quality observations beyond the 7 automated tests in PR #183. See sprint/archive/47-1-session.md for full smoke runbook + Reviewer's mandatory follow-up #1."
+    points: 1
+    priority: p2
+    status: backlog
+    repos: ui,server
+    workflow: trivial
+    type: chore
+  - id: 47-3
+    title: Magic Phase 5 — Confrontations Wired (the_standoff, the_salvage, the_bleeding_through, the_quiet_word, the_long_resident)
+    description: "Magic Phase 5 per docs/superpowers/plans/2026-04-28-magic-system-coyote-reach-v1.md (line 5557+). Wires 5 named magic confrontations into existing dispatch/confrontation.py: the_standoff, the_salvage, the_bleeding_through, the_quiet_word, the_long_resident. Implements: confrontations YAML loader (sidequest-server/sidequest/magic/confrontations.py), auto-fire trigger evaluator (e.g. 'sanity <= 0.40' for the_bleeding_through), mandatory advancement output emission (item_acquired, control_tier_advance, status_add_wound, etc.), ConfrontationOverlay branch-explicit reveal. Cut-point: two-player playtest with Keith + 1 playgroup member. UNBLOCKS Rig MVP Phase C downstream. PHASE 5 PREREQUISITE (per Reviewer 47-1 mandatory follow-up #2): Add 'StatusPromotion' interface + 'promote_to_status?: StatusPromotion | null' field to sidequest-ui/src/types/magic.ts BEFORE confrontation outcome work. Server has these on LedgerBarSpec at sidequest-server/sidequest/magic/models.py:114 and :151; UI does not. Phase 5 mandatory_outputs status_add_wound and status_add_scar will need this surface to render correctly. See sprint/archive/47-1-session.md drift table for details."
+    points: 8
+    priority: p2
+    status: backlog
+    repos: server,ui,content
+    workflow: wire-first
