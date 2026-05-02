@@ -243,8 +243,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Prompt Engineering (008, 009)**
 - 008 Three-Tier Rule Taxonomy · 009 Attention-Aware Prompt Zones
 
-**Agent System (011, 012, 066, 067)**
-- 011 World State JSON Patches · 012 Agent Session Management · 066 Persistent Opus Narrator Sessions · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session**
+**Agent System (011, 012, 013, 066, 067)**
+- 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction · 066 Persistent Opus Narrator Sessions · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session**
 
 **Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 080)**
 - **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(partial)* · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 080 Unified Narrative Weight Trait
@@ -258,20 +258,20 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Transport / Infrastructure (035, 038, 046, 047)**
 - **035 Unix Socket IPC for Python Sidecar** · **038 WebSocket Transport Architecture** · 046 GPU Memory Budget Coordinator · 047 Prompt Injection Sanitization Layer
 
-**Narrator / Text (040, 049, 052, 057)**
-- 040 Narrative Character Sheet (No Raw Stats) · 049 Narrator Verbosity and Vocabulary (Two-Axis Text Tuning) · 052 Narrative Axis System (/tone Command) · 057 Narrator Crunch Separation — LLM Narrates, Scripts Crunch *(partial)*
+**Narrator / Text (039, 040, 049, 052)**
+- 039 Narrator Structured Output (JSON Sidecar Block) · 040 Narrative Character Sheet (No Raw Stats) · 049 Narrator Verbosity and Vocabulary (Two-Axis Text Tuning) · 052 Narrative Axis System (/tone Command)
 
 **NPC / Character Systems (041, 042, 053, 091)**
 - 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(partial)* · 091 Culture-Corpus + Markov Naming
 
 **Media / Audio / Rendering (045, 048, 050, 070)**
-- 045 Client Audio Engine *(partial)* · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
+- 045 Client Audio Engine · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
 
 **Turn Management (051)**
 - 051 Two-Tier Turn Counter (Interaction vs. Round)
 
-**Code Generation / Tooling (059, 069)**
-- **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 069 Scenario Fixtures — Pre-configured World States for Testing *(partial)*
+**Code Generation / Tooling (059, 092)**
+- **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 092 Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures *(partial)*
 
 **Observability (090)**
 - 090 OTEL Dashboard Restoration after Python Port

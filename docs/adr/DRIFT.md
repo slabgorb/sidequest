@@ -17,10 +17,8 @@
 | [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-045: Client Audio Engine](045-client-audio-engine.md) | ✓ accepted | [ADR-076: Narration Protocol Collapse Post-TTS Removal](076-narration-protocol-collapse-post-tts.md) |
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | ✓ accepted | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) |
-| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 
 ## Deferred — accepted/proposed, not yet implemented
 

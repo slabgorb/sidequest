@@ -1,15 +1,57 @@
 ---
 id: 57
 title: "Narrator Crunch Separation — LLM Narrates, Scripts Crunch"
-status: accepted
+status: deprecated
 date: 2026-04-02
 deciders: [Keith]
-supersedes: [13, 39]
+supersedes: []
 superseded-by: null
 related: [1, 31, 56, 59]
 tags: [narrator]
-implementation-status: partial
-implementation-pointer: 59
+implementation-status: retired
+implementation-pointer: null
+---
+
+> **DEPRECATED 2026-05-02 — DO NOT IMPLEMENT.**
+>
+> This ADR is preserved as a historical record of a design that was never
+> implemented and **cannot be implemented** under the project's transport
+> architecture. Current agents reading this should not act on it.
+>
+> **Why it cannot ship.** ADR-057's core mechanism is the narrator calling
+> tools mid-generation (`namegen`, `set_mood`, `lore_mark`, `item_acquire`,
+> etc.) and a post-narration `assemble_turn` script collecting the results.
+> This is incompatible with [ADR-001 (Claude CLI Only)](001-claude-cli-only.md):
+> `claude -p` is a one-shot subprocess that returns a single text response.
+> It does not support reactive tool invocation during generation. The
+> `--allowedTools` flag exists, but it gates which tools Claude *may* call
+> in an Anthropic-API-style tool loop — not a mechanism `claude -p` exposes
+> for streaming tool outputs back into the same generation context. There is
+> no execution model under ADR-001 that lets the narrator call `set_mood`
+> at line 4 of its prose and reference the tool's return value at line 7.
+>
+> **What is actually running.** The pre-ADR-057 architecture: narrator emits
+> prose followed by a fenced `game_patch` JSON block; the server extracts
+> mechanical state from that block. Source of truth for the current narrator
+> contract is the system prompt in `sidequest-server/sidequest/agents/narrator.py`
+> (the `NARRATOR_OUTPUT_ONLY` constant, ~line 80) and the extraction logic in
+> `sidequest-server/sidequest/agents/orchestrator.py` (around line 1718).
+> The dual-task penalty ADR-057 §Context describes is real and accepted as
+> the price of ADR-001's CLI-only constraint.
+>
+> **What ADR-087 says.** [ADR-087 line 109](087-post-port-subsystem-restoration-plan.md)
+> previously framed the non-implementation as an "ADR-057 → ADR-059 progression"
+> and "intentionally removed" tool architecture. That framing was generous —
+> the design was infeasible from the start, not deliberately abandoned. ADR-087
+> has been updated to reflect the deprecation.
+>
+> **No successor ADR.** The current architecture is the default that was never
+> replaced. It is documented by the narrator code itself, not by a separate
+> ADR. Writing a "we kept the JSON block" ADR would add reading load without
+> adding clarity beyond `narrator.py`.
+>
+> The original design body is preserved below as historical record.
+
 ---
 
 # ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch

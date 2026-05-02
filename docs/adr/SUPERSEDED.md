@@ -8,11 +8,6 @@
 
 - [ADR-017: Cinematic Chase Engine](017-cinematic-chase-engine.md) — superseded
 
-### Superseded by [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md)
-
-- [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) — superseded
-- [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) — superseded
-
 ### Superseded by [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md)
 
 - [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) — superseded
@@ -42,6 +37,10 @@
 ### Superseded by [ADR-091: Culture-Corpus + Markov Naming](091-culture-corpus-markov-naming.md)
 
 - [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) — superseded
+
+### Superseded by [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md)
+
+- [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) — superseded
 
 ## Historical — no successor
 

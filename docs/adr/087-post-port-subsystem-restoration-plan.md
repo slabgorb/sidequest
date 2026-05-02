@@ -17,7 +17,7 @@ implementation-pointer: null
 - **Input:** `docs/port-drift-feature-audit-2026-04-24.md` (audit that fed this ADR)
 - **Governing:** ADR-082 (1:1 port mandate), ADR-085 (port-drift tracker hygiene)
 - **Consolidation context:** ADR-067 (Unified Narrator Agent — explains why several agent helpers are intentionally gone)
-- **Amended/acknowledged:** ADR-017, 018, 020, 041, 042, 044, 053, 059, 069 (their implementations are missing or partial in Python; this ADR schedules their restoration without reopening the original decisions). _ADR-043 was originally in this list; it has since been superseded by ADR-091 and dropped from the restoration scope._
+- **Amended/acknowledged:** ADR-017, 018, 020, 041, 042, 044, 053, 059, 069 (their implementations are missing or partial in Python; this ADR schedules their restoration without reopening the original decisions). _ADR-043 was originally in this list; it has since been superseded by ADR-091 and dropped from the restoration scope._ _ADR-069 has since been superseded by ADR-092 (design pivot ratified 2026-05-02); the restoration work item remains scheduled here but is now scoped against ADR-092's HTTP-endpoint design rather than ADR-069's retired CLI design._
 - **Explicit restraint:** ADR-071, 074, 075, 077, 078, 081 (Proposed — not executed in Rust either; stay deferred)
 
 > This ADR is not a redesign. It is a **scheduling verdict** on every subsystem
@@ -81,7 +81,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 | Subsystem | Prior ADR | Verdict | Tier | Notes |
 |-----------|-----------|---------|------|-------|
 | Pregen dispatch (server invokes namegen/encountergen/loadoutgen at turn-time) | ADR-059 Accepted | **RESTORE** | **P0** | Single biggest hot item. Accepted ADR is currently dark. Without this, NPC names/encounters/loadouts drift into Claude's improvisation — which is exactly what ADR-059 was written to prevent. |
-| Confrontation engine / Combat Epic 28 port verification | ADR-033 Accepted (Epic 28 landed Rust-side) | **VERIFY** → likely **RESTORE** | **P0** | Epic 28 was the biggest body of work immediately pre-port. Audit did not verify how much made it through. Dedicated port-drift audit on Epic 28 stories per ADR-085 §Audit procedure owed before a restoration plan can be finalized. |
+| Confrontation engine / Combat Epic 28 port verification | ADR-033 Accepted | **VERIFIED** (Pillars 1 + 2 live; Pillar 3 partial) | P3 | Audit completed 2026-05-02. Pillars 1 (StructuredEncounter / ConfrontationDef / `apply_beat`) and 2 (ResourcePool + threshold→KnownFact via `mint_threshold_lore`) shipped intact through the port and are heavily wired across narrator, dispatch, and session paths. Remaining gap is Pillar 3's `mood_aliases` lookup table: declared on the Pydantic model (`genre/models/audio.py:120`) and in one content pack (`heavy_metal/audio.yaml`), but no consumer fires the alias chain. `mood_override` (the Pillar 3 step that actually moves narration) is live. Polish item, not port-casualty — drop from P0. |
 | Speculative prerendering | ADR-044 Accepted | **RESTORE** | P2 | Zero occurrences. Performance feature; image latency is a primary-audience UX concern. |
 | Merchant / transactions | — | **DEFER** | — | No ADR, no current need. If economy becomes a feature, write an ADR first, then port. Add deferral marker to `game/__init__.py`. |
 | Affinity progression | ADR-021, ADR-081 | **DEFER** | — | Porter's `P6-deferred` marker confirmed at `game/character.py:55-64`. Will land with the advancement epic. No action. |
@@ -106,7 +106,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 | Inventory extractor (narrator → inventory patches) | **VERIFY** → likely **RESTORE** | P1 | Orchestrator does extract some structured output; confirm whether inventory specifically is covered before deciding. If not, restore. |
 | Entity reference tracking | **DEFER** | — | Low load-bearing; restore if continuity validator proves insufficient alone. |
 | Narrator/troper/resonator/world_builder/intent_router as separate agents | **SUPERSEDE** (already) | — | **Intentionally consolidated** under ADR-067 Unified Narrator Agent. This is not drift — it is ADR-067 being implemented. Documented here only to prevent false audit re-opens. |
-| Tools abstraction (14 tool modules: assemble_turn, tactical_place, set_intent, etc.) | **SUPERSEDE** (already) | — | **Intentionally removed** per ADR-057 → ADR-059 progression: narrator emits structured output directly rather than calling tools. Not drift. |
+| Tools abstraction (14 tool modules: assemble_turn, tactical_place, set_intent, etc.) | **DO NOT RESTORE** | — | These were the Rust-era surface for ADR-057's narrator-calls-tools design. **ADR-057 is deprecated as of 2026-05-02** — the design was infeasible under ADR-001 (`claude -p` is a one-shot subprocess; no reactive tool invocation during generation). What is actually running is the pre-ADR-057 default: narrator emits a fenced `game_patch` JSON block, server extracts mechanical state. No restoration owed; no successor ADR. Source of truth for the current narrator contract is `sidequest-server/sidequest/agents/narrator.py`. |
 
 ### E. CLI binaries and tooling
 
@@ -122,19 +122,20 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 
 | Subsystem | Prior ADR | Verdict | Tier | Notes |
 |-----------|-----------|---------|------|-------|
-| Scene fixture hydrator (`hydrate_fixture`, `load_fixture`, `Fixture` schema) | ADR-069 Accepted | **RESTORE** | **P0** | "Zero occurrences" was true at original write-time but is now stale. Landed since: UI scene-harness in `sidequest-ui/src/App.tsx:1183` + 4 fixture YAMLs in `scenarios/fixtures/`. Remaining gap: server `/dev/scene/{name}` endpoint + fixture→snapshot hydrator. **Design pivot unresolved:** ADR-069 specifies a CLI-driven flow (`sidequest-fixture load X` → save.db); the half-wired UI side targets an HTTP endpoint. Restoration must pick one — amend ADR-069 or write a successor — before building. Still highest-leverage iteration-speed work outside ADR-059. |
+| Scene fixture hydrator + `POST /dev/scene/{name}` endpoint | ADR-092 (supersedes ADR-069) | **RESTORE** | **P0** | Design pivot resolved 2026-05-02 — ADR-092 ratifies the dev-gated HTTP-endpoint shape; ADR-069's CLI design is retired. Landed: UI scene-harness in `sidequest-ui/src/App.tsx:1183` + 4 fixture YAMLs in `scenarios/fixtures/`. Remaining gap: server endpoint (gated by `DEV_SCENES=1`) + YAML→`GameSnapshot` hydrator + OTEL spans (`scene_harness_load`, `hydrate.ok/error`, `persist.ok`). Still highest-leverage iteration-speed work outside ADR-059. |
 | Scrapbook persistent image store | — | **COLLAPSE** into daemon, then **VERIFY** | P2 | One ref in `persistence.py`. Image persistence likely lives in `sidequest-daemon` now; if so, supersede the standalone concept and point at the daemon. |
 | `sidequest-test-support` equivalent (MockClaudeClient, SpanCapture) | — | **VERIFY** | P3 | Not inventoried. Pytest fixtures may cover. If not, thin helper module. |
 
 ## Priority-Tier Rollup
 
-### P0 — this sprint / next sprint (6 items)
+### P0 — this sprint / next sprint (5 items)
 1. ADR-059 pregen dispatch — server invokes pregen binaries at turn-time
 2. `sidequest-namegen` rewire (entry point + dispatch integration)
 3. `sidequest-encountergen` restore
 4. `sidequest-loadoutgen` restore
-5. ADR-069 scene fixture hydrator
-6. Epic 28 / Confrontation Engine port-drift audit + restore (**VERIFY** first)
+5. ADR-092 scene fixture hydrator + `POST /dev/scene/{name}` endpoint (supersedes ADR-069)
+
+> _Item 6 (Epic 28 / Confrontation Engine port-drift audit + restore) was originally P0 pending a VERIFY pass. Audit completed 2026-05-02: Pillars 1 + 2 of ADR-033 are live; only the `mood_aliases` alias-chain consumer remains as a polish gap. Moved to P3._
 
 ### P1 — within current epic window (7 items)
 7. Trope engine (ADR-018)
@@ -158,9 +159,10 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 23. `sidequest-validate` CLI expansion
 24. Scene relevance validator (**REDESIGN** under ADR-086 taxonomy)
 
-### P3 — flavor / low urgency (2 items)
+### P3 — flavor / low urgency (3 items)
 25. Beat filter
 26. Test-support helpers (**VERIFY** first)
+27. `mood_aliases` alias-chain consumer in MusicDirector track selection (ADR-033 Pillar 3 step 3) — Pydantic field + heavy_metal pack declaration exist; no consumer fires the chain. Polish, not port-casualty.
 
 > _Conlang morpheme glossary (ADR-043) was originally listed here at P3 RESTORE. Removed: ADR-043 has been superseded by ADR-091 (culture-corpus + Markov naming, already live). No restoration owed._
 
@@ -183,7 +185,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 ## What this ADR does **not** do
 
 - **Does not reconcile the sprint tracker.** That is PM/SM work per ADR-085 §Rule 1 and §4. This ADR gives them the verdict column they need to drive reconciliation; it does not re-open stories itself.
-- **Does not redesign any accepted ADR.** ADR-017/018/020/041/042/044/053/059/069 all stand. The work scheduled here is implementation, not design. (ADR-043 was in this list at original write-time; it has since been superseded by ADR-091 and is no longer part of the restoration scope.)
+- **Does not redesign any accepted ADR.** ADR-017/018/020/041/042/044/053/059/069 all stand at the time of this write-up; the work scheduled here is implementation, not design. (ADR-043 was in this list at original write-time and has since been superseded by ADR-091, out of scope. ADR-069 has since been superseded by ADR-092, but the supersession was authored separately as a successor ADR — this restoration plan did not redesign ADR-069 in place; it scheduled the implementation that ADR-092 then resolved the design pivot for.)
 - **Does not finalize Epic 28 scope.** Item P0-6 is explicitly `VERIFY` → likely `RESTORE`. The audit did not have time for a per-story Epic 28 port-drift pass; that is a follow-on from this ADR and from ADR-085 §Audit procedure.
 - **Does not commit to the P3 tier landing.** P3 items are the first to be cut if any P0/P1 restoration exposes a deeper design problem.
 
@@ -191,7 +193,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 
 ### Positive
 - Every non-parity subsystem now has a named verdict and a tier. Silent drift is no longer silent.
-- ADR-059, ADR-069, and ADR-018 all have a path back from being effectively dark.
+- ADR-059, ADR-092 (the scene-harness restoration scoped against ADR-092's HTTP design, supersedes ADR-069), and ADR-018 all have a path back from being effectively dark.
 - Porter's intentional deferrals are distinguished from true drift, defending the port's phasing against false "restore everything" pressure.
 - PM/SM can work sprint-planning against a prioritized list rather than a raw gap count.
 
@@ -201,13 +203,13 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 - Several restorations (trope engine, disposition, gossip, OCEAN shift) chain on each other — ordering matters, and ADR-087 intentionally does not hard-sequence the P1/P2 items because the chain depends on Epic 28 outcome.
 
 ### Neutral
-- Prior ADRs' status is unchanged for the active set. Readers of ADR-017/018/020/041/042/044/053/059/069 should be directed here for implementation status via the ADR README cross-reference (pending update). ADR-043 has been superseded by ADR-091 and is out of scope.
+- Prior ADRs' status is unchanged for the active set. Readers of ADR-017/018/020/041/042/044/053/059 should be directed here for implementation status via the ADR README cross-reference (pending update). ADR-043 has been superseded by ADR-091 and is out of scope. ADR-069 has been superseded by ADR-092; readers of ADR-069 should follow the supersession pointer to ADR-092 for the current design and to this ADR for restoration status.
 
 ## Follow-on tasks
 
 1. **PM/SM:** Run ADR-085 §Audit procedure against each P0/P1/P2 row. Open/re-open stories with code-backed status.
 2. **Architect (me, next pass):** Epic 28 port-drift audit — list Epic 28 stories, cross-check against Python `sidequest/game/encounter.py` + `server/dispatch/encounter_lifecycle.py` + `server/dispatch/confrontation.py`.
-3. **Architect (me, next pass):** Update `docs/adr/README.md` so ADR-017/018/020/041/042/044/053/059/069 each reference ADR-087 for current implementation status. (ADR-043 was originally on this list; superseded by ADR-091, out of scope.)
+3. **Architect (me, next pass):** Update `docs/adr/README.md` so ADR-017/018/020/041/042/044/053/059 each reference ADR-087 for current implementation status. (ADR-043 was originally on this list; superseded by ADR-091, out of scope. ADR-069 was originally on this list; superseded by ADR-092, out of scope — readers should follow the supersession pointer.)
 4. **Dev (eventual):** Take the P0 list as a delivery queue; each row becomes a story.
 
 ---

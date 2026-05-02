@@ -1,18 +1,26 @@
 ---
 id: 69
 title: "Scenario Fixtures — Pre-configured World States for Testing"
-status: accepted
+status: superseded
 date: 2026-04-06
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: []
+superseded-by: 92
+related: [87, 92]
 tags: [code-generation]
-implementation-status: partial
-implementation-pointer: 87
+implementation-status: retired
+implementation-pointer: 92
 ---
 
 # ADR-069: Scenario Fixtures — Pre-configured World States for Testing
+
+> **Superseded by [ADR-092](092-scene-harness-http-endpoint.md)** (2026-05-02).
+> The CLI-driven fixture flow specified here was never built in Python; a
+> dev-gated HTTP endpoint was wired in its place during the 2026-04 port.
+> ADR-092 ratifies that pivot. The **fixture YAML schema** and **hydration
+> rules** below remain canonical and are reused unchanged by the successor;
+> the CLI binary, `--player` flag, and `sidequest-promptpreview --fixture`
+> integration are retired and will not be built.
 
 **Context:** Epic 24 (Procedural World-Grounding), prompt preview tooling
 
@@ -257,6 +265,8 @@ What is dark:
 - `playtest.py` `fixture:` key handling — absent. The `strategy: restore` flag the ADR specifies is not parsed.
 - `sidequest-promptpreview --fixture` — and indeed `promptpreview` itself — does not exist as a CLI module.
 
-**Design pivot (unresolved).** The ADR specifies a CLI-driven flow: `sidequest-fixture load X` writes `save.db`, then `dispatch_connect()` restores it. What was actually wired (UI side only) is an HTTP-endpoint flow: `POST /dev/scene/X` stages a save, returns a slug, UI navigates to `/solo/:slug`. These are meaningfully different shapes. Restoration needs to pick one before continuing — the half-built UI side suggests the project drifted toward the HTTP design, but no ADR records that choice. A future amendment or successor ADR should resolve this.
+**Design pivot (resolved 2026-05-02).** The ADR specified a CLI-driven flow: `sidequest-fixture load X` writes `save.db`, then `dispatch_connect()` restores it. What was actually wired (UI side only) is an HTTP-endpoint flow: `POST /dev/scene/X` stages a save, returns a slug, UI navigates to `/solo/:slug`. These were meaningfully different shapes; the half-built UI suggested the project drifted toward the HTTP design without a recording ADR.
 
-Restoration is **P0 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md): _"Zero occurrences in Python. Contradicts ADR-082's own justification (iteration speed is the product)."_ The "zero occurrences" framing is now stale — UI wiring and fixture YAMLs landed after that audit, leaving only the server-side hydrator + endpoint missing. ADR-087's row for this ADR is owed an update on its next pass.
+[**ADR-092**](092-scene-harness-http-endpoint.md) ratifies the HTTP shape and supersedes this ADR. The fixture YAML schema and hydration rules above are reused unchanged. The CLI binary, the `--player` flag, and the promptpreview `--fixture` integration described in this ADR are retired.
+
+Restoration is tracked as **P0 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md). The remaining gap (server-side `POST /dev/scene/{name}` endpoint + fixture hydrator) is now scoped against ADR-092's design, not this one. ADR-087's row for this ADR is owed an update on its next pass.

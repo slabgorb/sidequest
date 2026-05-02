@@ -86,6 +86,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-011: World State JSON Patches](011-world-state-json-patches.md) | ✓ accepted | live |
 | [ADR-012: Agent Session Management](012-agent-session-management.md) | ✓ accepted | live |
+| [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✓ accepted | live |
 | [ADR-066: Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) | ✓ accepted | live |
 | [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session](067-unified-narrator-agent.md) | ✓ accepted | live |
 
@@ -141,10 +142,11 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
+| [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✓ accepted | live |
 | [ADR-040: Narrative Character Sheet (No Raw Stats)](040-narrative-character-sheet.md) | ✓ accepted | live |
 | [ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)](049-narrator-verbosity-vocabulary.md) | ✓ accepted | live |
 | [ADR-052: Narrative Axis System (/tone Command)](052-narrative-axis-system.md) | ✓ accepted | live |
-| [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | ✓ accepted | *partial* → ADR-059 |
+| [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | ✗ deprecated | — |
 
 ## NPC / Character Systems
 
@@ -159,7 +161,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-045: Client Audio Engine](045-client-audio-engine.md) | ✓ accepted | *partial* → ADR-076 |
+| [ADR-045: Client Audio Engine](045-client-audio-engine.md) | ✓ accepted | live |
 | [ADR-048: Lore RAG Store with Cross-Process Embedding](048-lore-rag-store.md) | ✓ accepted | live |
 | [ADR-050: Image Pacing Throttle](050-image-pacing-throttle.md) | ✓ accepted | live |
 | [ADR-070: MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX](070-mlx-image-renderer.md) | ✓ accepted | live |
@@ -184,7 +186,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | ADR | Status | Impl |
 |-----|--------|------|
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | ✓ accepted | *partial* → ADR-087 |
 
 ## Observability
 
@@ -236,16 +238,15 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | ADR | Status | Successor |
 |-----|--------|-----------|
 | [ADR-010: Intent-Based Agent Routing](010-intent-based-agent-routing.md) | ✗ superseded | [ADR-067](067-unified-narrator-agent.md) |
-| [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |
 | [ADR-017: Cinematic Chase Engine](017-cinematic-chase-engine.md) | ✗ superseded | [ADR-033](033-confrontation-engine-resource-pools.md) |
 | [ADR-019: Cartography Discovery](019-cartography-discovery.md) | ✗ superseded | [ADR-082](082-port-api-rust-to-python.md) |
 | [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 | [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
-| [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✗ superseded | [ADR-057](057-narrator-crunch-separation.md) |
 | [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | ✗ superseded | [ADR-091](091-culture-corpus-markov-naming.md) |
 | [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) | ✗ superseded | [ADR-076](076-narration-protocol-collapse-post-tts.md) |
 | [ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)](054-webrtc-voice-chat-disabled.md) | ✗ historical | — |
 | [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) | ✗ superseded | [ADR-059](059-monster-manual-server-side-pregen.md) |
+| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✗ superseded | [ADR-092](092-scene-harness-http-endpoint.md) |
 | [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
 | [ADR-084: Compositional-Dimension Specialization for Style LoRAs](084-lora-composition-dimension.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 
@@ -277,9 +278,7 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-018: Trope Engine](018-trope-engine.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-045: Client Audio Engine](045-client-audio-engine.md) | *partial* | [ADR-076](076-narration-protocol-collapse-post-tts.md) |
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | *partial* | [ADR-059](059-monster-manual-server-side-pregen.md) |
-| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 
 <!-- ADR-INDEX:GENERATED:END -->
