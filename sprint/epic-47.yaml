@@ -30,7 +30,10 @@ stories:
     description: "Magic Phase 5 per docs/superpowers/plans/2026-04-28-magic-system-coyote-reach-v1.md (line 5557+). Wires 5 named magic confrontations into existing dispatch/confrontation.py: the_standoff, the_salvage, the_bleeding_through, the_quiet_word, the_long_resident. Implements: confrontations YAML loader (sidequest-server/sidequest/magic/confrontations.py), auto-fire trigger evaluator (e.g. 'sanity <= 0.40' for the_bleeding_through), mandatory advancement output emission (item_acquired, control_tier_advance, status_add_wound, etc.), ConfrontationOverlay branch-explicit reveal. Cut-point: two-player playtest with Keith + 1 playgroup member. UNBLOCKS Rig MVP Phase C downstream. PHASE 5 PREREQUISITE (per Reviewer 47-1 mandatory follow-up #2): Add 'StatusPromotion' interface + 'promote_to_status?: StatusPromotion | null' field to sidequest-ui/src/types/magic.ts BEFORE confrontation outcome work. Server has these on LedgerBarSpec at sidequest-server/sidequest/magic/models.py:114 and :151; UI does not. Phase 5 mandatory_outputs status_add_wound and status_add_scar will need this surface to render correctly. See sprint/archive/47-1-session.md drift table for details."
     points: 8
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-02'
     repos: server,ui,content
     workflow: wire-first
+    completed: '2026-05-02'
+    review_findings: "All 5 round-2 BLOCKERS verified closed via direct command output. Shipped via PRs slabgorb/sidequest-server#170 and slabgorb/sidequest-ui#192."
+    review_verdict: approved
