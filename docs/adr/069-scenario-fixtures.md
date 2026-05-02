@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [code-generation]
-implementation-status: drift
+implementation-status: partial
 implementation-pointer: 87
 ---
 
@@ -239,3 +239,24 @@ non-deterministic.
 | `fixture:` + `strategy: restore` in playtest driver | ~30 LOC | orchestrator |
 | 5 starter fixtures | Content | orchestrator |
 | Justfile recipes (`just fixture-load`, `just fixture-list`) | Trivial | orchestrator |
+
+## Implementation status (2026-05-02)
+
+The Rust era implemented this ADR — the `sidequest-fixture` crate exists at `sidequest-api/crates/sidequest-fixture/` with `hydrate.rs`, `schema.rs`, `error.rs`, and a `scene_harness_wiring` test. The 2026-04 port to Python did not carry the crate forward, but a **partial restoration was attempted with a meaningfully different design**, then left half-wired.
+
+What is live:
+
+- 4 fixture YAMLs in `scenarios/fixtures/` (`combat_test.yaml`, `dogfight.yaml`, `negotiation.yaml`, `poker.yaml`), schema-conformant to this ADR, all dated 2026-04-21.
+- UI scene-harness in `sidequest-ui/src/App.tsx:1183–1213`: when the URL contains `?scene=NAME`, the client `POST /dev/scene/:name`, expects a `{slug}` response, and navigates to `/solo/:slug`. Fixture YAML headers document the expected URL form: `http://localhost:5173/?scene=combat_test (requires DEV_SCENES=1)`.
+
+What is dark:
+
+- The server `/dev/scene/{name}` endpoint — does not exist in `sidequest-server`. The UI POSTs into the void.
+- A fixture hydrator function reading fixture YAML into a `GameSnapshot` — absent.
+- The `sidequest-fixture` CLI binary — never created. `sidequest/cli/` contains namegen / encountergen / loadoutgen / validate / corpus* but no fixture module.
+- `playtest.py` `fixture:` key handling — absent. The `strategy: restore` flag the ADR specifies is not parsed.
+- `sidequest-promptpreview --fixture` — and indeed `promptpreview` itself — does not exist as a CLI module.
+
+**Design pivot (unresolved).** The ADR specifies a CLI-driven flow: `sidequest-fixture load X` writes `save.db`, then `dispatch_connect()` restores it. What was actually wired (UI side only) is an HTTP-endpoint flow: `POST /dev/scene/X` stages a save, returns a slug, UI navigates to `/solo/:slug`. These are meaningfully different shapes. Restoration needs to pick one before continuing — the half-built UI side suggests the project drifted toward the HTTP design, but no ADR records that choice. A future amendment or successor ADR should resolve this.
+
+Restoration is **P0 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md): _"Zero occurrences in Python. Contradicts ADR-082's own justification (iteration speed is the product)."_ The "zero occurrences" framing is now stale — UI wiring and fixture YAMLs landed after that audit, leaving only the server-side hydrator + endpoint missing. ADR-087's row for this ADR is owed an update on its next pass.

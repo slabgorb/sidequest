@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: [71, 86]
 tags: [media-audio, room-graph]
-implementation-status: drift
+implementation-status: deferred
 implementation-pointer: null
 ---
 

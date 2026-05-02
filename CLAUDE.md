@@ -247,7 +247,7 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - 011 World State JSON Patches · 012 Agent Session Management · 066 Persistent Opus Narrator Sessions · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session**
 
 **Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 080)**
-- **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(drift)* · 020 NPC Disposition System *(drift)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 080 Unified Narrative Weight Trait
+- **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(partial)* · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 080 Unified Narrative Weight Trait
 
 **Frontend / Protocol (026, 027, 079)**
 - 026 Client-Side State Mirror · 027 Reactive State Messaging · 079 Genre Theme System Unification
@@ -262,7 +262,7 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - 040 Narrative Character Sheet (No Raw Stats) · 049 Narrator Verbosity and Vocabulary (Two-Axis Text Tuning) · 052 Narrative Axis System (/tone Command) · 057 Narrator Crunch Separation — LLM Narrates, Scripts Crunch *(partial)*
 
 **NPC / Character Systems (041, 042, 043, 053)**
-- 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 043 Conlang Morpheme System *(drift)* · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(drift)*
+- 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 043 Conlang Morpheme System · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(partial)*
 
 **Media / Audio / Rendering (045, 048, 050, 070)**
 - 045 Client Audio Engine *(partial)* · 048 Lore RAG Store with Cross-Process Embedding · 050 Image Pacing Throttle · 070 MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX
@@ -271,7 +271,7 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - 051 Two-Tier Turn Counter (Interaction vs. Round)
 
 **Code Generation / Tooling (059, 069)**
-- **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 069 Scenario Fixtures — Pre-configured World States for Testing *(drift)*
+- **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 069 Scenario Fixtures — Pre-configured World States for Testing *(partial)*
 
 **Observability (090)**
 - 090 OTEL Dashboard Restoration after Python Port

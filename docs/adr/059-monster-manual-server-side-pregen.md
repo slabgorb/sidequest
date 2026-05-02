@@ -185,3 +185,24 @@ Claude treats these as advisory. Constraint escalation doesn't change behavior.
 ### D: Game-state embedding (Accepted)
 Claude treats `<game_state>` as world truth. Names, abilities, and dialogue quirks
 used correctly on first test. The simplest approach that works.
+
+## Implementation status (2026-05-02)
+
+The Rust era implemented this ADR end-to-end (Manual store + namegen/encountergen/loadoutgen called server-side at turn time + compound-key lookup + post-narration enrichment gate). The 2026-04 port to Python carried the **injection mechanism** but not the **content pipeline** behind it.
+
+What is live:
+
+- The `<game_state>` injection mechanism. `sidequest/agents/orchestrator.py:1272` wraps `state_summary` in `<game_state>` tags and places it in the validated Valley zone.
+- OTEL span definitions for `monster_manual` and `pregen` (`sidequest/telemetry/spans/monster_manual.py`, `…/pregen.py`).
+
+What is dark — the Manual + the pipeline that fills `<game_state>` with pre-generated content:
+
+- `MonsterManual` class — zero references in production paths. The persistent JSON file at `~/.sidequest/manuals/{genre}_{world}.json` is never created.
+- First-session seeding code that calls tool binaries to populate the Manual — absent.
+- `sidequest/cli/encountergen/__init__.py` and `sidequest/cli/loadoutgen/__init__.py` are **1-line empty stubs**. (`namegen` is the exception — it has 22K LOC of working code, but is not registered as a `[project.scripts]` entry and the server does not invoke it.)
+- Compound-key `(name, faction, world)` lookup — absent.
+- Post-narration NPC gate that matches used names against the Manual and enriches the registry from stat blocks — absent.
+
+What `<game_state>` carries today is the running session snapshot only (`orchestrator.py:1850`: `state_summary = session.model_dump_json(...)`). There is no pre-generated NPC pool, no encounter pool, no enemy stat-block pool being merged in. The narrator therefore continues to invent NPC names and stats — exactly the failure mode this ADR was written to prevent.
+
+Restoration is **P0 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md) — the highest-priority single item across the entire restoration plan: _"Single biggest hot item. Accepted ADR is currently dark. Without this, NPC names/encounters/loadouts drift into Claude's improvisation."_ ADR-087 also schedules the encountergen/loadoutgen binary RESTORE and the namegen REWIRE as P0 prerequisites in §E. The decision in this ADR stands.

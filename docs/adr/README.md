@@ -96,8 +96,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-014: Diamonds and Coal](014-diamonds-and-coal.md) | ✓ accepted | — |
 | [ADR-015: Character Builder State Machine](015-character-builder-state-machine.md) | ✓ accepted | live |
 | [ADR-016: Three-Mode Character Creation](016-three-mode-chargen.md) | ✓ accepted | live |
-| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | **drift** → ADR-087 |
+| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | live |
 | [ADR-022: WorldBuilder Maturity](022-world-builder-maturity.md) | ✓ accepted | live |
 | [ADR-023: Session Persistence](023-session-persistence.md) | ✓ accepted | live |
@@ -152,8 +152,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | ✓ accepted | **drift** → ADR-087 |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | ✓ accepted | **drift** → ADR-087 |
+| [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | ✓ accepted | — |
+| [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | ✓ accepted | *partial* → ADR-087 |
 
 ## Media / Audio / Rendering
 
@@ -165,7 +165,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-070: MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX](070-mlx-image-renderer.md) | ✓ accepted | live |
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | ◇ proposed | deferred |
 | [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md) | ◇ proposed | deferred |
-| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | ◇ proposed | **drift** |
+| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | ◇ proposed | deferred |
 
 ## Turn Management
 
@@ -184,7 +184,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | ADR | Status | Impl |
 |-----|--------|------|
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | ✓ accepted | **drift** → ADR-087 |
-| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✓ accepted | **drift** → ADR-087 |
+| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✓ accepted | *partial* → ADR-087 |
 
 ## Observability
 
@@ -269,17 +269,16 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | deferred | — |
 | [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md) | deferred | — |
 | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) | deferred | — |
-| [ADR-018: Trope Engine](018-trope-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | deferred | — |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | **drift** | — |
+| [ADR-018: Trope Engine](018-trope-engine.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-045: Client Audio Engine](045-client-audio-engine.md) | *partial* | [ADR-076](076-narration-protocol-collapse-post-tts.md) |
+| [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | *partial* | [ADR-059](059-monster-manual-server-side-pregen.md) |
+| [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 
 <!-- ADR-INDEX:GENERATED:END -->

@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [game-systems]
-implementation-status: drift
+implementation-status: partial
 implementation-pointer: 87
 ---
 
@@ -62,3 +62,16 @@ Tropes tick forward via `rate_per_turn` during gameplay and `rate_per_day` betwe
 - Stories have built-in momentum independent of player choices
 - Genre packs define narrative pacing without code
 - Between-session advancement keeps the world "alive"
+
+## Implementation status (2026-05-02)
+
+The Rust era (`sidequest-api/crates/sidequest-game/src/trope.rs`) implemented this ADR in full: `TropeStatus::{Dormant, Active, Progressing, Resolved}`, `fired_beats: HashSet`, `tick()` driving `rate_per_turn`, `advance_between_sessions()` driving `rate_per_day`.
+
+The 2026-04 port to Python carried the **data structures** (`sidequest/genre/models/tropes.py`: `TropeDefinition`, `TropeEscalation`, `PassiveProgression`) and the **YAML schemas** (every genre pack's `tropes.yaml`) but did not port the engine. As an interim, the unified narrator (ADR-067) emits `beat_selections` in its structured output and `narration_apply.py` records them on `active_tropes`. This covers escalation-beat firing during play but does not provide:
+
+- passive `rate_per_turn` advancement (the LLM is the only thing that moves a trope)
+- the canonical four-state lifecycle (current `status` is narrator-set; no automaton enforces transitions)
+- `fired_beats` dedup at the runtime layer (the narrator can re-emit the same beat; nothing rejects it)
+- `rate_per_day` between-session advancement
+
+Restoration is scheduled as **P1 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md). The decision in this ADR stands; the work is wiring the engine back onto the already-ported data structure.
