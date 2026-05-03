@@ -73,12 +73,10 @@ carry it back.
 No one taught you the shape of this. You learn by
 reaching, or by flinching.
 
-  Sanity   ▓▓▓▓▓▓▓▓▓▓░  0.95 / 1.00
-  Notice   ▓▓▓▓▓▓▓▓▓▓░  0.95 / 1.00
-  Vitality ▓▓▓▓▓▓▓▓▓▓░  0.95 / 1.00
-
 Your own words, in the input bar.
 ```
+
+**No bar HUD on the Abilities tab.** The existing `LedgerPanel` (rendered below the tabs in `CharacterPanel`) already shows the magic-ledger bars and the world's "The Reach" bar from turn 0 with their numeric values. Duplicating them on Abilities would violate "don't reinvent — wire what exists." The Sensitivities section is purely the *framing text* that explains what those bars mean — Keith's playtest confirmed he saw bars he didn't recognize, so the gap is vocabulary, not visibility.
 
 ## Architecture
 
@@ -88,13 +86,12 @@ Your own words, in the input bar.
 ### UI
 
 **Trigger logic (post-bleed detection):**
-- Read the active PC's three ledger entries: `character|<name>|sanity`, `|notice`, `|vitality`.
-- If `magic_state.ledger` is absent for the active PC → render nothing (Sensitivities section does not appear at all; covers other genres + pre-magic worlds).
-- If all three bars have `current === null` OR `current === starting` → pre-bleed mode (cryptic line).
-- If any of the three has `current !== null` AND `current !== starting` → post-bleed mode (full text + bar HUD).
+- Look up the active PC's character bars via the existing helper `getCharacterBars(magicState, character.name)` from `@/types/magic`.
+- If `magicState == null` OR `getCharacterBars(...)` returns an empty array → render nothing (Sensitivities section does not appear; covers other genres + pre-magic worlds).
+- If all returned bars have `value === spec.starts_at_chargen` → pre-bleed mode (cryptic line).
+- If any returned bar has `value !== spec.starts_at_chargen` → post-bleed mode (expanded text).
 
-**Bar HUD:**
-Reuses the existing `GenericResourceBar` component from the Status tab — same visual treatment Sebastien already learns elsewhere. Three rows, sanity / notice / vitality.
+**No duplicate bar HUD.** `LedgerPanel` (already mounted below the tabs in `CharacterPanel`) is the canonical bar surface. The Sensitivities section is text only.
 
 **World gate:**
 Implicit. The render only fires if the active PC has `magic_state.ledger` entries — coyote_star is currently the only world that produces them. No genre-slug check needed in code; if another world later wires magic, this section starts appearing for it automatically. (Acceptable — once a world has magic, the player needs to know about it.)
@@ -117,10 +114,10 @@ Per CLAUDE.md "no abstractions beyond what the task requires" — coyote_star is
 ## Acceptance criteria
 
 1. **AC1 (chargen Reader hint):** Loading a fresh coyote_star save with a newly created PC (no narration yet → no bar movement) shows a `Sensitivities` heading with the pre-bleed copy on the Abilities tab.
-2. **AC2 (post-bleed unfold):** When any of the active PC's three bars (`sanity` / `notice` / `vitality`) has `current` set and not equal to `starting`, the Sensitivities section expands inline to show the post-bleed copy + the three-row bar HUD.
-3. **AC3 (other-genre absence):** Loading any non-magic save (e.g. mawdeep) shows the Abilities tab with NO Sensitivities heading at all.
-4. **AC4 (cost transparency):** The post-bleed bar HUD uses the same `GenericResourceBar` component as the Status tab, so the visual language is consistent across surfaces.
-5. **AC5 (no buttons):** No interactive elements in either pre- or post-bleed state. Static text and static bars only.
+2. **AC2 (post-bleed unfold):** When any of the active PC's character bars has `value !== spec.starts_at_chargen`, the Sensitivities section shows the post-bleed copy.
+3. **AC3 (other-genre absence):** Loading any non-magic save (e.g. mawdeep, where `magicState == null`) shows the Abilities tab with NO Sensitivities heading at all.
+4. **AC4 (no duplication):** No bar HUD on the Abilities tab — the existing `LedgerPanel` below the tabs remains the only bar surface.
+5. **AC5 (no buttons):** No interactive elements in either pre- or post-bleed state. Static text only.
 6. **AC6 (smoke test):** Next coyote_star playtest produces at least one entry in `magic_state.recent_workings` OR a Phase-5 confrontation event in the save's events table — measurable evidence the affordance landed.
 
 AC6 is the real success criterion; AC1–AC5 are mechanical wiring checks that confirm the surface ships correctly.
@@ -129,9 +126,9 @@ AC6 is the real success criterion; AC1–AC5 are mechanical wiring checks that c
 
 **Wiring tests (vitest, `sidequest-ui/src/__tests__/`):**
 
-- `sensitivities-pre-bleed-wiring.test.tsx` — given a Character with `magic_state.ledger` populated and all three bars at `starting`, render `CharacterPanel` and assert the Sensitivities heading + pre-bleed copy is in the DOM, and the bar HUD is NOT.
-- `sensitivities-post-bleed-wiring.test.tsx` — same setup but with `sanity.current = 0.95` (≠ starting `1.00`); assert the post-bleed copy is in the DOM, all three `GenericResourceBar`s are rendered, and the heading is present.
-- `sensitivities-absent-when-no-magic-state.test.tsx` — given a Character with no `magic_state.ledger` entry, assert NO Sensitivities heading appears anywhere on the Abilities tab.
+- `sensitivities-pre-bleed-wiring.test.tsx` — given a `magicState` with character bars all at `value === spec.starts_at_chargen`, render `CharacterPanel` on the Abilities tab and assert the Sensitivities heading + pre-bleed copy is in the DOM, and the post-bleed copy substring (e.g. "Something stirred") is NOT.
+- `sensitivities-post-bleed-wiring.test.tsx` — same setup but with one bar's `value` nudged off `starts_at_chargen`; assert the post-bleed copy is in the DOM (heading + "Something stirred" + cost-vocabulary line) and the pre-bleed line is NOT.
+- `sensitivities-absent-when-no-magic-state.test.tsx` — given `magicState == null` OR `getCharacterBars(...)` returns `[]`, assert NO Sensitivities heading appears on the Abilities tab.
 
 **Visual sanity:** Manual render in dev (just up → coyote_star solo → check Abilities tab pre- and post-first-narration).
 
