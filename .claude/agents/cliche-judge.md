@@ -97,6 +97,14 @@ Scan descriptive prose for cliche vocabulary:
 
 Every instance is a `fix` finding. Keith's audience reads past these phrases as empty signal.
 
+### Rig framework hooks (slice scope, 2026-04-29)
+
+These hooks come from the rig taxonomy (`docs/design/rig-taxonomy.md` §Cliché-Judge Hooks) and are activated piecemeal as their producing subsystems land. The rig taxonomy uses a YELLOW/RED/DEEP RED severity scale: in this rubric, **YELLOW maps to `fix`**, **RED maps to `fix` or `blocker` depending on whether the world ships worse vs not at all**, and **DEEP RED maps to `blocker`**.
+
+- **Hook 7 (YELLOW → `fix`)** — When narrator prose contains a chassis address-form (e.g., the chassis calls a character by name), the form must match the chassis's current `bond_tier_chassis` per the chassis's `voice.name_forms_by_bond_tier` mapping. Mismatch is suspicious — flag it. Source of truth: `snapshot.chassis_registry[chassis_id].bond_ledger`, joined with the chassis's `voice` block (Coyote Star, the Kestrel: bond_tier `trusted` → `{first_name}` form; bond_tier `familiar` → `Mr. {last_name}`; bond_tier `fused` → `{nickname}`; everything else → `Pilot`). Treat the resolved form from `sidequest.agents.subsystems.chassis_voice.resolve_chassis_name_form` as the canonical comparison target.
+
+  Other rig hooks (1–6, 8–15 from docs/design/rig-taxonomy.md §Cliché-Judge Hooks) ship with their producing subsystems and are NOT active in this slice. Do not flag against them yet — they require state fields (`damage_history`, `crew_awareness`, `prior_chassis_bonds`, etc.) that the slice has not authored.
+
 ## How to approach work
 
 1. **Read the sources manifest first.** Every specialist's task return has a manifest block. Extract the `sources` section for every named entity. If a specialist's return is missing a manifest, immediately emit a `blocker` finding: "{specialist} returned without manifest — cannot evaluate cliche-granularity." No manifest = automatic fail.

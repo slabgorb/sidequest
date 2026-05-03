@@ -832,6 +832,8 @@ The new outputs (`chassis_tier`, `subsystem_acquisition`, `chassis_lineage`, `ch
 
 ## Cliché-Judge Hooks
 
+**Slice activation status (2026-04-29):** Hook #7 active per Story 47-4 / `docs/superpowers/specs/2026-04-29-rig-mvp-coyote-reach-design.md`. Hooks #1–6 and #8–15 are NOT yet active; each ships with its producing subsystem (damage history, hardpoints, ancillary loss, crew awareness, etc.) per the rig MVP roadmap. The cliché-judge agent should only flag against Hook #7 in this slice; flagging against unactivated hooks would produce false positives because the underlying state fields are not yet authored.
+
 When the cliché-judge agent reviews rig-narration, it should check:
 
 1. Did the narration emit a `rig.maneuver` or other appropriate `rig.*` span?
