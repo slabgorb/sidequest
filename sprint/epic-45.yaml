@@ -544,10 +544,13 @@ stories:
       UI indicator for skipped-but-eligible vs requested-but-failed.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-02'
     repos: server
     workflow: wire-first
+    completed: '2026-05-02'
     type: bug
+    review_verdict: approved
   - id: 45-31
     title: "Daemon worker heartbeat + render-unavailable degradation (was 37-47)"
     description: |-
