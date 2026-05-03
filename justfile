@@ -30,6 +30,40 @@ server *flags:
             --factory --reload --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
         | tee "$log"
 
+# Production-style serve for Cloudflare Tunnel: build UI, mount it on FastAPI,
+# run without --reload. Pair with `cloudflared tunnel run sidequest`.
+# Daemon must be running separately (`just daemon`) for image renders.
+#
+# - SIDEQUEST_ASSET_BASE_URL defaults to https://cdn.slabgorb.com — Phase A R2
+#   sync is live, so genre_packs media is served directly from R2's CDN-fronted
+#   bucket. Override with SIDEQUEST_ASSET_BASE_URL=local for offline/local-only
+#   dev (serves from /genre and /renders mounts).
+# - --proxy-headers: trust X-Forwarded-* from cloudflared on 127.0.0.1, so
+#   request.url and client IP reflect the public hostname (https) instead of localhost.
+serve *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    log={{logdir}}/sidequest-server.log
+    : > "$log"
+    echo "▶ building UI…"
+    ( cd {{root}}/sidequest-ui && npm run build )
+    cd {{root}}/sidequest-server
+    SIDEQUEST_GENRE_PACKS={{content}} \
+    SIDEQUEST_RENDER_ENABLED=1 \
+    SIDEQUEST_ASSET_BASE_URL="${SIDEQUEST_ASSET_BASE_URL:-https://cdn.slabgorb.com}" \
+    SIDEQUEST_UI_DIST={{root}}/sidequest-ui/dist \
+        uv run uvicorn sidequest.server.app:create_app \
+            --factory --host 127.0.0.1 --port 8765 \
+            --proxy-headers --forwarded-allow-ips 127.0.0.1 \
+            {{flags}} 2>&1 \
+        | tee "$log"
+
+# Cloudflare Tunnel — exposes :8765 at https://sidequest.slabgorb.com.
+# Tunnel config lives at ~/.cloudflared/config.yml. Access policy gates the
+# hostname; only the playgroup email allowlist gets in.
+tunnel:
+    cloudflared tunnel run sidequest
+
 # React client (Vite) — port 5173
 client *flags:
     #!/usr/bin/env bash
