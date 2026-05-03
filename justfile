@@ -25,6 +25,7 @@ server *flags:
     cd {{root}}/sidequest-server
     SIDEQUEST_GENRE_PACKS={{content}} \
     SIDEQUEST_RENDER_ENABLED=1 \
+    SIDEQUEST_ASSET_BASE_URL="${SIDEQUEST_ASSET_BASE_URL:-https://cdn.slabgorb.com}" \
         uv run uvicorn sidequest.server.app:create_app \
             --factory --reload --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
         | tee "$log"
@@ -44,6 +45,9 @@ client *flags:
 _daemon-cmd *flags:
     #!/usr/bin/env bash
     set -euo pipefail
+    : "${R2_S3_ENDPOINT:?R2_S3_ENDPOINT must be set in shell}"
+    : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID must be set in shell}"
+    : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY must be set in shell}"
     cd {{root}}/sidequest-daemon
     SIDEQUEST_GENRE_PACKS={{content}} \
         exec uv run sidequest-renderer --warmup {{flags}}
@@ -64,6 +68,9 @@ daemon *flags:
 up:
     #!/usr/bin/env bash
     set -euo pipefail
+    : "${R2_S3_ENDPOINT:?R2_S3_ENDPOINT must be set in shell}"
+    : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID must be set in shell}"
+    : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY must be set in shell}"
     srv={{logdir}}/sidequest-server.log
     cli={{logdir}}/sidequest-client.log
     dmn={{logdir}}/sidequest-daemon.log
@@ -86,6 +93,7 @@ up:
     ( cd {{root}}/sidequest-server && \
         SIDEQUEST_GENRE_PACKS={{content}} \
         SIDEQUEST_RENDER_ENABLED=1 \
+        SIDEQUEST_ASSET_BASE_URL="${SIDEQUEST_ASSET_BASE_URL:-https://cdn.slabgorb.com}" \
         uv run uvicorn sidequest.server.app:create_app \
             --factory --reload --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
     echo $! > {{logdir}}/sidequest-server.pid
