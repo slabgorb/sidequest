@@ -1,5 +1,12 @@
 # OTEL Phase 2 — Emission Family Rollouts: Handoff
 
+> **STATUS (2026-05-03): SUPERSEDED.** The premise of this handoff — that ~26 SPAN_*
+> families had live OTEL spans waiting to be routed — was wrong. The ADR-082 Python
+> port carried over the *names* but not the emissions. The corrected scope lives in
+> `2026-04-25-otel-phase-2-port-audit-followup.md`. Read that doc first; treat this
+> one as historical context only. Future per-subsystem OTEL work should be filed as
+> individual stories, not from this list.
+
 > **Audience:** the next agent (you, future me, or a subagent) who picks up the
 > Phase 2 work deferred from the OTEL Dashboard Restoration plan. Self-contained:
 > read this and you can ship without re-reading the spec.
