@@ -144,3 +144,26 @@ multiplayer; the redundant call was removed before merge.
 
 Spec: `docs/superpowers/specs/2026-04-26-mp-cinematic-mode-wiring-design.md`.
 Plan: `docs/superpowers/plans/2026-04-26-mp-cinematic-mode-wiring.md`.
+
+## Amendment — Action Visibility Model (2026-05-03)
+
+**Trigger:** Playtest 2026-05-03 feedback. Coordination broke down because cinematic-mode's information-hiding default was too aggressive — players could not see what teammates were composing or what they had already submitted, so plans formed in isolation and conflicted on resolution.
+
+**Decision:** Action *input* visibility is the new default. All party members see each other's in-progress and post-submit action text in real time during cinematic-mode rounds. Information-hiding moves entirely into *narration output* — SECRET_NOTE payloads and per-player `visibility_tag` filtering, both of which already exist.
+
+**What is unchanged:**
+- The cinematic-mode action buffer.
+- The barrier and CAS-guarded dispatcher (single narrator dispatch per round).
+- `PLAYER_ACTION` semantics. The sealed-letter resolution mechanic (dogfight cross-product lookup in `sealed_letter.py`) is a different system overloading the same name; it is untouched.
+
+**Mechanism:** New `ACTION_REVEAL` message type carries `composing` / `submitted` updates from clients (debounced ~250ms) and `cleared` updates from the server (emitted at barrier-fire dispatch and on socket disconnect). Client-side a `usePeerReveals` hook owns the per-round peer reveal map; a `PeerRevealList` component renders the rows above `MultiplayerTurnBanner`.
+
+**OTEL coverage:** `action_reveal.composing`, `action_reveal.submitted`, `action_reveal.cleared`, and `action_reveal.dropped_rate_limit` watcher events emitted from the handler and cleared-trigger sites. Privacy: `text_length` only — never the action content. Player input is sensitive; length + cadence + count are sufficient for the GM-panel lie-detector.
+
+**Cross-references:**
+- Spec: `docs/superpowers/specs/2026-05-03-live-teammate-typing-design.md`
+- Plan: `docs/superpowers/plans/2026-05-03-live-teammate-typing.md`
+- Playtest feedback memory: `project_playtest_2026_05_03.md` (in user auto-memory)
+- ADR-051 (round counter authority for the `round` field on the wire payload)
+
+**Future:** If a scene ever genuinely needs hidden input (perception rewriter, traitor briefings, charmed players), introduce a per-scene flag then. Current playgroup play does not need it. Cinematic-mode round timeout is also out of scope until that timeout itself is implemented.
