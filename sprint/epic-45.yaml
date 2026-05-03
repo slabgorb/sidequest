@@ -829,3 +829,14 @@ stories:
     completed: '2026-04-30'
     branch: feat/45-39-z-image-base-worker-swap
     type: bug
+  - id: 45-40
+    title: Course overlay aesthetic alignment with Star Wars HUD palette
+    description: 'Bounded one-shot from architect handoff (.session/course-overlay-design/DEV_BRIEF.md). Aligns sidequest/orbital/course_render.py with the Star Wars A-New-Hope HUD palette restored in spec 2026-05-02-orbital-chart-visual-restoration-design.md (palette.BRASS / palette.RED on palette.BG, Orbitron + VT323 typography). Replaces hardcoded #d9a766 amber + plain monospace + chord-midpoint chip + boolean drop signal with: palette tokens emitted as CSS custom properties on the layer-course root, ringed reticle (outer dashed + inner solid + N/E/S/W ticks + dot), HUD chip anchored at the Bezier peak with opposite-bulge perpendicular offset, _format_dv bug fix, and 4-state _resolve_drop_reason enum (none_course | unknown_party | unknown_destination | root_party) wired through intent.py and telemetry/spans/course.py. Adds 11 new tests (15 total, 27 in the broader course-overlay surface). Behavior change: root-body party now drops with drop_reason=root_party instead of drawing arc from origin. Out-of-scope follow-up: client-side getBBox() chip resize JS for sidequest-ui (staged at .session/course-overlay-design/project/course_chip_resize.js).'
+    points: 2
+    priority: p2
+    status: done
+    started: '2026-05-03'
+    repos: server
+    workflow: trivial
+    completed: '2026-05-03'
+    type: chore
