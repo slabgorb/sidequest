@@ -433,12 +433,14 @@ stories:
       improvement; non-blocking for playgroup but the cost is trivial.
     points: 1
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-05-02'
     repos: ui
     workflow: trivial
+    completed: '2026-05-02'
     type: chore
     branch: feat/45-24-retry-button-aria-describedby
+    review_verdict: approved
   - id: 45-25
     title: "Replace 300ms setTimeout with effect-based readyState=OPEN wait (was 37-51)"
     description: |-
