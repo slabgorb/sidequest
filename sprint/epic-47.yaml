@@ -42,7 +42,7 @@ stories:
     description: 'Wire the_tea_brew confrontation per Phase C of docs/superpowers/plans/2026-04-29-rig-mvp-coyote-reach.md (Tasks 15-19). Magic Phase 5 (47-3) shipped 2026-05-02 and unblocked this work. Touches: sidequest-content/genre_packs/space_opera/worlds/coyote_star/confrontations.yaml (append the_tea_brew, intimate register, bond resource pool); sidequest-server magic confrontation outcome handler (bond growth + chassis_lineage_intimate output handlers); auto-fire hook on Galley entry with cooldown and bond_tier_min gates. Plan calls out that exact handler/hook locations need discovery — first step is grep magic Phase 5 surface and adapt task pseudocode.'
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-03'
     repos: server,content
     workflow: tdd
@@ -53,3 +53,6 @@ stories:
       - Cliché-judge hook flags name-form mismatch (chassis voice resolver from Phase A)
       - 'E2E wiring test: player enters Galley with eligible state -> confrontation auto-fires -> bond persisted to snapshot'
       - OTEL span emitted on confrontation fire and outcome resolution (per CLAUDE.md OTEL principle)
+    completed: '2026-05-03'
+    review_findings: "APPROVED on round 2. Round 1 wiring gap closed via narration_apply.py:952 process_room_entry call site + bare-room name resolution in process_room_entry. 30 47-4 tests pass. Two HIGH findings deferred to 47-5 (rig_tie_ins filter, bond_tier ValueError isolation) — both dormant under today's single-chassis no-save-rehydration conditions. Develop merge brought 8 unrelated test failures (RuntimeError PhaseTimings already finalized in turn_manager/opening_turn_bootstrap/localdm tests) — not 47-4 surface; develop-hygiene followup. Shipping: server feat/47-4-tea-brew-wiring (5 src + 4 tests + merge), content feat/47-4-tea-brew-wiring (1 yaml), orchestrator main (already pushed: cliche-judge rubric + rig-taxonomy slice activation)."
+    review_verdict: approved
