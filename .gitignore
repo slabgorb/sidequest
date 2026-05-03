@@ -39,6 +39,7 @@ sq-playtest-screenshots/
 .claude/scheduled_tasks.lock
 .pennyfarthing/config.local.yaml
 .pennyfarthing/*.local.*
+.pennyfarthing/personas/portraits
 .pennyfarthing/bell-queue.json
 .pennyfarthing/window-state.json
 .pennyfarthing/work/
