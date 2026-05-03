@@ -566,9 +566,11 @@ stories:
         (d) post-session worker state logging for diagnosis.
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-03'
     repos: server,daemon
     workflow: wire-first
+    completed: '2026-05-03'
     type: bug
   - id: 45-32
     title: Post-review cleanup for 45-2 (test docstrings, lint, vacuous assertion, framing)
