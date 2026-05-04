@@ -943,3 +943,40 @@ stories:
     repos: server
     workflow: trivial
     type: chore
+  - id: 45-47
+    title: ADR-066 §8 — narrator session crash recovery (reactive)
+    description: Wrap claude --resume narrator calls so context-overflow / session-expired / unknown CLI errors are non-fatal. Per ADR-066 §8 (2026-05-04 amendment). Root cause of the playtest 3 server crash at ~1h 45m. Errors must classify and route to a Full-tier rebuild + recap, never propagate as a server crash.
+    points: 3
+    priority: p1
+    status: done
+    started: '2026-05-04'
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - CLI context-overflow error from --resume is caught and routed to reset_narrator_session() + Full-tier retry with recap header (warm-reboot frame per ADR-066 §9)
+      - CLI session-not-found error from --resume routes to the same recovery path
+      - Unknown narrator CLI failure routes to recovery; if recovery also fails, emits narrator.unrecoverable OTEL event and returns a graceful in-fiction stall to the player
+      - Transient/network errors retry once on the same session before triggering rotation
+      - OTEL span narrator.session_rotated emitted on every recovery with reason, cumulative_tokens, turn_number, cli_error_signature, recap_chars, rebuild_latency_ms
+      - Full-tier prompt builder accepts an optional rebuild_header argument that splices SessionStore.generate_recap() output plus the warm-reboot frame from ADR-066 §9
+      - 'Integration test: simulate CLI failure mid-turn, verify the next turn succeeds via Full-tier rebuild and player sees no error'
+    completed: '2026-05-04'
+    type: bug
+    review_verdict: approved
+  - id: 45-48
+    title: ADR-066 §7/§9/§10 — proactive narrator session rotation watchdog
+    description: Track cumulative narrator session input tokens (sum of usage envelope per turn) and proactively call reset_narrator_session() before the CLI hits its context ceiling. Per ADR-066 §7 + §10 (2026-05-04 amendment). Depends on 45-47 to validate the rebuild path works first.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    depends_on: 45-47
+    acceptance_criteria:
+      - Orchestrator tracks _cumulative_session_tokens (input + cache_create + cache_read from per-turn usage envelope), resets to 0 in reset_narrator_session()
+      - Threshold check runs between turns; default 700_000 tokens, configurable via SIDEQUEST_NARRATOR_TOKEN_BUDGET env var
+      - When threshold crossed, orchestrator calls reset_narrator_session() before sending next prompt; next turn naturally re-establishes via Full tier with recap header
+      - OTEL span narrator.session_rotated emitted with reason=token_threshold, cumulative_tokens, turn_number, threshold, recap_chars, rebuild_latency_ms
+      - Rotation is observable from the GM panel (Sebastien's mechanical-visibility lane)
+      - 'Integration test: simulate cumulative token count crossing threshold, verify rotation fires between turns and the rebuild turn carries the recap'
+      - 'Integration test: env var override of threshold takes effect without code change'
