@@ -496,10 +496,12 @@ stories:
       after 45-9 (total_beats_fired) lands.
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-04'
     repos: server
     workflow: wire-first
     type: chore
+    branch: feat/45-27-trope-progression-cooldown
   - id: 45-28
     title: "Markov namegen min-pool guard + thin-corpus audit (was 37-45)"
     description: |-
