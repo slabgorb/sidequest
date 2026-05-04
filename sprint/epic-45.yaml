@@ -496,12 +496,15 @@ stories:
       after 45-9 (total_beats_fired) lands.
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-04'
     repos: server
     workflow: wire-first
+    completed: '2026-05-04'
     type: chore
     branch: feat/45-27-trope-progression-cooldown
+    review_findings: Lint+format failures on 3 new test files (CI-blocking). 4 medium-severity engine concerns flagged as non-blocking follow-ups.
+    review_verdict: approved
   - id: 45-28
     title: "Markov namegen min-pool guard + thin-corpus audit (was 37-45)"
     description: |-
