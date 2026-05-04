@@ -69,10 +69,12 @@ stories:
     title: Tea ritual auto-fire — three-layer fix (room matcher, bond rebind, opening hook, OTEL)
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-05-04'
     repos: server
     workflow: tdd
     type: bug
+    branch: feat/47-6-tea-ritual-three-layer-fix
   - id: 47-7
     title: Magic state bars initialized at world-load + uninit warning span
     points: 2
