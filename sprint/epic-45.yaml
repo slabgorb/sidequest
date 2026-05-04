@@ -840,3 +840,13 @@ stories:
     workflow: trivial
     completed: '2026-05-03'
     type: chore
+  - id: 45-41
+    title: OTEL exporter not flowing — Jaeger registered but receives 0 spans (ADR-090 partial)
+    points: 3
+    priority: p1
+    status: in_progress
+    repos: server
+    workflow: tdd
+    type: bug
+    branch: feat/45-41-otel-exporter-flow-fix
+    started: '2026-05-03'
