@@ -873,6 +873,20 @@ stories:
     type: chore
     branch: feat/45-41-confrontation-calibration-v1
     note: 'Carried out in subrepo branches/PRs as 45-41 before tracker collision detected — ID renumbered to 45-42 at finish-time. Subrepo artifacts (server PR #190, content PR #177) keep the 45-41 label.'
+  - id: 45-43
+    title: Orrery v2 visual restoration — match design source
+    description: 'Match server-side orrery base render to the Coyote Reach Orrery v2 design source (renamed Coyote Star post-PR #171). Spec at docs/superpowers/specs/2026-05-04-orrery-v2-visual-restoration.md — Architect-drafted, UX-amended, both signed off 2026-05-04. Closes three visible playtest bugs: (1) tbrokendrift label corruption from stacked engraved_label annotations, (2) inner-cluster collision (gravel_orchard/far_landing/dead_man_l5/deep_root_world/new_claim labels stacking), (3) inconsistent label register (lowercase italic vs caps). Adds bearing rose, Coyote-as-reticle, chalk register for outer system, moons-at-system-scope, register field on BodyDef. Touches sidequest-server (render.py, models.py, palette.py) + sidequest-content (coyote_star/orbits.yaml, chart.yaml). Course overlay aesthetic alignment (45-40, commit bd1041c) is the predecessor — already shipped.'
+    points: 5
+    priority: p2
+    status: done
+    started: '2026-05-04'
+    repos: server,content
+    workflow: tdd
+    completed: '2026-05-04'
+    type: feature
+    branch: feat/45-42-orrery-v2-visual-restoration
+    review_verdict: approved
+    note: 'Filed and built in subrepo branches/PRs as 45-42 before tracker collision detected — ID renumbered to 45-43 at finish-time after origin/main showed 45-42 already taken by confrontation_calibration_v1 (which was itself renumbered from 45-41). Subrepo artifacts (server PR #192, content PR #179, branch feat/45-42-orrery-v2-visual-restoration) keep the 45-42 label.'
   - id: 45-45
     title: Wave 1 — snapshot split-brain dedup & rename (S1+S4+S5)
     description: |-
