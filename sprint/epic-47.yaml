@@ -65,3 +65,27 @@ stories:
     repos: server,ui,content
     workflow: trivial
     type: chore
+  - id: 47-6
+    title: Tea ritual auto-fire — three-layer fix (room matcher, bond rebind, opening hook, OTEL)
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 47-7
+    title: Magic state bars initialized at world-load + uninit warning span
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 47-8
+    title: Coyote Object salvage hooks — design (ADR + scenario seed)
+    points: 3
+    priority: p3
+    status: backlog
+    repos: server,content
+    workflow: bdd
+    type: chore

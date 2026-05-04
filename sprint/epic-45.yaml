@@ -1027,3 +1027,11 @@ stories:
     workflow: trivial
     depends_on: 45-47
     type: chore
+  - id: 45-53
+    title: Recurring NPC presence — narrator emits npcs_met every turn they're onstage
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
