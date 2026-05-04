@@ -34,23 +34,44 @@ description: |
     - docs/superpowers/specs/2026-04-19-python-port-execution-strategy-design.md
     - docs/plans/phase-3-combat-port.md
 priority: p0
-status: backlog
+status: done
+completed: '2026-04-24'
+reconciliation_note: |
+  Reconciled 2026-05-04. The original Epic 42 ran cleanly 2026-04-21
+  (PRs #17/#18/#19 for 42-1/-2/-3) and was archived 2026-04-24 via
+  orchestrator commit 2ab974e ("finish 42-4 + archive Epic 42") which
+  closed 42-4 via Option B (tracker-hygiene path, no sidequest-server
+  PR merged — Dev/TEA/Architect/Reviewer all approved on the branch).
+  The epic shard was then re-filed from scratch later that day via PR
+  #136 (commit 3e19a77), which reset every story to `backlog` except
+  42-3. This reconciliation restores the truth on disk: all four
+  stories shipped, 42-4 helpers (strip_combat_brackets,
+  find_confrontation_def, combat.* spans, in_combat) live on develop
+  via the original feature branch's scaffold + a dozen subsequent
+  Sprint 45/47 fix PRs that consumed them in production code paths.
+  AC8 (Keith's human playtest gate) was deferred at archive time and
+  has been functionally satisfied by the cumulative Sprint 45/47
+  playtests. The orphan draft PR #121 was closed without merge.
 repos: server
 stories:
   - id: 42-1
     title: Port StructuredEncounter + EncounterMetric + SecondaryStats + EncounterActor + EncounterPhase types; formalise Combatant as a Python Protocol; promote GameSnapshot.encounter from dict to typed
     points: 5
     priority: p0
-    status: backlog
+    status: done
+    completed: '2026-04-21'
     repos: server
     workflow: tdd
+    realizing_pr: 'sidequest-server#17'
   - id: 42-2
     title: Port ResourcePool + ResourceThreshold + ResourcePatch(Op/Result/Error) + mint_threshold_lore; promote GameSnapshot.resources from pass-through list to typed list[ResourcePool] (recommended pull-forward from Phase 4)
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    completed: '2026-04-21'
     repos: server
     workflow: tdd
+    realizing_pr: 'sidequest-server#18'
     review_findings: '7 blocking: silent-fallback (No Silent Fallbacks hard-gate), wiring-test gap, stale P4-deferred comment, docstring/mutator asymmetry, ThresholdAt Protocol type lie, detect_crossings export gap, OTEL deferral docs missing on 4 resource-pool methods'
     review_verdict: approved
   - id: 42-3
@@ -63,12 +84,17 @@ stories:
     repos: server
     workflow: tdd
     completed: '2026-04-21'
+    realizing_pr: 'sidequest-server#19'
     review_findings: '13 confirmed findings (6 HIGH severity per project rules: 2 silent-fallback asserts, 1 stringly-typed TurnClassification.kind, 1 _EventSpike not frozen, 1 vacuous is-not-None on enum members, 1 silent pytest.skip on missing Rust source); 6 MEDIUM (doc inaccuracies, test-file ruff missed by TEA scope, private-API coupling in tests, Any annotations); 1 OTEL span downgraded (Architect deferred to 42-4). All addressable in single green-rework pass — no test redesign needed.'
     review_verdict: approved
   - id: 42-4
     title: Combat dispatch + OTEL catalog + narrator wiring — in_combat helper, find_confrontation_def, encounter resolution from tropes, strip_combat_brackets, combat.* span names byte-identical to Rust, e2e playtest gate
     points: 8
     priority: p0
-    status: backlog
+    status: done
+    completed: '2026-04-24'
     repos: server
     workflow: tdd
+    closure_path: 'Option B (tracker-hygiene). See orchestrator commit 2ab974e. Branch feat/42-4-combat-dispatch-otel-narrator-wiring carried RED+GREEN+verify+review-approved work; helpers landed on develop via pre-port scaffold (Story 3.4) + Sprint 45/47 fix PRs. Draft PR #121 closed without merge 2026-05-04.'
+    review_verdict: approved
+    ac8_status: 'Deferred at archive time; satisfied by cumulative Sprint 45 (Playtest 2026-04-30) and Sprint 47 (Playtest 2026-05-02/-03) confrontation-engine playtests.'
