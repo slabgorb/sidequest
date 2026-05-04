@@ -950,3 +950,30 @@ stories:
     repos: server
     workflow: trivial
     type: chore
+  - id: 45-47
+    title: Snapshot split-brain Wave 2A — NPC pool/state split (S2)
+    description: "Wave 2A of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S2 dimension). Wave 1 (45-45) collapsed S1+S4+S5; this wave separates the NPC pool (catalog of who exists) from per-NPC runtime state (what each NPC is doing right now). Today both live tangled in `npc_registry` and `npcs` snapshot fields. Cut-points: (1) introduce a clean dual-field shape — pool/catalog vs state — with migration; (2) per-NPC runtime state survives save/load; (3) per-player projection filter in ADR-037 still works against the new shape; (4) deprecation alias drop chore for any renamed surface (mirroring Wave 1's __getattr__ pattern); (5) OTEL spans on the migration step. Sibling stories: 45-48 (Wave 2B). Plan TBD — write before pulling into a sprint. Until plan exists, leave in backlog as a placeholder for the design's deferred wave."
+    points: 8
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: refactor
+  - id: 45-48
+    title: Snapshot split-brain Wave 2B — location derivation (S3)
+    description: "Wave 2B of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S3 dimension). Today there are two ways to ask 'where is character X' — the snapshot's `location` field on the character record, and the separate `character_locations` map keyed by player_id. Either can drift from the other. Cut-point: pick one as authoritative (the design proposes deriving from `character_locations`) and remove the other, with a migration that backfills the survivor and a deprecation alias for the removed field. Save/load roundtrip must preserve location across the migration; per-player projections must still work. Sibling story: 45-47 (Wave 2A). Plan TBD."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 45-49
+    title: R2 media migration Task 17 — LFS strip + token revoke on sidequest-content
+    description: "Final task from docs/superpowers/plans/2026-05-03-cloudflare-r2-media-migration.md (Task 17, plus Tasks 18-19 cleanup). Tasks 1-16 shipped: server resolver, daemon r2_writer, image-pipeline + spans, sync/verify scripts, cdn.slabgorb.com cutover. What remains is destructive — held pending Keith's go-ahead because it rewrites sidequest-content history: (a) `git lfs migrate export` to strip large media blobs from history (Task 17), (b) revoke the old upload token (Task 18), (c) shepherd any in-flight content PRs across the rewritten base (Task 19). Risk: rewrites public branches; coordinate with anyone who has open content branches. Cut-points: (1) sidequest-content `du -sh .git` shrinks from current GB-scale to <100MB; (2) clone time drops; (3) all clones on Keith's machines + CI re-fetch from new history; (4) old token shows revoked in Cloudflare dashboard. p3 because not blocking — the storage cost and clone time are nuisances, not outages. ALL ACTION HELD UNTIL KEITH SAYS GO."
+    points: 2
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore
