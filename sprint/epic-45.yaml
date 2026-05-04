@@ -638,10 +638,14 @@ stories:
         even when fallback will populate. Minor wording fix.
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-04'
     repos: server
     workflow: tdd
+    completed: '2026-05-04'
     type: bug
+    branch: feat/45-33-sealed-letter-bypass-test
+    review_verdict: approved
   - id: 45-34
     title: ADR-051 amendment + architecture.md update for 45-11 lockstep collapse
     description: |-
@@ -914,7 +918,6 @@ stories:
     priority: p2
     status: done
     started: '2026-05-04'
-    completed: '2026-05-04'
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -926,6 +929,7 @@ stories:
       - 'OTEL: snapshot.canonicalize span fires once per migrated load with per-field attributes (s1_world_confrontations_merged:int, s4_encounter_tag_renamed:bool, s5_pending_queues_dropped:int) and is silent on canonical input.'
       - All three subsystems retain a wiring test that verifies end-to-end integration (load legacy save → exercise system → confirm canonical state).
       - just check-all passes (server lint+test, client lint+test, daemon lint).
+    completed: '2026-05-04'
     type: refactor
   - id: 45-46
     title: Wave 1 cleanup — drop EncounterTag deprecation alias
