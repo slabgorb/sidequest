@@ -118,7 +118,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-027: Reactive State Messaging](027-reactive-state-messaging.md) | ✓ accepted | live |
 | [ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay](075-3d-dice-rendering.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-079: Genre Theme System Unification](079-genre-theme-unification.md) | ✓ accepted | live |
-| [ADR-094: Orrery Label Placement — Three-Strategy Taxonomy](094-orrery-label-placement-strategies.md) | ✓ accepted | deferred |
+| [ADR-094: Orrery Label Placement — Three-Strategy Taxonomy](094-orrery-label-placement-strategies.md) | ✓ accepted | live |
 
 ## Multiplayer
 
@@ -260,7 +260,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 |-----|------|---------|
 | [ADR-065: Protocol Message Decomposition — Split message.rs by Domain](065-protocol-message-decomposition.md) | deferred | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | deferred | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-094: Orrery Label Placement — Three-Strategy Taxonomy](094-orrery-label-placement-strategies.md) | deferred | — |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |

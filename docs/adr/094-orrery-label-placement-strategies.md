@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: [86, 88, 90]
 tags: [frontend-protocol, observability]
-implementation-status: deferred
+implementation-status: live
 implementation-pointer: null
 ---
 
@@ -101,7 +101,7 @@ with explicit selection rules and OTEL attribution. The third strategy —
 |---|---|---|---|
 | `textpath` | the body glyph itself | curved along an explicit `curve_along` SVG path | annotation opts in via `kind: engraved_label` + `curve_along: …` AND path circumference ≥ text-width × 1.2 |
 | `radial` | the body glyph itself | along the bearing-from-center ray, offset by `body_radial + glyph_radius + padding + tier·offset` | body has a `label:` field AND the resolved label fits the available arc length AND parent.type ≠ companion |
-| `callout` | a small **anchor mark** at the body position | a **label block** placed in a margin gutter zone, joined by an orthogonal **leader line** | fallback when 1 and 2 don't apply, OR forced when parent.type == companion (first-class-destination rule) |
+| `callout` | a small **anchor mark** at the body position | a **label block** placed in a margin gutter zone, joined by an orthogonal **leader line** | fallback when 1 and 2 don't apply, OR forced when body is rendered inside a moon band with a `label:` (companion-children OR habitat-moons) |
 
 The taxonomy is orthogonal to the existing **register** axis (`engraved`
 / `chalk` / `prose` per ADR-026's port-era predecessor and `models.py:44`).
@@ -112,9 +112,12 @@ A label uses one *strategy* and one *register*; the register supplies font
 
 Per body, in this order — first match wins:
 
-1. **Forced callout** — if `body.parent.type == "companion"`, strategy =
-   `callout`. (No exceptions. The first-class-destination rule is what
-   makes the chart navigable for habitat groups.)
+1. **Forced moon-band callout** — if `body` is rendered inside a moon
+   band AND has a non-empty `label:`, strategy = `callout`. (No
+   exceptions. Covers companion-children — the primary failure mode this
+   ADR was shaped around — and any other parent type whose children
+   render in a moon band, e.g., habitats with named moons. Structural
+   reason: sub-pixel render position has no radial space.)
 2. **textpath** — if `body` is the target of an `engraved_label`
    annotation with `curve_along` AND that annotation's resolved path
    circumference ≥ text-width × 1.2, strategy = `textpath`.
@@ -213,6 +216,20 @@ Use cases: forcing a callout where radial would technically fit but the
 chart designer wants emphasis (e.g., a campaign-pivotal location); or
 overriding the auto-rule for a specific body.
 
+### Implementation note — generalization from forced_companion
+
+The accepted version of this ADR named the structural rule
+`forced_companion` (`parent.type == "companion"`). The implementation
+plan (`docs/superpowers/specs/2026-05-04-adr-094-orrery-callouts-implementation-design.md`)
+surfaced that Story Y also adds labels to moons of habitat-typed parents
+(e.g. `tethys_watch` under `far_landing`), which the narrow rule did not
+cover. The shipped implementation generalizes the rule to
+`forced_moon_band` — any moon-band child with a non-empty label — and
+renames `selection_reason=forced_companion` to
+`selection_reason=forced_moon_band`. Companion-children remain the
+canonical case; the rename keeps the OTEL enum truthful to the
+underlying structural cause.
+
 ## Observability — the lie-detector wiring
 
 Per CLAUDE.md OTEL Observability Principle, every label-strategy
@@ -229,7 +246,7 @@ Emitted once per labeled body, per render.
 | `parent_id` | string \| null | Parent body slug, or null for root. |
 | `parent_type` | string \| null | Parent's type (drives forced-callout rule). |
 | `strategy_chosen` | enum: `textpath` \| `radial` \| `callout` | The selected strategy. |
-| `selection_reason` | enum: `forced_companion` \| `textpath_fits` \| `radial_fits` \| `fallback_arc_too_short` \| `fallback_tier_capped` \| `fallback_textpath_too_short` \| `explicit_callout_label` | Why this strategy won. |
+| `selection_reason` | enum: `forced_moon_band` \| `textpath_fits` \| `radial_fits` \| `fallback_arc_too_short` \| `fallback_tier_capped` \| `fallback_textpath_too_short` \| `explicit_callout_label` | Why this strategy won. |
 | `tier` | int (0..LABEL_TIER_MAX, only for `radial`) | The peer-collision tier. |
 | `arc_available_px` | float (only for `radial` evaluations) | Arc-length to nearest neighbor. |
 | `text_width_px` | float | Estimated label width in selected register font. |
