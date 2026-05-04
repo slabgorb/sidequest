@@ -599,10 +599,13 @@ stories:
       Estimated effort: <30 minutes. All mechanical, zero behavior changes. Production code from 45-2 is correct and approved as-is.
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-04'
     repos: server
     workflow: trivial
+    completed: '2026-05-04'
     type: chore
+    review_verdict: approved
   - id: 45-33
     title: Sealed-letter bypass test + empty-fallback intent for 45-18
     description: |-
