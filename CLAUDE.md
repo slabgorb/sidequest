@@ -285,8 +285,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Narrator Architecture (073, 076)**
 - 073 Local Fine-Tuned Model Architecture · 076 Narration Protocol Collapse Post-TTS Removal
 
-**Genre Mechanics (031, 033)**
-- 031 Game Watcher — Semantic Telemetry for AI Agent Observability · 033 Genre Mechanics Engine — Confrontations & Resource Pools *(partial)*
+**Genre Mechanics (031, 033, 093)**
+- 031 Game Watcher — Semantic Telemetry for AI Agent Observability · 033 Genre Mechanics Engine — Confrontations & Resource Pools *(partial)* · 093 Confrontation Difficulty Calibration v1
 
 **Project Lifecycle / Meta (082, 085, 087)**
 - **082 Port `sidequest-api` from Rust back to Python** · **085 Tracker hygiene during the Rust→Python port — handling port-drift** · 087 Post-Port Subsystem Restoration Plan

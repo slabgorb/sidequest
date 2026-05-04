@@ -217,6 +217,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-031: Game Watcher — Semantic Telemetry for AI Agent Observability](031-game-watcher-semantic-telemetry.md) | ✓ accepted | live |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-093: Confrontation Difficulty Calibration v1](093-confrontation-difficulty-calibration.md) | ✓ accepted | live |
 
 ## Project Lifecycle / Meta
 
