@@ -955,10 +955,13 @@ stories:
     description: "Wave 2A of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S2 dimension). Wave 1 (45-45) collapsed S1+S4+S5; this wave separates the NPC pool (catalog of who exists) from per-NPC runtime state (what each NPC is doing right now). Today both live tangled in `npc_registry` and `npcs` snapshot fields. Cut-points: (1) introduce a clean dual-field shape — pool/catalog vs state — with migration; (2) per-NPC runtime state survives save/load; (3) per-player projection filter in ADR-037 still works against the new shape; (4) deprecation alias drop chore for any renamed surface (mirroring Wave 1's __getattr__ pattern); (5) OTEL spans on the migration step. Sibling stories: 45-48 (Wave 2B). Plan TBD — write before pulling into a sprint. Until plan exists, leave in backlog as a placeholder for the design's deferred wave."
     points: 8
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-04'
     repos: server,content
     workflow: tdd
+    completed: '2026-05-04'
     type: refactor
+    review_verdict: approved
   - id: 45-48
     title: Snapshot split-brain Wave 2B — location derivation (S3)
     description: "Wave 2B of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S3 dimension). Today there are two ways to ask 'where is character X' — the snapshot's `location` field on the character record, and the separate `character_locations` map keyed by player_id. Either can drift from the other. Cut-point: pick one as authoritative (the design proposes deriving from `character_locations`) and remove the other, with a migration that backfills the survivor and a deprecation alias for the removed field. Save/load roundtrip must preserve location across the migration; per-player projections must still work. Sibling story: 45-47 (Wave 2A). Plan TBD."
@@ -1014,3 +1017,13 @@ stories:
       - Rotation is observable from the GM panel (Sebastien's mechanical-visibility lane)
       - 'Integration test: simulate cumulative token count crossing threshold, verify rotation fires between turns and the rebuild turn carries the recap'
       - 'Integration test: env var override of threshold takes effect without code change'
+  - id: 45-52
+    title: Wave 2A cleanup — drop NpcRegistryEntry + test repoints + observability counters
+    description: "Cleanup follow-up to 45-47 (Wave 2A NPC pool/state split). Drops the deprecated NpcRegistryEntry class and GameSnapshot.npc_registry field; repoints 9 test files (test_npc_wiring, test_orchestrator, test_npc_agency, conftest, test_chargen_persist_and_play, test_encounter_actors_all_combatants, test_encounter_lifecycle, test_party_peer_identity, test_npc_registry_combat_stats); refactors dormant npc_agency.py subsystem signature; renames SPAN_NPC_REGISTRY_HP_SET → SPAN_NPC_EDGE_PUBLISHED; adds malformed_npcs_skipped + nameless_entries_dropped + location_available OTEL attributes per Reviewer's silent-failure findings; adds dedicated wiring test; doc updates. Originally filed as 45-50 before OQ-1/OQ-2 sync collision (the 45-50 slot was already taken by ADR-066 §8 narrator session crash recovery)."
+    points: 5
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    depends_on: 45-47
+    type: chore
