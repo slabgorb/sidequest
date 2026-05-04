@@ -852,3 +852,24 @@ stories:
     type: bug
     branch: feat/45-41-otel-exporter-flow-fix
     review_verdict: approved
+  - id: 45-42
+    title: Confrontation difficulty calibration v1 (ADR-093)
+    description: 'Implements the calibration prescribed by ADR-093 (docs/adr/093-confrontation-difficulty-calibration.md). Confrontations currently feel grindy because parity opponent stats (12 → mod +1 vs PC avg +1), a wide tie band (±2, ~50% inert ties), and high thresholds (10) produce ~20–25 rolls to resolution. Three numeric levers move: (1) opponent_default_stats 12 → 10 in every shipped genre pack (sidequest-content/genre_packs/*/rules.yaml — caverns_and_claudes, elemental_harmony, mutant_wasteland, space_opera, victoria), (2) tie band ±2 → ±1 in sidequest-server/sidequest/game/opposed_check.py (constants near :52–55), (3) confrontation thresholds 10 → 7 for combat and chase confrontation_types only (negotiation already at 7; sealed_letter dogfight/ship_combat at 30 untouched). Add a Monte-Carlo distribution test that simulates 10k opposed_check rolls and asserts the calibrated tier distribution lands within ±5% of: ~45% Success/CritSuccess, ~33% Tie, ~22% Fail/CritFail. Existing OTEL spans (encounter.opposed_roll_resolved, encounter.beat_applied, encounter.metric_advance, encounter.resolved) are sufficient — no telemetry schema change.'
+    points: 3
+    priority: p2
+    status: done
+    started: '2026-05-04'
+    repos: server,content
+    workflow: tdd
+    acceptance_criteria:
+      - 'Every genre pack rules.yaml has opponent_default_stats values changed from 12 to 10 (caverns_and_claudes, elemental_harmony, mutant_wasteland, space_opera, victoria — verify via grep that no value 12 remains in opponent_default_stats blocks).'
+      - 'Tie band constants in sidequest-server/sidequest/game/opposed_check.py narrowed from ±2 to ±1 (shift ≥ +2 → Success, −1 ≤ shift ≤ +1 → Tie, shift ≤ −2 → Fail; CritSuccess ≥ +10 and CritFail ≤ −10 unchanged).'
+      - 'Every confrontation of category combat or chase across all genre packs has player_metric.threshold and opponent_metric.threshold lowered from 10 to 7. Negotiation confrontations remain at 7. Dogfight and ship_combat (sealed_letter mode) remain at 30.'
+      - 'New Monte-Carlo distribution test in sidequest-server/tests/ runs 10,000 simulated opposed_checks at the calibrated parameters (player +1, opponent +0, tie band ±1) and asserts the resulting tier distribution is within ±5 percentage points of the ADR-093 expected distribution — 45% Success-or-better, 33% Tie, 22% Fail-or-worse.'
+      - 'Existing opposed_check unit tests still pass after the band narrowing — any test that hardcodes shift = ±2 → Tie has been updated to reflect the new bands and the change is documented in the deviation log.'
+      - 'just check-all passes (server-check + client-lint + client-test + daemon-lint).'
+      - 'OTEL span surface unchanged — encounter.opposed_roll_resolved, encounter.beat_applied, encounter.metric_advance, encounter.resolved still emit with the same attribute schema (verified by existing telemetry tests).'
+    completed: '2026-05-04'
+    type: chore
+    branch: feat/45-41-confrontation-calibration-v1
+    note: 'Carried out in subrepo branches/PRs as 45-41 before tracker collision detected — ID renumbered to 45-42 at finish-time. Subrepo artifacts (server PR #190, content PR #177) keep the 45-41 label.'
