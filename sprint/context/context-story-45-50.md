@@ -1,6 +1,8 @@
-# Context: Story 45-47 — ADR-066 §8 Narrator Session Crash Recovery (Reactive)
+# Context: Story 45-50 — ADR-066 §8 Narrator Session Crash Recovery (Reactive)
 
-**Status:** in setup phase
+> **Renumber note:** Originally 45-47. Renumbered to 45-50 at finish time (OQ-1/OQ-2 ID collision). Sidequest-server PR #200 keeps the old ID in its title/commits.
+
+**Status:** done (archived)
 **Last updated:** 2026-05-04
 
 ## Primary Specification Source

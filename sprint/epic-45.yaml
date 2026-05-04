@@ -532,10 +532,14 @@ stories:
       sessions; scope attributes per call or clear on session boundary.
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-04'
     repos: daemon
     workflow: trivial
+    completed: '2026-05-04'
     type: bug
+    branch: feat/45-29-daemon-span-context-art-style-scoping
+    review_verdict: approved
   - id: 45-30
     title: "Render trigger policy contract + OTEL render.trigger reasons (was 37-46)"
     description: |-
@@ -595,10 +599,13 @@ stories:
       Estimated effort: <30 minutes. All mechanical, zero behavior changes. Production code from 45-2 is correct and approved as-is.
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-04'
     repos: server
     workflow: trivial
+    completed: '2026-05-04'
     type: chore
+    review_verdict: approved
   - id: 45-33
     title: Sealed-letter bypass test + empty-fallback intent for 45-18
     description: |-
@@ -944,8 +951,35 @@ stories:
     workflow: trivial
     type: chore
   - id: 45-47
+    title: Snapshot split-brain Wave 2A — NPC pool/state split (S2)
+    description: "Wave 2A of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S2 dimension). Wave 1 (45-45) collapsed S1+S4+S5; this wave separates the NPC pool (catalog of who exists) from per-NPC runtime state (what each NPC is doing right now). Today both live tangled in `npc_registry` and `npcs` snapshot fields. Cut-points: (1) introduce a clean dual-field shape — pool/catalog vs state — with migration; (2) per-NPC runtime state survives save/load; (3) per-player projection filter in ADR-037 still works against the new shape; (4) deprecation alias drop chore for any renamed surface (mirroring Wave 1's __getattr__ pattern); (5) OTEL spans on the migration step. Sibling stories: 45-48 (Wave 2B). Plan TBD — write before pulling into a sprint. Until plan exists, leave in backlog as a placeholder for the design's deferred wave."
+    points: 8
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: refactor
+  - id: 45-48
+    title: Snapshot split-brain Wave 2B — location derivation (S3)
+    description: "Wave 2B of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S3 dimension). Today there are two ways to ask 'where is character X' — the snapshot's `location` field on the character record, and the separate `character_locations` map keyed by player_id. Either can drift from the other. Cut-point: pick one as authoritative (the design proposes deriving from `character_locations`) and remove the other, with a migration that backfills the survivor and a deprecation alias for the removed field. Save/load roundtrip must preserve location across the migration; per-player projections must still work. Sibling story: 45-47 (Wave 2A). Plan TBD."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 45-49
+    title: R2 media migration Task 17 — LFS strip + token revoke on sidequest-content
+    description: "Final task from docs/superpowers/plans/2026-05-03-cloudflare-r2-media-migration.md (Task 17, plus Tasks 18-19 cleanup). Tasks 1-16 shipped: server resolver, daemon r2_writer, image-pipeline + spans, sync/verify scripts, cdn.slabgorb.com cutover. What remains is destructive — held pending Keith's go-ahead because it rewrites sidequest-content history: (a) `git lfs migrate export` to strip large media blobs from history (Task 17), (b) revoke the old upload token (Task 18), (c) shepherd any in-flight content PRs across the rewritten base (Task 19). Risk: rewrites public branches; coordinate with anyone who has open content branches. Cut-points: (1) sidequest-content `du -sh .git` shrinks from current GB-scale to <100MB; (2) clone time drops; (3) all clones on Keith's machines + CI re-fetch from new history; (4) old token shows revoked in Cloudflare dashboard. p3 because not blocking — the storage cost and clone time are nuisances, not outages. ALL ACTION HELD UNTIL KEITH SAYS GO."
+    points: 2
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore
+  - id: 45-50
     title: ADR-066 §8 — narrator session crash recovery (reactive)
-    description: Wrap claude --resume narrator calls so context-overflow / session-expired / unknown CLI errors are non-fatal. Per ADR-066 §8 (2026-05-04 amendment). Root cause of the playtest 3 server crash at ~1h 45m. Errors must classify and route to a Full-tier rebuild + recap, never propagate as a server crash.
+    description: "Wrap claude --resume narrator calls so context-overflow / session-expired / unknown CLI errors are non-fatal. Per ADR-066 §8 (2026-05-04 amendment). Root cause of the Playtest 3 server crash at ~1h 45m. Errors must classify and route to a Full-tier rebuild + recap, never propagate as a server crash. NOTE: originally numbered 45-47 — the sidequest-server PR (#200) was created and merged under that ID before an OQ-1/OQ-2 sync collision required renumbering to 45-50. PR title and commit messages on sidequest-server still reference '45-47' for historical reasons; this entry is the canonical sprint record."
     points: 3
     priority: p1
     status: done
@@ -963,15 +997,15 @@ stories:
     completed: '2026-05-04'
     type: bug
     review_verdict: approved
-  - id: 45-48
+  - id: 45-51
     title: ADR-066 §7/§9/§10 — proactive narrator session rotation watchdog
-    description: Track cumulative narrator session input tokens (sum of usage envelope per turn) and proactively call reset_narrator_session() before the CLI hits its context ceiling. Per ADR-066 §7 + §10 (2026-05-04 amendment). Depends on 45-47 to validate the rebuild path works first.
+    description: "Track cumulative narrator session input tokens (sum of usage envelope per turn) and proactively call reset_narrator_session() before the CLI hits its context ceiling. Per ADR-066 §7 + §10 (2026-05-04 amendment). Depends on 45-50 (originally 45-47, renumbered after OQ-1/OQ-2 collision) to validate the rebuild path works first."
     points: 5
     priority: p2
     status: backlog
     repos: server
     workflow: tdd
-    depends_on: 45-47
+    depends_on: 45-50
     acceptance_criteria:
       - Orchestrator tracks _cumulative_session_tokens (input + cache_create + cache_read from per-turn usage envelope), resets to 0 in reset_narrator_session()
       - Threshold check runs between turns; default 700_000 tokens, configurable via SIDEQUEST_NARRATOR_TOKEN_BUDGET env var

@@ -1,15 +1,18 @@
 ---
-story_id: "45-47"
+story_id: "45-50"
 jira_key: null
 epic: "45"
 workflow: "tdd"
+renumber_note: "Originally numbered 45-47. Renumbered to 45-50 at finish time after an OQ-1/OQ-2 ID collision (origin/main concurrently shipped a different 45-47/45-48/45-49 series). The sidequest-server PR #200 and its commits still reference '45-47' for historical reasons; this archive is the canonical sprint record."
 ---
 
-# Story 45-47: ADR-066 §8 — narrator session crash recovery (reactive)
+# Story 45-50: ADR-066 §8 — narrator session crash recovery (reactive)
+
+> **Renumber note:** Originally 45-47. PR #200 in sidequest-server keeps the old ID in its title and commit messages — that PR is already merged and was created before the OQ-1/OQ-2 collision was detected at SM finish time.
 
 ## Story Details
 
-- **ID:** 45-47
+- **ID:** 45-50 (was 45-47)
 - **Epic:** 45 (Playtest 3 Closeout — MP Correctness, State Hygiene, and Post-Port Cleanup)
 - **Jira Key:** N/A (non-Jira project)
 - **Workflow:** tdd

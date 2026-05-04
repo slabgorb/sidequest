@@ -56,3 +56,12 @@ stories:
     completed: '2026-05-03'
     review_findings: "APPROVED on round 2. Round 1 wiring gap closed via narration_apply.py:952 process_room_entry call site + bare-room name resolution in process_room_entry. 30 47-4 tests pass. Two HIGH findings deferred to 47-5 (rig_tie_ins filter, bond_tier ValueError isolation) — both dormant under today's single-chassis no-save-rehydration conditions. Develop merge brought 8 unrelated test failures (RuntimeError PhaseTimings already finalized in turn_manager/opening_turn_bootstrap/localdm tests) — not 47-4 surface; develop-hygiene followup. Shipping: server feat/47-4-tea-brew-wiring (5 src + 4 tests + merge), content feat/47-4-tea-brew-wiring (1 yaml), orchestrator main (already pushed: cliche-judge rubric + rig-taxonomy slice activation)."
     review_verdict: approved
+  - id: 47-5
+    title: Magic Phase 6 — multiplayer playgroup playtest + MP stabilization
+    description: "Phase 6 of docs/superpowers/specs/2026-04-28-magic-system-coyote-reach-implementation-design.md. Final phase of Magic v1: multiplayer Coyote Star session with full playgroup (Keith + James + Alex + Sebastien). Cut-points: (1) all four players resolve at least one threshold cross under MP turn barrier without desync between magic_state.confrontations and per-player ledger reveal; (2) at least one auto-fired confrontation (the_bleeding_through or the_quiet_word) resolves with mandatory_outputs landing on the right player's character; (3) save/load roundtrip mid-session preserves magic_state across the per-player projections (ADR-037 split); (4) OTEL GM dashboard shows magic.* spans correlated with mp.* spans for Sebastien's mechanical-visibility lens. Prerequisite: 47-2 (solo smoke) must land first to baseline the SP magic surface. Also requires tests/magic/test_multiplayer.py — currently absent — at minimum covering save/load + barrier-fire + per-player magic_state visibility. Findings file lands at sprint/archive/47-5-session.md."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,ui,content
+    workflow: trivial
+    type: chore
