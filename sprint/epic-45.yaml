@@ -532,10 +532,12 @@ stories:
       sessions; scope attributes per call or clear on session boundary.
     points: 2
     priority: p3
-    status: backlog
+    status: in-progress
     repos: daemon
     workflow: trivial
     type: bug
+    started: '2026-05-04'
+    branch: feat/45-29-daemon-span-context-art-style-scoping
   - id: 45-30
     title: "Render trigger policy contract + OTEL render.trigger reasons (was 37-46)"
     description: |-
