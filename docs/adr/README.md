@@ -118,6 +118,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-027: Reactive State Messaging](027-reactive-state-messaging.md) | ✓ accepted | live |
 | [ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay](075-3d-dice-rendering.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-079: Genre Theme System Unification](079-genre-theme-unification.md) | ✓ accepted | live |
+| [ADR-094: Orrery Label Placement — Three-Strategy Taxonomy](094-orrery-label-placement-strategies.md) | ✓ accepted | live |
 
 ## Multiplayer
 

@@ -249,8 +249,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 074, 077, 078, 080, 081)**
 - **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(partial)* · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 074 Dice Resolution Protocol — Player-Facing Rolls via WebSocket · 077 Dogfight Subsystem via StructuredEncounter Extension · 078 Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals *(partial)* · 080 Unified Narrative Weight Trait · 081 Advancement Effect Variant Expansion (v1) *(deferred)*
 
-**Frontend / Protocol (026, 027, 075, 079)**
-- 026 Client-Side State Mirror · 027 Reactive State Messaging · 075 3D Dice Rendering — Three.js + Rapier Physics Overlay *(partial)* · 079 Genre Theme System Unification
+**Frontend / Protocol (026, 027, 075, 079, 094)**
+- 026 Client-Side State Mirror · 027 Reactive State Messaging · 075 3D Dice Rendering — Three.js + Rapier Physics Overlay *(partial)* · 079 Genre Theme System Unification · 094 Orrery Label Placement — Three-Strategy Taxonomy
 
 **Multiplayer (028, 036, 037)**
 - 028 Perception Rewriter · 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State Split
