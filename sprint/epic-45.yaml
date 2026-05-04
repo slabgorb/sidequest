@@ -873,3 +873,50 @@ stories:
     type: chore
     branch: feat/45-41-confrontation-calibration-v1
     note: 'Carried out in subrepo branches/PRs as 45-41 before tracker collision detected — ID renumbered to 45-42 at finish-time. Subrepo artifacts (server PR #190, content PR #177) keep the 45-41 label.'
+  - id: 45-45
+    title: Wave 1 — snapshot split-brain dedup & rename (S1+S4+S5)
+    description: |-
+      Resolve three mechanical-hygiene split-brain antipatterns on GameSnapshot (sidequest-server only). Wave 1 of three (one ADR, three stories). Wave 2A (S2 NPC pool/state split) and 2B (S3 location derivation) are separate plans, not yet written.
+
+      S1: Collapse snapshot.world_confrontations into magic_state.confrontations (chassis loader writes there; room_movement reads via register=='intimate' filter).
+      S4: Rename game/session.py:EncounterTag → NpcEncounterLogTag (game/encounter_tag.py keeps its name; transitional alias for one release).
+      S5: Mark transient magic queues (pending_status_promotions, pending_magic_auto_fires, pending_magic_confrontation_outcome) as Field(exclude=True) so they don't survive save snapshots.
+
+      Migration policy: read-old-write-new. Single migrate_legacy_snapshot(data: dict) -> dict hook in SqliteStore.load runs before pydantic validation. Plus a sibling-file safety net (.db.canonicalize.bak) on first canonicalize-write per save — durable retention, no reaping.
+
+      OTEL: snapshot.canonicalize span fires once per migrated load with per-field attributes (s1_world_confrontations_merged: int, etc.). GM panel lie-detector signal for Sebastien.
+
+      Spec: docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (commit b910399)
+      Plan: docs/superpowers/plans/2026-05-04-snapshot-split-brain-wave-1.md (commit f599c58)
+      Architect amendment 2026-05-04: pull spec risk-mitigation #1 (.bak safety net) back into Wave 1 — Task 1.5 wraps SqliteStore.save once after first canonicalize. Cost trivial; protects years-old saves against migration bugs landing in Wave 2A on top of Wave 1 shape.
+
+      S6 (Combatant protocol body duplication) is documented in spec as CI tripwire only — no story.
+    points: 3
+    priority: p2
+    status: done
+    started: '2026-05-04'
+    completed: '2026-05-04'
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - "S1: snapshot.world_confrontations field is removed from GameSnapshot; chassis loader writes intimate confrontations into magic_state.confrontations; room_movement.process_room_entry reads from there filtered by register=='intimate'."
+      - 'S4: game/session.py defines NpcEncounterLogTag (renamed from EncounterTag); game/__init__.py re-exports both names for one release window; game/encounter_tag.py:EncounterTag is unchanged.'
+      - 'S5: MagicState.pending_status_promotions, GameSnapshot.pending_magic_auto_fires, and GameSnapshot.pending_magic_confrontation_outcome are Field(exclude=True); model_dump_json() output never contains them.'
+      - 'Migration: SqliteStore.load calls migrate_legacy_snapshot(data) before GameSnapshot.model_validate; legacy fixture (captured pre-cleanup) round-trips successfully into canonical shape.'
+      - 'Safety net: SqliteStore.save copies the .db file to <save>.db.canonicalize.bak once on the first canonical write per save (idempotent — second save is no-op); .bak is never reaped.'
+      - 'OTEL: snapshot.canonicalize span fires once per migrated load with per-field attributes (s1_world_confrontations_merged:int, s4_encounter_tag_renamed:bool, s5_pending_queues_dropped:int) and is silent on canonical input.'
+      - All three subsystems retain a wiring test that verifies end-to-end integration (load legacy save → exercise system → confirm canonical state).
+      - just check-all passes (server lint+test, client lint+test, daemon lint).
+    type: refactor
+  - id: 45-46
+    title: Wave 1 cleanup — drop EncounterTag deprecation alias
+    description: |-
+      Wave 1 (story 45-43) introduced a deprecation alias for the renamed game.session.EncounterTag → NpcEncounterLogTag, wrapped in a sidequest/game/__init__.py module-level __getattr__ that fires DeprecationWarning. Per spec §S4 (docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md): "one release window, then drops it."
+
+      This chore drops the alias when Wave 2 (the next major split-brain story landing in this area, likely Wave 2A — story to be created) merges. Removal target: the __getattr__ shim and the __all__.append('EncounterTag') line in sidequest/game/__init__.py. Also remove the test that asserts the DeprecationWarning fires (tests/game/test_npc_encounter_log_tag_rename.py).
+    points: 1
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: chore
