@@ -1,9 +1,16 @@
 # Solo Sealed Action Turn — Sequence
 
+> **Last updated:** 2026-05-05 (post-port; ADR-082)
+>
+> Module paths reference `sidequest-server/sidequest/` (Python). The pre-port
+> Rust crate paths in earlier revisions of this document have been retired —
+> see `docs/adr/082-port-api-rust-to-python.md` and the translation table in
+> `docs/adr/README.md`.
+
 One complete action turn in **solo play**. The "sealed-letter" barrier stage
 is architecturally present on every turn but collapses to a no-op when only
-one player is in the session. See [`multiplayer-sealed-turn.md`](./multiplayer-sealed-turn.md)
-(TBD) for the full sealed-envelope variant.
+one player is in the session. See [`multiplayer-sealed-turns.md`](./multiplayer-sealed-turns.md)
+for the full sealed-envelope variant.
 
 ## Diagram
 
@@ -14,7 +21,7 @@ sequenceDiagram
     participant UI as UI (React)<br/>App.tsx / InputBar
     participant WS as WebSocket
     participant Reader as Server Reader<br/>handle_ws_connection
-    participant Disp as dispatch_player_action<br/>(dispatch/mod.rs)
+    participant Disp as PlayerActionHandler<br/>(handlers/player_action.py)
     participant Narr as Narrator<br/>(claude -p subprocess)
     participant Writer as Writer Task<br/>(mpsc + broadcast)
     participant Watcher as OTEL Watcher
@@ -22,8 +29,8 @@ sequenceDiagram
     Player->>UI: Types action, presses Enter
     Note over UI: handleSend(text, aside=false)<br/>optimistic: push PLAYER_ACTION into messages<br/>setCanType(false) — input locked
     UI->>WS: PLAYER_ACTION { action, aside:false }
-    WS->>Reader: serde parse → dispatch_message
-    Reader->>Disp: dispatch_player_action(ctx)
+    WS->>Reader: pydantic parse → dispatch_message
+    Reader->>Disp: handle_player_action(ctx)
 
     Note over Disp: turn span opens<br/>turn_number = ctx.turn_manager.interaction()
     Disp->>Watcher: game / AgentSpanOpen { action, player, turn }
@@ -38,7 +45,7 @@ sequenceDiagram
     Note over Disp: build_prompt_context (state_summary)<br/>+ Monster Manual NPC/encounter injection
 
     rect rgba(180,180,180,0.15)
-    Note over Disp: barrier::handle_barrier → None<br/>(no turn_barrier in solo —<br/>sealed-letter stage is skipped)
+    Note over Disp: SessionRoom.TurnBarrier → no-op<br/>(no turn_barrier in solo —<br/>sealed-letter stage is skipped)
     end
 
     Disp->>Narr: GameService.process_action(you, context)
@@ -73,10 +80,6 @@ sequenceDiagram
         Disp->>Writer: IMAGE { url, render_id, tier }
         Writer-->>UI: IMAGE (routed to gallery via ImageBus)
     end
-    opt Map state changed
-        Disp->>Writer: MAP_UPDATE
-        Writer-->>UI: MAP_UPDATE
-    end
     opt Item depleted
         Disp->>Writer: ITEM_DEPLETED { item_name, remaining_before }
         Writer-->>UI: ITEM_DEPLETED
@@ -87,36 +90,36 @@ sequenceDiagram
     Writer-->>UI: state-change broadcast
     Note over UI: useStateMirror processes<br/>state_delta into GameStateProvider
 
-    Note over Disp: persistence::persist_game_state<br/>(SQLite save, async)
+    Note over Disp: persistence.persist_game_state<br/>(SQLite save via asyncio.to_thread)
     Disp->>Watcher: TurnRecord (ADR-073)<br/>snapshot_before/after, patches, delta,<br/>intent, narration, tokens
 ```
 
 ## Code path reference
 
-| Step | File | Lines |
-|---|---|---|
-| UI `handleSend` | `sidequest-ui/src/App.tsx` | 467-498 |
-| WebSocket reader/writer loop | `sidequest-api/crates/sidequest-server/src/lib.rs` | 916-1032 (writer), 1085-1200 (reader) |
-| Dispatch entry | `sidequest-api/crates/sidequest-server/src/lib.rs` → `dispatch/mod.rs` | 1926 → 201 |
-| `THINKING` eager send | `dispatch/mod.rs` | 275-288 |
-| Two-pass inventory extractor | `dispatch/mod.rs` | 292-490 |
-| Scenario between-turn | `dispatch/mod.rs` | 568-682 |
-| Barrier (no-op solo) | `dispatch/barrier.rs` | 57-234 |
-| Narrator call | `dispatch/mod.rs` (via `GameService.process_action`) | 855-858 |
-| Response build (`NARRATION` / `NARRATION_END` / `PARTY_STATUS`) | `dispatch/response.rs` | 49-180 |
-| Delta broadcast | `dispatch/mod.rs` | 1857-1892 |
-| `TurnRecord` → OTEL | `dispatch/mod.rs` | 1906-1932 |
-| Client message handler | `sidequest-ui/src/App.tsx` | 198-410 |
-| Narrative segment build | `sidequest-ui/src/lib/narrativeSegments.ts` | 41-163 |
+| Step | File |
+|---|---|
+| UI `handleSend` | `sidequest-ui/src/App.tsx` |
+| WebSocket reader/writer loop | `sidequest-server/sidequest/server/websocket.py` + `websocket_session_handler.py` |
+| Dispatch entry (PLAYER_ACTION) | `sidequest-server/sidequest/handlers/player_action.py` |
+| `THINKING` eager send | `sidequest-server/sidequest/server/emitters.py` (via orchestrator) |
+| Inventory extractor (post-port partial — see ADR-087 P1 VERIFY) | `sidequest-server/sidequest/agents/orchestrator.py` |
+| Scenario between-turn | `sidequest-server/sidequest/game/scenario_state.py` |
+| Barrier (no-op solo) | `sidequest-server/sidequest/server/session_room.py` (`TurnBarrier`) |
+| Narrator call | `sidequest-server/sidequest/agents/narrator.py` (via `claude -p` subprocess) |
+| Response build (`NARRATION` / `NARRATION_END` / `PARTY_STATUS`) | `sidequest-server/sidequest/server/narration_apply.py` |
+| Delta broadcast | `sidequest-server/sidequest/game/delta.py` (`compute_delta`) + `server/emitters.py` |
+| State patches | `sidequest-server/sidequest/server/dispatch/` package (per-stage handlers) |
+| `TurnRecord` → OTEL | `sidequest-server/sidequest/telemetry/turn_record.py` + `validator.py` |
+| Client message handler | `sidequest-ui/src/App.tsx` + `useGameSocket` |
+| Narrative segment build | `sidequest-ui/src/lib/narrativeSegments.ts` |
 
 ## Solo vs. sealed-letter multiplayer
 
 Three things collapse to no-ops when only one player is in the session:
 
-1. **No barrier wait.** `handle_barrier` returns `None` because
-   `shared_session.turn_barrier` is never installed for a single player.
+1. **No barrier wait.** `SessionRoom.TurnBarrier` never installs for a single player.
 2. **No `TurnStatus("submitted")` broadcast.** The "sealed the envelope"
-   event (`dispatch/barrier.rs:75-84`) is gated on barrier existence.
+   event is gated on barrier existence.
 3. **No `ActionReveal`.** The reveal message is part of the barrier
    resolution path only.
 
@@ -124,28 +127,29 @@ So in solo, a turn is:
 
 ```
 PLAYER_ACTION → THINKING → narrator → NARRATION → NARRATION_END
-              → PARTY_STATUS (+ CHAPTER_MARKER / IMAGE / MAP_UPDATE / ITEM_DEPLETED)
+              → PARTY_STATUS (+ CHAPTER_MARKER / IMAGE / ITEM_DEPLETED)
               → typed state-change messages
 ```
+
+(`MAP_UPDATE` was retired with the live world-map view 2026-04-28; see ADR-019 supersession + ADR-055 room-graph navigation. The cartography YAML now seeds `snap.current_region` at chargen only.)
 
 The seal / wait / reveal ceremony only exists to keep multiplayer players
 in sync and to preserve simultaneous-resolution fairness.
 
 ## Message fan-out paths
 
-Two different fan-out paths feed the same writer task:
+Two different fan-out paths feed the same writer task (asyncio.Queue per connection plus a shared session broadcast):
 
-- **Per-connection mpsc** (`ctx.tx.send(...)`) — targeted at one player.
-  Used for `NARRATION`, `NARRATION_END`, and any response tied to the
-  acting player. See `lib.rs:922` (channel) and `lib.rs:958-968`
-  (writer receive).
-- **Global broadcast channel** (`state.broadcast(...)`) — fanned out to
-  every connected WS writer. Used for world-level events like
-  `ActionReveal` and typed state-change broadcasts. See `lib.rs:926`
-  (subscribe) and `lib.rs:970-981` (writer receive).
-- **Session broadcast** (`ss.broadcast(...)`) — scoped to players in the
-  same genre:world session, with optional per-player targeting. Used for
-  multiplayer session events. See `lib.rs:985-1028` (writer receive).
+- **Per-connection queue** — targeted at one player. Used for `NARRATION`,
+  `NARRATION_END`, and any response tied to the acting player. See
+  `server/websocket_session_handler.py` for the reader/writer split.
+- **Session broadcast** (`SessionRoom.broadcast(...)` in `server/session_room.py`) —
+  scoped to players in the same genre:world session, with optional
+  per-player targeting via projection-filter (`game/projection/`). Used for
+  multiplayer session events including `ActionReveal` and typed state-change
+  broadcasts.
+- **Global watcher fan-out** (`/ws/watcher` via `server/watcher.py` + `telemetry/watcher_hub.py`) —
+  separate from gameplay traffic; streams telemetry to GM Mode.
 
-All three feed the same `ws_sink.send(...)` at the bottom of the writer
-`tokio::select!` loop.
+All three feed the same `ws.send_text(...)` at the bottom of the writer
+`asyncio.gather(...)` loop.

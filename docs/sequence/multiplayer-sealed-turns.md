@@ -1,7 +1,13 @@
 # Multiplayer Sealed Letter Turns
 
+> **Last updated:** 2026-05-05 (post-port; ADR-082)
+>
 > Simultaneous action submission with claim-based narrator resolution.
 > Players submit privately behind a barrier; one narrator call resolves all actions.
+>
+> Module paths reference `sidequest-server/sidequest/` (Python). The pre-port
+> Rust crate paths in earlier revisions of this document have been retired —
+> see `docs/adr/082-port-api-rust-to-python.md`.
 
 ## Turn Mode Activation
 
@@ -23,7 +29,7 @@ Barrier is only active in **Structured** and **Cinematic** modes. FreePlay resol
 sequenceDiagram
     participant A as Player A (UI)
     participant B as Player B (UI)
-    participant S as Server (dispatch/barrier.rs)
+    participant S as Server (server/session_room.py)
     participant TB as TurnBarrier
     participant MS as MultiplayerSession
     participant SR as SealedRoundContext
@@ -128,30 +134,32 @@ sequenceDiagram
     end
 ```
 
-## Perception Rewriting (session_sync.rs)
+## Perception Rewriting
 
-After resolution, each player may receive a different version of the narration based on active `PerceptualEffect`s (blinded, charmed, hallucinating, etc.):
+After resolution, each player may receive a different version of the narration based on active `PerceptualEffect`s (blinded, charmed, hallucinating, etc.). This is now an in-narrator subsystem (ADR-067 unified narrator) — the standalone resonator agent of the pre-port architecture was collapsed into the unified narrator.
 
 ```mermaid
 flowchart TD
     N[Base Narration] --> CHECK{perception_filters\nexist for player?}
     CHECK -->|No| SEND[Send base narration]
-    CHECK -->|Yes| REWRITE[ClaudeRewriteStrategy\nfrom resonator agent]
+    CHECK -->|Yes| REWRITE[agents.perception_rewriter\nADR-028]
     REWRITE -->|Success| FILTERED[Send rewritten narration]
     REWRITE -->|Failure| FALLBACK[Send base narration\nwith effect annotation]
 ```
 
 ## Key Files
 
-| File | Purpose | LOC |
-|------|---------|-----|
-| `sidequest-game/src/barrier.rs` | TurnBarrier, claim election, AdaptiveTimeout | 555 |
-| `sidequest-game/src/sealed_round.rs` | SealedRoundContext, prompt formatting | 142 |
-| `sidequest-game/src/turn_mode.rs` | FreePlay/Structured/Cinematic transitions | 103 |
-| `sidequest-game/src/multiplayer.rs` | MultiplayerSession, force_resolve | 312 |
-| `sidequest-server/src/dispatch/barrier.rs` | handle_barrier(), action reveal, broadcast | 246 |
-| `sidequest-server/src/dispatch/session_sync.rs` | sync_back, perception rewriting | 233 |
-| `sidequest-server/src/shared_session.rs` | SharedGameSession, state sync | 455 |
+| File | Purpose |
+|------|---------|
+| `sidequest-server/sidequest/server/session_room.py` | `SessionRoom`, `TurnBarrier`, claim election, adaptive timeout |
+| `sidequest-server/sidequest/game/session.py` | Per-session state, `TurnMode` (FreePlay / Structured / Cinematic) |
+| `sidequest-server/sidequest/game/shared_world_delta.py` | Shared-world delta handshake (story 45-1) |
+| `sidequest-server/sidequest/server/session_handler.py` | Multiplayer dispatch path |
+| `sidequest-server/sidequest/handlers/player_action.py` | PLAYER_ACTION inbound handler |
+| `sidequest-server/sidequest/handlers/action_reveal.py` | Sealed-letter reveal dispatch |
+| `sidequest-server/sidequest/server/dispatch/sealed_letter.py` | Phase-5 sealed-letter dispatch (used by dogfight + magic confrontation outcomes) |
+| `sidequest-server/sidequest/agents/perception_rewriter.py` | Per-player narration variants (ADR-028) |
+| `sidequest-server/sidequest/game/projection_filter.py` + `game/projection/` | Per-player view computation |
 
 ## OTEL Events
 
