@@ -1,8 +1,14 @@
 # Lore Storage and Retrieval
 
+> **Last updated:** 2026-05-05 (post-port; ADR-082)
+>
 > Knowledge indexing with category/keyword/semantic search, budget-aware prompt injection,
 > and background embedding via the Python daemon. Two parallel systems feed the narrator:
 > LoreStore (world knowledge) and KnownFacts (character knowledge).
+>
+> Module paths reference `sidequest-server/sidequest/` (Python). The pre-port
+> Rust crate paths in earlier revisions of this document have been retired —
+> see `docs/adr/082-port-api-rust-to-python.md`.
 
 ## System Overview
 
@@ -46,14 +52,14 @@ flowchart TD
 
 ```mermaid
 sequenceDiagram
-    participant S as Server (lib.rs)
-    participant LS as LoreStore (Arc<Mutex>)
-    participant EW as Embed Worker (background)
-    participant C as connect.rs
+    participant S as Server (server/app.py)
+    participant LS as LoreStore (asyncio.Lock-guarded)
+    participant EW as Embed Worker (background asyncio.Task)
+    participant C as handlers/connect.py
 
-    S->>LS: LoreStore::new()
-    S->>S: create mpsc channel (lore_embed_tx, lore_embed_rx)
-    S->>EW: spawn(lore_store, lore_embed_rx)
+    S->>LS: LoreStore()
+    S->>S: create asyncio.Queue (lore_embed_queue)
+    S->>EW: asyncio.create_task(embed_worker(lore_store, queue))
     Note over EW: Background task starts<br/>Initial sweep: embed any pending fragments
 
     C->>LS: seed_lore_from_genre_pack(&mut store, genre_pack)
@@ -69,7 +75,7 @@ sequenceDiagram
     participant D as Dispatch Loop
     participant LS as LoreStore
     participant DB as SQLite
-    participant TX as mpsc channel
+    participant TX as asyncio.Queue
     participant EW as Embed Worker
     participant DM as Daemon (embed)
 
@@ -87,7 +93,7 @@ sequenceDiagram
 
     Note over EW: Background — decoupled from dispatch
 
-    EW->>TX: recv()
+    EW->>TX: await queue.get()
     EW->>EW: Check circuit breaker state
 
     alt Circuit closed
@@ -107,7 +113,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant PR as prompt.rs
+    participant PR as agents/prompt_framework
     participant LS as LoreStore
     participant DM as Daemon (embed)
     participant LF as LoreFilter
@@ -195,34 +201,32 @@ The NameOnly tier includes a closed-world assertion: "do not invent details abou
 ## LoreFragment Data Model
 
 ```
-LoreFragment
-├── id: String (deterministic: "evt-{turn}-{hash}" or "lore_genre_{section}")
-├── category: LoreCategory
-│   └── History | Geography | Faction | Character | Item | Event | Language | Custom(String)
-├── content: String (narrative text)
-├── token_estimate: usize (~chars/4)
+LoreFragment (pydantic v2 model)
+├── id: str (deterministic: "evt-{turn}-{hash}" or "lore_genre_{section}")
+├── category: LoreCategory (StrEnum)
+│   └── History | Geography | Faction | Character | Item | Event | Language | Custom
+├── content: str (narrative text)
+├── token_estimate: int (~chars/4)
 ├── source: LoreSource
 │   └── GenrePack | CharacterCreation | GameEvent
-├── turn_created: Option<u64>
-├── metadata: HashMap<String, String>
-├── embedding: Option<Vec<f32>> (from daemon)
+├── turn_created: int | None
+├── metadata: dict[str, str]
+├── embedding: list[float] | None  (from daemon)
 └── embedding_pending: bool (retry flag)
 ```
 
 ## Key Files
 
-| File | Purpose | LOC |
-|------|---------|-----|
-| `sidequest-game/src/lore/store.rs` | LoreStore, query methods, embedding management | 325 |
-| `sidequest-game/src/lore/seeding.rs` | seed_lore_from_genre_pack, seed_lore_from_char_creation | 107 |
-| `sidequest-game/src/lore/accumulation.rs` | accumulate_lore, accumulate_lore_batch | 54 |
-| `sidequest-game/src/lore/similarity.rs` | cosine_similarity | 17 |
-| `sidequest-game/src/known_fact.rs` | KnownFact, DiscoveredFact, FactCategory | 92 |
-| `sidequest-agents/src/lore_filter.rs` | LoreFilter, graph-distance, detail levels | 293 |
-| `sidequest-server/src/dispatch/prompt.rs` | build_prompt_context, lore injection pipeline | 950 |
-| `sidequest-server/src/dispatch/lore_sync.rs` | accumulate_and_persist_lore | 174 |
-| `sidequest-server/src/dispatch/lore_embed_worker.rs` | Background embed worker, circuit breaker | 233 |
-| `sidequest-daemon-client/src/client.rs` | DaemonClient::embed() | 350 |
+| File | Purpose |
+|------|---------|
+| `sidequest-server/sidequest/game/lore_store.py` | `LoreStore`, query methods, embedding management |
+| `sidequest-server/sidequest/game/lore_seeding.py` | `seed_lore_from_genre_pack`, `seed_lore_from_char_creation` |
+| `sidequest-server/sidequest/game/lore_embedding.py` | Cross-process embedding via daemon (ADR-048); cosine similarity |
+| `sidequest-server/sidequest/game/character.py` | `KnownFact`, `DiscoveredFact`, `FactCategory` |
+| `sidequest-server/sidequest/agents/prompt_framework/` (`core.py`, `soul.py`, `types.py`) | `build_prompt_context`, lore injection pipeline |
+| `sidequest-server/sidequest/server/dispatch/lore_embed.py` | Per-turn embedding fan-out / accumulate-and-persist |
+| `sidequest-server/sidequest/daemon_client/` | Daemon embedding RPC client (Unix socket, ADR-035) |
+| `sidequest-server/sidequest/telemetry/spans/lore.py` + `rag.py` | OTEL span definitions (lore + RAG) |
 
 ## OTEL Events
 

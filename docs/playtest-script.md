@@ -3,6 +3,7 @@
 **Genre:** Mutant Wasteland
 **World:** The Flickering Reach
 **Spoiler status:** FULLY SPOILABLE for testing purposes
+**Last updated:** 2026-05-05 (post-ADR-082 port; HP→Edge migration; multi-agent narrator collapse)
 
 This is a structured checklist for exercising SideQuest features during a playtest session. Work through the sections in order. Each item has a verification step — check it off when the expected behavior occurs.
 
@@ -10,10 +11,10 @@ This is a structured checklist for exercising SideQuest features during a playte
 
 ## 1. Connection & Setup
 
-- [ ] **Start the stack**
-  - `just api-run` (Rust API server)
-  - `just daemon-run` (Python media daemon)
-  - `just ui-dev` (React client)
+- [ ] **Start the stack** — easiest is `just up` to boot daemon → server → client and tail merged logs. Or run each in foreground:
+  - `just server` (Python FastAPI on :8765)
+  - `just daemon` (media daemon with warmup)
+  - `just client` (React/Vite dev server on :5173)
 - [ ] **Connect to server** — ConnectScreen loads, genre dropdown populates from /api/genres
 - [ ] **Select genre** — Choose "Mutant Wasteland" from dropdown
 - [ ] **Select world** — Choose "The Flickering Reach"
@@ -38,7 +39,7 @@ This is a structured checklist for exercising SideQuest features during a playte
 
 - [ ] **Read opening narration** — Narrator sets the scene at the trade post on the edge of the black glass plain
   - Expected: The Glass Flat visible in the distance, humming with mutagenic resonance, the starting location's gritty detail
-- [ ] **Verify:** Narration streams in chunks (NARRATION_CHUNK → NARRATION_END)
+- [ ] **Verify:** Narration arrives as a complete `NARRATION` message followed by `NARRATION_END` (the streaming chunk variant was retired with TTS — ADR-076)
 - [ ] **Verify:** Background music plays (AUDIO_CUE — wasteland/post-apocalyptic track)
 - [ ] **Verify:** Scene illustration renders (IMAGE message — wasteland landscape)
 - [ ] **Type a simple action** — "I look around" or "I check what's nearby"
@@ -51,7 +52,7 @@ This is a structured checklist for exercising SideQuest features during a playte
 - [ ] **Encounter a Dome Syndicate trader** — Scrapborn faction, led by Odige Fuseborn
   - Try: "I look for someone to trade with" or "I approach the merchants"
   - Expected: Pragmatic, everything-has-a-price attitude. Rain-catcher tech as leverage.
-- [ ] **Verify:** Ensemble agent handles dialogue
+- [ ] **Verify:** Unified narrator handles dialogue (ADR-067 — separate ensemble/troper/resonator agents were collapsed into one persistent Opus session)
 - [ ] **Verify:** NPC disposition affects tone (Dome Syndicate is neutral — mercantile, transactional)
 - [ ] **Find a Drifter singer** — The Singers of the Long Signal, led by Åych Przysåuchkin
   - Try: "I look for the nomads" or head toward the dust wastes
@@ -81,7 +82,7 @@ This is a structured checklist for exercising SideQuest features during a playte
   - Verify: Current location highlighted, fog of war on unexplored regions
   - Expected regions: Glass Flat, Przyå Dust, Bone Wind, Tood's Dome, Blind Reach, Blooming Tangle, Vault Echo, etc.
 - [ ] **Press P** — Party panel toggles
-  - Verify: Character portrait (with mutation visible), HP bar, status
+  - Verify: Character portrait (with mutation visible), Edge bar (HP was removed in story 45-35; CreatureCore now tracks Edge per ADR-078), status effects
 - [ ] **Press Escape** — All overlays close
 
 ## 6. Travel & Navigation
@@ -104,19 +105,20 @@ This is a structured checklist for exercising SideQuest features during a playte
 
 - [ ] **Provoke a combat encounter** — Explore dangerous territory (Glass Flat edges, Przyå Dust) or antagonize a faction
   - Or: "I try to salvage from the Singing Pit" — contested Scrapborn territory
-- [ ] **Verify:** Combat overlay appears (CombatOverlay component)
-  - Enemy list with HP bars
-  - Turn order display
+- [ ] **Verify:** Confrontation overlay appears (`ConfrontationOverlay` component)
+  - Enemy list with Edge bars (HP retired by ADR-078 / story 45-35)
+  - Beat surface, momentum readout (story 45-3)
+  - Inline 3D dice tray (`InlineDiceTray`, ADR-074/075)
 - [ ] **Verify:** Combat narration is cinematic and wasteland-flavored (mutations, improvised weapons, environmental hazards)
 - [ ] **Take a combat action** — "I swing my salvage axe" or "I use my psychic static to disorient them"
   - If you have a mutation, try using it in combat
-- [ ] **Verify:** State patches update HP bars in real-time
+- [ ] **Verify:** State patches update Edge bars in real-time
 - [ ] **Verify:** Combat SFX play (AUDIO_CUE with combat sounds)
-- [ ] **Take damage** — Get hit, verify HP bar updates in Party panel
-  - Check color coding: green (healthy) → orange (wounded) → red (critical)
-  - Lethality is "moderate" — deaths should be possible but not trivial
+- [ ] **Take damage** — Get hit, verify Edge bar drops in Party panel
+  - Check the threshold→KnownFact mint behavior (`mint_threshold_lore` — Pillar 2 of ADR-033)
+  - Lethality is "moderate" — auto-resolve fires when Edge ≤ 0 (ADR-078 §4)
 - [ ] **Win or flee combat** — Resolve the encounter
-- [ ] **Verify:** Combat overlay clears, normal narration resumes
+- [ ] **Verify:** Confrontation overlay clears, normal narration resumes
 
 ## 8. Trope Engine
 
@@ -169,9 +171,9 @@ The SOUL principle "Diamonds and Coal" means not every moment is epic. Test this
 - [ ] **Verify:** Turn barrier works — both players submit before narrator responds
 - [ ] **Verify:** Party panel shows both characters with distinct mutations
 - [ ] **Test perception rewriter** — If one character has psychic static and the other doesn't, narration should differ (psychic hears whispers the other doesn't)
-- [ ] **Test WebRTC voice** — Both players should hear each other via peer voice chat
 - [ ] **Mid-session join** — Open a third tab, connect mid-game
   - Verify: Catch-up narration provides context for the joining player
+  - Note: catch-up dispatch handler is ADR-087 P2 RESTORE (currently dark); the joining player will see live state but won't get a structured catch-up narration until it lands
 
 ## 12. GM Mode / Watcher
 
@@ -253,42 +255,55 @@ After completing the playtest, verify these systems were exercised:
 |--------|-----------|-------|
 | WebSocket connection | | |
 | Character creation | | |
-| Intent classification | | |
-| Narrator agent | | |
-| WorldBuilder agent | | |
-| Troper agent | | |
-| Resonator agent | | |
-| State patching | | |
-| Combat system | | |
-| Trope engine | | |
-| Image generation (Flux via MLX) | | |
+| Intent classification (state-override; no LLM call) | | |
+| Unified narrator (ADR-067) | | |
+| Auxiliary subsystems (chassis_voice, distinctive_detail, npc_agency, reflect_absence) | | |
+| State patching + projection filter | | |
+| Confrontation engine (ADR-033 Pillars 1+2) | | |
+| Edge / Composure (ADR-078) | | |
+| Trope engine (data live; engine dark per ADR-087 P1) | | |
+| Image generation (Z-Image MLX) | | |
 | Music (mood-based library playback) | | |
-| Audio mixing (music + SFX) | | |
-| Slash commands | | |
+| Audio mixing (music + SFX, 2-channel — ADR-076 retired TTS) | | |
+| Slash commands (server + client routes) | | |
 | Map overlay | | |
-| Inventory panel | | |
-| Character sheet | | |
-| Journal/handouts | | |
+| Inventory (within state_delta) | | |
+| Character sheet (per ADR-040 narrative voice) | | |
+| Journal / KnowledgeJournal | | |
 | Multiplayer (2+ players) | | |
-| GM Mode / Watcher | | |
+| GM Mode / Watcher / Dashboard tabs | | |
 | SQLite persistence | | |
-| Genre theming (CSS) | | |
+| Genre theming (CSS — ADR-079) | | |
 | Beat filter | | |
+| 3D dice (inline tray) | | |
+| Magic system (Epic 47 — five wired confrontations) | | |
+| Orbital chart (ADR-094) — space_opera/coyote_star | | |
 
 ---
 
-## Known Limitations (Current Sprint)
+## Known Limitations (as of 2026-05-05)
 
-These features are **not yet available** — don't expect them to work:
+Several features are dark on the post-port live path and tracked under ADR-087:
 
-- **Drama-aware text delivery** — Text streams at one speed regardless of drama_weight
-- **Faction agendas** — The Dome Syndicate doesn't proactively inject events yet (Epic 6 backlog)
-- **Server-side slash commands** — /status, /inventory etc. are client-side only
-- **Scenario/mystery mechanics** — No whodunit, belief state, or gossip propagation
-- **OCEAN personality** — NPCs don't have Big Five profiles yet
-- **Lore retrieval** — No RAG or semantic search (the Long Signal's knowledge isn't indexed)
-- **Tone command** — Can't adjust genre axes (hope/tech_level/weirdness) mid-session
-- **Turn reminders** — Idle players won't get nudged
+- **Trope engine** — `TropeState` data progresses, but the engine that fires beats from progression is dark (ADR-087 RESTORE P1)
+- **NPC disposition Attitude transitions** — reduced to scalar int; Attitude enum + transitions are dark (ADR-087 RESTORE P1)
+- **Continuity validator** — load-bearing for OTEL lie-detection; absent (ADR-087 RESTORE P1)
+- **Patch legality gate** — partial in `telemetry/validator.py`; agent-layer module not ported (ADR-087 RESTORE P1)
+- **Subsystem coverage tracker** — `CoverageGap` watcher events not emitted (ADR-087 RESTORE P1)
+- **OCEAN shift proposals** — model live; evolution pipeline dark (ADR-087 RESTORE P2)
+- **Gossip engine + accusation logic** — concept refs only; dark (ADR-087 RESTORE P2)
+- **Genie/wish consequence engine** — `GenieWish` tracked; engine dark (ADR-087 RESTORE P2)
+- **Chase engine** — only string refs in encounter; dark (ADR-087 RESTORE P2)
+- **ADR-059 pregen dispatch** — server doesn't invoke namegen/encountergen/loadoutgen at turn-time; binaries are stubs (ADR-087 RESTORE P0)
+- **Catch-up dispatch handler** — multiplayer latecomers don't get structured catch-up narration (ADR-087 RESTORE P2)
+
+What **is** live but worth noting:
+
+- **OCEAN personality data + behavioral summaries** — model live, narrator reads them
+- **Lore retrieval** — RAG with embedding cosine similarity is live (ADR-048)
+- **Faction agendas** — data ported, narrator injection live
+- **Scenario/clue graph + belief state** — ported intact (ADR-053 partial)
+- **Server-side slash commands** — `/status`, `/inventory`, `/map`, `/save`, `/tone`, `/gm` suite live in `game/commands.py`
 
 ## World Reference (Spoilers)
 
