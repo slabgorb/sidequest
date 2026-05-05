@@ -5,6 +5,7 @@
 **Repo:** sidequest-server (loader); sidequest-content already on disk
 **Spec parent:** `docs/superpowers/specs/2026-05-04-caverns-claudes-hub-design.md`
 **Related plan:** `docs/superpowers/plans/2026-05-04-caverns-claudes-hub-content.md` (content done; PR #181 draft)
+**Follow-on plan (must land before full server-test passes):** `docs/superpowers/plans/2026-05-05-deleted-world-slug-test-sweep.md` *(to be authored)* — 44 test files hardcode `grimvault` / `horden` / `mawdeep` / `dungeon_survivor` / `primetime` as world slugs; those directories are gone, so the tests fail before this loader change is even reached. That sweep is sequenced AFTER the dungeon-pick routing (engine plan item 4), because the right replacement target is `caverns_three_sins` + a dungeon selection, not a leaf world.
 
 ## Why
 
@@ -14,9 +15,12 @@ The Hamlet of Sünden content (PR slabgorb/sidequest-content#181) restructures `
 
 This plan ends when:
 - `load_genre_pack` returns successfully for `caverns_and_claudes` with `caverns_three_sins.dungeons == {"grimvault": Dungeon, "horden": Dungeon, "mawdeep": Dungeon}`.
-- Every other genre pack loads unchanged (no dungeons/ subdir, no behavior change).
+- Every other genre pack loads unchanged (no dungeons/ subdir, no behavior change). Verified by enumeration: a `find genre_packs -type d -name dungeons` returns exactly one path today (`caverns_three_sins/dungeons`), so the new code path is bypassed everywhere else.
 - A session connect into a *hub* world (no delve target) fails loudly with a clear authoring/UX message — no silent fallback to one of its dungeons.
 - A session connect into a *non-hub* world is bit-identical to today.
+- `tests/genre/test_loader.py` is green. Currently has 14 failing tests; *all of them are caused by the hub world failing to load on today's loader,* and they go green once this plan lands.
+
+**Explicitly NOT a goal of this plan:** full `just server-test` green. The pre-existing damage from the content PR — 44 test files anchored on deleted world slugs (`grimvault`, `horden`, `mawdeep`, `dungeon_survivor`, `primetime`) — was created by the content restructure, not by this plan. Those failures persist regardless of whether the loader is fixed; the right time to repair them is *after* the dungeon-pick routing exists, so they can be retargeted at `caverns_three_sins` plus a dungeon selection. Tracked separately (see follow-on plan above).
 
 **Out of scope** (separate plans, in spec §"Engine Surface"):
 - Save persistence for roster / Wall / drift flag / wound flag (item 2).
@@ -136,9 +140,17 @@ The dungeon-level openings file goes through the same `_validate_opening_setting
 
 ### 6. Downstream guard — fail loud when starting a session in a hub world
 
-In `sidequest/server/websocket_session_handler.py` near line 242 (`if world is None or not world.openings:`), add an explicit hub branch *before* the openings check:
+In `sidequest/server/websocket_session_handler.py`, today's line 242 reads:
 
 ```python
+if world is None or not world.openings:
+    # logs world_or_openings_missing and returns early
+```
+
+A hub world has `world.openings == []` (openings live on each dungeon), so it would silently fall into that early-return branch and the user sees a generic "no openings" failure instead of the real reason. **The hub-rejection MUST be inserted upstream of that line — before the openings check, immediately after the `world` lookup resolves.** Order matters; this is the bug my first draft missed.
+
+```python
+# (insert before the existing `if world is None or not world.openings:`)
 if world is not None and world.dungeons:
     # Hub world. Cannot start a delve directly; the dungeon-pick UI
     # (separate plan) routes through here. Until that ships, fail loud.
@@ -146,8 +158,8 @@ if world is not None and world.dungeons:
         "hub_world_requires_dungeon_selection",
         f"World {world.config.slug!r} is a hub world with "
         f"{len(world.dungeons)} dungeons. Select a dungeon "
-        "(dungeon-pick UI not yet implemented; tracked in plan "
-        "2026-05-04-caverns-claudes-hamlet-persistence). Available: "
+        "(dungeon-pick UI not yet implemented; tracked separately as "
+        "engine-plan item 4 of the Hamlet-of-Sünden spec). Available: "
         f"{sorted(world.dungeons)}.",
     )
 ```
@@ -155,6 +167,8 @@ if world is not None and world.dungeons:
 (Use whatever the codebase's standard refusal pattern is at that site — match it; don't invent a new exception type.)
 
 This is deliberate: hub world load must succeed, but trying to start a session in one without picking a dungeon is a loud error until item 4 ships. *Not a stub* — this is the correct terminal behavior for "engine doesn't support this entry path yet."
+
+The cartography accesses further down the same handler (lines ~1431, 1437, 1461, 1470, 1471, 1475) all sit downstream of the early-return for `world is None`, but the hub-rejection above is what *actually* keeps `world.cartography is None` from reaching them. With the guard in place, every cartography access in the file runs on a non-hub world by construction.
 
 ### 7. Validators — what changes
 
@@ -198,12 +212,13 @@ This is deliberate: hub world load must succeed, but trying to start a session i
 3. **Loader — `_load_single_dungeon`.** New function. Load dungeon.yaml + cartography + openings (run all five validators against the dungeon scope) + optional raw fields. (~120 LOC; mostly mirrors `_load_single_world` body.)
 4. **Loader — recursion wiring.** In `_load_single_world`, when `is_hub`, iterate `dungeons_dir`, call `_load_single_dungeon`, populate `World.dungeons`. Also load optional `hamlet.yaml` raw. (~15 LOC.)
 5. **Session-handler guard.** Add hub-world rejection in `websocket_session_handler.py` (per §6). Match the file's existing refusal pattern. (~15 LOC.)
-6. **Tests — hub world loads.** New `tests/genre/test_loader_hub_world.py`: full `load_genre_pack("caverns_and_claudes")` succeeds; `worlds["caverns_three_sins"].dungeons` has the three expected slugs; `worlds["caverns_three_sins"].cartography is None`; each `Dungeon.cartography` is non-`None`; each `Dungeon.config.parent_world == "caverns_three_sins"`.
-7. **Tests — leaf worlds unchanged.** Quick load of one leaf world from a different genre pack (e.g. `space_opera`) — assert no behavior change (cartography present, openings present, dungeons empty).
-8. **Tests — authoring-mistake rejections.** Use a tmp_path fixture: world directory with both `cartography.yaml` AND a `dungeons/foo/` subdir → `GenreLoadError` with the rejection message. Dungeon with mismatched `parent_world` → `GenreLoadError`. Dungeon missing required `cartography.yaml` → `GenreLoadError`.
-9. **Tests — wiring (per CLAUDE.md "Every Test Suite Needs a Wiring Test").** Connect a fake session against a hub world via the websocket session handler entry point; assert the §6 hub-rejection error message fires. Not a unit test of the guard — a real call through the handler.
-10. **Smoke run.** `just server-test`, then start `just up`, then attempt to start a session against `caverns_and_claudes/caverns_three_sins` from the UI — verify the hub error surfaces (no silent fallback, no crash). Then start a session in a non-hub world and verify it still works.
-11. **Land the content PR.** Once tests pass, mark slabgorb/sidequest-content#181 ready-for-review (still `--base develop` per gitflow). Pair with this server change in the PR description.
+6. **Update existing test_loader.py assertions.** `tests/genre/test_loader.py:161` and `:400` both assert `world.cartography is not None` for *every* world in the loop — that was correct yesterday and wrong today. Update to either skip hubs (`if world.dungeons: continue`) or split into "leaf worlds have cartography" + "hub worlds have non-empty `dungeons`". Pick the split form — it documents the new invariant. The 14 currently-failing tests in this file all stem from today's loader exploding on the hub; once the loader recurses, they pass without further intervention. Re-run the full file at the end of this task and confirm 0 failures.
+7. **Tests — hub world loads.** New `tests/genre/test_loader_hub_world.py`: full `load_genre_pack("caverns_and_claudes")` succeeds; `worlds["caverns_three_sins"].dungeons` has the three expected slugs; `worlds["caverns_three_sins"].cartography is None`; each `Dungeon.cartography` is non-`None`; each `Dungeon.config.parent_world == "caverns_three_sins"`.
+8. **Tests — leaf worlds unchanged.** Quick load of one leaf world from a different genre pack (e.g. `space_opera`) — assert no behavior change (cartography present, openings present, dungeons empty).
+9. **Tests — authoring-mistake rejections.** Use a tmp_path fixture: world directory with both `cartography.yaml` AND a `dungeons/foo/` subdir → `GenreLoadError` with the rejection message. Dungeon with mismatched `parent_world` → `GenreLoadError`. Dungeon missing required `cartography.yaml` → `GenreLoadError`. Hub world with an empty `dungeons/` directory → `GenreLoadError` (the hub-with-zero-dungeons defense from Risks).
+10. **Tests — wiring (per CLAUDE.md "Every Test Suite Needs a Wiring Test").** Connect a fake session against a hub world via the websocket session handler entry point; assert the §6 hub-rejection error message fires *and that the handler does not fall through to the openings-missing branch* (this is the bug the upstream-of-line-242 placement guards against). Not a unit test of the guard — a real call through the handler.
+11. **Smoke run.** Run `tests/genre/` only — should be green. Run `tests/server/test_room_graph_init.py` and `tests/server/test_chargen_dispatch.py` to *re-confirm* they still fail (with the same world-slug-missing errors as before this plan), demonstrating that those failures are owned by the follow-on test-sweep plan, not regressions caused here. Then `just up`, then attempt to start a session against `caverns_and_claudes/caverns_three_sins` from the UI — verify the hub error surfaces (no silent fallback, no crash). Then start a session in a non-hub world and verify it still works.
+12. **Land the content PR.** Once `tests/genre/` is green and the smoke check passes, mark slabgorb/sidequest-content#181 ready-for-review (still `--base develop` per gitflow). Pair with this server change in the PR description; cross-link the follow-on test-sweep plan so reviewers know the broken `tests/server/` files are tracked, not forgotten.
 
 ## Risks
 
@@ -214,8 +229,10 @@ This is deliberate: hub world load must succeed, but trying to start a session i
 
 ## Definition of Done
 
-- All eleven tasks complete.
-- `just server-check` green (lint + tests).
-- `just up` boots; UI can browse to caverns_three_sins (hub error fires loudly when a session is attempted; no crash).
+- All twelve tasks complete.
+- `tests/genre/` green (specifically: the 14 failing tests in `test_loader.py` flip green, plus the new hub-world test file is green).
+- `just server-lint` green.
+- `just up` boots; UI can browse to `caverns_three_sins` (hub error fires loudly when a session is attempted; no crash).
 - A non-hub world (e.g. `space_opera/coyote_star`) still starts a session normally.
 - PR slabgorb/sidequest-content#181 ready for review (still draft until item 2/3/4 of the spec ship).
+- The 44 broken `tests/server/` files referencing deleted world slugs (`grimvault`, `horden`, `mawdeep`, `dungeon_survivor`, `primetime`) remain broken at the same point they were broken before this plan started — *neither fixed nor regressed*. Their repair belongs to the follow-on plan and is sequenced after the dungeon-pick routing.
