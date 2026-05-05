@@ -749,7 +749,8 @@ stories:
       Plus 4 doc/comment cleanups and 1 cross-cutting otel_capture fixture flakiness note (also affects test_dice_throw_momentum_span.py).
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-05'
     repos: server
     workflow: trivial
     acceptance_criteria:
@@ -767,6 +768,8 @@ stories:
       - Replace 'Felix's solo sessions' persona reference at sidequest/handlers/connect.py:907-908 with technical phrasing ('genre+world+player triple saves without a slug')
       - Expand module docstring at sidequest/game/scrapbook_coverage.py:16-19 to explain that narrative_log.round_number is written from turn_manager.interaction at the narration site (websocket_session_handler._execute_narration_turn) — the lockstep invariant is non-obvious otherwise
       - Address otel_capture fixture flakiness in tests/server/conftest.py:917 — SimpleSpanProcessor.shutdown() does not deregister from the global TracerProvider; processors accumulate across the session. Reset the global provider on each fixture setup. Same defect in tests/server/test_dice_throw_momentum_span.py:60 (45-3 work) — fix both for consistency
+    completed: '2026-05-05'
+    branch: feat/45-36-45-10-followup-reviewer-cleanup
     type: chore
   - id: 45-37
     title: Image pipeline silent-fallback teardown — kill SF1-SF7 + render.completed lie detector
