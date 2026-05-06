@@ -970,10 +970,12 @@ stories:
     description: "Wave 2B of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S3 dimension). Today there are two ways to ask 'where is character X' — the snapshot's `location` field on the character record, and the separate `character_locations` map keyed by player_id. Either can drift from the other. Cut-point: pick one as authoritative (the design proposes deriving from `character_locations`) and remove the other, with a migration that backfills the survivor and a deprecation alias for the removed field. Save/load roundtrip must preserve location across the migration; per-player projections must still work. Sibling story: 45-47 (Wave 2A). Plan TBD."
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
     repos: server
     workflow: tdd
     type: refactor
+    branch: feat/45-48-snapshot-wave-2b-location
+    started: '2026-05-06'
   - id: 45-49
     title: R2 media migration Task 17 — LFS strip + token revoke on sidequest-content
     description: "Final task from docs/superpowers/plans/2026-05-03-cloudflare-r2-media-migration.md (Task 17, plus Tasks 18-19 cleanup). Tasks 1-16 shipped: server resolver, daemon r2_writer, image-pipeline + spans, sync/verify scripts, cdn.slabgorb.com cutover. What remains is destructive — held pending Keith's go-ahead because it rewrites sidequest-content history: (a) `git lfs migrate export` to strip large media blobs from history (Task 17), (b) revoke the old upload token (Task 18), (c) shepherd any in-flight content PRs across the rewritten base (Task 19). Risk: rewrites public branches; coordinate with anyone who has open content branches. Cut-points: (1) sidequest-content `du -sh .git` shrinks from current GB-scale to <100MB; (2) clone time drops; (3) all clones on Keith's machines + CI re-fetch from new history; (4) old token shows revoked in Cloudflare dashboard. p3 because not blocking — the storage cost and clone time are nuisances, not outages. ALL ACTION HELD UNTIL KEITH SAYS GO."
