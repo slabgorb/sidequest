@@ -64,6 +64,22 @@ This learning applies to ADR-073 / Group E's `OllamaClient` (`sidequest-server`)
 - **qwen-code CLI was not pre-installed.** The plan flagged this as a possible blocker (Task 4 Step 1) and recommended installing per the qwen-code repo README. Resolution: `npm install -g @qwen-code/qwen-code` (5 packages, completed in 1 second). The local `~/Projects/qwen-code/` checkout was not used for the install — the published package serves the daily-driver use case fine; rebuild from source if needed for development.
 - **Tasks 4-5 driven non-interactively.** The plan specified manual TUI interaction for Tasks 4-5, but qwen-code supports a non-interactive prompt mode (positional prompt + `-y` for yolo/auto-approve). All validation was driven via `qwen --auth-type openai --model qwen3-coder:30b -y "<prompt>"` rather than the interactive TUI. Manual TUI verification is a one-line follow-up the user can run any time (`qwen` in a project dir, then `/model` to confirm the entry appears in the picker).
 
+## Bonus capability: Claude Code itself routed at local Qwen
+
+Discovered after the MVP shipped: Ollama 0.23.x ships a built-in `ollama launch claude --model <model>` integration that does the Anthropic-API ↔ Ollama protocol translation in-process. No third-party proxy needed.
+
+Day-to-day usage:
+
+```bash
+ollama launch claude --model qwen3-coder:30b
+```
+
+This injects `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN=ollama` into Claude Code's environment, points it at a local gateway port the launcher spawns, and starts Claude Code's TUI normally. No `ANTHROPIC_API_KEY` required. Other supported integrations advertised by `ollama launch --help` (as of 0.23.1): `claude-desktop`, `cline`, `codex`, `copilot`, `droid`, `kimi`, `opencode`, `vscode`.
+
+**Validation status:** wiring proven end-to-end via headless smoke test (Read tool fired through the gateway, response returned, ~100-130s cold-start latency dominated by Claude Code TUI startup). Edit/Bash tool validation deferred to first interactive use — Claude Code's headless `--print` mode blocks edits without explicit `--permission-mode bypassPermissions`, which is appropriate behavior; in interactive TUI mode the user approves via prompts as usual.
+
+This capability is **incidental** to the MVP (which targeted qwen-code CLI specifically) but realizes the same goal — a local code editor — through the user's existing daily-driver tool. Worth knowing about for the cross-model "truthiness check" use case: now the user can drive *both* `qwen` and `claude` against the same local model and compare prompting behavior across CLI agents.
+
 ## Open follow-ups
 
 - **Verify `/model` picker UX in interactive mode.** The non-interactive path proved the wiring works, but the user has not yet seen the entry render in the TUI's `/model` picker. If for some reason the picker filters this entry (e.g., a settings-key typo this side of the validation didn't catch), it would be a small follow-up fix. Low risk.

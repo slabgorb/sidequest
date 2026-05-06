@@ -42,13 +42,24 @@ stories:
     workflow: trivial
     type: chore
     review_findings: |
-      Ollama 0.23.1 contradicts both the qwen-code docs and ADR-073's stated
-      assumption that Ollama defaults to num_ctx=2048. Empirically: a fresh
-      load of qwen3-coder:30b allocates the model's native 262144 (256K)
-      context. Per-request num_ctx in OpenAI-compat options triggers a KV
-      cache reallocation on every call (~28s/call observed). Resolution: drop
-      the override; rely on the at-load context. This learning is a direct
+      Two findings during MVP install:
+
+      (1) Ollama 0.23.1 contradicts both the qwen-code docs and ADR-073's
+      stated assumption that Ollama defaults to num_ctx=2048. Empirically: a
+      fresh load of qwen3-coder:30b allocates the model's native 262144
+      (256K) context. Per-request num_ctx in OpenAI-compat options triggers
+      a KV cache reallocation on every call (~28s/call observed).
+      Resolution: drop the override; rely on the at-load context. Direct
       input to 48-2 (review OllamaClient for the same per-request pattern).
+
+      (2) Ollama 0.23.x ships a built-in `ollama launch claude
+      --model <model>` integration that routes Claude Code itself at a
+      local Ollama-hosted model — gateway proxy is bundled, no third-party
+      proxy install needed. Validated end-to-end via headless smoke. This
+      gives the user two independent local-code-editor paths (qwen-code
+      CLI from the MVP + Claude Code via ollama launcher) which is useful
+      for the cross-model "truthiness" eval use case originally motivating
+      this epic. See as-installed notes §"Bonus capability".
   - id: 48-2
     title: 'Validate SIDEQUEST_LLM_BACKEND=ollama end-to-end + audit OllamaClient num_ctx pattern'
     description: |
