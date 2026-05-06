@@ -14,7 +14,8 @@
 
 ## Configuration
 
-- `~/.qwen/settings.json` created fresh (no prior file existed). Contains a single `modelProviders.openai[]` entry for `qwen3-coder:30b` with `baseUrl: http://localhost:11434/v1`, `extra_body.options.num_ctx: 32768`, and `OLLAMA_API_KEY=ollama` placeholder env value.
+- `~/.qwen/settings.json` created fresh (no prior file existed). Contains a single `modelProviders.openai[]` entry for `qwen3-coder:30b` with `baseUrl: http://localhost:11434/v1`, `contextWindowSize: 262144` (256K — the model's native max), and `OLLAMA_API_KEY=ollama` placeholder env value.
+- **No `num_ctx` override sent per request.** The original spec/plan called for `extra_body.options.num_ctx: 32768` based on outdated docs warning that Ollama defaults to a 2K context. **Ollama 0.23.1 actually loads this model at its native 262144 (256K) by default** — `ollama ps` confirms `CONTEXT 262144` on a fresh load with no client-side override. Sending a `num_ctx` value in `options` triggers a model reload on every request (~28s cost per call), so the override was removed. See "Key learning" below.
 
 ## Validation results
 
@@ -30,8 +31,33 @@
 ## Observed latency
 
 - **First-call weight load**: ~5-10 seconds (first `/api/generate` after model pull)
-- **Steady-state single-turn smoke** (`Reply with: ready`): a few seconds end-to-end
-- **Multi-tool task end-to-end** (read sample.py → edit → run → report): **34 seconds wall-clock** for a 4-tool-call sequence. Comfortably within the spec's "tens of seconds, not minutes" acceptance bar.
+- **Cold load with full 256K KV cache allocation**: ~80 seconds (one-time, first request after Ollama service start or model unload)
+- **Steady-state single-turn (curl direct, 1-token reply at 256K context)**: **86-162 ms** across three back-to-back calls
+- **Multi-tool task end-to-end via qwen CLI** (read sample.py → edit → run → report): **34 seconds wall-clock** for a 4-tool-call sequence at the original 32K config. Most of this is qwen-code CLI process overhead per non-interactive invocation, not inference. Interactive sessions amortize the overhead across many turns.
+
+## Memory footprint
+
+| Loaded context | Resident size | Free of 96 GB |
+|---------------:|--------------:|--------------:|
+| 32K (initial)  | ~18 GB        | ~78 GB        |
+| 256K (current) | ~33 GB        | ~63 GB        |
+
+256K is the model's native max; Ollama allocates the full KV cache at load time. No reason to constrain on this hardware.
+
+## Key learning: Ollama context defaults
+
+The original spec/plan was written assuming Ollama still defaults to `num_ctx: 2048` (a long-standing footgun in older versions). The recommended fix was to send `extra_body.options.num_ctx` per request from qwen-code to override the default.
+
+**Ollama 0.23.1 changes this behavior**: a fresh `ollama serve` + first request to `qwen3-coder:30b` loads the model at the model-card native context (262144 = 256K) by default. `ollama ps` confirms.
+
+Worse, sending `num_ctx` in the request `options` field — even a value within the model's range — triggers a KV cache reallocation. Observed cost: a 1-token reply that ran in ~100 ms with no override took ~28 seconds with `"num_ctx": 131072` in options. Every call paid that penalty.
+
+**Recommendation for any future spec touching Ollama context configuration:**
+1. Don't assume the 2K default — check `ollama ps` after a fresh load
+2. Configure context size at load time (custom Modelfile with `PARAMETER num_ctx`) if you need to constrain below the model's max, **not** per-request via OpenAI-compat options
+3. Per-request `num_ctx` in OpenAI-compat options forces a reload on each call — avoid
+
+This learning applies to ADR-073 / Group E's `OllamaClient` (`sidequest-server`) too: the client should not route `num_ctx` through per-request options if the server's loaded context already covers the prompt size. Worth a follow-up when SideQuest's Ollama backend is exercised.
 
 ## Deviations from spec
 
