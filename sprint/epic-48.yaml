@@ -1,0 +1,129 @@
+id: '48'
+type: epic
+title: Local-LLM Workstream — Inference, Fine-Tune, and Evaluation
+description: |
+  Umbrella epic for the local-LLM track on Keith's Mac Studio (M3 Ultra,
+  96 GB unified memory). Builds on ADR-073 (local fine-tuned model
+  architecture) and the completed Group E plan (LlmClient abstraction +
+  Ollama backend + mlx-lm training CLI shipped 2026-04-23).
+
+  Story 48-1 stands up Ollama + Qwen3-Coder and wires qwen-code as a
+  daily code editor — the foundation. 48-2 validates the existing
+  SideQuest Ollama backend end-to-end with a real model. 48-3 runs the
+  training pipeline on accumulated playtest corpus and closes the
+  MLX-adapter → Ollama-serving gap that Group E explicitly deferred
+  (Group F territory). 48-4 builds the A/B eval harness Group E also
+  deferred — same prompt to both Claude and local Qwen, diff outputs.
+
+  Specs and as-installed notes live under docs/superpowers/specs/
+  with the 2026-05-06-local-qwen-* prefix. No sidequest-content,
+  sidequest-ui, or orchestrator changes anticipated for this epic.
+priority: p2
+status: in_progress
+repos: server,daemon,docs
+stories:
+  - id: 48-1
+    title: 'Local Qwen as code editor MVP — Ollama + qwen-code wired on M3 Ultra'
+    description: |
+      Stand up Ollama + Qwen3-Coder 30B-A3B on the Mac Studio and configure
+      qwen-code CLI to use it as a daily local code editor. Foundation for
+      48-2/48-3/48-4. Spec: docs/superpowers/specs/2026-05-06-local-qwen-code-editor-design.md.
+      Plan: docs/superpowers/plans/2026-05-06-local-qwen-code-editor.md.
+      As-installed notes: docs/superpowers/specs/2026-05-06-local-qwen-code-editor-as-installed.md.
+      Final config: ~/.qwen/settings.json with modelProviders.openai entry
+      pointing at http://localhost:11434/v1, contextWindowSize 262144 (model
+      native max), no per-request num_ctx override (see review_findings).
+    points: 3
+    priority: p2
+    status: done
+    started: '2026-05-06'
+    completed: '2026-05-06'
+    repos: docs
+    workflow: trivial
+    type: chore
+    review_findings: |
+      Ollama 0.23.1 contradicts both the qwen-code docs and ADR-073's stated
+      assumption that Ollama defaults to num_ctx=2048. Empirically: a fresh
+      load of qwen3-coder:30b allocates the model's native 262144 (256K)
+      context. Per-request num_ctx in OpenAI-compat options triggers a KV
+      cache reallocation on every call (~28s/call observed). Resolution: drop
+      the override; rely on the at-load context. This learning is a direct
+      input to 48-2 (review OllamaClient for the same per-request pattern).
+  - id: 48-2
+    title: 'Validate SIDEQUEST_LLM_BACKEND=ollama end-to-end + audit OllamaClient num_ctx pattern'
+    description: |
+      Pull qwen2.5:7b-instruct (the Group E locked base model) alongside
+      qwen3-coder:30b on the same Mac. Run a SideQuest playtest turn with
+      SIDEQUEST_LLM_BACKEND=ollama and confirm narrator/decomposer round-trips
+      complete, OTEL spans tag agent.backend correctly, and degraded-response
+      paths fire on simulated Ollama errors.
+
+      Concurrent with the validation: review sidequest-server/sidequest/agents/ollama_client.py
+      for any per-request num_ctx pattern. 48-1 found that sending num_ctx
+      via OpenAI-compat options forces a KV cache reload on every call. If
+      OllamaClient does this, every narrator turn pays the reload cost.
+      Fix: configure num_ctx at load time via Modelfile, not per-request.
+
+      Acceptance: one full playtest turn through the Ollama backend; OTEL
+      span confirms agent.backend="ollama"; latency budget within 3x of
+      Claude baseline; OllamaClient num_ctx pattern reviewed and fixed if
+      present (separate PR if needed).
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: chore
+  - id: 48-3
+    title: 'Run sidequest-train on accumulated corpus + close MLX→Ollama serving gap (Group F)'
+    description: |
+      Group E shipped sidequest-train (mlx-lm QLoRA CLI in sidequest-daemon)
+      that produces ~/.sidequest/loras/<genre>/<base>-<ts>/adapters.safetensors.
+      Group E explicitly deferred adapter deployment: "Deploying an MLX
+      adapter to Ollama requires GGUF conversion which is format-gap work;
+      that is Group F (specialization) or a future plan."
+
+      This story closes the gap. Substeps:
+      (a) Confirm ~/.sidequest/corpus/mined/ has ≥500 TrainingPair entries
+          (Group D output). If not, gate on more playtests rather than
+          ship overfit.
+      (b) Run sidequest-train against a representative genre slice; capture
+          train/val loss; eval the adapter against held-out turns.
+      (c) Convert MLX safetensors → GGUF (llama.cpp's convert_lora_to_gguf.py
+          or equivalent). Validate the converted adapter loads.
+      (d) Wire Ollama Modelfile generator: ADAPTER directive pointing at
+          GGUF; ollama create sidequest-narrator-<genre>:latest -f Modelfile.
+      (e) Update sidequest-server's OllamaClient model_map so genre-tagged
+          requests route to the new adapter-fused model.
+      (f) A/B sample: 10 turns each through Claude vs local-fine-tuned;
+          qualitative GM panel review.
+
+      Multi-week. Full design under a new spec; this story is the placeholder.
+    points: 13
+    priority: p2
+    status: backlog
+    repos: daemon,server
+    workflow: bdd
+    type: chore
+  - id: 48-4
+    title: 'A/B evaluation harness — Claude vs local Qwen on identical prompts'
+    description: |
+      Group E explicitly deferred this: "An A/B eval harness (local vs Claude
+      on identical prompts) is a separate plan." Build it.
+
+      Scope: a sidequest-daemon CLI (or sidequest-server endpoint) that takes
+      a TrainingPair JSONL slice, replays the input through both backends,
+      diffs the outputs on (a) game_patch JSON validity, (b) subsystem
+      coverage (which beats fired, which tropes triggered), (c) string-level
+      narration similarity, (d) end-to-end latency. Outputs a markdown
+      report suitable for review.
+
+      Useful immediately for sub-project A2 ("evaluate Claude agent
+      prompting via non-Claude truthiness" — the original motivating use
+      case) and as the canonical eval surface for 48-3 fine-tune iterations.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: daemon,server
+    workflow: tdd
+    type: chore
