@@ -12,7 +12,7 @@
 
 **Repos touched:**
 - `sidequest-content/genre_packs/caverns_and_claudes/` — content (PRs target `develop` per `.pennyfarthing/repos.yaml`)
-- `sidequest-server/` — server wiring (PRs target `main`)
+- `sidequest-server/` — server wiring (PRs target `develop` per `.pennyfarthing/repos.yaml`)
 
 **Working convention for class identifiers** (consistency across all files):
 - `id` field in `classes.yaml` is **lowercase** (`fighter`, `mage`, `cleric`, `thief`)
@@ -1818,7 +1818,7 @@ gh pr create --base develop --title "C&C classic classes — fighter/mage/cleric
 cd sidequest-server
 git checkout -b feat/cc-classic-classes
 git push -u origin feat/cc-classic-classes
-gh pr create --base main --title "feat(chargen): classic class system (c&c)" \
+gh pr create --base develop --title "feat(chargen): classic class system (c&c)" \
   --body "Server-side support for C&C classic classes. Spec: docs/superpowers/specs/2026-05-06-cc-classic-classes-design.md."
 ```
 
