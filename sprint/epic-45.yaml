@@ -1038,9 +1038,10 @@ stories:
     title: Recurring NPC presence — narrator emits npcs_met every turn they're onstage
     points: 3
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-05-07'
     repos: server
     workflow: tdd
+    completed: '2026-05-07'
     type: bug
-    started: '2026-05-07'
     branch: feat/45-53-npcs_met-recurring-presence
