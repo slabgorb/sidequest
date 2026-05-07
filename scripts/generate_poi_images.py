@@ -114,9 +114,15 @@ async def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Preview prompts without rendering")
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
     parser.add_argument("--output-dir", type=Path, help="Override output directory")
+    parser.add_argument(
+        "--poi",
+        help="Only process this POI slug (requires --world)",
+    )
     args = parser.parse_args()
     if args.world and not args.genre:
         parser.error("--world requires --genre")
+    if args.poi and not args.world:
+        parser.error("--poi requires --world")
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 
@@ -129,6 +135,8 @@ async def main() -> None:
         pois = collect_pois(genre_dir)
         if args.world:
             pois = [p for p in pois if p.get("world") == args.world]
+        if args.poi:
+            pois = [p for p in pois if p.get("slug") == args.poi]
         if pois:
             worlds_seen = {}
             for poi in pois:

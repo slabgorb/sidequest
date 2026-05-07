@@ -338,25 +338,52 @@ async def send_render(
     writer.write((json.dumps(req) + "\n").encode())
     await writer.drain()
 
-    response_line = await reader.readline()
+    # Daemon emits heartbeat event lines on every connection alongside
+    # the response. Skip non-response lines and match by request id.
+    response: dict = {}
+    while True:
+        line = await reader.readline()
+        if not line:
+            break
+        try:
+            data = json.loads(line.decode())
+        except json.JSONDecodeError:
+            continue
+        if data.get("id") == req["id"]:
+            response = data
+            break
     writer.close()
     await writer.wait_closed()
 
-    return json.loads(response_line.decode())
+    return response
 
 
 async def check_daemon() -> bool:
-    """Check if the daemon is running."""
+    """Check if the daemon is running.
+
+    The daemon emits heartbeat event lines before/alongside the response.
+    Skip lines without `id == "healthcheck"` and look for our reply.
+    """
     try:
         reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
         req = {"id": "healthcheck", "method": "ping"}
         writer.write((json.dumps(req) + "\n").encode())
         await writer.drain()
-        resp = await reader.readline()
+        for _ in range(20):
+            line = await asyncio.wait_for(reader.readline(), timeout=2.0)
+            if not line:
+                break
+            try:
+                data = json.loads(line.decode())
+            except json.JSONDecodeError:
+                continue
+            if data.get("id") == "healthcheck":
+                writer.close()
+                await writer.wait_closed()
+                return data.get("result", {}).get("status") == "ok"
         writer.close()
         await writer.wait_closed()
-        data = json.loads(resp.decode())
-        return data.get("result", {}).get("status") == "ok"
+        return False
     except Exception:
         return False
 
