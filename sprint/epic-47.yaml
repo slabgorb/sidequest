@@ -17,11 +17,12 @@ stories:
     workflow: trivial
     completed: '2026-05-02'
   - id: 47-2
-    title: Magic Phase 4 — Playtest smoke verification (AC1-AC5)
-    description: "BLOCKED on 47-9 (do not start until 47-9 lands). Forensic audit 2026-05-07 found magic subsystem fires zero innate workings across 7 saves / 111 turns despite 5-6 playtests since this story opened — verification-of-nothing is not useful. 47-9 makes magic surfacing proactive on innate-active worlds. After 47-9 merges: original Phase 4 cut-point smoke runbook applies — innate working with cost (AC1), item working (AC1), threshold-cross to Bleeding through (AC1+AC2), save/load roundtrip (AC3), DEEP_RED-triggering working (AC4+AC5). Dashboard verified via 'just otel'. Requires Keith at the keyboard. See sprint/archive/47-1-session.md for full smoke runbook + Reviewer's mandatory follow-up #1."
+    title: Magic Phase 4 — Playtest smoke verification (AC1-AC6)
+    description: "UNBLOCKED 2026-05-07 (47-9 merged). Original Phase 4 cut-point smoke runbook applies — innate working with cost (AC1), item working (AC1), threshold-cross to Bleeding through (AC1+AC2), save/load roundtrip (AC3), DEEP_RED-triggering working (AC4+AC5), AC6 verifies innate_v1 firing proactively with OTEL observability after 47-9's narrator prompt hardening. Dashboard verified via 'just otel'. Requires Keith at the keyboard. See sprint/archive/47-1-session.md for full smoke runbook + Reviewer's mandatory follow-up #1, and .session/47-2-session.md for this iteration's brief."
     points: 1
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-08'
     repos: ui,server
     workflow: trivial
     type: chore
