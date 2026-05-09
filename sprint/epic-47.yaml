@@ -84,12 +84,14 @@ stories:
     title: Magic state bars initialized at world-load + uninit warning span
     points: 2
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-09'
     repos: server
     workflow: tdd
+    completed: '2026-05-09'
     type: bug
     branch: feat/47-7-magic-state-bars-init-warning
+    review_verdict: approved
   - id: 47-8
     title: Coyote Object salvage hooks — design (ADR + scenario seed)
     points: 3
