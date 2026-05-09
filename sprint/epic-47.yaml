@@ -119,9 +119,11 @@ stories:
     description: 'Final wiring pass for C&C memorized-spell casting. Spec at docs/superpowers/specs/2026-05-06-magic-system-caverns-and-claudes-implementation-design.md (amended 2026-05-09 — dual-plugin pivot: learned_v1 = data-layer infrastructure, innate_v1 = player-facing surface for cast_spell beat). Infrastructure already shipped in PRs #220/#193/#221/#194 (merged 2026-05-09): MagicWorking studied/granted, ClassDef.magic_config, MagicState.known_spells/prepared_spells, spell_catalog loader, learned_v1 plugin + ops, magic_init.seed_learned_v1_state helper, arcane_l1.yaml (12 spells), divine_l1.yaml (8 spells + 3 reverses), cast_spell beat with class_filter and resource_deltas. This story does the seven remaining tasks that turn that infrastructure into a playable Mage/Cleric — see acceptance_criteria. NOT included: cantrip mechanics (open question 2 — defer until playtest), L2+ spells (content scaling), per-level resource_deltas routing (one-line follow-up after L2). UNBLOCKS: full Sünden delve playtest with Mage and Cleric.'
     points: 8
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-05-09'
     repos: sidequest-server,sidequest-content,sidequest-ui
     workflow: tdd
+    branch: feat/cc-magic-memorization
     acceptance_criteria:
       - 'Init wiring: server/magic_init.init_magic_state_for_session calls seed_learned_v1_state for actors whose ClassDef has magic_config; populates MagicState.known_spells[actor], MagicState.prepared_spells[actor]={}, and spell_slots_lN_<actor> ledger bars at session start. Wiring test: a fresh Sünden session with a Mage character has the bars and collections present without any test-only seeding.'
       - 'classes.yaml: caverns_and_claudes Mage and Cleric ship magic_config blocks (B/X canon slot tables, starting_known_spells 2, save_dc_stat INT for Mage / WIS for Cleric, turn_undead true on Cleric). magic_access stays innate_v1 (already shipped).'
