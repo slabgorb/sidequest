@@ -188,7 +188,7 @@ All player text passes through `sanitize_player_text()` at the protocol layer �
 - **Turn modes:** FREE_PLAY, STRUCTURED, CINEMATIC
 - **Party action composition:** Multi-character PARTY ACTIONS block
 - **Perception rewriter:** Per-player narration variants based on status effects
-- **Two-tier turn counter:** Interaction (monotonic) vs Round (narrative beats) — ADR-051
+- **Lockstep turn counter:** `interaction` and `round` advance together via `record_interaction()`; the original two-tier aspiration was never wired (story 45-11 / PR #101) — ADR-051
 - **Catch-up narration:** Snapshot + "Previously On..." for mid-session joins
 
 ### Media Integration
