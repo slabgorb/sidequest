@@ -4,6 +4,10 @@
 **Amended:** 2026-05-09 — dual-plugin pivot (see Amendment below)
 **Status:** Design — partially shipped; remaining tasks tracked in §9
 **Target playtest:** Keith + James + Alex + Sebastien, full Sünden session
+**Amendment 2026-05-09b — slot bar naming and dual-bar v1 contract**
+
+Spec text in §1, §3, §11 referenced `spell_slots_lN_<actor>` per-level bars. The shipped helper `seed_learned_v1_state` creates `slots_l<N>` bars (no `spell_` prefix); the existing flat `spell_slots` bar (cnc-bx ship) drains via `cast_spell.resource_deltas`. Both shapes coexist in v1: `spell_slots` is the **active drain bar** (compat with the cast_spell beat); `slots_l<N>` is the per-level shape introduced for L2+ readiness, **present but dormant** in v1. The spec is amended to reflect the as-shipped names. Follow-up (when L2 spells ship): migrate `cast_spell.resource_deltas` to drain `slots_l<level>` per cast and retire the flat `spell_slots` bar.
+
 **Companion docs:**
 - `docs/design/magic-taxonomy.md` (framework)
 - `docs/superpowers/specs/2026-04-28-magic-system-coyote-reach-implementation-design.md` (vertical-slice precedent)
