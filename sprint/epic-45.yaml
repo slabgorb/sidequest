@@ -986,10 +986,14 @@ stories:
     description: "Final task from docs/superpowers/plans/2026-05-03-cloudflare-r2-media-migration.md (Task 17, plus Tasks 18-19 cleanup). Tasks 1-16 shipped: server resolver, daemon r2_writer, image-pipeline + spans, sync/verify scripts, cdn.slabgorb.com cutover. What remains is destructive — held pending Keith's go-ahead because it rewrites sidequest-content history: (a) `git lfs migrate export` to strip large media blobs from history (Task 17), (b) revoke the old upload token (Task 18), (c) shepherd any in-flight content PRs across the rewritten base (Task 19). Risk: rewrites public branches; coordinate with anyone who has open content branches. Cut-points: (1) sidequest-content `du -sh .git` shrinks from current GB-scale to <100MB; (2) clone time drops; (3) all clones on Keith's machines + CI re-fetch from new history; (4) old token shows revoked in Cloudflare dashboard. p3 because not blocking — the storage cost and clone time are nuisances, not outages. ALL ACTION HELD UNTIL KEITH SAYS GO."
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-09'
     repos: content
     workflow: trivial
+    completed: '2026-05-09'
     type: chore
+    branch: feat/45-49-r2-media-lfs-strip
+    review_verdict: approved
   - id: 45-50
     title: ADR-066 §8 — narrator session crash recovery (reactive)
     description: "Wrap claude --resume narrator calls so context-overflow / session-expired / unknown CLI errors are non-fatal. Per ADR-066 §8 (2026-05-04 amendment). Root cause of the Playtest 3 server crash at ~1h 45m. Errors must classify and route to a Full-tier rebuild + recap, never propagate as a server crash. NOTE: originally numbered 45-47 — the sidequest-server PR (#200) was created and merged under that ID before an OQ-1/OQ-2 sync collision required renumbering to 45-50. PR title and commit messages on sidequest-server still reference '45-47' for historical reasons; this entry is the canonical sprint record."
