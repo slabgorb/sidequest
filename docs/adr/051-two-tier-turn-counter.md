@@ -68,9 +68,11 @@ The original two-tier aspiration described above was **never wired into the live
 pipeline**. `advance_round()` existed but had zero production callers; only
 `record_interaction()` ran at turn boundaries, and it only advanced `interaction`. As a result:
 
-- `turn_manager.round` froze at 1 for entire sessions while `interaction` ticked normally.
-- `narrative_log` entries were keyed by `interaction`, so `MAX(narrative_log.round_number)`
-  drifted ahead of `turn_manager.round` over long sessions.
+- `turn_manager.round` lagged behind `interaction` for entire sessions because no live
+  caller advanced it on the per-interaction path.
+- `narrative_log` entries were keyed by `interaction` (write site
+  `websocket_session_handler.py:1525`), so `MAX(narrative_log.round_number)` tracked
+  `interaction` while `turn_manager.round` did not.
 - Felix's Playtest 3 ended with `turn_manager.round = 65` and
   `MAX(narrative_log.round_number) = 72` — a 7-round gap. Round-keyed gating (e.g., trope
   cooldowns, encounter pacing) operated on stale round data.
@@ -84,8 +86,11 @@ span (`turn_manager.round_invariant`) emits `round`, `interaction`, `max_narrati
 (see `sidequest-server/sidequest/telemetry/spans/turn.py`).
 
 **Net effect:** the *rule* in this ADR (two counters, one mechanical and one narrative)
-is downgraded to a *historical aspiration*. The implemented model is single-counter in
-behaviour with the field name `round` preserved for backward compatibility. The original
+is downgraded to a *historical aspiration*. The implemented model is effectively
+single-counter in behaviour — both `interaction` and `round` are persisted and exposed,
+but they always hold the same value because both advance only via `record_interaction()`.
+The field name `round` is preserved for backward compatibility with consumers
+(UI, OTEL, narrative log). The original
 "meaningful narrative beat" promotion criteria (location changes, chapter markers, trope
 escalations) are no longer used to gate round advancement; if a future feature wants
 narrative-only pacing, it can layer a third counter on top rather than re-splitting these

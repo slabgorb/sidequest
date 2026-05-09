@@ -71,7 +71,7 @@ These features are wired end-to-end in the Python tree and exercise OTEL spans d
 | Party action composition | `sidequest.agents.orchestrator` | Multi-character PARTY ACTIONS block in narrator prompt |
 | Perception rewriter | `sidequest.agents.perception_rewriter` | Per-player narration variants based on status effects (ADR-028) |
 | LocalDM dispatch package | `sidequest.agents.local_dm` (DORMANT on live path) + `protocol.dispatch.DispatchPackage` | Per-player visibility/perception/fidelity baseline structure; runtime dormant (LocalDM corpus extraction is offline-only via `corpus.miner` per 2026-04-28 spec) |
-| Two-tier turn counter | `sidequest.game.turn` | Interaction (monotonic) vs Round (narrative) — ADR-051 |
+| Lockstep turn counter | `sidequest.game.turn` | `interaction` and `round` advance together via `record_interaction()`; original two-tier aspiration collapsed in story 45-11 — ADR-051 |
 | TensionTracker | `sidequest.game.tension_tracker` | Dual-track model — gambler's ramp + Edge stakes + event spikes (HP fields vestigial, story 45-35 removed HP from chargen) |
 | Drama-aware delivery | narration_apply consumers | INSTANT / SENTENCE / STREAMING (drama_weight thresholds) |
 | Quiet turn detection | `sidequest.game.tension_tracker` | Escalation beat injection after sustained low drama |
