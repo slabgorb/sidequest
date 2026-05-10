@@ -68,31 +68,56 @@ def is_in_r2(r2_key: str) -> bool:
     return False
 
 
+async def _read_reply(reader: asyncio.StreamReader, req_id: str, timeout: float) -> dict:
+    """Read lines until we get the JSON-RPC reply matching `req_id`.
+
+    The daemon emits unsolicited heartbeat frames (`{"event":"heartbeat",...}`)
+    on every client connection, which would otherwise be mistaken for the
+    reply by a one-shot readline. Skip frames that aren't our reply.
+    """
+    deadline = time.monotonic() + timeout
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise asyncio.TimeoutError(f"no reply for id={req_id} within {timeout}s")
+        line = await asyncio.wait_for(reader.readline(), timeout=remaining)
+        if not line:
+            raise EOFError(f"daemon closed socket before replying to id={req_id}")
+        msg = json.loads(line.decode())
+        if msg.get("id") == req_id:
+            return msg
+
+
 async def send_render(json_path: Path) -> dict:
     reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
+    req_id = f"music-{json_path.stem}-{int(time.time())}"
     req = {
-        "id": f"music-{json_path.stem}-{int(time.time())}",
+        "id": req_id,
         "method": "render",
         "params": {"tier": "music", "json_params_path": str(json_path)},
     }
     writer.write((json.dumps(req) + "\n").encode())
     await writer.drain()
-    response_line = await asyncio.wait_for(reader.readline(), timeout=900)
-    writer.close()
-    await writer.wait_closed()
-    return json.loads(response_line.decode())
+    try:
+        return await _read_reply(reader, req_id, timeout=900)
+    finally:
+        writer.close()
+        await writer.wait_closed()
 
 
 async def check_daemon() -> bool:
     try:
         reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
-        req = {"id": "healthcheck", "method": "ping"}
+        req_id = "healthcheck"
+        req = {"id": req_id, "method": "ping"}
         writer.write((json.dumps(req) + "\n").encode())
         await writer.drain()
-        resp = await asyncio.wait_for(reader.readline(), timeout=5)
-        writer.close()
-        await writer.wait_closed()
-        return json.loads(resp.decode()).get("result", {}).get("status") == "ok"
+        try:
+            reply = await _read_reply(reader, req_id, timeout=5)
+        finally:
+            writer.close()
+            await writer.wait_closed()
+        return reply.get("result", {}).get("status") == "ok"
     except Exception:
         return False
 
