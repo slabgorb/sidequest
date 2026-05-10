@@ -83,6 +83,13 @@ def discover_jobs(pack_dir: Path) -> list[tuple[Path, str]]:
         jobs.append((json_path, r2_key))
     return jobs
 
+
+def filter_jobs_by_track(jobs: list[tuple[Path, str]], track: str) -> list[tuple[Path, str]]:
+    """Narrow the job list to entries whose JSON file is named
+    `<track>_input_params.json`. Used by the --track CLI flag."""
+    target = f"{track}_input_params.json"
+    return [(jp, key) for jp, key in jobs if jp.name == target]
+
 # ── Genre mood definitions ──────────────────────────────────────────
 # Each genre maps mood_name → (prompt, duration_seconds)
 

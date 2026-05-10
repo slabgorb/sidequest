@@ -49,3 +49,25 @@ def test_is_in_r2_honors_asset_base_url_env(monkeypatch):
         is_in_r2("genre_packs/cav/audio/music/combat.ogg")
         url = mock_head.call_args[0][0]
         assert url.startswith("http://localhost:8765/")
+
+
+def test_filter_jobs_by_track_returns_only_matching_stem():
+    from generate_music import filter_jobs_by_track
+    jobs = [
+        (Path("/x/genre_packs/cav/audio/music/combat_input_params.json"),
+         "genre_packs/cav/audio/music/combat.ogg"),
+        (Path("/x/genre_packs/cav/audio/music/tension_input_params.json"),
+         "genre_packs/cav/audio/music/tension.ogg"),
+    ]
+    filtered = filter_jobs_by_track(jobs, "combat")
+    assert len(filtered) == 1
+    assert filtered[0][1] == "genre_packs/cav/audio/music/combat.ogg"
+
+
+def test_filter_jobs_by_track_returns_empty_when_no_match():
+    from generate_music import filter_jobs_by_track
+    jobs = [
+        (Path("/x/genre_packs/cav/audio/music/combat_input_params.json"),
+         "genre_packs/cav/audio/music/combat.ogg"),
+    ]
+    assert filter_jobs_by_track(jobs, "nonexistent") == []
