@@ -235,18 +235,24 @@ class TacticalGridPayload(ProtocolBase):
 
 **Room loader** — reads `worlds/<world>/rooms/<room_id>.yaml` plus sibling `<room_id>.mask.txt` (cavern rooms only). PNG is referenced by URL, never loaded server-side.
 
-**Static delivery** — verify whether `sidequest-content/` is already statically mounted by FastAPI. If yes: reuse. If no: add `app.mount("/content", StaticFiles(directory=SIDEQUEST_GENRE_PACKS), name="content")` at app startup. Whichever path: `cavern_image_url` is server-prefix + relative path under `genre_packs/`.
+**Static delivery** — confirmed during planning: `sidequest-server/sidequest/server/app.py:267` already mounts `/genre/*` against `SIDEQUEST_GENRE_PACKS`, and `sidequest-server/sidequest/server/asset_urls.py` provides `resolve_asset_url("genre_packs/...")` to convert content-relative paths into UI-fetchable URLs (CDN in prod, `/genre/...` locally). The room loader feeds `resolve_asset_url(f"genre_packs/{genre}/worlds/{world}/rooms/{room_id}.cavern.png")` into the payload. No new mount, no new env var.
 
 **OTEL spans** — every cavern-room enter emits a span carrying `{room_id, seed, density, floor_count, mask_bytes_sha, image_url}`. The GM panel (Keith's lie-detector) can verify Claude isn't winging the room.
 
 ### 5. Frontend renderer
 
+> **Spec correction (during planning, 2026-05-10):** The original draft of this section misidentified which UI files host tactical rendering. The MapWidget routing is: orbital → `OrbitalChartView`; room graph → `Automapper` (which delegates to `TacticalGridRenderer` for the current room when grid data is present, or to `DungeonMapRenderer` for the room-graph overhead view); cartography → `MapOverlay`. So:
+>
+> - **`MapOverlay.tsx` is the cartography view, not the tactical view.** It is not touched in this slice.
+> - **`DungeonMapRenderer.tsx` is the room-graph view (ADR-055).** It is not touched in this slice.
+> - **`TacticalGridRenderer.tsx` is the single-room tactical view.** It is the rewrite target.
+> - The selection state (token click → reach disc + action panel) lives **inside** `TacticalGridRenderer.tsx` (or a small co-located component the renderer composes), not in `MapOverlay`.
+> - Settlement rooms route through a new `SettlementRoomView.tsx` which `Automapper.tsx` mounts when `room_type == "settlement"` — a small branch added to `Automapper`'s existing 3-way delegation, not a parallel tree.
+
 **Files deleted:**
-- `sidequest-ui/src/components/DungeonMapRenderer.tsx` + `__tests__/dungeon-map-renderer.test.tsx`
-- `sidequest-ui/src/components/__tests__/MapOverlay.cartography.test.tsx`
 - ASCII-rendering test paths in `tactical-grid-renderer.test.tsx` and `tactical-entity-story-29-10.test.tsx`; rewritten as image-mode tests.
 
-**`TacticalGridRenderer.tsx` rewritten** (target: smaller than current 238 lines):
+**`TacticalGridRenderer.tsx` rewritten** — currently takes `grid: TacticalGridData` + `theme` props (single-room SVG renderer, story 29-4). Rewritten to accept the new `cavern_image_url` + `mask` + `tokens` shape, render `<img>` + token overlay, and own the selection state (default + selected per UI scope).
 
 ```typescript
 // pseudo-shape
@@ -272,13 +278,15 @@ Cell math helpers exported from the renderer module:
 
 The renderer never reads `cellular` params; those ride along for OTEL/GM-panel transparency only.
 
-**`MapOverlay.tsx` evolved** for v1's two states:
-- **Default** — image + tokens + initiative bar (existing); hover-cell tooltip retained; no reach disc, no action panel.
+**Default and selected states inside `TacticalGridRenderer.tsx`:**
+- **Default** — image + tokens + initiative bar; hover-cell tooltip retained; no reach disc, no action panel.
 - **Selected** — clicking a player/ally token opens the right-rail action panel (Move / Dash / Attack / Cast / Object / Dodge / End turn) and overlays the reach disc as a cell-set: every floor cell within Chebyshev radius `speed / 5`, highlighted as a translucent fill. Visualization is a circle silhouette; truth is discrete.
 
-**`SettlementRoomView.tsx`** (new, small) — name + description + exit list. Routes around the tactical renderer entirely.
+**`SettlementRoomView.tsx`** (new) — name + description + exit list. Mounted by `Automapper.tsx` as a new branch in its existing delegation when the current room's `room_type == "settlement"`.
 
-**`GameBoard/widgets/MapWidget.tsx`** — single-line prop pass-through update; no logic changes.
+**`Automapper.tsx`** — small change: the existing "single room with grid → TacticalGridRenderer" branch gains a sibling for settlement rooms. Its room-graph fallback (DungeonMapRenderer) is unchanged.
+
+**`GameBoard/widgets/MapWidget.tsx`** — no changes; it routes by mapData shape, not by room_type. The settlement / cavern decision happens one layer down inside `Automapper`.
 
 ## Testing strategy
 
@@ -322,7 +330,6 @@ Single merge, no feature flag.
 
 These are deliberately deferred to the implementation plan rather than pre-decided here:
 
-- Exact directory the FastAPI static mount points at (`SIDEQUEST_GENRE_PACKS` vs the wider `sidequest-content/` root).
 - Whether `cavern_image_url` should carry a content-hash query param for cache-busting (probably yes; small detail).
 - Exact pixel grain pattern in `render.py` (visual taste; iterate during impl).
 - Whether `Pillow` wheels need pinning for Apple Silicon determinism (bytes-identical-across-machines goal — verify with the Python wheel that ships with `uv` and pin if it drifts).
