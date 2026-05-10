@@ -9,7 +9,7 @@ superseded-by: null
 related: [55, 71, 86, 89]
 tags: [game-systems, frontend-protocol, media-audio]
 implementation-status: partial
-implementation-pointer: docs/superpowers/plans/2026-05-10-cavern-renderer-revival.md
+implementation-pointer: null
 ---
 
 # ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps
