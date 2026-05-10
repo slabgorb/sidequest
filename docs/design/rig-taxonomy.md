@@ -824,7 +824,7 @@ Ancillary-shape chassis death is qualitatively larger than singular-chassis deat
 
 ### Multi-chassis multiplayer turns
 
-When two or more chassis are in the same scene with crew on both, how does sealed-letter MP turn coordination route? Probably: each chassis is a turn-coordination unit and roles within it sealed-letter their hardpoint operations within the chassis's turn-window. Defer formal decision until MP rig play happens in playtest.
+When two or more chassis are in the same scene with crew on both, how does the submit-and-wait MP turn barrier route? Probably: each chassis is a turn-coordination unit and roles within it submit their hardpoint operations into the chassis's turn-window. Action text remains peer-visible during the wait per ADR-036 (collaborative default); if cross-chassis hostility ever needs hidden submissions, that's the PvP "sealed visibility" hook. Defer formal decision until MP rig play happens in playtest.
 
 ### Output catalog ratification
 

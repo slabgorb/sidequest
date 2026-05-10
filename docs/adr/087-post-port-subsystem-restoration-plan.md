@@ -96,7 +96,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 
 | Handler | Prior ADR | Verdict | Tier | Notes |
 |---------|-----------|---------|------|-------|
-| Sealed-letter mechanic | ADR-024 / ADR-028 (related) | **RESTORE** | P1 | Two refs in encounter/rules; no dispatch. **Primary-audience feature per CLAUDE.md** — inclusive-pacing for Alex (_"sealed-letter turns, no fast-typist monopolies"_). Currently dark. |
+| Sealed-letter resolution dispatch (`server.dispatch.sealed_letter`) | ADR-077 (dogfight) / ADR-093 (calibration) | **VERIFY** | P3 (downgraded 2026-05-09) | Cross-product lookup table for dogfight + magic confrontation outcomes. Dogfight branch is live (`narration_apply.py:1176`); confirm magic-confrontation path is wired before closing. **NB:** the original P1 framing cited a stale CLAUDE.md line conflating this resolution table with multiplayer turn-visibility; per ADR-036 doctrine clarification (2026-05-09) those are different systems. The submit-and-wait barrier (the playgroup-pacing concern) is live and unrelated to this dispatch handler — see ADR-036. |
 | Catch-up / rapid turn replay | — | **RESTORE** | P2 | One telemetry span reference; no handler. Multiplayer latecomer flow. |
 
 ### D. Agent-layer helpers
@@ -141,7 +141,7 @@ The user (Bossmang) has asked for a single plan covering **all** non-parity item
 ### P1 — within current epic window (7 items)
 7. Trope engine (ADR-018)
 8. NPC disposition Attitude transitions (ADR-020)
-9. Sealed-letter dispatch handler
+9. ~~Sealed-letter dispatch handler~~ — **moved to P3 / VERIFY** 2026-05-09. The original P1 framing was based on a stale CLAUDE.md citation conflating this with multiplayer turn-visibility (different system; see ADR-036 doctrine clarification 2026-05-09). The dogfight branch of this dispatch is live; remaining work is verification of the magic-confrontation path.
 10. Continuity validator
 11. Patch legality gate
 12. Subsystem coverage tracker (`CoverageGap` watcher events)

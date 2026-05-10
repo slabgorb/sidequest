@@ -119,6 +119,26 @@ up:
         fi
     done
 
+    # Reap orphans listening on our ports — covers processes started outside
+    # this shell (different terminal, prior session whose pidfile was lost,
+    # crashed `just up` that never ran cleanup). Without this, `uvicorn`
+    # silently fails to bind and the stack tails three logs while one
+    # service is actually missing — which is how the 2026-05-09 chargen
+    # playtest hit a stale-server schema-mismatch wall.
+    for port in 8765 5173; do
+        pids=$(lsof -ti tcp:$port 2>/dev/null || true)
+        if [[ -n "$pids" ]]; then
+            echo "▶ reaping orphan listener on :$port (pid(s) $pids)"
+            kill $pids 2>/dev/null || true
+            sleep 0.3
+            # Force-kill anything that didn't exit on SIGTERM.
+            stragglers=$(lsof -ti tcp:$port 2>/dev/null || true)
+            if [[ -n "$stragglers" ]]; then
+                kill -9 $stragglers 2>/dev/null || true
+            fi
+        fi
+    done
+
     echo "▶ daemon  (warmup)  → $dmn"
     ( just _daemon-cmd >"$dmn" 2>&1 ) &
     echo $! > {{logdir}}/sidequest-daemon.pid
@@ -156,6 +176,13 @@ up:
     tail -F "$dmn" "$srv" "$cli"
 
 # Stop all background services started by `just up`.
+#
+# Reaps both pidfile-tracked processes AND any orphan listeners on our ports
+# (server :8765, client :5173). The port sweep handles processes started
+# outside this shell — prior sessions, crashed `just up` runs, services
+# launched manually with `just server` / `just client`. Without it, the
+# 2026-05-09 chargen playtest pattern repeats: `just down` looks clean but
+# the next `just up` can't bind.
 down:
     #!/usr/bin/env bash
     for svc in server client daemon; do
@@ -166,6 +193,19 @@ down:
                 kill "$pid" && echo "stopped sidequest-$svc (pid $pid)"
             fi
             rm -f "$pidfile"
+        fi
+    done
+
+    for port in 8765 5173; do
+        pids=$(lsof -ti tcp:$port 2>/dev/null || true)
+        if [[ -n "$pids" ]]; then
+            echo "stopped orphan listener on :$port (pid(s) $pids)"
+            kill $pids 2>/dev/null || true
+            sleep 0.3
+            stragglers=$(lsof -ti tcp:$port 2>/dev/null || true)
+            if [[ -n "$stragglers" ]]; then
+                kill -9 $stragglers 2>/dev/null || true
+            fi
         fi
     done
 

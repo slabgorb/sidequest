@@ -20,7 +20,7 @@
 3. [Image Generation](#3-image-generation) — Narration → Subject → Drama Gate → Daemon → IMAGE
 4. [TTS Voice Pipeline (removed)](#4-tts-voice-pipeline-removed) — Retired in Epic 27 / ADR-076
 5. [Music & Audio](#5-music--audio) — Narration → Mood → Track Selection → AUDIO_CUE
-6. [Multiplayer Turn Barrier](#6-multiplayer-turn-barrier) — Sealed Letter Collection → Resolution
+6. [Multiplayer Turn Barrier](#6-multiplayer-turn-barrier) — Submit-and-Wait Collection → Resolution
 7. [Combat & Encounter Flow](#7-combat--encounter-flow) — State Override → Mutations → COMBAT_EVENT
 8. [Character Creation](#8-character-creation) — Builder State Machine → Character
 9. [Pacing & Drama Engine](#9-pacing--drama-engine) — TensionTracker → Delivery Mode → Prompt
@@ -328,7 +328,7 @@ flowchart TD
 
 ## 6. Multiplayer Turn Barrier
 
-Sealed-letter pattern — all players submit, one elected handler resolves. Lives in `sidequest/server/session_room.py`.
+Submit-and-wait pattern — all players submit, one elected handler resolves. Lives in `sidequest/server/session_room.py`. Action text is peer-visible during the submission window via `ACTION_REVEAL` (collaborative default per ADR-036 amendment 2026-05-03). Hidden-submission "sealed visibility" mode is reserved for PvP scenarios and not currently implemented — see ADR-036 doctrine clarification (2026-05-09) for the disambiguation between barrier mechanism, visibility model, and the unrelated `sealed_letter.py` resolution table used by dogfight and magic confrontations.
 
 ```mermaid
 flowchart TD

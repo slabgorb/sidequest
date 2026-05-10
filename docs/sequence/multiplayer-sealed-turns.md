@@ -1,9 +1,17 @@
-# Multiplayer Sealed Letter Turns
+# Multiplayer Submit-and-Wait Turns
 
-> **Last updated:** 2026-05-05 (post-port; ADR-082)
+> **Last updated:** 2026-05-09 (terminology refresh — ADR-036 doctrine clarification)
+> *Filename retained as `multiplayer-sealed-turns.md` for stable inbound links; older
+> docs may still call this the "sealed letter" pattern. The mechanism is the same:
+> all players submit, narrator resolves once.*
 >
 > Simultaneous action submission with claim-based narrator resolution.
-> Players submit privately behind a barrier; one narrator call resolves all actions.
+> All players submit; one narrator call resolves all actions. Action text is
+> **peer-visible** during the submission window via `ACTION_REVEAL` (collaborative
+> default per ADR-036 amendment 2026-05-03). The barrier blocks resolution, not
+> visibility — teammates can read each other's typing in real time. Hidden-submission
+> "sealed visibility" mode is reserved for PvP scenarios and not currently
+> implemented; see ADR-036 doctrine clarification (2026-05-09).
 >
 > Module paths reference `sidequest-server/sidequest/` (Python). The pre-port
 > Rust crate paths in earlier revisions of this document have been retired —
@@ -23,7 +31,7 @@ stateDiagram-v2
 
 Barrier is only active in **Structured** and **Cinematic** modes. FreePlay resolves actions immediately (no barrier).
 
-## Sealed Turn Sequence
+## Submit-and-Wait Turn Sequence
 
 ```mermaid
 sequenceDiagram
@@ -156,7 +164,7 @@ flowchart TD
 | `sidequest-server/sidequest/game/shared_world_delta.py` | Shared-world delta handshake (story 45-1) |
 | `sidequest-server/sidequest/server/session_handler.py` | Multiplayer dispatch path |
 | `sidequest-server/sidequest/handlers/player_action.py` | PLAYER_ACTION inbound handler |
-| `sidequest-server/sidequest/handlers/action_reveal.py` | Sealed-letter reveal dispatch |
+| `sidequest-server/sidequest/handlers/action_reveal.py` | Peer action-text reveal dispatch (collaborative visibility per ADR-036 amendment 2026-05-03) |
 | `sidequest-server/sidequest/server/dispatch/sealed_letter.py` | Phase-5 sealed-letter dispatch (used by dogfight + magic confrontation outcomes) |
 | `sidequest-server/sidequest/agents/perception_rewriter.py` | Per-player narration variants (ADR-028) |
 | `sidequest-server/sidequest/game/projection_filter.py` + `game/projection/` | Per-player view computation |

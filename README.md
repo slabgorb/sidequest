@@ -3,7 +3,7 @@
 An AI narrator engine that runs tabletop-style RPGs in any genre, powered by a persistent
 Claude narrator. Players connect via browser, create characters through genre-driven
 scenes, and explore procedural worlds with real-time image generation and adaptive music.
-Multiplayer with turn barriers, perception rewriting, and sealed-letter turn coordination.
+Multiplayer with submit-and-wait turn barriers, perception rewriting, and collaborative peer-action visibility (see ADR-036).
 
 ## Repository Ecosystem
 
@@ -114,8 +114,9 @@ Genre packs live in `sidequest-content/genre_packs/` and are loaded via the
 9. **Knowledge:** KnownFacts accumulate from play, lore fragments seed from genre packs,
    conlang names generated from morpheme glossaries
    ([ADR-091](docs/adr/091-culture-corpus-markov-naming.md))
-10. **Multiplayer:** turn barriers with adaptive timeout, three turn modes
-    (FREE_PLAY / STRUCTURED / CINEMATIC), sealed-letter coordination, perception rewriting
+10. **Multiplayer:** submit-and-wait turn barriers with adaptive timeout, three turn modes
+    (FREE_PLAY / STRUCTURED / CINEMATIC), collaborative peer-action visibility, perception rewriting
+    (see ADR-036 for the visibility doctrine; sealed/hidden-submission mode is reserved for PvP)
 
 ## Server Module Layout
 

@@ -69,7 +69,7 @@ Server → Client (turn flow):
   TURN_STATUS           Turn/round tracking with player status
   PARTY_STATUS          Full party snapshot
   ACTION_QUEUE          Queued actions
-  ACTION_REVEAL         Sealed-letter action reveal (multiplayer)
+  ACTION_REVEAL         Peer action-text reveal (multiplayer; collaborative visibility per ADR-036 amendment 2026-05-03)
   CHAPTER_MARKER        Chapter/scene transition
 
 Server → Client (mechanics + UI):

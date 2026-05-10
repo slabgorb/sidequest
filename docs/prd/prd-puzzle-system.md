@@ -236,7 +236,7 @@ In multiplayer, puzzles become richer:
 - Different players observe different clues based on position/perception (PerceptionRewriter)
 - Solutions that require multiple simultaneous actions favor coordination
 - Resource costs can be distributed across the party
-- The sealed-letter turn mode (STRUCTURED) works naturally — all players submit their puzzle actions, then the narrator resolves the combined result
+- The STRUCTURED submit-and-wait turn mode works naturally — all players submit their puzzle actions, then the narrator resolves the combined result. Peer action text is visible during the wait phase (collaborative default per ADR-036), which helps the table coordinate puzzle-solving moves.
 
 ## Verification (OTEL)
 

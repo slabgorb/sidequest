@@ -63,7 +63,7 @@ These features are wired end-to-end in the Python tree and exercise OTEL spans d
 
 | Feature | Module | Notes |
 |---------|--------|-------|
-| Turn barrier (sealed-letter window) | `sidequest.server.session_room.TurnBarrier` | Adaptive timeout (3s for 2-3, 5s for 4+); claim-election prevents duplicate narrator calls |
+| Turn barrier (submit-and-wait window) | `sidequest.server.session_room.TurnBarrier` | Adaptive timeout (3s for 2-3, 5s for 4+); claim-election prevents duplicate narrator calls. Action text is peer-visible during the window per ADR-036 amendment 2026-05-03 (collaborative default). Hidden-submission "sealed visibility" mode reserved for PvP — not implemented. |
 | Active-turn-takers vs lobby count | story 45-2 | Closed Sprint 3; barrier no longer waits on phantom lobby peers |
 | Shared-world delta handshake | `sidequest.game.shared_world_delta` | Closed Sprint 3 (story 45-1); seeds next player's turn with location/encounter/adjacency ground truth |
 | Sealed-letter dispatch | `sidequest.server.dispatch.sealed_letter` | Phase-5 dispatch handler restored (used by dogfight `ResolutionMode.sealed_letter_lookup` and magic confrontation outcomes) |
@@ -278,7 +278,7 @@ These features are wired end-to-end in the Python tree and exercise OTEL spans d
 | Peer events cache | `lib/peerEventStore` | Local store of cross-player observations |
 | Narrative segments / streaming | `lib/narrativeSegments` + `providers/streamingNarration` | Two-message NARRATION/NARRATION_END atomic commit |
 | Narration cards / focus / scroll | `NarrationCards` + `NarrationFocus` + `NarrationScroll` + `NarrativeRenderers` | Layered narration renderers |
-| Action reveal / queue | `protocol.ACTION_REVEAL`, `ACTION_QUEUE` + `handlers.action_reveal` | Sealed-letter declaration reveal |
+| Action reveal / queue | `protocol.ACTION_REVEAL`, `ACTION_QUEUE` + `handlers.action_reveal` | Collaborative peer-action visibility (composing/submitted) per ADR-036 amendment 2026-05-03 |
 | Yield button | `YieldButton` | Voluntary turn yield wire |
 | Image bus | `providers/ImageBusProvider` | Image pub/sub for widgets |
 | Game state provider | `providers/GameStateProvider` | Shared state mirror context |
@@ -362,7 +362,7 @@ These features are wired end-to-end in the Python tree and exercise OTEL spans d
 
 | Handler | Module | Notes |
 |---------|--------|-------|
-| Action reveal | `handlers.action_reveal` | Sealed-letter reveal handler |
+| Action reveal | `handlers.action_reveal` | Peer action-text reveal handler (collaborative visibility per ADR-036 amendment 2026-05-03) |
 | Character creation | `handlers.character_creation` | Replaces inline session_handler logic |
 | Connect | `handlers.connect` | Connect handshake |
 | Course intent | `handlers.course_intent` | Orbital chart course-intent inbound |

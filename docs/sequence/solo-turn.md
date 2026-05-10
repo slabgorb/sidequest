@@ -7,10 +7,13 @@
 > see `docs/adr/082-port-api-rust-to-python.md` and the translation table in
 > `docs/adr/README.md`.
 
-One complete action turn in **solo play**. The "sealed-letter" barrier stage
+One complete action turn in **solo play**. The submit-and-wait barrier stage
 is architecturally present on every turn but collapses to a no-op when only
 one player is in the session. See [`multiplayer-sealed-turns.md`](./multiplayer-sealed-turns.md)
-for the full sealed-envelope variant.
+for the full multiplayer variant. (The "sealed-letter" name is historical — the
+barrier waits, but action text is peer-visible during the wait per ADR-036
+amendment 2026-05-03; hidden-submission "sealed visibility" is reserved for PvP
+and not implemented.)
 
 ## Diagram
 
@@ -45,7 +48,7 @@ sequenceDiagram
     Note over Disp: build_prompt_context (state_summary)<br/>+ Monster Manual NPC/encounter injection
 
     rect rgba(180,180,180,0.15)
-    Note over Disp: SessionRoom.TurnBarrier → no-op<br/>(no turn_barrier in solo —<br/>sealed-letter stage is skipped)
+    Note over Disp: SessionRoom.TurnBarrier → no-op<br/>(no turn_barrier in solo —<br/>submit-and-wait stage is skipped)
     end
 
     Disp->>Narr: GameService.process_action(you, context)
@@ -113,15 +116,15 @@ sequenceDiagram
 | Client message handler | `sidequest-ui/src/App.tsx` + `useGameSocket` |
 | Narrative segment build | `sidequest-ui/src/lib/narrativeSegments.ts` |
 
-## Solo vs. sealed-letter multiplayer
+## Solo vs. multiplayer submit-and-wait
 
 Three things collapse to no-ops when only one player is in the session:
 
 1. **No barrier wait.** `SessionRoom.TurnBarrier` never installs for a single player.
-2. **No `TurnStatus("submitted")` broadcast.** The "sealed the envelope"
-   event is gated on barrier existence.
-3. **No `ActionReveal`.** The reveal message is part of the barrier
-   resolution path only.
+2. **No `TurnStatus("submitted")` broadcast.** The submission acknowledgement
+   is gated on barrier existence.
+3. **No `ActionReveal`.** The peer reveal message is part of the barrier
+   resolution path only — see ADR-036 for the visibility doctrine.
 
 So in solo, a turn is:
 

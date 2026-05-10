@@ -220,7 +220,7 @@ Client C ──ws──► Session C ──────────┤   └─�
 
 Three turn modes govern coordination:
 - **FREE_PLAY:** Actions process immediately, no barrier
-- **STRUCTURED:** Sealed letter pattern — all submit, then barrier resolves, one narrator call
+- **STRUCTURED:** Submit-and-wait barrier — all players submit, then barrier resolves with one narrator call. Peer action text is visible during the wait phase (collaborative default per ADR-036 amendment 2026-05-03). Hidden-submission "sealed visibility" mode is reserved for PvP scenarios and not currently implemented.
 - **CINEMATIC:** DM-driven, players observe
 
 ## What Stays in sidequest-daemon (Python sidecar)

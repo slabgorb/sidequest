@@ -167,3 +167,36 @@ Plan: `docs/superpowers/plans/2026-04-26-mp-cinematic-mode-wiring.md`.
 - ADR-051 (round counter authority for the `round` field on the wire payload)
 
 **Future:** If a scene ever genuinely needs hidden input (perception rewriter, traitor briefings, charmed players), introduce a per-scene flag then. Current playgroup play does not need it. Cinematic-mode round timeout is also out of scope until that timeout itself is implemented.
+
+## Amendment — Doctrine Clarification: "Sealed-Letter" Terminology (2026-05-09)
+
+**Trigger:** Playtest 2026-05-09 pingpong filed a [BUG] against peer-visible action text, citing the CLAUDE.md primary-audience rubric ("sealed-letter turns, no fast-typist monopolies"). The cite was correct against the *pre-2026-05-03* doctrine but stale against the live amendment above. Closing the loop requires explicit doctrine and disambiguation of the overloaded "sealed-letter" name.
+
+**Doctrine (live as of 2026-05-09):**
+
+Multiplayer turns are **collaborative by default**. All party members see each other's in-progress and post-submit action text in real time during the wait phase. The barrier still holds — narration does not fire until every connected player has submitted — but information flows freely between teammates while they compose. The playgroup's typical mode is cooperative play; collaborative visibility lets the table coordinate without out-of-band chat.
+
+**"Sealed-letter" disambiguation.** The name means three different things in this codebase. Document and implement them as three different things:
+
+| Concept | What it is | Status |
+|---------|------------|--------|
+| **Submit-and-wait barrier** | All players submit, then the narrator resolves and broadcasts. The pattern of "wait for everyone, then act once." | **Live** — every multiplayer round goes through this barrier (`SessionRoom.dispatch_lock`, `last_dispatched_round` CAS guard). Single-player collapses to a no-op. |
+| **Sealed visibility mode** | Peer action text is *hidden* from other players until narration resolves. Reserved for PvP scenarios where players must not know each other's intent (factional betrayal, traitor briefings, hidden-objective scenes). | **Not implemented.** Hooks exist in the per-scene flag design space (see "Future" paragraph above). The current playgroup does not run PvP campaigns; nobody is slipping notes to the DM. Build this when a PvP scene needs it, not before. |
+| **Sealed-letter resolution mechanic** | A *cross-product lookup table* used by dogfight (ADR-077) and magic confrontation outcomes (`server.dispatch.sealed_letter`). Entirely unrelated to visibility — shares only the name. | **Live.** Untouched by this amendment. |
+
+**Naming guidance going forward:**
+
+- For the barrier mechanism, prefer **"submit-and-wait barrier"** or **"turn barrier"**. Avoid **"sealed-letter barrier"** in new docs — the name implies hidden submissions.
+- For the visibility model, prefer **"peer visibility model"** or **"collaborative visibility"** for the default, and **"sealed visibility"** for the PvP-only mode.
+- For the dogfight/magic resolution table, keep **"sealed-letter resolution"** — it is established TTRPG terminology for that specific cross-product mechanic and there is no naming conflict at the table.
+
+**Pre-existing references** in older ADRs, sequence diagrams, archived playtest notes, completed superpowers specs, and inline code comments may still call the barrier "sealed-letter". Those are historical and accurate-for-their-time; sweep as encountered, do not bulk-rename. The only LIVE doctrine docs that must agree with this amendment are: `CLAUDE.md`, `README.md`, `docs/architecture.md`, `docs/feature-inventory.md`, `docs/api-contract.md`, `docs/wiring-diagrams.md`, `docs/sequence/multiplayer-sealed-turns.md`, `docs/sequence/solo-turn.md`, `docs/design/rig-taxonomy.md`, `docs/prd/prd-puzzle-system.md`, and this ADR. Updated in the same change.
+
+**What is NOT changing:**
+
+- The barrier-and-CAS dispatcher.
+- ACTION_REVEAL message semantics or wire format.
+- ADR-028 perception rewriter (still filters narration *output* per-player; orthogonal to action *input* visibility).
+- The `sealed_letter.py` resolution table.
+
+**OTEL implication:** Should sealed visibility mode ever ship, the ACTION_REVEAL handler must gate the broadcast on a per-scene flag and emit `action_reveal.suppressed_pvp` watcher events when text is withheld. Privacy fields (`text_length` only) already match what would be needed; no protocol change.
