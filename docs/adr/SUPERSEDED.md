@@ -33,7 +33,6 @@
 
 - [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) — superseded
 - [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) — superseded
-- [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) — superseded
 
 ### Superseded by [ADR-091: Culture-Corpus + Markov Naming](091-culture-corpus-markov-naming.md)
 
@@ -42,6 +41,10 @@
 ### Superseded by [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md)
 
 - [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) — superseded
+
+### Superseded by [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md)
+
+- [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) — superseded
 
 ## Historical — no successor
 

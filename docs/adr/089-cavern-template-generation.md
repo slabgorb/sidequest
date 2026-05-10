@@ -5,7 +5,7 @@ status: superseded
 date: 2026-04-24
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: 86
+superseded-by: 96
 related: [71, 86]
 tags: [media-audio, room-graph]
 implementation-status: retired
@@ -14,7 +14,7 @@ implementation-pointer: 86
 
 # ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata
 
-> **Superseded by [ADR-086](086-image-composition-taxonomy.md) (2026-05-02).**
+> **Superseded by [ADR-096](096-cavern-renderer-revival.md) (revival, 2026-05-10) — see also [ADR-086](086-image-composition-taxonomy.md) for the parallel recipe pipeline.**
 >
 > ADR-086 and ADR-089 were written on the same day (2026-04-24) as
 > competing answers to the broken-ASCII-renderer problem ADR-071's
