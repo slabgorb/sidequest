@@ -246,6 +246,12 @@ client-build:
 client-lint:
     cd {{root}}/sidequest-ui && npm run lint
 
+# Strict type-check — catches drift that ESLint and Vite let through.
+# tsc --noEmit (used by some IDEs) skips composite projects; tsc -b walks
+# tsconfig.app.json + tsconfig.node.json the way `npm run build` does.
+client-typecheck:
+    cd {{root}}/sidequest-ui && npx tsc -b
+
 client-install:
     cd {{root}}/sidequest-ui && npm install
 
@@ -275,7 +281,7 @@ preview-style genre world:
 # Cross-repo + utilities
 # ---------------------------------------------------------------------------
 
-check-all: server-check client-lint client-test daemon-lint
+check-all: server-check client-lint client-typecheck client-test daemon-lint
 
 # OTEL dashboard — opens the browser-friendly /ws/watcher viewer
 # served by sidequest-server itself. Server must already be running
