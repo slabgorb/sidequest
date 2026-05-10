@@ -8,7 +8,7 @@ supersedes: [89]
 superseded-by: null
 related: [55, 71, 86, 89]
 tags: [game-systems, frontend-protocol, media-audio]
-implementation-status: in-progress
+implementation-status: partial
 implementation-pointer: docs/superpowers/plans/2026-05-10-cavern-renderer-revival.md
 ---
 
