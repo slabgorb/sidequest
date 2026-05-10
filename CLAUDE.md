@@ -89,9 +89,8 @@ sidequest-ui/                 # React frontend (subrepo)
 
 sidequest-daemon/             # Python media services (subrepo)
 ├── sidequest_daemon/         # Package root
-│   ├── audio/                # Music library, SFX mixer, scene interpreter
 │   ├── genre/
-│   ├── media/                # Flux / Z-Image generation pipeline
+│   ├── media/                # Flux / Z-Image image pipeline + ACE-Step music_pipeline
 │   ├── ml/
 │   └── renderer/
 ├── tests/
@@ -104,7 +103,7 @@ sidequest-daemon/             # Python media services (subrepo)
 - **Small REST surface** for save/load, character listing, genre pack metadata
 - **Claude CLI (`claude -p`)** for all LLM calls — subprocess from Python, not SDK
 - **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth), loaded by the server from `SIDEQUEST_GENRE_PACKS`
-- **Media daemon** is a Python sidecar for image/audio generation (Flux / Z-Image / ACE-Step)
+- **Media daemon** is a Python sidecar for image generation (Flux / Z-Image) and music generation (ACE-Step). Music is generated on operator command via `python scripts/generate_music.py --genre <pack>` — per-track JSON params files in `sidequest-content/genre_packs/<pack>/audio/music/*_input_params.json` are the canonical spec; the daemon uploads OGG to R2 at `genre_packs/<pack>/audio/music/<track>.ogg`. See ADR-095
 - **Save files** live at `~/.sidequest/saves/` (SQLite `.db` files, one per genre/world session) — not in the repo. See `.pennyfarthing/guides/save-management.md` for cleanup, inspection, and migration procedures
 
 ### Port history
