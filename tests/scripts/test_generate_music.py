@@ -1,6 +1,8 @@
 from pathlib import Path
 import sys
 import os
+import json
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"))
 
@@ -71,3 +73,28 @@ def test_filter_jobs_by_track_returns_empty_when_no_match():
          "genre_packs/cav/audio/music/combat.ogg"),
     ]
     assert filter_jobs_by_track(jobs, "nonexistent") == []
+
+
+@pytest.mark.asyncio
+async def test_send_render_uses_json_params_path_payload(tmp_path):
+    """The script's send_render must build the request shape the daemon expects."""
+    from unittest.mock import AsyncMock, patch
+    from generate_music import send_render
+
+    json_path = tmp_path / "combat_input_params.json"
+    json_path.write_text("{}")
+
+    fake_reader = AsyncMock()
+    fake_reader.readline = AsyncMock(return_value=b'{"id":"x","result":{"r2_key":"k","seed":42,"duration_ms":60000,"elapsed_ms":67000}}\n')
+    fake_writer = MagicMock()
+    fake_writer.drain = AsyncMock()
+    fake_writer.wait_closed = AsyncMock()
+
+    with patch("generate_music.asyncio.open_unix_connection", AsyncMock(return_value=(fake_reader, fake_writer))):
+        result = await send_render(json_path)
+
+    written = fake_writer.write.call_args[0][0].decode()
+    payload = json.loads(written)
+    assert payload["method"] == "render"
+    assert payload["params"]["tier"] == "music"
+    assert payload["params"]["json_params_path"] == str(json_path)
