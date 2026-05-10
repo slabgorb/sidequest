@@ -18,6 +18,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import re
 import subprocess
 import sys
 import time
@@ -39,6 +40,28 @@ VARIATION_SUFFIXES = {
     "resolution": "resolution, release, calm after storm, settling, peaceful conclusion, exhale",
     "overture": "overture, grand opening, introduction, establishing, sweeping, cinematic",
 }
+
+# ── Regex for parsing JSON params files ──────────────────────────────
+
+_GENRE_PACKS_RE = re.compile(r".*?(genre_packs/.*?)/audio/music/(.+?)_input_params\.json$")
+
+
+def discover_jobs(pack_dir: Path) -> list[tuple[Path, str]]:
+    """Walk `<pack_dir>/audio/music/**` for *_input_params.json files.
+
+    Returns list of (json_path, expected_r2_key) tuples. R2 key derivation
+    matches the daemon's MusicPipeline.derive_r2_key — strip
+    `_input_params.json`, append `.ogg`, anchor under `genre_packs/`.
+    """
+    jobs = []
+    for json_path in pack_dir.glob("**/audio/music/*_input_params.json"):
+        m = _GENRE_PACKS_RE.match(str(json_path))
+        if not m:
+            continue
+        pack_path, name = m.group(1), m.group(2)
+        r2_key = f"{pack_path}/audio/music/{name}.ogg"
+        jobs.append((json_path, r2_key))
+    return jobs
 
 # ── Genre mood definitions ──────────────────────────────────────────
 # Each genre maps mood_name → (prompt, duration_seconds)
