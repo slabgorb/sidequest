@@ -135,7 +135,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-035: Unix Socket IPC for Python Sidecar](035-unix-socket-ipc-sidecar.md) | ✓ accepted | live |
 | [ADR-038: WebSocket Transport Architecture](038-websocket-transport-architecture.md) | ✓ accepted | live |
-| [ADR-046: GPU Memory Budget Coordinator](046-gpu-memory-budget-coordinator.md) | ✓ accepted | live |
+| [ADR-046: GPU Memory Budget Coordinator](046-gpu-memory-budget-coordinator.md) | ✓ accepted | — |
 | [ADR-047: Prompt Injection Sanitization Layer](047-prompt-injection-sanitization.md) | ✓ accepted | live |
 
 ## Narrator / Text
@@ -166,6 +166,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-050: Image Pacing Throttle](050-image-pacing-throttle.md) | ✓ accepted | live |
 | [ADR-070: MLX Image Renderer — Replace PyTorch/diffusers with Apple MLX](070-mlx-image-renderer.md) | ✓ accepted | live |
 | [ADR-086: Image-Composition Taxonomy — Portraits, POIs, Illustrations](086-image-composition-taxonomy.md) | ✓ accepted | live |
+| [ADR-095: Daemon Music Tier via ACE-Step](095-daemon-music-tier-via-ace-step.md) | ✓ accepted | live |
 
 ## Turn Management
 

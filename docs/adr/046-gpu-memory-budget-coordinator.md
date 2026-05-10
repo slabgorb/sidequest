@@ -8,11 +8,28 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [transport-infrastructure]
-implementation-status: live
+implementation-status: retired
 implementation-pointer: null
 ---
 
 # ADR-046: GPU Memory Budget Coordinator
+
+> **STALE — implementation removed 2026-05-10.** `sidequest_daemon/ml/memory_manager.py`
+> was deleted in commit `5118d6c` because it had zero non-test callers (the
+> `ModelMemoryManager` was instantiated once in `WorkerPool.__init__` and never
+> accessed — no `register()` / `unregister()` / `ensure_loaded()` calls anywhere
+> in production). The Kokoro TTS backend it was sized around was retired in 2026-05;
+> the planned ACE-Step (music) client now joins the daemon as a separate concern
+> per ADR-095 (Daemon Music Tier via ACE-Step), which uses the existing
+> `render_lock` for image/music GPU coordination — no shared budget manager.
+>
+> The architectural problem this ADR addresses (Apple Silicon unified memory
+> coordination across three concurrent ML backends) is real, but the design
+> never reached production. The current daemon runs at most two ML model
+> families (Flux/Z-Image and ACE-Step) and serializes them via `render_lock`
+> with cold-swap on alternation. If a fourth backend is ever added, the
+> coordinator may need to come back — but the implementation in this ADR
+> is not what should be revived.
 
 > Retrospective — documents a decision already implemented in the codebase.
 

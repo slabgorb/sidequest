@@ -1,27 +1,31 @@
 #!/usr/bin/env python3
-"""Batch-generate mood tracks for genre packs using ACE-Step daemon.
+"""Walk per-track JSON params files in a genre pack and dispatch each
+to the daemon for ACE-Step generation.
 
-Reads mood definitions from genre-specific configs below, sends render
-requests to the running sidequest-renderer daemon, converts WAV→OGG.
+Source of truth: `<pack>/audio/music/*_input_params.json` files.
+Output: R2 at `genre_packs/<pack>/audio/music/<track>.ogg`.
 
 Usage:
-    python scripts/generate_music.py --genre pulp_noir           # all moods
-    python scripts/generate_music.py --genre pulp_noir --mood combat
-    python scripts/generate_music.py --genre pulp_noir --mood combat --variation sparse
-    python scripts/generate_music.py --genre pulp_noir --dry-run
-"""
+    python scripts/generate_music.py --genre <pack>           # all missing
+    python scripts/generate_music.py --genre <pack> --track combat
+    python scripts/generate_music.py --genre <pack> --force   # re-render existing
+    python scripts/generate_music.py --genre <pack> --dry-run
 
+See docs/superpowers/specs/2026-05-09-daemon-between-session-music-generation-design.md.
+"""
 from __future__ import annotations
 
 import argparse
 import asyncio
-import hashlib
 import json
 import logging
-import subprocess
+import os
+import re
 import sys
 import time
 from pathlib import Path
+
+import requests
 
 SOCKET_PATH = Path("/tmp/sidequest-renderer.sock")
 _root = Path(__file__).resolve().parent.parent
@@ -29,144 +33,53 @@ GENRE_PACKS_DIR = _root / "sidequest-content" / "genre_packs"
 
 log = logging.getLogger(__name__)
 
-# ── Variation types (shared across all genres) ──────────────────────
-
-VARIATION_SUFFIXES = {
-    "full": "full arrangement, complete orchestration, all instruments, rich, layered, dynamic",
-    "ambient": "ambient, reverb, pads, stripped, minimal, atmospheric, slow",
-    "sparse": "sparse, minimalist, solo instrument, space, silence, delicate, bare",
-    "tension_build": "building tension, rising, crescendo, layered, intensifying",
-    "resolution": "resolution, release, calm after storm, settling, peaceful conclusion, exhale",
-    "overture": "overture, grand opening, introduction, establishing, sweeping, cinematic",
-}
-
-# ── Genre mood definitions ──────────────────────────────────────────
-# Each genre maps mood_name → (prompt, duration_seconds)
-
-GENRE_MOODS: dict[str, dict[str, tuple[str, int]]] = {
-    "pulp_noir": {
-        "exploration": ("cool jazz, upright bass, brushed drums, muted trumpet, walking bass line, smoky, nocturnal, 1920s Paris, noir", 60),
-        "combat": ("hard bop, frantic drums, brass stabs, piano crashes, urgent, chaotic, bar fight, 1920s jazz, aggressive", 60),
-        "tension": ("sparse piano, single bass note, silence between beats, film noir, suspense, dark, slow, menacing, minimal", 60),
-        "rest": ("slow jazz ballad, solo saxophone, quiet piano, intimate, melancholic, late night, 1920s, torch song", 60),
-        "speakeasy": ("hot jazz, full band, swing feel, crowd energy, trumpet solo, clarinet, 1920s, prohibition, dance, upbeat", 60),
-        "intrigue": ("film noir score, solo clarinet, minor key, shadows, mysterious, detective, following leads, suspenseful, subtle", 60),
-        "chase": ("driving rhythm, walking bass, urgent brass, fast tempo, pursuit, car chase, 1920s, frantic, bebop", 60),
-    },
-    "neon_dystopia": {
-        "exploration": ("synthwave, neon, dark ambient, rain, city streets, blade runner, pulsing synth bass, atmospheric, nocturnal, cyberpunk", 60),
-        "combat": ("industrial, aggressive synth, distorted bass, fast tempo, combat, cyberpunk, metallic percussion, intense, electronic, dark", 60),
-        "tension": ("dark ambient, low drone, digital interference, suspense, hacking, cyber threat, minimal, ominous pulse, eerie, glitch", 60),
-        "rest": ("lo-fi synth, ambient pads, gentle, peaceful, rooftop dawn, warm synth, reflective, cyberpunk calm, slow, atmospheric", 60),
-        "cyberspace": ("digital, glitch, fast arpeggios, trance, virtual reality, data streams, electronic, pulsing, crystalline, matrix", 60),
-        "club": ("darkwave, dance, heavy bass, synth, nightclub, neon, industrial dance, electronic, 128 bpm, driving, cyberpunk club", 60),
-        "chase": ("high tempo synthwave, pursuit, driving bass, urgent, highway, vehicles, cyberpunk chase, fast, relentless, adrenaline", 60),
-        "corporate": ("cold ambient, glass and steel, corporate, elevator dystopia, clean synth, minimal, sterile, oppressive calm, boardroom", 60),
-    },
-    "low_fantasy": {
-        "exploration": ("medieval lute, acoustic guitar, gentle flute, tavern ambience, folk, pastoral, warm, earthy, wandering, journey", 60),
-        "combat": ("war drums, brass fanfare, urgent strings, medieval battle, epic, aggressive percussion, chaotic, martial, iron and steel", 60),
-        "tension": ("solo cello, minor key, sparse, creeping, dark forest, shadow, suspense, medieval, ominous drone, quiet menace", 60),
-        "rest": ("gentle harp, soft flute, peaceful, fireside, warmth, healing, lullaby, medieval, pastoral calm, night rest", 60),
-        "tavern": ("lively fiddle, bodhran, pub folk, raucous, ale and laughter, Celtic, dancing, jig, tavern crowd, merry", 60),
-        "mystery": ("solo recorder, ethereal choir, sacred, ancient ruins, discovery, wonder, medieval church, echoing, reverent, mystical", 60),
-        "chase": ("fast fiddle, galloping rhythm, pursuit, hooves, urgent, woodland chase, breathless, Celtic reel, frantic, escape", 60),
-    },
-    "elemental_harmony": {
-        "exploration": ("shamisen, bamboo flute, koto, gentle, misty mountains, zen garden, peaceful, Japanese traditional, atmospheric, meditative", 60),
-        "combat": ("taiko drums, fierce, martial, shamisen, fast tempo, samurai battle, steel and fire, aggressive, Japanese, epic", 60),
-        "tension": ("solo shakuhachi, sparse, dark, temple at night, suspense, ominous, minimal, koto drone, ancient threat, quiet dread", 60),
-        "rest": ("gentle koto, wind chimes, peaceful, hot springs, steam, evening, reflective, Japanese ambient, serene, warm", 60),
-        "ceremony": ("gagaku, imperial court, formal, ancient ritual, slow, ceremonial, flute and strings, Japanese classical, sacred, solemn", 60),
-        "spirit": ("ethereal, otherworldly, bell tones, shrine, supernatural, fox spirit, dreamlike, Japanese folklore, haunting, beautiful", 60),
-        "chase": ("fast taiko, urgent shamisen, pursuit, rooftops, wind, running, Japanese action, breathless, dramatic, relentless", 60),
-    },
-    "space_opera": {
-        "exploration": ("cinematic orchestral, space ambience, vast, strings, synthesizer, wonder, discovery, cosmic, sweeping, interstellar", 60),
-        "combat": ("epic orchestral, brass, war drums, space battle, lasers, urgent, aggressive, cinematic, action, intense", 60),
-        "tension": ("dark synth, low strings, suspense, deep space, isolation, dread, minimal, pulsing, alien, ominous", 60),
-        "rest": ("gentle piano, soft strings, starlight, peaceful, space station, ambient, reflective, cosmic calm, warm, hopeful", 60),
-        "cantina": ("alien jazz, unusual instruments, exotic, lively, space bar, eclectic, playful, interstellar lounge, quirky, upbeat", 60),
-        "void": ("deep drone, cosmic ambience, vast emptiness, dark, cold, infinite, minimal, space, desolate, haunting", 60),
-        "chase": ("fast orchestral, pursuit, engines, urgent brass, space chase, adrenaline, cinematic action, relentless, driving, epic", 60),
-    },
-    "mutant_wasteland": {
-        "exploration": ("post-apocalyptic ambient, desolate, wind, sparse guitar, dusty, wasteland, lonely, atmospheric, decay, survival", 60),
-        "combat": ("industrial metal, distorted, aggressive, chaotic, mutant battle, harsh, percussion, savage, wasteland combat, brutal", 60),
-        "tension": ("geiger counter clicks, low drone, radiation hum, dread, contamination, sparse, ominous, wasteland horror, toxic, creeping", 60),
-        "rest": ("campfire acoustic guitar, gentle, warm, night sky, stars, desert calm, folk, hopeful, survival rest, peaceful", 60),
-        "scavenge": ("clanking metal, industrial ambient, rummaging, discovery, salvage, mechanical, rhythmic, wasteland workshop, building, creating", 60),
-        "chase": ("fast industrial, pursuit, engines, wasteland vehicles, aggressive drums, road chase, dust, brutal, relentless, mad max", 60),
-    },
-    "caverns_and_claudes": {
-        "exploration": ("dark ambient drone, single plucked string, cave reverb, dripping water echo, sparse, minimal, dungeon crawl, oppressive silence, lonely, underground", 60),
-        "tension": ("low rhythmic pulse, heartbeat tempo, grinding stone, building dread, dungeon horror, minimal percussion, ominous, subterranean, Keeper awareness, claustrophobic", 60),
-        "combat": ("aggressive percussion, metallic strikes, short brutal, war drums, echoing stone, dungeon combat, chaotic, desperate, iron on iron, abrupt ending", 60),
-        "extraction": ("urgent driving rhythm, running footsteps tempo, rattling coins, building panic, pursuit, dungeon escape, breathless, relentless, no resolution, cuts to silence", 60),
-        "keeper_monologue": ("single sustained bass drone, cavernous reverb, ominous, deep rumble, subterranean, organ-like, dark, slow, alien intelligence, geological timescale", 60),
-        "town": ("sparse acoustic guitar, tired folk, mud and rain, tavern at dawn, melancholy, functional, no celebration, weary, simple, provisioning", 60),
-        "rest": ("crackling campfire, underground echo, distant dripping water, quiet breathing, chalk on stone, waterskin, safe room, medieval folk lullaby, tired, warm, reprieve from darkness, dungeon rest", 60),
-    },
-    "road_warrior": {
-        "exploration": ("desert rock, slide guitar, dusty road, heat haze, V8 engines idle, desolate highway, atmospheric, gritty, sun-bleached", 60),
-        "combat": ("thrash metal, aggressive drums, vehicle combat, road rage, explosive, chaotic, high octane, brutal, relentless, metal", 60),
-        "tension": ("sparse desert ambient, distant thunder, engine tick, fuel low, dread, minimal, hot wind, ominous, wasteland silence", 60),
-        "rest": ("acoustic blues, campfire, desert night, stars, harmonica, reflective, weary, road song, folk, peaceful", 60),
-        "chase": ("high tempo rock, V8 roar, pursuit, highway, adrenaline, guitar shred, drums pounding, road warrior chase, relentless", 60),
-        "convoy": ("driving rock, steady rhythm, engines in formation, road, powerful, united, heavy bass, convoy, rolling thunder, epic", 60),
-        # --- The Circuit: faction themes ---
-        "faction_bosozoku": ("Japanese punk rock, distorted guitar, aggressive drums, engine revving percussion, synchronized exhaust rhythm, Guitar Wolf energy, fast tempo, rebellious, raw, 1970s Japanese garage punk", 60),
-        "faction_mods": ("Northern Soul, urgent rhythm and blues, Motown energy, mod revival, The Jam, driving bass, Hammond organ, amphetamine energy, danceable, 1979 London, all-night club", 60),
-        "faction_one_percenters": ("heavy blues rock, Southern rock, Steppenwolf, ZZ Top, rolling Harley-Davidson rumble, menacing slide guitar, open highway, leather and chrome, 1970s biker rock", 60),
-        "faction_cafe_racers": ("instrumental surf rock, Dick Dale, Link Wray, reverb guitar, pure velocity, no vocals, driving tempo, clean tone, Fender twang, speed and precision, 1960s", 60),
-        "faction_rockers": ("1950s rock and roll, rockabilly, Gene Vincent, Eddie Cochran, slap bass, raw guitar, leather jacket energy, greasy, pub rock, brawling, sneer", 60),
-        "faction_lowriders": ("Chicano soul, oldies, War Low Rider, slow cruise bass, Thee Midniters, warm, low and slow, hydraulic bounce, candy paint, East LA, heartbreak and pride, 1970s", 60),
-        "faction_matatu": ("Afrobeat, Kenyan benga guitar, Fela Kuti energy, massive bass, percussive, polyrhythmic, joyful chaos, subwoofer pressure, Nairobi, painted bus, dancehall energy", 60),
-        "faction_tuk_tuk": ("Thai funk, Molam psychedelic, Khruangbin, hypnotic bass groove, Southeast Asian psych rock, three-wheeled groove, mysterious, wah guitar, nocturnal, alley music", 60),
-        "faction_raggare": ("1950s doo-wop, Buddy Holly, The Penguins, American rock and roll, jukebox at midnight, V8 idle rumble, cruising, Swedish summer night, warm nostalgia, pompadour rock", 60),
-        "faction_dekotora": ("Japanese enka ballad, dramatic vocal melody, sentimental, trucker highway opera, melancholy, convoy grandeur, Torakku Yaro film soundtrack, 1970s Japanese pop, orchestral, emotional", 60),
-    },
-}
+_GENRE_PACKS_RE = re.compile(r".*?(genre_packs/.*?)/audio/music/(.+?)_input_params\.json$")
 
 
-def compute_seed(genre: str, mood: str, variation: str) -> int:
-    key = f"{genre}+{mood}+{variation}"
-    digest = hashlib.sha256(key.encode()).hexdigest()
-    return int(digest[:8], 16)
+def discover_jobs(pack_dir: Path) -> list[tuple[Path, str]]:
+    jobs = []
+    for json_path in pack_dir.glob("**/audio/music/*_input_params.json"):
+        m = _GENRE_PACKS_RE.match(str(json_path))
+        if not m:
+            continue
+        pack_path, name = m.group(1), m.group(2)
+        r2_key = f"{pack_path}/audio/music/{name}.ogg"
+        jobs.append((json_path, r2_key))
+    return jobs
 
 
-def wav_to_ogg(wav_path: Path, ogg_path: Path) -> None:
-    subprocess.run(
-        ["ffmpeg", "-y", "-i", str(wav_path), "-c:a", "libvorbis", "-q:a", "4", str(ogg_path)],
-        capture_output=True,
-    )
-    if ogg_path.exists():
-        wav_path.unlink()
-        log.info("  Converted: %s (%dKB)", ogg_path.name, ogg_path.stat().st_size // 1024)
+def filter_jobs_by_track(jobs: list[tuple[Path, str]], track: str) -> list[tuple[Path, str]]:
+    target = f"{track}_input_params.json"
+    return [(jp, key) for jp, key in jobs if jp.name == target]
 
 
-async def send_render(prompt: str, duration: int, seed: int) -> dict:
-    """Send a music render request to the daemon."""
+def _asset_base_url() -> str:
+    return os.environ.get("SIDEQUEST_ASSET_BASE_URL", "https://cdn.slabgorb.com").rstrip("/")
+
+
+def is_in_r2(r2_key: str) -> bool:
+    url = f"{_asset_base_url()}/{r2_key.lstrip('/')}"
+    resp = requests.head(url, timeout=5)
+    if resp.status_code == 200:
+        return True
+    if resp.status_code == 404:
+        return False
+    resp.raise_for_status()
+    return False
+
+
+async def send_render(json_path: Path) -> dict:
     reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
-
     req = {
-        "id": f"music-{seed}",
+        "id": f"music-{json_path.stem}-{int(time.time())}",
         "method": "render",
-        "params": {
-            "tier": "music",
-            "prompt": prompt,
-            "duration": duration,
-            "seed": seed,
-        },
+        "params": {"tier": "music", "json_params_path": str(json_path)},
     }
-
     writer.write((json.dumps(req) + "\n").encode())
     await writer.drain()
-
     response_line = await asyncio.wait_for(reader.readline(), timeout=900)
     writer.close()
     await writer.wait_closed()
-
     return json.loads(response_line.decode())
 
 
@@ -179,118 +92,73 @@ async def check_daemon() -> bool:
         resp = await asyncio.wait_for(reader.readline(), timeout=5)
         writer.close()
         await writer.wait_closed()
-        data = json.loads(resp.decode())
-        return data.get("result", {}).get("status") == "ok"
+        return json.loads(resp.decode()).get("result", {}).get("status") == "ok"
     except Exception:
         return False
 
 
-async def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate mood music tracks for genre packs")
-    parser.add_argument("--genre", required=True, help="Genre pack name")
-    parser.add_argument("--mood", help="Only generate this mood")
-    parser.add_argument("--variation", help="Only generate this variation type")
-    parser.add_argument("--dry-run", action="store_true", help="Preview prompts without generating")
-    parser.add_argument("--duration", type=int, help="Override track duration in seconds")
+async def main() -> int:
+    parser = argparse.ArgumentParser(description="Generate ACE-Step music tracks for a genre pack")
+    parser.add_argument("--genre", required=True, help="Genre pack slug")
+    parser.add_argument("--track", help="Only generate this track (file stem, e.g. 'combat')")
+    parser.add_argument("--force", action="store_true", help="Re-render even if R2 already has the object")
+    parser.add_argument("--dry-run", action="store_true", help="List jobs without sending to daemon")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 
-    if args.genre not in GENRE_MOODS:
-        available = ", ".join(sorted(GENRE_MOODS.keys()))
-        log.error("Unknown genre '%s'. Available: %s", args.genre, available)
-        sys.exit(1)
+    pack_dir = GENRE_PACKS_DIR / args.genre
+    if not pack_dir.is_dir():
+        log.error("Pack directory not found: %s", pack_dir)
+        return 1
 
-    moods = GENRE_MOODS[args.genre]
-    output_dir = GENRE_PACKS_DIR / args.genre / "audio" / "music"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    jobs = discover_jobs(pack_dir)
+    if args.track:
+        jobs = filter_jobs_by_track(jobs, args.track)
+        if not jobs:
+            log.error("No JSON params file matched --track %r in %s", args.track, pack_dir)
+            return 1
 
-    # Filter moods if specified
-    if args.mood:
-        if args.mood not in moods:
-            available = ", ".join(sorted(moods.keys()))
-            log.error("Unknown mood '%s' for %s. Available: %s", args.mood, args.genre, available)
-            sys.exit(1)
-        moods = {args.mood: moods[args.mood]}
+    if args.dry_run:
+        for jp, key in jobs:
+            print(f"  {jp.name}  →  {key}")
+        print(f"\n{len(jobs)} job(s) discovered.")
+        return 0
 
-    # Filter variations if specified
-    variations = dict(VARIATION_SUFFIXES)
-    if args.variation:
-        if args.variation not in variations:
-            available = ", ".join(sorted(variations.keys()))
-            log.error("Unknown variation '%s'. Available: %s", args.variation, available)
-            sys.exit(1)
-        variations = {args.variation: variations[args.variation]}
+    if not await check_daemon():
+        log.error("Daemon not running at %s — start with: just daemon", SOCKET_PATH)
+        return 1
 
-    if not args.dry_run:
-        if not await check_daemon():
-            log.error("Daemon not running at %s — start with: sidequest-renderer", SOCKET_PATH)
-            sys.exit(1)
-        log.info("Daemon alive at %s", SOCKET_PATH)
-
-    total = len(moods) * len(variations)
-    success = 0
-    failed = 0
+    generated = 0
     skipped = 0
-    start_time = time.monotonic()
-    i = 0
+    failed = 0
+    t_start = time.monotonic()
 
-    for mood_name, (base_prompt, default_duration) in moods.items():
-        duration = args.duration or default_duration
-
-        log.info("\n%s", "=" * 60)
-        log.info("MOOD: %s (%s)", mood_name, args.genre)
-        log.info("=" * 60)
-
-        for var_type, var_suffix in variations.items():
-            i += 1
-            full_prompt = f"{base_prompt}, {var_suffix}"
-            seed = compute_seed(args.genre, mood_name, var_type)
-            ogg_path = output_dir / f"{mood_name}_{var_type}.ogg"
-            wav_path = output_dir / f"{mood_name}_{var_type}.wav"
-
-            if ogg_path.exists() and not args.dry_run:
-                log.info("  [%d/%d] SKIP %s (exists)", i, total, ogg_path.name)
-                skipped += 1
-                continue
-
-            log.info("  [%d/%d] %s_%s", i, total, mood_name, var_type)
-
-            if args.dry_run:
-                print(f"\n  Mood: {mood_name}  Variation: {var_type}")
-                print(f"  Duration: {duration}s  Seed: {seed}")
-                print(f"  Prompt: {full_prompt[:120]}...")
-                print(f"  Output: {ogg_path}")
-                continue
-
-            try:
-                result = await send_render(full_prompt, duration, seed)
-                if "error" in result:
-                    log.error("  FAILED: %s", result["error"])
-                    failed += 1
-                    continue
-
-                rendered_path = Path(result["result"]["image_path"])
-                # Rename daemon output to our wav path
-                rendered_path.rename(wav_path)
-
-                # Convert WAV → OGG
-                wav_to_ogg(wav_path, ogg_path)
-                elapsed = result["result"].get("elapsed_ms", 0)
-                log.info("  OK (%.1fs) → %s", elapsed / 1000, ogg_path.name)
-                success += 1
-
-            except Exception as e:
-                log.error("  FAILED: %s", e)
+    for jp, r2_key in jobs:
+        if not args.force and is_in_r2(r2_key):
+            log.info("SKIP %s (in R2)", r2_key)
+            skipped += 1
+            continue
+        log.info("GEN  %s", r2_key)
+        try:
+            result = await send_render(jp)
+            if "error" in result:
+                log.error("  FAILED: %s", result["error"])
                 failed += 1
+                continue
+            elapsed = result["result"].get("elapsed_ms", 0)
+            log.info("  OK (%.1fs)", elapsed / 1000)
+            generated += 1
+        except Exception as exc:
+            log.error("  FAILED: %s: %s", type(exc).__name__, exc)
+            failed += 1
 
-    total_time = time.monotonic() - start_time
-
+    total = time.monotonic() - t_start
     print(f"\n{'=' * 60}")
-    print(f"Done! {success} generated, {skipped} skipped, {failed} failed")
-    print(f"Total time: {total_time / 60:.1f} minutes")
-    print(f"Output: {output_dir}")
+    print(f"generated: {generated}  skipped: {skipped}  failed: {failed}")
+    print(f"total: {total:.1f}s")
+    return 0 if failed == 0 else 1
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    sys.exit(asyncio.run(main()))

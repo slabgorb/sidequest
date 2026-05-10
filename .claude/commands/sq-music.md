@@ -1,96 +1,94 @@
 ---
-description: Generate ACE-Step audio tracks and mood variations for genre packs
+description: Generate ACE-Step audio tracks for genre packs
 ---
 
 # Music Generation
 
-Generate mood-based music tracks using the ACE-Step worker in the sidequest-renderer daemon. Each genre pack defines moods (exploration, combat, tension, rest, etc.) and the script generates multiple variation types per mood.
+Generate music tracks using the ACE-Step worker in the sidequest-renderer daemon. Per-track JSON params files in `sidequest-content/genre_packs/<pack>/audio/music/*_input_params.json` are the canonical generation spec. The daemon reads them, runs ACE-Step, converts WAV → OGG, and uploads to R2 at `genre_packs/<pack>/audio/music/<track>.ogg`.
+
+## Authoring a new track
+
+1. Edit `sidequest-content/genre_packs/<pack>/audio.yaml` — add the entry under `mood_tracks.<mood>` (or whichever block applies) with `path: audio/music/<track>.ogg`, `title:`, and `bpm:`.
+2. Create `sidequest-content/genre_packs/<pack>/audio/music/<track>_input_params.json` — full ACE-Step config with at minimum:
+   - `task: "text2music"`
+   - `prompt:` (genre+mood+instrumentation description)
+   - `lyrics: "[inst]"` for instrumentals
+   - `audio_duration:` (seconds)
+   - `actual_seeds: [<int>]` (pinned for reproducibility)
+3. Run `python scripts/generate_music.py --genre <pack>` — the script discovers the JSON, sends each `json_params_path` to the daemon, daemon uploads OGG to R2.
+4. Iterate with `--track <stem>` for one-job runs, `--force` to overwrite an existing R2 object after editing the prompt.
+
+The daemon owns ACE-Step; you never edit Python.
 
 ## Parameters
 
 | Param | Description | Default |
 |-------|-------------|---------|
-| `--genre <name>` | Only process this genre pack | *required* |
-| `--mood <name>` | Only generate this mood | all moods |
-| `--variation <type>` | Only generate this variation type | all variations |
-| `--dry-run` | Preview prompts without generating | false |
-| `--duration <seconds>` | Override track duration | 60 |
+| `--genre <slug>` | Genre pack to walk | *required* |
+| `--track <stem>` | Only generate this track (file stem, e.g. `combat`) | all missing |
+| `--force` | Re-render even if R2 already has the OGG | false |
+| `--dry-run` | List discovered jobs without sending | false |
 
 ## Usage
 
 ```bash
-# Generate all moods for a genre
-python3 scripts/generate_music.py --genre pulp_noir
+# Generate all missing tracks for a pack
+python scripts/generate_music.py --genre caverns_and_claudes
 
-# One mood only
-python3 scripts/generate_music.py --genre pulp_noir --mood exploration
+# Single track
+python scripts/generate_music.py --genre caverns_and_claudes --track combat
 
-# One specific variation
-python3 scripts/generate_music.py --genre pulp_noir --mood combat --variation sparse
+# Re-render after editing the prompt
+python scripts/generate_music.py --genre caverns_and_claudes --track combat --force
 
-# Preview all prompts
-python3 scripts/generate_music.py --genre pulp_noir --dry-run
+# Preview discovered jobs without hitting the daemon
+python scripts/generate_music.py --genre caverns_and_claudes --dry-run
 ```
 
 ## Prerequisites
 
-- **Daemon must be running:** `just daemon-run` or `sidequest-renderer`
-- ACE-Step worker must be warm (happens automatically on first music render)
-- `ffmpeg` installed (for WAV → OGG conversion)
+- **Daemon must be running:** `just daemon`. Watch for `MusicPipeline initialized` in the log.
+- ACE-Step model lazy-loads on first music render (~10-15s cold-swap from image tier).
+- `ffmpeg` with libopus encoder (Homebrew core ffmpeg ships this by default).
 
-## Script
+## Request shape
 
-`scripts/generate_music.py` (ported from sq-2)
+The script sends:
 
-## Variation Types
+```json
+{"id":"music-<stem>-<ts>","method":"render","params":{"tier":"music","json_params_path":"<abs path>"}}
+```
 
-| Type | Character |
-|------|-----------|
-| `full` | Full arrangement, complete orchestration, all instruments |
-| `ambient` | Atmospheric, reverb, pads, stripped, minimal |
-| `sparse` | Minimalist, solo instrument, space, silence |
-| `tension_build` | Building tension, rising, crescendo, intensifying |
-| `resolution` | Release, calm after storm, settling, peaceful |
-| `overture` | Grand opening, introduction, establishing, cinematic |
+The daemon replies with:
 
-## Mood Prompts
-
-Each genre defines its own mood prompts in the generation script. The prompt combines:
-1. Genre-specific mood description (e.g., "cool jazz, upright bass, brushed drums")
-2. Variation suffix (e.g., "ambient, reverb, pads, stripped, minimal")
-3. Deterministic seed from `genre + mood + variation`
+```json
+{"id":"...","result":{"r2_key":"genre_packs/<pack>/audio/music/<track>.ogg","duration_ms":60000,"seed":42,"elapsed_ms":67000}}
+```
 
 ## Output
 
-- **Format:** OGG Vorbis (converted from WAV via ffmpeg)
-- **Location:** `genre_packs/{genre}/audio/music/{mood}_{variation}.ogg`
-- **Normalization:** Loudness normalized before conversion
-- Auto-skips existing files. Delete to regenerate.
+- **Format:** OGG container, Opus codec, ~96 kbps
+- **Location:** R2 — `https://cdn.slabgorb.com/genre_packs/<pack>/audio/music/<track>.ogg`
+- **Skip rule:** the script HEADs the CDN; if the object exists it skips unless `--force` is given.
 
-## Audio Config
+## Audio config
 
-Generated tracks should be registered in `genre_packs/{genre}/audio.yaml` under `themes`:
+`audio.yaml` is the runtime catalog (titles, BPM, mood mappings) and is human-authored — the daemon never writes to it. R2 key derivation is deterministic from the JSON file location, so manifest paths and R2 layout align by convention. Example:
 
 ```yaml
-themes:
-  - name: exploration
-    mood: exploration
-    base_prompt: ""
-    variations:
-      - type: full
-        path: audio/music/exploration_full.ogg
-      - type: ambient
-        path: audio/music/exploration_ambient.ogg
-      - type: sparse
-        path: audio/music/exploration_sparse.ogg
+mood_tracks:
+  combat:
+    - path: audio/music/combat.ogg
+      title: "The Keeper's Wrath"
+      bpm: 132
 ```
 
 ## Notes
 
-- ACE-Step generation takes ~2-5 minutes per track (much slower than Flux images)
-- A full genre with 7 moods x 6 variations = 42 tracks ≈ 2-3 hours
-- Seeds are deterministic — same genre+mood+variation always produces same track
+- ACE-Step generation takes ~60-90s per 60s track (cold) and ~real-time (~30-60s) once warm.
+- Seeds are pinned in `actual_seeds` for reproducibility — same JSON params + same seed → identical track.
+- All five LFS-stripped packs (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `victoria`) regenerate from their JSON params with one `--genre` invocation each.
 
-## Owned By
+## Owned by
 
-**World Builder** agent (`/sq-world-builder`). Run after defining mood prompts for a genre.
+**Music Director** agent (`music-director`). Run after authoring `*_input_params.json` files; the script discovers them.
