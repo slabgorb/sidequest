@@ -394,3 +394,120 @@ the body above.
 The Rust code samples above and the `### References` Rust paths are
 historical illustration — the implementation crossed into Python
 during the 2026-04 port ([ADR-082](082-port-sidequest-api-back-to-python.md)).
+
+## Amendment 2026-05-10 — CON-mod chargen seed for Edge (replaces Fighter +2 stub)
+
+### Context
+
+Playtest of `caverns_and_claudes / caverns_sunden` on 2026-05-10 surfaced
+a player-experience gap: a Fighter rolled CON 17 (`+3` modifier) and the
+character sheet showed Edge 6/6 — identical to a Fighter with CON 9.
+The complaint, fairly: "is CON only good for saves then?"
+
+Investigation confirmed the gap is real and the original framing of
+this ADR (§1, *Edge as a first-class CreatureCore field*) is silent on
+the chargen seed. The current path is:
+
+- `sidequest-content/genre_packs/<pack>/rules.yaml`
+  `edge_config.base_max_by_class` — class lookup, e.g. Fighter 4.
+- `sidequest-server/sidequest/game/creature_core.py:105`
+  `edge_pool_from_config(edge_config, class_name)` — class-only lookup;
+  CON is not read.
+- `sidequest-server/sidequest/game/builder.py:2066-2078` — hardcoded
+  Fighter +2 stub authored in Story 39-4 (smoke-gate "to be replaced
+  in 39-5"); never replaced.
+
+Net result: chargen produces Fighter 6, Cleric 3, Mage/Thief 2 regardless
+of CON. CON only buys d20-modifier on the rare beats it gates
+(3 of 35 in this pack — see Story 39-9 for the rebalance).
+
+This is a chargen-time gap, not a runtime-effect gap. ADR-078 §3
+(Authored advancement effects) correctly owns the *post-chargen*
+mechanical lever (level-up grows Edge per AdvancementTree). The seed
+itself has been informal.
+
+### Decision
+
+Chargen Edge max is seeded as:
+
+```
+edge.base_max = edge_config.base_max_by_class[class_name] + CON_modifier
+edge.max      = edge.base_max
+edge.current  = edge.max
+```
+
+Where `CON_modifier = floor((CON_score - 10) / 2)` — the same formula
+used throughout `dispatch/dice.py`, `game/saves.py`, and
+`game/opposed_check.py` for ability modifiers. Negative CON modifiers
+apply (CON 6 = `-2`), with a floor: `edge.base_max` cannot drop below
+`1` even if class base + CON mod would push it lower. This preserves
+the "everyone has some composure" invariant from §1.
+
+The hardcoded `Fighter += 2` stub in `builder.py:2066-2078` is
+**retired** by this change. It was always a temporary smoke gate
+("Replacing it is a future-story concern"); the CON-mod seed replaces
+it. Fighter-specific composure depth instead comes from a higher
+`base_max_by_class.Fighter` in the genre pack (the natural lever —
+genres can author "Fighter 6, Cleric 4, Mage 3, Thief 3" if their
+genre-truth wants meatier baselines), plus AdvancementTree growth at
+level-up per §3.
+
+### Rationale
+
+- **Coherent with the "deflection-against-pressure" framing.** §1
+  describes Edge as composure that holds until pressure breaks it.
+  A constitutionally tougher body holds composure longer under
+  sustained strain — fatigue, blood loss, cold, exhaustion are the
+  forces that erode deflection, and CON is the stat the rest of the
+  system already routes those forces through.
+- **Reuses existing infrastructure.** No new fields. No new types.
+  The `_ability_modifier` formula is already inlined three places;
+  this is one more call. The chargen flow already has the rolled
+  stats in hand at `builder.py:2066` (they were rolled and arranged
+  upstairs in the same builder).
+- **Retires a known stub.** Story 39-4 explicitly labeled the
+  Fighter +2 as smoke-gate code awaiting replacement. The replacement
+  has been outstanding for ~3 weeks of playtesting.
+- **Keeps the genre lever intact.** Genre packs still control class
+  baselines (Fighter 4 vs Mage 2). CON-mod is an additive personal
+  variation on top — same shape as D&D HD + CON mod, but as
+  composure rather than meat.
+- **Keeps the AdvancementTree lever intact.** §3 advancement effects
+  still own the level-up dial (`EdgeMaxBonus`). This amendment is
+  chargen-seed only.
+
+### Consequences
+
+- Fighter with CON 17 now seeds at `4 + 3 = 7` Edge instead of `6`.
+  Fighter with CON 9 seeds at `4 + (-1) = 3` Edge. CON 6 → `4 + (-2) =
+  2`. CON 3 → `4 + (-4)` floored to `1`.
+- Mage/Thief gain materially from CON for the first time: Mage with
+  CON 14 seeds at `2 + 2 = 4`, a 2x bump.
+- Existing characters in saved sessions keep their seeded Edge values
+  — this is a chargen-time change, not a migration. Sessions started
+  before this amendment will continue to show the legacy seed
+  (including the hardcoded Fighter +2) until the character is rerolled.
+  No save migration is required; legacy sessions are throwaway per
+  project memory `feedback_legacy_saves.md`.
+- The OTEL event `chargen.edge_seeded` in `builder.py:2042` and
+  `:2052` adds a `con_modifier` field and a `seed_formula` discriminant
+  (`"class_base+con_mod"`). The previously-emitted
+  `chargen.advancement_stub_applied` event is removed.
+- Genre packs that want a flatter or steeper baseline are still free
+  to author `base_max_by_class` accordingly. No genre-pack changes
+  required; opt-in to a non-Fighter buff by rebalancing class baselines
+  if desired.
+
+### Implementation pointers
+
+- `sidequest-server/sidequest/game/creature_core.py:105`
+  (`edge_pool_from_config`) — extend signature to accept
+  `con_score: int` and apply the modifier; floor at 1.
+- `sidequest-server/sidequest/game/builder.py:2036-2078` — pass the
+  rolled CON score (already in scope as `acc.stats` or equivalent)
+  to `edge_pool_from_config`; delete the Fighter +2 stub block.
+- `chargen.edge_seeded` OTEL event — add `con_modifier`,
+  `seed_formula`, remove `chargen.advancement_stub_applied`.
+
+Owner: Story 39-10.
+

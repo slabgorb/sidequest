@@ -81,3 +81,19 @@ stories:
     repos: content
     workflow: trivial
     type: chore
+  - id: 39-9
+    title: "Caverns_and_claudes CON rebalance + stat_display cleanup — surfaced by 2026-05-10 playtest: CON is the rarest stat (3 of 35 beats) in a dungeon-delve pack where it should matter. Add 5+ new CON-flagged obstacles to beat_vocabulary.yaml (cave-air poisoning, forced march fatigue, holding breath, cold soak, bad water dysentery) and re-route 2-3 existing brace/endurance beats in confrontations[combat] from STR/CON ambiguity into clean CON ownership. Remove stale `hp / max_hp / ac` entries from rules.yaml stat_display_fields (HP removed per ADR-014, lingering display schema). Content-only — no server change. Verify on a delve playtest that CON 17 vs CON 9 differs on ≥3 distinct beat types in a single descent."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: content
+  - id: 39-10
+    title: "Chargen Edge seed += CON modifier — retire Fighter +2 stub (ADR-078 amendment 2026-05-10). Extend `edge_pool_from_config` (creature_core.py:105) to take a `con_score: int` and apply `(score-10)//2` to base_max, floored at 1. Update builder.py:2036-2078 to pass the rolled CON score; delete the hardcoded `if class_str == 'Fighter': edge.max += 2` block (Story 39-4 smoke-gate stub). OTEL: extend `chargen.edge_seeded` event with `con_modifier` and `seed_formula='class_base+con_mod'`; drop `chargen.advancement_stub_applied`. Tests: unit on `edge_pool_from_config` for CON 3/9/10/14/17 across all four classes; integration test that a Fighter built via builder.py with CON 17 ends at Edge 7 (was 6), CON 9 ends at Edge 3 (was 6), CON 3 floors at 1. No save migration — legacy saves keep their seeded values per `feedback_legacy_saves.md`. Wiring test: assert ChargenAccumulator path actually flows CON into `edge_pool_from_config` (not just exists in the file)."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: api
+    workflow: wire-first
+    type: feature
