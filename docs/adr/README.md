@@ -109,6 +109,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-080: Unified Narrative Weight Trait](080-unified-narrative-weight-trait.md) | ✓ accepted | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | ✓ accepted | deferred → ADR-087 |
+| [ADR-095: Class Mechanical Surface — One Signature Ability Per Non-Magical Class](095-class-mechanical-surface.md) | ✓ accepted | live |
 
 ## Frontend / Protocol
 

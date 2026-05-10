@@ -92,3 +92,6 @@ tui-pid
 
 # Local-only archive of handoff docs, retros, scratch notes — never committed
 .archive/
+
+# Superpowers brainstorm visual companion — session content, not committed
+.superpowers/
