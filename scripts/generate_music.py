@@ -18,7 +18,9 @@ import asyncio
 import hashlib
 import json
 import logging
+import os
 import re
+import requests
 import subprocess
 import sys
 import time
@@ -44,6 +46,24 @@ VARIATION_SUFFIXES = {
 # ── Regex for parsing JSON params files ──────────────────────────────
 
 _GENRE_PACKS_RE = re.compile(r".*?(genre_packs/.*?)/audio/music/(.+?)_input_params\.json$")
+
+
+def _asset_base_url() -> str:
+    return os.environ.get("SIDEQUEST_ASSET_BASE_URL", "https://cdn.slabgorb.com").rstrip("/")
+
+
+def is_in_r2(r2_key: str) -> bool:
+    """HTTP HEAD against the public CDN. Returns True if 200, False if 404.
+    Other status codes (or network errors) propagate as exceptions —
+    we don't silently treat 'unreachable' as 'not present'."""
+    url = f"{_asset_base_url()}/{r2_key.lstrip('/')}"
+    resp = requests.head(url, timeout=5)
+    if resp.status_code == 200:
+        return True
+    if resp.status_code == 404:
+        return False
+    resp.raise_for_status()
+    return False  # unreachable, but appease type checker
 
 
 def discover_jobs(pack_dir: Path) -> list[tuple[Path, str]]:
