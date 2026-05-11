@@ -1,0 +1,67 @@
+id: '49'
+type: epic
+title: Playtest 4 Closeout — Glenross / ADR-098 Continuity Recovery
+description: "Findings from the 2026-05-11 victoria/glenross playtest. ADR-098 (stateless narrator turns, dropping --resume) delivered the predicted speed win (turns now 14-20s instead of 60s+) but introduced narrative-continuity regressions: (1) narrator teleports the scene by titling a new room in prose without filling the structured location patch (Garden→Parlour→Study without state update), (2) recent narrative facts drop between turns (secateurs set down twice; Father→Mother gender flip on patient), (3) dialogue-only NPCs never get extracted to the NPC roster (Father invisible turn 5, Mother fabricated turn 6), (4) Victoria archetypes have no starting_inventory — content gap, separate from the ADR-098 regression cluster. Goal of epic: recover continuity *without* reverting --resume — Keith does not want to give back the speed win. The fix path is smarter per-turn context packing: a Recency-zone recent-narrative-window section, server-side NPC auto-mint from prose, and location-patch enforcement when the narrator's prose room title diverges from canonical state. Plus content: author Victoria starting inventories."
+priority: p1
+status: backlog
+repos: sidequest-server,sidequest-content
+stories:
+  - id: 49-1
+    title: Recency-zone recent-narrative window in narrator prompt
+    description: "Root cause of the Father→Mother flip and the secateurs-set-down-twice continuity break in the 2026-05-11 Glenross playtest. Currently narrative_log is serialized inside the Valley-zone <game_state> JSON dump (orchestrator.py:1310, via snapshot.model_dump_json at session_helpers.py:308). That puts the conversational history mid-prompt, JSON-shape, in an attention-decayed zone. Pre-ADR-098 the --resume flag papered over this by keeping the whole Claude conversation hot. Post-098 there is no high-attention recent-narration block; the narrator has to dig prior turns out of a JSON blob far above the player_action. Result: it forgets recent prose-only facts (the patient is Father, the secateurs are already on the blotter). Fix is a dedicated Recency-zone section that renders the last few turns as readable prose, plus dropping the duplicate from the game_state dump so we don't ship the same data twice in two zones."
+    points: 5
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - Add register_section call in orchestrator.py registering a 'recent_narrative_context' section in AttentionZone.Recency (alongside player_action, npc_intro_visual_constraint, confrontation_trigger_constraint)
+      - 'Section content is the last K narrative_log entries (default K=4: two player turns + two narrator turns), rendered as readable prose blocks (NOT JSON), labeled by author/round prefix'
+      - Drop narrative_log from the snapshot dump that feeds <game_state> (or cap at 1 entry) so the same data does not ride twice — once high-attention, once decayed
+      - 'OTEL: emit recent_narrative_context_injected span with turn count and total tokens'
+      - 'Regression test: stub save fixture mirroring the gender-flip scenario (turn 5 prose names a male patient; turn 6 must not invent a female one)'
+      - 'Replay against ~/.sidequest/saves/games/2026-05-11-glenross/save.db: narrator on turn 6 references Father/him consistently with turn 5 prose'
+  - id: 49-2
+    title: Auto-mint NPCs from prose-only dialogue mentions
+    description: "On 2026-05-11 Glenross turn 5 the narrator wrote dialogue about Father in detail ('He's through the back passage — the morning room, where Mrs. Gow laid him after', 'gestures you ahead of him', 'set the secateurs down on the blotter') but emitted npcs_present=2 covering only Reverend Murchison + the pinafore girl. Father never made it into the NPC roster. Turn 6 then invented 'the wee one's mother / her' with no constraint to overrule. NPC roster currently works (orchestrator.py:1262 → prompt_framework/core.py:412) but only when populated; populating relies entirely on the narrator's structured patch. There is no server-side catch-loop for first-mention NPCs the narrator names in dialogue but forgets to extract. The existing lie-detector at session_helpers.py:660 (npc.recurring_presence_missed) catches recurring misses but not first-mention misses — which is exactly what happened here. Fix: scan narration prose for named-or-role-named individuals (Father, mother, the doctor, the Reverend, named honorifics + given names) and auto-mint NpcPoolMember entries when the narrator didn't, so the next turn's roster has a constraint."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - 'Extend narration_apply NPC scan: when narration prose names a person via role (Father, mother, son, daughter, the doctor, the Reverend, the constable, Mrs. <Name>, Mr. <Name>, Dr. <Name>) but the structured npcs_present omits that role/name, auto-mint an NpcPoolMember with the inferred pronouns/role'
+      - Pronoun inference uses pronouns the narrator already established in surrounding prose (he/him, she/her, they/them, it/its) — fail loud (warn + skip mint) when pronouns are ambiguous instead of guessing
+      - Emit OTEL span npc.auto_minted_from_prose with name, role, pronouns, source='dialogue_extraction', turn=N — distinct from existing npc.auto_registered which fires from structured patch
+      - "Add a separate Recency-zone Guardrail section ('npc_extraction_constraint') reminding the narrator: 'Any person named or role-named in this turn's prose — including patients, parents, children, siblings, and recurring townsfolk — MUST appear in npcs_present.' This catches the issue at narration time, not just post-hoc"
+      - "Regression test: build a turn fixture where narration contains 'the patient is Father; he is grave' but npcs_present omits him. Verify post-apply roster contains an NpcPoolMember with role=father pronouns=he/him"
+      - 'Replay glenross save: re-running turn 5 with the new logic mints Father in the roster; running turn 6 with the populated roster does not invent Mother'
+  - id: 49-3
+    title: Location-patch enforcement when narrator titles drift from state
+    description: "In the 2026-05-11 Glenross playtest the narrator silently relocated the scene across four different room titles (The Bee Garden → The Manse Garden → Front Parlour → Study → Study → Sickroom Passage) while the canonical state held character_locations[Ziggy]='the_manse' for turns 1-5. State only caught up on turn 6 (Sickroom Passage). game_patch.extracted logs show has_location=False on turns 2-5: narrator wrote new **Room Title** headers in markdown prose without filling the structured location patch field. This is the SOUL.md 'Illusionism' failure mode — narrator and state machine running on different tracks; the GM panel cannot tell where the party actually is. Fix is to parse the narrator's prose for a leading bold room title and (a) auto-fill patch.location when it disagrees with current state, plus (b) emit a loud OTEL span so the GM panel sees the drift catch. Auto-fill instead of fail-loud-and-bail because the cost of blocking a turn is too high — but the OTEL must be loud so we can iterate on the prompt later."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - In narration_apply (orchestrator.py around line 715 where patch.location is read), if patch.location is empty BUT the narration body starts with a bold markdown header like '**<text>**', extract <text> as the candidate location
+      - Compare the candidate against snapshot.party_location(perspective=char_name). If different, auto-fill patch.location with the candidate value and continue applying
+      - Emit OTEL span narrator.location_drift_repaired (loud — WARNING level) with old_state, new_from_title, turn, char — Sebastien's GM panel must see every repair
+      - "Add a Recency-zone Guardrail section ('location_patch_constraint') reminding the narrator: 'If your prose changes the room (any new **Bold Title** header, any explicit movement to a different named space), your game_patch MUST set location to the new value. State must not lag prose.' This addresses the issue at narration time so the auto-repair becomes a backstop, not a load-bearing component"
+      - "Regression test: a turn fixture where snapshot.character_locations[Ziggy]='the_manse' and narration body begins '**The Manse — Front Parlour**\\n\\nThe kettle...' with patch.location=None. After apply, character_locations[Ziggy] must equal 'The Manse — Front Parlour' and the OTEL span must have fired"
+      - "Replay glenross save turn 3: state must update from 'the_manse' to 'The Manse — Front Parlour' instead of holding stale"
+  - id: 49-4
+    title: Victoria archetypes — author starting inventories
+    description: "Separate from the ADR-098 continuity regression cluster: the Victoria genre pack ships zero starting inventory. After chargen the player has nothing — no Gladstone bag for the Country Doctor, no prayer book for the Clergyman, no notebook for the Detective. Confirmed: sidequest-content/genre_packs/victoria/ has no inventory.yaml, no equipment_tables.yaml, no starting_inventory keys anywhere in archetypes.yaml. Reference pattern lives in caverns_and_claudes — equipment_tables.yaml + inventory.yaml item catalog, wired via a 'the_kit' scene with equipment_generation: random_table in char_creation.yaml. Author equivalent files for Victoria so each archetype arrives with the kit they need. This is content-lane (World Builder), not server-lane — no code changes."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-content
+    workflow: trivial
+    acceptance_criteria:
+      - 'Create sidequest-content/genre_packs/victoria/inventory.yaml with an item_catalog covering Victorian-era essentials: gladstone_bag, stethoscope, clinical_thermometer, laudanum_bottle, quinine_bottle, iodine_tincture, bandages_linen, prayer_book, visiting_cards, pocket_watch_silver, notebook_leather, fountain_pen, magnifying_glass, walking_stick, oilskin_coat, etc. Each item gets id, name, weight, description, tags'
+      - Create sidequest-content/genre_packs/victoria/equipment_tables.yaml with per-archetype starting kits (Country Doctor → medical kit, Clergyman → ecclesiastical kit, Detective → investigation kit, etc.). Match the schema used by caverns_and_claudes/equipment_tables.yaml
+      - 'Wire the_kit scene (or equivalent) in sidequest-content/genre_packs/victoria/char_creation.yaml with equipment_generation: random_table — see caverns_and_claudes/char_creation.yaml for the exact mechanical_effects shape'
+      - All item_ids in equipment_tables.yaml exist in inventory.yaml item_catalog — wiring test enforces this in C&C and the same enforcement should hold for victoria
+      - 'New chargen run in victoria/glenross with a Doctor produces an inventory with at minimum: gladstone_bag, stethoscope, clinical_thermometer, bandages, one or two apothecary items'
