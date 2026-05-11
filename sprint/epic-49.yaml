@@ -11,7 +11,8 @@ stories:
     description: "Root cause of the Father→Mother flip and the secateurs-set-down-twice continuity break in the 2026-05-11 Glenross playtest. Currently narrative_log is serialized inside the Valley-zone <game_state> JSON dump (orchestrator.py:1310, via snapshot.model_dump_json at session_helpers.py:308). That puts the conversational history mid-prompt, JSON-shape, in an attention-decayed zone. Pre-ADR-098 the --resume flag papered over this by keeping the whole Claude conversation hot. Post-098 there is no high-attention recent-narration block; the narrator has to dig prior turns out of a JSON blob far above the player_action. Result: it forgets recent prose-only facts (the patient is Father, the secateurs are already on the blotter). Fix is a dedicated Recency-zone section that renders the last few turns as readable prose, plus dropping the duplicate from the game_state dump so we don't ship the same data twice in two zones."
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-11'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -21,6 +22,7 @@ stories:
       - 'OTEL: emit recent_narrative_context_injected span with turn count and total tokens'
       - 'Regression test: stub save fixture mirroring the gender-flip scenario (turn 5 prose names a male patient; turn 6 must not invent a female one)'
       - 'Replay against ~/.sidequest/saves/games/2026-05-11-glenross/save.db: narrator on turn 6 references Father/him consistently with turn 5 prose'
+    completed: '2026-05-11'
   - id: 49-2
     title: Auto-mint NPCs from prose-only dialogue mentions
     description: "On 2026-05-11 Glenross turn 5 the narrator wrote dialogue about Father in detail ('He's through the back passage — the morning room, where Mrs. Gow laid him after', 'gestures you ahead of him', 'set the secateurs down on the blotter') but emitted npcs_present=2 covering only Reverend Murchison + the pinafore girl. Father never made it into the NPC roster. Turn 6 then invented 'the wee one's mother / her' with no constraint to overrule. NPC roster currently works (orchestrator.py:1262 → prompt_framework/core.py:412) but only when populated; populating relies entirely on the narrator's structured patch. There is no server-side catch-loop for first-mention NPCs the narrator names in dialogue but forgets to extract. The existing lie-detector at session_helpers.py:660 (npc.recurring_presence_missed) catches recurring misses but not first-mention misses — which is exactly what happened here. Fix: scan narration prose for named-or-role-named individuals (Father, mother, the doctor, the Reverend, named honorifics + given names) and auto-mint NpcPoolMember entries when the narrator didn't, so the next turn's roster has a constraint."
