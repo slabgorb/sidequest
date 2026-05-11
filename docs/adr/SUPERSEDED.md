@@ -16,7 +16,7 @@
 
 - [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) — superseded
 
-### Superseded by [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session](067-unified-narrator-agent.md)
+### Superseded by [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Narrator](067-unified-narrator-agent.md)
 
 - [ADR-010: Intent-Based Agent Routing](010-intent-based-agent-routing.md) — superseded
 
@@ -45,6 +45,10 @@
 ### Superseded by [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md)
 
 - [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) — superseded
+
+### Superseded by [ADR-098: Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts](098-stateless-narrator-turns.md)
+
+- [ADR-066: Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) — superseded
 
 ## Historical — no successor
 

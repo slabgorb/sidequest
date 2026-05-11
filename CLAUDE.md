@@ -245,7 +245,7 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Load-bearing reads — start here:**
 - **ADR-082** Port `sidequest-api` from Rust back to Python — accepted
 - **ADR-085** Tracker hygiene during the Rust→Python port — handling port-drift — accepted
-- **ADR-067** Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session — accepted
+- **ADR-067** Unified Narrator Agent — Collapse Multi-Agent into Single Narrator — accepted
 - **ADR-059** Monster Manual — Server-Side Pre-Generation via Game-State Injection — accepted
 - **ADR-038** WebSocket Transport Architecture — accepted
 - **ADR-035** Unix Socket IPC for Python Sidecar — accepted
@@ -258,8 +258,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Prompt Engineering (008, 009)**
 - 008 Three-Tier Rule Taxonomy · 009 Attention-Aware Prompt Zones
 
-**Agent System (011, 012, 013, 066, 067)**
-- 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction · 066 Persistent Opus Narrator Sessions · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session**
+**Agent System (011, 012, 013, 067, 098)**
+- 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Narrator** · 098 Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts
 
 **Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 074, 077, 078, 080, 081, 095, 096)**
 - **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine *(partial)* · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 074 Dice Resolution Protocol — Player-Facing Rolls via WebSocket · 077 Dogfight Subsystem via StructuredEncounter Extension · 078 Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals *(partial)* · 080 Unified Narrative Weight Trait · 081 Advancement Effect Variant Expansion (v1) *(deferred)* · 095 Class Mechanical Surface — One Signature Ability Per Non-Magical Class · 096 Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps *(partial)*

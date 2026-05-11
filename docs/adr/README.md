@@ -87,8 +87,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-011: World State JSON Patches](011-world-state-json-patches.md) | ✓ accepted | live |
 | [ADR-012: Agent Session Management](012-agent-session-management.md) | ✓ accepted | live |
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✓ accepted | live |
-| [ADR-066: Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) | ✓ accepted | live |
-| [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session](067-unified-narrator-agent.md) | ✓ accepted | live |
+| [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Narrator](067-unified-narrator-agent.md) | ✓ accepted | live |
+| [ADR-098: Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts](098-stateless-narrator-turns.md) | ✓ accepted | live |
 
 ## Game Systems
 
@@ -248,6 +248,7 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) | ✗ historical | — |
 | [ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)](054-webrtc-voice-chat-disabled.md) | ✗ historical | — |
 | [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) | ✗ superseded | [ADR-059](059-monster-manual-server-side-pregen.md) |
+| [ADR-066: Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) | ✗ superseded | [ADR-098](098-stateless-narrator-turns.md) |
 | [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✗ superseded | [ADR-092](092-scene-harness-http-endpoint.md) |
 | [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
 | [ADR-072: System/Milieu Decomposition — Separating Mechanics from Aesthetic](072-system-milieu-decomposition.md) | ✗ historical | — |

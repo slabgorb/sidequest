@@ -1,11 +1,12 @@
 ---
 id: 66
 title: "Persistent Opus Narrator Sessions"
-status: accepted
+status: superseded
+status_rationale: "Replaced by ADR-098 — session memory was causing the very latency it was introduced to solve; long sessions ran into context_window_full."
 date: 2026-04-04
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
+superseded-by: 98
 related: []
 tags: [agent-system, narrator]
 implementation-status: live

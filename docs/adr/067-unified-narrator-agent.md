@@ -1,18 +1,18 @@
 ---
 id: 67
-title: "Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session"
+title: "Unified Narrator Agent — Collapse Multi-Agent into Single Narrator"
 status: accepted
 date: 2026-04-04
 deciders: [Keith Avery]
 supersedes: [10]
 superseded-by: null
-related: []
+related: [98]
 tags: [agent-system, narrator, narrator-migration]
 implementation-status: live
 implementation-pointer: null
 ---
 
-# ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Persistent Session
+# ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Narrator
 
 ## Context
 
@@ -70,7 +70,7 @@ The multi-agent architecture (ADR-010) was designed when:
 
 All three conditions have changed:
 
-1. ADR-066 established persistent Opus sessions with 1M context
+1. ADR-066 established Opus as the narrator model (ADR-098 later made turns stateless)
 2. ADR-059 tool calls let the narrator invoke specialist behavior on demand
 3. Sonnet classification now costs 8-17s per turn (CLI subprocess overhead)
 
@@ -80,21 +80,22 @@ ADR-010's original keyword-based intent routing was replaced with LLM
 classification precisely because natural language defeats pattern matching
 ("I pretend to take the item" ≠ acquisition, "I grab my backpack" ≠ combat).
 
-But the Opus narrator with full conversation context is strictly better at
+But the Opus narrator with full per-turn ground truth is strictly better at
 intent resolution than a stateless Sonnet call with a summary prompt. The
-narrator has seen every previous turn, knows the NPCs in the scene, knows
-the player's style. Sonnet is classifying from a lossy context summary.
+narrator receives the complete re-injected world state on every turn — NPCs,
+party peers, game context, player history — while Sonnet is classifying from
+a lossy context summary.
 
 ## Decision
 
-### 1. Collapse all agents into the narrator's persistent session
+### 1. Collapse all agents into the narrator
 
 The narrator handles all intents. No separate agents, no intent classification
 subprocess, no routing.
 
 ```
 Before:  Player → Sonnet classify (8-17s) → Agent dispatch → Opus/Sonnet response
-After:   Player → Opus narrator (persistent session, cached context)
+After:   Player → Opus narrator (each turn is a fresh claude -p call)
 ```
 
 ### 2. Specialist behavior via prompt sections and tools
@@ -174,9 +175,9 @@ classification when `in_combat` or `in_chase`. This decision makes that the
 - Harder to A/B test individual agent behaviors
 
 ### Mitigated
-- Prompt growth: 1M context window makes this negligible
-- Specialist optimization: Opus with full context outperforms Sonnet specialists
-  with lossy context — quality improves despite less focused prompts
+- Prompt growth: bounded per-turn prompts (ADR-098) keep system prompt size stable
+- Specialist optimization: Opus outperforms Sonnet specialists with lossy context —
+  quality improves despite less focused prompts
 
 ## Migration Path
 
@@ -197,4 +198,14 @@ agent definitions. Clean up orchestrator dispatch.
 - ADR-010: Intent-based agent routing (superseded by this ADR)
 - ADR-032: Haiku classifier with narrator ambiguity resolution (superseded)
 - ADR-059: Server-invoked tool calls
-- ADR-066: Persistent Opus narrator sessions
+- ADR-066: Persistent Opus narrator sessions (superseded by ADR-098)
+- ADR-098: Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts
+
+## Post-ADR-098 Note (2026-05-10)
+
+ADR-098 superseded the persistent-session model from ADR-066. The unified-agent
+decision in this ADR (one narrator handles all intents) remains in force; the
+references above to "persistent session" and "cached context" describe the original
+ADR-066 mechanism and are preserved for historical context. As of ADR-098, each
+narrator turn is a fresh `claude -p` call — no `--resume`, no session-id, no
+accumulated session history.
