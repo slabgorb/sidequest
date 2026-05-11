@@ -67,3 +67,18 @@ stories:
       - 'Wire the_kit scene (or equivalent) in sidequest-content/genre_packs/victoria/char_creation.yaml with equipment_generation: random_table — see caverns_and_claudes/char_creation.yaml for the exact mechanical_effects shape'
       - All item_ids in equipment_tables.yaml exist in inventory.yaml item_catalog — wiring test enforces this in C&C and the same enforcement should hold for victoria
       - 'New chargen run in victoria/glenross with a Doctor produces an inventory with at minimum: gladstone_bag, stethoscope, clinical_thermometer, bandages, one or two apothecary items'
+  - id: 49-5
+    title: Delete or rewire dead module-level run_narration_turn (orchestrator.py:2587)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: refactor
+  - id: 49-6
+    title: Ratification gate for narrator_invented NPCs before npc_registry promotion
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
