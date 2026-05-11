@@ -63,10 +63,12 @@ stories:
     description: "Phase 6 of docs/superpowers/specs/2026-04-28-magic-system-coyote-reach-implementation-design.md. Final phase of Magic v1: multiplayer Coyote Star session with full playgroup (Keith + James + Alex + Sebastien). Cut-points: (1) all four players resolve at least one threshold cross under MP turn barrier without desync between magic_state.confrontations and per-player ledger reveal; (2) at least one auto-fired confrontation (the_bleeding_through or the_quiet_word) resolves with mandatory_outputs landing on the right player's character; (3) save/load roundtrip mid-session preserves magic_state across the per-player projections (ADR-037 split); (4) OTEL GM dashboard shows magic.* spans correlated with mp.* spans for Sebastien's mechanical-visibility lens. Prerequisite: 47-2 (solo smoke) must land first to baseline the SP magic surface. Also requires tests/magic/test_multiplayer.py — currently absent — at minimum covering save/load + barrier-fire + per-player magic_state visibility. Findings file lands at sprint/archive/47-5-session.md."
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-10'
     repos: server,ui,content
     workflow: trivial
     type: chore
+    branch: feat/47-5-magic-phase-6-mp-playtest
   - id: 47-6
     title: Tea ritual auto-fire — three-layer fix (room matcher, bond rebind, opening hook, OTEL)
     points: 5
