@@ -37,9 +37,9 @@ stories:
     priority: p2
     status: done
     started: '2026-05-06'
-    completed: '2026-05-06'
     repos: docs
     workflow: trivial
+    completed: '2026-05-06'
     type: chore
     review_findings: |
       Two findings during MVP install:
