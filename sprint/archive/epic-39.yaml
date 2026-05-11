@@ -3,7 +3,7 @@ type: epic
 title: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals
 description: Replace phantom HP with first-class EdgePool on CreatureCore. First hard link from ADR-021 progression to engine state via per-genre mechanical_effects on existing affinity tiers. Extend pact_working beats with resource_deltas for push-currency spellcraft (Voice/Flesh/Ledger). Heavy_metal-first scope for HP delete; other 9 packs follow post-playtest. See ADR-078, plan ~/.claude/plans/ticklish-spinning-reef.md, content draft sidequest-content/genre_packs/heavy_metal/_drafts/edge-advancement-content.md
 priority: p2
-status: backlog
+status: done
 repos: api,ui,content
 stories:
   - id: 39-1
@@ -98,7 +98,13 @@ stories:
     title: "Chargen Edge seed += CON modifier — retire Fighter +2 stub (ADR-078 amendment 2026-05-10). Extend `edge_pool_from_config` (creature_core.py:105) to take a `con_score: int` and apply `(score-10)//2` to base_max, floored at 1. Update builder.py:2036-2078 to pass the rolled CON score; delete the hardcoded `if class_str == 'Fighter': edge.max += 2` block (Story 39-4 smoke-gate stub). OTEL: extend `chargen.edge_seeded` event with `con_modifier` and `seed_formula='class_base+con_mod'`; drop `chargen.advancement_stub_applied`. Tests: unit on `edge_pool_from_config` for CON 3/9/10/14/17 across all four classes; integration test that a Fighter built via builder.py with CON 17 ends at Edge 7 (was 6), CON 9 ends at Edge 3 (was 6), CON 3 floors at 1. No save migration — legacy saves keep their seeded values per `feedback_legacy_saves.md`. Wiring test: assert ChargenAccumulator path actually flows CON into `edge_pool_from_config` (not just exists in the file)."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: keith.avery@1898andco.io
+    started: '2026-05-10'
     repos: api
     workflow: wire-first
+    completed: '2026-05-10'
     type: feature
+    branch: feat/39-10-chargen-edge-seed-con-modifier
+    review_verdict: approved
+completed: '2026-05-10'

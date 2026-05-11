@@ -1,19 +1,90 @@
-# Sprint Unknown Sprint - Completed Work
-# Jira Sprint ID: 
-# Archived: 2026-04-27
-
 sprint:
   name: "Unknown Sprint"
   number: 3
-  jira_sprint_id: 
+  jira_sprint_id:
   jira_sprint_name: "Unknown Sprint"
   goal: Playtest 3 closeout — MP correctness, state hygiene, post-port cleanup
   start_date: 2026-04-27
   end_date: 2026-05-10
   status: active
 
-completed_epics: []
-  # Epic shard files live in sprint/archive/epic-{ref}.yaml
-
-completed_stories: []
-  # Orphan stories not belonging to an epic
+completed_epics:
+  - '39'
+  - '42'
+  - '44'
+completed_stories:
+  - id: 39-1
+    epic: '39'
+    title: Extract threshold helper + EdgePool type — refactor mint_threshold_lore/detect_crossings to shared sidequest-game/src/thresholds.rs; define EdgePool struct (current/max/base_max/recovery_triggers/thresholds); unit tests; no wiring
+    points: 5
+    completed: '2026-04-19'
+  - id: 39-2
+    epic: '39'
+    title: Delete HP from CreatureCore — remove hp/max_hp/ac fields, delete sidequest-game/src/hp.rs, fix Combatant trait (lose hp/max_hp/ac, gain edge/max_edge/is_broken), cascade compile errors workspace-wide, synthesize edge in constructors with placeholder values
+    points: 8
+    completed: '2026-04-19'
+  - id: 39-3
+    epic: '39'
+    title: Purge HP from heavy_metal YAML + RulesConfig loader — strip hp_formula/class_hp_bases/default_hp/default_ac/stat_display_fields from heavy_metal/rules.yaml only; make RulesConfig HP fields Option for other packs; add edge_config block (per-class base_max, recovery_defaults, thresholds, display_fields). Content from heavy_metal/_drafts/edge-advancement-content.md §1
+    points: 3
+    completed: '2026-04-19'
+  - id: 39-4
+    epic: '39'
+    title: BeatDef.edge_delta + target_edge_delta + beat dispatch wiring — extend BeatDef with edge_delta/target_edge_delta/resource_deltas; implement self-debit and target-debit blocks in handle_applied_side_effects (parallel to gold_delta at beat.rs:319-337); auto-resolve on Edge<=0; OTEL creature.edge_delta + encounter.composure_break events; hard-coded advancement stub (Fighter +2 edge_max) for smoke playtest gate at end of story
+    points: 8
+    completed: '2026-04-19'
+  - id: 39-5
+    epic: '39'
+    title: Authored advancement effects + resolved_beat_for — add AdvancementEffect enum (EdgeMaxBonus/EdgeRecovery/BeatDiscount with resource_mod/LeverageBonus/LoreRevealBonus); RecoveryTrigger with while_strained:bool (current<=max/4); CreatureCore.acquired_advancements; resolved_beat_for view function in sidequest-game/src/advancement.rs; per-genre audit for effects-host location (progression.yaml affinity tiers vs new advancements.yaml); milestone-grant path. Story 5 of ADR-078
+    points: 8
+    completed: '2026-04-27'
+  - id: 39-6
+    epic: '39'
+    title: Heavy_metal pact push currencies (content) — add three ResourcePools (voice/flesh/ledger, voluntary, no auto-refill); change pact_working category from social to ritual; add resource_deltas to all five pact_working beats (invoke/commit_cost/steady_the_rite/force_completion/close_the_book); add prompt conditional in unified narrator for confrontation.category=='ritual' (mirrors in_combat). Content from heavy_metal/_drafts/edge-advancement-content.md §3+§4
+    points: 5
+    completed: '2026-05-10'
+  - id: 39-7
+    epic: '39'
+    title: Save migration + UI composure sheet + real wiring test — Sqlite schema bump in sidequest-game/src/persistence.rs with legacy HP->Edge synthesis (base_max=class_base/2); React character sheet rework reading edge/max_edge/composure_state declaratively; rewrite beat_dispatch_wiring_story_28_5_tests.rs from regex-source-match to real DispatchContext + apply_beat_dispatch + assert mutation (fixes false-positive wiring test)
+    points: 5
+    completed: '2026-05-10'
+  - id: 39-8
+    epic: '39'
+    title: Playtest heavy_metal with full new system (acceptance gate) — author heavy_metal advancement tree (mechanical_effects on Iron/Pact/Court/Ruin/Craft/Lore tiers per draft §2); rewrite confrontations[type=combat] beats with edge_delta/target_edge_delta values; run 3 sample pacts (Frost-Letter/Borrowed-Year/Ledger-Refused) as playtest fixtures; verify GM panel OTEL trail (creature.edge_delta + advancement.effect_applied + composure_break events with full causality); SOUL §12 test — narrator never describes player damage they didn't ask for
+    points: 3
+    completed: '2026-05-10'
+  - id: 39-9
+    epic: '39'
+    title: "Caverns_and_claudes CON rebalance + stat_display cleanup — surfaced by 2026-05-10 playtest: CON is the rarest stat (3 of 35 beats) in a dungeon-delve pack where it should matter. Add 5+ new CON-flagged obstacles to beat_vocabulary.yaml (cave-air poisoning, forced march fatigue, holding breath, cold soak, bad water dysentery) and re-route 2-3 existing brace/endurance beats in confrontations[combat] from STR/CON ambiguity into clean CON ownership. Remove stale `hp / max_hp / ac` entries from rules.yaml stat_display_fields (HP removed per ADR-014, lingering display schema). Content-only — no server change. Verify on a delve playtest that CON 17 vs CON 9 differs on ≥3 distinct beat types in a single descent."
+    points: 3
+    completed: '2026-05-10'
+  - id: 39-10
+    epic: '39'
+    title: "Chargen Edge seed += CON modifier — retire Fighter +2 stub (ADR-078 amendment 2026-05-10). Extend `edge_pool_from_config` (creature_core.py:105) to take a `con_score: int` and apply `(score-10)//2` to base_max, floored at 1. Update builder.py:2036-2078 to pass the rolled CON score; delete the hardcoded `if class_str == 'Fighter': edge.max += 2` block (Story 39-4 smoke-gate stub). OTEL: extend `chargen.edge_seeded` event with `con_modifier` and `seed_formula='class_base+con_mod'`; drop `chargen.advancement_stub_applied`. Tests: unit on `edge_pool_from_config` for CON 3/9/10/14/17 across all four classes; integration test that a Fighter built via builder.py with CON 17 ends at Edge 7 (was 6), CON 9 ends at Edge 3 (was 6), CON 3 floors at 1. No save migration — legacy saves keep their seeded values per `feedback_legacy_saves.md`. Wiring test: assert ChargenAccumulator path actually flows CON into `edge_pool_from_config` (not just exists in the file)."
+    points: 3
+    completed: '2026-05-10'
+  - id: 42-1
+    epic: '42'
+    title: Port StructuredEncounter + EncounterMetric + SecondaryStats + EncounterActor + EncounterPhase types; formalise Combatant as a Python Protocol; promote GameSnapshot.encounter from dict to typed
+    points: 5
+    completed: '2026-04-21'
+  - id: 42-2
+    epic: '42'
+    title: Port ResourcePool + ResourceThreshold + ResourcePatch(Op/Result/Error) + mint_threshold_lore; promote GameSnapshot.resources from pass-through list to typed list[ResourcePool] (recommended pull-forward from Phase 4)
+    points: 3
+    completed: '2026-04-21'
+  - id: 42-3
+    epic: '42'
+    title: Port TensionTracker + PacingHint + DeliveryMode + CombatEvent classification + classify_round/classify_combat_outcome; wire PacingHint into narrator prompt zone (Rust-parity fixture suite)
+    points: 5
+    completed: '2026-04-21'
+  - id: 42-4
+    epic: '42'
+    title: Combat dispatch + OTEL catalog + narrator wiring — in_combat helper, find_confrontation_def, encounter resolution from tropes, strip_combat_brackets, combat.* span names byte-identical to Rust, e2e playtest gate
+    points: 8
+    completed: '2026-04-24'
+  - id: 44-1
+    epic: '44'
+    title: Leone canary — live extreme_closeup_leone render validation
+    points: 5
+    completed: '2026-05-10'

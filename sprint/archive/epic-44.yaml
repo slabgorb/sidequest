@@ -3,7 +3,7 @@ type: epic
 title: Visual Recipes — canary + live-render wiring
 description: Follow-on work from the Explicit Visual Recipes plan (merged 2026-04-24, sidequest-daemon#47 / content#119 / server#44 / orchestrator#133). The composer is green end-to-end against the fixture pack; live renders are not yet wired. This epic tracks the three deferred items that gate the Leone canary from the plan's Phase 10.
 priority: p2
-status: backlog
+status: done
 repos: daemon,content
 stories:
   - id: 44-1
@@ -43,3 +43,4 @@ stories:
       - Live render of one mutant_wasteland canary and one caverns_and_claudes canary submitted and saved
       - docs/leone-canary-results.md committed with findings per canary
       - OTEL span render.prompt_composed visible in GM panel during the live render
+completed: '2026-05-10'
