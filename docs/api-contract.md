@@ -5,7 +5,7 @@
 > `sidequest-server/sidequest/protocol/enums.py` (MessageType), and the supporting modules
 > `sidequest-server/sidequest/protocol/{models,dice,course_intent,orbital_intent,dispatch}.py`.
 >
-> **Last updated:** 2026-05-05
+> **Last updated:** 2026-05-11
 >
 > *Historical note:* between 2026-03-30 and 2026-04-19 the source of truth was
 > `sidequest-api/crates/sidequest-protocol/src/message.rs` (Rust). ADR-082 ported
@@ -157,6 +157,32 @@ Voluntary turn yield — debits Edge per ADR-078.
   "player_id": ""
 }
 ```
+
+### ACTION_REVEAL (outbound — live teammate typing)
+Broadcasts in-progress action text to peers in real time. ADR-036 amendment 2026-05-03 (Action Visibility Model). Clients send `composing` (debounced ~250ms) and `submitted`; the server emits `cleared` and clients sending `cleared` are silently dropped.
+
+```json
+{
+  "type": "ACTION_REVEAL",
+  "payload": {
+    "player_id": "",
+    "character_name": "Rux",
+    "status": "composing",
+    "action": "I creep along the rafters",
+    "aside": false,
+    "seq": 3,
+    "round": 0
+  },
+  "player_id": ""
+}
+```
+
+- `player_id` and `round` are server-stamped on fan-out — client-supplied values are overwritten (`handlers/action_reveal.py:107-112`).
+- `seq` is monotonic per `(player_id, round)`; receivers drop non-monotonic seq within a round. Round transitions hard-flush state.
+- `status` ∈ `composing` | `submitted` | `cleared` (`cleared` is server-only).
+- `action` is the current text; empty string when `status="cleared"`.
+- `aside: true` is the OOC convention; broadcast identically to in-character text.
+- Server rate-limit floor: 100ms per socket for `composing` (excess silently dropped, OTEL counter increments). `submitted` bypasses the floor.
 
 ### PLAYER_SEAT (outbound)
 Lobby seat claim. Server replies with `SEAT_CONFIRMED` or `ERROR`.
@@ -410,6 +436,49 @@ Background music, sound effects, and ambience control.
 > audio-cue actions were also retired — they only ever ducked music under
 > TTS voice playback.
 
+### ACTION_REVEAL (inbound — peer fan-out)
+Broadcast to all party members except the sender so peers can coordinate during cinematic-mode rounds. ADR-036 amendment 2026-05-03 (Action Visibility Model) — collaborative visibility is the default; the submit-and-wait barrier and CAS dispatcher are unaffected.
+
+```json
+{
+  "type": "ACTION_REVEAL",
+  "payload": {
+    "player_id": "alex-123",
+    "character_name": "Rux",
+    "status": "submitted",
+    "action": "I draw my pistol and watch the door.",
+    "aside": false,
+    "seq": 7,
+    "round": 2
+  },
+  "player_id": "alex-123"
+}
+```
+
+Lifecycle for one peer across a single round:
+
+1. Peer types first char → `composing` with `seq=0`.
+2. Peer keeps typing (250ms client debounce) → `composing` updates with monotonic `seq`.
+3. Peer hits send → `submitted` with the final `action`.
+4. Server-elected dispatcher fires barrier → server emits `cleared` for every peer (one per player, sequenced after the prior payload).
+5. Round `N+1` opens; per-peer `seq` resets to 0; receivers hard-flush state on round transition.
+
+**`cleared` is server-only.** It fires at three sites:
+- *Dispatch* — `session_room._emit_action_reveal_cleared` runs at barrier-fire, before the narrator dispatches.
+- *Disconnect* — last-socket disconnect emits `cleared` (`reason="disconnect"`) so peers don't see frozen ghost typing.
+- *Timeout* — cinematic-mode timeout cleanup (not yet wired; placeholder).
+
+**Privacy.** OTEL watcher events carry `text_length` only, never `action` content. Player input is sensitive; length + cadence + count are sufficient for the GM-panel lie-detector.
+
+| OTEL event | Fields |
+|---|---|
+| `action_reveal.composing` | `slug`, `player_id`, `round`, `seq`, `text_length` |
+| `action_reveal.submitted` | `slug`, `player_id`, `round`, `text_length`, `aside` |
+| `action_reveal.cleared` | `slug`, `player_id`, `round`, `reason` ∈ {`dispatch`, `disconnect`, `timeout`} |
+| `action_reveal.dropped_rate_limit` | `slug`, `player_id`, `round` (counter) |
+
+See ADR-036 amendments (2026-05-03 + 2026-05-09) for the doctrine and the three-meaning disambiguation of "sealed-letter".
+
 ### ACTION_QUEUE / CHAPTER_MARKER / ERROR
 ```json
 { "type": "ACTION_QUEUE", "payload": { "actions": [ ... ] } }
@@ -456,16 +525,22 @@ Background music, sound effects, and ambience control.
    - In confrontations, dice exchanges go DICE_REQUEST → DICE_THROW → DICE_RESULT
    - On orbital chart open, ORBITAL_INTENT → ORBITAL_CHART; course intent
      uses COURSE_INTENT
-6. Multiplayer turn flow (STRUCTURED mode):
+6. Multiplayer turn flow (Cinematic mode — the live default):
    - All players submit PLAYER_ACTION independently
    - Server holds actions until SessionRoom.TurnBarrier resolves (all
-     submitted or timeout — adaptive per active turn-takers, story 45-2)
-   - One handler claims and calls narrator with combined action; others
-     receive broadcast
-   - Server sends TURN_STATUS per player as they submit; ACTION_REVEAL when
-     the seal opens
+     submitted; timeout default deferred — story 45-2 closed the active-
+     turn-takers vs lobby-count gap)
+   - During the wait window, ACTION_REVEAL fans out continuously so peers
+     see each other's in-progress and post-submit text (ADR-036 amendment
+     2026-05-03; collaborative visibility is the default). Server stamps
+     player_id + round; clients debounce composing updates at ~250ms.
+   - One handler wins the CAS guard and calls narrator with the merged
+     party action; others receive the broadcast.
+   - At barrier-fire, server emits ACTION_REVEAL with status=cleared for
+     every player before dispatching the narrator.
+   - Server sends TURN_STATUS per player as they submit.
    - Shared-world delta (location, encounter id, party adjacency) flows
-     between turns via the shared-world handshake (story 45-1)
+     between turns via the shared-world handshake (story 45-1).
 7. Pause / resume:
    - Server may emit GAME_PAUSED / GAME_RESUMED at any time
 ```
