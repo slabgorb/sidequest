@@ -65,7 +65,8 @@ stories:
     description: "Separate from the ADR-098 continuity regression cluster: the Victoria genre pack ships zero starting inventory. After chargen the player has nothing — no Gladstone bag for the Country Doctor, no prayer book for the Clergyman, no notebook for the Detective. Confirmed: sidequest-content/genre_packs/victoria/ has no inventory.yaml, no equipment_tables.yaml, no starting_inventory keys anywhere in archetypes.yaml. Reference pattern lives in caverns_and_claudes — equipment_tables.yaml + inventory.yaml item catalog, wired via a 'the_kit' scene with equipment_generation: random_table in char_creation.yaml. Author equivalent files for Victoria so each archetype arrives with the kit they need. This is content-lane (World Builder), not server-lane — no code changes."
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-12'
     repos: sidequest-content
     workflow: trivial
     acceptance_criteria:
@@ -74,6 +75,10 @@ stories:
       - 'Wire the_kit scene (or equivalent) in sidequest-content/genre_packs/victoria/char_creation.yaml with equipment_generation: random_table — see caverns_and_claudes/char_creation.yaml for the exact mechanical_effects shape'
       - All item_ids in equipment_tables.yaml exist in inventory.yaml item_catalog — wiring test enforces this in C&C and the same enforcement should hold for victoria
       - 'New chargen run in victoria/glenross with a Doctor produces an inventory with at minimum: gladstone_bag, stethoscope, clinical_thermometer, bandages, one or two apothecary items'
+    completed: '2026-05-12'
+    session: .session/49-4-session.md
+    branch: feat/49-4-victoria-starting-inventories
+    review_verdict: approved
   - id: 49-5
     title: Delete or rewire dead module-level run_narration_turn (orchestrator.py:2587)
     points: 2
