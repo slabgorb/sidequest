@@ -30,7 +30,6 @@ stories:
     priority: p1
     status: done
     started: '2026-05-11'
-    completed: '2026-05-12'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -40,6 +39,7 @@ stories:
       - "Add a separate Recency-zone Guardrail section ('npc_extraction_constraint') reminding the narrator: 'Any person named or role-named in this turn's prose — including patients, parents, children, siblings, and recurring townsfolk — MUST appear in npcs_present.' This catches the issue at narration time, not just post-hoc"
       - "Regression test: build a turn fixture where narration contains 'the patient is Father; he is grave' but npcs_present omits him. Verify post-apply roster contains an NpcPoolMember with role=father pronouns=he/him"
       - 'Replay glenross save: re-running turn 5 with the new logic mints Father in the roster; running turn 6 with the populated roster does not invent Mother'
+    completed: '2026-05-12'
   - id: 49-3
     title: Location-patch enforcement when narrator titles drift from state
     description: "In the 2026-05-11 Glenross playtest the narrator silently relocated the scene across four different room titles (The Bee Garden → The Manse Garden → Front Parlour → Study → Study → Sickroom Passage) while the canonical state held character_locations[Ziggy]='the_manse' for turns 1-5. State only caught up on turn 6 (Sickroom Passage). game_patch.extracted logs show has_location=False on turns 2-5: narrator wrote new **Room Title** headers in markdown prose without filling the structured location patch field. This is the SOUL.md 'Illusionism' failure mode — narrator and state machine running on different tracks; the GM panel cannot tell where the party actually is. Fix is to parse the narrator's prose for a leading bold room title and (a) auto-fill patch.location when it disagrees with current state, plus (b) emit a loud OTEL span so the GM panel sees the drift catch. Auto-fill instead of fail-loud-and-bail because the cost of blocking a turn is too high — but the OTEL must be loud so we can iterate on the prompt later."
@@ -73,10 +73,15 @@ stories:
     title: Delete or rewire dead module-level run_narration_turn (orchestrator.py:2587)
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: dev
+    started: '2026-05-12'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-05-12'
     type: refactor
+    review_findings: Stale comments at orchestrator.py:534-538, 549-554 reference deleted module-level run_narration_turn wrapper as the populator/clearer of TurnContext fields. Documentation regression caused by this PR. 5-line edit; route back to dev as green-rework. Wiring gap (pending_resolution_signal + 3 sibling fields not threaded through _build_turn_context) is pre-existing and correctly logged for follow-up.
+    review_verdict: approved
   - id: 49-6
     title: Ratification gate for narrator_invented NPCs before npc_registry promotion
     points: 5
@@ -129,7 +134,6 @@ stories:
     status: backlog
     repos: sidequest-server,sidequest-ui
     workflow: tdd
-    type: bug
     acceptance_criteria:
       - "Refactor `build_confrontation_payload` (or add a sibling) to take a `recipient_pc` context — class_def, spell_slots_remaining, prepared_spells — and emit a payload whose `beats` field is the result of `beats_available_for(cdef, class_def, slots, prepared)`. Opponent-side beat selection in the narrator prompt is unaffected (continues to see all beats via the existing narrator.py:297 listing)."
       - "In `server/websocket_session_handler.py` around line 3085, replace the single-emit broadcast with a per-recipient loop: for each connected player in `self._room.connected_player_ids()`, resolve `(class_def, spell_slots, prepared_spells)` from session state, build the per-recipient payload, and emit a recipient-targeted CONFRONTATION message. Same change for the `mid_turn_payload` path at `server/dispatch/dice.py:504` and the `yield_action` handler emits at `handlers/yield_action.py:140,176`. All five build sites must move to per-recipient (audit with grep before declaring done — `build_confrontation_payload\\|build_clear_confrontation_payload`)."
@@ -141,6 +145,7 @@ stories:
       - "UI verification (manual, post-merge): re-run the 3-PC caverns_sunden playtest. On entry to combat, Carl's Confrontation tab shows ~10 beats (Fighter movelist), Donut's shows ~9-11 (Cleric, varies with slots), Katia's shows ~10 (Thief). No tab shows the full 16-button union. Screenshots filed to `oq-2/.playwright-mcp/` and the original pingpong entry transitioned to `verified`."
       - "Narrator latency: capture before/after p50 + p95 narrator-turn duration from `Claude CLI returned streaming narration duration_ms=...`. Per-recipient filter must add <100ms to total turn dispatch time at N=4 (it should be ~ms). If it adds more, the implementation is wrong (probably re-running heavy lookups inside the loop) — investigate before merge."
       - "No regression in the existing narrator-prompt-side filter — the `Fighter (Carl) can: ...` block in the prompt continues to render correctly; per-PC menus in the prompt are unchanged. Re-run `tests/test_narrator_prompt_pc_beat_menus.py` (or whatever covers it) green."
+    type: bug
   - id: 49-8
     title: Narration projection — fill _visibility sidecar + 2nd-person swap on POV-anchor recipient
     description: |-
@@ -204,7 +209,6 @@ stories:
     status: backlog
     repos: sidequest-server,sidequest-ui
     workflow: tdd
-    type: bug
     acceptance_criteria:
       - "Add a per-PC POV classifier at the narration emit site (`websocket_session_handler.py` around line 2955). For each per-PC POV card the narrator produced (cards anchored on a named PC — Carl/Donut/Katia), tag the card with `anchor_pc` (the PC whose action the card narrates) and `visible_to` (default: all PCs in the same `snap.location` perspective as the anchor PC, including the anchor). For omniscient/atmospheric cards (no PC anchor), default `visible_to` = all seated PCs. Stamp these into the `visibility_sidecar` field instead of `None`."
       - "Define the `visibility_sidecar` shape concretely: `{ anchor_pc: str | null, visible_to: list[str], pov_strategy: 'pc_anchored' | 'atmospheric' | 'private' }`. Document the shape on `NarrationPayload` in `protocol/messages.py:84` (the field already exists as `visibility_sidecar: dict | None`)."
@@ -219,3 +223,4 @@ stories:
       - "No regression: peers still receive every card (no filtering yet; that's ADR-028 / a follow-up story). Atmospheric / no-anchor cards continue to broadcast unchanged to everyone (no 2nd-person swap when `anchor_pc is None`). Test the existing single-player solo path to confirm no behavior change for N=1."
       - "UI verification (manual, post-merge): re-run the 3-PC caverns_sunden playtest. On each multi-card narration round, Carl's tab shows his own cards as `You ...` and peers' cards as `Donut ...` / `Katia ...`. Donut's and Katia's tabs symmetric. Screenshots filed to `oq-2/.playwright-mcp/` and the original pingpong entry transitioned to `verified`."
       - "Follow-up story (NOT in scope here): full ADR-028 perception rewriter — peer prose rewritten to perception-limited fidelity (`a clatter from the gallery, the moth's wings beat against something steel`) when a PC isn't in earshot. File as a new 49-N or 53-N once 49-8 lands and we have the visibility_sidecar plumbing exercised."
+    type: bug
