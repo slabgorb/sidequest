@@ -217,13 +217,11 @@ stories:
       (Perception Rewriter — full rewrite of peer prose is a follow-up).
     points: 5
     priority: p1
-    status: in_progress
+    status: done
+    assigned_to: dev
     started: '2026-05-12'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
-    assigned_to: dev
-    session: .session/49-8-session.md
-    branch: feat/49-8-narration-projection-visibility-sidecar
     acceptance_criteria:
       - "Add a per-PC POV classifier at the narration emit site (`websocket_session_handler.py` around line 2955). For each per-PC POV card the narrator produced (cards anchored on a named PC — Carl/Donut/Katia), tag the card with `anchor_pc` (the PC whose action the card narrates) and `visible_to` (default: all PCs in the same `snap.location` perspective as the anchor PC, including the anchor). For omniscient/atmospheric cards (no PC anchor), default `visible_to` = all seated PCs. Stamp these into the `visibility_sidecar` field instead of `None`."
       - "Define the `visibility_sidecar` shape concretely: `{ anchor_pc: str | null, visible_to: list[str], pov_strategy: 'pc_anchored' | 'atmospheric' | 'private' }`. Document the shape on `NarrationPayload` in `protocol/messages.py:84` (the field already exists as `visibility_sidecar: dict | None`)."
@@ -238,4 +236,8 @@ stories:
       - "No regression: peers still receive every card (no filtering yet; that's ADR-028 / a follow-up story). Atmospheric / no-anchor cards continue to broadcast unchanged to everyone (no 2nd-person swap when `anchor_pc is None`). Test the existing single-player solo path to confirm no behavior change for N=1."
       - "UI verification (manual, post-merge): re-run the 3-PC caverns_sunden playtest. On each multi-card narration round, Carl's tab shows his own cards as `You ...` and peers' cards as `Donut ...` / `Katia ...`. Donut's and Katia's tabs symmetric. Screenshots filed to `oq-2/.playwright-mcp/` and the original pingpong entry transitioned to `verified`."
       - "Follow-up story (NOT in scope here): full ADR-028 perception rewriter — peer prose rewritten to perception-limited fidelity (`a clatter from the gallery, the moth's wings beat against something steel`) when a PC isn't in earshot. File as a new 49-N or 53-N once 49-8 lands and we have the visibility_sidecar plumbing exercised."
+    completed: '2026-05-12'
+    session: .session/49-8-session.md
+    branch: feat/49-8-narration-projection-visibility-sidecar
     type: bug
+    review_verdict: approved
