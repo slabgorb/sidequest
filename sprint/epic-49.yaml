@@ -217,9 +217,13 @@ stories:
       (Perception Rewriter — full rewrite of peer prose is a follow-up).
     points: 5
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-05-12'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
+    assigned_to: dev
+    session: .session/49-8-session.md
+    branch: feat/49-8-narration-projection-visibility-sidecar
     acceptance_criteria:
       - "Add a per-PC POV classifier at the narration emit site (`websocket_session_handler.py` around line 2955). For each per-PC POV card the narrator produced (cards anchored on a named PC — Carl/Donut/Katia), tag the card with `anchor_pc` (the PC whose action the card narrates) and `visible_to` (default: all PCs in the same `snap.location` perspective as the anchor PC, including the anchor). For omniscient/atmospheric cards (no PC anchor), default `visible_to` = all seated PCs. Stamp these into the `visibility_sidecar` field instead of `None`."
       - "Define the `visibility_sidecar` shape concretely: `{ anchor_pc: str | null, visible_to: list[str], pov_strategy: 'pc_anchored' | 'atmospheric' | 'private' }`. Document the shape on `NarrationPayload` in `protocol/messages.py:84` (the field already exists as `visibility_sidecar: dict | None`)."
