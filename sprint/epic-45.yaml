@@ -1019,7 +1019,7 @@ stories:
     description: "Track cumulative narrator session input tokens (sum of usage envelope per turn) and proactively call reset_narrator_session() before the CLI hits its context ceiling. Per ADR-066 §7 + §10 (2026-05-04 amendment). Depends on 45-50 (originally 45-47, renumbered after OQ-1/OQ-2 collision) to validate the rebuild path works first."
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: server
     workflow: tdd
     depends_on: 45-50
