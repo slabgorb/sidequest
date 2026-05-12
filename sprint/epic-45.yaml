@@ -1040,13 +1040,15 @@ stories:
     description: "Cleanup follow-up to 45-47 (Wave 2A NPC pool/state split). Drops the deprecated NpcRegistryEntry class and GameSnapshot.npc_registry field; repoints 9 test files (test_npc_wiring, test_orchestrator, test_npc_agency, conftest, test_chargen_persist_and_play, test_encounter_actors_all_combatants, test_encounter_lifecycle, test_party_peer_identity, test_npc_registry_combat_stats); refactors dormant npc_agency.py subsystem signature; renames SPAN_NPC_REGISTRY_HP_SET → SPAN_NPC_EDGE_PUBLISHED; adds malformed_npcs_skipped + nameless_entries_dropped + location_available OTEL attributes per Reviewer's silent-failure findings; adds dedicated wiring test; doc updates. Originally filed as 45-50 before OQ-1/OQ-2 sync collision (the 45-50 slot was already taken by ADR-066 §8 narrator session crash recovery)."
     points: 5
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-05-12'
-    branch: feat/45-52-wave-2a-cleanup-drop-npcregistryentry
     repos: server
     workflow: trivial
     depends_on: 45-47
+    completed: '2026-05-12'
+    branch: feat/45-52-wave-2a-cleanup-drop-npcregistryentry
     type: chore
+    review_verdict: approved
   - id: 45-53
     title: Recurring NPC presence — narrator emits npcs_met every turn they're onstage
     points: 3
