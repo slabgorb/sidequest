@@ -64,7 +64,7 @@ This learning applies to ADR-073 / Group E's `OllamaClient` (`sidequest-server`)
 Story **48-2** completed the follow-up audit. The `OllamaClient` request bodies were reviewed against the per-request `num_ctx` anti-pattern:
 
 - **`/api/generate`** (`send_with_model`): body is `{"model", "prompt", "stream": False}` — **no `options` field at all**, so **no per-request `num_ctx`**.
-- **`/api/chat`** (`send_with_session`, and transitively `send_stateless` — the narrator's canonical post-ADR-098 path): body is `{"model", "messages", "stream": False}` — **no `options` field at all**, so **no per-request `num_ctx`**.
+- **`/api/chat`** (`send_with_session`, and transitively `send_stateless` — the narrator's canonical post-ADR-098 path): body is `{"model", "messages", "stream": False}` — **no `options` field at all**, so **no per-request `num_ctx`**. (Note: `send_stateless` merges `system_prompt` into the user message as a single combined string before calling `send_with_session`; the `messages` array therefore contains one user-role entry, not a separate `system`+`user` pair. This matters for Ollama models whose behavior differs between role types — but is orthogonal to the `num_ctx` audit.)
 - Static scan of `sidequest/agents/ollama_client.py` finds zero occurrences of the substring `num_ctx`.
 
 **Audit outcome:** no per-request `num_ctx` pattern present in `OllamaClient`. The KV-cache-reload regression observed with `qwen-code` (~28s per call) cannot occur via this client today. No fix needed.
