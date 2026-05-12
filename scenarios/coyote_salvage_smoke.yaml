@@ -1,0 +1,179 @@
+name: coyote_salvage_smoke
+description: >
+  Verifies the two-phase salvage hook flow specified in ADR-099. Two players
+  (Sira, Calix) enter a derelict alien hopper containing a coyote_object
+  (the_hopper_panel). Sira observes it first, then commits acquisition;
+  Calix later observes the same object but never acquires.
+
+  Exercises:
+    1. Discovery hook fires per-actor on first observation only
+       (magic.salvage_discovery span, triggered=true)
+    2. Discovery does NOT fire a second time for the same (actor, object)
+       (skip_reason=already_observed)
+    3. Discovery fires independently for a second actor in the same room
+       (per-player projection, ADR-037)
+    4. Acquisition hook fires on inventory-mutation chain when the acquired
+       item carries coyote_object=true (magic.salvage_acquisition,
+       fired=true, confrontation_id=the_salvage)
+    5. the_salvage confrontation enters active state after acquisition
+    6. Non-coyote items do NOT fire salvage hooks (control)
+
+  Reference scenario for downstream story implementing ADR-099 hooks.
+
+pack: space_opera
+world: coyote_star
+
+# Fixture overlay — declares the salvageable object present in the starting
+# room. Implementation: the downstream story authors a room fixture that
+# materializes `the_hopper_panel` (item_legacy_v1, coyote_object: true) in
+# the Mendes Post / Derelict Hopper interior at scenario start.
+fixture:
+  room: derelict_hopper
+  items_in_room:
+    - id: the_hopper_panel
+      item_class: item_legacy_v1
+      coyote_object: true
+      salvage_phase_default: acquisition
+      narrator_register: "bone-white surface, names you don't know in the metal"
+    - id: spare_o_ring_kit
+      item_class: mundane
+      coyote_object: false           # control — does NOT fire salvage hooks
+      narrator_register: "scuffed maintenance pouch"
+
+# NOTE: This scenario uses new assertion types that the playtest runner does
+# NOT yet implement: otel_span_emitted, otel_span_not_emitted, per_player_state,
+# per_player_state_unchanged, confrontation_active, player_must_not_receive.
+# Implementing these is in scope for the downstream story that implements
+# ADR-099 hooks — without that work, this scenario is syntactically valid YAML
+# but behaviorally inert (assertions silently skipped). Do NOT consider the
+# salvage hooks "verified" by a clean run against the current harness.
+
+players:
+  - name: Sira
+    character: voidborn_scavenger
+    lineage: voidborn               # innate_v1 native, exposure-prone
+  - name: Calix
+    character: hegemony_inspector
+    lineage: hegemony               # innate_v1 absent
+
+turns:
+  # --- Turn 1: Sira enters the hopper. Discovery fires for the coyote_object;
+  # the mundane o-ring kit does NOT trigger any salvage span.
+  - actor: Sira
+    action: "I step inside the hopper and look around."
+    assertions:
+      - otel_span_emitted:
+          name: "magic.salvage_discovery"
+          attrs:
+            actor_id: Sira
+            object_id: the_hopper_panel
+            object_class: coyote_object
+            room_local_id: derelict_hopper
+            triggered: true
+            skip_reason: null
+      - otel_span_not_emitted:
+          name: "magic.salvage_discovery"
+          attrs:
+            actor_id: Sira
+            object_id: spare_o_ring_kit
+      - otel_span_not_emitted:
+          name: "magic.salvage_acquisition"
+          attrs:
+            actor_id: Sira
+            object_id: the_hopper_panel
+      - per_player_state:
+          Sira:
+            observed_salvage_objects: ["the_hopper_panel"]
+            resolved_salvage_objects: []
+      - confrontation_active:
+          id: the_salvage
+          actor: Sira
+          active: false  # discovery does NOT fire the_salvage
+
+  # --- Turn 2: Sira looks around again. Discovery does NOT re-fire (already
+  # observed). The narration beat is not re-emitted.
+  - actor: Sira
+    action: "I scan the panel again, this time more carefully."
+    assertions:
+      - otel_span_emitted:
+          name: "magic.salvage_discovery"
+          attrs:
+            actor_id: Sira
+            object_id: the_hopper_panel
+            triggered: false
+            skip_reason: already_observed
+            narration_beat_id: null  # no new beat on repeat observation
+      - narration_beat_emitted: false  # bait beat does NOT re-fire
+      - per_player_state:
+          Sira:
+            observed_salvage_objects: ["the_hopper_panel"]
+            resolved_salvage_objects: []
+
+  # --- Turn 3: Calix enters the same room. Discovery fires for Calix on the
+  # same object — per-player projection (ADR-037). Sira's observation set
+  # does not affect Calix's.
+  - actor: Calix
+    action: "I follow Sira in, weapon drawn."
+    assertions:
+      - otel_span_emitted:
+          name: "magic.salvage_discovery"
+          attrs:
+            actor_id: Calix
+            object_id: the_hopper_panel
+            triggered: true
+            skip_reason: null
+      - per_player_state:
+          Calix:
+            observed_salvage_objects: ["the_hopper_panel"]
+            resolved_salvage_objects: []
+      - per_player_state_unchanged:
+          Sira:
+            observed_salvage_objects: ["the_hopper_panel"]
+            resolved_salvage_objects: []  # Calix's discovery must NOT leak into Sira's slice
+
+  # --- Turn 4: Sira commits acquisition. Inventory-mutation chain fires the
+  # acquisition hook → the_salvage confrontation enters active state.
+  # Calix is aware (shared narration) but Calix's ledger is not affected.
+  - actor: Sira
+    action: "I peel the panel off the bulkhead and slide it into my pack."
+    assertions:
+      - otel_span_emitted:
+          name: "magic.salvage_acquisition"
+          attrs:
+            actor_id: Sira
+            object_id: the_hopper_panel
+            confrontation_id: the_salvage
+            fired: true
+            skip_reason: null
+            pool_primary: sanity
+            pool_secondary: bond
+            rounds: 2
+      - confrontation_active:
+          id: the_salvage
+          actor: Sira
+      - per_player_state:
+          Sira:
+            resolved_salvage_objects: ["the_hopper_panel"]
+      - per_player_state_unchanged:
+          Calix:
+            resolved_salvage_objects: []
+      - player_receives:
+          Sira: ["NARRATION", "CONFRONTATION_OVERLAY"]
+          Calix: ["NARRATION"]   # aware but not engaged
+      - player_must_not_receive:
+          Calix: ["CONFRONTATION_OVERLAY"]   # explicit exclusion — subset checks would let a broadcast pass
+
+  # --- Turn 5: Sira picks up the mundane kit. No salvage hooks fire (control).
+  - actor: Sira
+    action: "I grab the o-ring kit too — might need it."
+    assertions:
+      - otel_span_not_emitted:
+          name: "magic.salvage_discovery"
+          attrs:
+            actor_id: Sira
+            object_id: spare_o_ring_kit
+      - otel_span_not_emitted:
+          name: "magic.salvage_acquisition"
+          attrs:
+            actor_id: Sira
+            object_id: spare_o_ring_kit
