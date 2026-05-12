@@ -952,10 +952,14 @@ stories:
       This chore drops the alias when Wave 2 (the next major split-brain story landing in this area, likely Wave 2A — story to be created) merges. Removal target: the __getattr__ shim and the __all__.append('EncounterTag') line in sidequest/game/__init__.py. Also remove the test that asserts the DeprecationWarning fires (tests/game/test_npc_encounter_log_tag_rename.py).
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-12'
     repos: server
     workflow: trivial
+    completed: '2026-05-12'
     type: chore
+    review_findings: 'Two LOW findings: (1) stale docstring at sidequest-server/sidequest/game/session.py:60-62 claims the alias still exists; (2) no test asserts sidequest.game.EncounterTag now raises AttributeError. Both fixes ≤5 lines total.'
+    review_verdict: approved
   - id: 45-47
     title: Snapshot split-brain Wave 2A — NPC pool/state split (S2)
     description: "Wave 2A of the snapshot split-brain cleanup per docs/superpowers/specs/2026-05-04-snapshot-split-brain-cleanup-design.md (S2 dimension). Wave 1 (45-45) collapsed S1+S4+S5; this wave separates the NPC pool (catalog of who exists) from per-NPC runtime state (what each NPC is doing right now). Today both live tangled in `npc_registry` and `npcs` snapshot fields. Cut-points: (1) introduce a clean dual-field shape — pool/catalog vs state — with migration; (2) per-NPC runtime state survives save/load; (3) per-player projection filter in ADR-037 still works against the new shape; (4) deprecation alias drop chore for any renamed surface (mirroring Wave 1's __getattr__ pattern); (5) OTEL spans on the migration step. Sibling stories: 45-48 (Wave 2B). Plan TBD — write before pulling into a sprint. Until plan exists, leave in backlog as a placeholder for the design's deferred wave."

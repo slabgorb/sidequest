@@ -3,7 +3,7 @@ type: epic
 title: Playtest 4 Closeout — Glenross / ADR-098 Continuity Recovery
 description: "Findings from the 2026-05-11 victoria/glenross playtest. ADR-098 (stateless narrator turns, dropping --resume) delivered the predicted speed win (turns now 14-20s instead of 60s+) but introduced narrative-continuity regressions: (1) narrator teleports the scene by titling a new room in prose without filling the structured location patch (Garden→Parlour→Study without state update), (2) recent narrative facts drop between turns (secateurs set down twice; Father→Mother gender flip on patient), (3) dialogue-only NPCs never get extracted to the NPC roster (Father invisible turn 5, Mother fabricated turn 6), (4) Victoria archetypes have no starting_inventory — content gap, separate from the ADR-098 regression cluster. Goal of epic: recover continuity *without* reverting --resume — Keith does not want to give back the speed win. The fix path is smarter per-turn context packing: a Recency-zone recent-narrative-window section, server-side NPC auto-mint from prose, and location-patch enforcement when the narrator's prose room title diverges from canonical state. Plus content: author Victoria starting inventories."
 priority: p1
-status: backlog
+status: done
 repos: sidequest-server,sidequest-content
 stories:
   - id: 49-1
@@ -248,3 +248,4 @@ stories:
     branch: feat/49-8-narration-projection-visibility-sidecar
     type: bug
     review_verdict: approved
+completed: '2026-05-12'
