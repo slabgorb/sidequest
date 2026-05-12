@@ -28,7 +28,9 @@ stories:
     description: "On 2026-05-11 Glenross turn 5 the narrator wrote dialogue about Father in detail ('He's through the back passage — the morning room, where Mrs. Gow laid him after', 'gestures you ahead of him', 'set the secateurs down on the blotter') but emitted npcs_present=2 covering only Reverend Murchison + the pinafore girl. Father never made it into the NPC roster. Turn 6 then invented 'the wee one's mother / her' with no constraint to overrule. NPC roster currently works (orchestrator.py:1262 → prompt_framework/core.py:412) but only when populated; populating relies entirely on the narrator's structured patch. There is no server-side catch-loop for first-mention NPCs the narrator names in dialogue but forgets to extract. The existing lie-detector at session_helpers.py:660 (npc.recurring_presence_missed) catches recurring misses but not first-mention misses — which is exactly what happened here. Fix: scan narration prose for named-or-role-named individuals (Father, mother, the doctor, the Reverend, named honorifics + given names) and auto-mint NpcPoolMember entries when the narrator didn't, so the next turn's roster has a constraint."
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-11'
+    completed: '2026-05-12'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
