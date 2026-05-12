@@ -5,11 +5,11 @@ status: accepted
 status_rationale: "Design-phase story 47-8. Extends the auto-fire taxonomy beyond bar-trigger (47-3) and room-entry (47-4) with an object-based trigger. Implementation phase is downstream."
 date: 2026-05-12
 deciders: ["Keith Avery"]
-supersedes: null
+supersedes: []
 superseded-by: null
-related: [33, 37, 93]
+related: [14, 33, 37, 93]
 tags: [genre-mechanics]
-implementation-status: planned
+implementation-status: deferred
 implementation-pointer: null
 ---
 
@@ -79,7 +79,7 @@ The existing `the_salvage` definition gains `auto_fire: true` and a new
     object_class: coyote_object        # which items qualify
     fire_phase: acquisition             # which lifecycle phase fires the conf
     discovery_emits_beat: true          # discovery emits a narration beat, no confrontation
-    cooldown_turns: 0                   # per-object lifetime — discovery+acquisition each fire at most once per object_id per actor
+    cooldown_turns: 0                   # reserved — not evaluated in v1; once-per-object invariant is enforced by resolved_salvage_objects / observed_salvage_objects sets, not this counter
   rounds: 2
   resource_pool: { primary: sanity, secondary: bond }
   outcomes: { ...unchanged... }
@@ -101,7 +101,11 @@ narrator-discretionary path.
 Two evaluators are added, each emitting one OTEL span:
 
 1. **Discovery hook** — `evaluate_salvage_discovery(*, confrontations, actor_id,
-   visible_object_ids, observed_objects_by_actor) -> list[SalvageDiscovery]`.
+   visible_object_ids, observed_salvage_objects) -> list[SalvageDiscovery]`.
+   (Where `visible_object_ids` is the set of item IDs currently surfaced for the
+   actor in the room — items physically present plus items the actor's
+   perception-filter exposes per ADR-028. `observed_salvage_objects` is the
+   actor's per-player MagicState set as defined in §Consequences.)
    Called from the room-entry / room-snapshot pipeline (same site as
    `find_eligible_room_autofire`). Returns the set of new Coyote Objects this
    actor has not yet observed in this room context. For each new observation,
@@ -112,7 +116,7 @@ Two evaluators are added, each emitting one OTEL span:
 2. **Acquisition hook** — `evaluate_salvage_acquisition(*, confrontations,
    actor_id, acquired_object_id, object_tags) -> ConfrontationDefinition |
    None`. Called from `narration_apply` after the inventory mutation pipeline
-   (`apply_inventory_changes`) materializes a new item into an actor's
+   (`items_gained processing in narration_apply.py`) materializes a new item into an actor's
    inventory. When the acquired item carries `coyote_object: true` and the
    actor has not yet resolved `the_salvage` against this object_id, dispatch
    the confrontation through the existing `dispatch/confrontation.py` flow.
@@ -143,16 +147,28 @@ per-character state slice.
 Two new spans register with `SPAN_ROUTES` under `event_type=state_transition,
 component=magic`:
 
-- **`magic.salvage_discovery`** — emitted once per (actor_id, object_id) pair.
-  Attributes: `actor_id`, `object_id`, `object_class`, `room_local_id`,
-  `triggered: bool`, `skip_reason: "already_observed" | "wrong_class" | null`,
-  `narration_beat_id` (the LoreFragment minted for the beat).
+- **`magic.salvage_discovery`** — emitted on every discovery-hook evaluation
+  for the actor (including evaluations where the hook skips). The
+  triggered/skip semantics live on the span attributes, not on whether the
+  span is emitted, so the GM panel can distinguish "evaluator ran and
+  correctly skipped" from "evaluator never ran." Attributes: `actor_id`,
+  `object_id`, `object_class`, `room_local_id`, `triggered: bool`,
+  `skip_reason: "already_observed" | "wrong_class" | null`,
+  `narration_beat_id: str` (the `LoreFragment.id` of the LoreFragment minted
+  for the beat — null when `triggered: false`).
 
-- **`magic.salvage_acquisition`** — emitted at every inventory-mutation site
-  where evaluation runs. Attributes: `actor_id`, `object_id`,
-  `confrontation_id`, `fired: bool`, `skip_reason: "already_resolved" |
-  "missing_tag" | "wrong_phase" | null`, plus the standard confrontation
-  context (`pool_primary`, `pool_secondary`, `rounds`) when `fired: true`.
+- **`magic.salvage_acquisition`** — emitted on every inventory-mutation event
+  where the evaluator runs. The evaluator is called for every acquired item
+  carrying `coyote_object: true`; mundane items short-circuit before the
+  evaluator (no span). Within the evaluator the span emits with attributes:
+  `actor_id`, `object_id`, `confrontation_id`, `fired: bool`,
+  `skip_reason: "already_resolved" | "wrong_phase" | null`, plus the standard
+  confrontation context (`pool_primary`, `pool_secondary`, `rounds`) when
+  `fired: true`. (Items that reach acquisition without the `coyote_object`
+  flag set is a *loader bug* — the load-time validator should have rejected
+  the item definition or the runtime tagger should have set the flag before
+  the inventory mutation — and therefore is not a runtime skip_reason. See
+  Implementation Notes.)
 
 Together these spans make Sebastien's GM panel a true lie detector for
 salvage: if a Coyote Object appears in the inventory and no
@@ -198,7 +214,7 @@ invariant.
   evaluators ~80 LOC combined; two SPAN_ROUTES entries; one per-player state
   slice (`observed_salvage_objects: set[str]`, `resolved_salvage_objects:
   set[str]`). The discovery/acquisition pipeline taps existing hook sites
-  (room-entry observer, `apply_inventory_changes`) — no new dispatch flow.
+  (room-entry observer, `items_gained processing in narration_apply.py`) — no new dispatch flow.
 
 - **`auto_fire: true` is no longer one-or-the-other.** The_salvage will have
   `auto_fire: true` AND no `auto_fire_trigger`. The auto-fire selection
@@ -281,7 +297,7 @@ shouldn't depend on the lie-detected system to self-report.
 - Scenario seed: `scenarios/coyote_salvage_smoke.yaml` (authored under this
   story — see References).
 - Wiring tests: at least one integration test confirms the
-  `apply_inventory_changes` → `evaluate_salvage_acquisition` →
+  `items_gained processing in narration_apply.py` → `evaluate_salvage_acquisition` →
   `dispatch_confrontation` chain runs end-to-end against a Coyote Star
   fixture.
 
