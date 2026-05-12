@@ -136,13 +136,11 @@ stories:
       `011-donut-confrontation-tab.png`, `012-katia-confrontation-tab.png`.
     points: 3
     priority: p1
-    status: in_progress
-    started: '2026-05-12'
+    status: done
     assigned_to: dev
+    started: '2026-05-12'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
-    session: .session/49-7-session.md
-    branch: feat/49-7-confrontation-panel-per-pc-beats
     acceptance_criteria:
       - "Refactor `build_confrontation_payload` (or add a sibling) to take a `recipient_pc` context — class_def, spell_slots_remaining, prepared_spells — and emit a payload whose `beats` field is the result of `beats_available_for(cdef, class_def, slots, prepared)`. Opponent-side beat selection in the narrator prompt is unaffected (continues to see all beats via the existing narrator.py:297 listing)."
       - "In `server/websocket_session_handler.py` around line 3085, replace the single-emit broadcast with a per-recipient loop: for each connected player in `self._room.connected_player_ids()`, resolve `(class_def, spell_slots, prepared_spells)` from session state, build the per-recipient payload, and emit a recipient-targeted CONFRONTATION message. Same change for the `mid_turn_payload` path at `server/dispatch/dice.py:504` and the `yield_action` handler emits at `handlers/yield_action.py:140,176`. All five build sites must move to per-recipient (audit with grep before declaring done — `build_confrontation_payload\\|build_clear_confrontation_payload`)."
@@ -154,7 +152,11 @@ stories:
       - "UI verification (manual, post-merge): re-run the 3-PC caverns_sunden playtest. On entry to combat, Carl's Confrontation tab shows ~10 beats (Fighter movelist), Donut's shows ~9-11 (Cleric, varies with slots), Katia's shows ~10 (Thief). No tab shows the full 16-button union. Screenshots filed to `oq-2/.playwright-mcp/` and the original pingpong entry transitioned to `verified`."
       - "Narrator latency: capture before/after p50 + p95 narrator-turn duration from `Claude CLI returned streaming narration duration_ms=...`. Per-recipient filter must add <100ms to total turn dispatch time at N=4 (it should be ~ms). If it adds more, the implementation is wrong (probably re-running heavy lookups inside the loop) — investigate before merge."
       - "No regression in the existing narrator-prompt-side filter — the `Fighter (Carl) can: ...` block in the prompt continues to render correctly; per-PC menus in the prompt are unchanged. Re-run `tests/test_narrator_prompt_pc_beat_menus.py` (or whatever covers it) green."
+    completed: '2026-05-12'
+    session: .session/49-7-session.md
+    branch: feat/49-7-confrontation-panel-per-pc-beats
     type: bug
+    review_verdict: approved
   - id: 49-8
     title: Narration projection — fill _visibility sidecar + 2nd-person swap on POV-anchor recipient
     description: |-
