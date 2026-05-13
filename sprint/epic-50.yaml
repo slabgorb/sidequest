@@ -46,17 +46,18 @@ stories:
       Out of scope: retroactively flipping the ~90 archive `fixed`-without-`verified` items that look paperwork-only. Those are written off as "verified via PR merge" historical debt.
     points: 2
     priority: p3
-    status: in-progress
+    status: done
+    started: '2026-05-13'
     repos: orchestrator
     workflow: trivial
-    branch: feat/50-1-pingpong-archive-triage
-    assignee: slabgorb
-    started: '2026-05-13'
     acceptance_criteria:
       - All 8 items from the "To Be Verified" section in sq-playtest-pingpong.md have a re-test verdict (still-broken / silently-fixed / unable-to-repro)
       - Confirmed-broken items are filed as new stories under epic 50 with their own AC blocks
       - Silently-fixed items get a one-line note in the pingpong audit section with the resolving commit/PR
       - The audit section is then closed out by removing the "To Be Verified" block and replacing it with a "Verified clean as of 2026-MM-DD" line
+    completed: '2026-05-13'
+    branch: feat/50-1-pingpong-archive-triage
+    assignee: slabgorb
     type: chore
   - id: 50-2
     title: Narrator confrontation-trigger detection — instantiate the encounter, not just an OTEL warning
