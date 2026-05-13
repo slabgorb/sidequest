@@ -249,11 +249,10 @@ stories:
     description: "Implement the accepted ADR-092 design in Python — restores scene-harness fixture loading lost during the Rust→Python port. The UI is already wired (App.tsx:1183-1217: ?scene=NAME → POST /dev/scene/{name} → navigate to /solo/{slug}); 4 fixture YAMLs already exist in scenarios/fixtures/ (combat_test, dogfight, negotiation, poker). What's missing: the Python endpoint that hydrates a fixture YAML into a GameSnapshot, persists via SqliteStore, and returns {slug}. Gated behind DEV_SCENES=1 env var per the ADR — route is not registered when the flag is unset, so production builds carry zero scene-harness surface. Also wire scripts/playtest.py with a --fixture <name> flag that POSTs to /dev/scene/{name} instead of /api/games, so headless mechanical playtests can skip chargen the same way the UI can. See ADR-092 for the full design, ADR-069 for the superseded CLI-first version (do not implement), ADR-087 row 125 for the gating question this resolves."
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-13'
     repos: sidequest-server,orc-quest
     workflow: tdd
-    branch: feat/50-18-adr-092-scene-harness-python
     acceptance_criteria:
       - POST /dev/scene/{name} returns {slug} on success when DEV_SCENES=1 is set
       - Route is NOT registered when DEV_SCENES env var is unset (production builds have zero scene-harness surface)
@@ -262,3 +261,6 @@ stories:
       - All 4 existing fixture YAMLs (combat_test, dogfight, negotiation, poker) hydrate successfully end-to-end via the UI ?scene=NAME flow
       - scripts/playtest.py grows --fixture <name> flag; routes through POST /dev/scene/{name} instead of POST /api/games; chargen is skipped; opening narration arrives and scripted actions drain normally
       - 'Wiring test: scene-harness endpoint is exercised end-to-end (POST → save persisted → slug-connect returns has_character=true → opening narration emits)'
+    completed: '2026-05-13'
+    branch: feat/50-18-adr-092-scene-harness-python
+    review_verdict: approved
