@@ -115,10 +115,10 @@ stories:
     repos: server,content
     workflow: tdd
     completed: '2026-05-13'
+    pr: 'https://github.com/slabgorb/sidequest-server/pull/277'
     assignee: slabgorb
     branch: feat/50-4-trope-rate-per-day
     review_verdict: approved
-    pr: 'https://github.com/slabgorb/sidequest-server/pull/277'
   - id: 50-5
     title: 'Scenario: wire discover_clue to narration consumption (call site + SPAN_SCENARIO_ADVANCE fires in play)'
     points: 3
@@ -145,9 +145,15 @@ stories:
     title: 'Scenario: GossipEngine — two-phase belief propagation, contradiction detection, credibility decay'
     points: 8
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-13'
     repos: server
     workflow: tdd
+    completed: '2026-05-13'
+    assignee: slabgorb
+    branch: feat/50-7-gossip-engine-propagation
+    review_findings: 'Round-trip 2 APPROVED. All 3 HIGH + 4 MEDIUM + 3 LOW findings from round-trip 0 resolved. 4 new non-blocking findings (1 MEDIUM, 3 LOW) logged in Delivery Findings as Improvements: misleading update_credibility in test, inline span imports, .get() vs [key] inconsistency, method docstring missing contradiction sub-case.'
+    review_verdict: approved
   - id: 50-8
     title: 'Scenario: AccusationEvaluator — EvidenceSummary, Circumstantial/Strong/Airtight verdict, SPAN_SCENARIO_ACCUSATION emit'
     points: 8
@@ -238,3 +244,19 @@ stories:
     repos: server
     workflow: tdd
     type: refactor
+  - id: 50-18
+    title: ADR-092 scene harness — Python POST /dev/scene/{name} hydrator
+    description: "Implement the accepted ADR-092 design in Python — restores scene-harness fixture loading lost during the Rust→Python port. The UI is already wired (App.tsx:1183-1217: ?scene=NAME → POST /dev/scene/{name} → navigate to /solo/{slug}); 4 fixture YAMLs already exist in scenarios/fixtures/ (combat_test, dogfight, negotiation, poker). What's missing: the Python endpoint that hydrates a fixture YAML into a GameSnapshot, persists via SqliteStore, and returns {slug}. Gated behind DEV_SCENES=1 env var per the ADR — route is not registered when the flag is unset, so production builds carry zero scene-harness surface. Also wire scripts/playtest.py with a --fixture <name> flag that POSTs to /dev/scene/{name} instead of /api/games, so headless mechanical playtests can skip chargen the same way the UI can. See ADR-092 for the full design, ADR-069 for the superseded CLI-first version (do not implement), ADR-087 row 125 for the gating question this resolves."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server,orc-quest
+    workflow: tdd
+    acceptance_criteria:
+      - POST /dev/scene/{name} returns {slug} on success when DEV_SCENES=1 is set
+      - Route is NOT registered when DEV_SCENES env var is unset (production builds have zero scene-harness surface)
+      - Endpoint reads scenarios/fixtures/{name}.yaml (ADR-069 schema), hydrates GameSnapshot, persists via SqliteStore, mints game_slug
+      - Missing fixture YAML returns 404 with the missing path in body; hydration error returns 422 with field-level detail (no silent fallback to manual chargen)
+      - All 4 existing fixture YAMLs (combat_test, dogfight, negotiation, poker) hydrate successfully end-to-end via the UI ?scene=NAME flow
+      - scripts/playtest.py grows --fixture <name> flag; routes through POST /dev/scene/{name} instead of POST /api/games; chargen is skipped; opening narration arrives and scripted actions drain normally
+      - 'Wiring test: scene-harness endpoint is exercised end-to-end (POST → save persisted → slug-connect returns has_character=true → opening narration emits)'
