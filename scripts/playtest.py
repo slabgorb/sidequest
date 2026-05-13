@@ -62,7 +62,6 @@ from playtest_messages import (  # noqa: E402
     make_slug_connect_msg,
     make_story_autogen,
     make_story_confirm,
-    make_yield,
     render_message,
 )
 
@@ -99,6 +98,33 @@ def load_scenario(path: Path) -> dict[str, Any]:
 # ── REST: mint a game slug ──────────────────────────────────────────────────
 
 
+async def _post_for_slug(
+    url: str,
+    *,
+    json: dict[str, Any] | None = None,
+    not_found_hint: str | None = None,
+) -> str:
+    """POST to ``url`` and extract a ``slug`` from the JSON response.
+
+    Shared helper for :func:`mint_game_slug` (POST /api/games) and
+    :func:`mint_via_scene_harness` (POST /dev/scene/{name}). When
+    ``not_found_hint`` is provided, a 404 response raises with that
+    hint instead of falling through ``raise_for_status`` — the dev-only
+    /dev/scene route returns 404 when DEV_SCENES is unset and the hint
+    points the operator at the missing env var.
+    """
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        resp = await client.post(url, json=json)
+        if not_found_hint is not None and resp.status_code == 404:
+            raise RuntimeError(f"POST {url} returned 404 — {not_found_hint}. Body: {resp.text}")
+        resp.raise_for_status()
+        body = resp.json()
+    slug = body.get("slug")
+    if not slug:
+        raise RuntimeError(f"POST {url} returned no slug: {body}")
+    return slug
+
+
 async def mint_game_slug(
     rest_base: str,
     genre_slug: str,
@@ -107,21 +133,16 @@ async def mint_game_slug(
     player_name: str,
     force_new: bool,
 ) -> str:
-    payload = {
-        "genre_slug": genre_slug,
-        "world_slug": world_slug,
-        "mode": mode,
-        "player_name": player_name,
-        "force_new": force_new,
-    }
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.post(f"{rest_base}/api/games", json=payload)
-        resp.raise_for_status()
-        body = resp.json()
-    slug = body.get("slug")
-    if not slug:
-        raise RuntimeError(f"POST /api/games returned no slug: {body}")
-    return slug
+    return await _post_for_slug(
+        f"{rest_base}/api/games",
+        json={
+            "genre_slug": genre_slug,
+            "world_slug": world_slug,
+            "mode": mode,
+            "player_name": player_name,
+            "force_new": force_new,
+        },
+    )
 
 
 async def mint_via_scene_harness(rest_base: str, fixture_name: str) -> str:
@@ -131,21 +152,13 @@ async def mint_via_scene_harness(rest_base: str, fixture_name: str) -> str:
     Requires the server to be running with ``DEV_SCENES=1``; absent that,
     the route 404s and we raise loudly so the dev fixes their environment.
     """
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.post(f"{rest_base}/dev/scene/{fixture_name}")
-        if resp.status_code == 404:
-            raise RuntimeError(
-                f"POST /dev/scene/{fixture_name} returned 404 — "
-                "check that the server is running with DEV_SCENES=1 and "
-                f"the fixture exists at scenarios/fixtures/{fixture_name}.yaml. "
-                f"Body: {resp.text}"
-            )
-        resp.raise_for_status()
-        body = resp.json()
-    slug = body.get("slug")
-    if not slug:
-        raise RuntimeError(f"POST /dev/scene/{fixture_name} returned no slug: {body}")
-    return slug
+    return await _post_for_slug(
+        f"{rest_base}/dev/scene/{fixture_name}",
+        not_found_hint=(
+            "check that the server is running with DEV_SCENES=1 and "
+            f"the fixture exists at scenarios/fixtures/{fixture_name}.yaml"
+        ),
+    )
 
 
 # ── Auto chargen strategy ───────────────────────────────────────────────────
