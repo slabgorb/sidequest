@@ -4,6 +4,7 @@ version = "1.1.0"
 description = "Cross-repo tooling scripts for SideQuest (image gen, playtest, migrations, ADR tooling, etc.)"
 requires-python = ">=3.11"
 dependencies = [
+    "httpx>=0.28.1",
     "numpy>=1.24",
     "pyyaml>=6.0",
     "requests>=2.31",

@@ -124,6 +124,30 @@ async def mint_game_slug(
     return slug
 
 
+async def mint_via_scene_harness(rest_base: str, fixture_name: str) -> str:
+    """POST /dev/scene/{name} and return the slug the server minted.
+
+    Counterpart to :func:`mint_game_slug` for ADR-092's scene-harness flow.
+    Requires the server to be running with ``DEV_SCENES=1``; absent that,
+    the route 404s and we raise loudly so the dev fixes their environment.
+    """
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        resp = await client.post(f"{rest_base}/dev/scene/{fixture_name}")
+        if resp.status_code == 404:
+            raise RuntimeError(
+                f"POST /dev/scene/{fixture_name} returned 404 — "
+                "check that the server is running with DEV_SCENES=1 and "
+                f"the fixture exists at scenarios/fixtures/{fixture_name}.yaml. "
+                f"Body: {resp.text}"
+            )
+        resp.raise_for_status()
+        body = resp.json()
+    slug = body.get("slug")
+    if not slug:
+        raise RuntimeError(f"POST /dev/scene/{fixture_name} returned no slug: {body}")
+    return slug
+
+
 # ── Auto chargen strategy ───────────────────────────────────────────────────
 
 
@@ -258,6 +282,7 @@ class Playtest:
         force_new: bool,
         idle_timeout: float,
         seed: int,
+        fixture: str | None = None,
     ) -> None:
         self.scenario = scenario
         self.server = server
@@ -266,12 +291,20 @@ class Playtest:
         self.force_new = force_new
         self.idle_timeout = idle_timeout
         self.rng = random.Random(seed)
+        # When set, the driver mints the slug via POST /dev/scene/{fixture}
+        # (ADR-092 scene harness) and skips chargen — the fixture YAML
+        # has already hydrated a character into the save.
+        self.fixture: str | None = fixture
 
         self.slug: str = ""
         self.actions: list[str] = list(scenario.get("actions") or [])
         self.actions_sent: int = 0
         self.chargen = AutoChargen()
-        self.chargen_done: bool = False
+        # Fixture mode: the save already has a character; the slug-connect
+        # handshake will report has_character=True and AutoChargen never
+        # runs. Mark done at construction so the idle-timeout fallback
+        # doesn't think we're stuck mid-chargen.
+        self.chargen_done: bool = fixture is not None
         self.session_ready: bool = False
         # Server's view of who *we* are. The connect handler assigns a UUID
         # if the client didn't send one; we get it back in TURN_STATUS as
@@ -288,18 +321,24 @@ class Playtest:
         )
 
         try:
-            self.slug = await mint_game_slug(
-                self.rest_base,
-                self.scenario["_genre_slug"],
-                self.scenario["_world_slug"],
-                self.scenario["mode"],
-                self.player_name,
-                self.force_new,
-            )
+            if self.fixture is not None:
+                self.slug = await mint_via_scene_harness(self.rest_base, self.fixture)
+                console.print(
+                    f"[green]Scene-harness loaded {self.fixture} → slug:[/green] {self.slug}"
+                )
+            else:
+                self.slug = await mint_game_slug(
+                    self.rest_base,
+                    self.scenario["_genre_slug"],
+                    self.scenario["_world_slug"],
+                    self.scenario["mode"],
+                    self.player_name,
+                    self.force_new,
+                )
+                console.print(f"[green]Minted game slug:[/green] {self.slug}")
         except httpx.HTTPError as exc:
             console.print(f"[bold red]REST error: {exc}[/bold red]")
             return 1
-        console.print(f"[green]Minted game slug:[/green] {self.slug}")
 
         try:
             async with websockets.connect(self.server, max_size=8 * 1024 * 1024) as ws:
@@ -441,11 +480,25 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         prog="playtest",
         description="Headless playtest driver for SideQuest.",
     )
-    parser.add_argument(
+    # One of --scenario or --fixture is required, but never both. Scenario
+    # mode drives a scripted action sequence; fixture mode (ADR-092)
+    # POSTs /dev/scene/{name} to land directly in a pre-hydrated scene
+    # and exercises whatever the scenario then sends.
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument(
         "--scenario",
         type=Path,
-        required=True,
         help="Path to a scenario YAML file (e.g. scenarios/smoke_test.yaml).",
+    )
+    source.add_argument(
+        "--fixture",
+        type=str,
+        help=(
+            "ADR-092 scene-harness fixture name (e.g. combat_test). POSTs "
+            "/dev/scene/{name} to the running server (requires DEV_SCENES=1) "
+            "to skip chargen and land directly in a hydrated scene. "
+            "Mutually exclusive with --scenario."
+        ),
     )
     parser.add_argument(
         "--server",
@@ -483,11 +536,25 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 
 async def amain(args: argparse.Namespace) -> int:
-    try:
-        scenario = load_scenario(args.scenario)
-    except ScenarioError as exc:
-        console.print(f"[bold red]Scenario error: {exc}[/bold red]")
-        return 2
+    if args.fixture is not None:
+        # Fixture mode (ADR-092): no scenario YAML needed. Synthesize a
+        # minimal scenario shape so the existing driver loop has the
+        # fields it reads (mode, actions). The genre/world slugs come
+        # from the hydrated save on the server side — not used by the
+        # client driver in fixture mode.
+        scenario: dict[str, Any] = {
+            "name": f"fixture:{args.fixture}",
+            "_genre_slug": "",
+            "_world_slug": "",
+            "mode": "solo",
+            "actions": [],
+        }
+    else:
+        try:
+            scenario = load_scenario(args.scenario)
+        except ScenarioError as exc:
+            console.print(f"[bold red]Scenario error: {exc}[/bold red]")
+            return 2
 
     pt = Playtest(
         scenario,
@@ -497,6 +564,7 @@ async def amain(args: argparse.Namespace) -> int:
         force_new=not args.keep,
         idle_timeout=args.idle_timeout,
         seed=args.seed,
+        fixture=args.fixture,
     )
     return await pt.run()
 
