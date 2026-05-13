@@ -158,10 +158,14 @@ stories:
     title: 'Scenario: AccusationEvaluator — EvidenceSummary, Circumstantial/Strong/Airtight verdict, SPAN_SCENARIO_ACCUSATION emit'
     points: 8
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-13'
     repos: server
     workflow: tdd
     depends_on: 50-7
+    completed: '2026-05-13'
+    branch: feat/50-8-scenario-accusation-evaluator
+    assignee: slabgorb
   - id: 50-9
     title: 'Mood: implement mood_aliases alias-chain fallback in music director track selection (ADR-033 Pillar 3 Steps 1-3)'
     points: 3
