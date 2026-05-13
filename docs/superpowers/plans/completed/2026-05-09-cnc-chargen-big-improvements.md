@@ -1,5 +1,7 @@
 # C&C Chargen Big Improvements — Implementation Plan
 
+> **COMPLETED via sprint stories — checkbox state never updated.** Six-scene flow ships in `sidequest-content/genre_packs/caverns_and_claudes/char_creation.yaml`: `the_roll`, `the_arrangement`, `the_calling`, `the_story`, `the_kit`, `the_mouth`. UI: `sidequest-ui/src/components/CharacterCreation/{StatArrangePanel,StoryPanel}.tsx` with companion tests; `CharacterCreation.tsx` renders `stat_arrange` and `story` input_type branches. Server builder.py handles the `stat_arrange` input_type at line 1302 and emits `SPAN_CHARGEN_BACKSTORY_COMPOSED` for the autogen step. Server-side dispatch tests: `test_chargen_arrange_dispatch.py`, `test_chargen_story_dispatch.py`, `test_45_2_chargen_to_playing_wire.py`. Plan body left intact as historical reference.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace C&C's silent stat-generation flow with player-visible 3d6 rolls, click-to-assign stat arrangement with a live-qualifying class panel, a folded story scene (pronouns + background + description with autogen), and reject-and-reroll. Drop prime-requisite XP and the manual-edit Pencil affordance.

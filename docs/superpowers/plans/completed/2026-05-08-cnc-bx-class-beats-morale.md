@@ -1,5 +1,7 @@
 # C&C B/X Class-Distinct Beats and Morale — Implementation Plan
 
+> **COMPLETED via sprint stories — checkbox state never updated.** Server resolver at `sidequest-server/sidequest/game/morale.py` (pure 2d6 vs `MoraleDef.score` per spec §4.4). Three-tier wiring in `narration_apply.py`: `_emit_morale_triggers` (first_blood / half_killed / leader_killed / intimidated), `_apply_flee_consequences` (chase / surrender / rout via `cdef.morale.flee_consequence` → `encounter.flee_consequence_pending`), and `_apply_morale_sidecar` (narrator-emitted morale_event per Task 10 / ADR-039). All 4 C&C classes carry distinct `encounter_beat_choices` in `classes.yaml`. Content: confrontations in `rules.yaml` carry `morale: {score, triggers, flee_consequence}` blocks. OTEL `confrontation.morale_trigger` + `confrontation.flee_consequence` spans emit. Tests at `tests/game/test_morale.py` and `tests/genre/test_models/test_morale.py`. Plan body left intact as historical reference.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Wire B/X-style class-distinct combat beats and 2d6 morale into the Caverns & Claudes genre pack — schema, pack-load validation, beat-filter helper, morale function, OTEL spans, narrator prompt invariant, content authoring, and tests.
