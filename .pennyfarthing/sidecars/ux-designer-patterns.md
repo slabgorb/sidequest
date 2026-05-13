@@ -11,7 +11,7 @@
 - **Current Turn Focus + Scrollable History.** Narrative renders as the current turn at full opacity + a scrollable dimmed history above. Not continuous scroll (too noisy). Not paginated storybook (book-conceit artifact). The current turn always lands at a predictable visual anchor.
 - **Themed chrome, not themed interaction patterns.** Genre theming drives colors, fonts, border treatments, backgrounds — not the navigation model. The tab strip, panel layout, input bar, and interaction gestures are constant across genres. Players learn the app once, not per-genre.
 - **Three chrome archetypes driven by `theme.yaml`:**
-  - **`parchment`** — low_fantasy, victoria, spaghetti_western, caverns_and_claudes
+  - **`parchment`** — low_fantasy, tea_and_murder, spaghetti_western, caverns_and_claudes
   - **`terminal`** — neon_dystopia, space_opera, mutant_wasteland, star_chamber
   - **`rugged`** — road_warrior, pulp_noir, elemental_harmony
 - **Existing infrastructure:** `theme.yaml` + `client_theme.css` per genre pack, injected via the `useGenreTheme` hook. CSS vars (`--primary`, `--surface`, `--accent`, etc.) bridge to Tailwind tokens automatically. Wire up existing hooks — don't rebuild the theming system.

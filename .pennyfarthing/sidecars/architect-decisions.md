@@ -23,7 +23,7 @@
 - **Dinkus scene breaks are CSS-based.** No PNG images. Don't audit for them, don't generate them.
 - **Drop caps are CSS-based.** Same — no illuminated drop cap images to generate.
 - **Three genre-chrome archetypes driven by `theme.yaml`:**
-  - `parchment` — low_fantasy, victoria, spaghetti_western, caverns_and_claudes
+  - `parchment` — low_fantasy, tea_and_murder, spaghetti_western, caverns_and_claudes
   - `terminal` — neon_dystopia, space_opera, mutant_wasteland, star_chamber
   - `rugged` — road_warrior, pulp_noir, elemental_harmony
 - **Genre theming infrastructure already exists:** `theme.yaml` + `client_theme.css` per genre pack, injected via `useGenreTheme` hook. CSS vars (`--primary`, `--surface`, `--accent`) bridge to Tailwind automatically. The gap is that only narrative elements get genre CSS classes; panels use generic Tailwind — fix in place, don't reinvent.

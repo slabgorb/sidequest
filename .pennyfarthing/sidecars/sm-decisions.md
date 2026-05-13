@@ -27,7 +27,7 @@
 
 ### Text rendering / UI chrome (settled)
 - **Dinkus and drop caps are CSS-based.** No PNG generation. Don't audit for them in sq-audit runs. Don't groom stories that generate these assets.
-- **Three genre-chrome archetypes driven by `theme.yaml`:** `parchment` (low_fantasy, victoria, spaghetti_western, caverns_and_claudes), `terminal` (neon_dystopia, space_opera, mutant_wasteland, star_chamber), `rugged` (road_warrior, pulp_noir, elemental_harmony). Don't coordinate stories that propose a fourth archetype without Keith raising it.
+- **Three genre-chrome archetypes driven by `theme.yaml`:** `parchment` (low_fantasy, tea_and_murder, spaghetti_western, caverns_and_claudes), `terminal` (neon_dystopia, space_opera, mutant_wasteland, star_chamber), `rugged` (road_warrior, pulp_noir, elemental_harmony). Don't coordinate stories that propose a fourth archetype without Keith raising it.
 
 ### Content systems (Keith's 30-year domain)
 - **Conlang is a core feature**, not a footnote. Corpus-based Markov name generation, 2+ language blends per faction (Clockwork Orange / Nadsat style). Don't coordinate stories that replace conlang with static name lists.

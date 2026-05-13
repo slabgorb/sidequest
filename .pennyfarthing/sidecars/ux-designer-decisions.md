@@ -5,7 +5,7 @@
 - **Persistent docked sidebar** (`CharacterPanel`) replaces the `OverlayManager` modal pattern.
 - **Current Turn Focus + Scrollable History** for narrative — not continuous scroll, not paginated storybook.
 - **Themed chrome, not themed interaction patterns.** Three archetypes driven by `theme.yaml`:
-  - `parchment` — low_fantasy, victoria, spaghetti_western, caverns_and_claudes
+  - `parchment` — low_fantasy, tea_and_murder, spaghetti_western, caverns_and_claudes
   - `terminal` — neon_dystopia, space_opera, mutant_wasteland, star_chamber
   - `rugged` — road_warrior, pulp_noir, elemental_harmony
 

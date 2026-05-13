@@ -87,7 +87,7 @@ mood_tracks:
 
 - ACE-Step generation takes ~60-90s per 60s track (cold) and ~real-time (~30-60s) once warm.
 - Seeds are pinned in `actual_seeds` for reproducibility — same JSON params + same seed → identical track.
-- All five LFS-stripped packs (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `victoria`) regenerate from their JSON params with one `--genre` invocation each.
+- All five LFS-stripped packs (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `tea_and_murder`) regenerate from their JSON params with one `--genre` invocation each.
 
 ## Owned by
 

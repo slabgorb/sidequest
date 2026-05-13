@@ -225,7 +225,7 @@ sidequest-content/genre_packs/<genre_name>/
 - `pulp_noir` — hardboiled detective fiction (1920s Paris)
 - `space_opera` — cinematic sci-fi
 - `road_warrior` — vehicular post-apocalypse
-- `victoria` — Victorian England mystery and romance (Playfair Display font, classical music, emotional ability scores)
+- `tea_and_murder` — cosy Edwardian English murder mystery (Playfair Display font, classical music, emotional ability scores)
 
 ## Design Principles
 

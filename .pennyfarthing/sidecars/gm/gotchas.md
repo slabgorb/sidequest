@@ -8,7 +8,7 @@
 ### Spoiler / content rules
 - **Spoiler protection is real.** Only `mutant_wasteland/flickering_reach` is fully spoilable. Everything else is unspoiled — don't read world secrets during audits of other genre packs.
 - **Content belongs at world level, not genre level.** Flavor goes in `worlds/{world}/`, mechanics go in genre root. This is the "Crunch in Genre, Flavor in World" SOUL principle in action.
-- **Genre packs have 7 active genres.** spaghetti_western and victoria exist in content but aren't in the active list yet.
+- **Genre packs have 5 live packs** (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `tea_and_murder`). Workshop packs in `genre_workshopping/` (`heavy_metal`, `low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`, `spaghetti_western`) exist but aren't wired yet.
 - **Content inheritance is three-layer:** base → genre → world. Archetypes and NPCs resolve through this chain. Never flatten layers during audits.
 - **Monster Manual NPCs go in `<game_state>`.** Pre-gen NPCs inject into the game_state prompt section as "NPCs nearby (not yet met)." Never audit for XML casting calls, tool-instruction sections, or meta-prompt framing — those all fail because Claude reads them as style inspiration, not world truth.
 
