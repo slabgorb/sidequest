@@ -218,10 +218,13 @@ stories:
     title: 'Journal: JOURNAL_REQUEST handler — server replies from character.known_facts (seam C server-side per ADR-100)'
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-13'
     repos: server
     workflow: tdd
     depends_on: 50-5
+    branch: feat/50-14-journal-request-handler
+    assignee: slabgorb
   - id: 50-15
     title: 'Journal: UI fact_id respect — drop synthetic id, consume narrator-supplied Footnote.fact_id (seam C UI part 1 per ADR-100)'
     points: 2
