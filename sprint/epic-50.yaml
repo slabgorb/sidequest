@@ -67,18 +67,19 @@ stories:
       Scope is prompt-engineering work in the narrator structured-output schema, not keyword extension. The narrator must be reliably steered to either (a) emit a proper confrontation block when its prose introduces a stake-binding trigger, or (b) avoid the trigger language entirely when there's no encounter to bind. The OTEL warning becomes a regression detector, not a permanent monument.
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-13'
     repos: sidequest-server
     workflow: tdd
-    branch: feat/50-2-narrator-confrontation-trigger-instantiate
-    assignee: slabgorb
     acceptance_criteria:
       - When narrator prose introduces a confrontation trigger keyword (chase/intercept/scandal/negotiation/social_duel/trial/auction), the structured-output sidecar emits a non-null confrontation block in the same turn
       - The encounter is instantiated server-side on receipt of that block (existing dispatch path)
       - "`confrontation.skipped_with_trigger_keywords` warning span only fires for residual edge cases, not as the steady-state behaviour"
       - Integration test covers each of the 7 trigger keywords with prose fixtures from prior playtests; each fixture results in a real confrontation, not just the warning
       - OTEL evidence on the next playtest shows `confrontation` populated on trigger-keyword turns; the dashboard can no longer use the warning span to find unfixed cases
+    completed: '2026-05-13'
+    branch: feat/50-2-narrator-confrontation-trigger-instantiate
+    assignee: slabgorb
     type: bug
   - id: 50-3
     title: PartyPanel renders recruited companions section — server roster correct, UI was silent
