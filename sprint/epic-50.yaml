@@ -155,13 +155,15 @@ stories:
     title: 'Disposition: SPAN_DISPOSITION_SHIFT threshold-crossing fields (before_attitude, after_attitude, crossed)'
     points: 2
     priority: p2
-    status: active
+    status: done
+    started: '2026-05-13'
     repos: server
     workflow: tdd
     depends_on: 50-10
-    started: '2026-05-13'
+    completed: '2026-05-13'
     branch: feat/50-11-disposition-shift-threshold-fields
     assignee: slabgorb
+    review_verdict: approved
   - id: 50-12
     title: 'Disposition: narrator NPC serialization emits attitude string (close the agents-see-only-attitude gap)'
     points: 3
