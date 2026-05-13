@@ -108,16 +108,17 @@ stories:
     type: bug
   - id: 50-4
     title: Trope rate_per_day between-session advancement
-    points: 5
+    points: 8
     priority: p2
     status: done
     started: '2026-05-13'
     repos: server,content
     workflow: tdd
     completed: '2026-05-13'
-    assignee: keith
-    branch: feat/50-4-trope-rate-per-day-advancement
+    assignee: slabgorb
+    branch: feat/50-4-trope-rate-per-day
     review_verdict: approved
+    pr: 'https://github.com/slabgorb/sidequest-server/pull/277'
   - id: 50-5
     title: 'Scenario: wire discover_clue to narration consumption (call site + SPAN_SCENARIO_ADVANCE fires in play)'
     points: 3

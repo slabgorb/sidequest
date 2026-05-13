@@ -1,464 +1,382 @@
 ---
 story_id: "50-4"
-jira_key: null
+jira_key: ""
 epic: "50"
 workflow: "tdd"
 ---
-
 # Story 50-4: Trope rate_per_day between-session advancement
 
 ## Story Details
 - **ID:** 50-4
-- **Epic:** 50
-- **Workflow:** tdd
+- **Jira Key:** None (personal project)
+- **Workflow:** tdd (phased)
 - **Stack Parent:** none
-- **Points:** 5
-- **Priority:** p2
 
-## Story Context
+## Workflow Tracking
+**Workflow:** tdd
+**Phase:** finish
+**Phase Started:** 2026-05-13T15:18:03Z
 
-The Trope Engine (ADR-018) defines two passive advancement rates:
-- **rate_per_turn:** Ticks forward during live gameplay (e.g., 0.02 per turn)
-- **rate_per_day:** Ticks forward between sessions when the game is not actively running (e.g., 0.05)
+### Phase History
+| Phase | Started | Ended | Duration |
+|-------|---------|-------|----------|
+| setup | 2026-05-13 | 2026-05-13 | instant |
+| red | 2026-05-13 | 2026-05-13T14:17:34Z | 14h 17m |
+| green | 2026-05-13T14:17:34Z | 2026-05-13T14:53:31Z | 35m 57s |
+| spec-check | 2026-05-13T14:53:31Z | 2026-05-13T14:54:41Z | 1m 10s |
+| verify | 2026-05-13T14:54:41Z | 2026-05-13T14:59:45Z | 5m 4s |
+| review | 2026-05-13T14:59:45Z | 2026-05-13T15:17:01Z | 17m 16s |
+| spec-reconcile | 2026-05-13T15:17:01Z | 2026-05-13T15:18:03Z | 1m 2s |
+| finish | 2026-05-13T15:18:03Z | - | - |
 
-The Python port (ADR-082, 2026-04) carried the data model (`TropeDefinition.passive_progression.rate_per_day` in genre packs) but left the advancement logic unimplemented. The narrator currently emits `beat_selections` during play, which `narration_apply.py` records on `active_tropes`, but between-session advancement is missing entirely.
+## Implementation Plan & Specification
 
-**Problem:** Tropes stall at session boundaries. A trope at 0.45 progress just before save-and-exit stays at 0.45 on reload; the world feels static rather than "alive" (per ADR-018 consequence).
+- **Plan:** `/Users/slabgorb/Projects/oq-1/docs/superpowers/plans/2026-05-13-50-4-trope-rate-per-day.md` (comprehensive implementation plan, 8pt re-estimate rationale, Pass A2 algorithm, OTEL spans, testing strategy)
+- **Spec:** `/Users/slabgorb/Projects/oq-1/docs/superpowers/specs/2026-05-13-50-4-trope-rate-per-day-design.md` (locked design decisions, protocol changes, narrator emission rule, snapshot fields, delta wiring, persistence, Pass A2 algorithm, prompt integration)
 
-**Solution:** On session load (after game state is hydrated from the SQLite save file), advance each active trope's progress by `(rate_per_day * elapsed_days)` before the session enters play. This ensures that stories continue to build momentum even during out-of-game time.
-
-## Acceptance Criteria
-
-1. **AC1 — Load-Time Advancement:** When a session is loaded from persistent storage, each active trope with a non-zero `rate_per_day` is advanced by `(trope.passive_progression.rate_per_day * days_elapsed)`. Days elapsed is calculated as `(now_timestamp - last_session_timestamp) / 86400`.
-
-2. **AC2 — Beat Firing on Load:** If advancement crosses a beat threshold, the beat fires immediately (same semantics as in-game firing: record in `beats_fired`, emit OTEL span, do NOT call the narrator — the beat was earned passively, not from player action).
-
-3. **AC3 — Progress Clamp:** Trope progress never exceeds 1.0. If advancement would push progress > 1.0, clamp to 1.0 and mark the trope as RESOLVED.
-
-4. **AC4 — No Advance on First Load:** A newly-created trope (from world materialization) has `last_session_timestamp=None`. The advancement logic skips them (no time has passed yet).
-
-5. **AC5 — OTEL Emission:** Each loaded session emits a `SPAN_TROPE_BETWEEN_SESSION_ADVANCE` event per trope that advanced, with:
-   - `trope_id`
-   - `days_elapsed`
-   - `progress_before`, `progress_after`
-   - `beats_fired_count` (count of beats that crossed thresholds during this advance pass)
-   - `new_status` (if the trope resolved)
-
-6. **AC6 — Integration Test:** Test covers:
-   - Load a session from a save file created N days ago
-   - Verify at least one trope advanced by the expected delta
-   - Verify beats that crossed thresholds are recorded
-   - Verify OTEL spans emitted
-   - Verify progress is clamped to 1.0 if needed
-   - Verify newly-created tropes (from prior save that hadn't been created yet) are skipped
-   - Wiring test confirms the advancement call is in the production code path for session loading (not mocked away)
-
-## Architecture Context
-
-### Call Site
-The load-time advancement should be triggered **after** the session is deserialized from the SQLite save file and **before** the first turn is dispatched. The call signature is:
-
-```python
-def advance_tropes_between_sessions(
-    session: GameSession,
-    now_timestamp: float,
-) -> dict[str, dict[str, Any]]:
-    """Advance each active trope by rate_per_day.
-    
-    Returns a dict mapping trope_id → {
-        'progress_before': float,
-        'progress_after': float,
-        'beats_fired': list[float],
-        'new_status': str | None,
-    }
-    """
-```
-
-The caller (server session load handler) passes `now_timestamp = time.time()` and the session's `created_at` / `last_save_time` field to compute `elapsed_days`.
-
-### Data Model Context
-- **TropeState** (`sidequest/game/session.py:413–431`) carries `id`, `status`, `progress`, `beats_fired` counter.
-- **PassiveProgression** (`sidequest/genre/models/tropes.py:29–39`) carries `rate_per_day` (float).
-- **TropeDefinition** (`sidequest/genre/models/tropes.py:42–60`) carries escalation beats at thresholds.
-- Session is hydrated with `active_tropes: list[TropeState]` and has access to genre pack via `session.genre`.
-
-### Rust Reference
-The Rust implementation (`sidequest-api/src/trope.rs`) carried `TropeState::advance_between_sessions()` calling `tick()` iteratively per elapsed day. Python implementation should be similar: for each trope, for each beat in its definition, check if `progress_before < beat.at <= progress_after`, and if so, record the beat and emit OTEL span.
-
-### OTEL Telemetry
-Define `SPAN_TROPE_BETWEEN_SESSION_ADVANCE` in `sidequest/telemetry/spans/trope.py` following the pattern of `SPAN_TROPE_TICK`. The span should be emitted **once per trope that advanced**, with the delta fields above.
-
-## Related Stories / Blockers
-- **50-3:** PartyPanel companions wiring (done, independent)
-- **50-5:** Scenario wire discover_clue (done, independent)
-- **50-10, 50-11:** Disposition refactor (done, independent)
-- No blockers; 50-4 is independent of the disposition work and scenario work.
+Both documents are load-bearing reads. The plan includes comprehensive test strategy and ADR amendment requirements.
 
 ## Delivery Findings
 
-No upstream findings.
-
-<!-- Agents: append findings below this line. Do not edit other agents' entries. -->
-
 ### TEA (test design)
 
-- **Improvement** (non-blocking): Story `Architecture Context` shows the public function
-  signature with `session: GameSession` and a `dict[trope_id → dict[...]]` return value.
-  The closest existing analogue (`trope_tick.tick_tropes`) takes `snapshot: GameSnapshot, pack, *, now_turn` and returns `None`, mutating in place. Tests pin the
-  consistent shape: `advance_tropes_between_sessions(*, snapshot, pack, now)` returning `None`. OTEL spans carry the per-trope diagnostic the return-dict would have. *Found by TEA during test design.*
-- **Question** (non-blocking): AC5 names a `beats_fired_count` span attribute; the
-  existing `trope_resolve` span uses `beats_fired_total` (cumulative). The contract test
-  pins `beats_fired_count` (count of beats fired *during this advance pass*, not cumulative)
-  because it matches the AC text and gives the GM panel a per-event delta. Dev should
-  surface the per-pass count, not the running total. *Found by TEA during test design.*
-
-## Impact Summary
-
-**Upstream Effects:** No upstream effects noted
-**Blocking:** None
+- **Improvement** (non-blocking): Plan's persistence design is over-specified relative to the codebase.
+  Affects `sidequest-server/sidequest/game/persistence.py` (no schema bump or ALTER TABLE needed).
+  *Found by TEA during test design.*
+- **Gap** (non-blocking): `SnapshotFlags` named in the spec does not exist — actual class is `StateDelta` in `sidequest/game/delta.py`.
+  Affects spec text (`docs/superpowers/specs/2026-05-13-50-4-trope-rate-per-day-design.md`) and plan (Task 3).
+  *Found by TEA during test design.*
+- **Improvement** (non-blocking): Plan's OTEL test uses `monkeypatch.setattr(trope_tick, "_emit_watcher_event", ...)` — actual emission uses the `Span.open` context manager pattern. Tests adapted to use `InMemorySpanExporter`, mirroring `tests/game/test_trope_tick.py`.
+  Affects `sidequest-server/tests/game/test_trope_time_skip.py` (now uses the SDK exporter pattern).
+  *Found by TEA during test design.*
+- **Improvement** (non-blocking): `tick_tropes` call site is in `sidequest/server/websocket_session_handler.py:2743`, not `narration_apply.py`. Plan Task 7's path edit lands in the WS handler.
+  Affects `sidequest-server/sidequest/server/websocket_session_handler.py` (Dev to add `days_advanced=result.days_advanced` kwarg there).
+  *Found by TEA during test design.*
 
 ## Design Deviations
 
-None yet.
-
-<!-- Agents: append deviations below this line. Do not edit other agents' entries. -->
-
-### TEA (verify)
-
-- **Improvement** (non-blocking): Test-helper duplication between `tests/game/test_trope_tick.py` and `tests/game/test_trope_advance_between_sessions.py`. `_trope_def`, `_pack_with`, and `_seed_snapshot` are near-identical between the two files; simplify-reuse flagged extraction to `tests/game/conftest.py`. Out of 50-4 scope (requires divergent-signature reconciliation on `_seed_snapshot`). Affects `tests/game/conftest.py` and both test files. *Found by TEA during test verification.*
-- **Improvement** (non-blocking): `_spans_named(exporter, name) -> list` is duplicated across ~9 OTEL test files in the repo. simplify-reuse flagged extraction to `tests/game/conftest.py` as a shared utility. Out of 50-4 scope (cross-cutting). Affects many `tests/**/*.py` files. *Found by TEA during test verification.*
-- **Question** (non-blocking): pre-existing TypeScript errors at `sidequest-ui/src/App.tsx:722:11` and `sidequest-ui/src/__tests__/turn-status-wire-shape-wiring.test.tsx:35:9` block `just check-all` aggregate gate. These were already failing on develop before 50-4 (verified via `git diff --name-only develop` showing zero UI files in my diff). The UI typecheck failure is unrelated to this story but blocks the aggregate gate; recommend a tracking story to fix the `GameMessage` ↔ `Record<string, unknown>` cast. Affects `sidequest-ui/src/App.tsx`, `sidequest-ui/src/__tests__/turn-status-wire-shape-wiring.test.tsx`. *Found by TEA during test verification.*
-
-### Reviewer (code review)
-
-- **Improvement** (non-blocking): `PassiveProgression.rate_per_day` is typed `float` with default `0.0` but no constraint excluding NaN / negative. The engine's `if rate <= 0: continue` skips both zero and negative, but `NaN <= 0` is `False` → NaN rates would proceed and produce NaN-tainted progress arithmetic. Pack YAML never authors NaN today, but a `Field(ge=0.0)` validator on `PassiveProgression.rate_per_day` would harden the data boundary. Affects `sidequest/genre/models/tropes.py:34-35`. *Found by Reviewer during code review.*
-- **Improvement** (non-blocking): If a legacy save has a tz-naive `last_saved_at` (none exist today — both writers in `persistence.py` use `datetime.now(tz=UTC)`), the subtraction `now - last_saved_at` raises `TypeError`, which propagates through `connect.py` and breaks the connect for that slug. Per user policy on legacy saves (throwaway, no migrations) this is not blocking, but a defensive `if last_saved.tzinfo is None: return` or coercion-on-load would make the engine robust to a wider class of save files. Affects `sidequest/game/trope_advance.py:75-77`. *Found by Reviewer during code review.*
-
-## Subagent Results
-
-| # | Specialist | Received | Status | Findings | Decision |
-|---|-----------|----------|--------|----------|----------|
-| 1 | reviewer-preflight | Yes | clean | 0 (no console.log, no test skips, no TODOs, no dangerouslySetInnerHTML) | N/A |
-| 2 | reviewer-edge-hunter | Skipped | disabled | N/A | Disabled via settings |
-| 3 | reviewer-silent-failure-hunter | Skipped | disabled | N/A | Disabled via settings |
-| 4 | reviewer-test-analyzer | Skipped | disabled | N/A | Disabled via settings |
-| 5 | reviewer-comment-analyzer | Skipped | disabled | N/A | Disabled via settings |
-| 6 | reviewer-type-design | Skipped | disabled | N/A | Disabled via settings |
-| 7 | reviewer-security | Skipped | disabled | N/A | Disabled via settings |
-| 8 | reviewer-simplifier | Skipped | disabled | N/A | Disabled via settings |
-| 9 | reviewer-rule-checker | Skipped | disabled | N/A | Disabled via settings |
-
-**All received:** Yes (1 enabled returned clean, 8 disabled per `workflow.reviewer_subagents` settings)
-**Total findings:** 2 [LOW] confirmed (NaN hardening + tz-naive defense), 0 dismissed, 0 deferred
-
-Note on disabled subagents: with 8 of 9 specialists toggled off, I am personally covering their domains in the manual review below (tagged where applicable). Per the agent rules, this is acknowledged as reduced coverage; the simplify domain was already covered during TEA verify with the same 3 subagents (`simplify-reuse`, `simplify-quality`, `simplify-efficiency`).
-
-## Reviewer Assessment
-
-**Verdict:** APPROVED
-
-**Data flow traced:**
-- **Save** → `persistence.py:369` writes `snapshot.model_copy(update={"last_saved_at": datetime.now(tz=UTC)})` to SQLite. `last_saved_at` is always tz-aware on the write path.
-- **Load** → `connect.py:309` `store.load()` returns `SavedSession` whose `snapshot` carries the tz-aware `last_saved_at` (pydantic v2 deserializes ISO+offset strings as tz-aware).
-- **Advance** → `connect.py:356-360` calls `advance_tropes_between_sessions(snapshot=snapshot, pack=genre_pack, now=datetime.now(tz=UTC))`. Both datetimes tz-aware → subtraction succeeds.
-- **Bind** → `connect.py:478` `room.bind_world(snapshot=snapshot, ...)` lands the mutated snapshot on the room. `bind_world` is idempotent (verified at `session_room.py:38-42`: `if self._snapshot is not None: return`) — Player B in an MP race has their advance mutations silently discarded; A's already-applied mutations remain canonical.
-- **OTEL** → per advancing trope, `Span.open(SPAN_TROPE_BETWEEN_SESSION_ADVANCE, {...})` emits → routed by `SPAN_ROUTES[SPAN_TROPE_BETWEEN_SESSION_ADVANCE]` to the watcher hub as `state_transition` events on `component="tropes"`. GM panel can read elapsed_days + beats_fired_count per event.
-
-**Pattern observed:**
-- The new engine mirrors `tick_tropes` (same file directory, same duck-typed pack, same keyword-only signature, same `Span.open` idiom) at `sidequest/game/trope_tick.py:79-141`. A reader who knows the per-turn engine can navigate the per-day engine without retraining. Good follow-the-pattern discipline.
-
-**Error handling:**
-- No `try/except` in the engine. Every failure mode is converted to an early-return guard *before* state mutation: `last_saved is None` → return; `delta_seconds <= 0` → return; `status != "progressing"` → continue; `tdef is None or passive_progression is None` → continue; `rate <= 0` → continue; `progress_after <= progress_before` → continue. This matches CLAUDE.md "No Silent Fallbacks" — every guard has a single clear meaning and never silently substitutes a default.
-- The wire site's `connect.py:356-360` has no `try/except` either — an exception would propagate. Looking at the surrounding code, `_backfill_magic_state_on_resume` at `connect.py:342` has no try/except either, so the advance call follows the same convention. Loud failure on bad data is the agreed pattern here.
-
-**Findings (severity-tagged):**
-
-| Tag | Severity | Issue | Location | Notes |
-|-----|----------|-------|----------|-------|
-| [VERIFIED] | — | Engine signature is keyword-only with type annotations on all params and return type | `trope_advance.py:57-62` | Complies with `.pennyfarthing/gates/lang-review/python.md` rule #3 (type annotations at public boundaries). |
-| [VERIFIED] | — | OTEL span is registered in `SPAN_ROUTES` AND not in `FLAT_ONLY_SPANS` | `telemetry/spans/trope.py:36-37, 141-156` | Component is `"tropes"`, all 6 AC5 attributes routed (`trope_id`, `days_elapsed`, `progress_before`, `progress_after`, `beats_fired_count`, `new_status`). Wire test `TestSpanRoutedThroughWatcher` confirms re-export from package init. |
-| [VERIFIED] | — | Engine writes to `trope.progress`, `trope.beats_fired`, `trope.status` only — never touches narrator-owned fields | `trope_advance.py:89-138` | Grep confirms no `narrative_log`, `quest_log`, or `notes` mutation. Test `test_passive_fire_does_not_record_narrative_entry` pins this. Matches AC2 "do NOT call the narrator". |
-| [VERIFIED] | — | Wire call sits INSIDE `if saved is not None:` branch | `connect.py:340, 356-360` | Belt-and-suspenders for AC4: both the function (None check) and the wire site (branch placement) gate against first-load advancement. Chargen-new-session path at `connect.py:507-517` never hits the call. |
-| [VERIFIED] | — | MP race safety | `connect.py:356 (advance) → connect.py:478 (bind)` ↔ `session_room.py:38-42 (bind early-return)` | Player A's mutations flow into room via bind. Player B's mutations on local snapshot are discarded by idempotent bind; B observes A's already-applied state via `snapshot = room.snapshot` at `connect.py:482`. Correct — re-advancing on a duplicate load would double-count, and the architecture prevents that. |
-| [VERIFIED] | — | Resolve-condition gate is consistent with the in-session engine | `trope_advance.py:118-125` vs `trope_tick.py:257-276` | Both require `progress >= 1.0 AND beats_fired >= len(escalation)`. Diverges from the literal AC3 wording (which says "if clamped, mark resolved") — flagged in Architect's spec-check Mismatch 1, recommendation A (update spec, code is the better reading). I ACCEPT that recommendation. |
-| [VERIFIED] | — | Beat-firing semantics match the Rust reference summary | `trope_advance.py:107-114` | Window is `progress_before < beat.at <= progress_after` (exclusive lower, inclusive upper). Inclusive upper is necessary so an `at=1.0` beat fires when progress clamps to 1.0 (`test_progress_at_one_without_all_beats_does_not_resolve` proves this). |
-| [DOC] | — | Module docstring + function docstring are present, accurate, and reference ADR-018 | `trope_advance.py:1-41, 63-73` | Manual review of docstrings against implementation: every claim in the docstring corresponds to a guard or behavior in code. Pin both with `TestEngineModuleHygiene::test_module_has_docstring` and `test_public_function_has_docstring`. |
-| [TYPE] | — | `pack: Any` is duck-typed; documented in docstring and matches existing convention | `trope_advance.py:60, 65-67` | python.md rule #3 allows `Any` "only with a comment explaining why" — docstring satisfies this. |
-| [SIMPLE] | LOW | Pack YAML schema permits NaN/negative `rate_per_day` | `sidequest/genre/models/tropes.py:34-35` | Engine handles `<= 0` correctly but NaN bypasses the guard (`NaN <= 0` is `False`). Hardening at the pydantic boundary (`Field(ge=0.0)`) would prevent a class of data-corruption bugs at the source rather than the consumer. Not blocking — no pack ships NaN today. See Delivery Finding above. |
-| [SEC] | LOW | tz-naive `last_saved_at` would raise `TypeError` at the subtraction | `trope_advance.py:79` | Per user policy `feedback_legacy_saves`, legacy saves are throwaway. Current writers always emit tz-aware. The risk is theoretical for the current playgroup but a defensive `if last_saved.tzinfo is None: return` is cheap insurance. Not blocking. See Delivery Finding above. |
-| [TEST] | — | All 6 ACs have AC-tagged test classes; 33 tests; 0 vacuous assertions | `tests/game/test_trope_advance_between_sessions.py` (and wire test) | `_spans_named` returns lists with `.name == name`; every span assertion is on `attrs.get(...)` against a concrete value; no `assert True` or `assert result`. Property-shape (`{1, 2}`) is explicitly justified in test 5's docstring. |
-| [EDGE] | — | All boundary cases covered by tests | TestAC1 (8), TestAC2 (5), TestAC3 (3), TestAC4 (2), TestAC5 (5) | Zero rate, dormant, resolved, missing pack def, missing passive_progression, missing trope id, negative elapsed, fractional days, single-beat-crossing, multi-beat-crossing, refire-prevention, clamp-without-overshoot, never-saved → all explicit. |
-| [SILENT] | — | Zero silent fallbacks in the engine | `trope_advance.py:75-138` | Every early return has a code-level reason that's surfaced as "no span emitted." The GM panel observably distinguishes "engine ran and nothing moved" from "engine never ran" — the former produces an "engine engaged but no work" turn aggregate via the existing `turn.tropes` aggregate at a turn boundary; the latter would show silence. Acceptable. |
-| [RULE] | — | python.md rules #1, #3, #6 satisfied; #2/#4/#5/#7-#13 N/A | per-rule below | See Rule Compliance section. |
-
-### Rule Compliance (manual enumeration vs `.pennyfarthing/gates/lang-review/python.md`)
-
-| Rule | Applicable? | Verdict | Evidence |
-|------|-------------|---------|----------|
-| #1 Silent exception swallowing | Yes (no try/except in diff) | Compliant | No `try`/`except` introduced in diff. Engine uses early-return guards instead of swallowing. |
-| #2 Mutable default arguments | No (no defaults in engine; tests use immutable `tuple` for thresholds) | N/A | `_trope_def(thresholds: tuple[float, ...] = (0.25, ...))` — tuple is immutable. |
-| #3 Type annotation gaps | Yes (public boundary) | Compliant | `advance_tropes_between_sessions(*, snapshot: GameSnapshot, pack: Any, now: datetime) -> None`. `Any` documented in docstring. |
-| #4 Logging coverage | N/A — no logging in engine; OTEL spans are the project-mandated diagnostic per CLAUDE.md | N/A | Engine emits OTEL via `Span.open`, no `logger.*` calls. |
-| #5 Path handling | N/A — no path manipulation in diff | N/A | — |
-| #6 Test quality | Yes | Compliant | Self-checked 33 tests for vacuous assertions; none found. Every test asserts on concrete values, typed predicates, or known-set membership. |
-| #7 Resource leaks | N/A — no I/O in engine; `Span.open` context manager handles span lifetime | N/A | — |
-| #8 Unsafe deserialization | N/A — no pickle/yaml/eval/subprocess in diff | N/A | — |
-| #9 Async/await pitfalls | N/A — synchronous engine | N/A | — |
-| #10 Import hygiene | Yes (new module + new import in connect.py) | Compliant | No star imports in new code, no circular imports (verified by `uv run pytest` passing; would surface as ImportError otherwise). |
-| #11 Security: input validation at boundaries | N/A — engine consumes server-side data (genre pack + snapshot), not user input | N/A | The wire site's inputs (snapshot, genre_pack) are server-controlled. |
-| #12 Dependency hygiene | N/A — no dependency changes | N/A | — |
-| #13 Fix-introduced regressions | Yes | Compliant | Full server suite re-run by Dev (5196 pass) and TEA verify (5196 pass). No regressions surfaced. |
-
-### Devil's Advocate
-
-The code looks clean. Let me argue it is not.
-
-**"It silently double-applies on server restart."** No — verified above. Server restart re-loads the *unmutated* SQLite snapshot (no save happened between load+restart in a no-save crash); a save IS performed (with updated `last_saved_at`) between the advance and any orderly restart. Either way, the elapsed delta in the next computation is anchored to a stable on-disk timestamp.
-
-**"NaN sneaks in through a malicious pack."** Real but exotic. Pack YAML doesn't ship NaN; pydantic accepts NaN floats but no shipped pack contains them. If a future malicious or accidental NaN lands, `rate <= 0` returns False for NaN → engine proceeds → progress becomes NaN → no beats fire (NaN comparisons all False) → resolved gate fires `False` → trope stays `progressing` with `progress=NaN`. The GM panel sees a NaN span attribute. Probably OTEL-serializer-tolerant (NaN serializes as `NaN` in JSON). User-visible damage: that trope is stuck forever — `progress_after <= progress_before` is True for NaN comparisons after the first NaN write, so subsequent loads no-op. Annoying, recoverable, low-impact. Hardening at the pydantic boundary would close this; flagged as [LOW].
-
-**"A legacy save with tz-naive `last_saved_at` crashes connect."** Real but per user policy these saves are throwaway. Defensive guard would be one line. Flagged as [LOW].
-
-**"The narrator sees beats fired but no narrative trigger."** Correct, by design. AC2 specifies "do NOT call the narrator — the beat was earned passively, not from player action." The opening turn's prompt zone reads `active_tropes` (foreground/background) and surfaces what the player should perceive on return. The narrator's framing job is handled by the existing `_build_turn_context` reading the now-mutated state. Not 50-4's problem; trope_tick.py:render_foreground_block already does the work.
-
-**"Player B's perfectly-correct advance gets discarded by Player A's possibly-buggy advance."** True. If A's clock is wildly skewed, A's mutations could be wrong, and B's correct ones get discarded. But the engine's guards (negative elapsed → skip) make this safe in the symmetric direction (A in the future → A skips, B skips — both correct), and in the asymmetric direction (A's `now` is the future relative to disk timestamp), A's advance applies a huge delta that gets clamped to 1.0. Aggressive but bounded.
-
-**"Multiple connects in the same second by the same player."** SOLO is guarded by `SoloSlotConflict` (line 237) before reaching the advance. MP allows reconnect — but the `bind_world` idempotency kills the second-applied mutation.
-
-**"The advance happens before `room.bind_world`, but bind happens FAR later (line 478 vs my call at line 356)."** True. Between line 356 and line 478, lots of code runs (chargen gate, character resume, etc). Could any of that code modify `snapshot.active_tropes` in ways that conflict with my advance? Scanning the intermediate code: no — it touches `snapshot.player_seats`, `snapshot.characters`, etc., but not `active_tropes`. Safe. (Architectural property worth keeping: between-session trope advance is the FIRST mutation post-load, before any session-bind code can confuse the state.)
-
-**"Tests use `pytest.approx` but compare float equality elsewhere."** Reviewed — every progress comparison uses `pytest.approx`. Beat counts are integers, status is strings, both use `==`. Correct.
-
-Devil's advocate produces 2 low-severity findings worth recording (NaN, tz-naive). Already captured above. No blocker uncovered.
-
-**Handoff:** To SM (Hawkeye) for finish-story.
-
-### Dev (implementation)
-
-- **Content repo touched: no changes required**
-  - Spec source: sprint/epic-50.yaml line 114
-  - Spec text: `repos: server,content`
-  - Implementation: server-only diff. Content packs already declare `rate_per_day` where applicable (4 of 5 live packs: caverns_and_claudes, mutant_wasteland, space_opera, tea_and_murder). `elemental_harmony` has no `passive_progression` blocks at all and the engine handles a missing block as a no-op (matches the existing `tick_tropes` precedent at `sidequest/game/trope_tick.py:183`).
-  - Rationale: adding rate_per_day to elemental_harmony tropes would be a content-design decision (which rates, on which tropes) that exceeds the 50-4 scope. The engine already degrades gracefully.
-  - Severity: minor
-  - Forward impact: a separate playtest-driven story can tune elemental_harmony's rates if the playgroup notices its tropes feel static between sessions.
-
 ### TEA (test design)
 
-- **Function signature deviates from story Architecture Context**
-  - Spec source: session file `## Architecture Context` → `### Call Site`
-  - Spec text: `def advance_tropes_between_sessions(session: GameSession, now_timestamp: float) -> dict[str, dict[str, Any]]`
-  - Implementation: tests pin `def advance_tropes_between_sessions(*, snapshot: GameSnapshot, pack: Any, now: datetime) -> None`
-  - Rationale: matches the existing engine in the same package (`trope_tick.tick_tropes`) so callers and reviewers can pattern-match across the two functions. Keyword-only args prevent the wire-site from swapping snapshot/pack. `datetime` matches `snapshot.last_saved_at`'s declared type (avoids float ↔ datetime conversion at every callsite). `None` return relies on OTEL spans for diagnostics, matching the project's "spans are the lie detector" principle (CLAUDE.md).
-  - Severity: minor
-  - Forward impact: Dev must call with keyword args at the connect.py wire site; the wiring test enforces this. If Reviewer prefers the original signature, the unit tests are isolated enough to retarget — the engine logic is the same.
+- **Persistence design: no schema bump or ALTER TABLE migration**
+  - Spec source: `docs/superpowers/specs/2026-05-13-50-4-trope-rate-per-day-design.md`, "SQLite persistence" subsection (lines 113-121)
+  - Spec text: "Schema bump in `persistence.py`: New columns on session table: `days_elapsed INTEGER NOT NULL DEFAULT 0`, `pending_time_skip_summary TEXT NOT NULL DEFAULT '[]'` (JSON-encoded list). `schema_version` bumps by 1. One-shot ALTER TABLE migration runs on load if a save's schema_version is below the new bump."
+  - Implementation: Tests assert `GameSnapshot.model_dump_json` / `GameSnapshot.model_validate` round-trip preserves both fields. `SessionPersistence` already serializes the entire snapshot as a JSON blob in `game_state.snapshot_json` — adding two pydantic fields to `GameSnapshot` (with defaults) gives free round-trip and free legacy-save loading via the existing `extra: "ignore"` plus default-factory semantics. No ALTER TABLE, no schema_version bump, no new columns.
+  - Rationale: The spec's persistence design predates an audit of the actual persistence layer. The whole-snapshot-JSON approach has been the contract since the Python port (ADR-082); adding per-column storage would duplicate state across two surfaces (column AND snapshot_json) and create a synchronization bug surface for no win. Pydantic's default handling covers AC-10 (existing saves load cleanly) without any code in `persistence.py`.
+  - Severity: minor (test surface only; the spec's intent — round-trip integrity and legacy-load — is fully exercised)
+  - Forward impact: Dev should NOT bump `SCHEMA_VERSION` or add columns. Plan Task 3 steps 5-7 collapse to "add fields to `GameSnapshot` + `StateDelta` only." ADR-018 amendment should reference snapshot-JSON persistence, not schema migration.
 
-- **Beat semantics: fire-all-crossed (not stagger)**
-  - Spec source: session file `## Architecture Context` → `### Rust Reference`
-  - Spec text: "for each trope, for each beat in its definition, check if `progress_before < beat.at <= progress_after`, and if so, record the beat and emit OTEL span"
-  - Implementation: tests pin "every beat whose threshold falls in `(progress_before, progress_after]` fires this pass" (no per-pass cap; offline catch-up). The in-session engine staggers (one beat per tick); the between-session engine does not.
-  - Rationale: matches the Rust port reference and the AC2 phrasing ("If advancement crosses a beat threshold, the beat fires immediately"). The narrator's opening turn handles the framing — multiple passive fires in one pass don't double-narrate.
-  - Severity: minor
-  - Forward impact: Dev implements a loop over thresholds, not single-pick stagger.
+- **`SnapshotFlags` does not exist — the actual class is `StateDelta`**
+  - Spec source: `docs/superpowers/specs/2026-05-13-50-4-trope-rate-per-day-design.md`, "Delta wiring" subsection (lines 103-109)
+  - Spec text: "```python\n# sidequest/game/delta.py — SnapshotFlags\ndays_elapsed: bool = False\npending_time_skip_summary: bool = False\n```\nBoth fields compared in `SnapshotFlags.detect_changes()`."
+  - Implementation: Tests target `sidequest.game.delta.StateDelta` (the actual class name) with comparisons added to the existing `compute_delta(before: StateSnapshot, after: StateSnapshot)` function. `StateSnapshot` (the JSON-frozen comparison class) also needs the two new fields so the `compute_delta` flag is meaningful.
+  - Rationale: Naming drift between spec and codebase; behavior is identical.
+  - Severity: trivial (rename)
+  - Forward impact: Dev edits `StateDelta` + `StateSnapshot` + `compute_delta` in `delta.py`, not a (non-existent) `SnapshotFlags`.
 
-### Reviewer (audit)
+- **Task 1 implementation partially present in working tree at handoff**
+  - Spec source: `docs/superpowers/plans/2026-05-13-50-4-trope-rate-per-day.md`, Task 1 (lines 44-145)
+  - Spec text: Plan Task 1 Steps 3-7 belong to Dev's green phase ("add `days_advanced` to `NarrationTurnResult`", "extract `days_advanced` in the game_patch parser", "commit").
+  - Implementation: TEA found `sidequest/agents/orchestrator.py` carrying the Task 1 implementation already (uncommitted working-tree change adding `days_advanced` field + extraction in `extract_structured_from_response` at orchestrator.py:763-769 and 2376/2578). Test file at `tests/protocol/test_game_patch_days_advanced.py` was already present and matched the implementation. TEA committed only the four test files (per TEA-role discipline) and left the orchestrator.py change uncommitted for Dev to review + commit during green.
+  - Rationale: Cleanest separation of TEA (tests-only commits) from Dev (implementation commits). Reverting the working-tree implementation to force a stricter RED state would have discarded work already done correctly per spec.
+  - Severity: minor (procedural — implementation correctness unchanged)
+  - Forward impact: Dev should `git diff sidequest/agents/orchestrator.py`, confirm matches Task 1 Steps 3 & 4 of the plan, and commit as the first green step. The 4 protocol tests pass against this implementation.
 
-- **TEA "Function signature deviates from story Architecture Context"** → ✓ ACCEPTED by Reviewer: keyword-only with `datetime` matches the existing engine in the same package; positional `float` would force callers to convert at every wire site. Architect's spec-check Mismatch 2 reached the same conclusion.
-- **TEA "Beat semantics: fire-all-crossed (not stagger)"** → ✓ ACCEPTED by Reviewer: matches both the Rust reference quoted in the session file and the AC2 "fires immediately" wording. The narrator's opening turn frames the catch-up; multi-fire-in-one-pass does not double-narrate because there is no narrator call per beat in this path.
-- **Dev "Content repo touched: no changes required"** → ✓ ACCEPTED by Reviewer: spot-checked all 5 live genre packs. 4 of 5 declare `rate_per_day` at varying density (`caverns_and_claudes` x4, `mutant_wasteland` x3, `space_opera` x5, `tea_and_murder` x6). `elemental_harmony` has zero `passive_progression` blocks anywhere — engine's `if tdef.passive_progression is None: continue` guard handles this cleanly. Content tuning is a separate design discussion.
-- **Architect spec-check Mismatch 1 "AC3 RESOLVED stricter than literal"** → ✓ ACCEPTED by Reviewer: implementation matches `trope_tick.py:257-276`. For well-formed YAML (all `beat.at` ≤ 1.0), the literal spec and the strict gate are functionally identical. Spec-update preferred over code-change.
-- **Architect spec-check Mismatch 2 "AC1/Architecture Context call-site type drift"** → ✓ ACCEPTED by Reviewer: covered by TEA's deviation above; no additional action.
-- **No additional undocumented deviations.** I checked the diff against every section of the story context and the AC list. The engine matches what the tests pin and what the deviation log describes.
-
-### Architect (reconcile)
-
-- No additional deviations found.
-
-**Verification of existing entries (re-audit against final diff):**
-- TEA "Function signature deviates from story Architecture Context" — accurate. Code at `sidequest/game/trope_advance.py:57-62` matches the deviation entry's described shape (`*, snapshot: GameSnapshot, pack: Any, now: datetime) -> None`).
-- TEA "Beat semantics: fire-all-crossed (not stagger)" — accurate. Code at `sidequest/game/trope_advance.py:107-114` loops over the escalation tail without per-pass cap; window is `progress_before < beat.at <= progress_after` exactly as quoted from the Rust reference.
-- Dev "Content repo touched: no changes required" — accurate. `git log feat/50-4-trope-rate-per-day-advancement` on `sidequest-content` shows zero commits beyond `develop`. The engine handles missing `passive_progression` in `elemental_harmony` via the precedent at `trope_tick.py:183` (verified by `test_trope_with_no_passive_progression_def_is_skipped`).
-- Reviewer audit stamps (all five) — accurate; the spec-check Mismatch 1 (AC3 strict-resolve) and Mismatch 2 (signature drift) are the only architectural divergences and both were ACCEPTED with rationale matching what the code does.
-
-**AC deferral check:** No ACs deferred — all six ACs have explicit test coverage in `tests/game/test_trope_advance_between_sessions.py` and `tests/server/test_50_4_trope_advance_wire.py`. The ac-completion gate's accountability table is not required for this story.
-
-**PRD reference:** Story context cites ADR-018 (Trope Engine) as the load-bearing design. ADR-018 status in the README is "partial" — this story takes a step toward closing that drift. No PRD lives outside the ADR for this subsystem.
-
-## Sm Assessment
-
-- 5pt TDD story, repos: server,content. Story is well-scoped: one entry point (`advance_tropes_between_sessions`), one call site (server session load handler after deserialization, before first turn), one new OTEL span (`SPAN_TROPE_BETWEEN_SESSION_ADVANCE`).
-- Rust reference exists at `sidequest-api/src/trope.rs::advance_between_sessions` — per `feedback_ports_are_not_designs`, this is a port, translate verbatim; do not run an alternatives menu.
-- Wiring test required (AC6): advancement must run from the production session-load path, not be mocked. Per CLAUDE.md "Verify Wiring, Not Just Existence" + "Every Test Suite Needs a Wiring Test".
-- OTEL emission is non-negotiable per the GM-panel "lie detector" principle — span must include `trope_id`, `days_elapsed`, `progress_before/after`, `beats_fired_count`, `new_status`.
-- Beat-firing semantics on load: record in `beats_fired`, emit OTEL, do NOT call the narrator (passive advancement, not player-driven).
-- Clamp progress to 1.0 and mark RESOLVED on overflow.
-- Banned patterns for TEA/Dev (pass forward into subagent prompts): no `git stash` of any kind; never run tests on a prior commit to "prove" a failure was pre-existing. Diagnose on HEAD.
-- No Jira (project is personal). No PR-base assumption — both repos target `develop`.
-- Routing: phased TDD → TEA owns RED next.
+- **OTEL emission test uses `InMemorySpanExporter`, not watcher monkeypatch**
+  - Spec source: `docs/superpowers/plans/2026-05-13-50-4-trope-rate-per-day.md`, Task 6 Step 3 (lines 1209-1237)
+  - Spec text: Plan suggests `monkeypatch.setattr(trope_tick, "_emit_watcher_event", fake_emit)` to capture span emission.
+  - Implementation: Tests use the SDK's `InMemorySpanExporter` attached to the active `TracerProvider`, matching the pattern used by `tests/game/test_trope_tick.py`. `trope_tick.py` does not have an `_emit_watcher_event` helper — it uses `Span.open(SPAN_NAME, attrs)` context managers, which the in-memory exporter captures directly.
+  - Rationale: Match the actual emission idiom and existing test fixtures; avoid creating a parallel watcher mechanism.
+  - Severity: trivial (test mechanism)
+  - Forward impact: Dev wires Pass A2's span emission via `Span.open(SPAN_TROPE_TIME_SKIP, attrs)` inside `tick_tropes`, same idiom as `SPAN_TROPE_TICK_PER`. No new emission helper needed.
 
 ## TEA Assessment
 
 **Tests Required:** Yes
-**Reason:** New engine module + new OTEL span + new wire site at connect.py. Pure-data refactor with no behavior — never. This story creates load-bearing behavior, so tests precede code.
+**Reason:** New feature with 14 ACs spanning protocol, state, engine, OTEL, and prompt-assembly layers — TDD-mandatory per workflow `tdd`.
 
 **Test Files:**
-- `sidequest-server/tests/game/test_trope_advance_between_sessions.py` — 27 unit tests for the engine (signature, AC1–AC5, edge cases).
-- `sidequest-server/tests/server/test_50_4_trope_advance_wire.py` — 6 wiring/hygiene tests (connect.py imports + AST call check + span re-export + module docstrings).
+- `sidequest-server/tests/protocol/test_game_patch_days_advanced.py` — protocol field validation (4 tests). Untracked-found at activation; reviewed and kept verbatim — covers AC-1 exactly.
+- `sidequest-server/tests/game/test_session_time_skip.py` — Snapshot fields, JSON round-trip, legacy-save defaults, StateDelta wiring (9 tests).
+- `sidequest-server/tests/game/test_trope_time_skip.py` — Pass A2 algorithm + OTEL emission + Pass B interaction (~28 tests across 6 test classes).
+- `sidequest-server/tests/integration/test_trope_time_skip_e2e.py` — Renderer helper, build_narrator_prompt wiring (skip-on-pack-missing), websocket_session_handler kwarg-threading source-inspection (8 tests across 3 classes; the 3 prompt-assembly tests are `pytest.mark.skipif` gated on `tea_and_murder` pack presence).
 
-**Tests Written:** 33 tests covering 6 ACs.
-**Status:** RED — 32 failing, 1 sanity-passing (connect.py file exists). Verified via `uv run pytest tests/game/test_trope_advance_between_sessions.py tests/server/test_50_4_trope_advance_wire.py`.
+**Tests Written:** ~49 tests covering AC-1 through AC-12 (AC-13 is the meta-AC about file presence, satisfied by this commit; AC-14 is the ADR amendment, owned by Dev's green phase).
 
-**Commit:** `55a7083` on `feat/50-4-trope-rate-per-day-advancement` (sidequest-server).
+**Status:** RED (3 of 4 files fail at module-collection time on `ModuleNotFoundError: sidequest.game.trope_time_skip` — the unwritten module is the entry point. Once Dev creates the module with the two pydantic models + `_pass_a2_time_skip` skeleton, individual tests start running and fail at the next missing piece. The protocol test file is GREEN — see Design Deviations for why.)
 
 ### Rule Coverage
 
-Rules from `.pennyfarthing/gates/lang-review/python.md` applicable to this story:
+| Rule (lang-review / project) | Test(s) | Status |
+|---|---|---|
+| Pydantic `extra='forbid'` rejects unknown fields | `TestModuleSurface.test_time_skip_beat_event_rejects_unknown_fields` | failing (no module) |
+| Defaults are sensible / explicit | `test_snapshot_default_days_elapsed_is_zero`, `test_snapshot_default_pending_time_skip_summary_is_empty` | failing (no field) |
+| Validated coercion — negative/non-int sanitization | `test_days_advanced_rejects_negative`, `test_days_advanced_rejects_non_int` | passing (impl present) |
+| Round-trip integrity for persisted state | `test_snapshot_days_elapsed_round_trips_through_json`, `test_snapshot_pending_summary_round_trips_through_json` | failing (no field) |
+| Forward-compat for legacy saves | `test_legacy_snapshot_without_new_fields_loads_with_defaults` | failing (no field) |
+| OTEL emission for every subsystem decision (CLAUDE.md OTEL principle) | `test_tick_tropes_emits_trope_time_skip_span`, `test_tick_tropes_no_time_skip_span_when_days_zero` | failing (no module) |
+| Wiring test for every test suite (CLAUDE.md "Every Test Suite Needs a Wiring Test") | `tests/integration/test_trope_time_skip_e2e.py::TestBuildNarratorPromptWiring`, `TestEngineBoundaryThreadsDaysAdvanced` | failing (no module, no kwarg) |
+| Non-test consumers verified (CLAUDE.md "Verify Wiring, Not Just Existence") | `test_tick_tropes_call_site_threads_days_advanced` (source-inspection on websocket_session_handler.py) | failing (kwarg absent) |
+| No silent fallback on missing trope def | `test_missing_trope_def_is_skipped` | failing (no module) |
+| Cap enforced — clamp behavior visible | `test_clamps_days_at_day_tick_cap`, `test_day_tick_cap_is_14` | failing (no module) |
+| Idempotence — already-fired beats not re-fired | `test_does_not_refire_already_fired_beats` | failing (no module) |
+| Self-check for vacuous assertions | review pass — every test has at least one meaningful `assert`; class `TestPassA2OtelFields.test_beats_fired_count_matches_list_length` asserts an invariant, not a tautology | clean |
 
-| Rule | Test(s) | Status |
-|------|---------|--------|
-| #3 type annotations at boundaries | `TestModuleContract::test_all_parameters_have_type_annotations` | failing |
-| #6 test quality — meaningful assertions | self-check pass — no `assert True`, no truthy-only checks, every test asserts on a specific value or membership | enforced in red |
-| #10 import hygiene — no circular | wiring test imports `sidequest.game.trope_advance` and `sidequest.handlers.connect`; would surface a cycle | failing (module doesn't exist) |
+**Rules checked:** All applicable Python/pydantic project rules from `CLAUDE.md` and the established `tests/game/test_trope_tick.py` patterns have at least one test pinning them. The `lang-review/python.md` checklist was consulted; no extra-strict checks (e.g., type-system invariants beyond `extra='forbid'`) apply to this story's surface.
+**Self-check:** Zero vacuous tests found; one over-iteratively drafted test (`test_no_resolution_when_progress_caps_but_beats_remain`) was rewritten before commit to use a single clean shape (rate × days = 0.99 progress, 2 of 3 beats fired).
 
-**Not applicable:** rules #1 (no exception handling in the engine), #2 (no defaults), #4 (no logging in scope — OTEL only), #5 (no path handling), #7 (no resources), #8 (no deserialization), #9 (sync engine), #11 (not a boundary), #12, #13.
-
-**Self-check:** zero vacuous tests; every assertion compares to a concrete value, a typed predicate, or a known-set membership.
-
-### Test Strategy Notes
-
-1. **Unit tests** isolate the engine via a `SimpleNamespace` pack stand-in (matches the `tick_tropes` test fixture pattern in `tests/game/test_trope_tick.py`). Time anchored at `2026-05-13 12:00 UTC` so elapsed-day arithmetic is exact.
-2. **OTEL tests** use the same `init_tracer()` + `InMemorySpanExporter` pattern as the existing trope-tick tests; capture per-span attributes via `s.attributes.get(...)`.
-3. **Wiring tests** parse `connect.py` with `ast` rather than executing it — the handler has many side-effecting imports (database, websocket, lore store) that would slow tests and pull in fixtures. AST inspection catches both "imported but unused" and "called with positional args" regressions statically.
-4. **Hygiene tests** pin docstrings on the new module + public function (project convention; helps the Reviewer locate ADR-018 from grep).
-
-**Handoff:** To Dev (Winchester) for GREEN. Implement `sidequest/game/trope_advance.py` and `SPAN_TROPE_BETWEEN_SESSION_ADVANCE` in `sidequest/telemetry/spans/trope.py`, then wire the call into `sidequest/handlers/connect.py` after `_backfill_magic_state_on_resume` (around line 342) — before the first turn dispatches. Banned patterns forwarded: **no `git stash` of any kind; never run tests on a prior commit to "prove" a failure was pre-existing — diagnose on HEAD.**
+**Handoff:** To Dev (The White Rabbit) for implementation. Recommended task order:
+1. Create `sidequest/game/trope_time_skip.py` with the two pydantic models + `DAY_TICK_CAP` + skeleton `_pass_a2_time_skip` (plan Task 2).
+2. Add `days_elapsed` + `pending_time_skip_summary` to `GameSnapshot` (plan Task 3 — drop the schema/ALTER changes, retain the field additions and `StateDelta`/`StateSnapshot`/`compute_delta` wiring).
+3. Commit `sidequest/agents/orchestrator.py` uncommitted change (plan Task 1 Step 7 — implementation already in working tree).
+4. Implement Pass A2 body, then wire into `tick_tropes`, then add the `trope.time_skip` span constant + emission (plan Tasks 4, 5, 6).
+5. Add `days_advanced=result.days_advanced` to the `tick_tropes` call site in `sidequest/server/websocket_session_handler.py:2743` (plan Task 7 — NOTE: not `narration_apply.py`).
+6. Add narrator prompt rule + `_render_time_skip_context` helper + section wiring (plan Tasks 8, 9).
+7. Dashboard surface + ADR-018 amendment (plan Tasks 11, 12).
 
 ## Dev Assessment
 
-**Implementation Complete:** Yes
-**Files Changed:**
-- `sidequest-server/sidequest/game/trope_advance.py` *(new)* — engine module with `advance_tropes_between_sessions(*, snapshot, pack, now) -> None`. ~80 LoC including docstrings.
-- `sidequest-server/sidequest/telemetry/spans/trope.py` — added `SPAN_TROPE_BETWEEN_SESSION_ADVANCE` constant and its `state_transition`/`component="tropes"` route (six attributes per the AC5 contract).
-- `sidequest-server/sidequest/handlers/connect.py` — added `datetime`/`UTC` import, `advance_tropes_between_sessions` import, and the call directly after `_backfill_magic_state_on_resume` (which runs once per save-resume in the SOLO/MP branches) — before any turn dispatches.
-- `sidequest-server/tests/game/test_trope_advance_between_sessions.py` — TEA's 27 unit tests, reformatted by ruff format.
-- `sidequest-server/tests/server/test_50_4_trope_advance_wire.py` — TEA's 6 wiring/hygiene tests, reformatted by ruff format.
+**Implementation complete:** Yes
+**Method:** superpowers:subagent-driven-development — fresh implementer subagent per logical task, two-stage spec + quality review after each non-trivial commit. 10 commits on `feat/50-4-trope-rate-per-day` (sidequest-server) + 1 commit on `main` (orchestrator).
 
-**Content repo:** branch created (`feat/50-4-trope-rate-per-day-advancement`) but no commits — see deviation log above. Branch remains local; SM can prune at finish time.
+**Commit chain (sidequest-server):**
+| Commit | Task | Summary |
+|---|---|---|
+| `f696e2d` | TEA red | 4 failing test files |
+| `de4bbb6` | T1 | `days_advanced` field on `NarrationTurnResult` + extraction in `extract_structured_from_response` (committed working-tree change) |
+| `80f7b86` | T2 | `sidequest/game/trope_time_skip.py` module with `DAY_TICK_CAP`, `TimeSkipBeatEvent`, `TropeTimeSkipFields`, NotImplementedError skeleton |
+| `e83b8c7` | T3 | `GameSnapshot.days_elapsed` + `pending_time_skip_summary` + `StateDelta`/`StateSnapshot`/`compute_delta` wiring (no schema bump, per deviation) |
+| `87c89b3` | T4/T5/T6 | Pass A2 algorithm body + `tick_tropes` kwarg + `SPAN_TROPE_TIME_SKIP` constant + Span.open emission + dashboard SpanRoute |
+| `bd52226` | T4 quality fix | Tighten `_pass_a2_time_skip` param type from bare `object` to `dict[str, TropeDefinition] \| object` |
+| `5427a81` | T7 | Thread `days_advanced=result.days_advanced` to `tick_tropes` in `websocket_session_handler.py:2747` |
+| `ecf45a9` | T8 | CRITICAL TIME RULE + `days_advanced` valid-field in `narrator_prompts/output_only.md` |
+| `4733c9b` | T9 | `_render_time_skip_context` helper + `TurnContext.snapshot` field + `build_narrator_prompt` registration of TIME-SKIP CONTEXT section (AttentionZone.Early) + one-shot clear |
+| `c22ff16` | T9 quality fix | Tighten `TurnContext.snapshot` annotation from `Any` to `GameSnapshot \| None` via `TYPE_CHECKING` import |
+| `e031ba0` | T11 | Dashboard `Day N` header indicator, `data-trope-id` row attribute, `trope.time_skip` `+Nd` badge handler (8s flash) |
 
-**Tests:** 33/33 50-4 tests pass (GREEN). Full suite: 5196 passed, 64 skipped, 0 failed.
-**Lint:** `uv run ruff check` clean on all changed files. `uv run ruff format` clean (test files reformatted as part of this commit).
-**Branch:** `feat/50-4-trope-rate-per-day-advancement` (sidequest-server), pushed to origin. Commits: `55a7083` (test), `a8bbe66` (feat).
+**Orchestrator commit:**
+- `a15594f` (main) — ADR-018 amended (Implementation update 2026-05-13, `implementation-status: accepted`, "Remaining gaps: None"), DRIFT.md entry removed, ADR-087 row marked RESTORED.
 
-### Implementation Notes
+**Acceptance criteria coverage (14 of 14):**
 
-1. **No-op gates land early.** `last_saved_at is None`, `delta_seconds <= 0`, `status != "progressing"`, missing tdef, `passive_progression is None`, and `rate <= 0` all return without emitting a span. The span only fires when the trope actually moved — keeps the GM panel quiet on uneventful loads.
-2. **Beat-firing is `(progress_before, progress_after]` (exclusive lower, inclusive upper).** Matches the AC2 wording ("crosses the beat") and the Rust reference summary in the session file. The inclusive upper bound is required so a trope clamped to 1.0 fires an `at=1.0` beat (covered by `test_progress_at_one_without_all_beats_does_not_resolve`).
-3. **Beats fire until one misses, then break.** Escalation thresholds are ordered ascending; the first miss means every later threshold is also above the window. Saves a few comparisons on long escalation lists without changing observable behavior.
-4. **`new_status` defaults to empty string, not None.** OTEL span attributes can't be `None` (the SDK drops them); empty string matches the route extractor's default and lets the GM panel filter on `new_status == "resolved"` without nullability handling.
-5. **No narrator-side wiring.** AC2 explicitly forbids invoking the narrator from this path; the opening turn handles framing. The engine touches `progress`, `beats_fired`, and `status` only — `narrative_log`, `quest_log`, etc. are untouched (covered by `test_passive_fire_does_not_record_narrative_entry`).
+| AC | Status | Evidence |
+|---|---|---|
+| AC-1 narrator emits `days_advanced` (pydantic non-negative int) | ✅ | `de4bbb6` + protocol tests pass |
+| AC-2 `tick_tropes` called with `days_advanced=N` post-apply | ✅ | `5427a81` — `test_tick_tropes_call_site_threads_days_advanced` source-inspect passes |
+| AC-3 Pass A2 advances progress by clamp(days,0,14)×rate | ✅ | `87c89b3` — `TestPassA2Advancement` 5 tests pass |
+| AC-4 Pass A2 fires every crossed beat | ✅ | `TestPassA2BeatFiring` 6 tests pass |
+| AC-5 `days_elapsed += min(days_advanced, 14)` | ✅ | `test_days_elapsed_accumulates_clamped_value` + `test_days_elapsed_accumulates_unclamped_value` pass |
+| AC-6 `pending_time_skip_summary` sorted by `(days_into_skip, trope_id)` | ✅ | `test_summary_sorted_by_days_into_skip_then_trope_id` passes |
+| AC-7 next prompt renders `## TIME-SKIP CONTEXT` + clears | ✅ | `TestBuildNarratorPromptWiring` 3 tests pass (pack-gated) |
+| AC-8 `trope.time_skip` OTEL span with full fields | ✅ | `test_tick_tropes_emits_trope_time_skip_span` passes; SpanRoute registered |
+| AC-9 GM panel `Day N` indicator | ✅ | `e031ba0` (visual smoke — no auto test per plan) |
+| AC-10 existing saves load cleanly with defaults | ✅ | `test_legacy_snapshot_without_new_fields_loads_with_defaults` passes (pydantic `extra: "ignore"` + defaults handle it; no schema migration required) |
+| AC-11 caverns (`rate_per_day=0.0`) shows zero drift | ✅ | `test_zero_rate_no_op_even_with_days` passes |
+| AC-12 Pass B continues to fire additional eligible beat after A2 | ✅ | `TestPassBInteraction` 2 tests pass |
+| AC-13 all 4 test files landed with unit/integration coverage | ✅ | `f696e2d` |
+| AC-14 ADR-018 amendment | ✅ | `a15594f` (orchestrator main) |
 
-### Self-Review Checklist
-- [x] All 6 ACs covered by tests, all green.
-- [x] Wiring test (AC6) verifies `connect.py` imports + calls the engine with keyword args. The AST inspection catches both "missed import" and "imported-but-unused" regressions.
-- [x] OTEL span registered in `SPAN_ROUTES` so the GM panel's typed feed surfaces it (CLAUDE.md "lie detector" principle).
-- [x] No silent fallbacks: clock skew, missing-pack-def, and never-saved snapshots all return early with no mutation and no spans (rather than e.g. defaulting elapsed-days to 0 and emitting a noise span).
-- [x] No stubs: the engine is fully functional; deferred-feature comments are absent.
-- [x] No backward-compat shims: `TropeState` already round-trips through `extra="ignore"`, so older saves load cleanly without an explicit migration.
-- [x] Project patterns: matches `tick_tropes` shape (keyword-only kwargs, duck-typed pack, `Span.open` context manager).
+**Test results:** `uv run pytest -q` → **5214 passed, 64 skipped** (skipped are pack-gated integration tests in environments without `tea_and_murder` content). Ruff clean. Zero regressions vs `develop`.
 
-**Handoff:** To TEA (verify phase) for simplify-pass + quality gate.
+**Two-stage review record:**
+- T2: spec ✅ / quality ✅
+- T3: spec ✅ / quality ✅
+- T4-6: spec ✅ / quality ✅ (one Important fixed inline — `bd52226`)
+- T7: combined ✅ (1-line kwarg threading)
+- T8: text-only edit, eyeball-verified
+- T9: spec ✅ / quality ✅ (one Important fixed inline — `c22ff16`)
+- T11: combined ✅ (HTML/JS/CSS only)
+- T12: docs-only edit, eyeball-verified
+
+### Dev (implementation)
+
+- No deviations from spec beyond TEA's logged ones. The TEA deviations (no schema migration, `SnapshotFlags`→`StateDelta` rename, OTEL `Span.open` idiom, `websocket_session_handler.py` instead of `narration_apply.py`) were applied verbatim and verified by tests passing.
+- Two procedural deviations:
+  1. **T2's NotImplementedError skeleton.** The instructions told the implementer NOT to add `_pass_a2_time_skip` in T2 (defer to T4). The implementer added it anyway because TEA's `tests/game/test_trope_time_skip.py` imports it unconditionally at module top-level — collection would have errored otherwise. The skeleton's only behavior is `raise NotImplementedError`, replaced fully in T4. Not a spec violation; a forced consequence of TEA's import-time test layout.
+  2. **TurnContext extension for snapshot reference.** The spec's prompt-builder snippet assumed `context.snapshot` existed. It did not. T9 implementer added `snapshot: GameSnapshot | None = None` to `TurnContext` and populated it in `_build_turn_context` via `sd.snapshot`. Net: one new typed field, zero behavior change for legacy callers (default-None). Logged here for the reconcile phase since it adds API surface to a high-traffic dataclass.
+
+**Handoff:** To TEA (The Caterpillar) for verify phase (simplify + quality-pass).
+
+### Architect (reconcile)
+
+Reviewed all four existing deviation sub-sections (TEA test design, TEA test verification, Dev implementation, plus the Architect spec-check substantive sweep). Every entry has all 6 required fields (Spec source, Spec text quoted inline, Implementation, Rationale, Severity, Forward impact), every spec source path exists in the project tree, and every quoted spec excerpt was verified against the current files.
+
+No additional deviations found beyond what TEA and Dev have already documented. Specifically:
+
+- **Persistence simplification, `SnapshotFlags` → `StateDelta` rename, OTEL `Span.open` pattern, WS-handler call site** — TEA's four design-time deviations were applied verbatim by Dev; tests pass against the deviated implementation; the spec's literal text would not have worked against the actual codebase.
+- **T2 `NotImplementedError` skeleton + `TurnContext.snapshot` extension** — Dev's two procedural deviations are forced consequences of (a) TEA's import-time test layout requiring the function name to exist for collection and (b) the spec's prompt-builder snippet assuming an attribute on `TurnContext` that did not exist. Both are minimal and well-documented in the Dev section.
+
+No AC was deferred — all 14 ACs in the story spec are satisfied per the AC accountability table in the Dev Assessment (each AC mapped to a specific commit + test).
+
+The Reviewer's adversarial pass (one fix-back loop on 5 HIGH findings, applied in `ee3161d`) tightened the implementation around 5 edge cases the spec under-specified (empty escalation list, empty DOM trope id, queue-clear ordering, zero-assertion test, `getattr` silent fallback). None of these alter the spec contract — they reinforce it. Logged in the Reviewer Assessment, not duplicated here.
+
+**Spec-reconcile gate: pass.** Definitive deviation manifest is the union of TEA (test design) + TEA (test verification) + Dev (implementation) + this entry; no entries need correction.
 
 ## Architect Assessment (spec-check)
 
-**Spec Alignment:** Aligned (with two minor drifts, both documented as deviations).
-**Mismatches Found:** 2
+**Spec Alignment:** Aligned
+**Mismatches Found:** None
 
-### Mismatch 1 — AC3 RESOLVED condition stricter than literal spec
+**Gate status:** ✅ pass (structural — AC coverage table present, implementation complete, TEA/Dev deviation subsections properly formatted).
 
-- **Category:** Different behavior — Type: Behavioral — Severity: Minor
-- **Spec (AC3):** "If advancement would push progress > 1.0, clamp to 1.0 and mark the trope as RESOLVED."
-- **Code (`trope_advance.py:118–125`):** Marks `resolved` only when `progress_after >= 1.0` AND `beats_fired >= len(escalation)`. A trope that clamps to 1.0 but still has un-fired beats stays `progressing`.
-- **Recommendation:** **A — update spec.** The implementation's gate matches the in-session engine (`trope_tick.py:257–276` comment: "Either condition alone is not enough"). Marking a trope `resolved` while beats remain un-fired would silently truncate its arc — a trope with `escalation=[at=0.50, at=0.75, at=1.00]` and a passive-only path could otherwise reach 1.0 with `beats_fired=0` and resolve before any beat has fired. For well-formed YAML (all beats ≤ 1.0) the two conditions converge — code and spec only diverge on illegal data. Behavior is **better** than the literal spec; capture as a deviation rather than handing back.
+**Substantive sweep:**
 
-### Mismatch 2 — AC1/Architecture Context call-site type drift
+| Risk area | Check | Result |
+|---|---|---|
+| AC-7 prompt rendering + one-shot clear | `_render_time_skip_context` in `narrator.py:89`; called from `orchestrator.py:1465`; section name `"time_skip_context"` registered; `snapshot.pending_time_skip_summary = []` on line 1479 immediately after registration | ✅ matches spec exactly |
+| AC-9 dashboard Day N | `dashboard.html:481` carries `${s.days_elapsed ? ' · Day '+esc(String(s.days_elapsed)) : ''}` appended to the header template — conditional on truthy value, escaped, integrates cleanly with the existing breadcrumb | ✅ |
+| AC-14 ADR-018 amendment | Frontmatter `implementation-status: accepted` (line 11); "Implementation update (2026-05-13)" subsection at line 83; "Remaining gaps: None" set; DRIFT.md ADR-018 entry removed; ADR-087 row marked RESTORED | ✅ |
+| All 4 test files | `uv run pytest tests/{game,protocol,integration}/...50-4 tests` → 51 passed, 0 failed | ✅ |
+| Persistence approach | No `persistence.py` edits, no `schema_version` bump — pydantic + JSON-blob round-trip per TEA deviation. `model_validate` on a minimal dict produces defaults (verified by `test_legacy_snapshot_without_new_fields_loads_with_defaults`) | ✅ |
+| OTEL emission idiom | `Span.open(SPAN_TROPE_TIME_SKIP, attrs)` in `tick_tropes`, matches `_advance_progress`'s `Span.open(SPAN_TROPE_TICK_PER, ...)` shape; captured by `InMemorySpanExporter` in tests | ✅ |
+| Engine wire location | `websocket_session_handler.py:2747` carries `days_advanced=result.days_advanced` — verified by both source-inspection test and the integration test | ✅ |
 
-- **Category:** Ambiguous spec — Type: Architectural — Severity: Minor
-- **Spec (Architecture Context):** `def advance_tropes_between_sessions(session: GameSession, now_timestamp: float) -> dict[str, dict[str, Any]]` — positional, `GameSession`, float timestamp, return-dict.
-- **Code:** `def advance_tropes_between_sessions(*, snapshot: GameSnapshot, pack: Any, now: datetime) -> None` — keyword-only, `GameSnapshot`, datetime, mutation-only.
-- **Recommendation:** **A — already updated via TEA deviation log** (`### TEA (test design)` → "Function signature deviates..."). The implementation matches the existing `tick_tropes` pattern, uses the type already on `snapshot.last_saved_at` (`datetime | None`), and relies on OTEL spans for diagnostics instead of a return value. TEA's deviation entry covers the change with full 6-field format. No additional action required.
+**Procedural deviations (both already logged by Dev — accepted, no action):**
 
-### Verification of Existing Deviations
+1. **T2's `NotImplementedError` skeleton.** Forced by TEA's `tests/game/test_trope_time_skip.py` importing `_pass_a2_time_skip` at module top-level (no `pytest.importorskip` guard, no late import). The skeleton was replaced in full by T4. The procedural alternative — TEA-side late imports — would have made the tests less readable. The skeleton-then-replace flow is acceptable for this narrow case where the test-layout pin and the impl arrive in adjacent commits on the same branch. Severity: trivial. Recommendation: A (update spec to permit forward-declared imports when tests need them; not blocking, future hygiene).
 
-- TEA's "function signature" deviation — **accurate**, code matches the deviation as written.
-- TEA's "fire-all-crossed (not stagger)" deviation — **accurate**, `escalation[trope.beats_fired:]` loop with no per-pass cap.
-- Dev's "content repo no changes" deviation — **accurate**, no commits on the content branch.
+2. **`TurnContext.snapshot: GameSnapshot | None` field added.** Spec assumed `context.snapshot` already existed on TurnContext; it did not. T9 implementer added it minimally — single field, default None, populated in `_build_turn_context` from `sd.snapshot`. The downstream prompt-builder read is gated on `snapshot is not None`, so legacy callers (tests that build TurnContext directly without going through `_build_turn_context`) keep working. Severity: minor (one-field API surface addition). Recommendation: A (spec implicitly required this; the implementation made the dependency explicit and typed it correctly).
 
-### Substantive Code Review (architecture-level)
+Neither deviation changes spec intent or behavior. Both improve over the spec's written form.
 
-- **Reuse over reinvention.** Engine uses the existing `Span.open` context manager, the existing `SpanRoute` register pattern, and matches the `tick_tropes` duck-typed pack contract. No new infrastructure introduced.
-- **No silent fallbacks.** All early-return paths (`last_saved_at is None`, negative elapsed, status≠progressing, missing tdef, missing passive_progression, rate ≤ 0, no progress delta) return without mutation AND without emitting a span. The GM panel sees only events that actually moved.
-- **Wiring is real.** AST-validated call site at `connect.py:356`. Import at line 28. Keyword args enforced by signature.
-- **OTEL routing is complete.** `SPAN_TROPE_BETWEEN_SESSION_ADVANCE` is registered in `SPAN_ROUTES` (not just `FLAT_ONLY_SPANS`), `component="tropes"`, six attributes match AC5. Routing-completeness test (`tests/telemetry/test_routing_completeness.py`) covers it implicitly via the existing pattern.
-- **ADR-018 alignment.** Closes the documented gap ("Python port carried the data model but left the advancement logic unimplemented"); the implementation honors the cap, cooldown, and resolution semantics owned by the in-session engine by deliberately *not* duplicating activation logic (dormant tropes don't auto-promote on load).
+**Spec authority hierarchy applied:**
+- Story scope (this session) — load-bearing for the persistence deviation and the WS-handler call site
+- Story context — none beyond the ACs
+- Plan + spec — followed except where TEA's deviations override
+- Architecture docs — ADR-018 amendment is the only impact, executed
 
-### Acceptance Criteria Coverage Matrix
+**Decision:** Proceed to TEA verify phase. No hand-back to Dev required.
 
-| AC | Spec | Code Location | Test Coverage |
-|----|------|---------------|---------------|
-| AC1 | Load-time advancement | `trope_advance.py:75–116` | `TestAC1LoadTimeAdvancement` (8 tests) |
-| AC2 | Beat firing on load | `trope_advance.py:107–115` | `TestAC2BeatFiringOnLoad` (5 tests) |
-| AC3 | Progress clamp + RESOLVED | `trope_advance.py:100, 118–125` | `TestAC3ProgressClamp` (3 tests) |
-| AC4 | No advance on first load | `trope_advance.py:75–77` | `TestAC4NoAdvanceOnFirstLoad` (2 tests) |
-| AC5 | OTEL emission | `trope.py: const + route`, `trope_advance.py:127–138` | `TestAC5OtelEmission` (5 tests) |
-| AC6 | Integration / wiring test | `connect.py:28, 356–360` | `TestEngineWiredIntoConnectHandler` + `TestSpanRoutedThroughWatcher` + `TestEngineModuleHygiene` (6 tests) |
+**Handoff:** To TEA (The Caterpillar) for verify phase (simplify + quality-pass).
 
-**Decision:** Proceed to TEA verify (simplify + quality-pass). No hand-back to Dev required.
-
-## TEA Assessment (verify phase)
+## TEA Assessment (verify)
 
 **Phase:** finish
-**Status:** GREEN confirmed (33/33 50-4 tests pass; full server suite 5196 passed, 64 skipped)
+**Status:** GREEN confirmed (5213 passed, 1 flaky, 64 skipped post-fix)
 
 ### Simplify Report
 
 **Teammates:** reuse, quality, efficiency
-**Files Analyzed:** 5 (trope_advance.py, connect.py, telemetry/spans/trope.py, both new test files)
+**Files Analyzed:** 15 (11 production + 4 test)
 
 | Teammate | Status | Findings |
 |----------|--------|----------|
-| simplify-reuse | 5 findings (4 high, 1 medium) | duplicate `otel_capture` fixture; cross-file duplication of `_trope_def`/`_pack_with`/`_seed_snapshot` against `test_trope_tick.py`; `_spans_named` duplicated across ~9 test files |
-| simplify-quality | clean | no findings |
-| simplify-efficiency | clean | no findings |
+| simplify-reuse | clean | none |
+| simplify-quality | clean | none |
+| simplify-efficiency | 3 findings | 1 high (in-scope), 1 medium (defended by reuse), 1 high (out-of-scope pre-existing API) |
 
-**Applied:** 1 high-confidence fix
-- **otel_capture duplicate** — deleted local fixture; `tests/game/conftest.py:182` auto-injects the same fixture (verified by direct file read, including the in-fixture comment about clearing accumulated processors).
+**Applied:** 1 high-confidence fix (`6ba7359` — drop redundant `or 0.0` after a ternary that already returns 0.0; `trope_time_skip.py:135`).
 
-**Flagged for Review:** 0
+**Flagged for Review:** 1 medium-confidence finding — dual-shape `pack_or_tropes_by_id` parameter in `_pass_a2_time_skip`. simplify-efficiency suggests collapsing to dict-only (move test fixtures to dict construction). simplify-reuse defended the dual-shape as an intentional ergonomic pattern. Reviewer call.
 
-**Deferred (out of 50-4 scope):**
-- `_trope_def`/`_pack_with` extraction to conftest — high confidence per the agent but would require also editing `test_trope_tick.py`'s helpers; the two `_seed_snapshot` variants have divergent signatures (mine takes `last_saved_at`; trope_tick's sets `turn_manager.interaction`). Harmonizing those is a legitimate refactor but exceeds 50-4 scope per CLAUDE.md "Don't add features, refactor, or introduce abstractions beyond what the task requires."
-- `_spans_named` extraction — agent itself noted this is a 9-file cleanup. Genuinely cross-cutting; warrants its own story.
+**Noted (not applied):** 1 high-confidence finding outside 50-4 scope — `StateDelta`'s 7 pre-existing single-line getter methods (`characters_changed()`, `tropes_changed()`, etc.) that duplicate direct field access. These were not added by 50-4 — removing them would mean editing the StateDelta public API and fanning out to every test that calls `.tropes_changed()`. That's a separate refactor story, not boy-scout-bounded. Logged here so a future story can pick it up.
 
-**Noted:** 0
 **Reverted:** 0
 
-**Overall:** simplify: applied 1 fix; 4 deferred to a follow-up cleanup story.
-
-### Regression Check
-
-After applying the simplify fix:
-- `uv run pytest tests/game/test_trope_advance_between_sessions.py tests/server/test_50_4_trope_advance_wire.py` → 33/33 pass.
-- `just server-check` → ruff clean, pyright clean, 5196 tests pass.
-- `just check-all` → server clean; **pre-existing UI typecheck failures** at `sidequest-ui/src/App.tsx:722:11` and `sidequest-ui/src/__tests__/turn-status-wire-shape-wiring.test.tsx:35:9` (both `TS2352: Conversion of type 'GameMessage' to type 'Record<string, unknown>' may be a mistake`). My diff is server-only — verified via `git diff --name-only develop` showing zero UI files. These TS errors pre-date this branch.
+**Overall:** simplify: applied 1 fix.
 
 ### Quality Checks
 
-- **Lint:** `uv run ruff check` clean on all changed files (after auto-fix of `I001` import-order on the test file post-edit).
-- **Format:** `uv run ruff format --check` clean.
-- **Tests:** server suite full green, 50-4 tests all pass.
+- `uv run ruff check .` — All checks passed
+- `uv run pytest -q` — 5213 passed, 1 failed, 64 skipped (the 1 failure is `tests/server/test_chargen_dispatch.py::TestSliceAWiring::test_caverns_delver_loadout_wired_into_snapshot` — confirmed flaky, passes in isolation, pre-existing test-isolation issue unrelated to 50-4; was reported as pre-existing during T7 green check too)
+- 51/51 tests across the four 50-4 test files pass cleanly after the simplify fix
+- No regressions vs `develop` introduced by 50-4 (the flaky test predates this story)
 
-### Delivery Findings Capture
+### Delivery Findings
 
-(See `### TEA (verify)` under Delivery Findings below.)
+### TEA (test verification)
 
-**Handoff:** To Reviewer (Colonel Potter) for code review and PR creation.
+- **Improvement** (non-blocking): Flaky test `tests/server/test_chargen_dispatch.py::TestSliceAWiring::test_caverns_delver_loadout_wired_into_snapshot` — fails when run in the full suite, passes in isolation. Pre-existing test-isolation issue (state leak across tests), surfaced again during 50-4 verify. Affects `sidequest-server/tests/server/test_chargen_dispatch.py` (needs fixture isolation cleanup; root cause not investigated here — out of 50-4 scope). *Found by TEA during test verification.*
+
+**Handoff:** To Reviewer (The Queen of Hearts) for adversarial code review.
+
+## Subagent Results
+
+| # | Specialist | Received | Status | Findings | Decision |
+|---|---|---|---|---|---|
+| 1 | reviewer-preflight | Yes | clean | 0 code smells, 0 console_log, 0 todos; 5213/5214 tests pass (1 flaky pre-existing) | N/A — green |
+| 2 | reviewer-edge-hunter | Yes | findings | 8 (2 HIGH: empty-escalation resolution, empty-tropeId queryselector; 4 MED; 2 LOW) | 2 HIGH applied + 1 MED convergent with silent-failure applied |
+| 3 | reviewer-silent-failure-hunter | Yes | findings | 4 (1 HIGH: float days_advanced silent drop noted-as-documented; 1 MED queue-clear ordering — convergent with edge-hunter; 2 LOW) | MED queue-clear applied; HIGH float-drop accepted as documented silent-drop pattern |
+| 4 | reviewer-test-analyzer | Yes | findings | 11 (3 HIGH: zero-assertion test, pack-skip CI, tautological test; 8 MED) | 1 HIGH (zero-assertion) applied; others flagged non-blocking |
+| 5 | reviewer-rule-checker | Yes | findings | 5 against 17-rule python.md checklist (1 HIGH project-rule: getattr silent fallback per CLAUDE.md; 3 type/import; 1 silent-suppress on _to_json pre-existing) | 1 HIGH applied; pre-existing items deferred |
+| 6 | reviewer-type-design | Yes | findings | 5 (1 MED bare-`object` parameter; 4 LOW: missing `ge=` constraints, redundant getattr) | All flagged non-blocking; type-improvement story candidate |
+| 7 | reviewer-comment-analyzer | Yes | clean | 0 stale/misleading comments in diff; new code added by 50-4 carries WHY-style comments (one-shot lifecycle, clamp rationale, silent-skip per spec) consistent with project pattern; no docstring rot found | N/A — green |
+
+**All received: Yes** — 7/7 subagent reports collected before this assessment was written.
+
+## Reviewer Assessment
+
+**Verdict:** ✅ APPROVED after one fix-back round
+
+**Subagents fanned out (6 in parallel, background):** preflight, edge-hunter, silent-failure-hunter, test-analyzer, rule-checker, type-design. simplify-* trio was already executed during TEA verify so reviewer-simplifier was skipped (would have retread the same ground).
+
+### Findings summary
+
+| Severity | Count | Disposition |
+|---|---|---|
+| HIGH (blocking) | 5 | fixed in `ee3161d` |
+| MEDIUM | ~10 | flagged below (non-blocking) |
+| LOW | ~8 | noted, not pursued |
+
+### Findings by specialist tag
+
+- [DOC] reviewer-comment-analyzer — clean. No stale/misleading comments. New 50-4 code carries WHY-style documentation throughout: module docstring links to design spec, `_render_time_skip_context` and `_pass_a2_time_skip` document lifecycle requirements, pydantic models explain each class's role, the `DAY_TICK_CAP` constant comment explains the YAGNI deferral. No docstring rot.
+- [RULE] reviewer-rule-checker — 5 findings against the 17-rule python.md checklist. 1 HIGH: getattr silent fallback on typed `TurnContext.snapshot` (CLAUDE.md "No Silent Fallbacks") — fixed in `ee3161d`. 4 LOW/MED: bare `except Exception` in pre-existing `_to_json`, star-import re-export of `SPAN_TROPE_TIME_SKIP` matching established pattern, `pack: Any` annotation on `tick_tropes` predates 50-4, `pack_or_tropes_by_id: dict | object` annotation. The HIGH item is fixed; the rest are pre-existing or annotation-only and flagged non-blocking in the Reviewer Assessment.
+- [TEST] reviewer-test-analyzer — 11 findings on test quality. 3 HIGH: zero-assertion `test_tick_tropes_accepts_days_advanced_kwarg` (fixed in `ee3161d` — added 3 assertions), pack-skipif on 3 wiring tests in CI (PROCESS — needs `tea_and_murder` checked out in CI; non-blocking), tautological `test_narration_turn_result_carries_days_advanced` (non-blocking, redundant with extraction test). 8 MED: otel_capture fixture leak, missing edge cases (progress=1.0 entry, empty active_tropes, negative days_advanced at engine boundary, sort tie-break by trope_id), source-inspection test substring loose, '14' substring search, tautological assignment-roundtrip test. All MED items logged for future polish stories.
+
+### HIGH findings (fixed)
+
+1. **Empty escalation → spurious implicit resolution** (`trope_time_skip.py:178`). Found by edge-hunter. A trope with `tdef.escalation == []` reaching `progress >= 1.0` would resolve with zero beats fired because `beats_fired >= len([]) == 0` is always True. Fix: added `tdef.escalation` truthiness to the resolution condition.
+2. **Empty `tropeId` → wrong-element badge** (`dashboard.html`, `+Nd` handler). Found by edge-hunter. `CSS.escape("")` returns `""`; `querySelector('[data-trope-id=""]')` matches the first element with an empty attribute. Fix: `if (!tropeId) return;` guard at top of the forEach callback.
+3. **Queue clear ordering vulnerable to register-section failure** (`orchestrator.py:1479`). Found by BOTH edge-hunter and silent-failure-hunter (convergent). If `PromptSection.new(...)` raised, the clear would be skipped and the same TIME-SKIP CONTEXT block would re-deliver next turn. Fix: reordered to clear-then-register so the one-shot lifecycle holds even on the register path's failure.
+4. **Zero-assertion test** (`test_trope_time_skip.py:784` — `test_tick_tropes_accepts_days_advanced_kwarg`). Found by test-analyzer. A regression silently dropping the kwarg would pass. Fix: added `assert snap.days_elapsed == 0`, `pending_time_skip_summary == []`, and `progress == 0.0` after both calls (default + explicit zero).
+5. **`getattr` silent fallback on typed `TurnContext.snapshot`** (`orchestrator.py:1461`). Found by rule-checker and type-design. CLAUDE.md "No Silent Fallbacks" violation: the field is declared `GameSnapshot | None`, default `None` — direct attribute access works and surfaces type errors. Fix: replaced all three `getattr(...)` calls with direct attribute reads.
+
+Fix commit: `ee3161d`. Re-ran full suite: 5213 passed, 1 pre-existing flaky (unchanged), 64 skipped. Ruff clean.
+
+### MEDIUM findings (non-blocking — flagged for future stories)
+
+- **otel_capture fixture leaks `SimpleSpanProcessor`** (test-analyzer). Pre-existing pattern across the test suite; touching it broadly is out of scope. May contribute to the flaky `test_caverns_delver_loadout_wired_into_snapshot`. Worth a future test-isolation refactor story.
+- **Pack-skipped wiring tests in CI** (test-analyzer). `TestBuildNarratorPromptWiring` is `pytest.mark.skipif`-gated on the `tea_and_murder` pack being checked out. Layer 1 (renderer) and Layer 3 (engine boundary) tests cover the helper and the kwarg threading without the pack, so the spec's AC-7 has indirect coverage even when the pack is absent. Document the assumption explicitly in CI setup, or add a pack-free smoke for the orchestrator path.
+- **Stale `beats_fired` lets already-passed thresholds fire as day-1 beats** (edge-hunter, `trope_time_skip.py:154`). A corrupted snapshot with `beats_fired` undershoot would replay beats. Not a real production path (beats_fired is engine-maintained); defensive guard could land later.
+- **`TimeSkipBeatEvent.days_into_skip` lacks `ge=1` constraint** (type-design). Production path enforces it via `max(1, ...)` in the engine, but the type doesn't encode the invariant. Worth a `Field(ge=1)` add in a future polish.
+- **`days_advanced: 1.5` float silent drop to 0** (silent-failure, orchestrator.py:778). Documented "silent-drop pattern as items" — consistent with project convention. Future improvement: log a warning when a non-int is dropped so the GM panel sees it.
+- **Source-inspection test substring loose** (test-analyzer, `test_tick_tropes_call_site_threads_days_advanced`). Could match `days_advanced=` anywhere in the file. The actual call site is the only occurrence today; future polish.
+- **`'14' substring search in TestRenderTimeSkipContext.test_renders_total_days_elapsed_for_narrator_context`** (test-analyzer). Could match incidental digits. Future tightening to a regex.
+- **`test_snapshot_carries_days_elapsed_and_summary` and `test_narration_turn_result_carries_days_advanced` are pydantic-assignment tautologies** (test-analyzer). They verify mutability of declared fields without exercising real flow. Could be removed; redundant with downstream tests but harmless.
+- **Missing edge cases**: progress=1.0 entry, empty active_tropes, negative days_advanced at engine level, sort tie-break by `trope_id` (test-analyzer). All low-risk paths exercised indirectly by adjacent tests; explicit coverage would tighten the suite.
+
+### LOW findings (noted)
+
+NaN rate bypassing zero-rate guard, dashboard span discriminator could false-positive on future spans with `days_applied` field, bare `except Exception` in `_to_json` predates 50-4, star-import re-export of `SPAN_TROPE_TIME_SKIP` matches the established `spans/__init__.py` pattern, `pack: Any` annotation on `tick_tropes` predates 50-4. All consistent with established patterns or low-probability scenarios.
+
+### Architecture concerns
+
+- **`TurnContext.snapshot` field added** is the only API-surface widening in green; threaded only through `_build_turn_context`, defaults to None for legacy callers. Logged in Dev's Design Deviations. Approved as the cleanest accommodation of the prompt-builder access pattern.
+- **DAY_TICK_CAP=14 not pack-configurable**: YAGNI per ADR-018 scope, documented in the constant's comment. Acceptable.
+
+### Decision
+
+**APPROVE** for merge. The fix-back round addressed every HIGH finding; remaining MEDIUM/LOW findings do not block merge and are appropriate for follow-up stories.
+
+## Review Correlation
+
+| # | Source | Finding | Classification | Checklist Check | Action |
+|---|--------|---------|----------------|-----------------|--------|
+| 1 | reviewer-edge-hunter | Empty escalation list → implicit resolution fires with zero beats (`trope_time_skip.py`) | NOT_APPLICABLE | — | Domain-specific algorithm boundary on the trope state machine; not a general Python pattern. Fixed in `ee3161d`. |
+| 2 | reviewer-edge-hunter | Empty `tropeId` → `querySelector('[data-trope-id=""]')` matches wrong element (`dashboard.html`) | NOT_APPLICABLE | — | JavaScript/HTML code path — outside Python lang-review scope. Fixed in `ee3161d`. |
+| 3 | reviewer-edge-hunter + silent-failure-hunter | Queue cleared AFTER fallible `register_section` — `PromptSection.new` failure causes silent re-delivery on next turn (`orchestrator.py`) | NEW_CHECK | #14 [NEW] State cleanup ordering with fallible side effects | Added check #14 to `.pennyfarthing/gates/lang-review/python.md` with provenance `Origin: 50-4 I3`. Fixed in `ee3161d`. |
+| 4 | reviewer-test-analyzer | Zero-assertion test `test_tick_tropes_accepts_days_advanced_kwarg` (`test_trope_time_skip.py`) | EXISTING_CHECK | #6 Test quality ("Tests with no assertions") | Author (TEA) missed an existing checklist entry — wiring smoke shouldn't be assertion-free. Fixed in `ee3161d`. |
+| 5 | reviewer-rule-checker + type-design | `getattr` silent-fallback access on typed `TurnContext.snapshot` / `GameSnapshot.pending_time_skip_summary` (`orchestrator.py`) | EXISTING_CHECK | CLAUDE.md "No Silent Fallbacks" | Maps to the project-wide rule in `sidequest-server/CLAUDE.md`. Dev missed the existing principle; the typed fields are None-safe via direct attribute access. Fixed in `ee3161d`. |
+| 6 | reviewer-type-design | `pack_or_tropes_by_id: dict[str, TropeDefinition] | object` defeats type checking (`trope_time_skip.py`) | EXISTING_CHECK | #3 Type annotation gaps at boundaries | Non-blocking — annotation is comment-justified by the duck-typing docstring. Logged as MEDIUM in Reviewer Assessment. |
+| 7 | reviewer-test-analyzer | `pytestmark_pack` skipif on AC-7 wiring tests in CI (`test_trope_time_skip_e2e.py`) | PROCESS | — | CI environment setup: needs `sidequest-content/genre_packs/tea_and_murder` checked out, or CI should assert pack presence. Logged as MEDIUM. |
+| 8 | reviewer-test-analyzer | `otel_capture` fixture leaks `SimpleSpanProcessor` (`test_trope_time_skip.py`) | TOOLING | — | Pre-existing test-isolation pattern across the suite; suggested future refactor to `trace.set_tracer_provider(fresh)`. Not introduced by 50-4. |
+
+### Signal Summary
+
+- **External findings:** 0 (no PR comments, no AI reviewer feedback, no CI failures — pipeline blind spots clean for this story)
+- **CI findings:** 0
+- **Internal findings:** 8 (6 fixed/applied, 2 flagged non-blocking)
+- **New checks added:** 1 (`#14 State cleanup ordering with fallible side effects` — from internal reviewer, not external)
+- **EXISTING_CHECK misses:** 2 (test-quality #6 missed by TEA; CLAUDE.md "no silent fallbacks" missed by Dev). Watch for repeat misses on these two — promotion to automated gate is on the table at the third occurrence.
+
+**Handoff:** To Scrum Master (The Mad Hatter) for sprint finish — PR open + merge + archive.
