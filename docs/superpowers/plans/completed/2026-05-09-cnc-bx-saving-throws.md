@@ -1,5 +1,7 @@
 # C&C B/X Saving Throws — Implementation Plan
 
+> **COMPLETED via sprint stories — checkbox state never updated.** Resolver lives at `sidequest-server/sidequest/game/saves.py` and implements the spec at `docs/superpowers/specs/2026-05-09-cnc-bx-saving-throws-design.md`: `resolve_save`, `apply_spell_effect`, `SaveResult`, `SpellEffectOutcome`, hard-fail-loud on missing class or save table. Schema (`SaveCategory`, `SavingThrowsTable`) lives in `sidequest-server/sidequest/genre/models/rules.py` and `character.py`. All four C&C classes carry per-class `saving_throws` tables in `classes.yaml`. Plan body left intact as historical reference.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Wire B/X saving throws into Caverns & Claudes — schema (`SaveCategory`, `SavingThrowsTable`, per-class table on `ClassDef`), thin resolver that rides existing `resolve_opposed_check` with a synthetic threat-as-opponent (the "circle says POISON" model), pack-load validation, OTEL span, narration_apply integration for `learned_v1` spells, content authoring, and tests.

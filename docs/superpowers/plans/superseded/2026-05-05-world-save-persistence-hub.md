@@ -1,5 +1,7 @@
 # World Save Persistence — Sünden Hub Item 2
 
+> **SUPERSEDED 2026-05-06 — DO NOT IMPLEMENT.** This plan added a `world_save` storage layer for hub-world cross-delve persistence (hireling roster, currency, Wall ledger, per-dungeon wound flags, drift flag). The 2026-05-06 pivot dropped the hub-and-dungeons world shape; Sünden ships as a flat cartography world saved through the standard per-slot save path. No cross-delve persistence layer is needed. If a future world legitimately requires shared state across multiple campaign sessions, design from scratch — do not revive this. See `sidequest-content/genre_packs/caverns_and_claudes/worlds/caverns_sunden/world.yaml` lines 11-15.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a `world_save` storage layer that persists hub-world state (hireling roster, currency, Wall ledger, per-dungeon wound flags, latest-delve drift flag) across delves into different dungeons within the same campaign — surviving the per-slot reinit that clears the per-delve game state today.

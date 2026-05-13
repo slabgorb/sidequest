@@ -1,5 +1,7 @@
 # Local Qwen as Code Editor (MVP) Implementation Plan
 
+> **COMPLETED via Epic 48 — checkbox state never updated.** Sprint story "Local Qwen as code editor MVP — Ollama + qwen-code wired on M3 Ultra" landed in epic-48 with status `done`. Ollama + Qwen3-Coder are running on the Mac Studio; `qwen-code` CLI uses the local endpoint. Follow-on story 48-2 validated the broader `SIDEQUEST_LLM_BACKEND=ollama` path end-to-end and audited `OllamaClient.num_ctx`. Plan body left intact as historical reference.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Stand up Ollama + Qwen3-Coder on the Mac Studio (M3 Ultra, 96GB) and configure `qwen-code` CLI to use it as a daily local code editor.

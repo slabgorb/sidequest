@@ -1,5 +1,7 @@
 # Delve Lifecycle Engine — Sünden Hub Item 4a (Server-Side)
 
+> **SUPERSEDED 2026-05-06 — DO NOT IMPLEMENT.** This plan defined the server-side delve lifecycle that made hub worlds playable (hub-mode connect, recruit/dismiss, party-pick, descend, return, wound persistence). The 2026-05-06 pivot abandoned the hub-engine design. Sünden world.yaml lines 11-15 are explicit: "the engine plumbing for it has been discarded." Sünden ships as a flat cartography world; nothing in this plan should be revived. The wound mechanic that did land applies per-character via existing combat/projection paths, not via this lifecycle.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add the server-side delve lifecycle that makes hub worlds playable: hub-mode connect (no immediate rejection), recruit/dismiss REST, `DUNGEON_SELECT` WS to start a delve from a chosen roster, materialize hirelings into `GameSnapshot.characters`, `RETREAT_TO_HAMLET` WS (and `player_dead` auto-trigger) to end a delve and commit stress + status back to the roster, append the Wall ledger, set the drift / wound flags, and `init_session()` the delve state for the next descent.

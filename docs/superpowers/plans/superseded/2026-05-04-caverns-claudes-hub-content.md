@@ -1,5 +1,7 @@
 # Caverns & Claudes — Hamlet of Sünden Content Plan
 
+> **SUPERSEDED 2026-05-06 — DO NOT IMPLEMENT.** This plan proposed restructuring four C&C worlds into one Darkest-Dungeon-shaped world (`caverns_three_sins`) with hub/delve separation, hireling-patron progression, and Wall-of-names persistence. The 2026-05-06 pivot abandoned the hub-engine design entirely: Sünden ships as a single normal cartography world with three dungeon mouths (Grimvault/Horden/Mawdeep), and the sins content is delivered through narrator-zone fodder rather than engine plumbing. See `sidequest-content/genre_packs/caverns_and_claudes/worlds/caverns_sunden/world.yaml` lines 11-15 for the canonical pivot note. The Wall, drift profile, factions, and other sin-content elements that did land live in that world directory, not in this plan.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Restructure four `caverns_and_claudes` worlds into one Darkest-Dungeon-shaped world (`caverns_three_sins`) with a single Hamlet (Sünden) and three sub-dungeons (Grimvault/Horden/Mawdeep reframed as Pride/Greed/Gluttony). Drop `dungeon_survivor` and `primetime` entirely.

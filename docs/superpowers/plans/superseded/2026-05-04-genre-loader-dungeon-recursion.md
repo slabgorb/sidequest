@@ -1,7 +1,9 @@
 # Genre Loader — Dungeon Recursion (hub-and-dungeons world shape)
 
+> **SUPERSEDED 2026-05-06 — DO NOT IMPLEMENT.** This was item 1 of the Sünden hub stack (recursive genre loader for the dungeon-as-world shape). The 2026-05-06 pivot dropped the hub-and-dungeons world shape entirely — Sünden is a single normal cartography world with three dungeon mouths, no recursive loading needed. See `sidequest-content/genre_packs/caverns_and_claudes/worlds/caverns_sunden/world.yaml` lines 11-15 for the canonical pivot note. Plan body left in place as a design artifact; do not act on it.
+
 **Date:** 2026-05-04
-**Status:** Draft
+**Status:** SUPERSEDED 2026-05-06
 **Repo:** sidequest-server (loader); sidequest-content already on disk
 **Spec parent:** `docs/superpowers/specs/2026-05-04-caverns-claudes-hub-design.md`
 **Related plan:** `docs/superpowers/plans/2026-05-04-caverns-claudes-hub-content.md` (content done; PR #181 draft)

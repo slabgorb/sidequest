@@ -1,5 +1,7 @@
 # Sünden Hub UI — Item 4b (Client-Side)
 
+> **SUPERSEDED 2026-05-06 — DO NOT IMPLEMENT.** This plan defined the React/TypeScript hub UI (HubScreen, Wall ledger, recruitable roster, three-sin dungeon picker, retreat affordance). It consumed the WS/REST surfaces from the now-superseded delve-lifecycle plan (item 4a). The 2026-05-06 pivot abandoned the hub-engine design; Sünden ships as a flat cartography world reached through the standard GameBoard. Do not build a HubScreen. See `sidequest-content/genre_packs/caverns_and_claudes/worlds/caverns_sunden/world.yaml` lines 11-15.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add the React/TypeScript hub UI that consumes item 4a's protocol surfaces. A new `hub` session phase routes hub-world connects to a `HubScreen` showing the Wall ledger, the recruitable roster, and a three-sin dungeon picker with party selection. Buttons fire `POST /api/games/{slug}/hub/recruit`, `DELETE /api/games/{slug}/hub/roster/{id}`, and the `DUNGEON_SELECT` WS frame; the existing GameBoard gains an in-delve "Retreat" affordance that sends `RETREAT_TO_HAMLET` and routes the user back to the hub on the resulting `HUB_VIEW`.

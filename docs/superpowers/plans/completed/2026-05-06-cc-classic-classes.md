@@ -1,5 +1,7 @@
 # C&C Classic Classes — Implementation Plan
 
+> **COMPLETED via sprint stories — checkbox state never updated.** All four classes (Fighter / Mage / Cleric / Thief) ship in `sidequest-content/genre_packs/caverns_and_claudes/classes.yaml` with full B/X structure: `prime_requisite`, `minimum_score`, `kit_table`, `encounter_beat_choices`, `saving_throws`, `magic_access`, and Lv1 `abilities`. Work landed across PR #201 (Class Mechanical Surface — Lv1 abilities tab + Fighter Taunt) and stories 47-7, 47-9, 47-10 (magic wiring that also exercised class slots). Chargen flow consuming these classes ships in `char_creation.yaml`. Plan body left intact as historical reference.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add Fighter / Mage / Cleric / Thief class choice to caverns_and_claudes chargen with B/X-style prime-requisite gating, class-themed kits, and per-class starting Edge.
