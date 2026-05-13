@@ -2,7 +2,7 @@
 
 **Status:** Draft, 2026-04-28
 **Source:** `item_based` (napkin)
-**Genres using:** spaghetti_western, road_warrior, caverns_and_claudes, heavy_metal, victoria-high-gothic, low_fantasy, pulp_noir
+**Genres using:** spaghetti_western, road_warrior, caverns_and_claudes, heavy_metal, tea_and_murder-high-gothic, low_fantasy, pulp_noir
 **Companion docs:** `../magic-taxonomy.md`, `../visible-ledger-and-otel.md`, `../confrontation-advancement.md`, `bargained_for_v1.md` (companion plugin), `README.md` (this dir)
 
 ## Identity
@@ -25,7 +25,7 @@ genres_using:
   - road_warrior           # named vehicles — signature
   - caverns_and_claudes    # cursed/relic items — signature
   - heavy_metal            # bargained-blades, stratigraphic artifacts
-  - victoria               # cursed letters, locked-room keys, portraits
+  - tea_and_murder               # cursed letters, locked-room keys, portraits
   - low_fantasy            # relics, surviving wizard's-tower items
   - pulp_noir              # artifacts, dead-language texts
 
@@ -169,7 +169,7 @@ classes:
     typical_mechanisms: [relational, condition]
     narrator_note: |
       Received the item via lineage, gift, or bequest. The giver's
-      history travels with the item. Often used in victoria
+      history travels with the item. Often used in tea_and_murder
       (the family locket, the inherited library) and low_fantasy
       (the heirloom blade, the family's long-kept relic).
 
@@ -900,7 +900,7 @@ world_layer_required:
   - Item subtypes the world admits
     description: |
       Some worlds admit only weapons (spaghetti_western), some
-      vessels (road_warrior), some letters/tomes (victoria,
+      vessels (road_warrior), some letters/tomes (tea_and_murder,
       pulp_noir). The world declares which subtypes are
       narratively coherent.
   - Sentience policy

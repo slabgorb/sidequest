@@ -815,7 +815,7 @@ flowchart TD
 
 **Lazy binding (ADR-004):** Server starts genre-agnostic; genre bound at runtime on player connect.
 
-**Production vs workshop:** `SIDEQUEST_GENRE_PACKS` always points at `sidequest-content/genre_packs/`. Five packs are functionally loadable (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `victoria`); two production directories (`heavy_metal`, `spaghetti_western`) are empty shells with their content still in `sidequest-content/genre_workshopping/`. Four other packs (`low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`) are workshop-only. See `docs/genre-pack-status.md`.
+**Production vs workshop:** `SIDEQUEST_GENRE_PACKS` always points at `sidequest-content/genre_packs/`. Five packs are functionally loadable (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `tea_and_murder`); two production directories (`heavy_metal`, `spaghetti_western`) are empty shells with their content still in `sidequest-content/genre_workshopping/`. Four other packs (`low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`) are workshop-only. See `docs/genre-pack-status.md`.
 
 ---
 

@@ -217,7 +217,7 @@ Each ability is `name + genre_description + mechanical_effect + involuntary=fals
 - ~3-4 sentences for `genre_description`. No more.
 - `mechanical_effect` is engine-facing — write as a clause the encounter engine can route on, not a paragraph.
 - `involuntary: false` — these are all player-chosen.
-- Match C&C voice (wry, B/X-flavored, illuminated-manuscript register). Not Heavy Metal voice; not Victoria voice.
+- Match C&C voice (wry, B/X-flavored, illuminated-manuscript register). Not Heavy Metal voice; not Tea & Murder voice.
 
 ### 9.2 What the writer agent does NOT touch
 

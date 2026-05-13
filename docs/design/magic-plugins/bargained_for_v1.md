@@ -2,7 +2,7 @@
 
 **Status:** Draft, 2026-04-28
 **Source:** `bargained_for` (napkin)
-**Genres using:** heavy_metal, victoria-high-gothic, low_fantasy-with-pacts
+**Genres using:** heavy_metal, tea_and_murder-high-gothic, low_fantasy-with-pacts
 **Companion docs:** `../magic-taxonomy.md`, `../visible-ledger-and-otel.md`, `../confrontation-advancement.md`, `README.md` (this dir)
 
 ## Identity
@@ -22,7 +22,7 @@ plugin: bargained_for_v1
 status: draft
 genres_using:
   - heavy_metal           # signature plugin; default for any caster build
-  - victoria              # only at gothic ≥ 0.6 (high gothic worlds)
+  - tea_and_murder              # only at gothic ≥ 0.6 (high gothic worlds)
   - low_fantasy           # for the standing-stones / nameless-spirits register
 
 source: bargained_for     # napkin Source
@@ -54,7 +54,7 @@ delivery_mechanisms:
     canonical_examples:
       - "The crossroads at midnight (folk Faustian)"
       - "The Old Altar in the burned wood (heavy_metal frontier)"
-      - "The cliff above the locked house (victoria gothic)"
+      - "The cliff above the locked house (tea_and_murder gothic)"
 
   - id: relational
     description: |
@@ -66,7 +66,7 @@ delivery_mechanisms:
     canonical_examples:
       - "A character's compact with the spirit of a place"
       - "An inherited fae bond from a grandmother"
-      - "The unnamed thing in the manor's east wing (victoria)"
+      - "The unnamed thing in the manor's east wing (tea_and_murder)"
 
   - id: condition
     description: |

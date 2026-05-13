@@ -105,7 +105,7 @@ Collapses two abstractions ("encounter beats" + "class abilities") into one. Cle
 
 Add the percentage-skill table (Pick Locks 15%, etc.) to Thief data. Add the Turn Undead matrix to Cleric data. Surface saves. Walk all four classes through canonical B/X feature parity. Then propagate the pattern to every other genre pack's class definitions (Heavy Metal, Mutant Wasteland, etc.) since uniformity matters.
 
-Highest fidelity for the veteran ear. Biggest content lift. Forces a decision on whether non-B/X genre packs (Mutant, Coyote Star, Victoria) should ALSO carry rich per-class mechanical tables, or whether they remain encounter-beat-only.
+Highest fidelity for the veteran ear. Biggest content lift. Forces a decision on whether non-B/X genre packs (Mutant, Coyote Star, Tea & Murder) should ALSO carry rich per-class mechanical tables, or whether they remain encounter-beat-only.
 
 ## The Deeper Question
 

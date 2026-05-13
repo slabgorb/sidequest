@@ -13,7 +13,7 @@ This is the non-magic equivalent of spell slots for genres without magic systems
 | spaghetti_western | Marked Deck | Unlocks `cheat` beat without Card Shark class, or gives +2 metric_delta on cheat |
 | pulp_noir | Forged Documents | Satisfies `requires` on `evidence` beat in interrogation without a real clue |
 | pulp_noir | Loaded Dice | +1 metric_delta on craps beats |
-| victoria | Damning Letter | Satisfies `requires` on `cross_examine` in trial, +2 conviction |
+| tea_and_murder | Damning Letter | Satisfies `requires` on `cross_examine` in trial, +2 conviction |
 | neon_dystopia | Blackmail File | Unlocks a hidden `leverage` beat in negotiation with +4 delta |
 | road_warrior | Nitro Canister | Not social — but same pattern for chase confrontations (boost a beat) |
 | space_opera | Diplomatic Credentials | +1 metric_delta on `persuade`, removes risk on `threaten` |

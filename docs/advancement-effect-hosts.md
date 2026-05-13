@@ -46,7 +46,7 @@ stories.
 | road_warrior          | advancements.yaml   | empty (declared)    | Vehicle modifications are first-class content — a sidecar lets mod-grant tiers reference `vehicle_class` gates and beat ids from the dogfight subsystem (ADR-077) without cluttering driver progression. |
 | space_opera           | progression.yaml    | empty (declared)    | Ship officer archetypes use affinity tiers (Command / Science / Operations / Security) — mechanical effects host there. |
 | spaghetti_western     | progression.yaml    | empty (declared)    | Draw / Grit / Survival / Reputation affinities host mechanical effects on tiers, matching low_fantasy / pulp_noir. |
-| victoria              | progression.yaml    | empty (declared)    | Propriety / Reason / Sentiment / Constitution affinities — same host pattern as pulp_noir. |
+| tea_and_murder              | progression.yaml    | empty (declared)    | Propriety / Reason / Sentiment / Constitution affinities — same host pattern as pulp_noir. |
 
 **Summary:** 7 progression-hosted, 3 sidecar-hosted. The sidecar choice is
 reserved for genres where the mechanical content is either modular

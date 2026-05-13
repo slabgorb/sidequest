@@ -357,7 +357,7 @@ A baseline smoke pass is:
 | Image bus | `providers/ImageBusProvider` | *Engineering* — image pub/sub for widgets |
 | Game state provider | `providers/GameStateProvider` | *Engineering* — shared state mirror context |
 | Local prefs | `useLocalPrefs` | Per-player persisted settings |
-| Display name resolver | `useDisplayName` | Genre-aware formatting (e.g. "Sir/Dame" prefix in `victoria`) |
+| Display name resolver | `useDisplayName` | Genre-aware formatting (e.g. "Sir/Dame" prefix in `tea_and_murder`) |
 | Running header | `useRunningHeader` | Header reacts to state mirror |
 | Error boundary | `ErrorBoundary` | UI errors caught at the boundary, not white-screen |
 | Genre theming | `ThemeProvider` + `useGenreTheme` | CSS vars from pack config (ADR-079); per-pack `client_theme.css` honored |
@@ -521,7 +521,7 @@ Speculative prerendering (ADR-044 historical 2026-05-02 — TTS-deprecated premi
 
 ## Genre Pack Status (Pointer)
 
-7 pack directories under `sidequest-content/genre_packs/`. Five packs (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `victoria`) have full pack-level runtime; the lobby world picker currently shows **3 worlds** (caverns_sunden, flickering_reach, coyote_star) after the 2026-05 M2 reshuffle parked `aureate_span`, `burning_peace`, `shattered_accord`, and `blackthorn_moor` into workshopping. The `heavy_metal` and `spaghetti_western` production directories are empty shells; their YAMLs live in `genre_workshopping/`. Four other packs (`low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`) are workshop-only.
+7 pack directories under `sidequest-content/genre_packs/`. Five packs (`caverns_and_claudes`, `elemental_harmony`, `mutant_wasteland`, `space_opera`, `tea_and_murder`) have full pack-level runtime; the lobby world picker currently shows **3 worlds** (caverns_sunden, flickering_reach, coyote_star) after the 2026-05 M2 reshuffle parked `aureate_span`, `burning_peace`, `shattered_accord`, and `blackthorn_moor` into workshopping. The `heavy_metal` and `spaghetti_western` production directories are empty shells; their YAMLs live in `genre_workshopping/`. Four other packs (`low_fantasy`, `neon_dystopia`, `pulp_noir`, `road_warrior`) are workshop-only.
 
 **Highlights since the 2026-04-30 pack-status snapshot:**
 - **caverns_and_claudes** — added Sünden hamlet world (`caverns_sunden`, formerly `caverns_three_sins`), authored Brecca + hamlet faction/lore/portraits, 6 hamlet music tracks (ACE-Step), Sünden-faith expansion, world-level visual_style; four classic B/X classes (fighter/mage/cleric/thief) + B/X B26 saving throws + memorization + morale; signature abilities (Taunt/Turn Undead/Backstab); silver currency
@@ -583,4 +583,4 @@ OTEL coverage is the strongest it has ever been. The biggest known gaps for Keit
 - `mutant_wasteland/flickering_reach` (the only fully spoilable world)
 - `space_opera/coyote_star` (orbital chart + magic + rig MVP — flagship for Epic 47 work)
 
-`elemental_harmony` and `victoria` retain their pack-level runtime but their worlds (`burning_peace`/`shattered_accord` and `blackthorn_moor`) are parked in workshopping pending the M2 completeness review — neither pack currently has a lobby-selectable world. The full media pipeline, faction-driven world, OCEAN-flavored NPCs, footnoted narration with journal, confrontation engine with genre-typed resource pools where wired, Edge/Composure replacing HP, magic ledger bars and five wired confrontations, live teammate typing, and streaming narration are all live across the three production worlds.
+`elemental_harmony` and `tea_and_murder` retain their pack-level runtime but their worlds (`burning_peace`/`shattered_accord` and `blackthorn_moor`) are parked in workshopping pending the M2 completeness review — neither pack currently has a lobby-selectable world. The full media pipeline, faction-driven world, OCEAN-flavored NPCs, footnoted narration with journal, confrontation engine with genre-typed resource pools where wired, Edge/Composure replacing HP, magic ledger bars and five wired confrontations, live teammate typing, and streaming narration are all live across the three production worlds.

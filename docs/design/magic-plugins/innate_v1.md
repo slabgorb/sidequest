@@ -2,7 +2,7 @@
 
 **Status:** Draft, 2026-04-28
 **Source:** `innate` (napkin)
-**Genres using:** mutant_wasteland (signature), space_opera-Firefly-River, victoria-touched, low_fantasy-bloodline, untrained Force-sensitive register across any space_opera world, the pre-training register of any elemental_harmony bloodline
+**Genres using:** mutant_wasteland (signature), space_opera-Firefly-River, tea_and_murder-touched, low_fantasy-bloodline, untrained Force-sensitive register across any space_opera world, the pre-training register of any elemental_harmony bloodline
 **Companion docs:** `../magic-taxonomy.md`, `../visible-ledger-and-otel.md`, `../confrontation-advancement.md`, `README.md` (this dir)
 
 ## Identity
@@ -27,7 +27,7 @@ genres_using:
                          # combat action is the canonical reference invocation
   - space_opera          # Firefly-River world (acquired-via-experimentation flavor),
                          # untrained-Force-sensitive register across any world
-  - victoria             # only at gothic ≥ 0.4 (the "touched" register —
+  - tea_and_murder             # only at gothic ≥ 0.4 (the "touched" register —
                          # mesmerists, hereditary seers)
   - low_fantasy          # bloodline-awakening for noble lines that didn't
                          # know what they were
@@ -138,7 +138,7 @@ delivery_mechanisms:
       Ambient-distributed Innate. Everyone has a touch; some have
       more. Allomancy commoners (faint Snapping potential), mid-Chrome
       neon_dystopia Netrunners (everyone's a little wired), low-gothic
-      victoria mesmerism background-radiation. The world's baseline
+      tea_and_murder mesmerism background-radiation. The world's baseline
       is non-zero; the player character is a high read on a continuum,
       not a binary haver.
     plot_engine: low friction at delivery (the resource is just there);
@@ -220,7 +220,7 @@ classes:
       can hold a gaze. The seer with reliable but oblique visions.
       Costs are subtler than The Surger — vitality drips rather than
       hemorrhages — but identity-drift is faster. The body holds; the
-      self frays. Victoria-touched register. Quiet horror.
+      self frays. Tea & Murder-touched register. Quiet horror.
 
   - id: the_reckoner
     label: "The Reckoner"
@@ -1550,7 +1550,7 @@ world_layer_required:
       spatial, temporal, necromantic, illusory, divinatory,
       transmutative, alchemical. mutant_wasteland-default: physical
       + occasional psychic. space_opera-Firefly-River: psychic +
-      divinatory. victoria-touched: psychic + divinatory + occasional
+      divinatory. tea_and_murder-touched: psychic + divinatory + occasional
       illusory. low_fantasy-bloodline: variable per bloodline.
 ```
 

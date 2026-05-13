@@ -34,7 +34,7 @@ This is a **wiring + content** story, not a build story.
 | `equipment_generation: random_table` | yes (`equipment_tables.yaml`) | adds 4 class-themed tables |
 | Edge resource (`max_edge`) | yes | new `set_starting_max_edge` mechanical effect |
 
-Other packs (`space_opera`, `elemental_harmony`, `mutant_wasteland`, `victoria`) already use `class_hint` in their `char_creation.yaml`. C&C is the outlier.
+Other packs (`space_opera`, `elemental_harmony`, `mutant_wasteland`, `tea_and_murder`) already use `class_hint` in their `char_creation.yaml`. C&C is the outlier.
 
 ## Design
 

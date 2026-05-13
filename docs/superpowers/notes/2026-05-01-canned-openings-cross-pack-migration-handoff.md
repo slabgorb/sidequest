@@ -85,7 +85,7 @@ This is Validator 7 firing during pack load. Because nearly every server test lo
 | elemental_harmony | burning_peace | no `openings.yaml` | M2 skeleton author |
 | elemental_harmony | shattered_accord | no `openings.yaml` | M2 skeleton author |
 | mutant_wasteland | flickering_reach | no `openings.yaml` | M2 skeleton author |
-| victoria | blackthorn_moor | no `openings.yaml` | M2 skeleton author |
+| tea_and_murder | blackthorn_moor | no `openings.yaml` | M2 skeleton author |
 
 Note: the user's original brief mentioned "burning_peace, flickering_reach, dust_and_lead." `dust_and_lead` does not exist anywhere in `genre_packs/`; `shattered_accord` and `blackthorn_moor` are present but were not on that list. Reconcile against current state, not the brief.
 
@@ -189,7 +189,7 @@ These worlds have substantive other content (lore, cartography, cultures) but no
 genre_packs/elemental_harmony/worlds/burning_peace/openings.yaml
 genre_packs/elemental_harmony/worlds/shattered_accord/openings.yaml
 genre_packs/mutant_wasteland/worlds/flickering_reach/openings.yaml
-genre_packs/victoria/worlds/blackthorn_moor/openings.yaml
+genre_packs/tea_and_murder/worlds/blackthorn_moor/openings.yaml
 ```
 
 ### Skeleton template (location-anchored, 2 entries)
@@ -260,7 +260,7 @@ openings:
 
 - **elemental_harmony** — martial-arts / elemental magic; the world should have a temple/dojo/sanctum starting region. Tone register usually "centered, deliberate, breath-paced." `already_a_crew` likely true (school-mates).
 - **mutant_wasteland** — post-apocalyptic; world should have a settlement/camp/ruin starting region. Tone "weathered, dust-coated, careful." `already_a_crew` true if the world's `char_creation.yaml` implies a vault-mate / scrap-crew framing, false if not.
-- **victoria** — Brontë gothic / drawing-room; world should have a parlor/garden/library starting region. Tone "measured, gas-lit, restrained." `already_a_crew` usually false — Victoria is solo-first per genre register.
+- **tea_and_murder** — cosy Edwardian village mystery; world should have a parlour/inn/manse starting region. Tone "measured, restrained, kettle-paced." `already_a_crew` usually false — Tea & Murder is solo-first per genre register.
 
 ### Cliche-judge gate
 
@@ -356,7 +356,7 @@ The Pennyfarthing task tracker has these pending:
 - `#126` — Migration M2: skeleton openings for the 4 lone-fail worlds (note: worlds list in the tracker description differs from current state; reconcile against `find genre_packs/*/worlds -mindepth 1 -maxdepth 1 -type d \! -path '*/aureate_span'`)
 - `#136` — Phase 7 deferred: aureate_span rewrite from workshop
 
-`#127` (Migration M3 — genre-tier old-shape file deletes for victoria/elemental_harmony/mutant_wasteland) is most likely a no-op now, since `space_opera/openings.yaml` was the only genre-tier old-shape file that existed and Task 26 already deleted it. Verify: `find genre_packs -maxdepth 2 -name openings.yaml`. If any genre-tier `openings.yaml` files surface, delete them as part of M3.
+`#127` (Migration M3 — genre-tier old-shape file deletes for tea_and_murder/elemental_harmony/mutant_wasteland) is most likely a no-op now, since `space_opera/openings.yaml` was the only genre-tier old-shape file that existed and Task 26 already deleted it. Verify: `find genre_packs -maxdepth 2 -name openings.yaml`. If any genre-tier `openings.yaml` files surface, delete them as part of M3.
 
 ## Hard rules (learned the hard way during this work)
 

@@ -240,7 +240,7 @@ These are the confrontation catalogs to populate. Each row needs a `confrontatio
 | **heavy_metal** | The Working, The Bargain, The Trial, The Duel, The Severance | The Severance is the ledger_lock-resolution confrontation |
 | **caverns_and_claudes** | Combat, Trap, Negotiation, The Identification | The Identification is the unique "is this scroll/potion safe?" confrontation |
 | **spaghetti_western** | The Quickdraw, The Standoff, The Chase, The Negotiation, The Reckoning | The Reckoning is the campaign-scale "everyone you've wronged shows up" |
-| **victoria** | The Conversation, The Investigation, The Séance, The Confrontation, The Revelation | The Revelation is the "the secret is out" social earthquake |
+| **tea_and_murder** | The Conversation, The Investigation, The Séance, The Confrontation, The Revelation | The Revelation is the "the secret is out" social earthquake |
 | **mutant_wasteland** | Combat, The Surge, Scavenge, Negotiation, The Settlement | The Surge is the mutation-out-of-control confrontation |
 | **space_opera** | The Dogfight, The Negotiation, The Heist, The Crew Crisis, The Stand | |
 | **road_warrior** | The Chase, The Raid, The Wrench-Job, The Showdown, The Gas Run | The Gas Run is fuel-as-time-bomb confrontation |
@@ -283,7 +283,7 @@ A reminder of what Decision #4 actually delivers:
 - Mandatory: `mechanism_revoked` (the divine apparatus has cast you out), `scar` (psychic), `identity_shift` (something in you has cooled)
 - Optional: `counter_dispatched` (an inquisitor is now hunting you)
 
-**victoria — The Conversation, branch: clear_loss**
+**tea_and_murder — The Conversation, branch: clear_loss**
 - Mandatory: `secret_known` (something has been admitted that cannot be unsaid), `bond` (cracked or strengthened depending on what was said), `reputation_tier` (the social position is altered)
 - Optional: `enemy_made` (the listener is now your antagonist)
 

@@ -44,10 +44,10 @@ All six plugins drafted. Combined ~7400 lines of plugin content.
 
 | Plugin | Source | Lines | Status | Genres using |
 |---|---|---|---|---|
-| `bargained_for_v1.md` | bargained_for | 815 | ✅ | heavy_metal, victoria-high-gothic, low_fantasy-with-pacts |
-| `item_legacy_v1.md` | item_based | 971 | ✅ | spaghetti_western, road_warrior, c&c, heavy_metal, victoria, low_fantasy, pulp_noir |
-| `divine_v1.md` | divine | 984 | ✅ | heavy_metal, victoria-Catholic, low_fantasy, elemental_harmony, space_opera-religious |
-| `innate_v1.md` | innate | 1631 | ✅ | mutant_wasteland (signature), space_opera-Firefly-River, victoria-touched, low_fantasy-bloodline, untrained Force/bender |
+| `bargained_for_v1.md` | bargained_for | 815 | ✅ | heavy_metal, tea_and_murder-high-gothic, low_fantasy-with-pacts |
+| `item_legacy_v1.md` | item_based | 971 | ✅ | spaghetti_western, road_warrior, c&c, heavy_metal, tea_and_murder, low_fantasy, pulp_noir |
+| `divine_v1.md` | divine | 984 | ✅ | heavy_metal, tea_and_murder-Catholic, low_fantasy, elemental_harmony, space_opera-religious |
+| `innate_v1.md` | innate | 1631 | ✅ | mutant_wasteland (signature), space_opera-Firefly-River, tea_and_murder-touched, low_fantasy-bloodline, untrained Force/bender |
 | `learned_v1.md` | learned | 1821 | ✅ | elemental_harmony (signature), space_opera-Jedi-trained, low_fantasy-wizards, witcher-signs, Bene Gesserit, heavy_metal-rite-priest, pulp_noir-Hermetic, spaghetti_western-gunsmith |
 | `obligation_scales_v1.md` | (cross-cutting tracker; no Source) | 1191 | ✅ | heavy_metal — tracks five obligation scales across all monitored Source plugins |
 
@@ -60,7 +60,7 @@ All six plugins drafted. Combined ~7400 lines of plugin content.
 | caverns_and_claudes | `genre_packs/caverns_and_claudes/magic.yaml` | ✅ napkin-shape draft |
 | mutant_wasteland | `genre_packs/mutant_wasteland/magic.yaml` | ✅ napkin-shape draft |
 | spaghetti_western | `genre_packs/spaghetti_western/magic.yaml` | ✅ napkin-shape draft |
-| victoria | `genre_packs/victoria/magic.yaml` | ✅ napkin-shape draft |
+| tea_and_murder | `genre_packs/tea_and_murder/magic.yaml` | ✅ napkin-shape draft |
 | road_warrior | `genre_workshopping/road_warrior/magic.yaml` | ✅ napkin-shape draft |
 | heavy_metal | `genre_packs/heavy_metal/_drafts/magic.yaml` | ✅ schema-validation draft |
 | elemental_harmony | (no magic.yaml yet) | ⏳ TODO |
@@ -151,7 +151,7 @@ The design-doc handoff has been calling the heavy_metal signature world "The Lon
 
 12. **Cross-genre item passport.** Item Legacy makes it technically possible for the Lassiter from Firefly to travel into a Star Wars session retaining OCEAN/disposition/history. Wild-card; deferred.
 13. **Player-facing bars on by default?** Or player-configurable hide-until-fire? Confrontation outcome callouts are always-shown (Decision #9), but the per-bar real-time animations might be configurable.
-14. **Animation language per-genre.** UX work pending — Buttercup said "rising bars," but heavy_metal-mood would call for ember-flicker, victoria for ink-bleeding, neon_dystopia for glitching.
+14. **Animation language per-genre.** UX work pending — Buttercup said "rising bars," but heavy_metal-mood would call for ember-flicker, tea_and_murder for ink-bleeding, neon_dystopia for glitching.
 15. **Multi-plugin overlap resolution.** If a working could be claimed by two plugins (cleric using a relic — Divine or Item-Legacy?), who claims it? Current answer: narrator declares; GM may override. Worth formalizing.
 16. **Confrontation chains.** If The Bargain ends `pyrrhic_win` with a counter dispatched, is the next session's encounter with that counter a *new* confrontation or a continuation? OTEL span chain links them; current model "new confrontation, linked."
 17. **Multi-character confrontations in multiplayer.** Default proposed: each character gets ≥1 mandatory output keyed to their participation. Not formalized.
@@ -173,8 +173,8 @@ Ranked roughly by value-per-effort:
 6. **Opportunistic world-layer instantiations.** flickering_reach + long_foundry already exercise every plugin and every plugin combination. Further world-layer authoring is content-authoring, not framework-validation. Candidates:
    - **Firefly-world (space_opera)** — innate_v1 in `classified` world_knowledge with River Tam as named seed; differs structurally from the Reach's `acknowledged + feared` configuration.
    - **Iron Hills Bender Academy (elemental_harmony)** — learned_v1 prerequisite-gate against a `celebrated` visibility (rather than long_foundry's `regulated`); also unwritten genre magic.yaml.
-   - **Low-gothic Brontë victoria** — dialed-supernatural at low intensity, the "is anything happening?" register no other instantiation has.
-   - **A pulp_noir world** — the Victoria-shape pattern in 1930s register, validates the schema's reuse claim.
+   - **Low-gothic Brontë tea_and_murder** — dialed-supernatural at low intensity, the "is anything happening?" register no other instantiation has.
+   - **A pulp_noir world** — the tea_and_murder-shape pattern in 1930s register, validates the schema's reuse claim.
 7. **Per-genre `confrontations.yaml` authoring.** From `confrontation-advancement.md`: each of the 11 genres needs 8-12 confrontation entries with full four-branch trees. Substantial content authoring. Best done after architect review confirms the schema is final.
 
 ## Key Insights to Preserve

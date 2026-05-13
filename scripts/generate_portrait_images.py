@@ -3,7 +3,7 @@
 
 Usage:
     python3 scripts/generate_portrait_images.py                      # all genres
-    python3 scripts/generate_portrait_images.py --genre victoria
+    python3 scripts/generate_portrait_images.py --genre tea_and_murder
     python3 scripts/generate_portrait_images.py --dry-run
     python3 scripts/generate_portrait_images.py --force              # regenerate existing
 """

@@ -506,7 +506,7 @@ python scripts/generate_music.py --genre caverns_and_claudes
 python scripts/generate_music.py --genre elemental_harmony
 python scripts/generate_music.py --genre mutant_wasteland
 python scripts/generate_music.py --genre space_opera
-python scripts/generate_music.py --genre victoria
+python scripts/generate_music.py --genre tea_and_murder
 ```
 
 regenerates every track that previously lived in LFS, lands them in R2, restores audio playback. **No content authoring needed** — the existing JSONs do the job.

@@ -76,7 +76,7 @@ stories:
   - id: 50-3
     title: PartyPanel renders recruited companions section — server roster correct, UI was silent
     description: |-
-      Found 2026-05-07 in archive `sq-playtest-pingpong.archive-20260507-085200.md`, repeated in `sq-playtest-pingpong.archive-20260508-pre472.md`. The recruitment subsystem maintains a server-side roster of companion NPCs; the UI `PartyPanel` component has no element to render them. The bug was marked `fixed` on the server-side at the time but never reached `verified` because the UI half wasn't wired. Playtests moved to Victoria solo immediately afterwards, leaving the UI gap silently broken for ~6 days.
+      Found 2026-05-07 in archive `sq-playtest-pingpong.archive-20260507-085200.md`, repeated in `sq-playtest-pingpong.archive-20260508-pre472.md`. The recruitment subsystem maintains a server-side roster of companion NPCs; the UI `PartyPanel` component has no element to render them. The bug was marked `fixed` on the server-side at the time but never reached `verified` because the UI half wasn't wired. Playtests moved to tea_and_murder solo immediately afterwards, leaving the UI gap silently broken for ~6 days.
 
       Sebastien-axis loss: recruited companions are mechanical state players cannot see. Aspirational household-audience loss: companion-driven play (which is half the Heavy Metal / road_warrior pitch) is invisible.
     points: 3

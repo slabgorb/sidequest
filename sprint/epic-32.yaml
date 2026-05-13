@@ -117,7 +117,7 @@ stories:
     depends_on: 32-2
     type: chore
   - id: 32-14
-    title: Decompose victoria — gothic_mystery system + victorian milieu
+    title: Decompose tea_and_murder — gothic_mystery system + tea_and_murdern milieu
     points: 2
     priority: p2
     status: backlog

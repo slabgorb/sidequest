@@ -23,7 +23,7 @@ This is the group the game is *actually for*. Features must serve this group. If
 
 Nice-to-have, not load-bearing. If they never play, SideQuest is still a success. Don't bend primary-audience features to chase these users.
 
-- **Sonia** (Keith's partner, lives with Keith) — The `victoria` genre pack is a love letter to her, not a feature gate. Has a nerd-force-field from years of living with nerds. Keith will live if she never plays.
+- **Sonia** (Keith's partner, lives with Keith) — The `tea_and_murder` genre pack is a love letter to her, not a feature gate. Has a nerd-force-field from years of living with nerds. Keith will live if she never plays.
 - **Antonio & Pedro** (Sonia's sons, late 20s, share the household with Keith and Sonia as adults — Keith is not a parental figure to them) — Low reading tolerance, Pedro especially. Antonio is AI-skeptical and has his own playgroup; one of them is an artist. If visual/voice features happen to land for them, great — but don't compromise playgroup pacing or narrative depth to court them.
 
 ### Player-style axes
@@ -51,7 +51,7 @@ orc-quest/                    # This repo (orchestrator, also cloned as oq-1 / o
 
 sidequest-content/            # Genre packs — single source of truth (subrepo)
 ├── genre_packs/              # Live, wired packs (5: caverns_and_claudes, elemental_harmony,
-│   │                         #   mutant_wasteland, space_opera, victoria)
+│   │                         #   mutant_wasteland, space_opera, tea_and_murder)
 │   └── <genre>/worlds/<world>/   # World-specific overrides
 ├── genre_workshopping/       # Pre-wired packs in design (heavy_metal, low_fantasy,
 │                             #   neon_dystopia, pulp_noir, road_warrior, spaghetti_western)

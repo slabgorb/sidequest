@@ -88,7 +88,7 @@ personality archetypes, and conlang morphemes:
 | **elemental_harmony** | Martial arts / elemental magic |
 | **mutant_wasteland** | Post-apocalyptic mutants (world `flickering_reach` fully spoilable) |
 | **space_opera** | Sci-fi space adventure (world `coyote_star`) |
-| **victoria** | Brontë-flavored gaslamp gothic, drawing-room intrigue (no swords, no starships; tunable occult) |
+| **tea_and_murder** | Brontë-flavored gaslamp gothic, drawing-room intrigue (no swords, no starships; tunable occult) |
 
 Workshopping packs (not yet wired) live in
 `sidequest-content/genre_workshopping/` — heavy_metal, low_fantasy,

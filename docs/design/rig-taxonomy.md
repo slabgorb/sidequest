@@ -39,7 +39,7 @@ These were ratified during the 2026-04-28 brainstorming session and should not b
 2. **R — Hybrid hardpoint typing.** Each hardpoint declares both a `location:` (physical place on the chassis) and a `function:` (what kind of subsystem it accepts). Either axis may be `null` for chassis classes that don't need both.
 3. **D3 — Schema-only damage at framework level.** The framework declares the *shape* of damage (per-location HP pools, critical-location flags, mounted-subsystem destruction propagation, chassis-death conditions) but does *not* dictate damage amount, targeting rules, armor/structure layering, or crit-hit dynamics. Those belong to scene-mechanics (dogfight, vehicle_chase, mech_melee, etc.).
 4. **S2 — Subsystems are `item_legacy_v1` items.** Every subsystem mounted in a chassis is an item-legacy item with an `installed_in: {chassis_id, location_id}` pointer. Integral parts (cockpit, reactor, fuel tank) are item-legacy items flagged `salvageable: false`. The rig framework does *not* introduce a separate subsystem entity type.
-5. **C3 — Crew model spectrum.** Each chassis class declares `crew_model:` as one of `single_pilot | strict_roles | flexible_roles`. Solo-first genres (pulp_noir, victoria) lean `single_pilot`; military-coded chassis lean `strict_roles`; Wayfarer-shaped trampers lean `flexible_roles`. The framework is register-agnostic; the genre's chassis-class catalog declares the dominant register.
+5. **C3 — Crew model spectrum.** Each chassis class declares `crew_model:` as one of `single_pilot | strict_roles | flexible_roles`. Solo-first genres (pulp_noir, tea_and_murder) lean `single_pilot`; military-coded chassis lean `strict_roles`; Wayfarer-shaped trampers lean `flexible_roles`. The framework is register-agnostic; the genre's chassis-class catalog declares the dominant register.
 6. **BD3 — Bond gates confrontations.** Per-character per-chassis bond is an asymmetric pair (`character_to_chassis`, `chassis_to_character`) that *gates* which confrontations a character can encounter on a given chassis. High bond unlocks deep-investment confrontations (The Refit, The Heroic Stand); negative bond opens grievance-driven ones (The Mutiny, The Sale). The asymmetry is load-bearing for Ancillary-register chassis (chassis-side bond can vastly exceed character-side); for most chassis the two scalars stay paired. Bond does not decay — it is an advancement-shaped quantity.
 7. **MI2 — Magic plugins reuse their existing extension points with chassis-state as a valid input.** No new framework primitives are added on the magic side. innate_v1's place-loci accept chassis IDs; bargained_for_v1's patron-scopes accept chassis IDs; learned_v1's prerequisite_gates accept chassis-state terms; divine_v1's sacred-sites accept chassis IDs; obligation_scales_v1's debited_scales attribute accepts chassis-state contributions; item_legacy_v1's installed-in is already chassis-aware (S2). Each plugin spec gets a brief "Chassis interaction" subsection.
 
@@ -121,7 +121,7 @@ Consequences flowing free from this decision:
 
 Per Locked Decision C3, each chassis class declares `crew_model:` as one of three values:
 
-- **`single_pilot`** — one operator slot; other characters are passengers without operational authority. All hardpoint operations route through the operator. Default for cycles, fighters, mechs, cars, pulp_noir cars, victoria carriages.
+- **`single_pilot`** — one operator slot; other characters are passengers without operational authority. All hardpoint operations route through the operator. Default for cycles, fighters, mechs, cars, pulp_noir cars, tea_and_murder carriages.
 - **`strict_roles`** — chassis class declares named roles (`pilot`, `gunner_top`, `engineer`, `navigator`, `bridge_officer`) with hard hardpoint-binding. Cross-role hardpoint operation is forbidden. Default for capital cruisers, war-rigs with multiple gun platforms, Hegemonic-issue military hulls.
 - **`flexible_roles`** — chassis class declares default-role-suggestions but does not enforce them. Any character "in the chassis" can attempt any hardpoint operation; the scene-mechanic adjudicates via skill-check or narrative-friction. Default for Wayfarer-shaped trampers, frontier kludge-trucks, beat-up cars, Firefly-register voidborn freighters. **The Kestrel pattern.**
 
@@ -140,7 +140,7 @@ OTEL spans on every rig action carry `actor_id` (which character) and `role_id` 
 A chassis class declares `embodiment_model:` as one of four values, governing how the chassis-mind expresses through bodies:
 
 - **`singular`** — One chassis, no separate ancillary bodies. The chassis acts through its hardpoints and (if voiced) speaks through its intercom. *The Kestrel pattern.* Default for almost every chassis class.
-- **`crew_only`** — The chassis is a hull without an AI; humans (or other crew) embody all action. Voice block is null; chassis cannot "do" anything except via crew operating its hardpoints. Default for non-AI freighters, most road_warrior vehicles, victoria carriages.
+- **`crew_only`** — The chassis is a hull without an AI; humans (or other crew) embody all action. Voice block is null; chassis cannot "do" anything except via crew operating its hardpoints. Default for non-AI freighters, most road_warrior vehicles, tea_and_murder carriages.
 - **`ancillary`** — One chassis-mind expressing through multiple physical bodies (`ancillaries`) that are *the chassis itself* operating in the world. *The Justice of Toren pattern, the Imperial Radch warship.* Ancillaries are not separate npc_registry entries — they share the chassis's id and OCEAN; each body is a physical instance of the same mind. They can leave the ship-body, walk through stations, serve tea, fight, sing — and every act is the chassis acting. When destroyed, the ancillary's experience folds back into the central mind (or is lost with it, depending on `ancillary_loss_consequence`).
 - **`swarm`** — Many small bodies sharing distributed cognition without a central chassis-body. Drone-rigs, alien hives, post-singularity collectives. Less deeply specified than `ancillary` because no current SideQuest world calls for it; framework declares the slot for future use.
 
@@ -228,7 +228,7 @@ Schema:
 
 Registration is *not* a magic plugin (it doesn't grant workings or cost anything to a Source). It is *not* a hardpoint or a subsystem. It is a chassis-instance state field that the world's customs/border NPCs query and that gates `registration_event`-shaped confrontations like *The Customs Inspection*.
 
-The space_opera genre uses registration heavily; pulp_noir uses it lightly (a car has plates and a registration card); victoria does not declare registration at all (the chassis schema permits omission). Genre-defined applicability.
+The space_opera genre uses registration heavily; pulp_noir uses it lightly (a car has plates and a registration card); tea_and_murder does not declare registration at all (the chassis schema permits omission). Genre-defined applicability.
 
 ### Damage History
 
@@ -778,7 +778,7 @@ classes:
 | elemental_harmony | ⏳ TODO | Likely null — martial-arts genre rarely uses rigs. Possibly a future Iron Hills airship sub-tradition. |
 | caverns_and_claudes | ⏳ TODO | Likely null — dungeon crawl genre. Possibly a war-cart sub-system if ever needed. |
 | low_fantasy | ⏳ TODO | Likely null primarily; possibly siege engines or warhorses |
-| victoria | ⏳ TODO | Solo-first; carriages and (rare) airships; registration heavy in social-class register |
+| tea_and_murder | ⏳ TODO | Solo-first; carriages and (rare) airships; registration heavy in social-class register |
 
 ## Open Issues
 

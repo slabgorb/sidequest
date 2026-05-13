@@ -2,7 +2,7 @@
 
 **Status:** Draft, 2026-04-28
 **Source:** `divine` (napkin)
-**Genres using:** heavy_metal, victoria-Catholic, low_fantasy, elemental_harmony, space_opera-religious-orders
+**Genres using:** heavy_metal, tea_and_murder-Catholic, low_fantasy, elemental_harmony, space_opera-religious-orders
 **Companion docs:** `../magic-taxonomy.md`, `../visible-ledger-and-otel.md`, `../confrontation-advancement.md`, `bargained_for_v1.md`, `item_legacy_v1.md`
 
 ## Identity
@@ -24,7 +24,7 @@ plugin: divine_v1
 status: draft
 genres_using:
   - heavy_metal              # signature — one of three magic systems
-  - victoria                 # only at gothic ≥ 0.4 — Catholic-coded register
+  - tea_and_murder                 # only at gothic ≥ 0.4 — Catholic-coded register
   - low_fantasy              # multiple competing churches (Pale Fire, Drowned Mother)
   - elemental_harmony        # spirit-medium has divine-shaped contact
   - space_opera              # Dune Bene Gesserit, Star Wars Jedi-as-religious-order
@@ -46,7 +46,7 @@ delivery_mechanisms:
     plot_engine: institutional politics, rank arcs, doctrinal schism
     canonical_examples:
       - "The Church of the Pale Fire (low_fantasy)"
-      - "The Catholic apparatus (victoria, Brontë register)"
+      - "The Catholic apparatus (tea_and_murder, Brontë register)"
       - "The Bene Gesserit (Dune-world space_opera)"
       - "The Eastern Diocese of the Hungering Lord (heavy_metal)"
 
@@ -59,7 +59,7 @@ delivery_mechanisms:
     canonical_examples:
       - "The Drowned Mother's altar at the cliff (low_fantasy)"
       - "The unmarked grove where the local god feeds (heavy_metal)"
-      - "The cathedral whose nave still works (victoria)"
+      - "The cathedral whose nave still works (tea_and_murder)"
 
   - id: condition
     description: |
@@ -388,7 +388,7 @@ hard_limits:
         Divine resurrection inherits genre's resurrection rule. Most
         worlds: forbidden. Heavy_metal-permitting worlds: allowed
         but at heaviest cost — multiple Standing, Purity, components,
-        AND a Calling event triggered. Victoria: forbidden absolutely.
+        AND a Calling event triggered. Tea & Murder: forbidden absolutely.
     - id: invoking_starving_god
       description: |
         A god whose Hunger is at maximum cannot be invoked. The god
@@ -980,5 +980,5 @@ With bargained_for + item_legacy + divine, plugin coverage spans:
 - [ ] **Architect**: review world-shared ledger bars, cyclical reset, plugin-citing-plugin patterns. Three framework refinements ready to fold in.
 - [ ] **GM**: draft `obligation_scales_v1` plugin (heavy_metal's signature) — integrates with divine_v1's apparatus_id. Validates plugin-on-plugin integration.
 - [ ] **GM**: draft `innate_developed_v1` next — covers Force/bending/witcher-mutations/Avatar bending. Major coverage gap.
-- [ ] **GM**: instantiate concrete world example. The Hungering Lord's Eastern Diocese (heavy_metal's The Long Reckoning), or the Pale Fire Cult (low_fantasy), or the Catholic apparatus at high gothic (victoria).
+- [ ] **GM**: instantiate concrete world example. The Hungering Lord's Eastern Diocese (heavy_metal's The Long Reckoning), or the Pale Fire Cult (low_fantasy), or the Catholic apparatus at high gothic (tea_and_murder).
 - [ ] **UX (Buttercup)**: panel mock for the three-bar divine display (Standing, Hunger, Purity) — significantly different visual texture than bargained_for's two-bar or item_legacy's two-bar.

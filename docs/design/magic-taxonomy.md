@@ -122,7 +122,7 @@ The line-in-the-sand limit is where the drama lives. *"Magic cannot bring back t
 Separate from whether magic *exists* (Sources non-empty) and from how it's *socially treated* (Visibility below). This is the **epistemological** axis — the world's collective awareness of magic as a real category. **This is where the "No Magic" claim properly lives.**
 
 - **Acknowledged / canonical** — magic is part of common knowledge; the cosmology states it (heavy_metal, elemental_harmony)
-- **Folkloric** — magic is in stories, songs, peasant beliefs; educated folk dismiss it (spaghetti_western, road_warrior, low-gothic victoria)
+- **Folkloric** — magic is in stories, songs, peasant beliefs; educated folk dismiss it (spaghetti_western, road_warrior, low-gothic tea_and_murder)
 - **Mythic / lapsed** — was canonical, now "ancient religion most have forgotten" (post-Order-66 Star Wars, low_fantasy, caverns_and_claudes commoners)
 - **Esoteric** — only initiates know; the public doesn't (pulp_noir, Dresden Files, Mage)
 - **Classified / suppressed** — actively hidden by power (Firefly world's River, X-Files, Akira)
@@ -145,7 +145,7 @@ A subordinate axis to World-Knowledge — only meaningful where World-Knowledge 
 - **Feared** — real, dangerous, avoided (witcher mutants, mutant_wasteland)
 - **Persecuted** — heresy, illegal (Imperial-era Jedi, witch-burning)
 - **Ubiquitous** — everyone has a touch, mundane (Allomancy commoners)
-- **Dismissed** — known but treated as charlatanry (low-gothic Victoria mesmerists)
+- **Dismissed** — known but treated as charlatanry (cosy-Edwardian tea_and_murder mesmerists)
 
 ### Reliability
 Does it work when you cast it?
@@ -171,7 +171,7 @@ Magic lives at **both** the genre and world layer, mirroring the existing genre/
 
 Same genre, multiple worlds, different tuples:
 - **space_opera** allows Innate-Psychic. *Star Wars* world commits to Force tuple. *Firefly* world commits to River-only narrative tuple. *Expanse* world commits to nothing (psychic disabled). All valid.
-- **victoria** allows dialed-occult. *Brontë* world dials low. *Carmilla* world dials high. *Stoker* world dials very high.
+- **tea_and_murder** allows dialed-occult. *Brontë* world dials low. *Carmilla* world dials high. *Stoker* world dials very high.
 
 The napkin's "intensity" knob is what makes worlds within a genre feel different without splintering the genre.
 
@@ -216,7 +216,7 @@ The mutation system already has a "Use Mutation" combat action with risk and nar
 
 The current `magic_design.md` ("psionics is narrative condition, never player option") becomes the **Firefly world tuple**, not a genre-level absolute. **Update needed: lift the River Tam Rule out of `magic_design.md` and into `worlds/firefly/magic.yaml`.**
 
-### victoria — dialed-supernatural
+### tea_and_murder — dialed-supernatural
 - Source: Bargained-for (rare, dial-gated); Innate (mesmerism); Item (cursed letters)
 - Cost: Sanity + Karma (moral and psychic only)
 - Limits: No resurrection, no combat magic, no tools (supernatural is dread, not utility)
@@ -254,7 +254,7 @@ Tests **competing-source uncertainty** — multiple Sources entertained as possi
 - Intensity dial: `axes.chrome`
 - Manifestation: Reflexive + Invoked + Item-channeled; Domain = Physical + Spatial-virtual + Psychic-via-chip
 
-### pulp_noir — *Victoria's tuple, different decade*
+### pulp_noir — *tea_and_murder's tuple, different decade*
 - Source: Item (artifacts) + Ritual (witnessed)
 - Cost: Sanity
 - Limits: Not a tool; not reliable; not safe; not understood
@@ -263,7 +263,7 @@ Tests **competing-source uncertainty** — multiple Sources entertained as possi
 - Intensity dial: `axes.occult`
 - Manifestation: Invoked + Ritual; Domain = Psychic + Necromantic + Divinatory
 
-The schema **collapses Victoria + Pulp Noir into one shape with different content** — proves the framework's reuse value.
+The schema **collapses Tea & Murder + Pulp Noir into one shape with different content** — proves the framework's reuse value.
 
 ### road_warrior
 - Source: Item (the named vehicle) + McCoy (the mechanic) + Acquired (Wasteland changes you)
@@ -364,7 +364,7 @@ A world can:
 2. **Cliché-judge has a reference** for "this genre forbids X but the narration just did X" detection.
 3. **Genre packs stop scattering magic across 4–5 files.** Single source of truth.
 4. **Worlds inherit cleanly** without forking the genre.
-5. **`magic_level: none` retires** in favor of explicit allowed-source lists *and* a separate `world_knowledge` field. The current flag is doing four jobs at once (no Sources / Sources-but-no-player-class / Sources-but-classified / Sources-but-denied-as-category) and conflating them is the root cause of mutant_wasteland mislabeling itself, space_opera contradicting itself, and victoria needing a separate dial to dig out from under it.
+5. **`magic_level: none` retires** in favor of explicit allowed-source lists *and* a separate `world_knowledge` field. The current flag is doing four jobs at once (no Sources / Sources-but-no-player-class / Sources-but-classified / Sources-but-denied-as-category) and conflating them is the root cause of mutant_wasteland mislabeling itself, space_opera contradicting itself, and tea_and_murder needing a separate dial to dig out from under it.
 
 ## Open Questions
 
@@ -372,7 +372,7 @@ A world can:
 2. **Vehicle / Vessel as first-class Item subtype.** **Decision: yes.** Road_warrior already implements as `item_subtype: vessel`. Schema base must support `item_subtypes: [weapon, scroll, relic, vessel, vehicle, ship]`.
 3. **Competing-source uncertainty** (low_fantasy) — does the schema express "multiple Sources entertained, none confirmed" or just "all of these are possible"? Probably needs an `epistemic_status` field per source. Defer until low_fantasy gets schematized.
 4. **Should `manifestation.domain` admit narrator-discovered Domains?** Or is the list closed? Lean closed for now, plugin-extendable later.
-5. **Is `world_knowledge` itself dialable?** Victoria's gothic axis does two jobs: scales both *whether magic exists* (intensity) AND *whether the world acknowledges it* (world-knowledge). The victoria magic.yaml documents this as a known coupling. May resolve when more genres are schematized.
+5. **Is `world_knowledge` itself dialable?** Tea & Murder's occult axis does two jobs: scales both *whether magic exists* (intensity) AND *whether the world acknowledges it* (world-knowledge). The tea_and_murder magic.yaml documents this as a known coupling. May resolve when more genres are schematized.
 6. **Three axes that can be confused — keep explicit in narrator prompts:**
    - **Intensity** (does it exist / how much?)
    - **World-Knowledge** (does the world know / how acknowledged?)
@@ -530,7 +530,7 @@ This directly satisfies the CLAUDE.md OTEL principle (*"Claude is excellent at w
 
 First specs to draft:
 - `bargained_for_v1` — the heavy_metal signature plugin
-- `divine_v1` — the feeding-economy plugin (heavy_metal, victoria-Catholic worlds)
+- `divine_v1` — the feeding-economy plugin (heavy_metal, tea_and_murder-Catholic worlds)
 - `item_legacy_v1` — items-as-NPCs (spaghetti_western, road_warrior, caverns_and_claudes, heavy_metal)
 - `mccoy_v1` — inventor pipeline (spaghetti_western gunsmiths, neon_dystopia ripperdocs, road_warrior wrenchers)
 - `obligation_scales_v1` — the five-scale ledger (heavy_metal)
@@ -550,10 +550,10 @@ First specs to draft:
 | **mutant_wasteland** | prod | `none` | Mislabeled — mutations ARE magic | `acknowledged` | fixed-medium | **Currently lying.** "Use Mutation" combat action with risk-narration is a magic system in everything but name. Source = Acquired + Innate-automatic. |
 | **space_opera** | prod | `none` | Conflates Firefly/Expanse with Star Wars | varies by world (`classified` → `mythic_lapsed` → `acknowledged`) | era-dial per world | **Genre-vs-world confusion.** Genre allows Innate-Psychic + McCoy; the "no psionics as toolkit" rule belongs to one *world* (Firefly), not the genre. |
 | **spaghetti_western** | prod | `none` | Folkloric-dismissed; item magic ubiquitous | `folkloric` | fixed-low | **Mislabeled.** Named guns, the impossible shot, the gunslinger reputation — all item-channeled Reflexive-Physical magic. The genre denies the word, not the structure. |
-| **victoria** | prod | `none` | Dialed via gothic axis | `gothic`-dialed (`denied` → `esoteric`) | dial: `gothic` | **Architecture correct, label wrong.** Already uses an axis to scale supernatural; just needs the label to match. |
+| **tea_and_murder** | prod | `none` | Dialed via gothic axis | `gothic`-dialed (`denied` → `esoteric`) | dial: `gothic` | **Architecture correct, label wrong.** Already uses an axis to scale supernatural; just needs the label to match. |
 | **low_fantasy** | workshop | `low` | Accurate; multiple competing sources | `mythic_lapsed` | fixed-low | **Tests competing-source uncertainty.** Pale Fire vs. Drowned Mother vs. standing stones — schema must support "multiple Sources entertained, none confirmed." |
 | **neon_dystopia** | workshop | `none` | Tech-substitution; `magic_design.md` is explicit | `denied` (low) → `acknowledged-as-tech` (high) | dial: `chrome` | **Structurally consistent.** The "no magic" claim is genuinely epistemological — the world has no concept. Tech IS the magic system; admit it via `mccoy` source. |
-| **pulp_noir** | workshop | `low` | Accurate; mirrors victoria's pattern | `esoteric` | dial: `occult` | **Same shape as victoria, different decade.** Schema collapses the two into one structure with different content. |
+| **pulp_noir** | workshop | `low` | Accurate; mirrors tea_and_murder's pattern | `esoteric` | dial: `occult` | **Same shape as tea_and_murder, different decade.** Schema collapses the two into one structure with different content. |
 | **road_warrior** | workshop | `none` | Folkloric named-vehicle magic | `folkloric` | fixed-low | **Mislabeled.** "The man with the V8 Interceptor" is item-magic where the item is a vehicle. Schema needs `item_subtypes: [weapon, scroll, relic, vessel]` to admit this cleanly. |
 
 ### Aggregate Findings
@@ -561,12 +561,12 @@ First specs to draft:
 **`magic_level: none` is wrong in 5 of 7 packs that use it.** Of the 7 packs flagged "none":
 - 4 are mislabeled (caverns_and_claudes, mutant_wasteland, spaghetti_western, road_warrior — magic exists, just not as caster classes)
 - 1 is genre/world-confused (space_opera — it depends which world)
-- 1 has correct architecture but wrong label (victoria — gothic-dialed, not absent)
+- 1 has correct architecture but wrong label (tea_and_murder — gothic-dialed, not absent)
 - 1 is structurally accurate (neon_dystopia — `denied` is the right epistemic claim)
 
 **Only `none` pack that's genuinely correct:** neon_dystopia.
 
-**Only `none` pack where the architecture is already right but the label is misleading:** victoria.
+**Only `none` pack where the architecture is already right but the label is misleading:** tea_and_murder.
 
 ### Recommended Field Replacements
 
@@ -595,7 +595,7 @@ Most current `magic_level: none` packs become `can_build_caster: false` with non
 - ✅ **`space_opera/magic_design.md` rewritten** — River Tam Rule is now one valid world-tuple alongside the Force Rule and Bene Gesserit Rule.
 - ✅ **Pre-Ordained removed from Source list** — narrative role/tag, not a Source.
 - ✅ **Heavy_metal schematized** — `genre_packs/heavy_metal/_drafts/magic.yaml`.
-- ✅ **5 mislabeled packs fixed** — clarifying comment added to `magic_level: none` in each `rules.yaml`, plus new draft `magic.yaml` in each pack: `caverns_and_claudes`, `mutant_wasteland`, `spaghetti_western`, `victoria`, `road_warrior`.
+- ✅ **5 mislabeled packs fixed** — clarifying comment added to `magic_level: none` in each `rules.yaml`, plus new draft `magic.yaml` in each pack: `caverns_and_claudes`, `mutant_wasteland`, `spaghetti_western`, `tea_and_murder`, `road_warrior`.
 - ✅ **Plugin/registration model committed** — replaces extension-slot proposal.
 
 ### Still pending

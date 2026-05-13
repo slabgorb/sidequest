@@ -174,7 +174,7 @@ The visible ledger panel renders the confrontation outcome callout when this spa
 ## Open Questions
 
 1. **Player-facing bars on by default?** Or a setting? Some players (Alex, narrative-first) may prefer bars hidden during normal play and visible only when a working fires. Others (Keith-as-player) want them always-on. *(Confrontation outcome callouts are NOT subject to this — Decision #2 makes them always-shown.)*
-2. **Animation language.** Buttercup says "rising bars," but heavy_metal-mood would call for ember-flicker, victoria-mood for ink-bleeding-on-paper, neon_dystopia for glitching readouts. Per-genre theming of the ledger.
+2. **Animation language.** Buttercup says "rising bars," but heavy_metal-mood would call for ember-flicker, tea_and_murder-mood for ink-bleeding-on-paper, neon_dystopia for glitching readouts. Per-genre theming of the ledger.
 3. **Mechanism-engagement consequences.** Faction notification → NPC dispatched. Place tapped → other claimants alerted. Time window used → can't be tapped again until next occurrence. Each mechanism has its own consequence-cadence; the plugin declares default, world tunes it.
 4. **Multi-plugin overlap.** If a working could be claimed by two plugins, who claims it? (e.g., a cleric using a relic — Divine plugin or Item-Legacy plugin?) The narrator must declare; the GM may override.
 

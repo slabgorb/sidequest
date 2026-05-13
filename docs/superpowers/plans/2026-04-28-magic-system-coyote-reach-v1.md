@@ -4186,7 +4186,7 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
 
 When `apply_magic_working` returns crossings, the pipeline auto-emits a `status_changes` ADD that re-uses the existing Status renderer. Sanity ≤ 0.40 → `Status(text="Bleeding through", severity=Wound)`.
 
-**Architect resolution (§5.3, 2026-04-29):** The mapping `bar_id → (status_text, severity)` is **world-content, not engine code.** Different worlds may want different status text on the same bar (Coyote Star: `sanity → "Bleeding through"`; a hypothetical victoria-touched world: `sanity → "Slipping"`). The mapping lives in the world `magic.yaml` co-located with the bar declaration:
+**Architect resolution (§5.3, 2026-04-29):** The mapping `bar_id → (status_text, severity)` is **world-content, not engine code.** Different worlds may want different status text on the same bar (Coyote Star: `sanity → "Bleeding through"`; a hypothetical tea_and_murder-touched world: `sanity → "Slipping"`). The mapping lives in the world `magic.yaml` co-located with the bar declaration:
 
 ```yaml
 ledger_bars:
@@ -4366,7 +4366,7 @@ def promote_crossings_to_status_changes(
     Reads the per-bar `promote_to_status` config from the world's
     LedgerBarSpec — NOT a hardcoded module-level dict. This keeps status
     text/severity world-tunable: a different innate-using world (e.g.
-    victoria-touched) can map sanity → "Slipping", Scar without code change.
+    tea_and_murder-touched) can map sanity → "Slipping", Scar without code change.
 
     The caller (existing apply pipeline) merges these into the turn's
     status_changes list so the existing Status renderer picks them up.

@@ -11,7 +11,7 @@
 
 Two changes since the prior snapshot are load-bearing for reading the tables below:
 
-- **M2 world parking** — `aureate_span` (space_opera), `burning_peace` + `shattered_accord` (elemental_harmony), and `blackthorn_moor` (victoria) were moved into `genre_workshopping/<pack>/worlds/` pending completeness review (commits `e2356c7`, `6a94881`). Their pack-level YAML and assets remain in production; only the worlds are parked.
+- **M2 world parking** — `aureate_span` (space_opera), `burning_peace` + `shattered_accord` (elemental_harmony), and `blackthorn_moor` (tea_and_murder) were moved into `genre_workshopping/<pack>/worlds/` pending completeness review (commits `e2356c7`, `6a94881`). Their pack-level YAML and assets remain in production; only the worlds are parked.
 - **caverns_and_claudes hamlet restructure** — the prior five worlds (grimvault, mawdeep, primetime, dungeon_survivor, horden) were folded as **dungeons** under the new `caverns_sunden` hamlet world (commit `fe09971`). They still exist on disk, just at `genre_packs/caverns_and_claudes/worlds/caverns_sunden/dungeons/<dungeon>/` rather than as peer worlds.
 - **Audio assets moved to R2** (story 45-49, ADR-095). Per-track ACE-Step `*_input_params.json` files remain in the repo as the canonical regeneration spec; OGG playback files now live in R2 (`cdn.slabgorb.com`). The "Audio" column below counts in-repo audio files (mostly params); track counts are higher because each params file generates multiple takes.
 
@@ -25,11 +25,11 @@ Two changes since the prior snapshot are load-bearing for reading the tables bel
 | elemental_harmony | **0** (worlds parked in workshopping pending review) | 20 | 121 | LFS-only | 2 | Pack runtime present; no lobby-selectable world. Most ACE-Step params (121); gold-standard variation coverage |
 | mutant_wasteland | 1 (flickering_reach — fully spoilable) | 22 | 96 | LFS-only | 1 | Mutation / flickering theme |
 | space_opera | 1 (coyote_star — flagship for magic + rig MVP; aureate_span parked) | 22 | 62 | LFS-only | 2 | coyote_star is the Epic 47 flagship; missing archetype/trope coverage |
-| victoria | **0** (blackthorn_moor parked in workshopping) | 22 | 1 | LFS-only | 2 | Pack runtime present; no lobby-selectable world. Public-domain classical music served from R2, no ACE-Step params |
+| tea_and_murder | **0** (blackthorn_moor parked in workshopping) | 22 | 1 | LFS-only | 2 | Pack runtime present; no lobby-selectable world. Public-domain classical music served from R2, no ACE-Step params |
 | **heavy_metal** ⚠️ | none in production | **0** | 0 | 0 | shell | **State inconsistency:** production directory is an empty shell. Actual content still in `genre_workshopping/heavy_metal/`. |
 | **spaghetti_western** ⚠️ | none in production | **0** | 0 | 0 | shell | **Same inconsistency.** Actual content still in `genre_workshopping/spaghetti_western/`. |
 
-**Functionally loadable today.** Five packs have pack-level YAML; the lobby world picker shows **3 worlds** (caverns_sunden, flickering_reach, coyote_star). `elemental_harmony` and `victoria` parked their worlds — selecting them in the lobby currently has no world to bind. The `heavy_metal` and `spaghetti_western` production directories remain empty shells.
+**Functionally loadable today.** Five packs have pack-level YAML; the lobby world picker shows **3 worlds** (caverns_sunden, flickering_reach, coyote_star). `elemental_harmony` and `tea_and_murder` parked their worlds — selecting them in the lobby currently has no world to bind. The `heavy_metal` and `spaghetti_western` production directories remain empty shells.
 
 ### Workshopping — `genre_workshopping/` (NOT loaded at runtime)
 
@@ -37,7 +37,7 @@ Two changes since the prior snapshot are load-bearing for reading the tables bel
 |------|--------|--------|
 | elemental_harmony | burning_peace, shattered_accord | **Parked from production 2026-05** (M2 reshuffle). Pack runtime still in production; worlds awaiting completeness review |
 | space_opera | aureate_span | **Parked from production 2026-05** (M2). coyote_star remains in production |
-| victoria | blackthorn_moor | **Parked from production 2026-05** (M2). Pack runtime still in production |
+| tea_and_murder | blackthorn_moor | **Parked from production 2026-05** (M2). Pack runtime still in production |
 | low_fantasy | shattered_reach | Active workshop — gritty medieval; substantive YAML, audio, images |
 | neon_dystopia | franchise_nations | Active workshop — cyberpunk |
 | pulp_noir | annees_folles | Active workshop — 1930s detective |
@@ -64,7 +64,7 @@ during the port era; promotion is incomplete.
 The **2026-05 M2 reshuffle** parked four formerly-production worlds back
 into workshopping — `aureate_span`, `burning_peace`, `shattered_accord`, and
 `blackthorn_moor`. The pack-level runtime YAML for `elemental_harmony`,
-`space_opera`, and `victoria` remains in production; only their worlds
+`space_opera`, and `tea_and_murder` remains in production; only their worlds
 moved. `caverns_and_claudes` consolidated five worlds into nested dungeons
 under the new `caverns_sunden` hamlet (commit `fe09971`).
 
@@ -85,7 +85,7 @@ still seeds `snap.current_region` at chargen as a `CartographyConfig`.
 | elemental_harmony | 21 yamls — missing voice_presets, inventory |
 | mutant_wasteland | 23 yamls — missing voice_presets |
 | space_opera | 23 yamls — missing voice_presets |
-| victoria | 23 yamls — full standard set + emotional axes additions |
+| tea_and_murder | 23 yamls — full standard set + emotional axes additions |
 
 ## World-Level Completeness
 
@@ -113,7 +113,7 @@ under the Sünden hamlet hub.
 | elemental_harmony/burning_peace | + | + | + | + | + | + | + |
 | elemental_harmony/shattered_accord | + | + | + | — | + | — | + |
 | space_opera/aureate_span | + | + | + | — | — | — | + |
-| victoria/blackthorn_moor | + | + | + | + | + | + | + |
+| tea_and_murder/blackthorn_moor | + | + | + | + | + | + | + |
 
 **Promotion candidates:** `burning_peace` and `blackthorn_moor` have full
 optional file sets — they are gated only on the M2 review, not on missing
@@ -131,7 +131,7 @@ rules are LLM-interpreted at narration time unless noted.
 | elemental_harmony | Harmony, Spirit + 4 | High magic, martial arts | LLM-interpreted |
 | mutant_wasteland | Brawn, Reflexes, Toughness, Wits, Instinct, Presence | Mutation system, no magic | LLM-interpreted |
 | space_opera | Physique, Reflex, Intellect, Cunning, Resolve, Influence | Ship Block, Ship Combat, Crew Bonds, Found Family | LLM-interpreted |
-| victoria | **Angst, Pride, Humour, Nerve, Cunning, Passion** | Emotional ability scores, class-stratified society | LLM-interpreted |
+| tea_and_murder | **Angst, Pride, Humour, Nerve, Cunning, Passion** | Emotional ability scores, class-stratified society | LLM-interpreted |
 
 ### Workshop genres (mechanics designed but pack not in production)
 
@@ -159,7 +159,7 @@ verify per-story landing. Restoration scheduling lives in ADR-087.
 | elemental_harmony | negotiation | — |
 | mutant_wasteland | negotiation | — |
 | space_opera | negotiation, ship_combat | — |
-| victoria | negotiation, trial, auction | standing |
+| tea_and_murder | negotiation, trial, auction | standing |
 | *(workshop)* heavy_metal | per workshop YAML | per workshop YAML |
 | *(workshop)* low_fantasy | negotiation | — |
 | *(workshop)* neon_dystopia | negotiation, net_combat | humanity |
@@ -228,7 +228,7 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 | mutant_wasteland | ACE-Step generated, all 6 variations | 212 | production |
 | space_opera | ACE-Step generated | 85 | production |
 | caverns_and_claudes | ACE-Step generated (sparse set) | 26 | production |
-| **victoria** | **Curated public-domain classical (Chopin, Strauss)** | 42 | production |
+| **tea_and_murder** | **Curated public-domain classical (Chopin, Strauss)** | 42 | production |
 | road_warrior | ACE-Step generated + 10 faction themes | ~147 | workshop |
 | low_fantasy | ACE-Step generated, all 6 variations | ~137 | workshop |
 | neon_dystopia | ACE-Step generated (needs more) | ~48 | workshop |
@@ -260,12 +260,12 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 - Ship Block mechanic mirrors road_warrior's Rig HP pattern. Both ride on the absent chase engine.
 - 62 in-repo ACE-Step params; OGGs in R2.
 
-### victoria (production runtime, world parked)
+### tea_and_murder (production runtime, world parked)
 - **Zero lobby-selectable worlds post-M2.** Pack-level YAML remains in production; `blackthorn_moor` is parked in workshopping (one of the strongest completeness profiles among parked worlds — promotion candidate).
 - **Unique architecture:** emotional ability scores (Angst, Pride, Passion), class-stratified society (Gentry, Trade, Servant, Clergy, Bohemian, Colonial).
 - **Public-domain classical music** — Chopin and Strauss recordings mapped to game moods; served from R2. No ACE-Step generation needed (hence near-zero in-repo audio).
 - Playfair Display font. 10 class-stratified naming corpus files.
-- Extra YAML files unique to victoria: achievements, beat_vocabulary, power_tiers.
+- Extra YAML files unique to tea_and_murder: achievements, beat_vocabulary, power_tiers.
 
 ### heavy_metal (production shell + workshop)
 - **Production state inconsistency.** `genre_packs/heavy_metal/` exists with empty `images/` and `worlds/` only — no `pack.yaml`, no rules. The actual content is in `genre_workshopping/heavy_metal/` with two worlds (evropi, long_foundry) and full YAML set.

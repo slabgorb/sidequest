@@ -377,7 +377,7 @@ This is plugin-content, not engine-content. It belongs in the plugin's `.yaml`
 `{status_text, severity, threshold_value, direction}`. The validator/state
 machine reads from there.
 
-Rationale: when `victoria` ships and `notice` becomes `infamy`, the world author
+Rationale: when `tea_and_murder` ships and `notice` becomes `infamy`, the world author
 should not be editing `narration_apply.py` to retitle the status. They edit
 their plugin's YAML.
 
