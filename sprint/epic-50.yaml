@@ -1,0 +1,93 @@
+id: '50'
+type: epic
+title: Pingpong-archive triage and dropped-work cleanup
+description: |-
+  Surfaced by the 2026-05-13 pingpong-archive audit of 31 files spanning the
+  five playtest closeout cycles. Headline finding: 131 entries reached
+  `Status: open` and 116 reached `Status: fixed` against only 20 `verified` —
+  the verification stage of the protocol is the leakiest, and the fast-loop
+  treats "merged PR" as terminal even though the protocol does not.
+
+  Two structural anti-patterns recurred across archives:
+
+  1. **OTEL-detector-as-fix.** A bug surfaces → fix-team adds an OTEL span
+     to detect it → status flips to `fixed` → root cause never addressed.
+     Telemetry becomes a permanent monument to an unfixed thing. Cleanest
+     case: PR #177 added `confrontation.skipped_with_trigger_keywords` but
+     never wired the encounter instantiation that the prose-trigger
+     keywords implied.
+
+  2. **Server-half done, UI-half silent.** A subsystem ships on the server,
+     marks `fixed`, and never reaches `verified` because the UI consumer
+     was never built. Cleanest case: recruitment subsystem maintains a
+     server-side companion roster; PartyPanel never rendered it. When
+     playtests rotated genres (MP → solo → social-first), the gap went
+     un-exercised for ~6 days.
+
+  Epic 50 holds the cleanup follow-ups from that audit. Most archived
+  `fixed`-without-`verified` items are paperwork-debt (PRs landed, tests
+  passed, formal flip skipped). The stories in this epic are the
+  not-paperwork-debt subset: items that almost certainly are still broken
+  in the running stack and the audit could justify naming.
+
+  Process change captured here separately from any one story: future
+  pingpongs should rename `fixed` → `merged` and require the driver
+  re-test step before declaring `verified`. The protocol step exists
+  (sq-playtest §3e), the archive ratio shows it isn't being followed.
+priority: p2
+status: active
+repos: orchestrator,sidequest-server,sidequest-ui
+stories:
+  - id: 50-1
+    title: Pingpong-archive triage — re-test 8 carryover items, split confirmed-broken into stories
+    description: |-
+      The 2026-05-13 pingpong-archive audit surfaced 8 items that entered archives without reaching `verified`. Several have likely been silently fixed by later work (NPC pool rewire in 45-52, ADR-098 stateless narrator collapsing the resume timeout, 49-7 confrontation-panel work, the ADR-082 Python backend port replacing the whole turn-time-escalation surface). The driver re-tests each item against the current stack; items that are still broken get split out into their own bug stories under this epic. Silently-fixed items get a one-line note in the audit section closing them out. See `~/Projects/sq-playtest-pingpong.md` "To Be Verified" section for the canonical list.
+
+      Out of scope: retroactively flipping the ~90 archive `fixed`-without-`verified` items that look paperwork-only. Those are written off as "verified via PR merge" historical debt.
+    points: 2
+    priority: p3
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    acceptance_criteria:
+      - All 8 items from the "To Be Verified" section in sq-playtest-pingpong.md have a re-test verdict (still-broken / silently-fixed / unable-to-repro)
+      - Confirmed-broken items are filed as new stories under epic 50 with their own AC blocks
+      - Silently-fixed items get a one-line note in the pingpong audit section with the resolving commit/PR
+      - The audit section is then closed out by removing the "To Be Verified" block and replacing it with a "Verified clean as of 2026-MM-DD" line
+    type: chore
+  - id: 50-2
+    title: Narrator confrontation-trigger detection — instantiate the encounter, not just an OTEL warning
+    description: |-
+      Found 2026-04-26 in archive `sq-playtest-pingpong.archive-20260506-074557.md`. Narrator describes prose that contains confrontation trigger keywords (`chase`, `intercept`, `scandal`, `negotiation`, etc.) but emits `confrontation=None` in the structured-output sidecar; the encounter is never instantiated. PR #177 added the warning span `confrontation.skipped_with_trigger_keywords` but the work that was implicit in "fixed" — actually instantiating the encounter on trigger detection — was never done. This is the cleanest example of the OTEL-detector-as-fix anti-pattern uncovered in the 2026-05-13 audit: telemetry lights up the gap while the gap persists.
+
+      Scope is prompt-engineering work in the narrator structured-output schema, not keyword extension. The narrator must be reliably steered to either (a) emit a proper confrontation block when its prose introduces a stake-binding trigger, or (b) avoid the trigger language entirely when there's no encounter to bind. The OTEL warning becomes a regression detector, not a permanent monument.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - When narrator prose introduces a confrontation trigger keyword (chase/intercept/scandal/negotiation/social_duel/trial/auction), the structured-output sidecar emits a non-null confrontation block in the same turn
+      - The encounter is instantiated server-side on receipt of that block (existing dispatch path)
+      - "`confrontation.skipped_with_trigger_keywords` warning span only fires for residual edge cases, not as the steady-state behaviour"
+      - Integration test covers each of the 7 trigger keywords with prose fixtures from prior playtests; each fixture results in a real confrontation, not just the warning
+      - OTEL evidence on the next playtest shows `confrontation` populated on trigger-keyword turns; the dashboard can no longer use the warning span to find unfixed cases
+    type: bug
+  - id: 50-3
+    title: PartyPanel renders recruited companions section — server roster correct, UI was silent
+    description: |-
+      Found 2026-05-07 in archive `sq-playtest-pingpong.archive-20260507-085200.md`, repeated in `sq-playtest-pingpong.archive-20260508-pre472.md`. The recruitment subsystem maintains a server-side roster of companion NPCs; the UI `PartyPanel` component has no element to render them. The bug was marked `fixed` on the server-side at the time but never reached `verified` because the UI half wasn't wired. Playtests moved to Victoria solo immediately afterwards, leaving the UI gap silently broken for ~6 days.
+
+      Sebastien-axis loss: recruited companions are mechanical state players cannot see. Aspirational household-audience loss: companion-driven play (which is half the Heavy Metal / road_warrior pitch) is invisible.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    acceptance_criteria:
+      - PartyPanel renders a "Companions" sub-section when the server's PARTY_STATUS / state mirror reports a non-empty companions roster
+      - Each companion row shows name, archetype/role, current location (if split-party), and a portrait or letter-fallback per the existing chrome
+      - The sub-section is hidden (not just empty) when the roster is empty
+      - Vitest covers the empty / single-companion / multi-companion / split-party-location states
+      - Wiring test confirms the section is reachable from the production state-mirror path (not just storybook fixtures)
+    type: bug
