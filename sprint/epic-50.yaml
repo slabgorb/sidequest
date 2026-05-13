@@ -133,10 +133,14 @@ stories:
     title: 'Scenario: ClueGraph DAG prerequisite enforcement in discover_clue (reject orphan discoveries)'
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-13'
     repos: server
     workflow: tdd
     depends_on: 50-5
+    completed: '2026-05-13'
+    assignee: slabgorb
+    branch: feat/50-6-scenario-cluegraph-dag-prerequisite-enforcement
   - id: 50-7
     title: 'Scenario: GossipEngine — two-phase belief propagation, contradiction detection, credibility decay'
     points: 8
