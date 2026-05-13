@@ -70,7 +70,7 @@ Examples appended to the prompt:
 
 - `sidequest/protocol/` — `GamePatch` model gains `days_advanced: int = Field(default=0, ge=0)` (pydantic validator: non-negative int)
 - `sidequest/agents/narrator_prompts/output_only.md` — rule + examples + `days_advanced` added to the valid-fields list on line 7
-- `sidequest/game/narration_apply.py` — after parsing the `GamePatch`, extract `patch.days_advanced` and pass it to `tick_tropes(..., days_advanced=N)`. No interim turn-context structure needed; the field is read once at the apply site and consumed in the same call frame.
+- `sidequest/server/narration_apply.py` — after parsing the `NarrationTurnResult`, extract `result.days_advanced` and pass it to `tick_tropes(..., days_advanced=N)`. No interim turn-context structure needed; the field is read once at the apply site and consumed in the same call frame.
 
 ## State & persistence
 
