@@ -147,10 +147,14 @@ stories:
     title: 'Disposition: central Attitude enum + Disposition.attitude() derivation (replace dispatch/opening helper)'
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-13'
     repos: server
     workflow: tdd
+    completed: '2026-05-13'
     type: refactor
+    branch: feat/50-10-disposition-central-attitude-enum
+    assignee: slabgorb
   - id: 50-11
     title: 'Disposition: SPAN_DISPOSITION_SHIFT threshold-crossing fields (before_attitude, after_attitude, crossed)'
     points: 2
