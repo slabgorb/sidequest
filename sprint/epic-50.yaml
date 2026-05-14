@@ -230,11 +230,14 @@ stories:
     title: 'Journal: UI fact_id respect — drop synthetic id, consume narrator-supplied Footnote.fact_id (seam C UI part 1 per ADR-100)'
     points: 2
     priority: p2
-    status: backlog
+    status: active
+    started: '2026-05-14'
     repos: ui
     workflow: tdd
     depends_on: 50-14
     type: bug
+    branch: feat/50-15-journal-ui-fact-id
+    assignee: slabgorb
   - id: 50-16
     title: "Journal: UI confidence propagation — drop hardcoded 'Suspected' in useStateMirror, source from JOURNAL_RESPONSE (seam C UI part 2 per ADR-100)"
     points: 2
