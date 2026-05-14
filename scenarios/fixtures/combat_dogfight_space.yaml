@@ -1,0 +1,52 @@
+# Dogfight fixture — drops into a contested-lane intercept above a coyote_star body.
+# Usage: http://localhost:5173/?scene=combat_dogfight_space (requires DEV_SCENES=1)
+
+name: Dogfight — Coyote Intercept
+genre: space_opera
+world: coyote_star
+player_name: fixture-dogfight
+description: Two-ship intercept on a contested lane above a coyote_star body. Maneuver, thrust, and nerves.
+location: Contested Approach Lane
+turn: 3
+
+character:
+  name: Nyx Corvane
+  description: A former Colonial strike-wing pilot turned freelance escort.
+  personality: Clipped, professional, visibly uncomfortable with small talk.
+  level: 3
+  hp: 14
+  max_hp: 18
+  inventory:
+    items:
+      - id: snubfighter-controls
+        name: Snubfighter Yoke
+        description: A worn flight yoke with custom thumb-triggers
+        category: tool
+        value: 0
+        weight: 0.0
+        rarity: common
+        narrative_weight: 0.4
+        tags: [pilot, vehicle]
+        equipped: true
+        quantity: 1
+    gold: 0
+  statuses: []
+  backstory: Mustered out after the Coyote Wars; now flies escort for cargo runners who can't afford a proper wing.
+  narrative_state: Closing on a hostile contact in a contested lane
+  hooks:
+    - The contact is squawking a recognised Colonial transponder
+  char_class: Pilot
+  race: Human
+  pronouns: she/her
+  stats:
+    Brawn: 10
+    Instinct: 14
+    Presence: 11
+    Reflexes: 15
+    Toughness: 11
+    Wits: 13
+
+npcs:
+  - name: Hostile Snubfighter
+    role: hostile pilot
+    disposition: -25
