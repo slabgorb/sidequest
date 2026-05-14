@@ -1,7 +1,7 @@
 # Combat fixture — drops directly into a Wasteland Brawl encounter.
 # Usage: http://localhost:5173/?scene=combat_brawl_wasteland (requires DEV_SCENES=1)
 
-name: Combat Test
+name: Combat — Wasteland Brawl
 genre: mutant_wasteland
 world: flickering_reach
 player_name: Fixture-Skar
