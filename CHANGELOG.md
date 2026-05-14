@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Subrepos (`sidequest-server`, `sidequest-content`, `sidequest-daemon`, `sidequest-ui`)
 keep their own CHANGELOGs; this file tracks orchestrator-side changes only.
 
+## [Unreleased]
+
+### Added
+- Scene harness fixture library Wave 1 (12 fixtures): combat tier scaling
+  (low/mid/high caverns), genre coverage (wasteland brawl, space dogfight,
+  space boarding), social setups (tea drawing room, caverns tavern, tea
+  negotiation, wasteland poker), merchant bazaar (wasteland), and a
+  veteran-drop caverns scene. Replaces the four original fixtures
+  (combat_test/dogfight/negotiation/poker), three of which targeted
+  workshopping worlds. Spec: docs/superpowers/specs/2026-05-14-scenario-fixture-library-wave-1-design.md.
+- Filed 5 scene-harness hydrator extension stories (Wave 2): known_facts,
+  scenario_state, StructuredEncounter, magic_state + abilities, multi-PC
+  characters list. 18 pts total.
+
+### Changed
+- `just server` and `just up` default `DEV_SCENES=1` and set
+  `SIDEQUEST_FIXTURES_DIR` to the orchestrator-root `scenarios/fixtures`,
+  so `/dev/scene/{name}` is live without per-shell exports.
+
 ## [1.1.0] - 2026-05-11
 
 ### Added
