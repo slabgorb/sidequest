@@ -218,11 +218,12 @@ stories:
     title: 'Journal: JOURNAL_REQUEST handler — server replies from character.known_facts (seam C server-side per ADR-100)'
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-13'
     repos: server
     workflow: tdd
     depends_on: 50-5
+    completed: '2026-05-13'
     branch: feat/50-14-journal-request-handler
     assignee: slabgorb
   - id: 50-15
@@ -258,11 +259,8 @@ stories:
     priority: p2
     status: done
     started: '2026-05-13'
-    completed: '2026-05-13'
-    review_verdict: approved
     repos: sidequest-server,orc-quest
     workflow: tdd
-    branch: feat/50-18-adr-092-scene-harness-python
     acceptance_criteria:
       - POST /dev/scene/{name} returns {slug} on success when DEV_SCENES=1 is set
       - Route is NOT registered when DEV_SCENES env var is unset (production builds have zero scene-harness surface)
@@ -271,3 +269,6 @@ stories:
       - All 4 existing fixture YAMLs (combat_test, dogfight, negotiation, poker) hydrate successfully end-to-end via the UI ?scene=NAME flow
       - scripts/playtest.py grows --fixture <name> flag; routes through POST /dev/scene/{name} instead of POST /api/games; chargen is skipped; opening narration arrives and scripted actions drain normally
       - 'Wiring test: scene-harness endpoint is exercised end-to-end (POST → save persisted → slug-connect returns has_character=true → opening narration emits)'
+    completed: '2026-05-13'
+    review_verdict: approved
+    branch: feat/50-18-adr-092-scene-harness-python
