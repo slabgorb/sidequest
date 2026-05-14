@@ -1,0 +1,91 @@
+# Merchant fixture — wasteland bazaar with goods to trade.
+# Usage: http://localhost:5173/?scene=merchant_bazaar_wasteland (requires DEV_SCENES=1)
+
+name: Merchant — The Slag Market
+genre: mutant_wasteland
+world: flickering_reach
+player_name: fixture-merchant
+description: A wasteland market under tarp-shade. Three things to sell, gold in pocket, and a merchant who watches her hands.
+location: The Slag Market
+turn: 3
+
+character:
+  name: Krayle
+  description: A scavenger in patched leathers carrying a bundle that clinks.
+  personality: Friendly but never first to name a price.
+  level: 3
+  hp: 14
+  max_hp: 14
+  inventory:
+    items:
+      - id: pre-war-tin
+        name: Pre-War Tin
+        description: Sealed; rattles when shaken
+        category: misc
+        value: 60
+        weight: 1.0
+        rarity: uncommon
+        narrative_weight: 0.5
+        tags: [trade-good, salvage]
+        equipped: false
+        quantity: 1
+      - id: med-vial
+        name: Medical Vial
+        description: Half-full of something amber
+        category: consumable
+        value: 35
+        weight: 0.2
+        rarity: uncommon
+        narrative_weight: 0.5
+        tags: [trade-good, healing]
+        equipped: false
+        quantity: 1
+      - id: brass-fitting
+        name: Brass Fitting
+        description: Heavy, useful, not mine
+        category: misc
+        value: 25
+        weight: 1.5
+        rarity: common
+        narrative_weight: 0.4
+        tags: [trade-good, salvage]
+        equipped: false
+        quantity: 2
+      - id: utility-knife
+        name: Utility Knife
+        description: Belted, mostly for show
+        category: weapon
+        value: 5
+        weight: 0.5
+        rarity: common
+        narrative_weight: 0.3
+        tags: [melee]
+        equipped: true
+        quantity: 1
+    gold: 200
+  statuses: []
+  backstory: Half her year is spent on the road, half spent in markets like this.
+  narrative_state: Bundle on the counter, waiting for the merchant's first offer
+  hooks:
+    - The fitting is recognisable — the merchant may know whose stall it came from
+  char_class: Scavenger
+  race: Human
+  pronouns: she/her
+  stats:
+    Brawn: 12
+    Instinct: 13
+    Presence: 12
+    Reflexes: 12
+    Toughness: 12
+    Wits: 13
+
+npcs:
+  - name: Goss the Trader
+    role: shrewd merchant
+    disposition: 5
+  - name: Browsing Drifter
+    role: indifferent shopper
+    disposition: 0
+  - name: Loud Buyer
+    role: another customer haggling at the next stall
+    disposition: 0
