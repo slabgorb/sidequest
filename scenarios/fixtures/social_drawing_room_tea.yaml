@@ -1,0 +1,72 @@
+# Social fixture — Glenross drawing room with mixed disposition.
+# Usage: http://localhost:5173/?scene=social_drawing_room_tea (requires DEV_SCENES=1)
+
+name: Social — Drawing Room
+genre: tea_and_murder
+world: glenross
+player_name: fixture-drawing-room
+description: A small Glenross drawing room. Tea is poured. Four guests, four temperaments, one investigator.
+location: The Glenross Drawing Room
+turn: 3
+
+character:
+  name: Mrs. Halloran
+  description: A widow who turned an inheritance into a private investigative practice.
+  personality: Patient, observant, allergic to small talk that goes nowhere.
+  level: 3
+  hp: 12
+  max_hp: 14
+  inventory:
+    items:
+      - id: leather-notebook
+        name: Leather Notebook
+        description: Half-filled with shorthand observations
+        category: tool
+        value: 1
+        weight: 0.4
+        rarity: common
+        narrative_weight: 0.5
+        tags: [investigator]
+        equipped: true
+        quantity: 1
+      - id: pearl-earrings
+        name: Pearl Earrings
+        description: Inherited; worn for the look of the thing
+        category: misc
+        value: 40
+        weight: 0.0
+        rarity: uncommon
+        narrative_weight: 0.4
+        tags: [society]
+        equipped: true
+        quantity: 1
+    gold: 30
+  statuses: []
+  backstory: Three quiet successes have made her a known quantity in Glenross society. Tonight is the fourth invitation.
+  narrative_state: Settled into the wing-back chair, observing
+  hooks:
+    - Lady Ashe spent yesterday in the conservatory; tonight she is wearing gloves
+  char_class: Investigator
+  race: Human
+  pronouns: she/her
+  stats:
+    Brawn: 9
+    Instinct: 14
+    Presence: 13
+    Reflexes: 11
+    Toughness: 11
+    Wits: 15
+
+npcs:
+  - name: Lady Margaret Ashe
+    role: warm hostess
+    disposition: 30
+  - name: Reverend Pell
+    role: pleasant guest
+    disposition: 10
+  - name: Mr. Cornelius Moreton
+    role: cool merchant guest
+    disposition: -5
+  - name: Captain Hawkins
+    role: openly hostile retired officer
+    disposition: -25
