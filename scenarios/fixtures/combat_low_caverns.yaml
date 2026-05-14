@@ -1,0 +1,63 @@
+# Combat fixture — low tier baseline. Lvl 1 PC vs 1 weak hostile.
+# Usage: http://localhost:5173/?scene=combat_low_caverns (requires DEV_SCENES=1)
+
+name: Combat — Low Tier Baseline
+genre: caverns_and_claudes
+world: caverns_sunden
+player_name: fixture-combat-low
+description: A solitary goblin in the entrance tunnel. Test the floor of the combat math.
+location: The Entrance Tunnel
+turn: 3
+
+character:
+  name: Wren
+  description: A nervous first-delve scout, lantern shaking in one hand.
+  personality: Curious, jumpy, asks too many questions.
+  level: 1
+  hp: 10
+  max_hp: 10
+  inventory:
+    items:
+      - id: short-sword
+        name: Short Sword
+        description: A serviceable iron blade
+        category: weapon
+        value: 10
+        weight: 2.0
+        rarity: common
+        narrative_weight: 0.4
+        tags: [melee, slashing]
+        equipped: true
+        quantity: 1
+      - id: lantern
+        name: Hooded Lantern
+        description: Half-full of oil
+        category: tool
+        value: 5
+        weight: 1.5
+        rarity: common
+        narrative_weight: 0.3
+        tags: [light]
+        equipped: true
+        quantity: 1
+    gold: 8
+  statuses: []
+  backstory: Just signed on with a small delving company. This is her first job.
+  narrative_state: Crouched at the tunnel mouth, one hostile in sight
+  hooks:
+    - The goblin hasn't spotted her yet
+  char_class: Scout
+  race: Human
+  pronouns: she/her
+  stats:
+    Brawn: 10
+    Instinct: 12
+    Presence: 9
+    Reflexes: 13
+    Toughness: 11
+    Wits: 12
+
+npcs:
+  - name: Stub-tooth Goblin
+    role: weak hostile
+    disposition: -10
