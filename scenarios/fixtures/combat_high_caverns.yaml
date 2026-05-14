@@ -1,0 +1,86 @@
+# Combat fixture — high tier. Lvl 5 PC at low Edge vs 4 hostiles + champion.
+# Usage: http://localhost:5173/?scene=combat_high_caverns (requires DEV_SCENES=1)
+
+name: Combat — High Tier Crucible
+genre: caverns_and_claudes
+world: caverns_sunden
+player_name: fixture-combat-high
+description: A delve gone bad. Edge nearly out, four hostiles closing, and the boss watching from a ledge.
+location: The Black Antechamber
+turn: 3
+
+character:
+  name: Wren
+  description: A veteran scout, one delve from retirement, lantern long since shattered.
+  personality: Tired. Patient in a way that worries her crewmates.
+  level: 5
+  hp: 4
+  max_hp: 20
+  inventory:
+    items:
+      - id: longsword-blooded
+        name: Blooded Longsword
+        description: A hilt rewrapped in something that used to be cloth
+        category: weapon
+        value: 50
+        weight: 3.0
+        rarity: uncommon
+        narrative_weight: 0.7
+        tags: [melee, slashing, signature]
+        equipped: true
+        quantity: 1
+      - id: heater-shield
+        name: Heater Shield
+        description: Strapped to her left arm, dented past the boss
+        category: armor
+        value: 25
+        weight: 5.0
+        rarity: common
+        narrative_weight: 0.5
+        tags: [shield]
+        equipped: true
+        quantity: 1
+      - id: healing-philtre
+        name: Healing Philtre
+        description: One dose left
+        category: consumable
+        value: 30
+        weight: 0.2
+        rarity: uncommon
+        narrative_weight: 0.5
+        tags: [healing]
+        equipped: false
+        quantity: 1
+    gold: 80
+  statuses: []
+  backstory: Lost her crew in the upper galleries; came down alone to finish what they started.
+  narrative_state: Bleeding, breathing hard, four contacts in the chamber, one on the ledge
+  hooks:
+    - The champion has a mace she has seen before — on a body she stepped over an hour ago
+  char_class: Fighter
+  race: Human
+  pronouns: she/her
+  stats:
+    Brawn: 14
+    Instinct: 14
+    Presence: 11
+    Reflexes: 14
+    Toughness: 14
+    Wits: 13
+
+npcs:
+  - name: Bugbear Champion
+    role: elite hostile leader
+    disposition: -35
+  - name: Bugbear Skirmisher
+    role: hostile
+    disposition: -25
+  - name: Goblin Bowman A
+    role: ranged hostile
+    disposition: -20
+  - name: Goblin Bowman B
+    role: ranged hostile
+    disposition: -20
+  - name: Goblin Skirmisher
+    role: light hostile
+    disposition: -15
