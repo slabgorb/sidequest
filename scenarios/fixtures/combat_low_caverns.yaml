@@ -46,7 +46,7 @@ character:
   narrative_state: Crouched at the tunnel mouth, one hostile in sight
   hooks:
     - The goblin hasn't spotted her yet
-  char_class: Scout
+  char_class: Thief
   race: Human
   pronouns: she/her
   stats:

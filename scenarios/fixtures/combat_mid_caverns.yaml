@@ -46,7 +46,7 @@ character:
   narrative_state: Pressed against a stalagmite, three contacts in the gallery
   hooks:
     - One contact is bigger than the others — a hobgoblin, maybe
-  char_class: Scout
+  char_class: Thief
   race: Human
   pronouns: she/her
   stats:
