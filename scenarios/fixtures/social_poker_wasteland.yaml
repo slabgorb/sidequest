@@ -1,0 +1,69 @@
+# Social fixture — high-stakes card table in a wasteland watering hole.
+# Usage: http://localhost:5173/?scene=social_poker_wasteland (requires DEV_SCENES=1)
+
+name: Cards — High Stakes
+genre: mutant_wasteland
+world: flickering_reach
+player_name: fixture-poker
+description: Four-hand card game with Brand. Grit vs cunning across a scarred plastic table.
+location: The Slag Bar back room
+turn: 3
+
+character:
+  name: Vask
+  description: A wiry scavver with a tell only she knows about.
+  personality: Quiet, calculating, slow to bet but ruthless when she does.
+  level: 3
+  hp: 14
+  max_hp: 16
+  inventory:
+    items:
+      - id: chip-stack
+        name: Chit Stack
+        description: Bottle-cap chits, three colours
+        category: misc
+        value: 80
+        weight: 1.0
+        rarity: common
+        narrative_weight: 0.4
+        tags: [gambling]
+        equipped: false
+        quantity: 1
+      - id: hidden-blade
+        name: Sleeve Blade
+        description: Just in case the table turns
+        category: weapon
+        value: 6
+        weight: 0.5
+        rarity: common
+        narrative_weight: 0.5
+        tags: [concealed, melee]
+        equipped: true
+        quantity: 1
+    gold: 80
+  statuses: []
+  backstory: Grew up running cards in a salvager camp; outlasted three of her old crew at this very table.
+  narrative_state: Sitting down for the first hand of a long night
+  hooks:
+    - Brand has been watching her hands, not her eyes
+  char_class: Scavenger
+  race: Human
+  pronouns: she/her
+  stats:
+    Brawn: 11
+    Instinct: 13
+    Presence: 12
+    Reflexes: 14
+    Toughness: 12
+    Wits: 14
+
+npcs:
+  - name: Brand
+    role: dangerous card-table heavy
+    disposition: -20
+  - name: Quiet Mel
+    role: indifferent card player
+    disposition: 0
+  - name: Old Soot
+    role: friendly drunk regular
+    disposition: 15
