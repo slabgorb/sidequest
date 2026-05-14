@@ -230,11 +230,12 @@ stories:
     title: 'Journal: UI fact_id respect — drop synthetic id, consume narrator-supplied Footnote.fact_id (seam C UI part 1 per ADR-100)'
     points: 2
     priority: p2
-    status: active
+    status: done
     started: '2026-05-14'
     repos: ui
     workflow: tdd
     depends_on: 50-14
+    completed: '2026-05-14'
     type: bug
     branch: feat/50-15-journal-ui-fact-id
     assignee: slabgorb
