@@ -243,11 +243,15 @@ stories:
     title: "Journal: UI confidence propagation — drop hardcoded 'Suspected' in useStateMirror, source from JOURNAL_RESPONSE (seam C UI part 2 per ADR-100)"
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-14'
     repos: ui
     workflow: tdd
     depends_on: 50-14
+    completed: '2026-05-14'
     type: bug
+    branch: feat/50-16-journal-ui-confidence
+    assignee: slabgorb
   - id: 50-17
     title: 'Journal: KnownFact.confidence enum promotion — Literal[Certain|Suspected|Rumored|Discovered] (J-4 per ADR-100)'
     points: 1
