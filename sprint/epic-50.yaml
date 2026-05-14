@@ -256,10 +256,11 @@ stories:
     title: 'Journal: KnownFact.confidence enum promotion — Literal[Certain|Suspected|Rumored|Discovered] (J-4 per ADR-100)'
     points: 1
     priority: p3
-    status: active
+    status: done
     started: '2026-05-14'
     repos: server
     workflow: tdd
+    completed: '2026-05-14'
     type: refactor
     branch: feat/50-17-knownfact-confidence-enum
     assignee: slabgorb
