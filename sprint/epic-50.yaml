@@ -366,9 +366,11 @@ stories:
       4 chargen sessions.
     points: 3
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-05-15'
     repos: server
     workflow: tdd
-    started: '2026-05-15'
+    completed: '2026-05-15'
     branch: feat/50-23-hydrate-multi-pc-characters
     assignee: slabgorb
+    review_verdict: approved
