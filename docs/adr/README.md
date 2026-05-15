@@ -72,6 +72,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-005: Background-First Pipeline](005-background-first-pipeline.md) | ✓ accepted | live |
 | [ADR-006: Graceful Degradation](006-graceful-degradation.md) | ✓ accepted | live |
 | [ADR-007: Unified Character Model](007-unified-character-model.md) | ✓ accepted | live |
+| [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ◇ proposed | — |
 
 ## Prompt Engineering
 
@@ -98,7 +99,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-014: Diamonds and Coal](014-diamonds-and-coal.md) | ✓ accepted | — |
 | [ADR-015: Character Builder State Machine](015-character-builder-state-machine.md) | ✓ accepted | live |
 | [ADR-016: Three-Mode Character Creation](016-three-mode-chargen.md) | ✓ accepted | live |
-| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | accepted → ADR-087 |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | live |
 | [ADR-022: WorldBuilder Maturity](022-world-builder-maturity.md) | ✓ accepted | live |
@@ -270,7 +271,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-018: Trope Engine](018-trope-engine.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
