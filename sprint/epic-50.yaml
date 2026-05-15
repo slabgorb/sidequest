@@ -286,11 +286,6 @@ stories:
     branch: feat/50-18-adr-092-scene-harness-python
   - id: 50-19
     title: 'Scene harness: hydrate Character.known_facts (ADR-092 follow-on)'
-    points: 2
-    priority: p2
-    status: backlog
-    repos: server
-    workflow: tdd
     description: |
       Extend hydrate_fixture (sidequest/game/scene_harness.py) to read
       `known_facts:` under the `character:` block and project to
@@ -300,13 +295,15 @@ stories:
       Wave 2 fixture. Test: load a fixture with 4 KnownFacts spanning all
       tiers; assert character.known_facts has the right confidence values
       and accusation evaluator weight lookup succeeds.
-  - id: 50-20
-    title: 'Scene harness: hydrate top-level scenario_state (ADR-092 follow-on)'
-    points: 5
+    points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-15'
     repos: server
     workflow: tdd
+    completed: '2026-05-15'
+  - id: 50-20
+    title: 'Scene harness: hydrate top-level scenario_state (ADR-092 follow-on)'
     description: |
       Extend hydrate_fixture to read a top-level `scenario_state:` block
       and project to GameSnapshot.scenario_state (clue_graph,
@@ -316,13 +313,13 @@ stories:
       innocent). Tests epic-50 wiring (50-5/6/7/8) at fixture level.
       Schema reference: sidequest/game/scenario_state.py and
       sidequest/genre/models/scenario.py (ClueGraph, ClueNode).
-  - id: 50-21
-    title: 'Scene harness: hydrate StructuredEncounter (ADR-092 follow-on)'
-    points: 3
+    points: 5
     priority: p2
     status: backlog
     repos: server
     workflow: tdd
+  - id: 50-21
+    title: 'Scene harness: hydrate StructuredEncounter (ADR-092 follow-on)'
     description: |
       Extend hydrate_fixture to read a top-level `encounter:` block and
       project to GameSnapshot.encounter (StructuredEncounter, ADR-033).
@@ -332,13 +329,13 @@ stories:
       (combat_pretier_low/mid/high) for ADR-093 confrontation difficulty
       calibration spot tests. Schema reference: ADR-033 confrontation
       engine + sidequest/game/encounter.py.
-  - id: 50-22
-    title: 'Scene harness: hydrate magic_state + Character.abilities (ADR-092 follow-on)'
-    points: 5
+    points: 3
     priority: p2
     status: backlog
     repos: server
     workflow: tdd
+  - id: 50-22
+    title: 'Scene harness: hydrate magic_state + Character.abilities (ADR-092 follow-on)'
     description: |
       Extend hydrate_fixture to read top-level `magic_state:` block
       (project to GameSnapshot.magic_state, MagicState shape per
@@ -351,13 +348,13 @@ stories:
       fixtures. Schema reference: ADR-095 (class mechanical surface)
       and ADR-014 (Diamonds and Coal — magic state is Diamond, must
       be hydrated faithfully).
-  - id: 50-23
-    title: 'Scene harness: hydrate multi-PC characters list (ADR-092 follow-on)'
-    points: 3
+    points: 5
     priority: p2
     status: backlog
     repos: server
     workflow: tdd
+  - id: 50-23
+    title: 'Scene harness: hydrate multi-PC characters list (ADR-092 follow-on)'
     description: |
       Extend hydrate_fixture to accept a top-level `characters:` list
       (each entry the existing single-character shape) and project to
@@ -367,3 +364,8 @@ stories:
       party_social_tea (3-PC drawing room). Multiplayer playtest is
       currently bottlenecked here — every MP smoke test starts with
       4 chargen sessions.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
