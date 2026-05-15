@@ -315,9 +315,12 @@ stories:
       sidequest/genre/models/scenario.py (ClueGraph, ClueNode).
     points: 5
     priority: p2
-    status: backlog
+    status: active
+    started: '2026-05-15'
     repos: server
     workflow: tdd
+    branch: feat/50-20-scene-harness-hydrate-scenario-state
+    assignee: slabgorb
   - id: 50-21
     title: 'Scene harness: hydrate StructuredEncounter (ADR-092 follow-on)'
     description: |
