@@ -30,7 +30,8 @@ server *flags:
     DEV_SCENES="${DEV_SCENES:-1}" \
     SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
         uv run uvicorn sidequest.server.app:create_app \
-            --factory --reload --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
+            --factory --reload --reload-dir sidequest \
+            --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
         | tee "$log"
 
 # Production-style serve for Cloudflare Tunnel: build UI, mount it on FastAPI,
@@ -155,7 +156,8 @@ up:
         DEV_SCENES="${DEV_SCENES:-1}" \
         SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
         uv run uvicorn sidequest.server.app:create_app \
-            --factory --reload --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
+            --factory --reload --reload-dir sidequest \
+            --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
     echo $! > {{logdir}}/sidequest-server.pid
 
     echo "▶ client  (:5173)   → $cli"

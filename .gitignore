@@ -95,3 +95,6 @@ tui-pid
 
 # Superpowers brainstorm visual companion — session content, not committed
 .superpowers/
+
+# Zeitgoose persona bindings (local)
+.claude/zeitgoose/
