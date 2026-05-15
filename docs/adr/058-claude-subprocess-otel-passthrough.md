@@ -5,11 +5,11 @@ status: accepted
 date: 2026-04-02
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: [31, 90]
+superseded-by: 103
+related: [31, 90, 101, 103]
 tags: [observability]
 implementation-status: live
-implementation-pointer: null
+implementation-pointer: 103
 ---
 
 # ADR-058: Claude Subprocess OTEL Passthrough

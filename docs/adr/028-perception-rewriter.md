@@ -5,11 +5,11 @@ status: accepted
 date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: []
+superseded-by: 104
+related: [36, 101, 104]
 tags: [multiplayer]
 implementation-status: live
-implementation-pointer: null
+implementation-pointer: 104
 ---
 
 # ADR-028: Perception Rewriter
