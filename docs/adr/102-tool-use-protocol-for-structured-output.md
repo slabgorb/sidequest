@@ -1,7 +1,7 @@
 ---
 id: 102
 title: "Tool-Use Protocol for Structured Output"
-status: proposed
+status: accepted
 date: 2026-05-15
 deciders: [Keith Avery]
 supersedes: [39]

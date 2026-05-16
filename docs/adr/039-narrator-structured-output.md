@@ -1,7 +1,7 @@
 ---
 id: 39
 title: "Narrator Structured Output (JSON Sidecar Block)"
-status: accepted
+status: superseded
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []

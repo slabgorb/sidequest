@@ -65,14 +65,13 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-001: Claude CLI Only](001-claude-cli-only.md) | ✓ accepted | live |
 | [ADR-002: SOUL Principles](002-soul-principles.md) | ✓ accepted | live |
 | [ADR-003: Genre Pack Architecture](003-genre-pack-architecture.md) | ✓ accepted | live |
 | [ADR-004: Lazy Genre Binding](004-lazy-genre-binding.md) | ✓ accepted | live |
 | [ADR-005: Background-First Pipeline](005-background-first-pipeline.md) | ✓ accepted | live |
 | [ADR-006: Graceful Degradation](006-graceful-degradation.md) | ✓ accepted | live |
 | [ADR-007: Unified Character Model](007-unified-character-model.md) | ✓ accepted | live |
-| [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ◇ proposed | — |
+| [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ✓ accepted | — |
 
 ## Prompt Engineering
 
@@ -91,7 +90,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Narrator](067-unified-narrator-agent.md) | ✓ accepted | live |
 | [ADR-098: Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts](098-stateless-narrator-turns.md) | ✓ accepted | live |
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | ✓ accepted | *partial* → ADR-087 |
-| [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ◇ proposed | *partial* → ADR-101 |
+| [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ✓ accepted | *partial* → ADR-101 |
 
 ## Game Systems
 
@@ -129,10 +128,9 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-028: Perception Rewriter](028-perception-rewriter.md) | ✓ accepted | live → ADR-104 |
 | [ADR-036: Multiplayer Turn Coordination](036-multiplayer-turn-coordination.md) | ✓ accepted | live |
 | [ADR-037: Shared-World / Per-Player State Split](037-shared-world-per-player-state.md) | ✓ accepted | live |
-| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ◇ proposed | *partial* → ADR-101 |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | *partial* → ADR-101 |
 
 ## Transport / Infrastructure
 
@@ -147,7 +145,6 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✓ accepted | live → ADR-102 |
 | [ADR-040: Narrative Character Sheet (No Raw Stats)](040-narrative-character-sheet.md) | ✓ accepted | live |
 | [ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)](049-narrator-verbosity-vocabulary.md) | ✓ accepted | live |
 | [ADR-052: Narrative Axis System (/tone Command)](052-narrative-axis-system.md) | ✓ accepted | live |
@@ -196,9 +193,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) | ✓ accepted | live → ADR-103 |
 | [ADR-090: OTEL Dashboard Restoration after Python Port](090-otel-dashboard-restoration.md) | ✓ accepted | live |
-| [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ◇ proposed | *partial* → ADR-101 |
+| [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ✓ accepted | *partial* → ADR-101 |
 
 ## Codebase Decomposition
 
@@ -243,17 +239,21 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 
 | ADR | Status | Successor |
 |-----|--------|-----------|
+| [ADR-001: Claude CLI Only](001-claude-cli-only.md) | ✗ superseded | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-010: Intent-Based Agent Routing](010-intent-based-agent-routing.md) | ✗ superseded | [ADR-067](067-unified-narrator-agent.md) |
 | [ADR-017: Cinematic Chase Engine](017-cinematic-chase-engine.md) | ✗ superseded | [ADR-033](033-confrontation-engine-resource-pools.md) |
 | [ADR-019: Cartography Discovery](019-cartography-discovery.md) | ✗ superseded | [ADR-082](082-port-api-rust-to-python.md) |
+| [ADR-028: Perception Rewriter](028-perception-rewriter.md) | ✗ superseded | [ADR-104](104-perception-filtering-at-the-tool-layer.md) |
 | [ADR-029: Guest NPC Players](029-guest-npc-players.md) | ✗ historical | — |
 | [ADR-030: Scenario Packs](030-scenario-packs.md) | ✗ superseded | [ADR-053](053-scenario-system.md) |
 | [ADR-032: Genre-Specific LoRA Style Training for Flux Image Generation](032-genre-lora-style-training.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 | [ADR-034: Portrait Identity Consistency — Tiered Character Recognition Pipeline](034-portrait-identity-consistency.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
+| [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✗ superseded | [ADR-102](102-tool-use-protocol-for-structured-output.md) |
 | [ADR-043: Conlang Morpheme System](043-conlang-morpheme-system.md) | ✗ superseded | [ADR-091](091-culture-corpus-markov-naming.md) |
 | [ADR-044: Speculative Prerendering During TTS Playback](044-speculative-prerendering.md) | ✗ historical | — |
 | [ADR-054: WebRTC Voice Chat (Disabled — Echo Feedback Loop)](054-webrtc-voice-chat-disabled.md) | ✗ historical | — |
 | [ADR-056: Script Tool Generators — Offloading Structured Generation from LLM to Rust Binaries](056-script-tool-generators.md) | ✗ superseded | [ADR-059](059-monster-manual-server-side-pregen.md) |
+| [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) | ✗ superseded | [ADR-103](103-native-otel-via-tool-registry.md) |
 | [ADR-066: Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) | ✗ superseded | [ADR-098](098-stateless-narrator-turns.md) |
 | [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✗ superseded | [ADR-092](092-scene-harness-http-endpoint.md) |
 | [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |

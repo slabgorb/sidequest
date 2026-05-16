@@ -1,7 +1,7 @@
 ---
 id: 28
 title: "Perception Rewriter"
-status: accepted
+status: superseded
 date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []

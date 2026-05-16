@@ -1,7 +1,7 @@
 ---
 id: 58
 title: "Claude Subprocess OTEL Passthrough"
-status: accepted
+status: superseded
 date: 2026-04-02
 deciders: [Keith Avery]
 supersedes: []

@@ -24,9 +24,9 @@
 | [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | ✓ accepted | — |
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ◇ proposed | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
-| [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ◇ proposed | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
-| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ◇ proposed | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
 
 ## Deferred — accepted/proposed, not yet implemented
 

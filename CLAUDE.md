@@ -252,14 +252,14 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - **ADR-014** Diamonds and Coal — accepted
 - **ADR-088** ADR Frontmatter Schema and Auto-Generated Indexes — accepted
 
-**Core Architecture (001, 002, 003, 004, 005, 006, 007)**
-- 001 Claude CLI Only · 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model
+**Core Architecture (002, 003, 004, 005, 006, 007, 101)**
+- 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model · 101 Anthropic SDK as Narrator Backend
 
 **Prompt Engineering (008, 009)**
 - 008 Three-Tier Rule Taxonomy · 009 Attention-Aware Prompt Zones
 
-**Agent System (011, 012, 013, 067, 098, 100)**
-- 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction *(drift)* · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Narrator** · 098 Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts · 100 Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook *(partial)*
+**Agent System (011, 012, 013, 067, 098, 100, 102)**
+- 011 World State JSON Patches · 012 Agent Session Management · 013 Lazy JSON Extraction *(drift)* · **067 Unified Narrator Agent — Collapse Multi-Agent into Single Narrator** · 098 Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts · 100 Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook *(partial)* · 102 Tool-Use Protocol for Structured Output *(partial)*
 
 **Game Systems (014, 015, 016, 018, 020, 021, 022, 023, 024, 025, 074, 077, 078, 080, 081, 095, 096)**
 - **014 Diamonds and Coal** · 015 Character Builder State Machine · 016 Three-Mode Character Creation · 018 Trope Engine · 020 NPC Disposition System *(partial)* · 021 Progression System · 022 WorldBuilder Maturity · 023 Session Persistence · 024 Dual-Track Tension Model · 025 Pacing Detection · 074 Dice Resolution Protocol — Player-Facing Rolls via WebSocket · 077 Dogfight Subsystem via StructuredEncounter Extension · 078 Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals *(partial)* · 080 Unified Narrative Weight Trait · 081 Advancement Effect Variant Expansion (v1) *(deferred)* · 095 Class Mechanical Surface — One Signature Ability Per Non-Magical Class · 096 Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps *(partial)*
@@ -267,14 +267,14 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Frontend / Protocol (026, 027, 075, 079, 094)**
 - 026 Client-Side State Mirror · 027 Reactive State Messaging · 075 3D Dice Rendering — Three.js + Rapier Physics Overlay *(partial)* · 079 Genre Theme System Unification · 094 Orrery Label Placement — Three-Strategy Taxonomy
 
-**Multiplayer (028, 036, 037)**
-- 028 Perception Rewriter · 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State Split
+**Multiplayer (036, 037, 104)**
+- 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State Split · 104 Perception Filtering at the Tool Layer *(partial)*
 
 **Transport / Infrastructure (035, 038, 046, 047)**
 - **035 Unix Socket IPC for Python Sidecar** · **038 WebSocket Transport Architecture** · 046 GPU Memory Budget Coordinator · 047 Prompt Injection Sanitization Layer
 
-**Narrator / Text (039, 040, 049, 052)**
-- 039 Narrator Structured Output (JSON Sidecar Block) · 040 Narrative Character Sheet (No Raw Stats) · 049 Narrator Verbosity and Vocabulary (Two-Axis Text Tuning) · 052 Narrative Axis System (/tone Command)
+**Narrator / Text (040, 049, 052)**
+- 040 Narrative Character Sheet (No Raw Stats) · 049 Narrator Verbosity and Vocabulary (Two-Axis Text Tuning) · 052 Narrative Axis System (/tone Command)
 
 **NPC / Character Systems (041, 042, 053, 091)**
 - 041 Genie Wish / Consequence Engine *(drift)* · 042 OCEAN Personality Live Evolution *(drift)* · 053 Scenario System (Clue Graph, Belief State, Gossip Propagation) *(partial)* · 091 Culture-Corpus + Markov Naming
@@ -291,8 +291,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Code Generation / Tooling (059, 092)**
 - **059 Monster Manual — Server-Side Pre-Generation via Game-State Injection** *(drift)* · 092 Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures *(partial)*
 
-**Observability (058, 090)**
-- 058 Claude Subprocess OTEL Passthrough · 090 OTEL Dashboard Restoration after Python Port
+**Observability (090, 103)**
+- 090 OTEL Dashboard Restoration after Python Port · 103 Native OTEL via Tool Registry *(partial)*
 
 **Codebase Decomposition (060, 061, 062, 063, 064, 065, 068, 088)**
 - 060 Genre Models Decomposition — Split models.rs by Domain · 061 Lore Module Decomposition — Split lore.rs by Responsibility · 062 Server lib.rs Extraction — Route Groups, State, and Watcher Events · 063 Dispatch Handler Splitting — By Pipeline Stage · 064 Game Crate Domain Modules — Organize 69 Flat Files · 065 Protocol Message Decomposition — Split message.rs by Domain *(deferred)* · 068 Magic Literal Extraction — Domain-Scoped Constants · **088 ADR Frontmatter Schema and Auto-Generated Indexes**

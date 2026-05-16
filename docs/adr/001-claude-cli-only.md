@@ -1,7 +1,7 @@
 ---
 id: 1
 title: "Claude CLI Only"
-status: accepted
+status: superseded
 date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []

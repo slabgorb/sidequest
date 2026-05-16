@@ -1,7 +1,7 @@
 ---
 id: 101
 title: "Anthropic SDK as Narrator Backend"
-status: proposed
+status: accepted
 date: 2026-05-15
 deciders: [Keith Avery]
 supersedes: [1, 39, 58, 28]

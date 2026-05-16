@@ -1,7 +1,7 @@
 ---
 id: 103
 title: "Native OTEL via Tool Registry"
-status: proposed
+status: accepted
 date: 2026-05-15
 deciders: [Keith Avery]
 supersedes: [58]

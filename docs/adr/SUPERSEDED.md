@@ -50,6 +50,22 @@
 
 - [ADR-066: Persistent Opus Narrator Sessions](066-persistent-opus-narrator-sessions.md) — superseded
 
+### Superseded by [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md)
+
+- [ADR-001: Claude CLI Only](001-claude-cli-only.md) — superseded
+
+### Superseded by [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md)
+
+- [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) — superseded
+
+### Superseded by [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md)
+
+- [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) — superseded
+
+### Superseded by [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md)
+
+- [ADR-028: Perception Rewriter](028-perception-rewriter.md) — superseded
+
 ## Historical — no successor
 
 These ADRs describe features or decisions that were cut without direct replacement.

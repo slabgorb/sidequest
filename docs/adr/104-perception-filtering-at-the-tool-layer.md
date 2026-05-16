@@ -1,7 +1,7 @@
 ---
 id: 104
 title: "Perception Filtering at the Tool Layer"
-status: proposed
+status: accepted
 date: 2026-05-15
 deciders: [Keith Avery]
 supersedes: [28]
