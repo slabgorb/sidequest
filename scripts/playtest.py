@@ -254,7 +254,21 @@ async def _query_jaeger_traces(
     async with httpx.AsyncClient(timeout=15.0) as client:
         resp = await client.get(f"{jaeger_url.rstrip('/')}/api/traces", params=params)
         resp.raise_for_status()
-        return resp.json()
+        try:
+            return resp.json()
+        except json.JSONDecodeError as exc:
+            # A reverse proxy / wrong --jaeger-url can answer HTTP 200 with
+            # an HTML error page. That is NOT an httpx.HTTPError, so a raw
+            # JSONDecodeError would escape amain's handler as a traceback.
+            # Re-raise as httpx.HTTPError so the existing fail-loud path
+            # (clean "[span-jsonl] Jaeger query failed" + exit 1, no file)
+            # handles it identically to an unreachable Jaeger — no silent
+            # fallback.
+            raise httpx.HTTPError(
+                f"Jaeger returned non-JSON from {resp.request.url} "
+                f"(HTTP {resp.status_code}, content-type "
+                f"{resp.headers.get('content-type', '?')!r}): {exc}"
+            ) from exc
 
 
 async def capture_run_spans(
@@ -282,6 +296,8 @@ async def capture_run_spans(
     for attempt in range(1, settle_attempts + 1):
         # Re-read the window end each poll so spans that close *after* the
         # scenario loop exits (trailing narration flush) are still caught.
+        # max() guards a backward wall-clock step (NTP slew); _now_us()
+        # normally wins so run_end_us is the floor, not the typical value.
         payload = await _query_jaeger_traces(
             jaeger_url,
             service=JAEGER_SERVICE,
@@ -834,6 +850,21 @@ async def amain(args: argparse.Namespace) -> int:
     run_start_us = _now_us()
     rc = await pt.run()
     run_end_us = _now_us()
+
+    # A failed scenario (server unreachable, protocol error, stuck
+    # chargen) typically produced zero narration.turn spans. Entering the
+    # ~12s Jaeger settle here would raise SpanCaptureEmpty whose message
+    # tells the operator "the run was not traced — start Jaeger" — that
+    # misdiagnoses the real root cause (the scenario/server failure) and
+    # wastes the settle window. A failed run's span artifact is
+    # meaningless anyway: short-circuit and preserve the true signal.
+    # (Successful-scenario fail-loud-on-empty stays exactly as spec'd
+    # below — that is the gate this whole feature exists for.)
+    if rc != 0:
+        msg = f"scenario failed (rc={rc}); skipping span capture"
+        console.print(f"[bold yellow][span-jsonl] {msg}[/bold yellow]")
+        print(f"span-jsonl: {msg}", file=sys.stderr)
+        return rc
 
     try:
         records = await capture_run_spans(

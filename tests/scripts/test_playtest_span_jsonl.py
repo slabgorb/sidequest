@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts"
 
 from playtest import (  # noqa: E402
     SpanCaptureEmpty,
+    _parent_span_id,
     flatten_jaeger_tags,
     jaeger_span_to_record,
     parse_args,
@@ -159,6 +160,22 @@ def test_jaeger_span_to_record_child_resolves_parent_from_child_of_ref():
     assert rec["name"] == "llm.request"
     assert rec["span_id"] == "span-child"
     assert rec["parent_span_id"] == "span-parent"
+
+
+def test_parent_span_id_ignores_non_child_of_refs_and_treats_as_root():
+    # A FOLLOWS_FROM-only span is not a tree child — it must read as a
+    # root (None), not inherit the FOLLOWS_FROM target as a parent.
+    span = {
+        "spanID": "span-async",
+        "references": [
+            {
+                "refType": "FOLLOWS_FROM",
+                "traceID": "trace-aaaa",
+                "spanID": "span-parent",
+            }
+        ],
+    }
+    assert _parent_span_id(span) is None
 
 
 # ── traces_to_jsonl_records ─────────────────────────────────────────────────
