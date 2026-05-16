@@ -14,6 +14,26 @@ Usage:
     python3 scripts/playtest.py --scenario scenarios/combat_otel.yaml
     python3 scripts/playtest.py --scenario scenarios/combat_otel.yaml --keep
 
+OTEL span-tree capture (Phase E SDK parity gate):
+    --span-jsonl PATH dumps every span the run produced (one JSON object
+    per line) so the new Anthropic-SDK ``narration.turn`` spans — and
+    their ``narration.turn.tool_calls_json`` lie-detector ledger — can be
+    eyeballed. Spans are pulled from Jaeger's HTTP query API (default
+    http://localhost:16686, override with --jaeger-url), so the server
+    MUST be running with OTEL→Jaeger export enabled:
+
+        just jaeger          # stand up Jaeger v2 (gRPC :4317, UI :16686)
+        just up-traced       # boot with SIDEQUEST_OTLP_ENDPOINT=localhost:4317
+        python3 scripts/playtest.py --scenario scenarios/combat_otel.yaml \\
+            --span-jsonl /tmp/combat_otel.spans.jsonl
+
+    This capture path deliberately does NOT reuse scripts/playtest_otlp.py.
+    That buffer is the ADR-058 Claude-subprocess HTTP/JSON telemetry
+    stream — a *different* telemetry path. The ``narration.turn`` spans
+    this gate inspects come from the server's own OTEL tracer, exported
+    via gRPC to Jaeger per ADR-103 (the load-bearing ADR for the SDK
+    migration). Jaeger is the real, working sink for these spans.
+
 Scenario shape (see ``scenarios/*.yaml``)::
 
     name: My Test
@@ -28,8 +48,15 @@ Scenario shape (see ``scenarios/*.yaml``)::
 
 Exit codes:
     0 — scenario completed (all actions sent + final turn resolved)
-    1 — protocol error, server unreachable, or chargen got stuck
+    1 — protocol error, server unreachable, chargen got stuck, OR
+        --span-jsonl was requested but Jaeger was unreachable / produced
+        zero narration.turn spans for the run (fail loud — an empty
+        capture means the run wasn't traced; no file is written)
     2 — scenario invalid
+
+A successful scenario whose span capture then fails downgrades the exit
+to 1: the scenario "passing" while the parity-gate artifact is missing
+is exactly the silent-success this gate exists to prevent.
 """
 
 from __future__ import annotations
@@ -40,6 +67,7 @@ import contextlib
 import json
 import random
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -93,6 +121,214 @@ def load_scenario(path: Path) -> dict[str, Any]:
     data.setdefault("character", {"strategy": "auto"})
     data.setdefault("actions", [])
     return data
+
+
+# ── OTEL span-tree capture via Jaeger (Phase E SDK parity gate) ─────────────
+#
+# These spans (narration.turn + its llm.request / tool.* children) are
+# emitted by the SERVER's own OpenTelemetry tracer and gRPC-exported to
+# Jaeger (ADR-103). We pull them back out of Jaeger's HTTP query API
+# rather than from scripts/playtest_otlp.py — that buffer is the ADR-058
+# Claude-subprocess HTTP/JSON stream, a different telemetry path that the
+# SDK migration supersedes. See the module docstring.
+#
+# Service name comes from sidequest-server/sidequest/telemetry/setup.py:
+# init_tracer(service_name="sidequest-server"), called unconditionally at
+# server/app.py startup.
+
+# OTEL service.name the server registers (telemetry/setup.py default).
+JAEGER_SERVICE = "sidequest-server"
+
+# The span we gate on. If zero of these are present for the run after the
+# settle window, the run was not traced — fail loud, never an empty file.
+NARRATION_TURN_SPAN = "narration.turn"
+
+
+class SpanCaptureEmpty(RuntimeError):
+    """Raised when a --span-jsonl capture would be empty.
+
+    An empty capture is never written silently: it means the run wasn't
+    traced (operator forgot ``just up-traced`` / wrong --jaeger-url /
+    Jaeger down). Per CLAUDE.md "No Silent Fallbacks" this is surfaced
+    loudly and maps to exit code 1.
+    """
+
+
+def flatten_jaeger_tags(tags: list[dict[str, Any]]) -> dict[str, Any]:
+    """Flatten a Jaeger span ``tags`` array into a plain dict.
+
+    Jaeger v2's query API emits each tag as ``{key, type, value}`` with
+    the value already typed (int64/float64/bool/string). We keep the
+    native Python value so ``narration.turn.total_input_tokens`` stays an
+    int and ``narration.turn.tool_calls_json`` stays its JSON string
+    verbatim (it is double-decoded by the consumer, not here).
+    """
+    flat: dict[str, Any] = {}
+    for tag in tags or []:
+        key = tag.get("key")
+        if key is None:
+            continue
+        flat[key] = tag.get("value")
+    return flat
+
+
+def _parent_span_id(span: dict[str, Any]) -> str | None:
+    """Return the CHILD_OF parent spanID, or None for a root span."""
+    for ref in span.get("references") or []:
+        if ref.get("refType") == "CHILD_OF" and ref.get("spanID"):
+            return ref["spanID"]
+    return None
+
+
+def jaeger_span_to_record(span: dict[str, Any]) -> dict[str, Any]:
+    """Convert one Jaeger query-API span into a JSONL record.
+
+    Preserves name, span/trace/parent ids, start (μs since epoch) and
+    duration (μs), plus the full flattened attribute dict — so a
+    ``narration.turn`` record carries ``narration.turn.tool_calls_json``,
+    ``.model_chosen``, the token rollups and ``.tool_call_count``.
+    """
+    return {
+        "name": span.get("operationName", ""),
+        "span_id": span.get("spanID", ""),
+        "trace_id": span.get("traceID", ""),
+        "parent_span_id": _parent_span_id(span),
+        "start_us": int(span.get("startTime", 0)),
+        "duration_us": int(span.get("duration", 0)),
+        "attributes": flatten_jaeger_tags(span.get("tags") or []),
+    }
+
+
+def traces_to_jsonl_records(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    """Flatten a Jaeger ``/api/traces`` payload to a flat span-record list.
+
+    Jaeger groups spans under traces (``payload["data"][].spans[]``); the
+    JSONL is one object per span across every trace in the payload, so the
+    parent/child tree is reconstructable downstream from
+    ``span_id``/``parent_span_id``.
+    """
+    records: list[dict[str, Any]] = []
+    for trace in payload.get("data") or []:
+        for span in trace.get("spans") or []:
+            records.append(jaeger_span_to_record(span))
+    return records
+
+
+def write_span_jsonl(records: list[dict[str, Any]], path: Path) -> int:
+    """Write span records to ``path`` as JSONL. Returns the count written.
+
+    Refuses to write an empty file: zero records means the run wasn't
+    traced and a 0-byte success artifact would silently pass the parity
+    gate. Raises :class:`SpanCaptureEmpty` instead (no file touched).
+    """
+    if not records:
+        raise SpanCaptureEmpty(
+            "refusing to write an empty span JSONL — zero spans captured"
+        )
+    lines = "\n".join(json.dumps(rec, sort_keys=True) for rec in records)
+    path.write_text(lines + "\n")
+    return len(records)
+
+
+async def _query_jaeger_traces(
+    jaeger_url: str,
+    *,
+    service: str,
+    start_us: int,
+    end_us: int,
+    limit: int = 200,
+) -> dict[str, Any]:
+    """GET Jaeger's /api/traces scoped to one service + wall-clock window.
+
+    Jaeger's classic query API (Jaeger v2 keeps it UI-compatible) takes
+    ``start``/``end`` in microseconds since epoch. Scoping by both the
+    service name AND the run's time window keeps stale traces from
+    previous runs out of the capture.
+    """
+    params = {
+        "service": service,
+        "start": str(start_us),
+        "end": str(end_us),
+        "limit": str(limit),
+    }
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.get(f"{jaeger_url.rstrip('/')}/api/traces", params=params)
+        resp.raise_for_status()
+        try:
+            return resp.json()
+        except json.JSONDecodeError as exc:
+            # A reverse proxy / wrong --jaeger-url can answer HTTP 200 with
+            # an HTML error page. That is NOT an httpx.HTTPError, so a raw
+            # JSONDecodeError would escape amain's handler as a traceback.
+            # Re-raise as httpx.HTTPError so the existing fail-loud path
+            # (clean "[span-jsonl] Jaeger query failed" + exit 1, no file)
+            # handles it identically to an unreachable Jaeger — no silent
+            # fallback.
+            raise httpx.HTTPError(
+                f"Jaeger returned non-JSON from {resp.request.url} "
+                f"(HTTP {resp.status_code}, content-type "
+                f"{resp.headers.get('content-type', '?')!r}): {exc}"
+            ) from exc
+
+
+async def capture_run_spans(
+    jaeger_url: str,
+    *,
+    run_start_us: int,
+    run_end_us: int,
+    settle_attempts: int = 8,
+    settle_interval: float = 1.5,
+) -> list[dict[str, Any]]:
+    """Poll Jaeger until this run's narration.turn spans land, then return all.
+
+    The server's gRPC OTLP exporter batches with a ~2 s schedule delay
+    (telemetry/setup.py: schedule_delay_millis=2000), so a single query
+    fired the instant the scenario ends races the export. We poll with a
+    bounded settle (default ~12 s total) until at least one
+    ``narration.turn`` span for the window appears, then return every span
+    in the window so children (llm.request / tool.*) ride along.
+
+    Raises :class:`SpanCaptureEmpty` if no narration.turn span ever
+    appears, and lets ``httpx`` errors propagate (Jaeger unreachable is a
+    loud failure, not a silent empty capture).
+    """
+    last_records: list[dict[str, Any]] = []
+    for attempt in range(1, settle_attempts + 1):
+        # Re-read the window end each poll so spans that close *after* the
+        # scenario loop exits (trailing narration flush) are still caught.
+        # max() guards a backward wall-clock step (NTP slew); _now_us()
+        # normally wins so run_end_us is the floor, not the typical value.
+        payload = await _query_jaeger_traces(
+            jaeger_url,
+            service=JAEGER_SERVICE,
+            start_us=run_start_us,
+            end_us=max(run_end_us, _now_us()),
+        )
+        last_records = traces_to_jsonl_records(payload)
+        has_turn = any(r["name"] == NARRATION_TURN_SPAN for r in last_records)
+        if has_turn:
+            console.print(
+                f"[dim][span-jsonl] {len(last_records)} spans "
+                f"({sum(1 for r in last_records if r['name'] == NARRATION_TURN_SPAN)} "
+                f"narration.turn) after {attempt} poll(s)[/dim]"
+            )
+            return last_records
+        if attempt < settle_attempts:
+            await asyncio.sleep(settle_interval)
+
+    raise SpanCaptureEmpty(
+        f"no {NARRATION_TURN_SPAN!r} spans found in Jaeger ({jaeger_url}) "
+        f"for service {JAEGER_SERVICE!r} in the run window after "
+        f"{settle_attempts} polls (~{settle_attempts * settle_interval:.0f}s). "
+        f"Saw {len(last_records)} other span(s). The run was not traced — "
+        f"start Jaeger ('just jaeger') and the server with OTEL export "
+        f"('just up-traced', SIDEQUEST_OTLP_ENDPOINT=localhost:4317)."
+    )
+
+
+def _now_us() -> int:
+    """Wall-clock microseconds since epoch (Jaeger query time unit)."""
+    return int(time.time() * 1_000_000)
 
 
 # ── REST: mint a game slug ──────────────────────────────────────────────────
@@ -545,6 +781,30 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=0,
         help="RNG seed for auto-dice faces (default: 0).",
     )
+    # Phase E SDK parity gate. Purely additive — absent, behaviour and
+    # exit codes are byte-for-byte unchanged. Requires the server to be
+    # running with OTEL→Jaeger export (`just up-traced`); see the module
+    # docstring. Does NOT reuse playtest_otlp.py (ADR-058 vs ADR-103).
+    parser.add_argument(
+        "--span-jsonl",
+        type=Path,
+        default=None,
+        help=(
+            "After the scenario completes, dump every OTEL span the run "
+            "produced (one JSON object per line) to this path by querying "
+            "Jaeger. Captures the SDK narration.turn spans + tool_calls_json "
+            "ledger. Fails loud (exit 1, no file) if Jaeger is unreachable "
+            "or zero narration.turn spans are found for the run."
+        ),
+    )
+    parser.add_argument(
+        "--jaeger-url",
+        default="http://localhost:16686",
+        help=(
+            "Jaeger HTTP query API base URL for --span-jsonl "
+            "(default: %(default)s)."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -579,7 +839,65 @@ async def amain(args: argparse.Namespace) -> int:
         seed=args.seed,
         fixture=args.fixture,
     )
-    return await pt.run()
+
+    # No-flag path: behaviour, output and exit code byte-for-byte
+    # unchanged — capture is strictly additive.
+    if args.span_jsonl is None:
+        return await pt.run()
+
+    # Mark the run window *before* the scenario starts so the Jaeger
+    # query can scope to this run's spans only.
+    run_start_us = _now_us()
+    rc = await pt.run()
+    run_end_us = _now_us()
+
+    # A failed scenario (server unreachable, protocol error, stuck
+    # chargen) typically produced zero narration.turn spans. Entering the
+    # ~12s Jaeger settle here would raise SpanCaptureEmpty whose message
+    # tells the operator "the run was not traced — start Jaeger" — that
+    # misdiagnoses the real root cause (the scenario/server failure) and
+    # wastes the settle window. A failed run's span artifact is
+    # meaningless anyway: short-circuit and preserve the true signal.
+    # (Successful-scenario fail-loud-on-empty stays exactly as spec'd
+    # below — that is the gate this whole feature exists for.)
+    if rc != 0:
+        msg = f"scenario failed (rc={rc}); skipping span capture"
+        console.print(f"[bold yellow][span-jsonl] {msg}[/bold yellow]")
+        print(f"span-jsonl: {msg}", file=sys.stderr)
+        return rc
+
+    try:
+        records = await capture_run_spans(
+            args.jaeger_url,
+            run_start_us=run_start_us,
+            run_end_us=run_end_us,
+        )
+        written = write_span_jsonl(records, args.span_jsonl)
+    except SpanCaptureEmpty as exc:
+        console.print(f"[bold red][span-jsonl] {exc}[/bold red]")
+        print(f"span-jsonl capture failed (empty): {exc}", file=sys.stderr)
+        # A "passing" scenario with no parity artifact is the silent
+        # success this gate exists to prevent — downgrade to 1.
+        return 1
+    except httpx.HTTPError as exc:
+        console.print(
+            f"[bold red][span-jsonl] Jaeger query failed "
+            f"({args.jaeger_url}): {exc}[/bold red]"
+        )
+        print(
+            f"span-jsonl capture failed (Jaeger unreachable at "
+            f"{args.jaeger_url}): {exc}",
+            file=sys.stderr,
+        )
+        return 1
+
+    console.print(
+        f"[green][span-jsonl] wrote {written} span(s) → "
+        f"{args.span_jsonl}[/green]"
+    )
+    # Preserve the scenario's own non-zero exit (protocol error etc.); a
+    # successful capture never *upgrades* a failed scenario to 0.
+    return rc
 
 
 def main(argv: list[str] | None = None) -> int:

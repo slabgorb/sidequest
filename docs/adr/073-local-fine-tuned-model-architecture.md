@@ -6,10 +6,11 @@ date: 2026-04-08
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+amended-by: [101]
+related: [101]
 tags: [narrator-migration, narrator]
 implementation-status: live
-implementation-pointer: null
+implementation-pointer: 101
 ---
 
 # ADR-073: Local Fine-Tuned Model Architecture

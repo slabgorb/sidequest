@@ -5,11 +5,11 @@ status: accepted
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
-related: [13]
+superseded-by: 102
+related: [13, 101, 102]
 tags: [narrator]
 implementation-status: live
-implementation-pointer: null
+implementation-pointer: 102
 ---
 
 > **Un-superseded 2026-05-02.** This ADR was previously marked superseded by

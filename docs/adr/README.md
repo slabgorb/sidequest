@@ -72,6 +72,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-005: Background-First Pipeline](005-background-first-pipeline.md) | ✓ accepted | live |
 | [ADR-006: Graceful Degradation](006-graceful-degradation.md) | ✓ accepted | live |
 | [ADR-007: Unified Character Model](007-unified-character-model.md) | ✓ accepted | live |
+| [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ◇ proposed | — |
 
 ## Prompt Engineering
 
@@ -86,10 +87,11 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-011: World State JSON Patches](011-world-state-json-patches.md) | ✓ accepted | live |
 | [ADR-012: Agent Session Management](012-agent-session-management.md) | ✓ accepted | live |
-| [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✓ accepted | live |
+| [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✓ accepted | **drift** → ADR-102 |
 | [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Narrator](067-unified-narrator-agent.md) | ✓ accepted | live |
 | [ADR-098: Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts](098-stateless-narrator-turns.md) | ✓ accepted | live |
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ◇ proposed | *partial* → ADR-101 |
 
 ## Game Systems
 
@@ -98,7 +100,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-014: Diamonds and Coal](014-diamonds-and-coal.md) | ✓ accepted | — |
 | [ADR-015: Character Builder State Machine](015-character-builder-state-machine.md) | ✓ accepted | live |
 | [ADR-016: Three-Mode Character Creation](016-three-mode-chargen.md) | ✓ accepted | live |
-| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | accepted → ADR-087 |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | live |
 | [ADR-022: WorldBuilder Maturity](022-world-builder-maturity.md) | ✓ accepted | live |
@@ -127,9 +129,10 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-028: Perception Rewriter](028-perception-rewriter.md) | ✓ accepted | live |
+| [ADR-028: Perception Rewriter](028-perception-rewriter.md) | ✓ accepted | live → ADR-104 |
 | [ADR-036: Multiplayer Turn Coordination](036-multiplayer-turn-coordination.md) | ✓ accepted | live |
 | [ADR-037: Shared-World / Per-Player State Split](037-shared-world-per-player-state.md) | ✓ accepted | live |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ◇ proposed | *partial* → ADR-101 |
 
 ## Transport / Infrastructure
 
@@ -144,7 +147,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✓ accepted | live |
+| [ADR-039: Narrator Structured Output (JSON Sidecar Block)](039-narrator-structured-output.md) | ✓ accepted | live → ADR-102 |
 | [ADR-040: Narrative Character Sheet (No Raw Stats)](040-narrative-character-sheet.md) | ✓ accepted | live |
 | [ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)](049-narrator-verbosity-vocabulary.md) | ✓ accepted | live |
 | [ADR-052: Narrative Axis System (/tone Command)](052-narrative-axis-system.md) | ✓ accepted | live |
@@ -193,8 +196,9 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) | ✓ accepted | live |
+| [ADR-058: Claude Subprocess OTEL Passthrough](058-claude-subprocess-otel-passthrough.md) | ✓ accepted | live → ADR-103 |
 | [ADR-090: OTEL Dashboard Restoration after Python Port](090-otel-dashboard-restoration.md) | ✓ accepted | live |
+| [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ◇ proposed | *partial* → ADR-101 |
 
 ## Codebase Decomposition
 
@@ -213,7 +217,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-073: Local Fine-Tuned Model Architecture](073-local-fine-tuned-model-architecture.md) | ✓ accepted | live |
+| [ADR-073: Local Fine-Tuned Model Architecture](073-local-fine-tuned-model-architecture.md) | ✓ accepted | live → ADR-101 |
 | [ADR-076: Narration Protocol Collapse Post-TTS Removal](076-narration-protocol-collapse-post-tts.md) | ✓ accepted | live |
 
 ## Genre Mechanics
@@ -267,10 +271,10 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-065: Protocol Message Decomposition — Split message.rs by Domain](065-protocol-message-decomposition.md) | deferred | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | deferred | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | deferred | — |
+| [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | **drift** | [ADR-102](102-tool-use-protocol-for-structured-output.md) |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-059: Monster Manual — Server-Side Pre-Generation via Game-State Injection](059-monster-manual-server-side-pregen.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-018: Trope Engine](018-trope-engine.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
@@ -280,5 +284,8 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | *partial* | — |
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 
 <!-- ADR-INDEX:GENERATED:END -->

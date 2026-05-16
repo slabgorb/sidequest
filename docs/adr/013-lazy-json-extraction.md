@@ -6,12 +6,23 @@ date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: [39]
+related: [39, 101, 102]
 tags: [agent-system]
-implementation-status: live
-implementation-pointer: null
+implementation-status: drift
+implementation-pointer: 102
 ---
 
+> **Drift 2026-05-15.** Phase D of the Anthropic SDK migration (ADR-101)
+> introduces ADR-102 (Tool-Use Protocol for Structured Output) as the
+> narrator-side successor: structured fields now come from typed tool
+> calls instead of fenced-JSON sidecars. The legacy `extract_structured_from_response`
+> three-tier path remains live on the `claude -p` ClaudeClient backend
+> until the playgroup flip in Phase E; on the SDK narrator path, the
+> sidecar parser is bypassed once the narrator prompt drops the
+> `narrator_output_only` injection (deferred follow-up to Phase D — the
+> Phase D plan's literal "delete the parser" task was descoped because
+> the parser is still load-bearing for ClaudeClient streaming).
+>
 > **Un-superseded 2026-05-02.** This ADR was previously marked superseded by
 > ADR-057 (Narrator Crunch Separation). ADR-057 has since been deprecated —
 > its design was infeasible under ADR-001 (`claude -p` cannot call tools

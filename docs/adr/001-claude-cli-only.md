@@ -5,7 +5,7 @@ status: accepted
 date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
-superseded-by: null
+superseded-by: 101
 related: [73, 82]
 tags: [core-architecture]
 implementation-status: live
