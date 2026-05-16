@@ -26,7 +26,8 @@
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
-| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) |
+| [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
 
 ## Deferred — accepted/proposed, not yet implemented
 

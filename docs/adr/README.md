@@ -130,7 +130,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-036: Multiplayer Turn Coordination](036-multiplayer-turn-coordination.md) | ✓ accepted | live |
 | [ADR-037: Shared-World / Per-Player State Split](037-shared-world-per-player-state.md) | ✓ accepted | live |
-| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | *partial* → ADR-101 |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | *partial* → ADR-105 |
+| [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | *partial* → ADR-101 |
 
 ## Transport / Infrastructure
 
@@ -286,6 +287,7 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
-| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
+| [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | *partial* | [ADR-105](105-broadcast-layer-perception-firewall.md) |
+| [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 
 <!-- ADR-INDEX:GENERATED:END -->
