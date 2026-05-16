@@ -59,6 +59,29 @@ Test file lives in `sidequest-server/tests/` (the existing home for genre-load t
 
 ---
 
+## Required-File Contract (measured — Task 2)
+
+Read directly from `sidequest-server/sidequest/genre/loader.py` `_load_single_world` (line 708) and the model definitions. **This measured contract supersedes the pre-measurement File Structure hypothesis above** — Task 2's mandate is "author exactly the REQUIRED set, no more … adjust to the measured `World` model … Do not invent fields."
+
+**REQUIRED files (`_load_yaml` — `GenreLoadError` if absent/malformed; no silent fallback):**
+
+| File | Model | Strict-required fields | Notes |
+|---|---|---|---|
+| `world.yaml` | `WorldConfig` (`models/world.py:263`, `extra=allow`) | `name`, `description` | All else defaulted; `axis_snapshot.gravity ≥ 0.85` per `world_register.yaml` + the wiring test. `slug/starting_location/cover_poi/tone/tagline` are flatten-extras. |
+| `lore.yaml` | `WorldLore` (`models/lore.py:38`, `extra=allow`) | *(all optional)* | All fields default to `None`/`[]`. "No Stubbing" + Diamonds-and-Coal (the anchor is high-weight) ⇒ author real grave prose for `world_name/history/geography/cosmology`, not an empty file. |
+| `cartography.yaml` | `CartographyConfig` (`models/world.py:232`, `extra=ignore`) | *(all defaulted)* | `navigation_mode` **defaults to `region`**. Keep it `region`: `_load_cartography` (loader.py:597) only consults the sibling `rooms.yaml` when `navigation_mode == room_graph`. Authoring as `region` keeps the procedural room-graph runtime lane (Plans 5–7) cleanly out of scope. The surface settlement + descent are `regions:` here. |
+| `openings.yaml` | list of `Opening` (`models/narrative.py:208`) | per-opening `id`, `triggers`, `setting`, `establishing_narration` | `_load_openings` (loader.py:618) raises if the file is absent. Validator 7 (`_validate_opening_bank_coverage`, loader.py:463) requires **≥1 solo-eligible AND ≥1 MP-eligible** opening (`mode` ∈ {solo|either} and {multiplayer|either}). Validator 8 is **disabled** here (no `char_creation.yaml` ⇒ `chargen_backgrounds=[]`). `OpeningSetting` requires exactly one of `chassis_instance` or `location_label` — use `location_label`; leave `present_npcs:[]` so no `npcs.yaml` is required. `first_turn_invitation` must contain no `?`; no `[placeholder]`/`[tbd]`/`[authored]` markers. |
+
+**NOT in the world-validity contract — the loader's `_load_single_world` never reads these:** `hamlet.yaml` (zero references anywhere in `sidequest/`), a `rooms/` directory, or `rooms.yaml` (only consulted when `navigation_mode == room_graph`, which we deliberately do not use). All other `worlds/<slug>/*` files (`cultures/legends/tropes/archetypes/visual_style/history/npcs/rigs/magic/items/portrait_manifest/client_theme`) are strictly **optional** (`_load_yaml_optional`/`.exists()`-guarded).
+
+### ⚠ Plan-vs-loader divergence (surfaced, not silently resolved)
+
+The pre-measurement **File Structure** table prescribes `hamlet.yaml` + `rooms/*.yaml`. The measured loader contract **does not read those files at all** for world discovery/validity — `caverns_sunden` carries a 17 KB `hamlet.yaml` and a `rooms/` dir, but `_load_single_world` consumes none of it (those belong to the runtime interior / cookbook room lane = the Plans 5–7 fenced lane). Authoring `hamlet.yaml`/`rooms/` as the discoverability mechanism would create files the world loader ignores — speculative content for the fenced runtime lane, violating the plan's own Task-2 rule ("no speculative extras") and **No Stubbing / No Silent Fallbacks**.
+
+**Resolution (per the executing constraint — schema-true, surfaced loudly, no oq-1 fence crossed):** the hand-authored *surface anchor* is expressed in the structures the loader actually consumes. The "surface settlement / waiting-place" becomes a **cartography `region`**; the "descent POI / the_dropmouth seam" becomes a **cartography region** representing the shaft mouth, with the Plan-7 handoff documented as a `routes:` sentinel + comment (NOT a dangling `adjacent` ref, NOT an authored dungeon region — the deep is generated, not authored). Tasks 4 & 5 are executed against this real model; the wiring test asserts `w.config` / `w.lore` / `w.cartography` / `w.openings` (the real `World` fields) — **not** `w.hamlet` / `w.rooms`, which do not exist on the `World` model. No engine/schema/loader/`caverns_sunden` edit is made; the divergence is purely *which content files carry the anchor*, and both the real schema and the plan's own Task-2 measurement mandate authoring to the real contract.
+
+---
+
 ## Task 1: Measure the pre-flight bomb (does the pack load currently choke on beneath_sunden?)
 
 **Files:**
