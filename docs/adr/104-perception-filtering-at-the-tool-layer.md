@@ -10,7 +10,7 @@ related: [28, 36, 101, 102]
 depends_on: [101, 102]
 tags: [multiplayer, agent-system]
 implementation-status: partial
-implementation-pointer: 101
+implementation-pointer: 105
 load_bearing: false
 ---
 
@@ -18,8 +18,16 @@ load_bearing: false
 
 ## Status
 
-**Proposed.** Promotes to `accepted` on the Phase E merge alongside
-ADR-101.
+**Accepted.** Promoted on the Phase E merge alongside ADR-101.
+
+> **Completion pointer (2026-05-16):** the tool-layer decision in this
+> ADR is live and correct. Its *deferred broadcast-layer half* — the MP
+> fan-out per-recipient firewall the visibility classifier left
+> hardcoded to `visible_to:"all"` — is designed and completed in
+> **ADR-105**. `implementation-status` stays `partial` until ADR-105's
+> Track A + Track B land. Read ADR-105 for the merged-MP firewall; this
+> ADR remains the authority for tool-layer (`perspective_pc`)
+> filtering only.
 
 ## Context
 
