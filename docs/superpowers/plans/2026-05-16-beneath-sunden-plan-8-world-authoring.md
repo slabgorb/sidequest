@@ -31,6 +31,17 @@ If any task here finds itself editing engine code, the schema, or `caverns_sunde
 
 `worlds/beneath_sunden/` **already exists** (it holds `cookbook/`, `corpus/`, `world_register.yaml` from the merged cookbook track) but has **no `world.yaml`**. World discovery is a pure directory scan (`_load_subdirectories`, `loader.py:~327`) that calls `_load_single_world` → `_load_yaml(world_path / "world.yaml", WorldConfig)` (`loader.py:731`). A `worlds/<slug>/` directory **with no `world.yaml` is a latent loud-failure**: any full load of the `caverns_and_claudes` pack that walks `worlds/` may already choke on `beneath_sunden`. Task 1 measures this empirically *before* authoring — the result is load-bearing for the whole plan.
 
+### Pre-flight Measurement (recorded — Task 1)
+
+**Outcome: A (live break, not latent).** A full `load_genre_pack(caverns_and_claudes)` raises:
+
+```
+GenreLoadError :: failed to load .../worlds/beneath_sunden/world.yaml:
+[Errno 2] No such file or directory: '.../worlds/beneath_sunden/world.yaml'
+```
+
+The `beneath_sunden/` directory (cookbook track artifacts only, no `world.yaml`) is **already breaking pack load** — the whole `caverns_and_claudes` pack fails to load today. Task 3+ therefore **fixes a live break**, not merely adds a world. Code path confirmed: `_load_subdirectories(path, "worlds", lambda p: _load_single_world(p, ...))` (`loader.py:1087`) → `_load_single_world` (`loader.py:708`) → `_load_yaml(world_path / "world.yaml", WorldConfig)` (`loader.py:731`).
+
 ---
 
 ## File Structure
