@@ -22,6 +22,13 @@ Accepted. Design detail lives in
 decision record and scope boundary the spec's §9 mandates; it does not restate the
 spec, it locks the contested calls and the seams.
 
+**See `## Post-Closure Correction (2026-05-17)` below.** A live multiplayer
+playtest proved the materializer is reached in production code but silently
+no-ops at the genre/world gate; clause 12's wiring test is satisfied in letter
+(it calls the seam) but not in spirit (it bypasses the real connect→row→attach
+provenance). `implementation-status` stays `partial`; the spec's §10 / status
+block over-claimed "CLOSED & VERIFIED" and is corrected there.
+
 ## Context
 
 `caverns_and_claudes` ships one hand-authored world, `caverns_sunden`: 54 rooms across
@@ -200,3 +207,66 @@ math); player-paced pressure removes the "arbitrary clock" failure mode.
 
 The spec's §10 decomposition table is the authoritative live tracker; update it, not
 this section, as items land.
+
+## Post-Closure Correction (2026-05-17)
+
+**Recorded by:** Architect, from a live `beneath_sunden` 3-player multiplayer
+playtest (session `2026-05-17-beneath_sunden-mp`).
+
+The spec's §10 / status block and the project tracker recorded ADR-106 as
+**CLOSED & VERIFIED 2026-05-17**. A live session contradicts that claim. This
+ADR's `implementation-status: partial` was — and remains — correct; the spec
+closure record over-claimed and is the artifact to correct there.
+
+**What the playtest showed.** Three players created characters at the Ropefoot
+entrance and descended the shaft. The narrator produced fully improvised
+dungeon geography (a named NPC volunteered a clue referencing "the east
+turning — second level"); the UI Map showed "No map data yet"; and the server
+log contained **zero** `dungeon.materialize.*` / `frontier.*` / ledger spans
+and **no** raised exception, across a server confirmed running the merged
+Plan-7 wiring on hot-reloaded latest code.
+
+**Root cause (architectural).** The Plan-7 seam
+(`dungeon/session_integration.py::attach_dungeon_to_session`) is wired
+unconditionally from `handlers/connect.py:763` and is loud-by-design on every
+dependency failure. Its **only** silent exit is the genre/world gate
+(`session_integration.py:98`): `if genre_slug != "caverns_and_claudes" or
+world_slug != "beneath_sunden": return None`. Zero spans **and** zero raise can
+only mean the gate returned `None` — i.e. `row.world_slug` / `row.genre_slug`
+at the connect call site was not the gate literal at the instant `attach` ran
+(connect-vs-lobby ordering / slug-provenance for a fresh MP host game; to be
+confirmed by OQ-2). The gate's silent `return None` cannot distinguish
+"correctly skipped for another world" from "wrongly skipped for beneath_sunden
+because the slug was unresolved" — a **No-Silent-Fallbacks** violation in the
+one place the seam is allowed to be quiet.
+
+**Clause 12 assessment.** The keystone wiring test
+(`tests/dungeon/test_session_lifecycle_wiring.py`) invokes the seam with a
+pre-resolved `world_slug="beneath_sunden"`. It proves the seam works; it does
+**not** exercise the connect→row→attach chain that supplies that slug at
+runtime. Clause 12 ("invoked from the real session/frontier-crossing path, not
+only unit-tested") is therefore met in letter, unmet in spirit. This is the
+exact "Verify Wiring, Not Just Existence" failure the project guards against,
+and the reason clause 12 names the GM panel the lie detector.
+
+**Required to re-close (all four):**
+
+1. Add a loud `dungeon.attach.{bootstrapped|skipped}` OTEL span carrying
+   `genre`, `world_slug`, `reason` at the gate / call site — so the skip is
+   visible, not silent (OTEL Observability Principle; smallest, do first).
+2. Fix the `row.world_slug` / `row.genre_slug` provenance (or move the single
+   attach incision to where the world is authoritatively bound for **all**
+   flows — MP host, MP join, resume — favoring relocation over added logic per
+   the spec's "two one-line incisions" minimalism; the seam is already
+   idempotent via `already_seeded` + `_ATTACHED_SAVES`).
+3. Extend the keystone test to drive the real connect→row→attach chain
+   (construct the session via the connect handler, not a hand-built
+   `attach_dungeon_to_session(world_slug="beneath_sunden")` call), asserting
+   bootstrap spans fire — satisfying clause 12 in spirit.
+4. Correct the spec's §10 / status block: revert "CLOSED & VERIFIED" to the
+   accurate state; ADR-106 stays `partial` until 1–3 land and a live session
+   re-verifies materialization.
+
+Remediation is tracked operationally in the playtest ping-pong
+(`sq-playtest-pingpong.md`, headline `[BS-BUG]`); this section is the durable
+record.
