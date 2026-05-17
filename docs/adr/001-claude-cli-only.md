@@ -8,13 +8,29 @@ supersedes: []
 superseded-by: 101
 related: [73, 82]
 tags: [core-architecture]
-implementation-status: live
-implementation-pointer: null
+implementation-status: retired
+implementation-pointer: "Retired by ADR-101. Live transport: sidequest-server/sidequest/agents/llm_factory.py (default backend anthropic_sdk → anthropic_sdk_client.py)"
 ---
 
 # ADR-001: Claude CLI Only
 
-## Implementation status (2026-05-02)
+> **SUPERSEDED AND RETIRED — DO NOT FOLLOW THIS ADR (correction 2026-05-17).**
+> This ADR's core constraint ("no Anthropic SDK dependency; the grep is the
+> test") was **reversed by [ADR-101](101-anthropic-sdk-as-narrator-backend.md)**
+> on 2026-05-15. The Anthropic SDK is now a hard runtime dependency
+> (`anthropic>=0.40` in `sidequest-server/pyproject.toml`) and the default
+> narrator backend. `from anthropic import AsyncAnthropic` is present in
+> `sidequest-server/sidequest/agents/anthropic_sdk_client.py`. The live
+> transport selector is `sidequest-server/sidequest/agents/llm_factory.py`
+> (`SIDEQUEST_LLM_BACKEND`, default `anthropic_sdk`). `claude -p` and Ollama
+> survive only as opt-in non-default backends. **Everything below — including
+> the 2026-05-02 "Implementation status" block — is preserved verbatim as a
+> historical record and is no longer true.**
+
+## Implementation status (2026-05-02 — HISTORICAL, REVERSED BY ADR-101)
+
+> The paragraph below was accurate on 2026-05-02 and is false as of
+> 2026-05-15. Kept unedited for the historical record only.
 
 The truly load-bearing constraint of this ADR is **no Anthropic SDK dependency** — that constraint remains absolute and is enforced by the absence of `from anthropic` / `import anthropic` / `@anthropic-ai/sdk` anywhere in `sidequest-server`, `sidequest-daemon`, or `sidequest-ui`. The grep is the test.
 

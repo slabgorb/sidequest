@@ -52,7 +52,7 @@ This is a structured checklist for exercising SideQuest features during a playte
 - [ ] **Encounter a Dome Syndicate trader** — Scrapborn faction, led by Odige Fuseborn
   - Try: "I look for someone to trade with" or "I approach the merchants"
   - Expected: Pragmatic, everything-has-a-price attitude. Rain-catcher tech as leverage.
-- [ ] **Verify:** Unified narrator handles dialogue (ADR-067 — separate ensemble/troper/resonator agents were collapsed into one persistent Opus session)
+- [ ] **Verify:** Unified narrator handles dialogue (ADR-067 — separate ensemble/troper/resonator agents collapsed into one narrator; stateless per-turn calls per ADR-098, no persistent session)
 - [ ] **Verify:** NPC disposition affects tone (Dome Syndicate is neutral — mercantile, transactional)
 - [ ] **Find a Drifter singer** — The Singers of the Long Signal, led by Åych Przysåuchkin
   - Try: "I look for the nomads" or head toward the dust wastes

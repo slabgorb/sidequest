@@ -63,7 +63,7 @@ sidequest-content/            # Genre packs — single source of truth (subrepo)
 
 sidequest-server/             # Python FastAPI backend (subrepo, uv-managed)
 ├── sidequest/
-│   ├── agents/               # Claude CLI subprocess orchestration (narrator; LocalDM preprocessor dormant per 2026-04-28 spec)
+│   ├── agents/               # Narrator backends — Anthropic SDK (default) + claude -p/Ollama opt-in; LocalDM preprocessor dormant per 2026-04-28 spec
 │   ├── audio/                # Server-side music + SFX coordination
 │   ├── cli/                  # Standalone CLIs (encountergen, loadoutgen, namegen, validate, corpus*)
 │   ├── corpus/               # Conlang corpus + Markov naming (ADR-091)
@@ -117,7 +117,7 @@ sidequest-daemon/             # Python media services (subrepo)
 
 - **Server communicates via WebSocket** for real-time game events (narration, state updates)
 - **Small REST surface** for save/load, character listing, genre pack metadata
-- **Claude CLI (`claude -p`)** for all LLM calls — subprocess from Python, not SDK
+- **Anthropic Python SDK** is the default narrator LLM backend per **ADR-101** (supersedes ADR-001): prompt caching, native tool-use (replaces the ADR-039 JSON sidecar via ADR-102), per-call model routing (Haiku/Sonnet/Opus). Backend is selected by `SIDEQUEST_LLM_BACKEND` (default `anthropic_sdk`) — see `sidequest-server/sidequest/agents/llm_factory.py`. The `claude -p` CLI subprocess and Ollama remain opt-in non-default backends, and `claude -p` still serves some non-narrator jobs (e.g. dungeon "curate")
 - **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth), loaded by the server from `SIDEQUEST_GENRE_PACKS`
 - **Media daemon** is a Python sidecar for image generation (Flux / Z-Image) and music generation (ACE-Step). Music is generated on operator command via `python scripts/generate_music.py --genre <pack>` — per-track JSON params files in `sidequest-content/genre_packs/<pack>/audio/music/*_input_params.json` are the canonical spec; the daemon uploads OGG to R2 at `genre_packs/<pack>/audio/music/<track>.ogg`. See ADR-095
 - **Save files** live at `~/.sidequest/saves/` (SQLite `.db` files, one per genre/world session) — not in the repo. See `.pennyfarthing/guides/save-management.md` for cleanup, inspection, and migration procedures
@@ -253,7 +253,7 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - **ADR-088** ADR Frontmatter Schema and Auto-Generated Indexes — accepted
 
 **Core Architecture (002, 003, 004, 005, 006, 007, 101)**
-- 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model · 101 Anthropic SDK as Narrator Backend
+- 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model · 101 Anthropic SDK as Narrator Backend *(partial)*
 
 **Prompt Engineering (008, 009)**
 - 008 Three-Tier Rule Taxonomy · 009 Attention-Aware Prompt Zones

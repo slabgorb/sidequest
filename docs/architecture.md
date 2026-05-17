@@ -47,7 +47,7 @@
 ┌──────────────────────┐ ┌────────────────────────────────────────────┐
 │    Agent Layer       │ │              Game Layer                     │
 │  (sidequest.agents)  │ │  (sidequest.game)                           │
-│  Claude CLI subproc  │ │  ~70 modules: state, combat, chase, tropes,│
+│  Anthropic SDK       │ │  ~70 modules: state, combat, chase, tropes,│
 │  Unified narrator    │ │  inventory, NPCs, OCEAN, lore, conlang,    │
 │  + auxiliary agents  │ │  faction agendas, world materialization,   │
 │  + prompt_framework  │ │  music direction, barriers, dice resolve   │
@@ -81,7 +81,7 @@ sidequest-server/
 │   ├── protocol/                      # GameMessage discriminated union, typed payloads
 │   ├── genre/                         # YAML loader, genre pack models, 6 packs
 │   ├── game/                          # ~30+ modules — state, combat, NPCs, lore, pacing, etc.
-│   ├── agents/                        # Claude CLI subprocess, narrator + auxiliary agents
+│   ├── agents/                        # Anthropic SDK narrator (default) + claude -p/Ollama opt-in, auxiliary agents
 │   ├── server/                        # FastAPI HTTP/WS, session management, dispatch
 │   ├── daemon_client/                 # Unix socket client for Python media daemon
 │   ├── telemetry/                     # OTEL tracing and watcher event infrastructure
@@ -106,9 +106,13 @@ sidequest.server
 
 ## Key Design Decisions
 
-### ADR-001 / ADR-067: Claude CLI Only, Unified Narrator
+### ADR-101 / ADR-067 / ADR-098: Anthropic SDK Backend, Unified Narrator, Stateless Turns
 
-All LLM calls use `claude -p` subprocess via `asyncio.create_subprocess_exec`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery. Per **ADR-067** (Unified Narrator Agent), the narrator is the primary agent — it handles exploration, dialogue, combat narration, and chase narration through a persistent Opus session. Auxiliary agents (`world_builder`, `troper`, `resonator`) run for specialist tasks outside the per-turn critical path. The original multi-agent dispatch (ADR-010: creature_smith, dialectician, ensemble) is superseded. `intent_router` remains as state-override classification (`in_combat` → Combat, `in_chase` → Chase, default → Exploration).
+**Transport (ADR-101, supersedes ADR-001):** The narrator LLM path uses the **Anthropic Python SDK** by default — prompt caching on stable system zones, native tool-use (JSON-Schema-validated round-trips, replacing the ADR-039 fenced-JSON sidecar via ADR-102), and per-call model routing (Haiku 4.5 classification/scratch, Sonnet 4.6 narration, Opus 4.7 declared-important moments). Backend is selected by `SIDEQUEST_LLM_BACKEND` (default `anthropic_sdk`) in `sidequest/agents/llm_factory.py`; `claude -p` (`claude_client.py`) and Ollama remain opt-in non-default backends, and `claude -p` still serves some non-narrator jobs (e.g. dungeon "curate"). `ANTHROPIC_API_KEY` is a hard runtime requirement on narrator paths (fail-loud, no silent fallback).
+
+**Narrator role (ADR-067):** the narrator is the primary agent — it handles exploration, dialogue, combat narration, and chase narration. Auxiliary agents (`world_builder`, `troper`, `resonator`) run for specialist tasks outside the per-turn critical path. The original multi-agent dispatch (ADR-010: creature_smith, dialectician, ensemble) is superseded. `intent_router` remains as state-override classification (`in_combat` → Combat, `in_chase` → Chase, default → Exploration).
+
+**Session model (ADR-098, supersedes ADR-066):** narrator turns are **stateless** — each turn is a bounded, self-contained invocation with no `--resume` and no persistent Opus session. The earlier persistent-session / Full-Delta tiering (ADR-066) is retired.
 
 **LocalDM preprocessor — DORMANT as of 2026-04-28:** The `local_dm` decomposer (designed to pre-process player input into structured dispatch packages before narrator invocation) is **not on the live turn critical path**. It is wired for offline-only corpus extraction via `sidequest.corpus.miner`. Six modules carry DORMANT marker docstrings (`local_dm/`, `dispatch_bank/`). The original design spec is at `docs/superpowers/specs/2026-04-23-local-dm-decomposer-design.md`; the offline-only decision spec is at `docs/superpowers/specs/2026-04-28-localdm-offline-only-design.md`.
 
@@ -141,11 +145,11 @@ Python ML sidecar communicates via Unix domain socket (`/tmp/sidequest-renderer.
 ### ADR-038: WebSocket Transport
 Reader/writer task split per connection. Broadcast channels: JSON `GameMessage` for global state and session-scoped `TargetedMessage` for per-player narration. `ProcessingGuard` prevents concurrent dispatch per player. *(ADR-038 marks TTS binary channel as historical; see ADR-076.)*
 
-### ADR-039/057: Narrator Output & Sidecar Tools
-The narrator outputs prose only — no JSON blocks. Mechanical state changes (mood, intent, items acquired, quests, SFX, resource deltas, personality events, scene renders) are handled by sidecar tools that write JSONL results during narration. `assemble_turn` merges tool results with narration, with tool values always taking precedence. The old three-tier JSON extraction fallback (ADR-039/013) is superseded by this tool-based approach.
+### ADR-102 / ADR-057: Structured Output via Native Tool-Use (supersedes ADR-039)
+The narrator outputs prose only — no JSON blocks. Mechanical state changes (mood, intent, items acquired, quests, SFX, resource deltas, personality events, scene renders) are produced as **native Anthropic SDK tool calls** (JSON-Schema-validated round-trips) under the default `anthropic_sdk` backend, per **ADR-102** — the narrator structurally cannot describe a mechanical effect without invoking the corresponding tool. The earlier ADR-039 fenced-JSON *sidecar* (a stderr/JSONL parser used on the `claude -p` path) is superseded by this approach and is being retired with the SDK migration (ADR-101 Phase D); the legacy three-tier JSON extraction fallback (ADR-039/013) was already superseded. `assemble_turn` merges tool results with narration, tool values taking precedence.
 
 ### ADR-059: Monster Manual — Server-Side Pre-Generation
-NPC and encounter data is pre-generated server-side using Python CLI entry points (`namegen`, `encountergen`, `loadoutgen`) and stored in a persistent Monster Manual at `~/.sidequest/manuals/{genre}_{world}.json`. The narrator sees pre-generated NPCs and enemies embedded in `<game_state>` as world facts ("NPCs nearby", "Hostile creatures"). Claude treats game_state as ground truth and uses exact names, dialogue quirks, and abilities. Post-narration gate matches mentioned names against the Manual via compound key `(name, faction, world)` for stat block enrichment. This replaced narrator-side tool calling (ADR-056), which failed empirically — Claude in `claude -p` mode consistently ignores `--allowedTools` instructions.
+NPC and encounter data is pre-generated server-side using Python CLI entry points (`namegen`, `encountergen`, `loadoutgen`) and stored in a persistent Monster Manual at `~/.sidequest/manuals/{genre}_{world}.json`. The narrator sees pre-generated NPCs and enemies embedded in `<game_state>` as world facts ("NPCs nearby", "Hostile creatures"). Claude treats game_state as ground truth and uses exact names, dialogue quirks, and abilities. Post-narration gate matches mentioned names against the Manual via compound key `(name, faction, world)` for stat block enrichment. This replaced narrator-side tool calling (ADR-056), which failed empirically — Claude in `claude -p` mode consistently ignores `--allowedTools` instructions. (Native tool-use *is* reliable on the ADR-101 Anthropic SDK backend — see ADR-102 — but server-side pre-generation remains the doctrine: the narrator is gaslit with ground-truth game state regardless of transport.)
 
 ### ADR-047: Input Sanitization
 All player text passes through `sanitize_player_text()` at the protocol layer — strips injection attempts before routing.

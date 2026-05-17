@@ -8,11 +8,21 @@ supersedes: []
 superseded-by: 103
 related: [31, 90, 101, 103]
 tags: [observability]
-implementation-status: live
-implementation-pointer: 103
+implementation-status: retired
+implementation-pointer: "Retired by ADR-103. The default anthropic_sdk backend emits OTEL natively: sidequest-server/sidequest/telemetry/spans/llm_request.py (llm_request_span), called from agents/anthropic_sdk_client.py:108. No production code scrapes claude subprocess stderr for telemetry; the legacy claude -p path captures stderr for error logging only."
 ---
 
 # ADR-058: Claude Subprocess OTEL Passthrough
+
+> **SUPERSEDED AND RETIRED — DO NOT FOLLOW THIS ADR (correction 2026-05-17).**
+> Replaced by [ADR-103](103-native-otel-via-tool-registry.md). The default
+> `anthropic_sdk` backend (ADR-101) emits OTEL **natively** via
+> `sidequest-server/sidequest/telemetry/spans/llm_request.py`
+> (`llm_request_span`, called from `agents/anthropic_sdk_client.py:108`).
+> No production code scrapes `claude` subprocess stderr for telemetry. The
+> legacy `claude -p` path still captures stderr, but for error logging only —
+> not OTEL. The stderr-passthrough mechanism described below is dead in
+> production and is preserved here as a historical record only.
 
 > Extends ADR-031 (Game Watcher Semantic Telemetry). Bridges the gap between
 > the Rust backend's internal telemetry and the Claude CLI's internal operations.

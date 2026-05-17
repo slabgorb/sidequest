@@ -4,14 +4,14 @@ title: "Anthropic SDK as Narrator Backend"
 status: accepted
 date: 2026-05-15
 deciders: [Keith Avery]
-supersedes: [1, 39, 58, 28]
+supersedes: [1]
 superseded-by: null
 amends: [73]
 depends_on: [67, 98, 73]
 related: [1, 39, 58, 28, 67, 73, 98]
 tags: [core-architecture, agent-system]
-implementation-status: not-applicable
-implementation-pointer: null
+implementation-status: partial
+implementation-pointer: "Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103."
 load_bearing: true
 ---
 

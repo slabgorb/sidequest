@@ -41,7 +41,7 @@ sidequest-server/
 │   ├── protocol/                      # GameMessage discriminated union, 33+ message types, sanitization
 │   ├── genre/                         # YAML genre pack loader, pydantic models, 6 packs
 │   ├── game/                          # ~30+ modules — state, combat, NPCs, lore, audio direction
-│   ├── agents/                        # Claude CLI subprocess, narrator + auxiliary agents
+│   ├── agents/                        # Anthropic SDK narrator (default) + claude -p/Ollama opt-in, auxiliary agents
 │   ├── server/                        # FastAPI app, session management, dispatch, watcher
 │   ├── daemon_client/                 # Unix socket client for Python media daemon
 │   ├── telemetry/                     # OTEL span helpers + watcher event infrastructure
@@ -63,18 +63,20 @@ sidequest.server
 
 The composition mirrors the prior Rust crate layout 1:1 (per ADR-082) — any feature, span, or test can be compared across historical trees by path.
 
-## Claude CLI Integration
+## LLM Integration
 
-All LLM calls use `claude -p` as a subprocess via `asyncio.create_subprocess_exec`. No Anthropic SDK. Claude Max subscription handles billing. The agent layer wraps this with timeout, stdout parsing, and error recovery.
+The narrator LLM path uses the **Anthropic Python SDK** by default per **ADR-101** (supersedes ADR-001): prompt caching on stable system zones, native tool-use for structured output (ADR-102), and per-call model routing (Haiku 4.5 classification/scratch, Sonnet 4.6 narration, Opus 4.7 declared-important moments). `ANTHROPIC_API_KEY` is a hard runtime requirement on narrator paths (fail-loud, no silent fallback). Backend is selected by `SIDEQUEST_LLM_BACKEND` (default `anthropic_sdk`) in `agents/llm_factory.py`; `claude -p` (`claude_client.py`) and Ollama (`ollama_client.py`) remain opt-in non-default backends, and `claude -p` still serves some non-narrator jobs (e.g. the daemon's subject extraction and the dungeon "curate" stage).
 
-Active agent types, each a Python class wrapping the same subprocess pattern with agent-specific system prompts:
+Active agent types:
 
-- **Narrator** — unified prose generation (exploration, dialogue, combat, chase). Persistent Opus session per ADR-066/067.
+- **Narrator** — unified prose generation (exploration, dialogue, combat, chase). Unified per ADR-067; **stateless turns** per ADR-098 (each turn is a bounded, self-contained call — no `--resume`, no persistent session; supersedes ADR-066's persistent-Opus model).
 - **WorldBuilder** — world state patches, NPC creation, faction updates
 - **IntentRouter** — state-override classification (in_combat → Combat, in_chase → Chase, default → Exploration)
 - **Troper** — trope beat injection and narrative pacing
 
 Historical agents (CreatureSmith, Ensemble, Dialectician) are superseded by ADR-067's unified narrator; their routing references remain in the `AgentKind` enum but do not dispatch.
+
+The opt-in `claude` backend wraps a CLI subprocess (`claude_client.py`), kept for non-narrator jobs and as a fallback:
 
 ```python
 proc = await asyncio.create_subprocess_exec(
@@ -86,7 +88,7 @@ proc = await asyncio.create_subprocess_exec(
 stdout, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
 ```
 
-The narrator outputs prose only — no JSON blocks or structured data. Mechanical state changes are handled by sidecar tools that run alongside narration (mood, intent, items, quests, SFX, resource changes, personality events, scene renders). Tool results are validated and merged in `assemble_turn` with tool values taking precedence over extraction. NPC and encounter data is pre-generated server-side and injected into `<game_state>` as world facts (ADR-059: Monster Manual).
+The narrator outputs prose only — no JSON blocks. On the default `anthropic_sdk` backend, mechanical state changes (mood, intent, items, quests, SFX, resource changes, personality events, scene renders) are produced as **native SDK tool calls** (ADR-102) — the narrator structurally cannot describe a mechanical effect without invoking the matching tool. (The legacy ADR-039 fenced-JSON sidecar survives only on the opt-in, default-off `SIDEQUEST_NARRATOR_STREAMING=1` `claude -p` path.) Tool results are validated and merged in `assemble_turn` with tool values taking precedence. NPC and encounter data is pre-generated server-side and injected into `<game_state>` as world facts (ADR-059: Monster Manual).
 
 Player input is sanitized at the protocol layer before reaching any agent prompt (ADR-047).
 
@@ -121,7 +123,6 @@ See ADR-035 for the Unix socket IPC architecture and ADR-046 for GPU memory budg
 
 Not used and not planned:
 
-- **Anthropic SDK** — `claude -p` subprocess is the integration pattern (ADR-001)
 - **PostgreSQL / asyncpg** — SQLite is sufficient for single-server game saves
 - **SQLAlchemy / ORM** — game state is document-shaped; raw `sqlite3` with typed row factories
 - **Alembic / migrations** — saves are versioned by genre/world slug, not schema evolution
