@@ -18,7 +18,7 @@ oq-2 authors/pushes/opens PRs; **oq-1 owns Plan 5, git-sync, merge, verify.** Th
 
 - **No persistence schema authored here.** The complication-ledger *storage* (first-class persisted structure, spec §7) is Plan 5. This plan defines *what is added at attach* and *the resolve transition*; it calls Plan 5's ledger primitive. It does not define save tables.
 - **No pipeline orchestration / no async worker / no frontier here.** That is Plan 7. This plan's entry point is *called by* Plan 7's attach stage; it does not run the pipeline.
-- **No new trope engine and no new scenario engine.** Trope components register into the **existing** ADR-018 trope engine (`snap.active_tropes`); quest components seed into the **existing** ADR-053 `ScenarioState`. Plan 6 does cross-resolution (id → real trope/quest) and wiring, not a reimplementation. Reuse-first (ADR-106 / pragmatic-restraint).
+- **No new trope engine and no new scenario engine.** Trope components register into the **existing** ADR-018 trope engine (`snap.active_tropes`); quest components seed into the **existing** ADR-053 `ScenarioState`. ⚠️ **SUPERSEDED — see "Architect Task-0 Reconciliation (2026-05-16)" below: the quest-component host is Plan 5's `ComplicationThread(kind="quest")`, NOT `ScenarioState`.** Plan 6 does cross-resolution (id → real trope/quest) and wiring, not a reimplementation. Reuse-first (ADR-106 / pragmatic-restraint).
 - **Set-pieces ≠ cookbook special rooms.** `DungeonTheme.set_pieces` (Plan 4 templates) is this plan's source library. The manifest's `special_rooms` are *curated content rows* placed by Plan 7's curate/attach — a different axis. Slot options that reference creatures/loot resolve against the manifest's `wandering_table`/`loot_table` (the join point, Task 3). Do not conflate the two; this boundary is stated so review does not flag the absence of special-room handling here.
 - **No CR→Edge translation here.** That seam is Plan 7 Task 4 (owned, end-to-end). Plan 6 consumes already-translated creature refs from the manifest.
 
@@ -50,10 +50,34 @@ None. Set-piece templates + theme libraries shipped in Plan 4; `tropes.yaml`/sce
 
 ## Task 0: Branch setup + dependency gate
 
-- [ ] **Hard gate:** confirm Plan 5 (persistence/ledger storage) is **merged**. If not, stop. Record merged-base SHA.
-- [ ] Read the **real merged** Plan 5 ledger API. Every "spec §7.1 contract" seam below binds to it at execution; log divergence in Self-Review (do not silently adapt).
-- [ ] Read the live `tropes.yaml` shape (world content) and the real `ScenarioState` seeding surface. **If the scenario/quest-seeding surface is too partial (ADR-053 `partial`) to seed a quest component, stop and report it** as the stated dependency risk — do not stub a fake seed (No Stubbing / No Silent Fallbacks; `feedback_no_burying_bombs`).
-- [ ] Branch in `sidequest-server` per `repos.yaml` base.
+- [x] **Hard gate:** confirm Plan 5 (persistence/ledger storage) is **merged**. If not, stop. Record merged-base SHA. → **MERGED. PR #303 `feat/beneath-sunden-persistence`, merged-base SHA `cfd4aa1`.**
+- [x] Read the **real merged** Plan 5 ledger API. Every "spec §7.1 contract" seam below binds to it at execution; log divergence in Self-Review (do not silently adapt). → **Done — see reconciliation below.**
+- [x] Read the live `tropes.yaml` shape (world content) and the real `ScenarioState` seeding surface. **If the scenario/quest-seeding surface is too partial (ADR-053 `partial`) to seed a quest component, stop and report it** as the stated dependency risk — do not stub a fake seed (No Stubbing / No Silent Fallbacks; `feedback_no_burying_bombs`). → **Probed. Reported below — seam redirected, not stubbed.**
+- [x] Branch in `sidequest-server` per `repos.yaml` base. → **`feat/beneath-sunden-plan-6-setpiece-attach` off `develop` (server) + off `main` (orchestrator, for plan/spec docs).**
+
+## Architect Task-0 Reconciliation (2026-05-16)
+
+Task 0's three investigative checkboxes are discharged here against **merged** Plan 5 (`cfd4aa1`), not spec §7.1 prose. Dev: bind to these findings; do not re-derive. Log any further divergence in Self-Review per the plan's honest-deferral discipline.
+
+**Seam (1) — Plan 5 complication-ledger storage → GREEN (one favorable divergence).**
+Merged API in `sidequest/dungeon/persistence.py`:
+- `ComplicationThread(thread_id, origin_region_id, kind, status, started_at_depth_score, payload)` — `kind ∈ {"trope","quest"}`. This is the dataclass Task 4 binds to. `to_dict`/`from_dict` present.
+- `DungeonStore.open_thread(thread: ComplicationThread)` — the ledger-add primitive (Task 4). Raises loudly on duplicate `thread_id` (no silent fallback). **It already wraps `ledger_add_span` internally.**
+- `DungeonStore.resolve_thread(thread_id)` — the resolve primitive (Task 5). Wraps `ledger_resolve_span`.
+- `DungeonStore.get_thread(thread_id)` — raises `NotFoundError` if absent.
+- Span constants `ledger.add` / `ledger.resolve` are **owned by Plan 5** in `sidequest/telemetry/spans/dungeon_persist.py`.
+
+**Divergence to carry into Self-Review:** Plan 6 does **NOT** emit `ledger.add` / `ledger.resolve` itself — Plan 5 owns those spans inside `open_thread()` / `resolve_thread()`. The line-7 architecture statement ("Plan 6 ... emits `ledger.add` as children") is superseded: Plan 6 emits only `setpiece.attach` / `trope.start` / `quest.seed` and **calls** the Plan 5 primitive for the ledger row + its span. This is favorable — less surface for Plan 6 to own, span contract centralized.
+
+**Seam (2) — ADR-018 trope engine → GREEN (as the plan predicted, low-risk).**
+`snapshot.active_tropes: list[TropeState]` is live on the session snapshot (`sidequest/game/session.py:587`); `trope_tick.tick_tropes` mutates it in place. Trope-start = append a `TropeState(status="progressing")` to `snapshot.active_tropes` (Task 2/3). No new engine. Binding confirmed real.
+
+**Seam (3) — quest-component host → REDIRECTED (the ADR-053 bomb, defused on paper).**
+`ScenarioState` (`sidequest/game/scenario_state.py`) is a **whodunit** model: clue graph, `guilty_npc`, suspect roles, gossip adjacency, "binding surface only, between-turn processing deferred." It has **no surface to seed a dungeon quest thread and never will — that is not its axis.** Plan 6 scope bullet "quest components seed into ADR-053 `ScenarioState`" was written against spec prose *before Plan 5 merged* and is **stale**.
+
+**Architect decision (supersedes scope line 21):** A dungeon quest component is a `ComplicationThread(kind="quest")` written via Plan 5's `open_thread()` and cleared via `resolve_thread()` — **the same primitive as a trope thread, different `kind`**. Plan 5 already shipped the quest-thread host. `ScenarioState` is explicitly **out of Plan 6's path** (different subsystem, ADR-053 murder-mystery axis; conflating it is exactly the line-22 axis error). This is a **seam redirect, not a descope and not a stub**: every quest component still produces a real, persisted, legible ledger thread — it just lands in the ledger where Plan 5 put the `kind="quest"` slot, not in a whodunit clue graph.
+
+**Net:** all three seams resolved. Task 1 is unblocked. Branch `feat/beneath-sunden-plan-6-setpiece-attach` off `develop` in `sidequest-server` (empirical: every merged Sünden server PR #295–#303 used `feat/beneath-sunden-*` → `develop`).
 
 ## Task 1: Slot roll — pure deterministic component selection
 
