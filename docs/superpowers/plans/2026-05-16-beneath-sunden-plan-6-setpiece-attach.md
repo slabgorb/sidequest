@@ -180,3 +180,97 @@ snapshot when the `ValueError` propagates (Task 5 wires this into a live snapsho
 the orphan-on-raise would otherwise surface there). The failure span is still
 emitted with `failed=True`. Pinned by
 `tests/dungeon/test_setpiece_attach.py::test_unknown_trope_id_is_atomic_no_partial_mutation`.
+
+### Task 3 investigation (2026-05-16, implementer: Claude Sonnet 4.6) — NEEDS_CONTEXT: creature/loot-ref convention undefined
+
+**Seam (3) continuation — ScenarioState supersession confirmed.**
+The Architect Task-0 Reconciliation already discharged this: `ScenarioState` is a whodunit
+model with no dungeon-quest-seeding surface. A quest component's host is
+`ComplicationThread(kind="quest")` via Plan 5's `open_thread()`. This is confirmed by reading
+`sidequest/dungeon/persistence.py::ComplicationThread` (thread_id, origin_region_id, kind,
+status, started_at_depth_score, payload) and `DungeonStore.open_thread()`. The ScenarioState
+path is explicitly not touched — no ScenarioState import, no whodunit surface. Task 3's primary
+job (carry quest_id + params + origin_region as a pending ComplicationThread for Task 4) is
+fully implementable.
+
+**Decision C — symmetric API + shared budget (implementable).**
+`seed_quest_components(*, campaign_seed, expansion_id, region_id, setpiece_id,
+components: list[QuestComponent], manifest, threads_lit_per_expansion: int,
+threads_already_lit: int) -> QuestSeedResult` and
+`QuestSeedResult(quests_seeded: int, pending: list[tuple[QuestComponent, str]])` are well-defined
+and symmetric with Task 2's `start_trope_components` / `TropeStartResult`. The manifest is
+duck-typed on `.wandering_table` / `.loot_table` (mirror Task 2's `pack_tropes: Any` precedent).
+Budget sharing: Task 4 passes `threads_already_lit = trope_result.tropes_started` so quests
+consume what remains after tropes. Budget determinism via `_slot_seed` family.
+
+**Decision D — atomicity (implementable).**
+All-or-nothing on content bug: validate ALL components before producing any result or emitting
+success spans. On first missing ref: open that component's `quest.seed` span, set
+`failed=True`, raise loudly — symmetric with Task 2.
+
+**Decision E — creature/loot-ref convention: UNDEFINED in shipped Plan 4 code → STOP.**
+Investigation of the real shipped code and templates:
+
+1. `QuestComponent` (`sidequest/dungeon/setpieces.py:95`) has `quest_id: str` and
+   `params: dict` (free-form, no schema). No typed creature/loot ref fields.
+
+2. `ComponentSlot.name` is a free string (validated non-blank only). Slot names in shipped
+   YAML are `"features"`, `"creatures"`, `"loot"`, `"layout"` — but the `SlotOption.value`
+   for these is a FREE narrative string, not a manifest entry key.
+
+3. Shipped `sunless_temple.yaml` set-piece `the_altar_that_waits`:
+   - `slots[creatures].options = [{value: waking_acolytes, weight: 2.0},
+     {value: the_thing_the_temple_feeds, weight: 1.0}]` — these are NARRATIVE descriptions,
+     not manifest creature names
+   - `quest_components[0].params = {irreversible: true}` — a game-mechanical flag,
+     NOT a creature/loot ref
+
+4. Shipped `bone_crypt.yaml` set-piece `the_false_floor`:
+   - `slots[loot].options = [{value: prior_victims_effects, weight: 1.0}]` — narrative
+     description, not a manifest loot item name
+
+5. `build_wandering_table()` (`sidequest/game/cookbook/assemble.py:92`) produces rows with
+   keys `name`, `cr`, `xp`, `type`, `weight`, `count`, `telegraph`. The `name` values are
+   canonical D&D monster names from the corpus (`"Zombie"`, `"Shadow"`, etc.).
+
+6. `build_loot_table()` produces rows with keys `name`, `item_type`, `rarity`. The `name`
+   values are canonical item names from the corpus.
+
+7. The `DungeonTheme.creature_table[*].ref` values (`temple_acolyte_shade`, `altar_horror`,
+   `bone_drake`, `crypt_warden`) are theme-internal identifiers that appear NEITHER in the
+   manifest's `wandering_table` (corpus names) NOR in `QuestComponent.params`.
+
+**Finding:** There is NO convention in shipped Plan 4 code, YAML templates, or any other
+source that defines how a `QuestComponent`'s params or a set-piece's slot option values
+reference manifest `wandering_table` / `loot_table` entries. The task's "test 2" (missing
+creature/loot ref raises loudly) cannot be implemented without inventing a convention — which
+is explicitly forbidden (No Silent Fallbacks means the test must bind to a REAL convention,
+not an invented one).
+
+**What is blocked:**
+- Test 2: a slot option referencing a creature id absent from the manifest raises loudly
+- The creature/loot ref cross-resolution logic in `seed_quest_components`
+
+**What is NOT blocked (implementable without this convention):**
+- `QuestSeedResult` dataclass (quests_seeded, pending)
+- `seed_quest_components` signature + budget sharing + pending production
+- `quest.seed` span in `dungeon_setpiece.py`
+- Test 1 (pending quest is a real pending ledger thread for Task 4)
+- Test 3 reframe (no ScenarioState, no stub — real pending thread)
+- Budget cap / deterministic selection test
+- No-silent-default test
+
+**Resolution needed from Architect before Task 3 can complete:**
+Define the convention by which a set-piece references manifest creature/loot entries.
+Options (do NOT select one here — that's the Architect's call):
+  A. Define `creatures`/`loot` slot values as corpus `name` references (would require
+     changing shipped YAML to use corpus names instead of narrative descriptions).
+  B. Define a separate typed field on `QuestComponent` for creature/loot refs (would require
+     a Plan 4 schema extension and new YAML convention).
+  C. Defer creature/loot ref cross-resolution entirely to Plan 7's materializer
+     (making Task 3's "test 2" Plan 7 scope, not Plan 6 scope).
+  D. Explicitly exclude creature/loot ref resolution from Task 3 (the `params` dict is
+     narration-facing, not manifest-resolution-facing; the manifest join happens in Plan 7).
+
+The implementation can proceed on the non-ref-resolution subtasks immediately once the
+Architect confirms the scope reduction (option C/D) or the new convention (option A/B).
