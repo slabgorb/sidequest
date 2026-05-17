@@ -504,3 +504,23 @@ the branch via `superpowers:finishing-a-development-branch`.
 Until that verification passes, ADR-106 is **not** claimed closed
 anywhere. No push/merge until the real-pack keystone is genuinely green
 and the final review clears.
+
+---
+
+**STATUS 2026-05-17 — ADR-106 CLOSED (verified, not asserted).** 14.A
+(4 genre-level tropes, content branch `feat/beneath-sunden-trope-gap-fix`
+`1f2ab37`), 14.C (real-pack keystone + `test_session_integration`, zero
+`_attach_pack`), and 14.D (save-keyed guard, `lookahead_worker.py` /
+`frontier_hook.py` byte-unchanged) all landed on server branch
+`feat/beneath-sunden-plan-7-session-integration` (current `origin/develop`
+merged in clean — incl. the narrator-SDK routing fix `528ea8b`/#309 that
+resolved a wandering real-`claude`-call-timeout flake). The independent
+final adversarial review self-generated the closure evidence: keystone
+green against the real `GenreLoader(...).load("caverns_and_claudes")`
+pack, real `apply_world_patch` crossing grows the dungeon
+(`max(expansion_id)` ≥ 2), live `frontier.region_transition` span
+`observers >= 1`, full server suite 6482 passed / 0 failed, blob-equality
+proof for the two untouchable files — verdict **SHIP**. Closure recorded
+in the parent megadungeon spec §10 item 7. Remaining: finish-branch
+(`superpowers:finishing-a-development-branch`) — content + server branches
+merge **together** (server keystone reads the sibling content checkout).
