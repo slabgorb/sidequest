@@ -141,4 +141,32 @@ Designed by Architect (oq-2) on 2026-05-16, in parallel with oq-1's in-flight Pl
 
 ## Post-Implementation Corrections (as-built — CODE IS AUTHORITATIVE)
 
-_To be filled at execution. Record every divergence from the spec §6/§7.1 contract this plan was written against versus the real merged Plan 5 ledger + ADR-018 trope + ADR-053 scenario APIs; reconcile to as-built if the plan is re-run._
+### Task 2 corrections (2026-05-16, implementer: Claude Opus 4.7)
+
+**Decision A — origin_region & params do NOT go on `TropeState`.**
+Spec §6 says "origin region recorded, params carried" on the TropeState append. But
+`TropeState` has `model_config = {"extra": "ignore"}` — any extra kwargs passed to it
+are silently dropped, which is exactly the silent fallback the GM panel exists to catch.
+Therefore:
+- `start_trope_components` appends a minimal `TropeState(id=<trope_id>, status="progressing", progress=0.0)` only.
+- Origin region and `params` are carried in `TropeStartResult.pending` as
+  `list[tuple[TropeComponent, str]]` (component, origin_region_id pairs) for Task 4 to
+  write into the ledger (`ComplicationThread.origin_region_id` + payload). Task 2 does
+  NOT attempt to stash them on `TropeState`.
+- Code authority: `sidequest/dungeon/setpiece_attach.py::TropeStartResult` and
+  `start_trope_components`.
+
+**Decision B — `threads_lit_per_expansion` is an explicit required parameter, no config module.**
+The plan references `threads_lit_per_expansion` derived from `burst_magnitude` (spec §7.1).
+There is no `threads_lit_per_expansion` knob in the dungeon subsystem (only Plan 2's
+`region_graph/config.py::connection_burst`, a distinct structural axis). Plan 6's File
+Structure forbids creating a config module. Therefore:
+- `start_trope_components` takes `threads_lit_per_expansion: int` and `threads_already_lit: int`
+  as explicit required keyword arguments — no silent default.
+- Plan 7's pipeline owns the value (derived from `burst_magnitude`, playtest-tuned, spec §7.1)
+  and threads it across set-pieces.
+- The budget is shared across trope AND quest components (Task 3 continues the same counter
+  via the returned `TropeStartResult.tropes_started` value accumulated into `threads_already_lit`).
+- When components exceed remaining budget, the selection is deterministic from the seed via
+  the existing `_slot_seed` / blake2b family (no second seed scheme, no XOR).
+- Code authority: `sidequest/dungeon/setpiece_attach.py::start_trope_components` signature.
