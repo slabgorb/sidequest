@@ -215,11 +215,10 @@ orchestrator SDK path is the precedent; no `.send()`-shim exists — call
   tests inject a fake). Widen the `ClaudeClient | None` annotations to the
   tooling-client protocol / `Any` consistent with the rest of the migrated
   surface.
-- **Model tier:** `CallType.SCRATCH` (Haiku). Curation is structured
-  selection/refinement of monster manifests + telegraphs (JSON-shaped, not
-  player-facing prose) and runs once ahead of the party — cheap tier is
-  appropriate. This is the single tunable judgement call in the design; it
-  is called out as an Open Item (§13).
+- **Model tier:** `CallType.SCRATCH` (Haiku) — **decided** (spec read,
+  2026-05-17). Curation is structured selection/refinement of monster
+  manifests + telegraphs (JSON-shaped, not player-facing prose) and runs
+  once ahead of the party — the cheap tier is appropriate.
 
 This is the only change to merged Plan 7 code, and it is the minimal,
 codebase-idiomatic diff.
@@ -337,14 +336,14 @@ per task, the Plan 7 discipline:
 7. The keystone session-lifecycle wiring test (all of §10 (a)–(e)) +
    central-constraint reuse test + full-suite gate.
 
-## 13. Open Items (confirm at spec read)
+## 13. Resolved at Spec Read (2026-05-17)
 
-1. **Curate model tier** — `CallType.SCRATCH` (Haiku) is the recommended
-   default for structured curation (cheap, once-ahead-of-party). Confirm, or
-   choose `CallType.NARRATION` (Sonnet) if dungeon-content quality warrants
-   the spend.
-2. **Entrance theme selection** — the entrance uses the shallowest
-   depth-band theme from the loaded palette. Confirm this is the intended
-   surface-entry treatment for `beneath_sunden` (vs. a fixed dedicated
-   "entrance" theme), or defer the exact choice to the plan's pin against
-   the test seeding helpers.
+1. **Curate model tier — DECIDED:** `CallType.SCRATCH` (Haiku). Structured
+   curation, runs once ahead of the party; cheap tier is correct. (Not
+   `CallType.NARRATION`.)
+2. **Entrance theme — DECIDED:** the entrance uses the shallowest depth-band
+   theme from the loaded `ThemePalette` (no new content needed; consistent
+   with the depth gradient). The exact construction is pinned in the
+   implementation plan against the test seeding helpers + the
+   Seed=Expansion-0 contract; no fixed dedicated "entrance" theme is
+   introduced.
