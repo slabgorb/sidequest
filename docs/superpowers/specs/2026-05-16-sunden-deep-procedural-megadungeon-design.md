@@ -274,7 +274,7 @@ Likely sequenced sub-plans:
 4. **Theme palette + set-piece schema** — authored content scaffold + loader.
 5. **Persistence layer** — `dungeon_map`, `frontier`, mutation overlay, complication
    ledger; round-trip tests.
-6. **Set-piece attach + trope/quest-at-attach** — wired to the ledger.
+6. **Set-piece attach + trope/quest-at-attach** — wired to the ledger. ✓ **SHIPPED** (Plan 6, `feat/beneath-sunden-plan-6-setpiece-attach`, server HEAD `6eeba8b`; full server suite twice-green at 6413 passed / 0 failed). As-built: quest components seed as `ComplicationThread(kind="quest")` via Plan 5's `open_thread()`, NOT via `ScenarioState` (ADR-053 superseded — whodunit model, no dungeon surface); creature/loot slot-option→manifest ref cross-resolution deferred to Plan 7 (Plan 4 shipped no ref convention); Plan 6 emits `setpiece.attach`/`trope.start`/`quest.seed`/`setpiece.resolve` spans — `ledger.add`/`ledger.resolve` are Plan 5's. See Post-Implementation Corrections in `docs/superpowers/plans/2026-05-16-beneath-sunden-plan-6-setpiece-attach.md`.
 7. **Async look-ahead materializer + frontier-crossing promotion** — wiring test + OTEL.
 8. **`beneath_sunden` world authoring + `caverns_sunden` retirement** — manifest, town
    hub, theme palette content, curation passes.
