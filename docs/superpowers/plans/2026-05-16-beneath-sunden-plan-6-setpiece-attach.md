@@ -170,3 +170,13 @@ Structure forbids creating a config module. Therefore:
 - When components exceed remaining budget, the selection is deterministic from the seed via
   the existing `_slot_seed` / blake2b family (no second seed scheme, no XOR).
 - Code authority: `sidequest/dungeon/setpiece_attach.py::start_trope_components` signature.
+
+**Atomicity (post-review correctness fix, not a spec divergence).**
+`start_trope_components` validates EVERY component's `trope_id` against the pack
+(two-pass: validate-all → budget-select → append) BEFORE any
+`snapshot.active_tropes.append`. A bad `trope_id` rejects the whole set-piece's
+trope-start with zero snapshot mutation — no orphan `TropeState` left in a live
+snapshot when the `ValueError` propagates (Task 5 wires this into a live snapshot;
+the orphan-on-raise would otherwise surface there). The failure span is still
+emitted with `failed=True`. Pinned by
+`tests/dungeon/test_setpiece_attach.py::test_unknown_trope_id_is_atomic_no_partial_mutation`.
