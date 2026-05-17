@@ -58,8 +58,8 @@ flowchart TD
     J -->|"default"| K3["Exploration → unified narrator"]
 
     K1 & K2 & K3 --> L["agents/orchestrator.py<br/>narrator.build_context()<br/>+ prompt_framework.compose()"]
-    L --> M["agents/claude_client.py<br/>asyncio.create_subprocess_exec(<br/>'claude', '-p', prompt)<br/>120s timeout"]
-    M --> N["agents/orchestrator.py<br/>assemble_turn()<br/>(merges narration + sidecar JSONL<br/>tool patches per ADR-059)"]
+    L --> M["agents/llm_factory.py → anthropic_sdk_client.py<br/>Anthropic SDK (default, ADR-101)<br/>prompt caching + native tool-use<br/>model routing Haiku/Sonnet/Opus<br/>(claude -p / Ollama = opt-in)"]
+    M --> N["agents/orchestrator.py<br/>assemble_turn()<br/>(merges narration + native<br/>tool-use results per ADR-102)"]
 
     N --> O["extract_location_header()"]
     O --> P["Update NPC registry"]
@@ -81,9 +81,9 @@ flowchart TD
     style M fill:#ff6b6b,color:#fff
 ```
 
-**Key files:** `server/websocket.py` → `server/session_handler.py` → `agents/orchestrator.py` → `agents/claude_client.py` → back through `session_handler.py`
+**Key files:** `server/websocket.py` → `server/session_handler.py` → `agents/orchestrator.py` → `agents/llm_factory.py` → `agents/anthropic_sdk_client.py` (default; `claude_client.py`/`ollama_client.py` are opt-in backends) → back through `session_handler.py`
 
-**Sidecar tool model (ADR-059):** the narrator emits prose only. Mechanical state changes (mood, intent, items, quests, SFX, resource deltas, personality events, scene renders) are written by sidecar tools to JSONL during narration. `assemble_turn` merges tool results with narration, with tool values always taking precedence over any prose extraction.
+**Tool-use model (ADR-102, supersedes the ADR-039 sidecar):** the narrator emits prose only. Mechanical state changes (mood, intent, items, quests, SFX, resource deltas, personality events, scene renders) are produced as native Anthropic SDK tool calls (JSON-Schema-validated) under the default `anthropic_sdk` backend — the narrator structurally cannot describe a mechanical effect without invoking the matching tool. The earlier ADR-039 fenced-JSON/JSONL sidecar is retired with the SDK migration (ADR-101 Phase D). `assemble_turn` merges tool results with narration, tool values always taking precedence over any prose extraction.
 
 **Storage touched:** NPC registry, quest log, inventory, XP/level, narration history, lore store
 
@@ -91,7 +91,7 @@ flowchart TD
 
 ## 2. Narrator Prompt Assembly
 
-How the narrator prompt is composed across attention zones, with Full vs Delta tiering (ADR-066). Lives entirely in `sidequest-server/sidequest/agents/prompt_framework/`.
+How the narrator prompt is composed across attention zones. Turns are **stateless** (ADR-098, supersedes ADR-066's Full/Delta persistent-session tiering): every turn composes the full prompt with no `--resume`. Cost is controlled by **prompt caching** (ADR-101) — `cache_control` breakpoints on the three stable system zones (SOUL + rules, tool definitions, world snapshot) yield ~60% cached input after warmup. Lives in `sidequest-server/sidequest/agents/prompt_framework/`.
 
 ```mermaid
 flowchart TD
@@ -105,18 +105,14 @@ flowchart TD
     C -->|"in_chase"| C2["Intent.Chase"]
     C -->|"default"| C3["Intent.Exploration"]
 
-    C1 & C2 & C3 --> D{"First turn<br/>of session?"}
-    D -->|"yes"| E["Full Tier<br/>(~15KB system prompt)"]
-    D -->|"no"| F["Delta Tier<br/>(dynamic state only)"]
-
-    E & F --> G["agents/prompt_framework/<br/>core/ContextBuilder"]
+    C1 & C2 & C3 --> G["agents/prompt_framework/<br/>core/ContextBuilder<br/>composes full prompt every turn<br/>(ADR-098 stateless — no session resume)"]
 
     subgraph PRIMACY["Primacy Zone — Maximum Attention"]
         P1["narrator_identity"]
         P2["narrator_constraints<br/>Silent constraint handling"]
         P3["narrator_agency<br/>PC puppet prevention + multiplayer"]
         P4["narrator_consequences<br/>Genre tone alignment"]
-        P5["narrator_output_only ★<br/>Sidecar-tool emission rules<br/>(prose only; tools handle patches)"]
+        P5["narrator_output_only ★<br/>Native tool-use rules per ADR-102<br/>(prose only; tools handle patches)"]
         P6["genre_identity ★"]
     end
 
@@ -154,18 +150,15 @@ flowchart TD
 
     G --> PRIMACY --> EARLY --> VALLEY --> LATE --> RECENCY
 
-    RECENCY --> H{"Tier?"}
-    H -->|"Full"| I["claude --model opus<br/>--session-id {UUID}<br/>--system-prompt {zones}<br/>-p {action}"]
-    H -->|"Delta"| J["claude --model opus<br/>--resume {session_id}<br/>-p {zones + action}"]
+    RECENCY --> I["agents/anthropic_sdk_client.py<br/>stateless SDK call — no --resume (ADR-098)<br/>cache_control on SOUL+rules / tool defs /<br/>world snapshot (ADR-101)<br/>model routing Haiku/Sonnet/Opus per turn"]
 
-    I & J --> K["Parse response (prose only)<br/>+ collect sidecar tool JSONL"]
+    I --> K["Parse prose<br/>+ collect native tool-use results (ADR-102)"]
     K --> L["assemble_turn:<br/>merge narration with<br/>tool-emitted patches"]
     L --> M["ActionResult<br/>→ back to session_handler"]
 
     style A fill:#6c5ce7,color:#fff
     style M fill:#6c5ce7,color:#fff
     style I fill:#ff6b6b,color:#fff
-    style J fill:#ff6b6b,color:#fff
     style PRIMACY fill:#ff634720,stroke:#ff6347
     style EARLY fill:#ffa50020,stroke:#ffa500
     style VALLEY fill:#32cd3220,stroke:#32cd32
@@ -173,11 +166,11 @@ flowchart TD
     style RECENCY fill:#9370db20,stroke:#9370db
 ```
 
-**★ = injected on EVERY tier** (Full and Delta). Unmarked = Full tier only or conditional.
+**★ = always-present core zone.** Turns are stateless (ADR-098): the full prompt is composed every turn. ★ zones are sent unconditionally; unmarked zones are intent/state-conditional. ADR-101 `cache_control` on the stable system zones (SOUL + rules, tool definitions, world snapshot) makes the repeated portions cache-hits, so re-sending them every turn is cheap.
 
 **Attention zone ordering:** Primacy (0) → Early (1) → Valley (2) → Late (3) → Recency (4). Sections added in any order; `compose()` sorts by zone before joining.
 
-**Delta tier key rule:** `narrator_output_only` (sidecar-tool emission rules) is re-sent every turn — without it, the narrator stops emitting structured tool calls.
+**Per-turn invariant:** `narrator_output_only` (native tool-use rules per ADR-102) is sent every turn — without it, the narrator stops emitting structured tool calls and reverts to prose-only.
 
 **Token telemetry:** Per-zone token estimates emitted via OTEL spans for the Prompt Inspector dashboard (ADR-090, restoration in progress).
 
@@ -244,7 +237,7 @@ flowchart TD
 > - `SceneRelevanceValidator` **dark** (REDESIGN P2 under ADR-086 image-composition taxonomy).
 > - `PrerenderScheduler` (speculative prerender, ADR-044) **dark** (RESTORE P2).
 
-**Subject extraction:** Narrator's `visual_scene` (from sidecar tool emission) is preferred; regex fallback only.
+**Subject extraction:** Narrator's `visual_scene` (from native tool-use per ADR-102) is preferred; regex fallback only.
 
 **Render tiers:** portrait (768×1024), portrait_square (1024×1024), landscape (1024×768), scene_illustration (1024×768), text_overlay (768×512), fog_of_war (1024×1024). The `cartography` tier was removed 2026-04-28 along with the rest of the live world-map runtime view (ADR-019 superseded). The `tactical_sketch` tier was retired separately under ADR-086.
 
@@ -391,7 +384,7 @@ flowchart TD
     C -->|"yes"| D["Intent.Combat<br/>source: StateOverride<br/>confidence: 1.0"]
     C -->|"no"| E["Intent.Exploration<br/>(or Chase if in_chase)"]
 
-    D --> F["Narrator agent responds;<br/>sidecar tools emit<br/>combat patches"]
+    D --> F["Narrator agent responds;<br/>native tool-use emits<br/>combat patches (ADR-102)"]
     E --> F
 
     F --> G["game/encounter.py<br/>apply_state_mutations()"]
@@ -533,7 +526,7 @@ Narrator footnotes become persistent facts that feed back into future prompts. L
 
 ```mermaid
 flowchart TD
-    A["Narrator response:<br/>prose + sidecar tool emissions"] --> B["agents/orchestrator.py<br/>assemble_turn extracts<br/>footnotes from tool JSONL"]
+    A["Narrator response:<br/>prose + native tool-use results"] --> B["agents/orchestrator.py<br/>assemble_turn extracts<br/>footnotes from tool results (ADR-102)"]
     B --> C["footnotes: list[Footnote]<br/>{marker, summary, category,<br/>is_new, fact_id}"]
 
     C --> D["session_handler.py<br/>Attach to NarrationPayload<br/>(sent to client)"]
@@ -680,7 +673,7 @@ flowchart TD
     style V fill:#4a9eff,color:#fff
 ```
 
-**No LLM call:** Slash commands resolve mechanically — no Claude subprocess, no intent classification.
+**No LLM call:** Slash commands resolve mechanically — no narrator/LLM call, no intent classification.
 
 **GM commands:** Protected by role check, allow direct state manipulation for debugging.
 
@@ -824,7 +817,7 @@ flowchart TD
 ```
 Blue   (#4a9eff)  — Client/WebSocket messages (visible to player)
 Purple (#6c5ce7)  — Internal data (narration text, results)
-Red    (#ff6b6b)  — Claude CLI subprocess / narrator prompt
+Red    (#ff6b6b)  — Narrator LLM call (Anthropic SDK default) / narrator prompt
 Green  (#00b894)  — Python daemon (Flux / Z-Image gen)
 Orange (#e17055)  — SQLite persistence
 Yellow (#fdcb6e)  — YAML configuration (genre packs)

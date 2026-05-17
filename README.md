@@ -24,8 +24,8 @@ typing, and collaborative peer-action visibility (see ADR-036).
 │ uvicorn      │ │ client    │ │ (MLX)        │ │ YAML + audio   │
 │ WebSocket    │ │ Audio     │ │ renderer     │ │ params + LFS   │
 │ Narrator     │ │ engine    │ │ ACE-Step     │ │ images         │
-│ subprocess   │ │ 3D dice   │ │ music tier   │ │ 5 live packs   │
-│ (claude -p)  │ │ overlay   │ │ + SFX mixer  │ │ + workshopping │
+│ Anthropic SDK│ │ 3D dice   │ │ music tier   │ │ 5 live packs   │
+│ (ADR-101)    │ │ overlay   │ │ + SFX mixer  │ │ + workshopping │
 └──────────────┘ └───────────┘ └──────────────┘ └────────────────┘
        ▲              │              ▲
        │  WebSocket   │   Unix sock  │
@@ -107,11 +107,13 @@ Genre packs are loaded via the `SIDEQUEST_GENRE_PACKS` env var. See
 3. **Each turn:** player action → narrator dispatch → state patch → narration broadcast
 4. **Unified narrator** (per [ADR-067](docs/adr/067-unified-narrator-agent.md), invoked
    stateless per turn per [ADR-098](docs/adr/098-stateless-narrator-turns.md)) handles
-   all intents through a single bounded `claude -p` invocation
-   ([ADR-001](docs/adr/001-claude-cli-only.md)). Auxiliary subsystem agents
+   all intents through a single bounded **Anthropic SDK** call
+   ([ADR-101](docs/adr/101-anthropic-sdk-as-narrator-backend.md), supersedes ADR-001 —
+   prompt caching, native tool-use, model routing; `claude -p`/Ollama are opt-in
+   non-default backends). Auxiliary subsystem agents
    (chassis_voice, distinctive_detail, npc_agency, reflect_absence) run topologically
-   off the live turn critical path. Narration streams live to the client by default
-   (`SIDEQUEST_NARRATOR_STREAMING=1`)
+   off the live turn critical path. Streaming narration is opt-in and **default-off**
+   (`SIDEQUEST_NARRATOR_STREAMING=1` enables it, routing to the legacy `claude -p` path)
 5. **Media pipeline:** narration triggers Z-Image MLX renders and mood-based audio
    cues in parallel — background-first, only text is critical path
    ([ADR-005](docs/adr/005-background-first-pipeline.md)). Renders and music both
@@ -146,7 +148,7 @@ sidequest-server/sidequest/
 ├── protocol/         # GameMessage, typed payloads (pydantic)
 ├── server/           # FastAPI app, WebSocket, dispatch, sessions
 ├── handlers/         # Per-message-type dispatch handlers
-├── agents/           # claude -p subprocess orchestration (narrator + auxiliaries)
+├── agents/           # Anthropic SDK narrator (default) + claude -p/Ollama opt-in, auxiliaries
 ├── game/             # State, characters, encounters, tropes, turns, persistence
 ├── genre/            # YAML genre pack loader
 ├── audio/            # Server-side music/SFX coordination

@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: 102
 related: [13, 101, 102]
 tags: [narrator]
-implementation-status: live
-implementation-pointer: 102
+implementation-status: retired
+implementation-pointer: "Superseded by ADR-102 native SDK tool-use on the default anthropic_sdk backend. The fenced-JSON sidecar survives ONLY on the opt-in (default-off) is_streaming_enabled() legacy claude -p path: sidequest-server/sidequest/agents/orchestrator.py:2300-2303 routing, stream_fence.py."
 ---
 
 > **Un-superseded 2026-05-02.** This ADR was previously marked superseded by
@@ -23,6 +23,20 @@ implementation-pointer: 102
 > source-of-truth pointers.
 
 # ADR-039: Narrator Structured Output (JSON Sidecar Block)
+
+> **SUPERSEDED BY ADR-102 — RETIRED ON THE DEFAULT PATH (correction 2026-05-17).** This supersedes
+> the 2026-05-02 "Un-superseded" banner above, which is now itself outdated.
+> On the **default `anthropic_sdk` backend** (ADR-101), structured output is
+> produced by **native SDK tool-use** ([ADR-102](102-tool-use-protocol-for-structured-output.md)),
+> *not* the fenced-JSON sidecar described below. The fenced-JSON sidecar
+> (`StreamFenceParser`) is still wired, but **only on the opt-in,
+> default-OFF `is_streaming_enabled()` legacy `claude -p` path** — see
+> `sidequest-server/sidequest/agents/orchestrator.py:2300-2303` (routing
+> guard) and `agents/stream_fence.py`. `SIDEQUEST_NARRATOR_STREAMING`
+> defaults to `0` (`agents/narrator.py:83`), so the default game never
+> exercises this protocol. **The 2026-05-02 banner's claim that "the
+> fenced-JSON-sidecar architecture described below is what's actually
+> running" is true only for the legacy streaming path now.**
 
 > Retrospective — documents a decision already implemented in the codebase.
 
