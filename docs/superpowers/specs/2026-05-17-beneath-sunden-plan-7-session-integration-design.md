@@ -339,10 +339,9 @@ the *session lifecycle*).
 `DungeonStore`/`SqliteStore` accessors; `dungeon_meta` seed table; the
 synchronous idempotent bootstrap; the §7 curate SDK edit; the two lifecycle
 incisions; the test suite above; **plus the §14 DO-NOT-SHIP resolution: the
-4-trope content fix + `visual_style.yaml` port in `sidequest-content`
-(§14.A/B), the real-pack keystone rewrite (§14.C), the save-keyed residual
-guard (§14.D), and — gated on a verified real-pack growth — the ADR-106
-CLOSED recording in spec §10 + Post-Implementation Corrections (§14.E)**.
+4-trope content fix in `sidequest-content` (§14.A), the real-pack keystone
+rewrite (§14.C), the save-keyed residual guard (§14.D), and — gated on a
+verified real-pack growth — the ADR-106 CLOSED recording (§14.E)**.
 The ADR-106 closure recording is now part of *this* story's close-out
 (Keith's decision 2026-05-17: genuinely close ADR-106 here, verified not
 asserted) — it is no longer deferred to a separate deliverable.
@@ -350,11 +349,12 @@ asserted) — it is no longer deferred to a separate deliverable.
 **Out of scope:** streaming-narrator SDK migration and any `claude -p` → SDK
 work beyond the curate stage; the broader Anthropic SDK migration (its own
 spec); the companion docs PR #234 *mechanics* (tracker bookkeeping —
-coordinated with, not authored by, this story); adapting any
-`caverns_sunden` asset **beyond `visual_style.yaml`** (the rest is
-sins-comedy-specific or already authored fresh in `beneath_sunden` — a
-faithful port would import the wrong tone; steerable later if Keith names a
-specific file); `lookahead_breadth > 1` tuning (default 1); the Plan-5
+coordinated with, not authored by, this story); **the `beneath_sunden`
+`visual_style.yaml` port (§14.B — handled in a separate workstream)** and
+adapting any other `caverns_sunden` asset (the rest is sins-comedy-specific
+or already authored fresh in `beneath_sunden` — a faithful port would
+import the wrong tone); `lookahead_breadth > 1` tuning (default 1); the
+Plan-5
 mask-persistence gap (inert, tracked in `project_beneath_sunden`); ADR
 authoring (this reuses ADR-106 / Plan 7 decisions, adds none).
 
@@ -463,17 +463,15 @@ dispatching any content implementer; this content must merge first/with
 the server branch (the server keystone reads the sibling content
 checkout).
 
-### 14.B — Port `visual_style.yaml` (genre-neutral, same content branch)
+### 14.B — `visual_style.yaml` port — OUT OF SCOPE (handled elsewhere)
 
-`caverns_sunden/visual_style.yaml`'s `positive_suffix` (B&W Otus/Trampier
-pen-and-ink discipline) + `color_palette` are genuinely world-neutral and
-port cleanly to `worlds/beneath_sunden/visual_style.yaml`; the header
-doctrine is **rewritten** for the single grave shaft (drop the
-Grimvault/Horden/Mawdeep three-dungeon + sins-hamlet references). Loaded
-via the existing `_load_yaml_raw_optional(world_path/"visual_style.yaml")`
-path — **no server change**. Authored by the **art-director** agent. Scope
-is exactly this one file (see §11 — the rest of `caverns_sunden` is
-sins-comedy-specific).
+**Removed from this story (Keith, 2026-05-17): the `beneath_sunden`
+`visual_style.yaml` port is being handled in a separate workstream.** It is
+loaded via the existing optional path and requires no server change, so it
+is fully decoupled from this story's ADR-106 closure. Not in this spec's
+plan, tests, or close-out gate. (The original analysis — that the port
+reduces to `visual_style.yaml` because the rest of `caverns_sunden` is
+sins-comedy-specific — is retained in §11 for the record.)
 
 ### 14.C — Real-pack keystone rewrite (`sidequest-server` branch)
 
@@ -493,7 +491,8 @@ detach clears the key. Covered by §10 (f).
 
 ### 14.E — Close-out (gated, verified-not-asserted)
 
-Only **after** 14.A–D land and the real-pack keystone genuinely passes
+Only **after** 14.A, 14.C, and 14.D land (14.B is out of scope — handled
+elsewhere) and the real-pack keystone genuinely passes
 (observers ≥ 1 on a real `frontier.region_transition` span + a real
 crossing materializes the next expansion): re-run the final adversarial
 whole-impl review against the real pack; then — and only then — record
