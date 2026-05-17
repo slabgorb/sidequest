@@ -710,7 +710,10 @@ def _sqlite_store() -> Any:
 
 def _beneath_sunden_world_dir() -> Path:
     return (
-        Path(__file__).resolve().parents[2]
+        # tests/dungeon/<file> → tests → sidequest-server → repo root;
+        # sidequest-content is a SIBLING of sidequest-server (parents[3]),
+        # matching the existing _BENEATH_SUNDEN_WORLD in test_materializer.py.
+        Path(__file__).resolve().parents[3]
         / "sidequest-content/genre_packs/caverns_and_claudes/worlds/beneath_sunden"
     )
 
@@ -1116,7 +1119,10 @@ def _otel_in_memory() -> tuple[Any, Any, Any]:
 
 def _beneath_sunden_world_dir() -> Path:
     return (
-        Path(__file__).resolve().parents[2]
+        # tests/dungeon/<file> → tests → sidequest-server → repo root;
+        # sidequest-content is a SIBLING of sidequest-server (parents[3]),
+        # matching the existing _BENEATH_SUNDEN_WORLD in test_materializer.py.
+        Path(__file__).resolve().parents[3]
         / "sidequest-content/genre_packs/caverns_and_claudes/worlds/beneath_sunden"
     )
 
