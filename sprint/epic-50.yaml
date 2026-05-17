@@ -380,3 +380,20 @@ stories:
     branch: feat/50-23-hydrate-multi-pc-characters
     assignee: slabgorb
     review_verdict: approved
+  - id: 50-24
+    title: Out-of-band aside channel — finish half-wired player→GM table-talk (ADR-107)
+    description: 'Finish the half-wired aside feature: non-turn-consuming player→GM OOC table-talk. Origin: Beneath Sünden 2026-05-17 MP playtest finding F6 (players burned turns asking the GM clarifying questions). Spec: docs/superpowers/specs/2026-05-17-aside-channel-design.md. Plan (10 TDD tasks, no placeholders): docs/superpowers/plans/2026-05-17-aside-channel.md. Docs PR (spec+plan, base main): slabgorb/sidequest#238. Approach A: reuse existing aside:bool, branch before the ADR-036 barrier, read-only AsideResolver, ASIDE_ANSWER broadcast, routed aside.resolve span, ADR-101 Haiku routing. Code branches: sidequest-server + sidequest-ui off develop; orchestrator (api-contract fix + ADR-107) off main. Execute the plan task-by-task via subagent-driven-development.'
+    points: 8
+    priority: p1
+    status: backlog
+    repos: sidequest-server,sidequest-ui,orchestrator
+    workflow: tdd
+    acceptance_criteria:
+      - 'Aside consumes no turn: no narrative_log/scrapbook row, turn/round unchanged, zero world patch (proven by tests/handlers/test_aside_channel_wiring.py)'
+      - "MP: aside never counts toward the ADR-036 barrier; asker still owes their real action; other players' submissions unaffected"
+      - Server answers OOC via read-only AsideResolver; ASIDE_ANSWER broadcast to ALL seats (table-visible)
+      - "Answer policy: capability/rules/recap answered+grounded; hidden-state refused ('you'd have to check'); unparseable LLM → loud resolver_error, never invents lore"
+      - Routed aside.resolve OTEL span fires every aside (asker_id/outcome/grounded_on/model/latency) — GM-panel visible
+      - "UI: gm-aside segment in OOC register; InputBar aside placeholder = 'Ask the GM — no turn spent'"
+      - docs/api-contract.md aside lie corrected + doc-contract guard test; ADR-107 authored and indexed
+      - Mandatory MP wiring test green; just server-check + client-lint + client-test green
