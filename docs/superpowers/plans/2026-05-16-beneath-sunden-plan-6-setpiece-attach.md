@@ -377,3 +377,93 @@ pre-existing `test_identical_inputs_produce_identical_result` (Task 1, byte-iden
 Confirmed pre-existing by type-checking the base-commit copy of the file. Out of Task 3 scope
 (another task's code); not "fixed" here to avoid cross-task scope creep. All Task 3 code
 (`setpiece_attach.py`, `dungeon_setpiece.py`, all 9 new test functions) is pyright-clean.
+
+### Task 4 as-built (2026-05-16, implementer: Claude Sonnet 4.6)
+
+**BASE_SHA (before Task 4 commit):** `571060d95569683b0326c64c94e311690e484c96`
+**Task 4 server commit SHA:** `c76a482`
+
+**(a) `ledger.add` supersession — Plan 6 does NOT emit `ledger.add`.**
+Plan 5's `DungeonStore.open_thread()` ALREADY emits `ledger.add` internally (wraps
+`ledger_add_span`). Plan 6's `attach_set_piece` emits ONLY `setpiece.attach` and calls
+`open_thread()` (which emits `ledger.add` itself). This supersedes the plan's line-7
+architecture "Plan 6 ... emits `ledger.add` as children". The Task 4 test
+`test_attach_set_piece_n_threads_produce_n_ledger_entries_lie_detector`'s cross-check
+counts `trope.start + quest.seed` spans (emitted by Tasks 2/3) against ledger rows —
+NOT `ledger.add` spans — per the Architect Task-0 reconciliation.
+
+**(b) Decision H — collision-safe, frozen-into-save thread_id derivation.**
+`thread_id` is derived deterministically via `_thread_id_seed(campaign_seed, expansion_id,
+region_id, setpiece_id, kind, component_index)` using blake2b over the pipe-delimited
+discriminator string (same family as `_slot_seed`). `component_index` is the component's
+stable position in the deterministically-ordered pending list returned by
+`start_trope_components` and `seed_quest_components`. The `kind` field (`"trope"` vs
+`"quest"`) ensures the two pending lists' component_index=0 entries get distinct thread_ids
+even if their payloads are otherwise similar. Thread_id format:
+`"thread|{kind}|{campaign_seed}|{expansion_id}|{region_id}|{setpiece_id}|{component_index}|{hex_val}"`.
+A genuine re-attach of the same set-piece at the same position produces the same thread_id —
+correctly tripping Plan 5's `open_thread` duplicate loud raise (freeze-violation signal).
+
+**(c) `attach_set_piece` signature — the Plan-7 contract (Task 5 must bind to this).**
+```python
+attach_set_piece(
+    *,
+    campaign_seed: int,
+    expansion_id: int,
+    region_id: str,
+    setpiece_id: str,
+    set_piece: SetPiece,
+    trope_components: list[TropeComponent],
+    quest_components: list[QuestComponent],
+    pack_tropes: Any,
+    snapshot: GameSnapshot,
+    manifest: Any,
+    store: DungeonStore,          # concrete Plan 5 type — NOT Any (Decision J)
+    threads_lit_per_expansion: int,
+    threads_already_lit: int,
+    started_at_depth_score: float,  # REQUIRED, no default (Decision I)
+) -> AttachReport
+```
+Code authority: `sidequest/dungeon/setpiece_attach.py::attach_set_piece`.
+
+**(d) `AttachReport.as_dict()` locked key set (Decision K).**
+```python
+{"setpiece_id", "region_id", "tropes_started", "quests_seeded", "threads_written"}
+```
+`threads_written = tropes_started + quests_seeded` (count of `ComplicationThread`s opened).
+Byte-pinned by `test_attach_report_as_dict_key_set_locked`. Any addition or removal breaks
+Plan 7's `attach` span and the GM panel lie-detector.
+
+**(e) `ComplicationThread.payload` shape (Decision L).**
+```python
+{"setpiece_id": setpiece_id, "component_index": component_index, "ref_id": <trope_id|quest_id>, "params": component.params}
+```
+Legible, flat, no hidden math. `component_index` is the stable pending-list position (same
+discriminator used for thread_id — cross-referencing is possible). `ref_id` is `trope_id`
+for trope threads and `quest_id` for quest threads. Pinned by
+`test_attach_set_piece_payload_is_legible`.
+
+**(f) `setpiece.attach` span added to `dungeon_setpiece.py`.**
+`SPAN_SETPIECE_ATTACH = "setpiece.attach"` with `SPAN_ROUTES` registration
+(`component="dungeon"`, `event_type="state_transition"`, `field="complication_ledger"`,
+`op="setpiece_attach"`). Context manager `setpiece_attach_span(...)` carries the locked
+`AttachReport.as_dict()` key set as span attributes. Added to `__all__`. Routing-completeness
+test (`test_routing_completeness.py`) passes. `ledger.add` and `ledger.resolve` are Plan 5's
+(`dungeon_persist.py`) — not added here.
+
+**Test inventory (10 new Task 4 tests, all green; 29 prior Task 1/2/3 unchanged & green):**
+- `test_attach_set_piece_n_threads_produce_n_ledger_entries_lie_detector` (checkbox 1: N threads → N rows, cross-check against trope.start+quest.seed spans, one setpiece.attach span)
+- `test_attach_set_piece_no_orphan_rows_on_caller_rollback` (checkbox 2: caller-owns-txn, no orphan rows after `conn.rollback()`)
+- `test_attach_report_as_dict_key_set_locked` (checkbox 3: locked key set, byte-pinned values)
+- `test_attach_report_as_dict_matches_fields` (as_dict keys == dataclass fields, spec §7.1 legibility)
+- `test_attach_set_piece_thread_ids_are_deterministic` (frozen-into-save, Decision H)
+- `test_attach_set_piece_duplicate_trope_id_produces_distinct_thread_ids` (per-component discriminator, Decision H)
+- `test_attach_set_piece_tropes_consume_budget_before_quests` (shared budget, tropes first, Decision C)
+- `test_attach_set_piece_payload_is_legible` (Decision L payload shape)
+- `test_attach_set_piece_started_at_depth_score_required_no_default` (Decision I, No Silent Fallbacks)
+- `test_attach_set_piece_setpiece_attach_span_routed` (SPAN_ROUTES routing-completeness)
+
+**pyright:** 0 errors, 0 warnings on `setpiece_attach.py`, `dungeon_setpiece.py`, `test_setpiece_attach.py`
+**ruff:** all checks passed, all files formatted.
+**routing completeness:** 2/2 passed (`test_routing_completeness.py`).
+**pre-existing test-ordering sensitivity in `test_persistence.py::test_commit_and_ledger_emit_spans`:** passes in isolation; flaky in the large `-k dungeon` run due to OTEL tracer monkeypatching contamination from prior tests. Pre-existing — NOT introduced by Task 4. Confirmed by running the test alone.
