@@ -274,3 +274,106 @@ Options (do NOT select one here — that's the Architect's call):
 
 The implementation can proceed on the non-ref-resolution subtasks immediately once the
 Architect confirms the scope reduction (option C/D) or the new convention (option A/B).
+
+### Task 3 as-built (2026-05-16, implementer: Claude Opus 4.7 — Architect decision applied)
+
+**Architect decision (2026-05-16): Option C/D merged — defer the creature/loot manifest-join
+to Plan 7.** Rationale (logged spec-reconciliation, same pattern as Task-0/Task-2 — NOT a stub,
+NOT a silent fallback):
+- The plan's scope line 22 ("the join point, Task 3") was an Architect assumption that Plan 4
+  would ship a slot/param→creature/loot-ref convention. The Decision-E investigation above
+  proves Plan 4 shipped **no such convention**. The assumption was wrong.
+- Option A (YAML changes) is forbidden — Plan 6 authors no content (scope line 47-49).
+  Option B (extend Plan 4 schema) is forbidden — Plan 4 schema is shipped/frozen; extending it
+  from Plan 6 is scope-violating.
+- Plan 7 **owns the manifest, curation/attach, and CR→Edge translation end-to-end** (scope
+  line 23: "Plan 6 consumes already-translated creature refs from the manifest"). The
+  set-piece↔cookbook content-existence join is therefore Plan 7's by ownership, not Plan 6's.
+
+> **PLAN 7 OWNS** (deferred from reduced Task 3 by Architect decision, flagged loudly — NOT
+> silently dropped): creature/loot ref resolution of set-piece quest/slot content against the
+> manifest's `wandering_table` / `loot_table`. Plan 6 deferred this because **Plan 4 shipped no
+> binding convention** (see Decision-E investigation above). The dropped Task-3 "test 2"
+> (missing creature/loot ref raises loudly) and its behavior are **reassigned to Plan 7**, which
+> owns the manifest + CR→Edge end-to-end. Plan 7's execution must implement this join and its
+> loud-failure path. This is a Plan 7 dependency/TODO.
+
+**(a) ScenarioState supersession — continuation of reconciliation Seam 3 (confirmed in code).**
+`seed_quest_components` does NOT import, construct, or mutate `ScenarioState`. A quest component
+is carried forward as a pending `ComplicationThread(kind="quest")` for Task 4 to write via
+Plan 5's `DungeonStore.open_thread()`. Pinned by
+`tests/dungeon/test_setpiece_attach.py::test_quest_seed_does_not_touch_scenario_state` (AST
+import + symbol scan — not a docstring substring scan, since the module docstring legitimately
+*names* ScenarioState to document the supersession). The genuine lie-detector,
+`test_seeded_quest_is_a_real_pending_ledger_thread`, persists the pending entry through the
+**real** `DungeonStore.open_thread()` and reads it back via `get_thread()` — proving the
+pending shape is end-to-end-consumable by Task 4, not an inert struct write.
+
+**(b) Decision-E finding (verbatim above) — Plan 4 ships no creature/loot-ref convention.**
+Recorded in full in the "Task 3 investigation" section above. Unchanged by the Architect
+decision; the decision is the *resolution* of that finding (defer to Plan 7), not a refutation.
+
+**(c) Decision C — symmetric API, shared budget, manifest-as-parameter (Plan-7-supplied).**
+Implemented as:
+```
+seed_quest_components(*, campaign_seed: int, expansion_id: int, region_id: str,
+    setpiece_id: str, components: list[QuestComponent], manifest: Any,
+    threads_lit_per_expansion: int, threads_already_lit: int) -> QuestSeedResult
+QuestSeedResult(quests_seeded: int, pending: list[tuple[QuestComponent, str]])
+```
+Symmetric to `start_trope_components` / `TropeStartResult`. `manifest` is REQUIRED (duck-typed
+`Any`, mirroring Task 2's `pack_tropes: Any` precedent) so Plan 7's call shape is ready, but
+reduced Task 3 does NOT resolve refs against it (Plan 7 owns that join — see PLAN 7 OWNS
+callout). Over-budget selection is deterministic via the shared `_slot_seed` / blake2b family
+with a `"quest_order|<idx>"` discriminator (keeps quest selection independent of trope
+selection; no second seed scheme, no XOR). **Shared expansion budget:** Task 4's caller passes
+`threads_already_lit = trope_result.tropes_started` so quests consume what remains after
+tropes. `QuestSeedResult.quests_seeded` accumulates into the running total exactly as
+`TropeStartResult.tropes_started` does.
+
+**(d) Decision D — atomicity: structurally symmetric, no trigger by design.**
+`start_trope_components` runs a validate-all PASS 1 before mutating because an unknown
+`trope_id` is a content bug that must reject the whole set-piece atomically. Reduced Task 3
+has **no such trigger** — there is no quest registry to resolve `quest_id` against, and the
+manifest-join that could surface a content bug is Plan 7's. So there is intentionally **no
+PASS 1 validate-all** here: inventing a check just to mirror the shape would be dead code, and
+fabricating a failure mode just to have a failure-path test would be **testing theater (the
+inverse of stubbing)**. The structural shape (budget gate → deterministic select → emit span)
+is preserved for symmetry/robustness; the absence of a failure path is documented in the
+module docstring and the function's `Raises:` section ("Nothing by design"). If Plan 7 ever
+pushes ref-resolution back into Plan 6, a PASS 1 validate-all must be reinstated here (same
+two-pass discipline as `start_trope_components`).
+
+**`quest.seed` span (informational/success only).** Added to
+`sidequest/telemetry/spans/dungeon_setpiece.py` as `SPAN_QUEST_SEED = "quest.seed"` +
+`quest_seed_span(...)` ctxmgr + a `SPAN_ROUTES` registration (`component="dungeon"`,
+`event_type="state_transition"`, `field="complication_ledger"`, `op="quest_seed"`). Mirrors
+`trope_start_span` EXCEPT there is **no `failed` attribute** — reduced Task 3 has no failure
+path (see (d)), so a `failed` key would be testing theater. One span per seeded component for
+the GM-panel per-quest trail. Routing-completeness lint passes
+(`tests/telemetry/test_routing_completeness.py`). `setpiece.attach` remains deferred (Task 4 —
+no stub).
+
+**Test inventory (9 new, all green; 17 prior Task 1/2 unchanged & green):**
+`test_seeded_quest_is_a_real_pending_ledger_thread` (lie-detector via real `DungeonStore`),
+`test_quest_seed_does_not_touch_scenario_state` (AST coupling check — supersession pin),
+`test_quest_budget_caps_seeded_and_is_deterministic`,
+`test_quest_shared_budget_accumulator_with_tropes` (shared-budget threading),
+`test_quest_zero_budget_seeds_nothing`, `test_quest_budget_exhausted_seeds_nothing`,
+`test_quest_budget_no_silent_default`,
+`test_quest_seed_span_emitted_per_component_and_routed` (span + SPAN_ROUTES),
+`test_quest_seed_manifest_parameter_accepted_unchanged` (manifest accepted, refs NOT
+resolved — pins the Plan 7 deferral).
+
+**No Task-3-owned failure path — by design.** Reviewers: the absence of a "missing
+creature/loot ref raises loudly" test is **intentional and Architect-decided**, not a gap.
+That behavior is reassigned to Plan 7 (see PLAN 7 OWNS callout). Manufacturing a fake failure
+mode to satisfy a "needs a failure test" heuristic would be testing theater.
+
+**Pre-existing pyright note (not introduced here):** `tests/dungeon/test_setpiece_attach.py`'s
+pre-existing `test_identical_inputs_produce_identical_result` (Task 1, byte-identical to base
+`ffc2663`) trips 10 `reportArgumentType` errors from its `kwargs = dict(...)` then
+`roll_set_piece(**kwargs)` splat pattern (the heterogeneous dict literal loses per-key types).
+Confirmed pre-existing by type-checking the base-commit copy of the file. Out of Task 3 scope
+(another task's code); not "fixed" here to avoid cross-task scope creep. All Task 3 code
+(`setpiece_attach.py`, `dungeon_setpiece.py`, all 9 new test functions) is pyright-clean.
