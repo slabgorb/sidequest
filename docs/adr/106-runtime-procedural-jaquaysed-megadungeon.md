@@ -200,3 +200,99 @@ math); player-paced pressure removes the "arbitrary clock" failure mode.
 
 The spec's §10 decomposition table is the authoritative live tracker; update it, not
 this section, as items land.
+
+## Amendments
+
+### Amendment A — Curate-stage robustness contract (story 50-26, 2026-05-18, Architect / M. Houlihan)
+
+**Status:** Recorded as the gating contract for sprint story `50-26`. This amendment
+does not change the §10 implementation-status tracker, clause numbering, frontmatter,
+or any supersession relationship.
+
+**Context.** The Stage-3 curate pass (`dungeon/materializer.py::_stage_curate` →
+`_parse_curation_verdict`) does a strict `json.loads` on the curator LLM's verdict and
+raises a fatal `CurationError` on any unparseable output. The 2026-05-17 beneath_sunden
+MP playtest recorded a ~9-minute submit-and-wait table freeze on the R3 descent;
+`/tmp/sidequest-server.log` showed `CurationError: ... Unterminated string ... line 452`
+on `exp001.r0`. Forensic provenance: the SDK client's 4096-token default truncated the
+~11.5 KB whole-expansion verdict mid-`wandering_table` deterministically. Commit
+`b846544` ("region-projection 4-seam wiring + resume self-heal", 2026-05-17 19:22,
+merged to develop via PR #317) raised the curate call to `max_tokens=16384` —
+**after** the recorded freeze window (narration id#7→id#8 ≈ 16:51–17:00). The specific
+truncation sub-case the playtest hit is therefore already mitigated on develop. That
+mitigation is necessary but **not a contract**: a static token ceiling lowers the
+probability of truncation without bounding the failure *mode*, and truncation is only
+one way the verdict can be unparseable (stray preamble, unescaped quote in a telegraph,
+oversized burst exceeding even 16384). Any residual unparseable verdict still produces
+the fatal-`CurationError`-freezes-the-turn behaviour story 50-26 exists to eliminate.
+(Whether the live R3 gap was *this* exact error is a clock-binding question owned by
+OQ-1's next-session timestamped capture — out of scope here; the contract below makes
+the table-freeze impossible regardless of which error fires.)
+
+The prior engineer's in-code stance (`materializer.py` ~L909) — *"Curation is
+enrichment, not a gate; give it the headroom to finish rather than degrade (No Silent
+Fallbacks — the verdict must be whole, not a stamped-curated raw manifest)"* — is
+**correct and retained**, but it conflated two different things. "Degrade" can mean
+(a) **silent**: ship the raw manifest stamped `curated=true`, pretending nothing
+happened — a genuine No-Silent-Fallbacks violation, correctly rejected; or
+(b) **loud**: ship the raw manifest explicitly stamped `curated=false`, with a span,
+an ERROR log, and a visible uncurated marker. (b) was never considered and is *not* a
+silent fallback — it is ADR-006 Graceful Degradation done honestly.
+
+**Decision — layered, bounded curate-robustness policy.** Not repair-vs-retry-vs-degrade
+as alternatives; a single layered contract:
+
+- **Layer 0 (retained):** keep `max_tokens=16384` (b846544). Necessary; eliminates the
+  common deterministic-truncation case. Not the whole contract.
+- **Layer 1 — bounded whole-call retry:** on an unparseable verdict, re-issue the
+  one-shot curate call. Budget: **exactly 1 retry (2 attempts total)**. Each attempt is
+  an independent one-shot — ADR-098-compatible (no `--resume`, no mid-generation tools,
+  no continuation). This is **NOT JSON repair**: the system never invents the truncated
+  tail. Inventing the missing `wandering_table` rows would silently corrupt creature
+  stats / the CR→Edge seam — a worse failure than the freeze.
+- **Layer 1 deadline:** the entire curate stage across all attempts is bounded by an
+  explicit wall-clock cap (recommended **≤ 25 s total**). Deadline OR retry-exhaustion
+  → Layer 2. This cap is the load-bearing guarantee that the turn cannot dead-air for
+  minutes (the Alex / whole-table submit-and-wait pacing axis is the reason this story
+  is high priority).
+- **Layer 2 — loud degrade-to-uncurated:** ship the deterministic pre-curation
+  `assemble_region` manifest (ADR-106 clause 9: it is valid, complete, and
+  seed-reproducible — an honest procedurally-assembled region, not garbage) as the
+  region content, stamped `curated=false`, with a visible `uncurated` marker on the
+  materialized region, an ERROR-level log, and a routed `dungeon.curate.degraded` span.
+  The materialize transaction **completes**; the turn proceeds in seconds.
+- **Forbidden invariant (retained):** shipping the raw manifest stamped `curated=true`
+  (the prior architect's correctly-rejected silent fallback) remains forbidden. Layer 2
+  stamps `curated=false` — the exact inverse.
+- **`CurationError` is retained, not deleted.** It is reserved for genuinely
+  unrecoverable cases: (i) the assembled manifest itself structurally invalid (a real
+  upstream bug — fail loud, never degrade a corrupt input into content); (ii) post-parse
+  structural violations where degrading would corrupt mechanics rather than merely
+  under-enrich (e.g. a curated row missing `cr` → CR→Edge impossible). Degradation is
+  **per-region**: one unparseable/invalid region degrades that region loudly; regions
+  that parsed are kept curated. One bad region never aborts the whole expansion.
+- **Span taxonomy (clause 12, mandatory):** `dungeon.curate.parse_failed` — emitted on
+  every parse failure, once per attempt, carrying `region_id`, `failure_kind`
+  ∈ {`truncated`, `malformed`, `llm_error`, `deadline`}, `attempt`. And
+  `dungeon.curate.degraded` — emitted when Layer 2 fires, carrying `region_id`,
+  `failure_kind`, `attempts`, `elapsed_ms`. Both routed/watcher-visible so the GM panel
+  proves whether a region shipped curated, retried-then-curated, or degraded.
+
+**Rationale.** Reuse-first: Layer 0 keeps b846544; Layer 2's payload is the
+`assemble_region` output that already exists and is contractually valid per clause 9;
+the span infra already exists. The contract honours the prior architect's real concern
+(no *silent* stamped-curated raw manifest) while fixing the failure they did not
+foresee (a *loud* honest degrade is not what they rejected). ADR-014 Diamonds-and-Coal:
+an uncurated-but-labeled room is coal that players can still polish into a diamond — far
+better than a 9-minute frozen table. The async look-ahead worker (clause 10) running
+ahead of the party makes Layer-2 degrades rare in practice; the contract guarantees no
+freeze even when the party catches the frontier.
+
+**Acceptance-criteria mapping (story 50-26):** AC-1 = this amendment. AC-2 = Layer 1
+deadline + Layer 2 guarantee the turn proceeds (no escaped `CurationError` on the
+truncated-verdict path). AC-3 = the span taxonomy + `curated=false` uncurated marker.
+AC-4 = the explicit 1-retry count AND wall-clock cap, exhaustion → deterministic
+Layer 2 (provably non-looping). AC-5 = exercised through the real
+`materialize → _stage_curate → _parse_curation_verdict` chain. The implemented
+behaviour MUST match this contract exactly; TEA writes RED against it, Dev makes it
+GREEN, no improvisation past what is written here.
