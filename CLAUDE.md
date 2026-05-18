@@ -267,8 +267,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 **Frontend / Protocol (026, 027, 075, 079, 094, 107)**
 - 026 Client-Side State Mirror · 027 Reactive State Messaging · 075 3D Dice Rendering — Three.js + Rapier Physics Overlay *(partial)* · 079 Genre Theme System Unification · 094 Orrery Label Placement — Three-Strategy Taxonomy · 107 Out-of-Band Aside Channel — Non-Turn-Consuming Player→GM Table-Talk
 
-**Multiplayer (036, 037, 104, 105)**
-- 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State Split · 104 Perception Filtering at the Tool Layer *(partial)* · 105 Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out *(partial)*
+**Multiplayer (036, 037, 104, 105, 108)**
+- 036 Multiplayer Turn Coordination · 037 Shared-World / Per-Player State Split · 104 Perception Filtering at the Tool Layer *(partial)* · 105 Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out *(partial)* · 108 MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract *(deferred)*
 
 **Transport / Infrastructure (035, 038, 046, 047)**
 - **035 Unix Socket IPC for Python Sidecar** · **038 WebSocket Transport Architecture** · 046 GPU Memory Budget Coordinator · 047 Prompt Injection Sanitization Layer
