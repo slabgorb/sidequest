@@ -1372,3 +1372,27 @@ Declined: deep-immutable `derived` via `MappingProxyType` (no real consumer muta
 ## Task 3 Review Deviation (accepted during execution)
 
 - **D3 (pins load-bearing kind-agnosticism — Spike F2 / plan line 43):** In `test_last_write_wins_with_ordered_provenance`, the seq-9 event must set `EventRow.kind` to a non-default value via `_ev(9, {"state_delta": {"location": "Hall"}}, kind="TURN_STATUS")` rather than burying `"TURN_STATUS"` in the payload's `type` field with `EventRow.kind` defaulting to `"NARRATION"`. Same assertions, but the test now genuinely exercises a non-NARRATION event-kind contributing `state_delta` — proving the fold does not filter by kind (no other test covered this).
+
+## Task 5 Review Deviation — D4 (CRITICAL, binding, module-wide; supersedes plan's `SqliteStore` usage)
+
+**Defect:** The plan tells `forensic_query` to open saves via `SqliteStore.open(path)` and claims the module "never writes, never checkpoints (respects the WAL/save-clobber hazard)." Source (`sidequest/game/persistence.py:279-290`) shows `SqliteStore.open` → `_configure_connection` (`PRAGMA journal_mode=WAL`) → `__init__` → `_init_schema()` = `executescript(SCHEMA_SQL)` + `_apply_migrations()` + `commit()`. **Every open mutates the file** (WAL mode flip, schema re-create, migrations, commit). On a *live or foreign* save this is exactly the documented save-clobber/WAL hazard and violates the plan's own read-only contract and server CLAUDE.md ("Do X, not Y"; durable saves). The spike missed it because it probed with raw `sqlite3.connect`, never `SqliteStore.open`.
+
+**Binding correction for Tasks 5, 6, 7, 8 (reference this as fact, not the plan's `SqliteStore` listings):**
+
+1. `forensic_query.py` adds `import sqlite3` and a private helper; the production read path NEVER uses `SqliteStore`:
+   ```python
+   def _ro_connect(db_path) -> sqlite3.Connection:
+       """Strictly read-only: no schema init, no migration, no WAL flip
+       (SqliteStore.open writes on construction — forbidden here per the
+       save-clobber hazard)."""
+       conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+       conn.row_factory = sqlite3.Row
+       return conn
+   ```
+2. **`list_saves`**: replace the `SqliteStore.open`/`.connection()`/`.close()` dance with `_ro_connect(db_file)`; wrap connect+`SELECT … session_meta WHERE id=1` in one `try` → on any `Exception` `logger.warning("forensic_query.open_failed slug=%s err=%s", …)` + `continue`; `finally: conn.close()`; keep the `row is None` → `logger.warning("forensic_query.no_meta slug=%s", …)` + continue path. (The separate `meta_failed` key folds into `open_failed` since both surface in the same try over a RO connection — still fully loud, satisfies No-Silent-Fallbacks. A non-sqlite file connects lazily then raises `sqlite3.DatabaseError` on the SELECT; a missing file raises `sqlite3.OperationalError` at connect — both caught, both logged loudly, broken-db test still red→green.) Drop the production `SqliteStore` import.
+3. **`build_timeline` / `build_turn_bundle` (Tasks 6, 7)**: signature becomes `(conn: sqlite3.Connection, …)` (a read-only connection), NOT `(store: SqliteStore, …)`. Every `store.connection()` in the plan's listings becomes the `conn` parameter directly. They never write — RO is sufficient and required.
+4. **Task 8 `_open_save`**: returns `sqlite3.Connection | None` via `_ro_connect` (connect/SELECT failure or absent file → `None`, mapping to the plan's existing empty-list/empty-bundle fallback). Endpoints: `try: build_*(conn, …) finally: conn.close()`.
+5. **Test fixtures only** (`_make_save`, `_seed_rounds`): MAY keep `SqliteStore.open(str(db))` to create+seed throwaway `tmp_path` DBs (writing a brand-new test DB is fine — not a live save), then `.close()` it. Read-path assertions then call the production functions, which open their own `_ro_connect`. Task 6/7 tests that passed `store` to `build_*` now seed+close the store, then open a RO connection on the same `db` path (`sqlite3.connect(f"file:{db}?mode=ro", uri=True)` with `row_factory=sqlite3.Row`, or import `_ro_connect`) and pass THAT, closing it after.
+6. **Imports (supersedes the plan's "do not prune imports" note):** each test file imports only what it uses *at that task* — ruff is a real Task 11 gate and F401 must not accumulate. Task 5's test imports only `Path`, `SqliteStore`, `list_saves` (no `json`/`EventLog`/`NarrativeEntry` — Task 6 re-adds `json`+`EventLog` with `_seed_rounds`; `NarrativeEntry` is never used by any planned fixture, so never import it).
+
+OTEL note: still none — read-only post-mortem tool, no subsystem decisions (plan §10 by-omission stands; the loud `logger.warning` skips are the observability surface here).
