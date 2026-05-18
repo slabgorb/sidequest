@@ -374,9 +374,14 @@ stories:
       be hydrated faithfully).
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-18'
     repos: server
     workflow: tdd
+    completed: '2026-05-18'
+    branch: feat/50-22-scene-harness-magic-abilities
+    assignee: slabgorb
+    review_verdict: approved
   - id: 50-23
     title: 'Scene harness: hydrate multi-PC characters list (ADR-092 follow-on)'
     description: |
