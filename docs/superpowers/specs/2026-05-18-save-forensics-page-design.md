@@ -68,6 +68,16 @@ N" by folding events ≤ N is the **same fold the system already trusts for
 catch-up** — not fabrication. The only honesty constraint: the fold can only
 surface what events explicitly carry (see §6).
 
+**Correction to an early assumption (verified 2026-05-18):** there is *no*
+`STATE_UPDATE` event kind and no ADR-011 JSON-patch payload. State mutations
+travel as a structured `StateDelta` object (`protocol/models.py:205`) carried
+*inside* `NARRATION` / `NARRATION_END` / `TURN_STATUS` event payloads (field
+`state_delta`). `StateDelta` is a closed, enumerable set of optional fields:
+`location`, `characters`, `quests`, `items_gained`, `encounter_id`,
+`party_formation`, `magic_state` — each present only when it changed that
+turn. This *strengthens* the honesty contract: provenance is per-named-field,
+and "absent" is unambiguous.
+
 ## 4. Architecture & placement
 
 - **Route:** `GET /forensics` → `FileResponse(static/forensics.html)`. A
@@ -94,10 +104,18 @@ New read-only REST endpoints, siblings of `/api/debug/state` in
 
 **Fold module:** new pure module `sidequest/game/forensic_fold.py`, built on
 the *existing* `EventLog.read_since(since_seq=0)` primitive (no new read
-mechanism). It walks events in `seq` order and accumulates `STATE_UPDATE`
-JSON-patch payloads (ADR-011 patch shape) into a running derived-delta map,
-recording for each derived field the set of source event `seq`s that touched
-it. Pure function: `(events: list[EventRow]) -> FoldResult`. No DB writes ever.
+mechanism). It walks events in `seq` order and, for each event whose payload
+carries a non-null `state_delta` (kinds `NARRATION` / `NARRATION_END` /
+`TURN_STATUS`), accumulates each populated `StateDelta` field into a running
+derived-delta map, recording for each derived field the set of source event
+`seq`s that touched it. Pure function: `(events: list[EventRow]) ->
+FoldResult`. No DB writes ever.
+
+A second thin module `sidequest/game/forensic_query.py` (mirroring the
+existing module-level `query_encounter_events(store)` precedent) assembles the
+per-turn drill-down bundle — reading `narrative_log`, `projection_cache`, and
+`scrapbook_entries` directly from the save connection and calling the pure
+fold. Isolating the pure fold from DB I/O keeps it trivially testable.
 
 **Save access:** open each `save.db` read-only via `SqliteStore.open` and
 **never checkpoint or write** — respects the WAL/clobber hazard. The forensic
@@ -163,9 +181,10 @@ Explicitly labelled *the only stored absolute state*.
 - **R1 — seq↔round correlation (only real unknown).** Plan task 1 is a spike
   that confirms the join key before any UI work. Fallback (timestamp bucketing)
   is honest if events lack round identity.
-- **R2 — `STATE_UPDATE` payload completeness.** The fold reconstructs only
-  what flows through events. The §6 honesty contract makes this a feature
-  (absent ≠ zero), not a defect. Accepted.
+- **R2 — `StateDelta` coverage.** The fold reconstructs only the closed set
+  of `StateDelta` fields that flow through `NARRATION`/`NARRATION_END`/
+  `TURN_STATUS`. The §6 honesty contract makes this a feature (absent ≠ zero),
+  not a defect. Accepted.
 - **R3 — reading a save while its session is live.** Read-only
   `sqlite3.connect` over WAL is safe; we open read-only and never checkpoint.
   Accepted.
