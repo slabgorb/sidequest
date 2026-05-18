@@ -193,6 +193,20 @@ like zero rows (honest empty lane). Existing saves gain telemetry only
 for turns played after the substrate ships; pre-substrate rounds honestly
 show none.
 
+## Open implementation question (plan's first task)
+
+**Does `_watcher_publish` already have a handle to the per-slug
+`SqliteStore`?** It lives in `session_handler.py` and is called as a
+free function from `emitters.py`. If it does not carry the session's
+store/handler, the sink cannot "resolve the active session's store"
+without a session-registry lookup or threading the store through. The
+plan's **first task** is to confirm the actual `_watcher_publish`
+signature/scope and pick the wiring: (a) it already has the handler →
+trivial; (b) thread the store in at call sites; (c) look up via the
+session registry by slug. No silent global fallback — the chosen path
+must be explicit. This is the load-bearing unknown; everything else is
+mechanical.
+
 ## Risks & mitigations
 
 - **Hot-path cost:** one small INSERT per `_watcher_publish` in the
