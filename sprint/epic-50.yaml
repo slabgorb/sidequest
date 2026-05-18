@@ -202,10 +202,13 @@ stories:
     title: 'Disposition: narrator NPC serialization emits attitude string (close the agents-see-only-attitude gap)'
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-18'
     repos: server
     workflow: tdd
     depends_on: 50-10
+    completed: '2026-05-18'
+    review_verdict: approved
   - id: 50-13
     title: 'Disposition: genre-configurable thresholds (pack model field + load-time wiring, +/-10 default)'
     points: 3
