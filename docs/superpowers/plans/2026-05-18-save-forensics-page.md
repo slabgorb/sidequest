@@ -1357,3 +1357,14 @@ Round `r`'s event slice = events where
    This makes the join tests exercise the actual format mismatch; with the uniform-ISO fixtures the tests would be vacuous w.r.t. F3/F4 and would pass against broken code.
 
 Other DDL confirmed against plan assumptions (all correct, no further change): `session_meta(id,genre_slug,world_slug,created_at,last_played,schema_version)`, `projection_cache` PK `(event_seq,player_id)`, `scrapbook_entries` column list and defaults as the plan's Task 7 fixture writes them.
+
+---
+
+## Task 2 Review Deviations (accepted during execution)
+
+Code-quality review of the Task 2 commit surfaced two issues accepted as **intentional divergences from the verbatim Task 2 listing** (so later spec review does not flag these as drift):
+
+- **D1 (serves `<critical>` No Silent Fallbacks):** `fold_state_deltas` must NOT silently `continue` on a payload that is valid JSON but not a dict (e.g. `"null"`, `42`, `[...]`). It is treated exactly like an unparseable payload: `logger.warning("forensic_fold.non_dict_payload seq=%s ...")` **and** the seq is appended to `unparseable_seqs`. (Distinct from Task 4's *malformed-JSON* case; both now land in `unparseable_seqs`. Tasks 3/4/7 planned fixtures use only dict payloads, so their contracts are unaffected.)
+- **D2 (serves "every test suite needs a wiring test"):** `tests/game/test_forensic_fold.py` gains `test_state_delta_fields_match_protocol_model` asserting `set(STATE_DELTA_FIELDS) == set(StateDelta.model_fields)` — a protocol-drift guard, since `STATE_DELTA_FIELDS` is a hand-copied mirror of `protocol/models.py` `StateDelta`.
+
+Declined: deep-immutable `derived` via `MappingProxyType` (no real consumer mutates it; plan deliberately locked the minimal frozen shape) and `value: object → Any` (plan-specified; `object` is defensible).
