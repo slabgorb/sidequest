@@ -3,13 +3,16 @@
 > System design for the SideQuest AI Narrator engine.
 > Python package composition, narrator-primary agent model, three turn modes.
 >
-> **Last updated:** 2026-05-10
+> **Last updated:** 2026-05-18
 > - 2026-04-28: LocalDM preprocessor moved off live turn path
 > - 2026-05-02: Narrator streaming pipeline built end-to-end (dormant behind `SIDEQUEST_NARRATOR_STREAMING=0`, ADR-066)
 > - 2026-05-07: Magic prompt made plugin-aware proactive on innate-active worlds
 > - 2026-05-08: Daemon music tier wired via ACE-Step (ADR-095)
 > - 2026-05-09: Cavern renderer revival (ADR-096, partial — Python port of maze-maker Cellular)
 > - 2026-05-10: Class mechanical surface — Lv1 abilities tab + Fighter Taunt (ADR-095 class-side)
+> - 2026-05-15: Anthropic SDK cutover (ADR-101) — narrator default; native tool-use (ADR-102); native OTEL via tool registry (ADR-103)
+> - 2026-05-17: ADR-106 runtime procedural Jaquaysed megadungeon closed; `caverns_and_claudes/beneath_sunden` replaces `caverns_sunden` as the live caverns world
+> - 2026-05-18: Forensics telemetry substrate P1 + P2 merged (`turn_telemetry` + `mechanical_census` SQLite sinks); ADR-107 out-of-band aside channel accepted
 
 ## Architectural Layers
 
@@ -154,6 +157,26 @@ NPC and encounter data is pre-generated server-side using Python CLI entry point
 ### ADR-047: Input Sanitization
 All player text passes through `sanitize_player_text()` at the protocol layer — strips injection attempts before routing.
 
+### ADR-103: Native OTEL via Tool Registry
+The narrator's tool registry emits OTEL spans natively — every tool call (mood, intent, items_gained, visual_scene, etc.) produces a span without a sidecar parser. Replaces ADR-058's `playtest_otlp` Claude-subprocess HTTP/JSON scraper, which still backs the dashboard's legacy panes but no longer reflects narrator state on the SDK path. Narrator spans flow `server-tracer → gRPC → Jaeger`; the substrate is the GM-panel lie-detector for "did the narrator actually mutate state, or just describe it?"
+
+### ADR-106: Runtime Procedural Jaquaysed Megadungeon
+`caverns_and_claudes` is no longer a hand-authored world. Its sole live world `beneath_sunden` is a static surface anchor (Ropefoot waiting-camp, the Dropmouth shaft head) feeding into a contiguous-edge-expansion procedural megadungeon — Python port of the maze-maker family plus a Complication Ledger. The expansion loop runs server-side: a `commit_expansion` step persists `expansion.new_nodes` only (the entrance is persisted as Expansion 0 by `_commit_seed`), the materializer seeds-then-commits and rolls back on `PersistError`. The single LLM hook is the "curate" stage, currently the only `claude -p` call remaining in the megadungeon path.
+
+### ADR-107: Out-of-Band Aside Channel
+A non-turn-consuming channel for OOC player→GM table-talk. `PLAYER_ACTION` carries an `aside: true` bit; the asker still owes their normal turn. The server resolves asides through a separate Haiku call site (`AsideResolver`), broadcasts the answer as `ASIDE_ANSWER` to the whole room (table-visible), and bypasses the ADR-036 submit-and-wait barrier. `ACTION_REVEAL` mirrors composing/submitted aside text to peers as OOC table-talk; it never becomes narration.
+
+## Forensics Telemetry Substrate (live)
+
+Two SQLite sinks ship inside the save file itself so the GM panel can lie-detect against ground-truth mechanical state without depending on the live process:
+
+- **`turn_telemetry`** (Phase 1, ADR-103-aligned) — one row per turn, written inside the same `NARRATION` transaction (`emit_event ... with conn`) so per-turn back-pressure metrics never desync from the event they describe. Model, latency, token counts (input/output/cache_read/cache_write), tool-call counts, cost USD, intent classification.
+- **`mechanical_census`** (Phase 2) — pure canonical-state projections per seated PC plus session-level trope state. Per-round mechanical diff lanes (baseline / static / moved / absent). Hot-path cost-guarded (a normal turn writes N=1 census rows). `mechanical_strip` / `fold_mechanical_strip` ship as annotated Phase-3 forward seams — emitted but not yet consumed by a viewer.
+
+The save-forensics viewer reads via the public `open_save_readonly` API. **Never** call `SqliteStore.open()` for forensic access — that path WAL-flips, schema-migrates, and commits on construction (see `project_sqlitestore_open_writes`).
+
+Edge / Composure (ADR-078) is the mechanical pool the census projects; the wire still ships `hp` / `max_hp` for backward compatibility (see `docs/api-contract.md`). The fold path treats them as Edge values reusing legacy field names.
+
 ## Game Systems (sidequest.game, ~30+ modules)
 
 ### Core State
@@ -186,6 +209,7 @@ All player text passes through `sanitize_player_text()` at the protocol layer �
 - **World materialization:** Campaign maturity levels (fresh/early/mid/veteran)
 - **Trope engine:** Genre-defined narrative pacing via lifecycle management (ADR-018)
 - **Room graph navigation:** Per-room topology for dungeon-crawl worlds (ADR-055). Region/route world-topology config still lives in `world.cartography.yaml` (`CartographyConfig`) and seeds `snap.current_region` at chargen; the live world-map / fog-of-war runtime view (originally ADR-019) was removed 2026-04-28 — see ADR-019 superseded.
+- **Procedural megadungeon:** `caverns_and_claudes/beneath_sunden` runs the ADR-106 contiguous-edge-expansion engine (Python port of maze-maker Cellular family) with a Complication Ledger. The world authors only a static surface anchor; the deep is generated unbounded server-side.
 
 ### Pacing & Drama
 - **TensionTracker:** Dual-track model — gambler's ramp + HP stakes + event spikes
@@ -213,6 +237,7 @@ All player text passes through `sanitize_player_text()` at the protocol layer �
 - **Commands:** /status, /inventory, /map, /save, /help, /tone, /gm suite
 - **Inventory:** Items by type, equipped state, merchant transactions
 - **Progression:** Milestones, affinities, item evolution, wealth (ADR-021)
+- **Aside channel (ADR-107):** `PLAYER_ACTION{aside: true}` routes to a dedicated Haiku-backed resolver, answers broadcast as `ASIDE_ANSWER`. Non-turn-consuming, bypasses the multiplayer barrier, does not become narration.
 
 ## Multiplayer Architecture
 

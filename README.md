@@ -1,11 +1,17 @@
 # SideQuest — AI Dungeon Master
 
-An AI narrator engine that runs tabletop-style RPGs in any genre, powered by a Claude
-narrator invoked stateless per turn (ADR-098). Players connect via browser, create
-characters through genre-driven scenes, and explore procedural worlds with real-time
-image generation, streaming narration, adaptive music, and pre-rendered tactical maps.
-Multiplayer with submit-and-wait turn barriers, perception rewriting, live teammate
-typing, and collaborative peer-action visibility (see ADR-036).
+An AI narrator engine that runs tabletop-style RPGs in any genre, powered by an
+Anthropic-SDK-backed Claude narrator (ADR-101 default; Haiku 4.5 / Sonnet 4.6 /
+Opus 4.7 routed per call) invoked stateless per turn (ADR-098), with native
+tool-use for structured mechanical patches (ADR-102) and native OTEL via the
+tool registry (ADR-103). Players connect via browser, create characters
+through genre-driven scenes, and explore worlds — including the runtime
+procedural Jaquaysed megadungeon `beneath_sunden` (ADR-106) — with real-time
+image generation (Z-Image MLX), streaming narration, adaptive music, and
+pre-rendered tactical maps. Multiplayer uses submit-and-wait turn barriers,
+perception rewriting at the tool layer (ADR-104), live teammate typing,
+collaborative peer-action visibility (ADR-036), and a non-turn-consuming
+out-of-band aside channel for OOC table-talk (ADR-107).
 
 ## Repository Ecosystem
 
