@@ -211,12 +211,19 @@ stories:
     review_verdict: approved
   - id: 50-13
     title: 'Disposition: genre-configurable thresholds (pack model field + load-time wiring, +/-10 default)'
+    description: 'Make the disposition→attitude numeric thresholds genre-pack-configurable. Today disposition.py:78-82 hardcodes >10⇒friendly / <-10⇒hostile / else neutral. Add a genre-pack model field (default ±10) read at pack load time so a pack can widen/narrow the bands. CONSTRAINT (50-12 lesson, verified against code): the Attitude enum is the THREE-tier lowercase wire contract friendly/neutral/hostile (sidequest/game/disposition.py:41-54, locked by tests/game/test_disposition_attitude_enum.py). This story changes the numeric BOUNDARIES only — it does NOT add/rename bands and there is NO five-tier capitalised set. Change vector is the disposition module + genre-pack model + pack loader (repos: server,content); 50-12 already wired Disposition.attitude() into the narrator roster so corrected thresholds flow through with zero roster rework. Do NOT reintroduce the fictional Literal["Hostile","Guarded","Neutral","Trusting","Allied"] that sm-setup invented for 50-12.'
     points: 3
     priority: p2
     status: backlog
     repos: server,content
     workflow: tdd
     depends_on: 50-10
+    acceptance_criteria:
+      - 'AC-1: Genre-pack model exposes a disposition-threshold field (friendly_at / hostile_at or equivalent) defaulting to +10 / -10, preserving exact current behavior (>10 friendly, <-10 hostile, else neutral) when unset.'
+      - 'AC-2: Threshold is read at pack load time and used by Disposition.attitude() derivation; band labels remain the fixed 3-tier Attitude enum (friendly/neutral/hostile) — only the numeric cut points change.'
+      - 'AC-3: A pack overriding the threshold (e.g. ±5) reclassifies dispositions at the new boundary; default/unset packs are byte-identical to pre-50-13 behavior (regression-locked).'
+      - 'AC-4: No silent fallback — a malformed/out-of-range threshold in pack YAML fails loudly at load, not silently clamped.'
+      - 'AC-5: OTEL/dashboard continuity — SPAN_DISPOSITION_SHIFT before/after attitude (shipped by 50-11) still reflects the configured thresholds; no new narrator-facing numeric leak (ADR-104/105).'
   - id: 50-14
     title: 'Journal: JOURNAL_REQUEST handler — server replies from character.known_facts (seam C server-side per ADR-100)'
     points: 3
