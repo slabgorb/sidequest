@@ -81,9 +81,11 @@ epics:
         title: Server emits cavern PNG sidecar from runtime mask via room_file_loader resolve_asset_url
         points: 3
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: server
         workflow: tdd
+        completed: '2026-05-19'
       - id: 52-5
         title: 'UI end-to-end wiring test: TacticalGridRenderer renders runtime-sourced cavern_image_url + OTEL assert'
         points: 2
