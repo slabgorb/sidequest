@@ -122,7 +122,8 @@ epics:
         title: 'Crash event handler: Composure→0 fires injury tag + Edge hit + dismount'
         points: 3
         priority: p1
-        status: backlog
+        status: in-progress
+        started: '2026-05-19'
         repos: sidequest-server
         workflow: tdd
       - id: 53-4
