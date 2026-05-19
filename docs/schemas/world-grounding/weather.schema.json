@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidequest.local/schemas/world-grounding/weather.schema.json",
+  "title": "Weather (pack level)",
+  "description": "Genre-level climate rules. Defines climate zones, per-season weather palettes, and rare special events. Consumed by the Phase 1 weather generator (story 24-5) to produce per-scene weather state injected into the narrator prompt zone. PRD §1.1. Authored once per pack; lives at sidequest-content/genre_packs/<pack>/weather.yaml.",
+  "type": "object",
+  "required": ["climate_zones"],
+  "properties": {
+    "climate_zones": {
+      "type": "object",
+      "description": "Map of climate zone id to its rules. A genre pack may have one zone (single-climate setting) or many (continental scope). World content references zones by id.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/climateZone"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "climateZone": {
+      "type": "object",
+      "required": ["seasons"],
+      "properties": {
+        "seasons": {
+          "type": "object",
+          "description": "Map of season id (e.g. 'spring', 'monsoon', 'fire_season') to its weather palette. Season ids are pack-defined — they MUST match calendar.yaml season ids in any world that uses this zone, otherwise prompt-zone injection cannot align weather to time of year.",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/$defs/seasonPalette"
+          }
+        },
+        "special_events": {
+          "type": "array",
+          "description": "Rare weather events that may override the season palette. Sampled before the per-scene roll; if one fires, it takes precedence for its duration. Useful for narrative anchors (harvest gales, mutagen storms, fire-season eruptions).",
+          "items": { "$ref": "#/$defs/specialEvent" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "seasonPalette": {
+      "type": "object",
+      "required": ["temp_range", "conditions", "weights"],
+      "properties": {
+        "temp_range": {
+          "type": "array",
+          "description": "[min, max] typical temperature for the season, in the units the genre pack uses (Celsius is the default).",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number" }
+        },
+        "precipitation_chance": {
+          "type": "number",
+          "description": "Optional. Probability [0..1] that a scene's weather involves precipitation. If omitted, the generator may infer from condition weights.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "conditions": {
+          "type": "array",
+          "description": "Weather condition labels sampled by the generator. Open enum — genres extend with their own flavor (e.g. road_warrior adds 'dust_storm', neon_dystopia adds 'acid_rain'). The narrator receives the chosen label verbatim.",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "weights": {
+          "type": "array",
+          "description": "Relative weights for the corresponding `conditions` entries. Length MUST equal `conditions` length. Values are integers; the generator normalizes.",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "specialEvent": {
+      "type": "object",
+      "required": ["name", "chance"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Identifier surfaced to the narrator. Use snake_case."
+        },
+        "season": {
+          "type": "string",
+          "description": "Optional. If set, event can only fire during this season id. Omit for year-round events."
+        },
+        "chance": {
+          "type": "number",
+          "description": "Per-day (or per-scene, see 24-5) probability the event fires when eligible.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "duration_days": {
+          "type": "array",
+          "description": "Optional [min, max] event duration in days. The generator samples uniformly.",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "effects": {
+          "type": "array",
+          "description": "Optional list of mechanical effect ids the event imposes (e.g. 'travel_penalty', 'visibility_poor'). Effect ids are open enum — downstream stories define how each is consumed.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "climate_zones": {
+        "scottish_highlands": {
+          "seasons": {
+            "spring": {
+              "temp_range": [5, 14],
+              "precipitation_chance": 0.55,
+              "conditions": ["clear", "overcast", "drizzle", "fog", "rain"],
+              "weights": [15, 35, 25, 15, 10]
+            },
+            "autumn": {
+              "temp_range": [4, 12],
+              "precipitation_chance": 0.6,
+              "conditions": ["overcast", "rain", "fog", "wind", "frost"],
+              "weights": [30, 30, 20, 15, 5]
+            }
+          },
+          "special_events": [
+            {
+              "name": "haar",
+              "season": "spring",
+              "chance": 0.08,
+              "duration_days": [1, 2],
+              "effects": ["visibility_poor"]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

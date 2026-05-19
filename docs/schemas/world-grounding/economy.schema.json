@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidequest.local/schemas/world-grounding/economy.schema.json",
+  "title": "Economy (world level)",
+  "description": "Trade routes and commodity baselines for a world. Used to inject prices and route status into shop/trade scenes and to react to active tropes (e.g. 'bandit_blockade' marks a route as disrupted, doubling grain prices on it). PRD §2.1. Lives at sidequest-content/genre_packs/<pack>/worlds/<world>/economy.yaml.",
+  "type": "object",
+  "required": ["commodity_baseline"],
+  "properties": {
+    "trade_routes": {
+      "type": "array",
+      "description": "Optional. Inter-settlement trade arcs. Each route is directional in name only — `from` and `to` describe the typical flow, but goods move both ways via `return_goods`.",
+      "items": { "$ref": "#/$defs/tradeRoute" }
+    },
+    "commodity_baseline": {
+      "type": "object",
+      "description": "Map of commodity id (e.g. 'iron_ore', 'tea', 'fuel_cells') to baseline economics. Commodity ids are open enum — genre-typed.",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/commodity" }
+    },
+    "currency": {
+      "type": "object",
+      "description": "Optional. In-world currency name + base unit. If omitted, prices in `commodity_baseline.base_price` are abstract scalars the narrator translates contextually.",
+      "properties": {
+        "name": { "type": "string" },
+        "abbreviation": { "type": "string" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "tradeRoute": {
+      "type": "object",
+      "required": ["from", "to", "goods"],
+      "properties": {
+        "from": { "type": "string", "description": "Origin settlement name. SHOULD match a settlement in demographics.yaml." },
+        "to":   { "type": "string", "description": "Destination settlement name. SHOULD match a settlement in demographics.yaml." },
+        "goods": {
+          "type": "array",
+          "description": "Commodities moved from `from` to `to`. Ids reference `commodity_baseline`.",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "return_goods": {
+          "type": "array",
+          "description": "Optional. Commodities moved from `to` back to `from`.",
+          "items": { "type": "string" }
+        },
+        "danger": {
+          "type": "string",
+          "description": "Open enum: 'safe', 'moderate', 'dangerous', or genre-specific. Narrator references when describing travel.",
+          "examples": ["safe", "moderate", "dangerous"]
+        },
+        "status": {
+          "type": "string",
+          "description": "Current route status. Closed enum — the trope engine may mutate this at runtime.",
+          "enum": ["active", "disrupted", "blockaded", "abandoned"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "commodity": {
+      "type": "object",
+      "required": ["base_price"],
+      "properties": {
+        "base_price": {
+          "type": "number",
+          "description": "Price in the world's currency for one unit (unit is genre-implicit; tea may be 'a pot', iron may be 'a bar')."
+        },
+        "abundance": {
+          "type": "string",
+          "description": "Optional. Open enum: 'rare', 'low', 'moderate', 'high', 'glut'. Drives price modifiers when supply state changes.",
+          "examples": ["rare", "low", "moderate", "high", "glut"]
+        },
+        "source": {
+          "type": "string",
+          "description": "Optional. Free-form prose explaining the origin (e.g. 'Grimholt mines', 'Glenross gardens, mostly Mrs. Pettigrew's')."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "currency": { "name": "Pound Sterling", "abbreviation": "£" },
+      "trade_routes": [
+        {
+          "from": "Glenross",
+          "to": "Inverness",
+          "goods": ["whisky", "wool"],
+          "return_goods": ["coal", "newspapers"],
+          "danger": "safe",
+          "status": "active"
+        }
+      ],
+      "commodity_baseline": {
+        "tea": { "base_price": 0.15, "abundance": "high", "source": "imported via Inverness" },
+        "whisky": { "base_price": 2.50, "abundance": "moderate", "source": "Glenross distillery" },
+        "newspapers": { "base_price": 0.05, "abundance": "moderate" }
+      }
+    }
+  ]
+}

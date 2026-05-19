@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidequest.local/schemas/world-grounding/establishment_templates.schema.json",
+  "title": "Establishment Templates (pack level)",
+  "description": "Genre-typed templates for unnamed establishments (taverns, shops, temples). When a player enters an establishment the world YAML hasn't pre-named, the generator picks a template, selects a tier from settlement wealth, and produces staff/menu/patrons. Named establishments live in existing world YAML and are NOT generated here. PRD §2.2. Lives at sidequest-content/genre_packs/<pack>/establishment_templates.yaml. Top-level keys are establishment categories (open enum: 'tavern', 'tea_room', 'fixer_bar', 'temple', 'general_store', 'apothecary', 'gunsmith', ...) — genre-typed.",
+  "type": "object",
+  "minProperties": 1,
+  "additionalProperties": { "$ref": "#/$defs/establishmentType" },
+  "$defs": {
+    "establishmentType": {
+      "type": "object",
+      "required": ["tiers", "menu_items"],
+      "properties": {
+        "tiers": {
+          "type": "object",
+          "description": "Map of quality tier id (open enum: 'poor', 'common', 'fine', or genre-typed) to its shape. Settlement wealth selects a tier at generation time.",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/tier" }
+        },
+        "menu_items": {
+          "type": "array",
+          "description": "Pool of items that may appear on the establishment's menu/inventory. The generator filters by tier.",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/menuItem" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tier": {
+      "type": "object",
+      "properties": {
+        "menu_quality": {
+          "type": "string",
+          "description": "Short prose description the narrator may surface verbatim (e.g. 'gruel and ale', 'roast and wine')."
+        },
+        "patron_count": {
+          "type": "array",
+          "description": "[min, max] number of NPC patrons present. Generator samples uniformly.",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "rumors": {
+          "type": "integer",
+          "description": "Number of rumors the establishment surfaces in a scene. Rumors source from active tropes (not random flavor).",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "menuItem": {
+      "type": "object",
+      "required": ["name", "tier"],
+      "properties": {
+        "name": { "type": "string" },
+        "tier": {
+          "type": "string",
+          "description": "Tier id this item is available at. Must match a key in `tiers`."
+        },
+        "price_range": {
+          "type": "array",
+          "description": "Optional [min, max] price. The economy schema's currency applies.",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "tea_room": {
+        "tiers": {
+          "poor":   { "menu_quality": "stewed tea and yesterday's scones",        "patron_count": [1, 3], "rumors": 1 },
+          "common": { "menu_quality": "proper pot and a scone with cream",       "patron_count": [3, 8], "rumors": 2 },
+          "fine":   { "menu_quality": "loose-leaf, finger sandwiches, cake stand","patron_count": [4, 10],"rumors": 3 }
+        },
+        "menu_items": [
+          { "name": "pot of tea", "tier": "common", "price_range": [0.05, 0.10] },
+          { "name": "scone with jam", "tier": "common", "price_range": [0.08, 0.15] },
+          { "name": "cucumber sandwich", "tier": "fine", "price_range": [0.20, 0.35] }
+        ]
+      }
+    }
+  ]
+}

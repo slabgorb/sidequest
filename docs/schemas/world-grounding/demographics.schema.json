@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidequest.local/schemas/world-grounding/demographics.schema.json",
+  "title": "Demographics (world level)",
+  "description": "Settlement profiles for a specific world. Gives the narrator concrete numbers (twelve guards, two taverns, one apothecary) instead of vague plurals. Baked content — authored once per world, no runtime generator. PRD §1.2. Lives at sidequest-content/genre_packs/<pack>/worlds/<world>/demographics.yaml.",
+  "type": "object",
+  "required": ["settlements"],
+  "properties": {
+    "settlements": {
+      "type": "array",
+      "description": "Every named settlement the players might enter. The narrator references this list when describing the place. Settlements not listed here exist as scenery only — they get a name but no concrete shape.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/settlement" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "settlement": {
+      "type": "object",
+      "required": ["name", "type", "population"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name. Must be unique within this world."
+        },
+        "type": {
+          "type": "string",
+          "description": "Settlement category. Open enum — genre-typed (e.g. 'small_town', 'hamlet' for tea_and_murder; 'arcology_sector' for neon_dystopia; 'station' for space_opera). The narrator uses this to set scope."
+        },
+        "population": {
+          "type": "integer",
+          "description": "Headcount. Drives plausibility checks ('the town's 47 residents include exactly one blacksmith').",
+          "minimum": 1
+        },
+        "wealth": {
+          "type": "string",
+          "description": "Optional. Open enum — 'destitute', 'modest', 'comfortable', 'wealthy', or genre-specific equivalent. Drives the establishment generator's quality tier when 24-2-era stories wire it in."
+        },
+        "profile": {
+          "$ref": "#/$defs/profile",
+          "description": "Optional. Service and institution counts. Authors include the categories that exist; omitted categories mean the settlement has none of that thing."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional narrator-facing prose (single paragraph). Use sparingly; this is hint material, not lore. Lore lives elsewhere."
+        }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "description": "All fields optional. The narrator references whatever is present. Free-form additionalProperties permitted for genre-specific categories not anticipated here (e.g. 'datacenters', 'fuel_depots').",
+      "properties": {
+        "noble_houses": { "type": "integer", "minimum": 0 },
+        "guard_force": { "type": "integer", "minimum": 0, "description": "Total guards/constables/peacekeepers — the narrator may break out where they are stationed." },
+        "clergy": { "type": "integer", "minimum": 0 },
+        "taverns": { "type": "integer", "minimum": 0 },
+        "inns": { "type": "integer", "minimum": 0 },
+        "shops": {
+          "type": "object",
+          "description": "Map of shop category (open enum: 'blacksmith', 'general', 'apothecary', 'tea_room', 'gunsmith', etc.) to count. Genre-typed.",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "guilds": {
+          "type": "array",
+          "description": "Named guilds/associations/syndicates present. Open enum.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": { "type": ["integer", "string", "array", "object"] }
+    }
+  },
+  "examples": [
+    {
+      "settlements": [
+        {
+          "name": "Glenross",
+          "type": "small_village",
+          "population": 412,
+          "wealth": "modest",
+          "profile": {
+            "guard_force": 2,
+            "clergy": 1,
+            "taverns": 1,
+            "inns": 1,
+            "shops": {
+              "tea_room": 2,
+              "general": 1,
+              "blacksmith": 1
+            },
+            "guilds": ["village_council"]
+          },
+          "notes": "Train station closed since the 1962 cuts; bus once a week."
+        }
+      ]
+    }
+  ]
+}

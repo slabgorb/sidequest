@@ -379,11 +379,14 @@ epics:
         title: Define YAML schemas for weather, demographics, calendar, economy, establishments, quest shapes, NPC schedules
         points: 3
         priority: p0
-        status: backlog
+        status: started
+        started: '2026-05-19'
         repos: content,orchestrator
         workflow: trivial
         acceptance_criteria: []
         type: chore
+        branch: feat/24-1-world-grounding-schemas
+        assignee: slabgorb
       - id: 24-2
         title: Author tea_and_murder/glenross weather rules (climate zones, seasonal conditions, special events)
         points: 2

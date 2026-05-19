@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidequest.local/schemas/world-grounding/calendar.schema.json",
+  "title": "Calendar (world level)",
+  "description": "Genre-appropriate timekeeping for a specific world: day names, month structure, seasons, festivals, and time precision. Lets the narrator say 'dawn on Restday in Thawmelt' instead of 'it's morning'. PRD §2.3. Lives at sidequest-content/genre_packs/<pack>/worlds/<world>/calendar.yaml.",
+  "type": "object",
+  "required": ["calendar"],
+  "properties": {
+    "calendar": {
+      "type": "object",
+      "required": ["days_in_year", "days_in_week", "day_names", "months", "time_precision"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Optional. In-world name for the calendar system itself (e.g. 'The Turning', 'Imperial Standard')."
+        },
+        "days_in_year": {
+          "type": "integer",
+          "description": "Total days in a full year. Sum of month lengths SHOULD equal this; generator may warn if they diverge.",
+          "minimum": 1
+        },
+        "days_in_week": {
+          "type": "integer",
+          "description": "Number of weekday entries in `day_names`.",
+          "minimum": 1
+        },
+        "day_names": {
+          "type": "array",
+          "description": "Ordered list of weekday names. Length MUST equal `days_in_week`.",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "months": {
+          "type": "array",
+          "description": "Ordered list of months. The cycle repeats yearly.",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/month" }
+        },
+        "moons": {
+          "type": "array",
+          "description": "Optional. Celestial bodies with cycle metadata. Used by mechanics that care about moon phase (lycanthropy, tides, ritual magic).",
+          "items": { "$ref": "#/$defs/moon" }
+        },
+        "time_precision": {
+          "type": "string",
+          "description": "Granularity at which the narrator tracks time of day. Closed enum: the prompt zone format depends on the choice.",
+          "enum": ["hour", "quarter_day", "watch", "scene"]
+        },
+        "epoch": {
+          "type": "object",
+          "description": "Optional starting date for a fresh campaign in this world. If absent, sessions begin at the world's authoring default.",
+          "properties": {
+            "year": { "type": "integer" },
+            "month_index": { "type": "integer", "minimum": 0, "description": "Zero-based index into `months`." },
+            "day_of_month": { "type": "integer", "minimum": 1 }
+          },
+          "required": ["year", "month_index", "day_of_month"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "month": {
+      "type": "object",
+      "required": ["name", "days", "season"],
+      "properties": {
+        "name": { "type": "string", "description": "Month name as the narrator says it." },
+        "days": { "type": "integer", "minimum": 1, "description": "Length of the month." },
+        "season": {
+          "type": "string",
+          "description": "Season id this month belongs to. MUST match a season id used in the pack's weather.yaml climate zones — otherwise the prompt zone cannot align weather to month."
+        },
+        "festivals": {
+          "type": "array",
+          "description": "Optional festival list. Each entry is a short phrase the narrator may surface as a hook (e.g. 'First Planting — seeds blessed by clergy'). Free-form prose, but keep one entry to one sentence.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "moon": {
+      "type": "object",
+      "required": ["name", "cycle_days"],
+      "properties": {
+        "name": { "type": "string" },
+        "cycle_days": { "type": "integer", "minimum": 1, "description": "Full cycle length, dawn-of-new to dawn-of-new." },
+        "lore": { "type": "string", "description": "Optional one-line in-world significance." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "calendar": {
+        "name": "Gregorian (Earth)",
+        "days_in_year": 365,
+        "days_in_week": 7,
+        "day_names": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "months": [
+          { "name": "January",  "days": 31, "season": "winter" },
+          { "name": "February", "days": 28, "season": "winter" },
+          { "name": "March",    "days": 31, "season": "spring" },
+          { "name": "April",    "days": 30, "season": "spring", "festivals": ["Easter — village fete on the green"] },
+          { "name": "May",      "days": 31, "season": "spring" },
+          { "name": "June",     "days": 30, "season": "summer" },
+          { "name": "July",     "days": 31, "season": "summer" },
+          { "name": "August",   "days": 31, "season": "summer", "festivals": ["Glenross Show — annual fair, prize livestock and homemade jam"] },
+          { "name": "September","days": 30, "season": "autumn" },
+          { "name": "October",  "days": 31, "season": "autumn" },
+          { "name": "November", "days": 30, "season": "autumn" },
+          { "name": "December", "days": 31, "season": "winter", "festivals": ["Christmas — carols at the kirk"] }
+        ],
+        "moons": [
+          { "name": "The Moon", "cycle_days": 28 }
+        ],
+        "time_precision": "hour",
+        "epoch": { "year": 1973, "month_index": 9, "day_of_month": 14 }
+      }
+    }
+  ]
+}

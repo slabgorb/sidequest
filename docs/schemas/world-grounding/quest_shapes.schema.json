@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sidequest.local/schemas/world-grounding/quest_shapes.schema.json",
+  "title": "Quest Shapes (pack level)",
+  "description": "Structural templates for how tropes manifest as playable sequences. When a trope escalates to 'active quest', the system assigns a quest shape and tracks phase progression — the narrator knows whether it's pacing the hook or the climax. PRD §3.1. Lives at sidequest-content/genre_packs/<pack>/quest_shapes.yaml.",
+  "type": "object",
+  "required": ["shapes"],
+  "properties": {
+    "shapes": {
+      "type": "object",
+      "description": "Map of shape id (open enum: 'investigation', 'rescue', 'dungeon_crawl', 'heist', 'cosy_mystery', ...) to its structure. Shape ids are genre-typed.",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/shape" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "shape": {
+      "type": "object",
+      "required": ["phases", "pacing"],
+      "properties": {
+        "phases": {
+          "type": "array",
+          "description": "Ordered list of phase ids the quest passes through. Free-form per shape; the narrator's prompt zone receives the current phase verbatim.",
+          "minItems": 2,
+          "items": { "type": "string" }
+        },
+        "min_turns": {
+          "type": "integer",
+          "description": "Optional. Lower bound on how many turns a quest of this shape should consume — pacing safeguard against snap-resolutions.",
+          "minimum": 1
+        },
+        "pacing": {
+          "type": "string",
+          "description": "Pacing label the narrator pairs with the current phase. Closed enum: drives scene-cut policy (Cut the Dull Bits / SOUL #10).",
+          "enum": ["slow_build", "exploration", "urgent", "deliberate", "frantic"]
+        },
+        "structure": {
+          "type": "string",
+          "description": "Optional. Higher-level structural label (e.g. 'five_room_dungeon', 'three_act') for shapes that conform to a canonical narrative skeleton."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "shapes": {
+        "cosy_mystery": {
+          "phases": ["discovery", "neighbourhood_inquiry", "false_lead", "second_body_or_clue", "drawing_room_reveal"],
+          "min_turns": 4,
+          "pacing": "deliberate"
+        },
+        "rescue": {
+          "phases": ["plea", "journey", "obstacle", "discovery", "extraction"],
+          "min_turns": 4,
+          "pacing": "urgent"
+        }
+      }
+    }
+  ]
+}
