@@ -1,44 +1,53 @@
 id: '52'
 type: epic
 title: Wire Procedural Megadungeon Output to the ADR-096 Cavern Renderer Pipeline
-description: "ADR-096's static-authoring approach is subsumed by ADR-106's runtime generator (cellular port already re-homed). Renderer consumer end is built but starved — materializer.py:57 flags the unwired mask gap. Build the seam so procedural regions serialize ADR-096-shaped mask+PNG sidecars the live UI already renders. Verdict: SUBSUME (no superseded-by; ADR-096 amendment only)."
+description: "ADR-096's static-authoring approach is subsumed by ADR-106's runtime\
+  \ generator (cellular port already re-homed). Renderer consumer end is built but\
+  \ starved \u2014 materializer.py:57 flags the unwired mask gap. Build the seam so\
+  \ procedural regions serialize ADR-096-shaped mask+PNG sidecars the live UI already\
+  \ renders. Verdict: SUBSUME (no superseded-by; ADR-096 amendment only)."
 priority: p1
 status: ready
 repos: server,ui,content
 stories:
-  - id: 52-1
-    title: ADR-096 subsume amendment + DRIFT/index regenerate (no superseded-by; symmetric related)
-    points: 1
-    priority: p1
-    status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
-  - id: 52-2
-    title: Materializer emits ADR-096 mask + derived block per region (span dungeon.materialize.mask)
-    points: 3
-    priority: p1
-    status: backlog
-    repos: server
-    workflow: tdd
-  - id: 52-3
-    title: 'Persistence: mask-BLOB column + loader (the materializer.py:57 gap); reload on resume'
-    points: 3
-    priority: p1
-    status: backlog
-    repos: server
-    workflow: tdd
-  - id: 52-4
-    title: Server emits cavern PNG sidecar from runtime mask via room_file_loader resolve_asset_url
-    points: 3
-    priority: p1
-    status: backlog
-    repos: server
-    workflow: tdd
-  - id: 52-5
-    title: 'UI end-to-end wiring test: TacticalGridRenderer renders runtime-sourced cavern_image_url + OTEL assert'
-    points: 2
-    priority: p1
-    status: backlog
-    repos: ui,server
-    workflow: tdd
+- id: 52-1
+  title: ADR-096 subsume amendment + DRIFT/index regenerate (no superseded-by; symmetric
+    related)
+  points: 1
+  priority: p1
+  status: in_progress
+  repos: orchestrator
+  workflow: trivial
+  type: chore
+  branch: feat/52-1-adr-096-subsume-amendment
+  assignee: slabgorb
+- id: 52-2
+  title: Materializer emits ADR-096 mask + derived block per region (span dungeon.materialize.mask)
+  points: 3
+  priority: p1
+  status: backlog
+  repos: server
+  workflow: tdd
+- id: 52-3
+  title: 'Persistence: mask-BLOB column + loader (the materializer.py:57 gap); reload
+    on resume'
+  points: 3
+  priority: p1
+  status: backlog
+  repos: server
+  workflow: tdd
+- id: 52-4
+  title: Server emits cavern PNG sidecar from runtime mask via room_file_loader resolve_asset_url
+  points: 3
+  priority: p1
+  status: backlog
+  repos: server
+  workflow: tdd
+- id: 52-5
+  title: 'UI end-to-end wiring test: TacticalGridRenderer renders runtime-sourced
+    cavern_image_url + OTEL assert'
+  points: 2
+  priority: p1
+  status: backlog
+  repos: ui,server
+  workflow: tdd

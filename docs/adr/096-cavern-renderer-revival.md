@@ -6,17 +6,32 @@ date: 2026-05-10
 deciders: ["Keith Avery"]
 supersedes: [89]
 superseded-by: null
-related: [55, 71, 86, 89]
+related: [55, 71, 86, 89, 106]
 tags: [game-systems, frontend-protocol, media-audio]
 implementation-status: partial
-implementation-pointer: null
+implementation-pointer: 106
 ---
 
 # ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps
 
+> **AMENDED FOR RUNTIME GENERATION (2026-05-19).** ADR-106 subsumes the
+> production path: caverns are generated at *runtime* by the server-native
+> dungeon materializer, not authored offline and committed to
+> `sidequest-content`. **What ADR-096 still owns:** the cell-stepped math,
+> the PNG-floor + ASCII-mask sidecar *format contract*, and the tactical
+> grid renderer's data shape (mask is truth, PNG is visual). **What ADR-106
+> subsumes:** the authoring-time pipeline, `seed + cellular params` as
+> authored source-of-truth, and the "ship masks/PNGs as committed
+> artifacts" deployment story. New work should target ADR-106's
+> materializer seam (`sidequest-server/sidequest/dungeon/`) — see
+> ADR-106 §10 decomposition. This is a *related* link, not a
+> supersession: ADR-106 doesn't replace ADR-096's format contract, it
+> implements it on a different schedule.
+
 ## Status
 
-Accepted (2026-05-10).
+Accepted (2026-05-10). Amended 2026-05-19 — format contract is
+authoritative; runtime path owned by ADR-106 (related, symmetric).
 
 Revives ADR-089 (superseded 2026-05-02 by ADR-086) per ADR-089's own
 "do not revive — write a fresh ADR" instruction. ADR-086's recipe
