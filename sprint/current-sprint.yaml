@@ -137,3 +137,107 @@ epics:
         status: backlog
         repos: orchestrator
         workflow: trivial
+  - id: '54'
+    type: epic
+    title: Persistent Location Descriptions (Mechanical Manifest)
+    description: 'Server-side typed manifest of named entities per location (real_object / yes_and / flavor_only), two-mode runtime resolver (narrator_proactive lie-detector + player_initiated mint), location_promotions sqlite + encounter-bound overlays + dedicated OTEL spans + LocationPanel UI. POI side and infrastructure; Approach C sibling-epic to 52. Spec: docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md (~22 pts).'
+    priority: p1
+    status: ready
+    repos: server,ui,content,orchestrator
+    stories:
+      - id: 54-1
+        title: 'ADR: Persistent Location Descriptions + Mechanical Manifest (doctrine, manifest type spec, validator surface, OTEL contract, two-mode resolver)'
+        points: 1
+        priority: p1
+        status: backlog
+        repos: orchestrator
+        workflow: trivial
+        type: chore
+      - id: 54-2
+        title: 'Server schema: LocationEntity + LocationEntityBinding types; cartography + rooms/<id>.yaml schema; loader wiring through TacticalGridPayload + region payload; new LOCATION_DESCRIPTION WebSocket message + emit on room change/resume'
+        points: 4
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+      - id: 54-3
+        title: 'pf validate locations validator — well-formedness + binding resolution (hard) + prose-manifest coherence (warning); CI integration; per-pack/per-world reporting'
+        points: 3
+        priority: p1
+        status: backlog
+        repos: orchestrator,server
+        workflow: tdd
+      - id: 54-4
+        title: 'Content backfill: tea_and_murder/glenross — convert 12 region landmarks[] to typed entities[], add bindings, validator-clean'
+        points: 2
+        priority: p1
+        status: backlog
+        repos: content
+        workflow: trivial
+        type: chore
+      - id: 54-5
+        title: 'Content backfill: caverns_and_claudes/beneath_sunden settlement rooms — add entities[] to existing descriptions, validator-clean'
+        points: 2
+        priority: p1
+        status: backlog
+        repos: content
+        workflow: trivial
+        type: chore
+      - id: 54-6
+        title: 'Runtime: resolve_location_entity tool with both modes + location_promotions SQLite + migration; flavor_only→yes_and promotion; player-initiated mint; tool dispatch wiring'
+        points: 3
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+      - id: 54-7
+        title: 'Action overlays: EncounterLocationOverlay model + read-time merge in get_location_manifest/get_location_prose + LOCATION_OVERLAY_CHANGED emit on encounter activate/deactivate'
+        points: 3
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+      - id: 54-8
+        title: 'OTEL: location.entity.resolve (both modes) + .minted + .promoted + .overlay.{activate,deactivate} spans; GM-panel surfacing distinguishing narrator-lie vs player-canon'
+        points: 2
+        priority: p1
+        status: backlog
+        repos: server,ui
+        workflow: tdd
+      - id: 54-9
+        title: 'UI: LocationPanel.tsx + tab registration + state-mirror integration + WS payload types; base prose + overlay suffixes; Overlay active pip; mirrors JournalView pattern'
+        points: 3
+        priority: p1
+        status: backlog
+        repos: ui
+        workflow: tdd
+  - id: '55'
+    type: epic
+    title: Procedural Cavern Description+Manifest Emit at Materialize Time
+    description: 'Stitch story tying Epic 52 (megadungeon materializer + mask emit) to Epic 54 (manifest types + validator). Cookbook gains compose_room_prose; RegionContentManifest gains room_descriptions[]; materializer writes <world>/rooms/<id>.yaml per region after the mask emit. Single materializer rewrite (Approach C). Depends on 52-2, 52-3, 54-2, 54-3.'
+    priority: p1
+    status: ready
+    repos: server
+    stories:
+      - id: 55-1
+        title: 'Cookbook extension: compose_room_prose(rng, look_def, special_rooms, room_id) → (prose, entities[]); RegionContentManifest.room_descriptions[]; deterministic seeded from (campaign_seed, expansion_id, room_id); materializer persists <world>/rooms/<id>.yaml; validator post-check'
+        points: 5
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+  - id: '56'
+    type: epic
+    title: Playgroup QoL Wave 1
+    description: 'Small-scope quality-of-life papercuts surfaced by the play table (Sebastien/Alex/James). Each story should be cheap, ship-shaped, and tightly scoped — these are not roadmap epics, they are the channel for playgroup-direct feedback. (Renumbered from epic 53 on rebase: road_warrior epic 53 landed first on origin/main, so this epic moved to 56 per the OQ-1/OQ-2 story-ID collision resolution rule.)'
+    priority: p1
+    status: ready
+    repos: ui
+    stories:
+      - id: 56-1
+        title: Show controlling player's name on character displays (multiplayer only)
+        points: 2
+        priority: p1
+        status: backlog
+        repos: ui
+        workflow: tdd
