@@ -161,9 +161,13 @@ epics:
         title: 'Server schema: LocationEntity + LocationEntityBinding types; cartography + rooms/<id>.yaml schema; loader wiring through TacticalGridPayload + region payload; new LOCATION_DESCRIPTION WebSocket message + emit on room change/resume'
         points: 4
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: server
         workflow: tdd
+        completed: '2026-05-19'
+        review_findings: All 9 round-1 must-fix findings closed; rework strengthens AC-5/AC-6/AC-2 coverage; 2 polish notes dismissed; suite GREEN
+        review_verdict: approved
       - id: 54-3
         title: 'pf validate locations validator — well-formedness + binding resolution (hard) + prose-manifest coherence (warning); CI integration; per-pack/per-world reporting'
         points: 3
