@@ -211,9 +211,12 @@ epics:
         title: 'Runtime: resolve_location_entity tool with both modes + location_promotions SQLite + migration; flavor_only→yes_and promotion; player-initiated mint; tool dispatch wiring'
         points: 3
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: server
         workflow: tdd
+        completed: '2026-05-19'
+        review_verdict: approved
       - id: 54-7
         title: 'Action overlays: EncounterLocationOverlay model + read-time merge in get_location_manifest/get_location_prose + LOCATION_OVERLAY_CHANGED emit on encounter activate/deactivate'
         points: 3
