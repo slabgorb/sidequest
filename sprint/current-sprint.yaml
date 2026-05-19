@@ -52,10 +52,13 @@ epics:
         title: ADR-096 subsume amendment + DRIFT/index regenerate (no superseded-by; symmetric related)
         points: 1
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: orchestrator
         workflow: trivial
+        completed: '2026-05-19'
         type: chore
+        review_verdict: approved
       - id: 52-2
         title: Materializer emits ADR-096 mask + derived block per region (span dungeon.materialize.mask)
         points: 3
