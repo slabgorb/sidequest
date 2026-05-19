@@ -72,9 +72,11 @@ epics:
         title: 'Persistence: mask-BLOB column + loader (the materializer.py:57 gap); reload on resume'
         points: 3
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: server
         workflow: tdd
+        completed: '2026-05-19'
       - id: 52-4
         title: Server emits cavern PNG sidecar from runtime mask via room_file_loader resolve_asset_url
         points: 3

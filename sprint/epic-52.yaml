@@ -35,9 +35,11 @@ stories:
     on resume'
   points: 3
   priority: p1
-  status: backlog
+  status: in_progress
   repos: server
   workflow: tdd
+  branch: feat/52-3-mask-blob-persistence
+  assignee: slabgorb
 - id: 52-4
   title: Server emits cavern PNG sidecar from runtime mask via room_file_loader resolve_asset_url
   points: 3
