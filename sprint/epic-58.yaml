@@ -1,0 +1,42 @@
+epic:
+  id: '58'
+  type: epic
+  title: 'Content Pipeline & Hero Shot Coverage'
+  description: "Content authoring pipeline ergonomics surfaced during the burning_peace promotion (2026-05-19). POI renders land at genre_packs/<g>/images/poi/ but the server's cover_poi resolver and lobby preview expect genre_packs/<g>/worlds/<w>/assets/poi/. Every promotion currently does the bridge step manually. Adjacent: audit all live worlds for missing hero shots (cover_poi files actually on disk / R2) and backfill where missing."
+  priority: p2
+  status: backlog
+  repos:
+    - sidequest-content
+    - sidequest-server
+    - orchestrator
+  jira: null
+  stories:
+    - id: '58-1'
+      title: "Auto-bridge POI renders: generator writes to worlds/<w>/assets/poi/ matching server's cover_poi resolver"
+      points: 3
+      priority: p2
+      status: backlog
+      repos:
+        - orchestrator
+        - sidequest-content
+      workflow: tdd
+      type: chore
+    - id: '58-2'
+      title: Hero-shot coverage audit + backfill for all live worlds
+      points: 5
+      priority: p2
+      status: done
+      repos:
+        - sidequest-content
+      workflow: trivial
+      completed: '2026-05-19'
+      type: chore
+    - id: '58-3'
+      title: "Generalize tone chip renderer: 'high {axis}' / 'low {axis}' for any axis name"
+      points: 2
+      priority: p1
+      status: backlog
+      repos:
+        - sidequest-ui
+      workflow: trivial
+      type: chore

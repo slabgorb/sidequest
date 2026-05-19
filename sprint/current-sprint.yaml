@@ -361,7 +361,8 @@ epics:
             - glenross (cosy/puzzle/gossip/gothic) → 4 chips
         points: 2
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: sidequest-ui
         workflow: trivial
         acceptance_criteria:
@@ -370,7 +371,12 @@ epics:
           - any axis with 0.33<v<0.67 renders as 'medium {axis_name}'
           - any axis with v≥0.67 renders as 'high {axis_name}'
           - all 6 live worlds render one chip per declared axis (verified in snapshot test or live lobby)
+        completed: '2026-05-19'
+        assignee: slabgorb
+        branch: feat/58-3-tone-chips-generalize
         type: chore
+        review_findings: NaN/non-finite silent-fallback (toneAxes.ts:51), missing wiring test (WorldPreview.test.tsx), 2 stale JSDoc comments on threshold constants, 1 missing tie-break test case.
+        review_verdict: approved
   - id: '24'
     type: epic
     title: 'Epic: Procedural World-Grounding Systems'
