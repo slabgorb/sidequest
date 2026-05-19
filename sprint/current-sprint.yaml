@@ -265,13 +265,15 @@ epics:
         title: Recency narrative window K=4→K=2
         points: 1
         priority: p1
-        status: in_progress
+        status: done
         started: '2026-05-19'
         repos: server
         workflow: trivial
+        completed: '2026-05-19'
         type: chore
         branch: feat/57-1-recency-window-k2
         assignee: slabgorb
+        review_verdict: approved
       - id: 57-2
         title: Audit five empty narrator_prompts/*.md stubs (load-bearing bug check)
         points: 1
