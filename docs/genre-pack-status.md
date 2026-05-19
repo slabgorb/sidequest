@@ -1,6 +1,6 @@
 # Genre Pack Status Guide
 
-> **Last updated:** 2026-05-11
+> **Last updated:** 2026-05-18
 > **Source:** `sidequest-content` — `genre_packs/` (production) + `genre_workshopping/` (staging)
 >
 > Two trees. `SIDEQUEST_GENRE_PACKS` always points at `genre_packs/`. The
@@ -9,10 +9,11 @@
 
 ### Reshuffles since 2026-04-30
 
-Two changes since the prior snapshot are load-bearing for reading the tables below:
+Four changes since the prior snapshot are load-bearing for reading the tables below:
 
 - **M2 world parking** — `aureate_span` (space_opera), `burning_peace` + `shattered_accord` (elemental_harmony), and `blackthorn_moor` (tea_and_murder) were moved into `genre_workshopping/<pack>/worlds/` pending completeness review (commits `e2356c7`, `6a94881`). Their pack-level YAML and assets remain in production; only the worlds are parked.
-- **caverns_and_claudes hamlet restructure** — the prior five worlds (grimvault, mawdeep, primetime, dungeon_survivor, horden) were folded as **dungeons** under the new `caverns_sunden` hamlet world (commit `fe09971`). They still exist on disk, just at `genre_packs/caverns_and_claudes/worlds/caverns_sunden/dungeons/<dungeon>/` rather than as peer worlds.
+- **caverns_and_claudes → procedural megadungeon (ADR-106, closed 2026-05-17).** The prior `caverns_sunden` hamlet world is **deprecated** (content PR #228, commit `67dee9c`). The new live world is `beneath_sunden` — a single shaft into Sünden Deep — and authors only the static surface anchor (Ropefoot waiting-camp + Dropmouth shaft head). The dungeon below is generated unbounded at runtime by the ADR-106 contiguous-edge-expansion engine plus Complication Ledger. The prior five hamlet-nested dungeons (grimvault, mawdeep, primetime, dungeon_survivor, horden) are off the active world list. Four genre-level set-piece tropes (Plan 7 §14.A, content PR #227) anchor the procedural deep.
+- **victoria → tea_and_murder rename** (chore commits across all repos, completed 2026-05). The pack and all references rename from `victoria` to `tea_and_murder`.
 - **Audio assets moved to R2** (story 45-49, ADR-095). Per-track ACE-Step `*_input_params.json` files remain in the repo as the canonical regeneration spec; OGG playback files now live in R2 (`cdn.slabgorb.com`). The "Audio" column below counts in-repo audio files (mostly params); track counts are higher because each params file generates multiple takes.
 
 ## Pack Overview
@@ -21,15 +22,15 @@ Two changes since the prior snapshot are load-bearing for reading the tables bel
 
 | Genre Pack | Worlds (lobby-selectable) | Genre YAMLs | Audio (in-repo) | Images (in-repo) | Tier | Notes |
 |-----------|---------------------------|-------------|-----------------|------------------|------|-------|
-| caverns_and_claudes | 1 (caverns_sunden — Sünden hamlet, with grimvault/horden/mawdeep/primetime/dungeon_survivor as nested dungeons) | 27 | 24 | 19 | 1 | Reference pack; only pack with portrait images committed locally |
+| caverns_and_claudes | 1 (**beneath_sunden** — single-shaft procedural megadungeon, ADR-106; surface anchor authored, deep is runtime) | 27 | 24 | 19 | 1 | Reference pack; only pack with portrait images committed locally. The prior `caverns_sunden` hamlet world is deprecated (PR #228) |
 | elemental_harmony | **0** (worlds parked in workshopping pending review) | 20 | 121 | LFS-only | 2 | Pack runtime present; no lobby-selectable world. Most ACE-Step params (121); gold-standard variation coverage |
 | mutant_wasteland | 1 (flickering_reach — fully spoilable) | 22 | 96 | LFS-only | 1 | Mutation / flickering theme |
 | space_opera | 1 (coyote_star — flagship for magic + rig MVP; aureate_span parked) | 22 | 62 | LFS-only | 2 | coyote_star is the Epic 47 flagship; missing archetype/trope coverage |
-| tea_and_murder | **0** (blackthorn_moor parked in workshopping) | 22 | 1 | LFS-only | 2 | Pack runtime present; no lobby-selectable world. Public-domain classical music served from R2, no ACE-Step params |
+| tea_and_murder | 1 (`glenross` — Highland village Edwardian Scotland c. 1908; blackthorn_moor parked) | 22 | 1 | LFS-only | 1 | Public-domain classical music served from R2, no ACE-Step params; full world file set |
 | **heavy_metal** ⚠️ | none in production | **0** | 0 | 0 | shell | **State inconsistency:** production directory is an empty shell. Actual content still in `genre_workshopping/heavy_metal/`. |
 | **spaghetti_western** ⚠️ | none in production | **0** | 0 | 0 | shell | **Same inconsistency.** Actual content still in `genre_workshopping/spaghetti_western/`. |
 
-**Functionally loadable today.** Five packs have pack-level YAML; the lobby world picker shows **3 worlds** (caverns_sunden, flickering_reach, coyote_star). `elemental_harmony` and `tea_and_murder` parked their worlds — selecting them in the lobby currently has no world to bind. The `heavy_metal` and `spaghetti_western` production directories remain empty shells.
+**Functionally loadable today.** Five packs have pack-level YAML; the lobby world picker shows **4 worlds** (`beneath_sunden`, `flickering_reach`, `coyote_star`, `glenross`). `elemental_harmony` has no lobby-selectable world (both worlds parked). The `heavy_metal` and `spaghetti_western` production directories remain empty shells.
 
 ### Workshopping — `genre_workshopping/` (NOT loaded at runtime)
 
@@ -65,8 +66,10 @@ The **2026-05 M2 reshuffle** parked four formerly-production worlds back
 into workshopping — `aureate_span`, `burning_peace`, `shattered_accord`, and
 `blackthorn_moor`. The pack-level runtime YAML for `elemental_harmony`,
 `space_opera`, and `tea_and_murder` remains in production; only their worlds
-moved. `caverns_and_claudes` consolidated five worlds into nested dungeons
-under the new `caverns_sunden` hamlet (commit `fe09971`).
+moved. `caverns_and_claudes` was subsequently restructured again on
+2026-05-17 by **ADR-106**: the briefly-consolidated `caverns_sunden` hamlet
+(commit `fe09971`) was deprecated (PR #228) in favor of `beneath_sunden`,
+a single-shaft procedural-megadungeon world whose deep is runtime-generated.
 
 ## Genre-Level File Coverage (Production)
 
@@ -96,15 +99,17 @@ Required: `world.yaml`, `lore.yaml`. Optional: `history`, `cartography`,
 
 | World | history | carto | cultures | archetypes | tropes | visual_style | legends |
 |-------|---------|-------|----------|-----------|--------|-------------|---------|
-| caverns_and_claudes/caverns_sunden | + | + | + | + | + | + | + |
+| caverns_and_claudes/**beneath_sunden** | + | + (surface only — Ropefoot + Dropmouth) | + | + | + (4 set-piece, anchor the procedural deep) | + | + |
 | mutant_wasteland/flickering_reach | — | + | + | — | — | + | + |
 | space_opera/coyote_star | + | + | + | — | — | — | + |
+| tea_and_murder/**glenross** | + | + | + | — | — | + | + |
 
-`caverns_sunden` carries the prior five worlds (grimvault, mawdeep,
-primetime, dungeon_survivor, horden) as nested dungeons at
-`worlds/caverns_sunden/dungeons/<dungeon>/` — they are not lobby-selectable
-on their own but remain available as in-fiction dungeon-crawl destinations
-under the Sünden hamlet hub.
+`beneath_sunden` deliberately authors **only** the surface anchor; the deep
+is generated at runtime by the ADR-106 expansion engine. The prior hamlet
+world `caverns_sunden` (and its nested grimvault/mawdeep/primetime/
+dungeon_survivor/horden dungeons) is deprecated and removed from the
+lobby. Old dungeon directories may persist on disk for fixture reference
+but are not registered as worlds.
 
 ### Parked worlds (workshopping, formerly in production)
 
@@ -117,7 +122,8 @@ under the Sünden hamlet hub.
 
 **Promotion candidates:** `burning_peace` and `blackthorn_moor` have full
 optional file sets — they are gated only on the M2 review, not on missing
-content.
+content. `blackthorn_moor` would give `tea_and_murder` a second selectable
+world alongside the live `glenross`.
 
 ## Unique Genre Mechanics
 
@@ -127,7 +133,7 @@ rules are LLM-interpreted at narration time unless noted.
 
 | Genre | Custom Stats | Unique Mechanics | Engine Support |
 |-------|-------------|-----------------|----------------|
-| caverns_and_claudes | Standard fantasy 6 | Dungeon crawl, room graph navigation | Room graph engine present (`game/room_movement.py`); ADR-055 |
+| caverns_and_claudes | Standard fantasy 6 | Dungeon crawl, room graph navigation, **procedural megadungeon (ADR-106)** | Room graph engine (`game/room_movement.py`, ADR-055) + Sünden Deep expansion engine + Complication Ledger (ADR-106, closed 2026-05-17) |
 | elemental_harmony | Harmony, Spirit + 4 | High magic, martial arts | LLM-interpreted |
 | mutant_wasteland | Brawn, Reflexes, Toughness, Wits, Instinct, Presence | Mutation system, no magic | LLM-interpreted |
 | space_opera | Physique, Reflex, Intellect, Cunning, Resolve, Influence | Ship Block, Ship Combat, Crew Bonds, Found Family | LLM-interpreted |
@@ -239,10 +245,13 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 ## Per-Pack Notes
 
 ### caverns_and_claudes (production)
-- **One lobby-selectable world** post-M2: `caverns_sunden` (the Sünden hamlet hub). The prior five worlds (grimvault, mawdeep, primetime, dungeon_survivor, horden) are now nested dungeons under Sünden — accessible through hamlet exploration, not the lobby picker.
-- Sparse music (24 in-repo params, OGGs in R2) — candidate for next ACE-Step pass; recent Sünden hamlet pass added 6 ACE-Step params (content PR #202).
+- **One lobby-selectable world** post-ADR-106: `beneath_sunden` — a single shaft into Sünden Deep. **Procedural megadungeon** pack as of 2026-05-17. The world manifest authors only the surface anchor (`ropefoot` waiting-camp + `the_dropmouth` shaft head); the deep is generated unbounded at runtime by the contiguous-edge-expansion engine (Python port of the maze-maker family) plus the Complication Ledger. Genre truth — grave, lethal, Moria-as-tragedy, gravity ≥ 0.85, no winking — is fixed by `world_register.yaml`.
+- The prior `caverns_sunden` hamlet world is **deprecated** (content PR #228); its nested grimvault/mawdeep/primetime/dungeon_survivor/horden dungeons are off the active world list.
+- Four genre-level set-piece tropes (Plan 7 §14.A, content PR #227) anchor the procedural deep — the expansion engine threads them rather than improvising every encounter.
+- The `claude -p` "curate" stage is the only LLM call in the megadungeon expansion loop (everything else moved to the Anthropic SDK with ADR-101).
+- Sparse music (24 in-repo params, OGGs in R2) — candidate for next ACE-Step pass.
 - Reference pack for shape and conventions; ships the four classic C&C B/X classes (fighter / mage / cleric / thief), B26 saving throws, learned_v1 memorization, morale, and class signature abilities (Taunt / Turn Undead / Backstab).
-- Room graph wired in Python (`game/room_movement.py`) — most engine-supported genre-specific feature in production.
+- Room graph wired in Python (`game/room_movement.py`, ADR-055) — paired with the ADR-106 expansion engine on the runtime path.
 
 ### elemental_harmony (production runtime, worlds parked)
 - **Zero lobby-selectable worlds post-M2.** Pack-level YAML and audio remain in production; both worlds (burning_peace, shattered_accord) are parked in workshopping pending completeness review.
@@ -260,12 +269,14 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 - Ship Block mechanic mirrors road_warrior's Rig HP pattern. Both ride on the absent chase engine.
 - 62 in-repo ACE-Step params; OGGs in R2.
 
-### tea_and_murder (production runtime, world parked)
-- **Zero lobby-selectable worlds post-M2.** Pack-level YAML remains in production; `blackthorn_moor` is parked in workshopping (one of the strongest completeness profiles among parked worlds — promotion candidate).
+### tea_and_murder (production — `glenross` live; `blackthorn_moor` parked)
+- **One lobby-selectable world:** `glenross` — a fictional Highland village in Edwardian Scotland c. 1908, post-Victorian, pre-Great-War, "the long warm afternoon of empire." No swords, no séances by default, no fist-fights in the kirk yard. Currency is standing, gossip, observation, and a steady noticing eye. River Allt Ross threads through the glen; the kirk on its mound, Castle Ross on the rise above the burn, the distillery smoking faintly. Cover POI: `the_glenross_arms`. Full world file set (history, cartography, cultures, lore, NPCs, openings, portrait manifest, visual style).
+- `blackthorn_moor` parked in workshopping pending M2 review — one of the strongest completeness profiles among parked worlds, promotion candidate if you want a second tea_and_murder world.
 - **Unique architecture:** emotional ability scores (Angst, Pride, Passion), class-stratified society (Gentry, Trade, Servant, Clergy, Bohemian, Colonial).
 - **Public-domain classical music** — Chopin and Strauss recordings mapped to game moods; served from R2. No ACE-Step generation needed (hence near-zero in-repo audio).
 - Playfair Display font. 10 class-stratified naming corpus files.
-- Extra YAML files unique to tea_and_murder: achievements, beat_vocabulary, power_tiers.
+- Extra YAML files unique to tea_and_murder: achievements, beat_vocabulary, power_tiers, magic, classes, equipment_tables.
+- The `victoria` → `tea_and_murder` rename completed 2026-05; all references should use the new slug.
 
 ### heavy_metal (production shell + workshop)
 - **Production state inconsistency.** `genre_packs/heavy_metal/` exists with empty `images/` and `worlds/` only — no `pack.yaml`, no rules. The actual content is in `genre_workshopping/heavy_metal/` with two worlds (evropi, long_foundry) and full YAML set.
