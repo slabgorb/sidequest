@@ -50,11 +50,11 @@ orc-quest/                    # This repo (orchestrator, also cloned as oq-1 / o
 └── justfile                  # Cross-repo task runner
 
 sidequest-content/            # Genre packs — single source of truth (subrepo)
-├── genre_packs/              # Live, wired packs (5: caverns_and_claudes, elemental_harmony,
-│   │                         #   mutant_wasteland, space_opera, tea_and_murder)
+├── genre_packs/              # Live, wired packs (6: caverns_and_claudes, elemental_harmony,
+│   │                         #   mutant_wasteland, road_warrior, space_opera, tea_and_murder)
 │   └── <genre>/worlds/<world>/   # World-specific overrides
 ├── genre_workshopping/       # Pre-wired packs in design (heavy_metal, low_fantasy,
-│                             #   neon_dystopia, pulp_noir, road_warrior, spaghetti_western)
+│                             #   neon_dystopia, pulp_noir, spaghetti_western)
 ├── corpus/                   # Conlang word lists per culture (ADR-091)
 ├── tools/                    # Pack authoring tooling
 ├── PROMPTING_Z_IMAGE.md      # Z-Image prompting guide
