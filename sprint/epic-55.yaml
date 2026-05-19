@@ -1,0 +1,9 @@
+epic:
+  id: '55'
+  type: epic
+  title: 'Procedural Cavern Description+Manifest Emit at Materialize Time'
+  description: 'Stitch story tying Epic 52 (megadungeon materializer + mask emit) to Epic 54 (manifest types + validator). Cookbook gains compose_room_prose; RegionContentManifest gains room_descriptions[]; materializer writes <world>/rooms/<id>.yaml per region after the mask emit. Single materializer rewrite (Approach C). Depends on 52-2, 52-3, 54-2, 54-3.'
+  priority: p1
+  status: ready
+  repos: server
+  jira_key: null
