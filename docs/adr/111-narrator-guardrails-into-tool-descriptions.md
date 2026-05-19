@@ -1,18 +1,18 @@
 ---
-id: 110
+id: 111
 title: "Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose"
 status: accepted
 date: 2026-05-19
 deciders: ["Keith Avery", "Major Margaret Houlihan (Architect)"]
 supersedes: []
 superseded-by: null
-related: [9, 98, 101, 102, 109]
+related: [9, 98, 101, 102, 110]
 tags: [agent-system, prompt-engineering, observability]
 implementation-status: deferred
 implementation-pointer: sprint/current-sprint.yaml#56-4
 ---
 
-# ADR-110: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose
+# ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose
 
 ## Status
 
@@ -139,7 +139,7 @@ discipline matching the pattern at `orchestrator.py:1320` for the
 lives at its new migration target, paid once and cached.
 
 On the legacy `claude -p` path, the four sections continue to register
-unchanged. The legacy path stays byte-identical to pre-110 behavior; the
+unchanged. The legacy path stays byte-identical to pre-111 behavior; the
 playgroup safety net is preserved.
 
 ### Observability discipline (mandatory per repo CLAUDE.md)
@@ -221,7 +221,7 @@ exercising the SDK backend:
 
 - **Audit cost at every tool addition:** new tools introduced after this
   ADR must consciously decide whether their `description` carries a
-  rule-of-use clause. The DROP-list discipline from ADR-109 has its
+  rule-of-use clause. The DROP-list discipline from ADR-110 has its
   analogue here: tool descriptions are a living artifact, not a
   one-shot edit.
 - **Cache invalidation on tool-description edits:** any edit to a
@@ -328,7 +328,7 @@ upside.
   asserts the legacy path still emits all four sections byte-identical
   to the pre-change baseline. A replay-based test asserts the four
   lie-detector spans fire at the same-or-lower rate.
-- This story coordinates with ADR-109 (story 56-5) only by ordering. They
+- This story coordinates with ADR-110 (story 56-5) only by ordering. They
   touch the same prompt-assembly module but different sections; either
   may merge first. The `narrator.recency_guardrails_skipped` span name
   must not collide with `narrator.state_summary_built` introduced by
@@ -344,7 +344,7 @@ upside.
   ADR exploits)
 - ADR-102 — Tool-Use Protocol for Structured Output (the tool-description
   surface this ADR targets; the slimmed-sidecar contract)
-- ADR-109 — Game-State Snapshot Slimming (sibling story 56-5; same epic)
+- ADR-110 — Game-State Snapshot Slimming (sibling story 56-5; same epic)
 - Stories 45-1, 45-8, 45-13, 49-1 — the prior load-bearing edits
   whose contracts are preserved
 - Playtest bug reports: Pingpong 2026-05-03 (confrontation trigger),

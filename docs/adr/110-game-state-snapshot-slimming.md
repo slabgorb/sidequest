@@ -1,5 +1,5 @@
 ---
-id: 109
+id: 110
 title: "Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred"
 status: accepted
 date: 2026-05-19
@@ -12,7 +12,7 @@ implementation-status: deferred
 implementation-pointer: sprint/current-sprint.yaml#56-5
 ---
 
-# ADR-109: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred
+# ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred
 
 ## Status
 

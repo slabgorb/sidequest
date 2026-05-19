@@ -39,6 +39,6 @@
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | ✓ accepted | [ADR-087: Post-Port Subsystem Restoration Plan](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | ✓ accepted | — |
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | ✓ accepted | docs/adr/108-mp-item-attribution-recipient-tagging.md#implementation-guidance-for-dev |
-| [ADR-109: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred](109-game-state-snapshot-slimming.md) | ✓ accepted | sprint/current-sprint.yaml#56-5 |
-| [ADR-110: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](110-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | sprint/current-sprint.yaml#56-4 |
-| [ADR-111: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](111-genre-prose-stable-cache-promotion.md) | ✓ accepted | sprint/current-sprint.yaml#56-3 |
+| [ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred](110-game-state-snapshot-slimming.md) | ✓ accepted | sprint/current-sprint.yaml#56-5 |
+| [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | sprint/current-sprint.yaml#56-4 |
+| [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | ✓ accepted | sprint/current-sprint.yaml#56-3 |

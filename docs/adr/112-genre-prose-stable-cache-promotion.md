@@ -1,18 +1,18 @@
 ---
-id: 111
+id: 112
 title: "Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer"
 status: accepted
 date: 2026-05-19
 deciders: ["Keith Avery", "Major Margaret Houlihan (Architect)"]
 supersedes: []
 superseded-by: null
-related: [9, 98, 101, 109, 110]
+related: [9, 98, 101, 110, 111]
 tags: [agent-system, prompt-engineering, observability]
 implementation-status: deferred
 implementation-pointer: sprint/current-sprint.yaml#56-3
 ---
 
-# ADR-111: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer
+# ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer
 
 ## Status
 
@@ -363,8 +363,8 @@ no further action is needed.
   `system=` array and **do not** appear in the user message. A
   byte-identity test runs three consecutive turns on a fixed snapshot
   and asserts `stable_section_bytes` is identical across all three.
-- Coordinates with ADR-109 and ADR-110: independent. ADR-109 shrinks
-  the Valley-zone `<game_state>` blob in-place; ADR-110 removes
+- Coordinates with ADR-110 and ADR-111: independent. ADR-110 shrinks
+  the Valley-zone `<game_state>` blob in-place; ADR-111 removes
   Recency-zone guardrail prose from the user message on the SDK path;
   this ADR moves four Valley-zone sections into the cached System
   block. The three stories touch overlapping files
@@ -380,8 +380,8 @@ no further action is needed.
   cache amortization operates within)
 - ADR-101 — Anthropic SDK as Narrator Backend (the three-zone caching
   split this ADR exploits)
-- ADR-109 — Game-State Snapshot Slimming (sibling story 56-5)
-- ADR-110 — Recency-Zone Narrator Guardrails Migrate to Tool
+- ADR-110 — Game-State Snapshot Slimming (sibling story 56-5)
+- ADR-111 — Recency-Zone Narrator Guardrails Migrate to Tool
   Descriptions (sibling story 56-4)
 - `sidequest-server/sidequest/agents/prompt_framework/bucket.py` — the
   allowlist this ADR edits
