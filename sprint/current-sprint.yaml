@@ -181,7 +181,7 @@ epics:
         review_findings: All 9 round-1 must-fix findings closed; rework strengthens AC-5/AC-6/AC-2 coverage; 2 polish notes dismissed; suite GREEN
         review_verdict: approved
       - id: 54-3
-        title: 'pf validate locations validator — well-formedness + binding resolution (hard) + prose-manifest coherence (warning); CI integration; per-pack/per-world reporting'
+        title: pf validate locations validator — well-formedness + binding resolution (hard) + prose-manifest coherence (warning); CI integration; per-pack/per-world reporting
         points: 3
         priority: p1
         status: done
@@ -265,7 +265,7 @@ epics:
   - id: '57'
     type: epic
     title: Narrator Prompt Token Reduction
-    description: 'Audit identified 15-40k uncached tokens/turn in narrator prompts. Five cuts ranging from a one-line constant to ADR-shaped designs (game_state diffing, guardrail-to-tool-description migration). Cost savings scale linearly with playtest hours. (Renumbered from epic 56 — epic 56 was claimed by Playgroup QoL Wave 1 on parallel branch; OQ-1/OQ-2 story-ID collision resolution rule.)'
+    description: Audit identified 15-40k uncached tokens/turn in narrator prompts. Five cuts ranging from a one-line constant to ADR-shaped designs (game_state diffing, guardrail-to-tool-description migration). Cost savings scale linearly with playtest hours. (Renumbered from epic 56 — epic 56 was claimed by Playgroup QoL Wave 1 on parallel branch; OQ-1/OQ-2 story-ID collision resolution rule.)
     priority: p2
     status: backlog
     repos: server
@@ -367,3 +367,125 @@ epics:
           - any axis with v≥0.67 renders as 'high {axis_name}'
           - lobby snapshot test updated; all 6 live worlds render their chips correctly
         type: chore
+  - id: '24'
+    type: epic
+    title: 'Epic: Procedural World-Grounding Systems'
+    description: 'Anti-mode-collapse infrastructure: weather, demographics, NPC schedules, economy, establishments, calendar — following Monster Manual pattern (ADR-059; note drift, successor pointer ADR-087 — implementer reads both). Phase 1: schemas + tea_and_murder/glenross proof of concept. Generator lives in sidequest-server (Python; ADR-082 retired the Rust backend). Packs remain monolithic — ADR-072 (system/milieu split) is retired (historical 2026-05-02), so weather/demographics/calendar YAML go in sidequest-content/genre_packs/<pack>/ alongside existing top-level pack files, NOT in a layered system/ folder. Existing seam: genre/models/scenario.py:132 SceneSetting.weather is a free-form str — the new system populates it from typed state. Genre fit note (tea_and_murder): cozy mystery benefits hard from grounding — Scottish-village weather/seasons drive scene framing, glenross demographics give the narrator a stable cast for "who is in the post office today", calendar gates festivals and tea-room hours.'
+    priority: p1
+    status: backlog
+    repos: server,content,orchestrator
+    stories:
+      - id: 24-1
+        title: Define YAML schemas for weather, demographics, calendar, economy, establishments, quest shapes, NPC schedules
+        points: 3
+        priority: p0
+        status: backlog
+        repos: content,orchestrator
+        workflow: trivial
+        acceptance_criteria: []
+        type: chore
+      - id: 24-2
+        title: Author tea_and_murder/glenross weather rules (climate zones, seasonal conditions, special events)
+        points: 2
+        priority: p0
+        status: backlog
+        repos: content
+        workflow: trivial
+        acceptance_criteria: []
+      - id: 24-3
+        title: Author tea_and_murder/glenross demographics (settlement profiles, population, services)
+        points: 2
+        priority: p0
+        status: backlog
+        repos: content
+        workflow: trivial
+        acceptance_criteria: []
+      - id: 24-4
+        title: Author tea_and_murder/glenross calendar (months, days, moons, festivals, time precision)
+        points: 2
+        priority: p0
+        status: backlog
+        repos: content
+        workflow: trivial
+        acceptance_criteria: []
+      - id: 24-5
+        title: 'Python: weather generator in sidequest-server (climate YAML + RNG seed → typed weather state, following namegen module + CLI pattern)'
+        points: 3
+        priority: p0
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []
+      - id: 24-6
+        title: Prompt zone injection for weather + demographics + calendar (extend narrator template, verify with preview-prompt.py)
+        points: 3
+        priority: p0
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []
+      - id: 24-7
+        title: OTEL spans for weather generation (proposed vs used) and demographics injection
+        points: 2
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []
+      - id: 24-8
+        title: 'Playtest validation: narrator uses weather/demographics grounding in tea_and_murder/glenross'
+        points: 2
+        priority: p1
+        status: backlog
+        repos: orchestrator
+        workflow: trivial
+        acceptance_criteria: []
+        type: chore
+  - id: '22'
+    type: epic
+    title: "Epic: Seed Tropes — Narrative Variety via Schrödinger's Gun"
+    description: "Expand the trope engine with short-arc 'seed' tropes — deliberately vague narrative events (a sealed letter, a missing item, an uneasy innkeeper) randomly dealt each session from a per-pack deck. Seeds inject as background context; the LLM narrator retroactively connects them to macro-trope escalations, creating emergent foreshadowing. Expired seeds linger as ghosts for cross-session callbacks. The player experiences a world with narrative memory and variety. ARCHITECTURE POINTERS: (a) Backend is Python post-ADR-082 — no Rust. (b) ADR-018 Trope Engine is live — existing TropeDefinition at sidequest-server/sidequest/genre/models/tropes.py:42 has escalation/passive_progression/tags; seed tropes likely want a sibling SeedTrope type, not field extension (different lifecycle: short-arc + deck draw + ghost retention). (c) ADR-009 VALLEY zone is live — 22-3 injection target is real. Note ADR-111/112 are deferred work that may migrate guardrail prose; seeds belong in VALLEY (context), not Recency, so unaffected. (d) Persistence: ghost retention extends ADR-023 session DB (~/.sidequest/saves/*.db) — new table or trope-state column. (e) Phase 1: dogfood one pack (tea_and_murder) to align with epic 24 grounding playtest; other-pack seeds follow as separate stories once the loop is proven. Doctrine note: 'sealed letter' here is a thematic seed example, NOT the multiplayer submit-and-wait barrier — see memory project_sealed_letter_doctrine."
+    priority: p1
+    status: backlog
+    repos: server,content,orchestrator
+    stories:
+      - id: 22-1
+        title: Seed trope schema + deck engine in sidequest-server — SeedTrope sibling type, lifespan, flavor tags, draw-without-replacement, ghost retention persisted in ADR-023 session DB
+        points: 5
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []
+      - id: 22-2
+        title: Seed trope content — author 20-30 seeds for tea_and_murder (dogfood pack) with flavor tags and NPC delivery hints; other-pack expansion follows as separate stories
+        points: 3
+        priority: p1
+        status: backlog
+        repos: content
+        workflow: trivial
+        acceptance_criteria: []
+      - id: 22-3
+        title: Seed trope narrator injection — VALLEY-zone context for active seeds (ADR-009), Faded tag for expired ghosts
+        points: 3
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []
+      - id: 22-4
+        title: Seed trope OTEL + GM panel — seed_fired, seed_expired, seed_promoted spans
+        points: 2
+        priority: p2
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []
+      - id: 22-5
+        title: Engagement-triggered seed drops — passive player pacing, mid-session seed injection
+        points: 3
+        priority: p2
+        status: backlog
+        repos: server
+        workflow: tdd
+        acceptance_criteria: []

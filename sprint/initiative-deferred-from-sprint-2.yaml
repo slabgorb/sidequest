@@ -1,18 +1,12 @@
-name: "Deferred from Sprint 2"
+name: Deferred from Sprint 2
 status: planning
-description: |
-  Untouched epics from Sprint 2 (Multiplayer Works For Real). Zero stories
-  started — deferred as-is via audit 2026-04-15. Epic shard files remain in
-  sprint/ and can be promoted back into current sprint via
-  `pf sprint epic promote <id>`.
-
-  Contents:
-    - 17: Portrait Identity Consistency (tiered recognition pipeline, ADR-034)
-    - 22: Seed Tropes (Schrödinger's gun narrative variety)
-    - 24: Procedural World-Grounding Systems (weather, demographics, calendar)
-    - 32: System/Milieu Decomposition (ADR-072)
+description: "Untouched epics from Sprint 2 (Multiplayer Works For Real). Zero stories\n\
+  started \u2014 deferred as-is via audit 2026-04-15. Epic shard files remain in\n\
+  sprint/ and can be promoted back into current sprint via\n`pf sprint epic promote\
+  \ <id>`.\n\nContents:\n  - 17: Portrait Identity Consistency (tiered recognition\
+  \ pipeline, ADR-034)\n  - 22: Seed Tropes (Schr\xF6dinger's gun narrative variety)\n\
+  \  - 24: Procedural World-Grounding Systems (weather, demographics, calendar)\n\
+  \  - 32: System/Milieu Decomposition (ADR-072)\n"
 epics:
-  - '17'
-  - '22'
-  - '24'
-  - '32'
+- '17'
+- '32'
