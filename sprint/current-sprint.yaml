@@ -206,10 +206,13 @@ epics:
         title: 'Content backfill: caverns_and_claudes/beneath_sunden settlement rooms — add entities[] to existing descriptions, validator-clean'
         points: 2
         priority: p1
-        status: backlog
+        status: in_progress
+        started: '2026-05-19'
         repos: content
         workflow: trivial
         type: chore
+        branch: feat/54-5-beneath-sunden-settlement-entities-backfill
+        assignee: slabgorb
       - id: 54-6
         title: 'Runtime: resolve_location_entity tool with both modes + location_promotions SQLite + migration; flavor_only→yes_and promotion; player-initiated mint; tool dispatch wiring'
         points: 3

@@ -1,0 +1,93 @@
+id: '54'
+type: epic
+title: Persistent Location Descriptions (Mechanical Manifest)
+description: 'Server-side typed manifest of named entities per location (real_object / yes_and / flavor_only), two-mode runtime resolver (narrator_proactive lie-detector + player_initiated mint), location_promotions sqlite + encounter-bound overlays + dedicated OTEL spans + LocationPanel UI. POI side and infrastructure; Approach C sibling-epic to 52. Spec: docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md (~22 pts).'
+priority: p1
+status: ready
+repos: server,ui,content,orchestrator
+jira: null
+stories:
+  - id: 54-1
+    title: 'ADR: Persistent Location Descriptions + Mechanical Manifest (doctrine, manifest type spec, validator surface, OTEL contract, two-mode resolver)'
+    points: 1
+    priority: p1
+    status: done
+    started: '2026-05-19'
+    repos: orchestrator
+    workflow: trivial
+    completed: '2026-05-19'
+    type: chore
+    branch: feat/54-1-adr-persistent-location-descriptions
+  - id: 54-2
+    title: 'Server schema: LocationEntity + LocationEntityBinding types; cartography + rooms/<id>.yaml schema; loader wiring through TacticalGridPayload + region payload; new LOCATION_DESCRIPTION WebSocket message + emit on room change/resume'
+    points: 4
+    priority: p1
+    status: done
+    started: '2026-05-19'
+    repos: server
+    workflow: tdd
+    completed: '2026-05-19'
+    branch: feat/54-2-server-schema-location-entity
+  - id: 54-3
+    title: 'pf validate locations validator — well-formedness + binding resolution (hard) + prose-manifest coherence (warning); CI integration; per-pack/per-world reporting'
+    points: 3
+    priority: p1
+    status: done
+    started: '2026-05-19'
+    repos: orchestrator,server
+    workflow: tdd
+    completed: '2026-05-19'
+    branch: feat/54-3-pf-validate-locations-validator
+  - id: 54-4
+    title: 'Content backfill: tea_and_murder/glenross — convert 12 region landmarks[] to typed entities[], add bindings, validator-clean'
+    points: 2
+    priority: p1
+    status: done
+    started: '2026-05-19'
+    repos: content
+    workflow: trivial
+    completed: '2026-05-19'
+    type: chore
+    branch: feat/54-4-content-backfill-glenross
+  - id: 54-5
+    title: 'Content backfill: caverns_and_claudes/beneath_sunden settlement rooms — add entities[] to existing descriptions, validator-clean'
+    points: 2
+    priority: p1
+    status: in_progress
+    started: '2026-05-19'
+    repos: content
+    workflow: trivial
+    type: chore
+    branch: feat/54-5-beneath-sunden-settlement-entities-backfill
+    assignee: slabgorb
+  - id: 54-6
+    title: 'Runtime: resolve_location_entity tool with both modes + location_promotions SQLite + migration; flavor_only→yes_and promotion; player-initiated mint; tool dispatch wiring'
+    points: 3
+    priority: p1
+    status: done
+    started: '2026-05-19'
+    repos: server
+    workflow: tdd
+    completed: '2026-05-19'
+    branch: feat/54-6-runtime-resolve-location-entity
+  - id: 54-7
+    title: 'Action overlays: EncounterLocationOverlay model + read-time merge in get_location_manifest/get_location_prose + LOCATION_OVERLAY_CHANGED emit on encounter activate/deactivate'
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 54-8
+    title: 'OTEL: location.entity.resolve (both modes) + .minted + .promoted + .overlay.{activate,deactivate} spans; GM-panel surfacing distinguishing narrator-lie vs player-canon'
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+  - id: 54-9
+    title: 'UI: LocationPanel.tsx + tab registration + state-mirror integration + WS payload types; base prose + overlay suffixes; Overlay active pip; mirrors JournalView pattern'
+    points: 3
+    priority: p1
+    status: backlog
+    repos: ui
+    workflow: tdd
