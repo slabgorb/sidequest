@@ -122,9 +122,12 @@ epics:
         title: 'Crash event handler: Composure→0 fires injury tag + Edge hit + dismount'
         points: 3
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: sidequest-server
         workflow: tdd
+        completed: '2026-05-19'
+        review_verdict: approved
       - id: 53-4
         title: 'OTEL spans: rig_pool delta + rig_crash_event per ADR-031'
         points: 2
