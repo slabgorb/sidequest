@@ -6,8 +6,8 @@ date: 2026-05-19
 deciders: ["Keith Avery", "Oberon (Architect agent)"]
 supersedes: []
 superseded-by: null
-related: [3, 14, 26, 55, 96, 100, 103, 104, 106]
-tags: [game-systems, frontend-protocol, observability, world-building]
+related: [3, 14, 26, 31, 55, 88, 96, 100, 101, 103, 104, 106, 107]
+tags: [game-systems, frontend-protocol, observability, room-graph]
 implementation-status: partial
 implementation-pointer: docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md
 ---
@@ -30,15 +30,16 @@ The SideQuest narrator (Anthropic SDK per ADR-101) writes convincing prose
 with zero mechanical backing. A player who tugs the "rusted chain hanging
 from the ceiling" can discover the chain was improv — there is no chain
 object, no affordance, just narrator flavor. Sometimes the improv lands;
-often it collapses (overbaited hook per SOUL.md Diamonds-and-Coal,
-"narrator-lie" per CLAUDE.md OTEL Observability).
+often it collapses — an overbaited hook (SOUL.md Diamonds-and-Coal) that
+the OTEL "lie detector" (CLAUDE.md OTEL Observability Principle) is
+designed to catch.
 
 The play table asked for **persistent room/area descriptions, mechanically
 backed**. Anything the description names must either be a real game-state
 thing with affordances, OR be trivial enough that yes-and promotion handles
 player engagement without breaking trust.
 
-This is also a Zork-Problem (CLAUDE.md) call: the manifest is a
+This is also a Zork-Problem (SOUL.md) call: the manifest is a
 **producer-side contract** (what the narrator and authors may claim), never
 a **consumer-side gate** (the closed verb set of "things players may
 touch"). The player can always introduce new entities the description
@@ -170,6 +171,8 @@ Suggested rollout order (spec §7.4): 54-1 → 54-2 → {54-3, 54-9} → 54-6
 ### Reference
 
 - Spec: `docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md`
-- Related ADRs: ADR-026 (client state mirror), ADR-100 (KnownFacts),
-  ADR-103 (native OTEL via tool registry), ADR-104/105 (perception
-  filtering — out of scope here), ADR-106 (procedural megadungeon).
+- Related ADRs: ADR-026 (client state mirror), ADR-031 (Game Watcher —
+  semantic telemetry substrate behind the lie-detector span), ADR-100
+  (KnownFacts), ADR-103 (native OTEL via tool registry), ADR-104/105
+  (perception filtering — out of scope here), ADR-106 (procedural
+  megadungeon).
