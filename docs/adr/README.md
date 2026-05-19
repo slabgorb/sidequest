@@ -112,7 +112,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-080: Unified Narrative Weight Trait](080-unified-narrative-weight-trait.md) | ✓ accepted | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | ✓ accepted | deferred → ADR-087 |
 | [ADR-095: Class Mechanical Surface — One Signature Ability Per Non-Magical Class](097-class-mechanical-surface.md) | ✓ accepted | live |
-| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | ✓ accepted | *partial* |
+| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | ✓ accepted | *partial* → ADR-106 |
 | [ADR-106: Runtime Procedural Jaquaysed Megadungeon — Contiguous Edge-Expansion, maze-maker Family Port + Complication Ledger](106-runtime-procedural-jaquaysed-megadungeon.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-16-sunden-deep-procedural-megadungeon-design.md |
 
 ## Frontend / Protocol
@@ -287,7 +287,7 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay](075-3d-dice-rendering.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | *partial* | — |
+| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | *partial* | [ADR-106](106-runtime-procedural-jaquaysed-megadungeon.md) |
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | *partial* | Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103. |
 | [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
