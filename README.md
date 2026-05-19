@@ -84,22 +84,25 @@ and [`scenarios/`](scenarios/) for headless playtest YAML driven by `just playte
 
 ## Genre Packs
 
-Five narrative packs are live and wired into the runtime, each with its own
+Six narrative packs are live and wired into the runtime, each with its own
 rules, tropes, character creation, audio, visual style, faction agendas, OCEAN
 personality archetypes, and conlang morphemes:
 
 | Pack | Theme |
 |------|-------|
-| **caverns_and_claudes** | High fantasy dungeon crawl (meta-humor on D&D tropes) |
-| **elemental_harmony** | Martial arts / elemental magic |
+| **caverns_and_claudes** | High fantasy dungeon crawl (meta-humor on D&D tropes; world `beneath_sunden`) |
+| **elemental_harmony** | Martial arts / elemental magic (world `burning_peace`) |
 | **mutant_wasteland** | Post-apocalyptic mutants (world `flickering_reach` fully spoilable) |
+| **road_warrior** | Late-70s / early-80s vehicle subcultures sharing one port city (world `the_circuit`) |
 | **space_opera** | Sci-fi space adventure (world `coyote_star`) |
-| **tea_and_murder** | Brontë-flavored gaslamp gothic, drawing-room intrigue (no swords, no starships; tunable occult) |
+| **tea_and_murder** | Cosy Edwardian (1901-1914) BritBox murder mystery; Highland village amateur sleuths (world `glenross`) |
 
 Workshopping packs (not yet wired) live in
-`sidequest-content/genre_workshopping/` — heavy_metal, low_fantasy,
-neon_dystopia, pulp_noir, road_warrior, spaghetti_western at various levels
-of completeness.
+`sidequest-content/genre_workshopping/` — caverns_sunden (deprecated three-sins
+hub, superseded by `beneath_sunden`), heavy_metal, low_fantasy, neon_dystopia,
+pulp_noir, spaghetti_western at various levels of completeness. Stub directories
+`genre_packs/heavy_metal/` and `genre_packs/spaghetti_western/` exist but lack
+`pack.yaml` and are skipped by the loader.
 
 Genre packs are loaded via the `SIDEQUEST_GENRE_PACKS` env var. See
 [`docs/genre-pack-status.md`](docs/genre-pack-status.md) for per-pack completeness.
