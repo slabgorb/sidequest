@@ -110,10 +110,12 @@ epics:
         title: 'Materializer: instantiate rig vessel item → bind RigComposurePool to character'
         points: 3
         priority: p1
-        status: in_progress
+        status: done
         started: '2026-05-19'
         repos: sidequest-server
         workflow: tdd
+        completed: '2026-05-19'
+        review_verdict: approved
       - id: 53-3
         title: 'Crash event handler: Composure→0 fires injury tag + Edge hit + dismount'
         points: 3
