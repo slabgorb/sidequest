@@ -149,9 +149,11 @@ epics:
         title: 'ADR: Persistent Location Descriptions + Mechanical Manifest (doctrine, manifest type spec, validator surface, OTEL contract, two-mode resolver)'
         points: 1
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: orchestrator
         workflow: trivial
+        completed: '2026-05-19'
         type: chore
       - id: 54-2
         title: 'Server schema: LocationEntity + LocationEntityBinding types; cartography + rooms/<id>.yaml schema; loader wiring through TacticalGridPayload + region payload; new LOCATION_DESCRIPTION WebSocket message + emit on room change/resume'
