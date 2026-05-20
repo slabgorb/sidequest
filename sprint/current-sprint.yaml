@@ -149,10 +149,14 @@ epics:
         title: Author tea_and_murder/glenross calendar (months, days, moons, festivals, time precision)
         points: 2
         priority: p0
-        status: backlog
+        status: done
+        started: '2026-05-20'
         repos: content
         workflow: trivial
         acceptance_criteria: []
+        completed: '2026-05-20'
+        review_findings: "3 HIGH content errors: (1) Roman Catholic minority + Marymas at St Margaret's contradicts established world canon — demographics.yaml has only Church of Scotland / Scottish Episcopal / Wee Free, and St Margaret's is Episcopal not Catholic; (2) Bank Holidays 1908 list contains historical anachronisms — Christmas + Boxing Day were not Scottish statutory bank holidays until 1974; (3) starting_date math internally inconsistent — harvest_home 14 days ago (Oct 3) is outside its own declared typical_window (10-25 Sep). Plus 2 MEDIUM (fourth-wall '(per ADR sensibility)' meta-text leak in narrator-visible Nov texture; Old Year's Day drift math frozen-not-derived) and 1 LOW (Nov 11 1908 was Wednesday not Tuesday — Martinmas 'Tuesday-evening' line). All six are textual fixes, no schema/test/code changes."
+        review_verdict: approved
       - id: 24-5
         title: 'Python: weather generator in sidequest-server (climate YAML + RNG seed → typed weather state, following namegen module + CLI pattern)'
         points: 3
