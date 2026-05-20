@@ -135,3 +135,22 @@ single squash-merge gives a clean revert path.
 - ADR-058 (Claude subprocess OTEL passthrough) — superseded on landing
 - ADR-028 (Perception rewriter) — superseded on landing
 - ADR-073 (LLM backend factory) — amended on landing
+
+## Amendment — 2026-05-20: Four-Region Cache Layout
+
+The cacheable surface of the narrator request is documented as four
+regions, in cache-prefix order:
+
+| Region | Source | Cache | TTL | Notes |
+|--------|--------|-------|-----|-------|
+| **Tools** | `_build_tools_array` (last entry marked) | yes | 1h | 27 stable definitions; see live size at `narration.turn.system_block_sizes_json["tools"]`. Marker added 2026-05-20 because Anthropic's default auto-cache on tools was landing in 5m and re-writing every turn the 5m TTL expired. Tools byte-stability gated by `tests/agents/test_cache_ttl_prefix_and_otel.py::test_tool_definitions_json_byte_identical_across_calls`. |
+| **Stable** (Primacy + Early) | `system_blocks[0]` | yes | 1h | SOUL, identity, guardrails; see live size at `narration.turn.system_block_sizes_json["stable"]`. Byte-stability is gated by `tests/agents/test_cache_ttl_prefix_and_otel.py::test_compose_split_system_prefix_byte_identical_across_3_turns`. |
+| **Valley** | `system_blocks[1]` | no | — | Per-turn drift (narrator vocabulary). Deliberately uncached per Phase D Task 6. |
+| **Late + Recency** | `system_blocks[2]` | no | — | Per-turn drift (genre transition hints). Deliberately uncached per Phase D Task 6. |
+
+The orchestrator emits a `narration.turn.system_block_sizes_json` OTEL
+attribute carrying token-estimate sizes for all four regions on every
+narration turn, so drift inside the "stable" region surfaces in the GM
+panel rather than as a cache-write growth on the Anthropic console.
+
+See [spec](../superpowers/specs/2026-05-20-narrator-cache-cost-reduction-design.md) and [plan](../superpowers/plans/2026-05-20-narrator-cache-cost-reduction.md) for the change set.
