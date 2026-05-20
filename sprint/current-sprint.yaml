@@ -219,10 +219,12 @@ epics:
         title: 'Python: weather generator in sidequest-server (climate YAML + RNG seed → typed weather state, following namegen module + CLI pattern)'
         points: 3
         priority: p0
-        status: backlog
+        status: done
+        started: '2026-05-20'
         repos: server
         workflow: tdd
         acceptance_criteria: []
+        completed: '2026-05-20'
       - id: 24-6
         title: Prompt zone injection for weather + demographics + calendar (extend narrator template, verify with preview-prompt.py)
         points: 3
