@@ -193,9 +193,11 @@ epics:
         title: 'UI: LocationPanel.tsx + tab registration + state-mirror integration + WS payload types; base prose + overlay suffixes; Overlay active pip; mirrors JournalView pattern'
         points: 3
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-20'
         repos: ui
         workflow: tdd
+        completed: '2026-05-20'
   - id: '57'
     type: epic
     title: Narrator Prompt Token Reduction
