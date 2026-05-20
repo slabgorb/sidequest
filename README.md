@@ -95,14 +95,14 @@ personality archetypes, and conlang morphemes:
 | **mutant_wasteland** | Post-apocalyptic mutants (world `flickering_reach` fully spoilable) |
 | **road_warrior** | Late-70s / early-80s vehicle subcultures sharing one port city (world `the_circuit`) |
 | **space_opera** | Sci-fi space adventure (world `coyote_star`) |
+| **spaghetti_western** | Morally ambiguous anti-heroes — Leone/Corbucci/Kurosawa (worlds `dust_and_lead` Mexican border + `the_real_mccoy` 1878 Pittsburgh) |
 | **tea_and_murder** | Cosy Edwardian (1901-1914) BritBox murder mystery; Highland village amateur sleuths (world `glenross`) |
 
 Workshopping packs (not yet wired) live in
 `sidequest-content/genre_workshopping/` — caverns_sunden (deprecated three-sins
 hub, superseded by `beneath_sunden`), heavy_metal, low_fantasy, neon_dystopia,
-pulp_noir, spaghetti_western at various levels of completeness. Stub directories
-`genre_packs/heavy_metal/` and `genre_packs/spaghetti_western/` exist but lack
-`pack.yaml` and are skipped by the loader.
+pulp_noir at various levels of completeness. The stub directory
+`genre_packs/heavy_metal/` exists but lacks `pack.yaml` and is skipped by the loader.
 
 Genre packs are loaded via the `SIDEQUEST_GENRE_PACKS` env var. See
 [`docs/genre-pack-status.md`](docs/genre-pack-status.md) for per-pack completeness.

@@ -1,6 +1,6 @@
 # Genre Pack Status Guide
 
-> **Last updated:** 2026-05-18
+> **Last updated:** 2026-05-19
 > **Source:** `sidequest-content` — `genre_packs/` (production) + `genre_workshopping/` (staging)
 >
 > Two trees. `SIDEQUEST_GENRE_PACKS` always points at `genre_packs/`. The
@@ -15,6 +15,7 @@ Four changes since the prior snapshot are load-bearing for reading the tables be
 - **caverns_and_claudes → procedural megadungeon (ADR-106, closed 2026-05-17).** The prior `caverns_sunden` hamlet world is **deprecated** (content PR #228, commit `67dee9c`). The new live world is `beneath_sunden` — a single shaft into Sünden Deep — and authors only the static surface anchor (Ropefoot waiting-camp + Dropmouth shaft head). The dungeon below is generated unbounded at runtime by the ADR-106 contiguous-edge-expansion engine plus Complication Ledger. The prior five hamlet-nested dungeons (grimvault, mawdeep, primetime, dungeon_survivor, horden) are off the active world list. Four genre-level set-piece tropes (Plan 7 §14.A, content PR #227) anchor the procedural deep.
 - **victoria → tea_and_murder rename** (chore commits across all repos, completed 2026-05). The pack and all references rename from `victoria` to `tea_and_murder`.
 - **Audio assets moved to R2** (story 45-49, ADR-095). Per-track ACE-Step `*_input_params.json` files remain in the repo as the canonical regeneration spec; OGG playback files now live in R2 (`cdn.slabgorb.com`). The "Audio" column below counts in-repo audio files (mostly params); track counts are higher because each params file generates multiple takes.
+- **spaghetti_western promoted to production 2026-05-19.** Full pack (worlds `dust_and_lead` + `the_real_mccoy`) moved from `genre_workshopping/` to `genre_packs/`. Music generation, portraits, and POIs in flight. Server load is blocked by 10 schema-drift fields (`docs/content-drift-triage.md`) — 9 require Python model wiring (`StandoffRules`, `ReputationConfig`, `LuckConfig`, per-tier `ProgressionUnlock`) before the lobby can serve this pack.
 
 ## Pack Overview
 
@@ -27,10 +28,10 @@ Four changes since the prior snapshot are load-bearing for reading the tables be
 | mutant_wasteland | 1 (flickering_reach — fully spoilable) | 22 | 96 | LFS-only | 1 | Mutation / flickering theme |
 | space_opera | 1 (coyote_star — flagship for magic + rig MVP; aureate_span parked) | 22 | 62 | LFS-only | 2 | coyote_star is the Epic 47 flagship; missing archetype/trope coverage |
 | tea_and_murder | 1 (`glenross` — Highland village Edwardian Scotland c. 1908; blackthorn_moor parked) | 22 | 1 | LFS-only | 1 | Public-domain classical music served from R2, no ACE-Step params; full world file set |
+| **spaghetti_western** ⚠️ | 0 (server load blocked by drift) | 26 | 54 params (OGG in flight) | 16 portraits + 28 POIs in flight | drift-blocked | **Promoted 2026-05-19** from workshopping. Worlds `dust_and_lead` (Mexican border town) + `the_real_mccoy` (1878 industrial Pittsburgh). Server load blocked by 9 wire-required drift fields (standoff, reputation, luck, per-tier unlocks) — see `docs/content-drift-triage.md`. |
 | **heavy_metal** ⚠️ | none in production | **0** | 0 | 0 | shell | **State inconsistency:** production directory is an empty shell. Actual content still in `genre_workshopping/heavy_metal/`. |
-| **spaghetti_western** ⚠️ | none in production | **0** | 0 | 0 | shell | **Same inconsistency.** Actual content still in `genre_workshopping/spaghetti_western/`. |
 
-**Functionally loadable today.** Five packs have pack-level YAML; the lobby world picker shows **4 worlds** (`beneath_sunden`, `flickering_reach`, `coyote_star`, `glenross`). `elemental_harmony` has no lobby-selectable world (both worlds parked). The `heavy_metal` and `spaghetti_western` production directories remain empty shells.
+**Functionally loadable today.** Five packs have pack-level YAML and load cleanly; the lobby world picker shows **4 worlds** (`beneath_sunden`, `flickering_reach`, `coyote_star`, `glenross`). `elemental_harmony` has no lobby-selectable world (both worlds parked). `spaghetti_western` was promoted 2026-05-19 with full content but is server-load-blocked by 9 wire-required schema-drift fields. The `heavy_metal` production directory remains an empty shell.
 
 ### Workshopping — `genre_workshopping/` (NOT loaded at runtime)
 
@@ -44,7 +45,6 @@ Four changes since the prior snapshot are load-bearing for reading the tables be
 | pulp_noir | annees_folles | Active workshop — 1930s detective |
 | road_warrior | the_circuit | Active workshop — vehicular post-apocalypse |
 | heavy_metal | evropi, long_foundry | Full YAML set lives here; production shell exists but is empty |
-| spaghetti_western | dust_and_lead, the_real_mccoy | Full YAML set lives here; production shell exists but is empty |
 
 ### Tiers
 
