@@ -230,13 +230,15 @@ epics:
         description: 'Replace always-on VALLEY-zone prompt injection (original 24-6 design) with a narrator-callable tool that returns weather + demographics + calendar grounding on demand. Aligns with ADR-102 (native tool-use for structured output) and ADR-103 (OTEL via tool registry — spans free for 24-7). Narrator calls when scene needs the grounding, not every turn — saves tokens, makes use observable. Acceptance: tool registered in narrator tool registry; returns current weather (from 24-5 generator), glenross calendar (from 24-4), and pack demographics; narrator invokes during tea_and_murder/glenross playtest (verifiable in 24-8); OTEL span emitted per call (free win for 24-7). Out of scope: forcing narrator to call it (we trust the model + tool description).'
         points: 3
         priority: p0
-        status: in-progress
+        status: done
         started: '2026-05-20'
         repos: server
         workflow: tdd
         acceptance_criteria: []
+        completed: '2026-05-20'
         branch: feat/24-6-narrator-grounding-tool
         assignee: slabgorb
+        review_verdict: approved
       - id: 24-7
         title: OTEL spans for weather generation (proposed vs used) and demographics injection
         points: 2
