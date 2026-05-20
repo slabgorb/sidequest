@@ -15,12 +15,13 @@ epic:
       title: "Auto-bridge POI renders: generator writes to worlds/<w>/assets/poi/ matching server's cover_poi resolver"
       points: 3
       priority: p2
-      status: backlog
+      status: in-progress
       repos:
         - orchestrator
         - sidequest-content
       workflow: tdd
       type: chore
+      started: '2026-05-20'
     - id: '58-2'
       title: Hero-shot coverage audit + backfill for all live worlds
       points: 5
