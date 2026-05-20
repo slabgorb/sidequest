@@ -362,6 +362,8 @@ epics:
         repos: content
         workflow: trivial
         acceptance_criteria: []
+        review_findings: 'Round 2 APPROVED. All 4 round-1 reject-causes verified fixed: recurring_cast_count 12→13, header comment 12-strong→13-strong, castle_ross.total_approx 13→12, castle_ross.size 14→15_in_residence. No collateral changes. Non-blocking carry-forward findings (6 dangling supporting-cast IDs, npcs.yaml:3 pre-existing comment, schema-pending polish) documented as Delivery Findings for follow-up stories.'
+        review_verdict: approved
       - id: 24-4
         title: Author tea_and_murder/glenross calendar (months, days, moons, festivals, time precision)
         points: 2

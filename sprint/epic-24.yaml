@@ -22,10 +22,10 @@ stories:
     repos: content
     workflow: trivial
   - id: 24-3
-    title: Author low_fantasy/pinwheel_coast demographics (settlement profiles, population, services)
+    title: Author tea_and_murder/glenross demographics (settlement profiles, population, services)
     points: 2
     priority: p0
-    status: backlog
+    status: in-progress
     repos: content
     workflow: trivial
   - id: 24-4
