@@ -9,6 +9,7 @@ completed_epics:
   - '55'
   - '52'
   - '56'
+  - '57'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -44,4 +45,29 @@ completed_stories:
     epic: '56'
     title: Show controlling player's name on character displays (multiplayer only)
     points: 2
+    completed: '2026-05-20'
+  - id: 57-1
+    epic: '57'
+    title: Recency narrative window K=4→K=2
+    points: 1
+    completed: '2026-05-19'
+  - id: 57-2
+    epic: '57'
+    title: Audit five empty narrator_prompts/*.md stubs (load-bearing bug check)
+    points: 1
+    completed: '2026-05-19'
+  - id: 57-3
+    epic: '57'
+    title: Promote static genre prose into Stable cached zone
+    points: 2
+    completed: '2026-05-20'
+  - id: 57-4
+    epic: '57'
+    title: Migrate recency guardrail prose into tool-use descriptions
+    points: 5
+    completed: '2026-05-19'
+  - id: 57-5
+    epic: '57'
+    title: game_state snapshot slimming (diff-with-anchor or field pruning)
+    points: 5
     completed: '2026-05-20'

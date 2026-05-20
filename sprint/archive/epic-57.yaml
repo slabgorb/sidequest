@@ -3,7 +3,7 @@ type: epic
 title: Narrator Prompt Token Reduction
 description: 'Audit identified 15-40k uncached tokens/turn in narrator prompts. Five cuts ranging from a one-line constant to ADR-shaped designs (game_state diffing, guardrail-to-tool-description migration). Cost savings scale linearly with playtest hours. (Renumbered from epic 56 — epic 56 was claimed by Playgroup QoL Wave 1 on parallel branch; OQ-1/OQ-2 story-ID collision resolution rule.)'
 priority: p2
-status: backlog
+status: done
 repos: server
 stories:
   - id: 57-1
@@ -43,7 +43,9 @@ stories:
     title: game_state snapshot slimming (diff-with-anchor or field pruning)
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
     repos: server
     workflow: tdd
     type: refactor
+    branch: feat/57-5-snapshot-slimming
+completed: '2026-05-20'
