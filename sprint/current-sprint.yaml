@@ -90,9 +90,12 @@ epics:
         title: 'UI end-to-end wiring test: TacticalGridRenderer renders runtime-sourced cavern_image_url + OTEL assert'
         points: 2
         priority: p1
-        status: backlog
+        status: in_progress
+        started: '2026-05-20'
         repos: ui,server
         workflow: tdd
+        branch: feat/52-5-tactical-grid-runtime-cavern-image-wiring
+        assignee: slabgorb
   - id: '53'
     type: epic
     title: 'Road Warrior: Rig two-pool wiring + content alignment'
