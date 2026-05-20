@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: [9, 98, 101, 110, 111]
 tags: [agent-system, prompt-engineering, observability]
-implementation-status: deferred
+implementation-status: partial
 implementation-pointer: sprint/current-sprint.yaml#57-3
 ---
 
@@ -111,11 +111,24 @@ Add to `bucket.STABLE_SECTION_NAMES`:
 - `genre_town`
 - `genre_chargen`
 
-Each section's registration site at `orchestrator.py:1330–1373` remains
-**unchanged** in shape: same name, same zone, same content, same
-`PromptSection.new(...)` arguments. The classifier change at
-`bucket.py:28` is the only edit needed to route the content into the
-cached System block.
+Each section's registration site at `orchestrator.py:1368–1411` keeps
+the same name, content, and `SectionCategory.Genre`. The attention zone
+is changed from `Valley → Early` so the System-bucket content actually
+lands in the cache-marked `system_blocks[0]` block; the bucket
+classifier alone is insufficient under the ADR-101 Phase D Task 6
+zone-aligned cache split (only Primacy + Early compose the cached
+`stable_text`). The bucket classifier change at `bucket.py:28` AND the
+four `AttentionZone.Early` updates at the registration sites are the
+two edits needed to route the content into the cached System block.
+
+> **2026-05-20 amendment (Story 57-3 implementation):** This block was
+> originally "registration site unchanged … classifier change is the
+> only edit needed." That claim missed a load-bearing interaction with
+> ADR-101 Phase D Task 6, which only caches `Primacy + Early` zones —
+> Valley-zone System content rides `system_blocks[1]` uncached. The
+> required `Valley → Early` re-zone is small (four `AttentionZone`
+> argument flips) and is consistent with §Consequences:Negative below
+> which already documented the attention-zone shift as accepted.
 
 ### Defer
 
@@ -283,14 +296,13 @@ replay exercising the SDK backend:
 
 ### Neutral
 
-- The four registration sites at `orchestrator.py:1330–1373` are
-  untouched — same zone (Valley), same category (Genre). The classifier
-  change is the *only* code edit. The Valley zone assignment at the
-  registration site is now a documentation artifact for human readers
-  (the section's natural zone if it were uncached); the bucket
-  classifier overrides it for transport purposes. A future cleanup
-  could re-tag the registration `AttentionZone` to match — flagged
-  here, not in scope.
+- The four registration sites at `orchestrator.py:1368–1411` have
+  `AttentionZone.Early` (re-zoned from Valley by Story 57-3 — see the
+  2026-05-20 amendment in §Decision:Promote above). Same name, same
+  category (Genre). The bucket-classifier change AND the zone change
+  together route the content into the cached System block. The
+  attention-zone shift documented as a known consequence in
+  §Consequences:Negative is now realized.
 
 ## Alternatives Considered
 
