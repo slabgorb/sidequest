@@ -84,9 +84,12 @@ stories:
     title: 'OTEL: location.entity.resolve (both modes) + .minted + .promoted + .overlay.{activate,deactivate} spans; GM-panel surfacing distinguishing narrator-lie vs player-canon'
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
+    started: '2026-05-20'
     repos: server,ui
     workflow: tdd
+    branch: feat/54-8-location-entity-otel-gm-panel
+    assignee: slabgorb
   - id: 54-9
     title: 'UI: LocationPanel.tsx + tab registration + state-mirror integration + WS payload types; base prose + overlay suffixes; Overlay active pip; mirrors JournalView pattern'
     points: 3
