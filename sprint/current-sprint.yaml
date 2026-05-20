@@ -259,9 +259,12 @@ epics:
         title: Show controlling player's name on character displays (multiplayer only)
         points: 2
         priority: p1
-        status: backlog
+        status: in_progress
+        started: '2026-05-20'
         repos: ui
         workflow: tdd
+        assignee: slabgorb
+        branch: feat/56-1-show-controlling-player-name-mp
   - id: '57'
     type: epic
     title: Narrator Prompt Token Reduction
