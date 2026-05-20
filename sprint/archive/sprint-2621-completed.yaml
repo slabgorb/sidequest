@@ -11,6 +11,7 @@ completed_epics:
   - '56'
   - '57'
   - '54'
+  - '58'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -117,3 +118,18 @@ completed_stories:
     title: 'UI: LocationPanel.tsx + tab registration + state-mirror integration + WS payload types; base prose + overlay suffixes; Overlay active pip; mirrors JournalView pattern'
     points: 3
     completed: '2026-05-20'
+  - id: 58-1
+    epic: '58'
+    title: "Auto-bridge POI renders: generator writes to worlds/<w>/assets/poi/ matching server's cover_poi resolver"
+    points: 3
+    completed: '2026-05-20'
+  - id: 58-2
+    epic: '58'
+    title: Hero-shot coverage audit + backfill for all live worlds
+    points: 5
+    completed: '2026-05-19'
+  - id: 58-3
+    epic: '58'
+    title: "Generalize tone chip renderer: 'high {axis}' / 'low {axis}' for any axis name"
+    points: 2
+    completed: '2026-05-19'

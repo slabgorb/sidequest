@@ -9,7 +9,7 @@ epic:
     - sidequest-content
     - sidequest-server
     - orchestrator
-  jira: null
+  jira:
   stories:
     - id: '58-1'
       title: "Auto-bridge POI renders: generator writes to worlds/<w>/assets/poi/ matching server's cover_poi resolver"
@@ -41,3 +41,5 @@ epic:
         - sidequest-ui
       workflow: trivial
       type: chore
+status: done
+completed: '2026-05-20'
