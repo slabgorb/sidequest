@@ -114,6 +114,7 @@ epics:
         repos: orchestrator,sidequest-content
         workflow: tdd
         type: chore
+        review_verdict: approved
       - id: 58-2
         title: Hero-shot coverage audit + backfill for all live worlds
         points: 5
