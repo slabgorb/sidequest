@@ -7,9 +7,35 @@ sprint:
 
 completed_epics:
   - '55'
+  - '52'
 completed_stories:
   - id: 55-1
     epic: '55'
     title: 'Cookbook extension: compose_room_prose(rng, look_def, special_rooms, room_id) → (prose, entities[]); RegionContentManifest.room_descriptions[]; deterministic seeded from (campaign_seed, expansion_id, room_id); materializer persists <world>/rooms/<id>.yaml; validator post-check'
     points: 5
     completed: '2026-05-19'
+  - id: 52-1
+    epic: '52'
+    title: ADR-096 subsume amendment + DRIFT/index regenerate (no superseded-by; symmetric related)
+    points: 1
+    completed: '2026-05-19'
+  - id: 52-2
+    epic: '52'
+    title: Materializer emits ADR-096 mask + derived block per region (span dungeon.materialize.mask)
+    points: 3
+    completed: '2026-05-19'
+  - id: 52-3
+    epic: '52'
+    title: 'Persistence: mask-BLOB column + loader (the materializer.py:57 gap); reload on resume'
+    points: 3
+    completed: '2026-05-19'
+  - id: 52-4
+    epic: '52'
+    title: Server emits cavern PNG sidecar from runtime mask via room_file_loader resolve_asset_url
+    points: 3
+    completed: '2026-05-19'
+  - id: 52-5
+    epic: '52'
+    title: 'UI end-to-end wiring test: TacticalGridRenderer renders runtime-sourced cavern_image_url + OTEL assert'
+    points: 2
+    completed: '2026-05-20'
