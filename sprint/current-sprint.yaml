@@ -236,9 +236,11 @@ epics:
         title: Promote static genre prose into Stable cached zone
         points: 2
         priority: p2
-        status: backlog
+        status: done
+        started: '2026-05-20'
         repos: server
         workflow: tdd
+        completed: '2026-05-20'
         type: refactor
       - id: 57-4
         title: Migrate recency guardrail prose into tool-use descriptions
