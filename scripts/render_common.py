@@ -409,11 +409,21 @@ async def render_batch(
         compose_fn: Function(item, visual_style) -> (positive, clip, negative, seed).
         tier: Renderer tier ('portrait', 'landscape', etc.).
         image_subdir: Subdirectory under images/ ('portraits', 'poi', etc.).
+            When ``image_subdir == "poi"``, output is auto-bridged to the
+            world-scoped path ``<genre>/worlds/<world>/assets/poi/<slug>.png``
+            matching the server's cover_poi resolver
+            (sidequest-server/sidequest/server/rest.py:215-218). All other
+            subdirs route to the genre-flat ``<genre>/images/<subdir>/<slug>.png``
+            (the portrait_manifest / creature layout).
+            For POI items, raises ValueError if world is empty or "default":
+            the world-scoped resolver cannot reach genre-level entries, so a
+            silent fallback would orphan the file (No-Silent-Fallbacks).
         genre_filter: Only process items from this genre.
         dry_run: Preview prompts without rendering.
         steps: Inference steps.
         force: Regenerate even if image exists.
-        output_dir: Override output directory.
+        output_dir: Override output directory (escape hatch for ad-hoc dumps;
+            bypasses the world-scoped POI routing).
         catalog_compose: When True and an item has a `catalog_ref` (e.g.
             `where:<world>/<slug>` for POIs, `npc:<slug>` for portraits),
             route through the daemon's PromptComposer so all style layers
@@ -463,6 +473,25 @@ async def render_batch(
 
         if output_dir:
             out_dir = output_dir / item["genre"]
+        elif image_subdir == "poi":
+            world = item.get("world", "")
+            if not world or world == "default":
+                raise ValueError(
+                    f"render_batch: POI items must carry a real world (got "
+                    f"world={world!r}) — the server's cover_poi resolver only "
+                    f"reaches files under worlds/<world>/assets/poi/, so a "
+                    f"genre-level entry would be orphaned. Move the entry "
+                    f"under worlds/<world>/history.yaml. Offending item: "
+                    f"{item.get('genre')}/{item.get('name')}."
+                )
+            out_dir = (
+                GENRE_PACKS_DIR
+                / item["genre"]
+                / "worlds"
+                / world
+                / "assets"
+                / image_subdir
+            )
         else:
             out_dir = GENRE_PACKS_DIR / item["genre"] / "images" / image_subdir
         out_dir.mkdir(parents=True, exist_ok=True)
