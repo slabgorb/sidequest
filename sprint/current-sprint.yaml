@@ -308,10 +308,13 @@ epics:
         title: Migrate recency guardrail prose into tool-use descriptions
         points: 5
         priority: p2
-        status: backlog
+        status: done
+        started: '2026-05-19'
         repos: server
         workflow: tdd
+        completed: '2026-05-19'
         type: refactor
+        review_verdict: approved
       - id: 57-5
         title: game_state snapshot slimming (diff-with-anchor or field pruning)
         points: 5
