@@ -209,3 +209,95 @@ references above to "persistent session" and "cached context" describe the origi
 ADR-066 mechanism and are preserved for historical context. As of ADR-098, each
 narrator turn is a fresh `claude -p` call — no `--resume`, no session-id, no
 accumulated session history.
+
+## Post-Spec-2026-05-20 Note: Intent inference site wired
+
+ADR-067 promised inference rather than pre-narration classification:
+the narrator's response implicitly carries intent information, and
+post-narration extraction lifts the action type for OTEL telemetry and
+state-machine transitions. That inference site was never built — until
+the 2026-05-20 confrontation-intent-validator spec.
+
+Spec: `docs/superpowers/specs/2026-05-20-confrontation-intent-validator-design.md`
+Plan: `docs/superpowers/plans/2026-05-20-confrontation-intent-validator.md`
+
+Driver bug: 2026-05-20 dust_and_lead playtest. A five-turn negotiation
+over a horse (the Bonita / saddle / eight-dollars scene) played as
+freeform fiction with zero `confrontation.*` OTEL spans because the
+narrator never emitted `confrontation=negotiation` and the legacy
+prose-regex lie-detector only covered combat and chase phrases.
+
+### What this delivers
+
+1. **The inference site is `sidequest.agents.confrontation_intent_validator.validate(...)`.**
+   The validator reads `ActionRewrite.intent` (formerly dead
+   infrastructure that the narrator emitted but no downstream consumer
+   read) and compares it to the narrator's declared `confrontation`
+   field against per-confrontation vocabulary owned by each
+   `ConfrontationDef` in `rules.yaml`.
+
+2. **`TurnRecord.classified_intent` is populated from real signal.**
+   On the happy path it carries `action_rewrite.intent` verbatim; on a
+   mismatch it carries the validator's `ValidationResult.matched_type`;
+   when the narrator omits `action_rewrite.intent` entirely it is
+   `"unspecified"`. The hardcoded `"unknown"` stub at
+   `sidequest/server/websocket_session_handler.py` is removed; a grep
+   guard test pins the literal dead.
+
+3. **The legacy prose-regex lie-detector is retired in the same change.**
+   `_CONFRONTATION_TRIGGER_PATTERNS` and
+   `_scan_for_confrontation_trigger_keywords` in
+   `sidequest/server/narration_apply.py` are deleted; the
+   `state_transition field=confrontation op=skipped_with_trigger_keywords`
+   watcher event is gone. One mechanism per problem
+   (`memory/feedback_one_mechanism_per_problem.md`).
+
+4. **Per-confrontation-def dispatch policy.** Each `ConfrontationDef`
+   declares `on_intent_mismatch: warn | soft_suggest | reprompt`.
+   Lethal / genre-truth heavy types (combat, ship_combat, dogfight,
+   chase, standoff) default to `reprompt`; social-pressure /
+   transactional types (negotiation, poker, trial, auction,
+   social_duel, scandal) default to `warn`. `tea_and_murder` uses
+   `warn` for every type per the cosy-genre pacing rule.
+
+5. **One-iteration reprompt loop.** When severity is `reprompt`, the
+   orchestrator re-invokes `run_narration_turn` exactly once with an
+   `extra_directive` injected into the recency zone. Bounded to one
+   retry; on second-narrator failure the first attempt's narration is
+   applied and a `confrontation.intent_mismatch_reprompt_failed` span
+   fires.
+
+6. **New OTEL spans.** Three new spans on the `confrontation`
+   component: `confrontation.intent_mismatch`,
+   `confrontation.intent_mismatch_resolved`, and
+   `confrontation.intent_mismatch_reprompt_failed`. The GM panel
+   surfaces all three via the existing generic state_transition
+   routing — no panel-specific UI change needed.
+
+### What does NOT change
+
+- The unified-narrator topology. No specialist agents resurrected from
+  ADR-010. No pre-narration intent classifier (ADR-067 killed that
+  with cause — 8-17s latency hit).
+- The narrator's prompt assembly. The `CONFRONTATION_TRIGGER_CONSTRAINT`
+  prompt-guardrail text in
+  `sidequest/agents/narrator_guardrails.py` and its Recency-zone
+  registration both stay — that's prompt steering (prevent the
+  narrator from forgetting `confrontation` in the first place), a
+  different mechanism than the deleted prose-regex scanner.
+- The narrator's tool-use output contract. The narrator already
+  emitted `action_rewrite.intent` per
+  `sidequest/agents/narrator_prompts/output_only_sdk.md`; this work
+  just wires the first downstream consumer.
+
+### Replay regression
+
+`sidequest-server/tests/server/test_dust_and_lead_horse_replay.py`
+pins the fix against the real `spaghetti_western` pack. Six
+parametrized intent strings derived from the dust_and_lead save's
+horse-purchase narration each fire
+`confrontation.intent_mismatch matched_type=negotiation severity=warn`.
+The save file itself predates the validator (its NARRATION events
+carry prose but no `action_rewrite.intent`), so the intent strings are
+hand-derived from the prose with per-turn seq annotations for
+traceability.
