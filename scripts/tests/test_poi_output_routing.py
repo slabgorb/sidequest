@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.render_common import GENRE_PACKS_DIR, render_batch, slugify
+from scripts.render_common import render_batch, slugify
 
 
 # ---------------------------------------------------------------------------
