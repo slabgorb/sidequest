@@ -31,14 +31,52 @@ Total rows: **29**
 | space_opera | `rules.yaml` | `confrontations.[N].interaction_table.starting_state` | missing | `{'_from': 'dogfight/interactions_mvp.yaml'}` |   |   |   |
 | space_opera | `rules.yaml` | `confrontations.[N].interaction_table._from` | extra_forbidden | `dogfight/interactions_mvp.yaml` |   |   |   |
 | space_opera | `inventory.yaml` | `philosophy.notes` | extra_forbidden | `Inventory is not the point of space opera. The ship carri…` |   |   |   |
-| spaghetti_western | `rules.yaml` | `standoff_rules` | extra_forbidden | `{'sizing_up': {'description': "Before violence erupts, co…` |   |   |   |
-| spaghetti_western | `rules.yaml` | `reputation_factions` | extra_forbidden | `[{'id': 'outlaws', 'name': 'Outlaws & Bandits', 'descript…` |   |   |   |
-| spaghetti_western | `rules.yaml` | `reputation_effects` | extra_forbidden | `{'high': ['NPCs of this faction offer jobs, shelter, and …` |   |   |   |
-| spaghetti_western | `rules.yaml` | `luck_rules` | extra_forbidden | `{'starting_luck': 3, 'max_luck': 5, 'spend_effects': [{'n…` |   |   |   |
-| spaghetti_western | `char_creation.yaml` | `[N].choices.[N].mechanical_effects.reputation_bonus` | extra_forbidden | `intimidation` |   |   |   |
-| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.novice` | extra_forbidden | `{'name': 'Steady Hand', 'description': 'The basics — you …` |   |   |   |
-| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.journeyman` | extra_forbidden | `{'name': 'Dead Eye', 'description': 'You see the fight be…` |   |   |   |
-| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.expert` | extra_forbidden | `{'name': 'Legendary Shot', 'description': 'Your reputatio…` |   |   |   |
-| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.master` | extra_forbidden | `{'name': 'The Fastest', 'description': 'There is no one f…` |   |   |   |
-| spaghetti_western | `prompts.yaml` | `session_opener_template` | extra_forbidden | `The sun sits high and white in a sky that has forgotten w…` |   |   |   |
+| spaghetti_western | `rules.yaml` | `standoff_rules` | extra_forbidden | `{'sizing_up': {'description': "Before violence erupts, co…` |   | x |   |
+| spaghetti_western | `rules.yaml` | `reputation_factions` | extra_forbidden | `[{'id': 'outlaws', 'name': 'Outlaws & Bandits', 'descript…` |   | x |   |
+| spaghetti_western | `rules.yaml` | `reputation_effects` | extra_forbidden | `{'high': ['NPCs of this faction offer jobs, shelter, and …` |   | x |   |
+| spaghetti_western | `rules.yaml` | `luck_rules` | extra_forbidden | `{'starting_luck': 3, 'max_luck': 5, 'spend_effects': [{'n…` |   | x |   |
+| spaghetti_western | `char_creation.yaml` | `[N].choices.[N].mechanical_effects.reputation_bonus` | extra_forbidden | `intimidation` |   | x |   |
+| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.novice` | extra_forbidden | `{'name': 'Steady Hand', 'description': 'The basics — you …` |   | x |   |
+| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.journeyman` | extra_forbidden | `{'name': 'Dead Eye', 'description': 'You see the fight be…` |   | x |   |
+| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.expert` | extra_forbidden | `{'name': 'Legendary Shot', 'description': 'Your reputatio…` |   | x |   |
+| spaghetti_western | `progression.yaml` | `affinities.[N].unlocks.master` | extra_forbidden | `{'name': 'The Fastest', 'description': 'There is no one f…` |   | x |   |
+| spaghetti_western | `prompts.yaml` | `session_opener_template` | extra_forbidden | `The sun sits high and white in a sky that has forgotten w…` |   |   | x |
+
+## Triage notes — spaghetti_western (2026-05-19, promotion blocker)
+
+All 10 rows triaged on promotion of `spaghetti_western` from `genre_workshopping/`
+to `genre_packs/`. Routed to Dev — pack will fail server load until wired:
+
+- **standoff_rules** (rules.yaml) — wire as a confrontation kind. The standoff
+  IS the genre's signature combat trope (sizing_up → first_move → resolution
+  per Leone). Should plug into the existing ConfrontationDef framework
+  alongside dogfight (ADR-077) and edge/composure (ADR-078). New `StandoffRules`
+  pydantic model + per-beat resolution wiring + OTEL `confrontation.standoff.*`
+  spans.
+- **reputation_factions** + **reputation_effects** (rules.yaml) — wire as a
+  faction-reputation subsystem. Each faction has a -100..+100 reputation track,
+  effects fire at high/low thresholds (NPC dispositions, prices, ambush
+  probability). Companion field `char_creation.[N].mechanical_effects.reputation_bonus`
+  applies starting reputation deltas from chargen choices. Touches char_creation
+  schema + game-state model + narrator context injection.
+- **luck_rules** (rules.yaml) — wire as a per-character resource pool
+  (starting=3, max=5) with spend effects (reroll, narrate-the-escape, etc).
+  Models the "lucky drifter" genre archetype. Touches Character model + a
+  new luck-spend tool in the narrator's toolkit.
+- **affinities.[N].unlocks.{novice,journeyman,expert,master}** (progression.yaml)
+  — wire as per-tier unlock content for each progression affinity. Each tier
+  yields a named ability (Steady Hand → Dead Eye → Legendary Shot → The Fastest).
+  Same structure works for any non-magical class affinity — likely a
+  cross-genre `ProgressionUnlock` model that other packs without classes.yaml
+  (mutant_wasteland, tea_and_murder) could adopt instead of duplicating.
+- **session_opener_template** (prompts.yaml) — accept as **prose** pass-through.
+  Authored text dropped into the session-1 opening prompt. Not mechanical.
+  Add as `Optional[str]` on PromptsConfig with no consumer wiring beyond
+  the existing opener pipeline.
+
+Engineering scope: 1 `ProgressionUnlock` shared model + 1 spaghetti-specific
+`StandoffRules` confrontation kind + a `ReputationConfig` block (factions + effects
++ starting_bonus) + a `LuckConfig` block + pass-through `session_opener_template`.
+Estimated 1 story (~5-8 points) — adjacent to but separable from existing
+confrontation work.
 
