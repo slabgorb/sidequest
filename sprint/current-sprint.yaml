@@ -185,10 +185,14 @@ epics:
         title: OTEL spans for weather generation (proposed vs used) and demographics injection
         points: 2
         priority: p1
-        status: backlog
+        status: done
+        started: '2026-05-21'
         repos: server
         workflow: tdd
         acceptance_criteria: []
+        completed: '2026-05-21'
+        branch: feat/24-7-otel-weather-demographics
+        assignee: slabgorb
       - id: 24-8
         title: 'Playtest validation: narrator uses weather/demographics grounding in tea_and_murder/glenross'
         points: 2
