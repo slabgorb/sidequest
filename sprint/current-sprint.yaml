@@ -202,10 +202,15 @@ epics:
         title: Author spaghetti_western calendar for dust_and_lead + the_real_mccoy (1878 Gregorian; months, days, festivals, time precision)
         points: 2
         priority: p0
-        status: backlog
+        status: done
+        started: '2026-05-21'
         repos: content
         workflow: trivial
+        completed: '2026-05-21'
         type: chore
+        branch: feat/24-9-spaghetti-western-calendar
+        assignee: slabgorb
+        review_verdict: approved
   - id: '22'
     type: epic
     title: "Epic: Seed Tropes — Narrative Variety via Schrödinger's Gun"
