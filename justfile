@@ -134,6 +134,22 @@ up *flags:
     : "${R2_S3_ENDPOINT:?R2_S3_ENDPOINT must be set in shell}"
     : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID must be set in shell}"
     : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY must be set in shell}"
+
+    # Anthropic SDK narrator (ADR-101) hard-requires ANTHROPIC_API_KEY — the SDK
+    # client raises at first WebSocket connect without it. `just server` resolves
+    # this but `up` historically did not, so `up` failed late mid-session instead
+    # of refusing at boot. Resolve it here (env override wins; else pull the
+    # canonical ~/.zshrc export), export so the inline server subshell inherits
+    # it, and fail loudly. Never start silently keyless.
+    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
+      ANTHROPIC_API_KEY="$(sed -nE 's/^[[:space:]]*export[[:space:]]+ANTHROPIC_API_KEY=["'\'']?([^"'\'' ]+).*/\1/p' "$HOME/.zshrc" 2>/dev/null | tail -n1)"
+    fi
+    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
+      echo "✗ ANTHROPIC_API_KEY not set and no 'export ANTHROPIC_API_KEY=' in ~/.zshrc — Anthropic SDK narrator (ADR-101) cannot start. Export it or add it to ~/.zshrc." >&2
+      exit 1
+    fi
+    export ANTHROPIC_API_KEY
+
     srv={{logdir}}/sidequest-server.log
     cli={{logdir}}/sidequest-client.log
     dmn={{logdir}}/sidequest-daemon.log
