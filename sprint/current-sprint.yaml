@@ -259,3 +259,502 @@ epics:
         repos: server
         workflow: tdd
         acceptance_criteria: []
+  - id: '50'
+    type: epic
+    title: Pingpong-archive triage and dropped-work cleanup
+    description: |-
+      Surfaced by the 2026-05-13 pingpong-archive audit of 31 files spanning the
+      five playtest closeout cycles. Headline finding: 131 entries reached
+      `Status: open` and 116 reached `Status: fixed` against only 20 `verified` —
+      the verification stage of the protocol is the leakiest, and the fast-loop
+      treats "merged PR" as terminal even though the protocol does not.
+
+      Two structural anti-patterns recurred across archives:
+
+      1. **OTEL-detector-as-fix.** A bug surfaces → fix-team adds an OTEL span
+         to detect it → status flips to `fixed` → root cause never addressed.
+         Telemetry becomes a permanent monument to an unfixed thing. Cleanest
+         case: PR #177 added `confrontation.skipped_with_trigger_keywords` but
+         never wired the encounter instantiation that the prose-trigger
+         keywords implied.
+
+      2. **Server-half done, UI-half silent.** A subsystem ships on the server,
+         marks `fixed`, and never reaches `verified` because the UI consumer
+         was never built. Cleanest case: recruitment subsystem maintains a
+         server-side companion roster; PartyPanel never rendered it. When
+         playtests rotated genres (MP → solo → social-first), the gap went
+         un-exercised for ~6 days.
+
+      Epic 50 holds the cleanup follow-ups from that audit. Most archived
+      `fixed`-without-`verified` items are paperwork-debt (PRs landed, tests
+      passed, formal flip skipped). The stories in this epic are the
+      not-paperwork-debt subset: items that almost certainly are still broken
+      in the running stack and the audit could justify naming.
+
+      Process change captured here separately from any one story: future
+      pingpongs should rename `fixed` → `merged` and require the driver
+      re-test step before declaring `verified`. The protocol step exists
+      (sq-playtest §3e), the archive ratio shows it isn't being followed.
+    priority: p2
+    status: active
+    repos: orchestrator,sidequest-server,sidequest-ui
+    stories:
+      - id: 50-1
+        title: Pingpong-archive triage — re-test 8 carryover items, split confirmed-broken into stories
+        description: |-
+          The 2026-05-13 pingpong-archive audit surfaced 8 items that entered archives without reaching `verified`. Several have likely been silently fixed by later work (NPC pool rewire in 45-52, ADR-098 stateless narrator collapsing the resume timeout, 49-7 confrontation-panel work, the ADR-082 Python backend port replacing the whole turn-time-escalation surface). The driver re-tests each item against the current stack; items that are still broken get split out into their own bug stories under this epic. Silently-fixed items get a one-line note in the audit section closing them out. See `~/Projects/sq-playtest-pingpong.md` "To Be Verified" section for the canonical list.
+
+          Out of scope: retroactively flipping the ~90 archive `fixed`-without-`verified` items that look paperwork-only. Those are written off as "verified via PR merge" historical debt.
+        points: 2
+        priority: p3
+        status: done
+        started: '2026-05-13'
+        repos: orchestrator
+        workflow: trivial
+        acceptance_criteria:
+          - All 8 items from the "To Be Verified" section in sq-playtest-pingpong.md have a re-test verdict (still-broken / silently-fixed / unable-to-repro)
+          - Confirmed-broken items are filed as new stories under epic 50 with their own AC blocks
+          - Silently-fixed items get a one-line note in the pingpong audit section with the resolving commit/PR
+          - The audit section is then closed out by removing the "To Be Verified" block and replacing it with a "Verified clean as of 2026-MM-DD" line
+        completed: '2026-05-13'
+        branch: feat/50-1-pingpong-archive-triage
+        assignee: slabgorb
+        type: chore
+      - id: 50-2
+        title: Narrator confrontation-trigger detection — instantiate the encounter, not just an OTEL warning
+        description: |-
+          Found 2026-04-26 in archive `sq-playtest-pingpong.archive-20260506-074557.md`. Narrator describes prose that contains confrontation trigger keywords (`chase`, `intercept`, `scandal`, `negotiation`, etc.) but emits `confrontation=None` in the structured-output sidecar; the encounter is never instantiated. PR #177 added the warning span `confrontation.skipped_with_trigger_keywords` but the work that was implicit in "fixed" — actually instantiating the encounter on trigger detection — was never done. This is the cleanest example of the OTEL-detector-as-fix anti-pattern uncovered in the 2026-05-13 audit: telemetry lights up the gap while the gap persists.
+
+          Scope is prompt-engineering work in the narrator structured-output schema, not keyword extension. The narrator must be reliably steered to either (a) emit a proper confrontation block when its prose introduces a stake-binding trigger, or (b) avoid the trigger language entirely when there's no encounter to bind. The OTEL warning becomes a regression detector, not a permanent monument.
+        points: 5
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: sidequest-server
+        workflow: tdd
+        acceptance_criteria:
+          - When narrator prose introduces a confrontation trigger keyword (chase/intercept/scandal/negotiation/social_duel/trial/auction), the structured-output sidecar emits a non-null confrontation block in the same turn
+          - The encounter is instantiated server-side on receipt of that block (existing dispatch path)
+          - "`confrontation.skipped_with_trigger_keywords` warning span only fires for residual edge cases, not as the steady-state behaviour"
+          - Integration test covers each of the 7 trigger keywords with prose fixtures from prior playtests; each fixture results in a real confrontation, not just the warning
+          - OTEL evidence on the next playtest shows `confrontation` populated on trigger-keyword turns; the dashboard can no longer use the warning span to find unfixed cases
+        completed: '2026-05-13'
+        branch: feat/50-2-narrator-confrontation-trigger-instantiate
+        assignee: slabgorb
+        type: bug
+      - id: 50-3
+        title: PartyPanel renders recruited companions section — server roster correct, UI was silent
+        description: |-
+          Found 2026-05-07 in archive `sq-playtest-pingpong.archive-20260507-085200.md`, repeated in `sq-playtest-pingpong.archive-20260508-pre472.md`. The recruitment subsystem maintains a server-side roster of companion NPCs; the UI `PartyPanel` component has no element to render them. The bug was marked `fixed` on the server-side at the time but never reached `verified` because the UI half wasn't wired. Playtests moved to tea_and_murder solo immediately afterwards, leaving the UI gap silently broken for ~6 days.
+
+          Sebastien-axis loss: recruited companions are mechanical state players cannot see. Aspirational household-audience loss: companion-driven play (which is half the Heavy Metal / road_warrior pitch) is invisible.
+
+          Resolution 2026-05-13: silently-fixed by 2026-05-06/07 commits (sidequest-ui 890dc4b/6d7fdd3/784147b). 50-1 pingpong triage carried a stale-read forward without re-testing. Workflow switched mid-flight tdd→trivial. Deliverable: companions-app-wire-integration.test.tsx (sidequest-ui PR #236, merged) — the genuine App-level wiring guard the pre-existing companions-party-status-wiring.test.tsx never actually was. AC2/AC4 split-party-location deferred as out-of-scope (new feature, not in original bug report).
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: sidequest-ui
+        workflow: trivial
+        acceptance_criteria:
+          - PartyPanel renders a "Companions" sub-section when the server's PARTY_STATUS / state mirror reports a non-empty companions roster
+          - Each companion row shows name, archetype/role, current location (if split-party), and a portrait or letter-fallback per the existing chrome
+          - The sub-section is hidden (not just empty) when the roster is empty
+          - Vitest covers the empty / single-companion / multi-companion / split-party-location states
+          - Wiring test confirms the section is reachable from the production state-mirror path (not just storybook fixtures)
+        completed: '2026-05-13'
+        branch: feat/50-3-partypanel-renders-recruited-companions
+        assignee: keith
+        review_verdict: approved
+        type: bug
+      - id: 50-4
+        title: Trope rate_per_day between-session advancement
+        points: 8
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server,content
+        workflow: tdd
+        completed: '2026-05-13'
+        pr: 'https://github.com/slabgorb/sidequest-server/pull/277'
+        assignee: slabgorb
+        branch: feat/50-4-trope-rate-per-day
+        review_verdict: approved
+      - id: 50-5
+        title: 'Scenario: wire discover_clue to narration consumption (call site + SPAN_SCENARIO_ADVANCE fires in play)'
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-13'
+        review_verdict: approved
+      - id: 50-6
+        title: 'Scenario: ClueGraph DAG prerequisite enforcement in discover_clue (reject orphan discoveries)'
+        points: 2
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        depends_on: 50-5
+        completed: '2026-05-13'
+        assignee: slabgorb
+        branch: feat/50-6-scenario-cluegraph-dag-prerequisite-enforcement
+      - id: 50-7
+        title: 'Scenario: GossipEngine — two-phase belief propagation, contradiction detection, credibility decay'
+        points: 8
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-13'
+        assignee: slabgorb
+        branch: feat/50-7-gossip-engine-propagation
+        review_findings: 'Round-trip 2 APPROVED. All 3 HIGH + 4 MEDIUM + 3 LOW findings from round-trip 0 resolved. 4 new non-blocking findings (1 MEDIUM, 3 LOW) logged in Delivery Findings as Improvements: misleading update_credibility in test, inline span imports, .get() vs [key] inconsistency, method docstring missing contradiction sub-case.'
+        review_verdict: approved
+      - id: 50-8
+        title: 'Scenario: AccusationEvaluator — EvidenceSummary, Circumstantial/Strong/Airtight verdict, SPAN_SCENARIO_ACCUSATION emit'
+        points: 8
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        depends_on: 50-7
+        completed: '2026-05-13'
+        branch: feat/50-8-scenario-accusation-evaluator
+        assignee: slabgorb
+      - id: 50-9
+        title: 'Mood: implement mood_aliases alias-chain fallback in music director track selection (ADR-033 Pillar 3 Steps 1-3)'
+        points: 3
+        priority: p3
+        status: backlog
+        repos: server,content
+        workflow: tdd
+      - id: 50-10
+        title: 'Disposition: central Attitude enum + Disposition.attitude() derivation (replace dispatch/opening helper)'
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-13'
+        type: refactor
+        branch: feat/50-10-disposition-central-attitude-enum
+        assignee: slabgorb
+      - id: 50-11
+        title: 'Disposition: SPAN_DISPOSITION_SHIFT threshold-crossing fields (before_attitude, after_attitude, crossed)'
+        points: 2
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        depends_on: 50-10
+        completed: '2026-05-13'
+        branch: feat/50-11-disposition-shift-threshold-fields
+        assignee: slabgorb
+        review_verdict: approved
+      - id: 50-12
+        title: 'Disposition: narrator NPC serialization emits attitude string (close the agents-see-only-attitude gap)'
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-18'
+        repos: server
+        workflow: tdd
+        depends_on: 50-10
+        completed: '2026-05-18'
+        review_verdict: approved
+      - id: 50-13
+        title: 'Disposition: genre-configurable thresholds (pack model field + load-time wiring, +/-10 default)'
+        description: 'Make the disposition→attitude numeric thresholds genre-pack-configurable. Today disposition.py:78-82 hardcodes >10⇒friendly / <-10⇒hostile / else neutral. Add a genre-pack model field (default ±10) read at pack load time so a pack can widen/narrow the bands. CONSTRAINT (50-12 lesson, verified against code): the Attitude enum is the THREE-tier lowercase wire contract friendly/neutral/hostile (sidequest/game/disposition.py:41-54, locked by tests/game/test_disposition_attitude_enum.py). This story changes the numeric BOUNDARIES only — it does NOT add/rename bands and there is NO five-tier capitalised set. Change vector is the disposition module + genre-pack model + pack loader (repos: server,content); 50-12 already wired Disposition.attitude() into the narrator roster so corrected thresholds flow through with zero roster rework. Do NOT reintroduce the fictional Literal["Hostile","Guarded","Neutral","Trusting","Allied"] that sm-setup invented for 50-12.'
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-18'
+        repos: server,content
+        workflow: tdd
+        depends_on: 50-10
+        acceptance_criteria:
+          - 'AC-1: Genre-pack model exposes a disposition-threshold field (friendly_at / hostile_at or equivalent) defaulting to +10 / -10, preserving exact current behavior (>10 friendly, <-10 hostile, else neutral) when unset.'
+          - 'AC-2: Threshold is read at pack load time and used by Disposition.attitude() derivation; band labels remain the fixed 3-tier Attitude enum (friendly/neutral/hostile) — only the numeric cut points change.'
+          - 'AC-3: A pack overriding the threshold (e.g. ±5) reclassifies dispositions at the new boundary; default/unset packs are byte-identical to pre-50-13 behavior (regression-locked).'
+          - 'AC-4: No silent fallback — a malformed/out-of-range threshold in pack YAML fails loudly at load, not silently clamped.'
+          - 'AC-5: OTEL/dashboard continuity — SPAN_DISPOSITION_SHIFT before/after attitude (shipped by 50-11) still reflects the configured thresholds; no new narrator-facing numeric leak (ADR-104/105).'
+        completed: '2026-05-18'
+        branch: feat/50-13-genre-configurable-thresholds
+        assignee: slabgorb
+        review_verdict: approved
+      - id: 50-14
+        title: 'Journal: JOURNAL_REQUEST handler — server replies from character.known_facts (seam C server-side per ADR-100)'
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: server
+        workflow: tdd
+        depends_on: 50-5
+        completed: '2026-05-13'
+        branch: feat/50-14-journal-request-handler
+        assignee: slabgorb
+      - id: 50-15
+        title: 'Journal: UI fact_id respect — drop synthetic id, consume narrator-supplied Footnote.fact_id (seam C UI part 1 per ADR-100)'
+        points: 2
+        priority: p2
+        status: done
+        started: '2026-05-14'
+        repos: ui
+        workflow: tdd
+        depends_on: 50-14
+        completed: '2026-05-14'
+        type: bug
+        branch: feat/50-15-journal-ui-fact-id
+        assignee: slabgorb
+      - id: 50-16
+        title: "Journal: UI confidence propagation — drop hardcoded 'Suspected' in useStateMirror, source from JOURNAL_RESPONSE (seam C UI part 2 per ADR-100)"
+        points: 2
+        priority: p2
+        status: done
+        started: '2026-05-14'
+        repos: ui
+        workflow: tdd
+        depends_on: 50-14
+        completed: '2026-05-14'
+        type: bug
+        branch: feat/50-16-journal-ui-confidence
+        assignee: slabgorb
+      - id: 50-17
+        title: 'Journal: KnownFact.confidence enum promotion — Literal[Certain|Suspected|Rumored|Discovered] (J-4 per ADR-100)'
+        points: 1
+        priority: p3
+        status: done
+        started: '2026-05-14'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-14'
+        type: refactor
+        branch: feat/50-17-knownfact-confidence-enum
+        assignee: slabgorb
+      - id: 50-18
+        title: ADR-092 scene harness — Python POST /dev/scene/{name} hydrator
+        description: "Implement the accepted ADR-092 design in Python — restores scene-harness fixture loading lost during the Rust→Python port. The UI is already wired (App.tsx:1183-1217: ?scene=NAME → POST /dev/scene/{name} → navigate to /solo/{slug}); 4 fixture YAMLs already exist in scenarios/fixtures/ (combat_test, dogfight, negotiation, poker). What's missing: the Python endpoint that hydrates a fixture YAML into a GameSnapshot, persists via SqliteStore, and returns {slug}. Gated behind DEV_SCENES=1 env var per the ADR — route is not registered when the flag is unset, so production builds carry zero scene-harness surface. Also wire scripts/playtest.py with a --fixture <name> flag that POSTs to /dev/scene/{name} instead of /api/games, so headless mechanical playtests can skip chargen the same way the UI can. See ADR-092 for the full design, ADR-069 for the superseded CLI-first version (do not implement), ADR-087 row 125 for the gating question this resolves."
+        points: 5
+        priority: p2
+        status: done
+        started: '2026-05-13'
+        repos: sidequest-server,orc-quest
+        workflow: tdd
+        acceptance_criteria:
+          - POST /dev/scene/{name} returns {slug} on success when DEV_SCENES=1 is set
+          - Route is NOT registered when DEV_SCENES env var is unset (production builds have zero scene-harness surface)
+          - Endpoint reads scenarios/fixtures/{name}.yaml (ADR-069 schema), hydrates GameSnapshot, persists via SqliteStore, mints game_slug
+          - Missing fixture YAML returns 404 with the missing path in body; hydration error returns 422 with field-level detail (no silent fallback to manual chargen)
+          - All 4 existing fixture YAMLs (combat_test, dogfight, negotiation, poker) hydrate successfully end-to-end via the UI ?scene=NAME flow
+          - scripts/playtest.py grows --fixture <name> flag; routes through POST /dev/scene/{name} instead of POST /api/games; chargen is skipped; opening narration arrives and scripted actions drain normally
+          - 'Wiring test: scene-harness endpoint is exercised end-to-end (POST → save persisted → slug-connect returns has_character=true → opening narration emits)'
+        completed: '2026-05-13'
+        review_verdict: approved
+        branch: feat/50-18-adr-092-scene-harness-python
+      - id: 50-19
+        title: 'Scene harness: hydrate Character.known_facts (ADR-092 follow-on)'
+        description: |
+          Extend hydrate_fixture (sidequest/game/scene_harness.py) to read
+          `known_facts:` under the `character:` block and project to
+          Character.known_facts. Each entry must validate as a KnownFact with
+          confidence in Literal["Certain","Suspected","Rumored","Discovered"]
+          (post-50-17 promotion). Unblocks the journal_mixed_confidence_caverns
+          Wave 2 fixture. Test: load a fixture with 4 KnownFacts spanning all
+          tiers; assert character.known_facts has the right confidence values
+          and accusation evaluator weight lookup succeeds.
+        points: 2
+        priority: p2
+        status: done
+        started: '2026-05-15'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-15'
+      - id: 50-20
+        title: 'Scene harness: hydrate top-level scenario_state (ADR-092 follow-on)'
+        description: |
+          Extend hydrate_fixture to read a top-level `scenario_state:` block
+          and project to GameSnapshot.scenario_state (clue_graph,
+          discovered_clues, npc_roles, guilty_npc, tension). Unblocks Wave 2
+          mystery fixtures: mystery_mid_tea (50% clue graph discovered, 1
+          accusation primed) and mystery_redherring_tea (obvious suspect is
+          innocent). Tests epic-50 wiring (50-5/6/7/8) at fixture level.
+          Schema reference: sidequest/game/scenario_state.py and
+          sidequest/genre/models/scenario.py (ClueGraph, ClueNode).
+        points: 5
+        priority: p2
+        status: done
+        started: '2026-05-15'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-15'
+        branch: feat/50-20-scene-harness-hydrate-scenario-state
+        assignee: slabgorb
+        review_findings: 'HIGH: DAG-replay is order-sensitive; rejects valid fixtures where discovered_clues is in non-topological YAML order with misleading error message (AC4 violation). LOW: 12 ruff format violations in 50-20 test additions.'
+        review_verdict: approved
+      - id: 50-21
+        title: 'Scene harness: hydrate StructuredEncounter (ADR-092 follow-on)'
+        description: |
+          Extend hydrate_fixture to read a top-level `encounter:` block and
+          project to GameSnapshot.encounter (StructuredEncounter, ADR-033).
+          The combat_brawl_wasteland fixture (formerly combat_test) currently
+          includes `encounter: type: combat` which is silently dropped — wire
+          it through. Unblocks Wave 2 pre-armed combat fixtures
+          (combat_pretier_low/mid/high) for ADR-093 confrontation difficulty
+          calibration spot tests. Schema reference: ADR-033 confrontation
+          engine + sidequest/game/encounter.py.
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-18'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-18'
+        review_verdict: approved
+      - id: 50-22
+        title: 'Scene harness: hydrate magic_state + Character.abilities (ADR-092 follow-on)'
+        description: |
+          Extend hydrate_fixture to read top-level `magic_state:` block
+          (project to GameSnapshot.magic_state, MagicState shape per
+          sidequest/magic/) and `abilities:` under the `character:` block
+          (project to Character.abilities). Unblocks Wave 2 magic fixtures:
+          magic_active_elemental (mid-ritual), magic_drained_elemental
+          (empty pool), and class-ability-active fixtures. Note: blocked on
+          elemental_harmony having no live worlds — file a content story
+          to land at least one elemental world before authoring those
+          fixtures. Schema reference: ADR-095 (class mechanical surface)
+          and ADR-014 (Diamonds and Coal — magic state is Diamond, must
+          be hydrated faithfully).
+        points: 5
+        priority: p2
+        status: done
+        started: '2026-05-18'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-18'
+        branch: feat/50-22-scene-harness-magic-abilities
+        assignee: slabgorb
+        review_verdict: approved
+      - id: 50-23
+        title: 'Scene harness: hydrate multi-PC characters list (ADR-092 follow-on)'
+        description: |
+          Extend hydrate_fixture to accept a top-level `characters:` list
+          (each entry the existing single-character shape) and project to
+          GameSnapshot.characters. Keep backwards-compat: legacy `character:`
+          singular continues to work as `characters[0]`. Unblocks Wave 2
+          party fixtures: party_combat_caverns (4-PC vs mixed force) and
+          party_social_tea (3-PC drawing room). Multiplayer playtest is
+          currently bottlenecked here — every MP smoke test starts with
+          4 chargen sessions.
+        points: 3
+        priority: p2
+        status: done
+        started: '2026-05-15'
+        repos: server
+        workflow: tdd
+        completed: '2026-05-15'
+        branch: feat/50-23-hydrate-multi-pc-characters
+        assignee: slabgorb
+        review_verdict: approved
+      - id: 50-24
+        title: Restore dice authority severed by the ADR-101/102 SDK migration
+        description: "Two root causes, one migration. The ADR-101/102 SDK-narrator cutover moved dice authority out of the engine into a discretionary narrator tool call and never built a narrator->ADR-074 player-facing seam, so across 68 rounds of 2026-05-17-coyote_star-mp the narrator fabricated every d20 result (zero DICE_REQUEST in server log; zero tool.gen.roll_dice spans in Jaeger on 2026-05-17 — the private tool genuinely never fired). Source of truth: /Users/slabgorb/Projects/sq-playtest-pingpong.md, the 'OQ-2 ARCHITECT RESOLUTION' bullet under the 'Narrator fabricates dice' headline (Architect/OQ-2, 2026-05-17), which contains the full three-legged evidence chain and the contract decision. SCOPE GUARD: Symptoms 2 (NPC pool->present promotion) and 3 (synthetic-span bridge) in that same pingpong entry are SEPARATE seams — do NOT fold them into this story. Note: pingpong line 98 references an 'aside-channel story 50-24' that never existed; that ID is now this dice story — the aside-channel work needs its own fresh story ID."
+        points: 8
+        priority: p0
+        status: done
+        started: '2026-05-17'
+        repos: sidequest-server
+        workflow: tdd
+        acceptance_criteria:
+          - "AC-1 (prompt contract parity): agents/narrator_prompts/output_only_sdk.md section 7 is promoted to MUST/MANDATORY parity with the other seven tool-owned categories, gains a trigger enumeration matching the section-4 pattern, and the self-gating clause 'When the prose hinges on an uncertain outcome the engine should resolve' is DELETED (it is the fabrication loophole). Verifiable: a narration turn that asserts a numeric/check/save/damage outcome with no roll_dice tool call fails contract validation."
+          - 'AC-2 (narrator->ADR-074 seam, the missing wire): a player-actor uncertain outcome routes through opposed_check / a player-facing DICE_REQUEST (the dispatch/dice.py:321 emit machinery already works and game/opposed_check.py already resolves from client d20 faces); the narrator defers the outcome tier to the returned face and MUST NOT pre-write it; free-text tier-emission for player-actor uncertainty is forbidden the way section 4 forbids unstructured confrontation resolution. Verifiable: a player-actor check produces a DICE_REQUEST plus an encounter.opposed_roll_resolved span, not a prose number.'
+          - 'AC-3 (roll_dice span attribution): agents/tools/roll_dice.py (around lines 62-65) adds a session/world OTEL attribute to the tool.gen.roll_dice span. Verifiable: a tool.gen.roll_dice span carries the session id, so a future audit can bind a private roll to its game without the temporal argument OQ-1/OQ-2 were forced into.'
+        completed: '2026-05-17'
+        type: bug
+        review_verdict: approved
+      - id: 50-25
+        title: Out-of-band aside channel — finish half-wired player→GM table-talk (ADR-107)
+        description: 'Finish the half-wired aside feature: non-turn-consuming player→GM OOC table-talk. Origin: Beneath Sünden 2026-05-17 MP playtest finding F6 (players burned turns asking the GM clarifying questions). Spec: docs/superpowers/specs/2026-05-17-aside-channel-design.md. Plan (10 TDD tasks, no placeholders): docs/superpowers/plans/2026-05-17-aside-channel.md. Docs PR (spec+plan, base main): slabgorb/sidequest#238. Approach A: reuse existing aside:bool, branch before the ADR-036 barrier, read-only AsideResolver, ASIDE_ANSWER broadcast, routed aside.resolve span, ADR-101 Haiku routing. Code branches: sidequest-server + sidequest-ui off develop; orchestrator (api-contract fix + ADR-107) off main. Execute the plan task-by-task via subagent-driven-development.'
+        points: 8
+        priority: p1
+        status: done
+        started: '2026-05-18'
+        repos: sidequest-server,sidequest-ui,orchestrator
+        workflow: tdd
+        acceptance_criteria:
+          - 'Aside consumes no turn: no narrative_log/scrapbook row, turn/round unchanged, zero world patch (proven by tests/handlers/test_aside_channel_wiring.py)'
+          - "MP: aside never counts toward the ADR-036 barrier; asker still owes their real action; other players' submissions unaffected"
+          - Server answers OOC via read-only AsideResolver; ASIDE_ANSWER broadcast to ALL seats (table-visible)
+          - "Answer policy: capability/rules/recap answered+grounded; hidden-state refused ('you'd have to check'); unparseable LLM → loud resolver_error, never invents lore"
+          - Routed aside.resolve OTEL span fires every aside (asker_id/outcome/grounded_on/model/latency) — GM-panel visible
+          - "UI: gm-aside segment in OOC register; InputBar aside placeholder = 'Ask the GM — no turn spent'"
+          - docs/api-contract.md aside lie corrected + doc-contract guard test; ADR-107 authored and indexed
+          - Mandatory MP wiring test green; just server-check + client-lint + client-test green
+        completed: '2026-05-18'
+        review_findings: "HIGH: aside_resolver.resolve() does not catch LLM call failure/timeout (anthropic.APIError/asyncio.TimeoutError escape the narrow except) — crashes PLAYER_ACTION handler, violates spec §6 'LLM call fails/times out -> resolver_error, no turn lost'. MEDIUM: no ERROR-level log on resolver_error path (spec §6 requires it). LOW: aside-branch acting-name resolution unguarded vs normal path. Testable -> RED rework: add raising-LLM test."
+        review_verdict: approved
+      - id: 50-26
+        title: Harden ADR-106 curate stage against truncated JSON — no frozen turn, loud degrade-to-uncurated
+        description: "ADR-106 megadungeon curate stage has no robustness against a truncated/unterminated curate-LLM JSON response. Source of truth: /Users/slabgorb/Projects/sq-playtest-pingpong.md, the '[BS-BUG] Dungeon curation pass returns truncated/unterminated JSON -> materializer raises CurationError, freezing the turn (~9-min table dead-air on the R3 descent)' headline (GM/Architect OQ-1, 2026-05-17) — read its Root-cause and Honest-caveat bullets in full before touching code. Deterministic failure mode (independent of the clock-binding caveat): the curate-stage LLM (claude -p curate, ADR-106 materializer) emits a large wandering_table JSON that is cut mid-string (token cap / streaming cut); _parse_curation_verdict does a strict json.loads with NO repair / retry-with-continuation / bounded-timeout-then-degrade, so the JSONDecodeError becomes sidequest.dungeon.materializer.CurationError (raised materializer.py:914 _stage_curate -> :749/:747 _parse_curation_verdict, observed shapes: 'Unterminated string starting at: line 452 column 17', 'Expecting value: line 429 column 25', head {\"exp001.r0\":{\"race\":\"undead\",\"cr_band\":\"shallow\",\"wandering_table\":[{\"name\":\"Skeleton\",...) which propagates unhandled and freezes the narration turn — a multi-minute submit-and-wait dead-air with zero player feedback, the worst MP failure mode for the Alex/whole-table pacing axis, and a No-Silent-Fallbacks gap in the ADR-106 curate stage. GATING PRECONDITION (the pingpong explicitly routes this): do NOT blind-patch the parser. The policy choice — JSON repair vs retry-with-continuation vs degrade-to-uncurated-room — is an Architect contract decision under ADR-106 and MUST be recorded (ADR-106 amendment or a design note referenced by the implementation) BEFORE GREEN; the implemented behaviour must be exactly the recorded policy. The fix must be LOUD per CLAUDE.md No-Silent-Fallbacks + the OTEL lie-detector mandate: a degraded room is observably marked uncurated and emits a span, never silently substituted, never a swallowed except. SCOPE GUARD: whether this exact CurationError consumed the live R3 9-min gap is a clock-binding question owned by OQ-1's next-session timestamped capture (pingpong Honest-caveat) — it is a verification step, NOT a code blocker and NOT in this story's scope; the deterministic strict-json.loads-on-truncated-output failure is sufficient and is what this story fixes. Repo: sidequest-server (dungeon/materializer.py). Player-feedback-during-materialize (a UI progress signal) is explicitly OUT of scope unless the Architect policy decision requires it — do not over-scope; fixing the freeze removes the dead-air."
+        points: 5
+        priority: p1
+        status: done
+        started: '2026-05-18'
+        repos: sidequest-server
+        workflow: tdd
+        acceptance_criteria:
+          - 'AC-1 (Architect contract decision recorded, GATING — precedes GREEN): the repair-vs-retry-with-continuation-vs-degrade-to-uncurated policy is decided by the Architect under ADR-106 and written down (ADR-106 amendment or a session design note the implementation references). Verifiable: the recorded decision exists and the shipped behaviour matches it exactly; a reviewer can point at the policy doc and the code path that implements it.'
+          - 'AC-2 (no frozen turn): a truncated/unterminated curate-stage JSON response no longer produces an unhandled CurationError that propagates and blocks the narration turn. Verifiable (RED first): a test feeds _stage_curate / _parse_curation_verdict the exact pingpong failure shapes (Unterminated string at line 452 col 17; Expecting value line 429 col 25; the {exp001.r0:{race:undead,cr_band:shallow,wandering_table:[{name:Skeleton... truncated head) and asserts the materialize resolves within a bounded time budget per the AC-1 policy (repaired parse, or a degraded uncurated room) — the exception does NOT escape _stage_curate.'
+          - 'AC-3 (loud + observable — No-Silent-Fallbacks + OTEL mandate): every curate-parse failure AND every degrade-to-uncurated fallback emits a routed OTEL span / watcher event (e.g. dungeon.curate.parse_failed / dungeon.curate.degraded) carrying region_id, failure_kind, and retry_count, GM-panel visible. A degraded room is explicitly flagged uncurated in the materialized state, never silently swapped for a curated one. Verifiable: the span fires in the AC-2 test and the degraded region carries the uncurated marker.'
+          - 'AC-4 (bounded, non-looping): if the AC-1 policy includes retry-with-continuation, it is capped by an explicit budget (max attempts AND wall-clock) that provably cannot loop; budget exhaustion deterministically falls through to the degrade path. Verifiable: a test forces repeated truncated responses and asserts the attempt count is capped and the degrade path is taken (no unbounded loop, no second freeze).'
+          - "AC-5 (wiring — not a parser unit test in isolation): the robustness path is exercised end-to-end through the real dungeon/materializer.py materialize -> _stage_curate -> _parse_curation_verdict chain (ADR-106 production path), proving it is reachable from a real expansion materialize (the exp001.r0-style first-descent expansion), per CLAUDE.md 'every test suite needs a wiring test'."
+        completed: '2026-05-18'
+        type: bug
+        review_verdict: approved
+      - id: 50-27
+        title: Parallelize pytest with pytest-xdist — isolate global-state fixtures, 5-6 min suite → ~1 min
+        description: |-
+          The full server test suite (7,440 tests) walks serially in 5-6 minutes. Per-test speed is already fine (sub-second; median ~5-20ms, slowest ~0.5s on intentional timeout tests). The bottleneck is purely cardinality + serial execution. Add pytest-xdist and run `-n auto` to shard across cores; expect ~5-8× speedup on a 10-core machine (~1 min full suite).
+
+          Surfaced by Dev during 50-9 GREEN phase (2026-05-21): testing-runner reported a "stuck at 81%" — investigation showed the suite was progressing normally, just large. Keith confirmed: "tests should be fast" + "we aren't doing rocket surgery here when the LLM is not involved" — agreed, and the per-test speed already meets that bar. This story closes the wall-clock gap that comes from suite size alone.
+
+          KNOWN RISK — global state in fixtures: parallel workers don't share Python process state, so any test using a singleton/process-level resource needs per-worker isolation. Likely offenders:
+          - OTEL TracerProvider (multiple test files call `init_tracer()` and rely on the singleton — see `tests/audio/test_mood_alias_chain.py::otel_capture` fixture pattern). Will need worker-scoped fixtures OR `init_tracer()` needs to be made worker-aware.
+          - SQLite saves at `~/.sidequest/saves/` — multiple workers writing the same DB will lock. Any test that loads or writes a save needs per-worker tmp dirs.
+          - Daemon socket fixtures (if any test spins up the unix-socket daemon, port/path collisions in parallel).
+          - Fixed `tmp_path`-style fixtures using a non-pytest tempdir.
+
+          EXPECTED WORK:
+          1. Add `pytest-xdist` to dev deps in `pyproject.toml`; `uv sync`.
+          2. Run `uv run pytest -n auto` and triage failures by category.
+          3. Fix global-state offenders by scoping fixtures to `session` -> `function` or by adding worker_id to shared paths.
+          4. Update orchestrator `justfile` (`just server-test` recipe) + `pf check` invocation to pass `-n auto`.
+          5. Verify CI config (if any) gets the flag too.
+
+          NON-GOALS:
+          - Do not parallelize integration tests (`tests/integration/`) without a separate audit — those are more likely to share state.
+          - Do not change individual test logic to enable parallelism — fix the FIXTURE, not the test.
+          - Do not raise the per-test 30s timeout — that's a leak-catcher and stays.
+
+          ACCEPTANCE (set via --add-ac):
+          - AC-1: `uv run pytest -n auto` completes the full unit suite (tests/ minus tests/integration, tests/e2e) in under 90 seconds on Keith's machine (10-core ARM Mac baseline).
+          - AC-2: All tests that pass serially continue to pass under `-n auto`. No regression, no skipped/xfailed test from flakiness.
+          - AC-3: `just server-test` and `pf check` invoke parallel mode by default (with a documented opt-out for debugging).
+          - AC-4: Any fixture refactored for worker isolation is annotated with a comment naming the global state it isolates from.
+          - AC-5: Story 50-9 reference: this story exists because the slow suite made 50-9's verify-loop painful; verify by re-running 50-9's full suite check in under 90s after this lands.
+
+          Repos: sidequest-server (bulk of fixture/dep work) + orchestrator (justfile + pf check recipe).
+        points: 5
+        priority: p2
+        status: backlog
+        repos: sidequest-server,orchestrator
+        workflow: tdd
+        type: chore

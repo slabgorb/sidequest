@@ -168,11 +168,21 @@ stories:
     assignee: slabgorb
   - id: 50-9
     title: 'Mood: implement mood_aliases alias-chain fallback in music director track selection (ADR-033 Pillar 3 Steps 1-3)'
+    description: |-
+      ADR-033 Pillar 3 (Music Extension) specifies a mood_aliases dict that maps genre-specific moods to core mood_tracks keys via chain fallback. The model (AudioConfig.mood_aliases), load-time validation, runtime resolver (resolve_mood_to_track_key), and OTEL spans are implemented but untested in production. TDD approach: write comprehensive unit + wiring tests to verify the alias-chain fallback works end-to-end, then author mood_aliases sections in at least one live pack (spaghetti_western) for content coverage.
+
+      Spec: ADR-033 §Pillar 3 Steps 1–3 (mood_aliases field, chain walk, track selection via alias).
     points: 3
     priority: p3
     status: backlog
     repos: server,content
     workflow: tdd
+    acceptance_criteria:
+      - "AC-1: AudioConfig.mood_aliases model + load-time validator complete and tested (cycles, broken links, depth limits rejected loudly)"
+      - "AC-2: resolve_mood_to_track_key() walks declared alias chains, emits OTEL spans (mood_alias_resolved / mood_alias_failed), integrated in LibraryBackend._resolve_music()"
+      - "AC-3: OTEL spans registered in SPAN_ROUTES and GM-panel visible; wiring test confirms spans fire on mood resolution"
+      - "AC-4: At least one live pack (spaghetti_western) authored with mood_aliases for custom moods; all packs validate at load"
+      - "AC-5: Production wiring test or playtest turn confirms novel mood resolves via alias chain and track is selected (not None)"
   - id: 50-10
     title: 'Disposition: central Attitude enum + Disposition.attitude() derivation (replace dispatch/opening helper)'
     points: 3
