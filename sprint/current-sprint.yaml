@@ -756,7 +756,8 @@ epics:
           Repos: sidequest-server (bulk of fixture/dep work) + orchestrator (justfile + pf check recipe).
         points: 5
         priority: p2
-        status: backlog
+        status: in_progress
+        started: '2026-05-21'
         repos: sidequest-server,orchestrator
         workflow: tdd
         type: chore
