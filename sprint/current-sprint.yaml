@@ -215,6 +215,14 @@ epics:
         branch: feat/24-9-spaghetti-western-calendar
         assignee: slabgorb
         review_verdict: approved
+      - id: 24-10
+        title: Wire world-grounding YAML loaders + ToolContext fields at session bootstrap (unblocks 24-8 playtest)
+        points: 3
+        priority: p1
+        status: backlog
+        repos: server
+        workflow: tdd
+        depends_on: 24-7
   - id: '22'
     type: epic
     title: "Epic: Seed Tropes — Narrative Variety via Schrödinger's Gun"
