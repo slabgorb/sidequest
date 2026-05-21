@@ -256,6 +256,14 @@ epics:
         workflow: trivial
         acceptance_criteria: []
         type: chore
+      - id: 24-9
+        title: Author spaghetti_western calendar for dust_and_lead + the_real_mccoy (1878 Gregorian; months, days, festivals, time precision)
+        points: 2
+        priority: p0
+        status: backlog
+        repos: content
+        workflow: trivial
+        type: chore
   - id: '22'
     type: epic
     title: "Epic: Seed Tropes — Narrative Variety via Schrödinger's Gun"
