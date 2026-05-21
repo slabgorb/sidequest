@@ -277,3 +277,50 @@ epics:
         repos: server
         workflow: tdd
         acceptance_criteria: []
+  - id: '59'
+    type: epic
+    title: Confrontation Engagement Regression — Narrator Stops Firing advance_confrontation
+    description: "Post-Epic-50 regression found in the 2026-05-21 Glenross playtest: the SDK narrator never calls advance_confrontation, so social confrontations (negotiation/trial/auction/social_duel/scandal) never engage in tea_and_murder. The narrator writes full standoff/negotiation prose with zero engine state (every turn logs confrontation=None, beat_selections=0; advance_confrontation invoked 0 times despite tool_calls=1-4/turn). Epic 50 moved from keyword auto-trigger to a narrator-declared-intent model (79cea7a, 60027da, ad9381b) and deleted the _CONFRONTATION_TRIGGER_PATTERNS lie-detector (93c7659) that used to catch exactly this non-engagement — so the regression ships silently. Tool is registered and output_only_sdk.md has strong trigger criteria, so it's a behavior/wiring gap, not a missing tool. Scope: get the narrator to actually declare social confrontations in tea_and_murder, and restore a non-keyword OTEL lie-detector for narrated-confrontation-without-engine-state."
+    priority: p1
+    status: ready
+    repos: sidequest-server
+    stories:
+      - id: 59-1
+        title: Narrator never calls advance_confrontation in tea_and_murder — social confrontations never engage
+        description: |-
+          Found in 2026-05-21 Glenross (tea_and_murder) solo playtest. The SDK narrator never calls advance_confrontation, so the social-confrontation engine (negotiation/trial/auction/social_duel/scandal) never engages. The narrator writes full confrontation prose with no engine state behind it — a SOUL/OTEL 'winging it' violation.
+
+          REPRO: Glenross solo; reach an NPC resisting questioning (Solicitor Ewan Forbes); escalate explicitly ('I block his way and call the bluff: name your client or I'll have the Sergeant ask you'). Narrator returns a textbook standoff ('he makes no move to go around Neil — but he makes no move to answer further, either') and NO confrontation engages.
+
+          OTEL EVIDENCE: every turn logs 'game_patch.extracted ... beat_selections=0 confrontation=None'; across ~6 turns the narrator made tool_calls=1..4/turn (apply_world_patch, commit_known_fact) but advance_confrontation was invoked 0 times and there were 0 confrontation.intent* spans.
+
+          GIT CONTEXT (all on develop): Epic 50 moved to a narrator-declared-intent model (79cea7a derive intent_verb_set per ConfrontationDef; 60027da validate(action_rewrite,declared,pack); ad9381b enumerate Victoria social types) and 93c7659 DELETED _CONFRONTATION_TRIGGER_PATTERNS — the keyword lie-detector that caught narrated-confrontation-without-engine-state. So the regression is silent. Tool is registered (agents/tools/__init__.py) and output_only_sdk.md §4 has strong trigger criteria incl. negotiation/social_duel/scandal — so it's a behavior/wiring gap, not a missing tool. Likely: SDK tool selection is driven by tool DESCRIPTION not system prompt (ADR-111); and/or tea_and_murder's derived intent_verb_set is too narrow to match natural prose.
+        points: 5
+        priority: p1
+        status: backlog
+        repos: sidequest-server
+        workflow: tdd
+        acceptance_criteria:
+          - In a tea_and_murder session, an explicit social escalation (accusation / blocking someone's path / formal challenge) causes the narrator to call advance_confrontation on the same turn, with the most specific social type (negotiation/social_duel/trial/auction/scandal) — verified via OTEL (confrontation != None, intent span present).
+          - Verify advance_confrontation is actually in the per-turn tool list handed to the SDK narrator for tea_and_murder (registered != offered).
+          - Audit the advance_confrontation tool DESCRIPTION (not just the system prompt) for social-confrontation coverage, since SDK tool selection keys on the description (ADR-111).
+          - Confirm tea_and_murder ConfrontationDefs derive an intent_verb_set broad enough that natural narrator prose can match (per 79cea7a).
+          - "Restore a non-keyword OTEL lie-detector: a watcher event that flags 'narration reads as a confrontation but advance_confrontation was not called this turn', replacing the deleted _CONFRONTATION_TRIGGER_PATTERNS so this cannot regress silently again."
+          - Add a regression test that drives a social escalation turn for tea_and_murder and asserts advance_confrontation is invoked / confrontation state is non-None.
+        type: bug
+  - id: '60'
+    type: epic
+    title: Narrator Token & Cost Budget — Cache-Write Efficiency
+    description: 'Continuation of archived epic 57 (Narrator Prompt Token Reduction). Live tea_and_murder/glenross playtest on 2026-05-21 showed ~77% of per-narrator-call cost is cache_WRITE, not actual work: a ~12k-token cache breakpoint is re-written to the 5-minute cache on EVERY turn/iteration for the volatile game_state snapshot, which mutates each turn and is therefore never read back (cache_read stays flat at the stable genre prefix ~11,168 while cache_write churns 12,281-12,456 per call). Per-call cost ~$0.059 of which ~$0.046 is wasted cache-write premium. The stable prefix caches correctly; the snapshot segment thrashes the cache. Complements 57-3 (ADR-112 stable-zone cache promotion) and 57-5 (ADR-110 snapshot slimming) but is a distinct concern: breakpoint PLACEMENT, not segment size. Cost savings scale linearly with playtest hours.'
+    priority: p2
+    status: backlog
+    repos: server
+    stories:
+      - id: 60-1
+        title: Stop cache-writing the volatile game_state snapshot segment — reposition cache_control breakpoint
+        points: 3
+        priority: p2
+        status: backlog
+        repos: server
+        workflow: tdd
+        type: refactor
