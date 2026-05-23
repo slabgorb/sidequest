@@ -36,35 +36,73 @@ _log-rotate name:
     : > "$log"
     find "{{logdir}}" -maxdepth 1 -name 'sidequest-*.log.*' -type f -mtime +30 -delete 2>/dev/null || true
 
-# API server (FastAPI / uvicorn) — port 8765
-server *flags:
+# Private: resolve ANTHROPIC_API_KEY from env or ~/.zshrc, print to stdout.
+# Fails loud if neither has it. Anthropic SDK narrator (ADR-101) hard-requires
+# it — without it the SDK raises at first WebSocket connect, NOT at boot, so
+# every entrypoint (server / serve / up) calls this to fail-fast.
+_resolve-anthropic-key:
     #!/usr/bin/env bash
     set -euo pipefail
-    just _log-rotate server
-    log={{logdir}}/sidequest-server.log
-    cd {{root}}/sidequest-server
-    # Anthropic SDK narrator (ADR-101) hard-requires ANTHROPIC_API_KEY — the
-    # SDK client raises without it. Don't depend on the launching shell having
-    # sourced ~/.zshrc: resolve it here (env override wins; else pull the
-    # canonical ~/.zshrc export). Fail loudly, never start silently keyless.
-    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-      ANTHROPIC_API_KEY="$(sed -nE 's/^[[:space:]]*export[[:space:]]+ANTHROPIC_API_KEY=["'\'']?([^"'\'' ]+).*/\1/p' "$HOME/.zshrc" 2>/dev/null | tail -n1)"
+    if [[ -n "${ANTHROPIC_API_KEY:-}" ]]; then
+        echo "${ANTHROPIC_API_KEY}"
+        exit 0
     fi
-    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-      echo "✗ ANTHROPIC_API_KEY not set and no 'export ANTHROPIC_API_KEY=' in ~/.zshrc — Anthropic SDK narrator (ADR-101) cannot start. Export it or add it to ~/.zshrc." >&2
-      exit 1
+    key="$(sed -nE 's/^[[:space:]]*export[[:space:]]+ANTHROPIC_API_KEY=["'\'']?([^"'\'' ]+).*/\1/p' "$HOME/.zshrc" 2>/dev/null | tail -n1)"
+    if [[ -z "$key" ]]; then
+        echo "✗ ANTHROPIC_API_KEY not set and no 'export ANTHROPIC_API_KEY=' in ~/.zshrc — Anthropic SDK narrator (ADR-101) cannot start. Export it or add it to ~/.zshrc." >&2
+        exit 1
     fi
+    echo "$key"
+
+# Private: spawn the dev server (caller handles output redirection / flags).
+# Extracted so `server` and `up` share one source of truth for the uvicorn
+# invocation — a flag/env change updates both call sites.
+_server-cmd *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Split assign+export so a failed resolver propagates `set -e` — `export X=$(...)`
+    # is a builtin invocation whose exit status masks the inner failure.
+    ANTHROPIC_API_KEY="$(just _resolve-anthropic-key)"
     export ANTHROPIC_API_KEY
+    cd {{root}}/sidequest-server
     SIDEQUEST_GENRE_PACKS={{content}} \
     SIDEQUEST_RENDER_ENABLED=1 \
     SIDEQUEST_NARRATOR_STREAMING="${SIDEQUEST_NARRATOR_STREAMING:-1}" \
     SIDEQUEST_ASSET_BASE_URL="${SIDEQUEST_ASSET_BASE_URL:-https://cdn.slabgorb.com}" \
     DEV_SCENES="${DEV_SCENES:-1}" \
     SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
-        uv run uvicorn sidequest.server.app:create_app \
+        exec uv run uvicorn sidequest.server.app:create_app \
             --factory \
-            --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
-        | tee "$log"
+            --host 127.0.0.1 --port 8765 {{flags}}
+
+# Private: spawn the Vite client (caller handles output redirection / flags).
+# Extracted so `client` and `up` share one source of truth.
+_client-cmd *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{root}}/sidequest-ui
+    exec npm run dev -- {{flags}}
+
+# Private: spawn the daemon (caller handles output redirection / flags).
+# Extracted per Story 43-5 so `daemon` and `up` share one source of truth
+# for the daemon invocation — a flag change updates both call sites.
+_daemon-cmd *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    : "${R2_S3_ENDPOINT:?R2_S3_ENDPOINT must be set in shell}"
+    : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID must be set in shell}"
+    : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY must be set in shell}"
+    cd {{root}}/sidequest-daemon
+    SIDEQUEST_GENRE_PACKS={{content}} \
+        exec uv run sidequest-renderer --warmup {{flags}}
+
+# API server (FastAPI / uvicorn) — port 8765
+server *flags:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just _log-rotate server
+    log={{logdir}}/sidequest-server.log
+    just _server-cmd {{flags}} 2>&1 | tee "$log"
 
 # Production-style serve for Cloudflare Tunnel: build UI, mount it on FastAPI,
 # run without --reload. Pair with `cloudflared tunnel run sidequest`.
@@ -76,26 +114,19 @@ server *flags:
 #   dev (serves from /genre and /renders mounts).
 # - --proxy-headers: trust X-Forwarded-* from cloudflared on 127.0.0.1, so
 #   request.url and client IP reflect the public hostname (https) instead of localhost.
+#
+# Standalone of _server-cmd because flags + env differ (UI_DIST mount,
+# --proxy-headers, no DEV_SCENES/FIXTURES_DIR).
 serve *flags:
     #!/usr/bin/env bash
     set -euo pipefail
     just _log-rotate server
     log={{logdir}}/sidequest-server.log
+    ANTHROPIC_API_KEY="$(just _resolve-anthropic-key)"
+    export ANTHROPIC_API_KEY
     echo "▶ building UI…"
     ( cd {{root}}/sidequest-ui && npm run build )
     cd {{root}}/sidequest-server
-    # Anthropic SDK narrator (ADR-101) hard-requires ANTHROPIC_API_KEY — the
-    # SDK client raises without it. Don't depend on the launching shell having
-    # sourced ~/.zshrc: resolve it here (env override wins; else pull the
-    # canonical ~/.zshrc export). Fail loudly, never start silently keyless.
-    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-      ANTHROPIC_API_KEY="$(sed -nE 's/^[[:space:]]*export[[:space:]]+ANTHROPIC_API_KEY=["'\'']?([^"'\'' ]+).*/\1/p' "$HOME/.zshrc" 2>/dev/null | tail -n1)"
-    fi
-    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-      echo "✗ ANTHROPIC_API_KEY not set and no 'export ANTHROPIC_API_KEY=' in ~/.zshrc — Anthropic SDK narrator (ADR-101) cannot start. Export it or add it to ~/.zshrc." >&2
-      exit 1
-    fi
-    export ANTHROPIC_API_KEY
     SIDEQUEST_GENRE_PACKS={{content}} \
     SIDEQUEST_RENDER_ENABLED=1 \
     SIDEQUEST_NARRATOR_STREAMING="${SIDEQUEST_NARRATOR_STREAMING:-1}" \
@@ -119,21 +150,7 @@ client *flags:
     set -euo pipefail
     just _log-rotate client
     log={{logdir}}/sidequest-client.log
-    cd {{root}}/sidequest-ui
-    npm run dev -- {{flags}} 2>&1 | tee "$log"
-
-# Private: spawn the daemon (caller handles output redirection / flags).
-# Extracted per Story 43-5 so `daemon` and `up` share one source of truth
-# for the daemon invocation — a flag change updates both call sites.
-_daemon-cmd *flags:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    : "${R2_S3_ENDPOINT:?R2_S3_ENDPOINT must be set in shell}"
-    : "${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID must be set in shell}"
-    : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY must be set in shell}"
-    cd {{root}}/sidequest-daemon
-    SIDEQUEST_GENRE_PACKS={{content}} \
-        exec uv run sidequest-renderer --warmup {{flags}}
+    just _client-cmd {{flags}} 2>&1 | tee "$log"
 
 # Media daemon (Z-Image renderer) with warmup
 daemon *flags:
@@ -156,18 +173,12 @@ up *flags:
     : "${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY must be set in shell}"
 
     # Anthropic SDK narrator (ADR-101) hard-requires ANTHROPIC_API_KEY — the SDK
-    # client raises at first WebSocket connect without it. `just server` resolves
-    # this but `up` historically did not, so `up` failed late mid-session instead
-    # of refusing at boot. Resolve it here (env override wins; else pull the
-    # canonical ~/.zshrc export), export so the inline server subshell inherits
-    # it, and fail loudly. Never start silently keyless.
-    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-      ANTHROPIC_API_KEY="$(sed -nE 's/^[[:space:]]*export[[:space:]]+ANTHROPIC_API_KEY=["'\'']?([^"'\'' ]+).*/\1/p' "$HOME/.zshrc" 2>/dev/null | tail -n1)"
-    fi
-    if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
-      echo "✗ ANTHROPIC_API_KEY not set and no 'export ANTHROPIC_API_KEY=' in ~/.zshrc — Anthropic SDK narrator (ADR-101) cannot start. Export it or add it to ~/.zshrc." >&2
-      exit 1
-    fi
+    # client raises at first WebSocket connect without it. Fail-fast at boot
+    # rather than mid-session. _server-cmd resolves it again internally, but
+    # this pre-flight call lets `up` refuse before backgrounding subprocesses.
+    # Split assign+export so a failed resolver propagates `set -e` (export's
+    # exit status masks command-substitution failure).
+    ANTHROPIC_API_KEY="$(just _resolve-anthropic-key)"
     export ANTHROPIC_API_KEY
 
     # OTEL: by default export spans + mirror every watcher event as a synthetic
@@ -270,19 +281,11 @@ up *flags:
     echo $! > {{rundir}}/sidequest-daemon.pid
 
     echo "▶ server  (:8765)   → $srv"
-    ( cd {{root}}/sidequest-server && \
-        SIDEQUEST_GENRE_PACKS={{content}} \
-        SIDEQUEST_RENDER_ENABLED=1 \
-        SIDEQUEST_ASSET_BASE_URL="${SIDEQUEST_ASSET_BASE_URL:-https://cdn.slabgorb.com}" \
-        DEV_SCENES="${DEV_SCENES:-1}" \
-        SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
-        uv run uvicorn sidequest.server.app:create_app \
-            --factory \
-            --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
+    ( just _server-cmd >"$srv" 2>&1 ) &
     echo $! > {{rundir}}/sidequest-server.pid
 
     echo "▶ client  (:5173)   → $cli"
-    ( cd {{root}}/sidequest-ui && npm run dev >"$cli" 2>&1 ) &
+    ( just _client-cmd >"$cli" 2>&1 ) &
     echo $! > {{rundir}}/sidequest-client.pid
 
     cleanup() {
