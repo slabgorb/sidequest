@@ -35,10 +35,9 @@ stories:
     description: Revive sidequest/agents/local_dm.py as sidequest/agents/intent_router.py (IntentRouter class). Wire an SDK-Haiku LlmClient adapter mirroring the AsideResolver / _ASIDE_MODEL pattern in agents/llm_factory.py. Emit DispatchPackage per (action, state_summary). Remove DispatchPackage.degraded and degraded_reason fields per ADR-113 no-fallbacks discipline. Implement fail-loud router failure path (ERROR span, bounded retry, explicit surface). Not yet called from the live pipeline — that lands in 59-4. Foundation story for the reframed Epic 59 Intent Router spine.
     points: 5
     priority: p1
-    status: in_progress
+    status: done
     repos: sidequest-server
     workflow: tdd
-    branch: feat/59-2-intent-router-skeleton
     acceptance_criteria:
       - IntentRouter class exists (renamed from LocalDM); IntentRouter.decompose(action, state_summary) returns schema-valid DispatchPackage on synthetic input fixture test
       - DispatchPackage.degraded and degraded_reason fields REMOVED from protocol/dispatch.py; _degraded_requires_reason validator REMOVED; all existing references (tests, callers) updated; tests for the old degraded path migrated to assert fail-loud retry semantics instead
@@ -47,6 +46,9 @@ stories:
       - 'Fail-loud failure path: Haiku timeout / transport error / unparseable / schema-invalid → ERROR-level intent_router.failed OTEL span (reason + raw preview); ONE bounded retry; retry-also-fails surfaces explicit error (no silent narrator-only continuation). Tests prove each failure mode and the absence of silent fallback per memory rule feedback_no_fallbacks_hard'
       - 'OTEL spans: intent_router.decompose (action length, model, confidence_global, dispatch count, latency, retry count); intent_router.failed (ERROR). Legacy local_dm_decompose_span renamed/removed'
       - 'Wiring test per CLAUDE.md: assert IntentRouter is importable + constructible with SDK-Haiku adapter; document that LIVE pipeline wiring happens in 59-4'
+    completed: '2026-05-23'
+    branch: feat/59-2-intent-router-skeleton
+    review_verdict: approved
   - id: 59-3
     title: Repurpose confrontation_intent_validator as router-vs-engine lie-detector watcher
     description: Change confrontation_intent_validator trigger from narrator-action_rewrite vs engaged-encounter mismatch to router-dispatched-subsystem vs engine-engaged-on-snapshot mismatch. Broaden semantics across the full dispatch vocabulary (confrontation, magic_working, scenario_clue). Watcher is a pure function (package, post_turn_snapshot) → optional[mismatch_span] running post-turn. Replaces both the deleted _CONFRONTATION_TRIGGER_PATTERNS keyword scanner (93c7659) and the 59-1-shipped confrontation_intent_mismatch_reprompt_failed_span self-report-reprompt flow. One mechanism per project memory feedback_one_mechanism_per_problem.
