@@ -39,10 +39,11 @@ stories:
     title: 'OTEL spans: rig_pool delta + rig_crash_event per ADR-031'
     points: 2
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-05-23'
     repos: sidequest-server
     workflow: tdd
-    started: '2026-05-23'
+    completed: '2026-05-23'
   - id: 53-5
     title: 'UI: surface RigComposure + Edge + injury tags on CharacterSheet'
     points: 2
