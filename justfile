@@ -2,7 +2,12 @@
 
 root    := justfile_directory()
 content := root / "sidequest-content" / "genre_packs"
-logdir  := "/tmp"
+# Logs live under ~/.sidequest/logs so reboots don't eat them (was /tmp).
+# Each run rotates the previous file to sidequest-<svc>.log.YYYYMMDD-HHMMSS
+# and prunes rotated logs older than 30 days. Pidfiles + the stack lock stay
+# in /tmp because they MUST clear on reboot (stale-pid handler already copes).
+logdir  := home_directory() / ".sidequest" / "logs"
+rundir  := "/tmp"
 
 import '.pennyfarthing/justfile.pf'
 
@@ -11,17 +16,32 @@ default: up
 
 # ---------------------------------------------------------------------------
 # The three you actually use.
-# Each recipe tees stdout+stderr to /tmp so you can re-tail it later with:
-#   tail -f /tmp/sidequest-{server,client,daemon}.log
+# Each recipe tees stdout+stderr to ~/.sidequest/logs so you can re-tail with:
+#   tail -f ~/.sidequest/logs/sidequest-{server,client,daemon}.log
+# Previous runs are kept as sidequest-<svc>.log.YYYYMMDD-HHMMSS for 30 days.
 # Ctrl-C stops the service in the foreground.
 # ---------------------------------------------------------------------------
+
+# Private: rotate {{logdir}}/sidequest-<name>.log → .log.YYYYMMDD-HHMMSS,
+# then drop rotated logs older than 30d. Used by every recipe that writes
+# a service log so reboots stop nuking history.
+_log-rotate name:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p "{{logdir}}"
+    log="{{logdir}}/sidequest-{{name}}.log"
+    if [[ -s "$log" ]]; then
+        mv "$log" "${log}.$(date +%Y%m%d-%H%M%S)"
+    fi
+    : > "$log"
+    find "{{logdir}}" -maxdepth 1 -name 'sidequest-*.log.*' -type f -mtime +30 -delete 2>/dev/null || true
 
 # API server (FastAPI / uvicorn) — port 8765
 server *flags:
     #!/usr/bin/env bash
     set -euo pipefail
+    just _log-rotate server
     log={{logdir}}/sidequest-server.log
-    : > "$log"
     cd {{root}}/sidequest-server
     # Anthropic SDK narrator (ADR-101) hard-requires ANTHROPIC_API_KEY — the
     # SDK client raises without it. Don't depend on the launching shell having
@@ -59,8 +79,8 @@ server *flags:
 serve *flags:
     #!/usr/bin/env bash
     set -euo pipefail
+    just _log-rotate server
     log={{logdir}}/sidequest-server.log
-    : > "$log"
     echo "▶ building UI…"
     ( cd {{root}}/sidequest-ui && npm run build )
     cd {{root}}/sidequest-server
@@ -97,8 +117,8 @@ tunnel:
 client *flags:
     #!/usr/bin/env bash
     set -euo pipefail
+    just _log-rotate client
     log={{logdir}}/sidequest-client.log
-    : > "$log"
     cd {{root}}/sidequest-ui
     npm run dev -- {{flags}} 2>&1 | tee "$log"
 
@@ -119,8 +139,8 @@ _daemon-cmd *flags:
 daemon *flags:
     #!/usr/bin/env bash
     set -euo pipefail
+    just _log-rotate daemon
     log={{logdir}}/sidequest-daemon.log
-    : > "$log"
     just _daemon-cmd {{flags}} 2>&1 | tee "$log"
 
 # ---------------------------------------------------------------------------
@@ -167,6 +187,7 @@ up *flags:
     srv={{logdir}}/sidequest-server.log
     cli={{logdir}}/sidequest-client.log
     dmn={{logdir}}/sidequest-daemon.log
+    mkdir -p "{{logdir}}"
 
     # ---- Machine-global singleton lock (spans every clone) ------------------
     # Prevents the 2026-05-21 duplicate-stack cost runaway: two `just up` from
@@ -210,11 +231,14 @@ up *flags:
         echo "HOLDER_SINCE=\"$(date '+%Y-%m-%d %H:%M:%S')\""
     } > "$holder"
 
-    : > "$srv"; : > "$cli"; : > "$dmn"
+    # Rotate prior logs (preserves history across reboots; see _log-rotate).
+    for svc in server client daemon; do
+        just _log-rotate "$svc"
+    done
 
     # Kill any leftover services from a previous run.
     for svc in server client daemon; do
-        pidfile={{logdir}}/sidequest-${svc}.pid
+        pidfile={{rundir}}/sidequest-${svc}.pid
         if [[ -f "$pidfile" ]]; then
             kill "$(cat "$pidfile")" 2>/dev/null || true
             rm -f "$pidfile"
@@ -243,7 +267,7 @@ up *flags:
 
     echo "▶ daemon  (warmup)  → $dmn"
     ( just _daemon-cmd >"$dmn" 2>&1 ) &
-    echo $! > {{logdir}}/sidequest-daemon.pid
+    echo $! > {{rundir}}/sidequest-daemon.pid
 
     echo "▶ server  (:8765)   → $srv"
     ( cd {{root}}/sidequest-server && \
@@ -255,17 +279,17 @@ up *flags:
         uv run uvicorn sidequest.server.app:create_app \
             --factory \
             --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
-    echo $! > {{logdir}}/sidequest-server.pid
+    echo $! > {{rundir}}/sidequest-server.pid
 
     echo "▶ client  (:5173)   → $cli"
     ( cd {{root}}/sidequest-ui && npm run dev >"$cli" 2>&1 ) &
-    echo $! > {{logdir}}/sidequest-client.pid
+    echo $! > {{rundir}}/sidequest-client.pid
 
     cleanup() {
         echo
         echo "Stopping services…"
         for svc in server client daemon; do
-            pidfile={{logdir}}/sidequest-${svc}.pid
+            pidfile={{rundir}}/sidequest-${svc}.pid
             if [[ -f "$pidfile" ]]; then
                 kill "$(cat "$pidfile")" 2>/dev/null || true
                 rm -f "$pidfile"
@@ -297,7 +321,7 @@ up *flags:
 down:
     #!/usr/bin/env bash
     for svc in server client daemon; do
-        pidfile={{logdir}}/sidequest-${svc}.pid
+        pidfile={{rundir}}/sidequest-${svc}.pid
         if [[ -f "$pidfile" ]]; then
             pid=$(cat "$pidfile")
             if kill -0 "$pid" 2>/dev/null; then
@@ -325,8 +349,10 @@ down:
     rm -rf /tmp/sidequest-stack.lock.d
 
 # Tail one or all service logs.  `just logs`, `just logs server`, etc.
+# Reads from ~/.sidequest/logs (rotated per launch, 30d retention).
 logs service="all":
     #!/usr/bin/env bash
+    mkdir -p "{{logdir}}"
     if [[ "{{service}}" == "all" ]]; then
         tail -F {{logdir}}/sidequest-server.log \
                 {{logdir}}/sidequest-client.log \
@@ -425,8 +451,7 @@ otel:
 jaeger:
     #!/usr/bin/env bash
     set -euo pipefail
-    log={{logdir}}/sidequest-jaeger.log
-    pidfile={{logdir}}/sidequest-jaeger.pid
+    pidfile={{rundir}}/sidequest-jaeger.pid
     if [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile")" 2>/dev/null; then
         echo "Jaeger already running (pid $(cat "$pidfile")). UI: http://localhost:16686"
         exit 0
@@ -436,7 +461,8 @@ jaeger:
         echo "       (jaeger v2 binary from https://github.com/jaegertracing/jaeger/releases)"
         exit 1
     fi
-    : > "$log"
+    just _log-rotate jaeger
+    log={{logdir}}/sidequest-jaeger.log
     mkdir -p /tmp/sidequest-jaeger/keys /tmp/sidequest-jaeger/values
     unset OTEL_EXPORTER_OTLP_ENDPOINT OTEL_EXPORTER_OTLP_HEADERS \
           OTEL_EXPORTER_OTLP_PROTOCOL OTEL_EXPORTER_OTLP_TRACES_ENDPOINT \
@@ -449,7 +475,7 @@ jaeger:
 # Stop the background Jaeger started by `just jaeger`.
 jaeger-stop:
     #!/usr/bin/env bash
-    pidfile={{logdir}}/sidequest-jaeger.pid
+    pidfile={{rundir}}/sidequest-jaeger.pid
     if [[ -f "$pidfile" ]]; then
         pid=$(cat "$pidfile")
         if kill -0 "$pid" 2>/dev/null; then
