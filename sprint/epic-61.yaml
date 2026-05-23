@@ -77,3 +77,15 @@ stories:
     workflow: trivial
     depends_on: 61-2
     type: chore
+  - id: 61-7
+    title: 'Unify _npc_in_scene predicate with list_npcs_in_scene scene resolution'
+    points: 2
+    priority: p1
+    status: in_progress
+    repos: server
+    workflow: tdd
+    depends_on: 61-2
+    assigned_to: slabgorb
+    started: '2026-05-23'
+    branch: feat/61-7-unify-npc-in-scene-predicate
+    type: refactor
