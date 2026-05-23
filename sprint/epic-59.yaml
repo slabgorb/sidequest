@@ -1,7 +1,7 @@
 id: '59'
 type: epic
-title: Confrontation Engagement Regression — Narrator Stops Firing advance_confrontation
-description: "Post-Epic-50 regression found in the 2026-05-21 Glenross playtest: the SDK narrator never calls advance_confrontation, so social confrontations (negotiation/trial/auction/social_duel/scandal) never engage in tea_and_murder. The narrator writes full standoff/negotiation prose with zero engine state (every turn logs confrontation=None, beat_selections=0; advance_confrontation invoked 0 times despite tool_calls=1-4/turn). Epic 50 moved from keyword auto-trigger to a narrator-declared-intent model (79cea7a, 60027da, ad9381b) and deleted the _CONFRONTATION_TRIGGER_PATTERNS lie-detector (93c7659) that used to catch exactly this non-engagement — so the regression ships silently. Tool is registered and output_only_sdk.md has strong trigger criteria, so it's a behavior/wiring gap, not a missing tool. Scope: get the narrator to actually declare social confrontations in tea_and_murder, and restore a non-keyword OTEL lie-detector for narrated-confrontation-without-engine-state."
+title: Intent Router — Mechanical-Engagement Spine
+description: "Restore a single authoritative routing spine: a pre-narrator Haiku-via-SDK pass that reads each player's submitted action, infers intent as confidence-scored advisory dispatches, and engages the matching mechanical engine directly BEFORE the narrator runs. The narrator then narrates already-real state and cannot wing the mechanics. Every decision emits OTEL so the GM panel can see the engine engaged (not improvised). Originally scoped as a single-bug fix (Story 59-1 begin_confrontation tool — shipped server PRs #378+#379 2026-05-22) but re-inventory 2026-05-23 revealed the underlying problem is systemic across multiple engines (confrontation, magic_working, scenario_clue, npc_agency, distinctive_detail_hint, reflect_absence) and half the receiving plumbing was already merged-and-dormant from the 2026-04-23 LocalDM Group A/B work (DispatchPackage protocol, run_dispatch_bank executor, lethality_arbiter, redact_dispatch_package, 5 orchestrator consumer sites, 3 subsystem handlers). The 2026-04-28 LocalDM shelving reason (claude -p subprocess latency) is obsolete now that Haiku is an SDK call. See sprint/context/context-epic-59.md for the full architectural reframe and ADR-113 for the structural ratification."
 priority: p1
 status: ready
 repos: sidequest-server
@@ -18,7 +18,7 @@ stories:
       GIT CONTEXT (all on develop): Epic 50 moved to a narrator-declared-intent model (79cea7a derive intent_verb_set per ConfrontationDef; 60027da validate(action_rewrite,declared,pack); ad9381b enumerate Victoria social types) and 93c7659 DELETED _CONFRONTATION_TRIGGER_PATTERNS — the keyword lie-detector that caught narrated-confrontation-without-engine-state. So the regression is silent. Tool is registered (agents/tools/__init__.py) and output_only_sdk.md §4 has strong trigger criteria incl. negotiation/social_duel/scandal — so it's a behavior/wiring gap, not a missing tool. Likely: SDK tool selection is driven by tool DESCRIPTION not system prompt (ADR-111); and/or tea_and_murder's derived intent_verb_set is too narrow to match natural prose.
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -28,4 +28,116 @@ stories:
       - Confirm tea_and_murder ConfrontationDefs derive an intent_verb_set broad enough that natural narrator prose can match (per 79cea7a).
       - "Restore a non-keyword OTEL lie-detector: a watcher event that flags 'narration reads as a confrontation but advance_confrontation was not called this turn', replacing the deleted _CONFRONTATION_TRIGGER_PATTERNS so this cannot regress silently again."
       - Add a regression test that drives a social escalation turn for tea_and_murder and asserts advance_confrontation is invoked / confrontation state is non-None.
+    completed: '2026-05-22'
     type: bug
+  - id: 59-2
+    title: IntentRouter producer skeleton (Haiku-via-SDK) + remove DispatchPackage.degraded
+    description: Revive sidequest/agents/local_dm.py as sidequest/agents/intent_router.py (IntentRouter class). Wire an SDK-Haiku LlmClient adapter mirroring the AsideResolver / _ASIDE_MODEL pattern in agents/llm_factory.py. Emit DispatchPackage per (action, state_summary). Remove DispatchPackage.degraded and degraded_reason fields per ADR-113 no-fallbacks discipline. Implement fail-loud router failure path (ERROR span, bounded retry, explicit surface). Not yet called from the live pipeline — that lands in 59-4. Foundation story for the reframed Epic 59 Intent Router spine.
+    points: 5
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - IntentRouter class exists (renamed from LocalDM); IntentRouter.decompose(action, state_summary) returns schema-valid DispatchPackage on synthetic input fixture test
+      - DispatchPackage.degraded and degraded_reason fields REMOVED from protocol/dispatch.py; _degraded_requires_reason validator REMOVED; all existing references (tests, callers) updated; tests for the old degraded path migrated to assert fail-loud retry semantics instead
+      - SDK-Haiku adapter implemented in agents/llm_factory.py routing claude-haiku-4-5-20251001 via CallType.CLASSIFICATION (mirrors existing _ASIDE_MODEL pattern)
+      - 'local_dm.py (now intent_router.py) module docstring rewritten: DORMANT header removed; replaced with Production live-path producer per ADR-113'
+      - 'Fail-loud failure path: Haiku timeout / transport error / unparseable / schema-invalid → ERROR-level intent_router.failed OTEL span (reason + raw preview); ONE bounded retry; retry-also-fails surfaces explicit error (no silent narrator-only continuation). Tests prove each failure mode and the absence of silent fallback per memory rule feedback_no_fallbacks_hard'
+      - 'OTEL spans: intent_router.decompose (action length, model, confidence_global, dispatch count, latency, retry count); intent_router.failed (ERROR). Legacy local_dm_decompose_span renamed/removed'
+      - 'Wiring test per CLAUDE.md: assert IntentRouter is importable + constructible with SDK-Haiku adapter; document that LIVE pipeline wiring happens in 59-4'
+  - id: 59-3
+    title: Repurpose confrontation_intent_validator as router-vs-engine lie-detector watcher
+    description: Change confrontation_intent_validator trigger from narrator-action_rewrite vs engaged-encounter mismatch to router-dispatched-subsystem vs engine-engaged-on-snapshot mismatch. Broaden semantics across the full dispatch vocabulary (confrontation, magic_working, scenario_clue). Watcher is a pure function (package, post_turn_snapshot) → optional[mismatch_span] running post-turn. Replaces both the deleted _CONFRONTATION_TRIGGER_PATTERNS keyword scanner (93c7659) and the 59-1-shipped confrontation_intent_mismatch_reprompt_failed_span self-report-reprompt flow. One mechanism per project memory feedback_one_mechanism_per_problem.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 59-2
+    acceptance_criteria:
+      - Router dispatched confrontation:negotiation + snapshot has no encounter → mismatch span fires (reuse existing confrontation_unengaged_turn_span)
+      - Router dispatched confrontation:negotiation + snapshot has matching encounter → no span (no false positive)
+      - Router dispatched nothing + snapshot has no encounter → no span (no false positive on quiet turns)
+      - Watcher covers magic_working and scenario_clue dispatch mismatches with new spans dispatch_engagement.{subsystem}.mismatch (extends span family beyond confrontation)
+      - 'Wiring test (CLAUDE.md): drive a synthetic router-dispatched-not-engaged turn through the real watcher hook (not unit-test mock); assert span emission via OTEL not source-text grep'
+      - 59-1-shipped confrontation_intent_mismatch_reprompt_failed_span self-report-reprompt path is REMOVED (replaced by watcher; one mechanism)
+  - id: 59-4
+    title: 'Confrontation cutover: live IntentRouter wiring + retire begin_confrontation (atomic)'
+    description: "THE BIG MIGRATION — atomic, no parallel window per project memory feedback_one_mechanism_per_problem. In ONE PR: (1) wire confrontation dispatch handler at subsystems/confrontation.py → instantiate_encounter_from_trigger; (2) insert IntentRouter into the live turn pipeline pre-narrator with context.dispatch_package populated for real; (3) call run_dispatch_bank to engage engines before narrator runs; (4) retire begin_confrontation tool (relocate to agents/tools/_retired/, drop from per-turn tool list); (5) remove confrontation from _SDK_TOOL_OWNED_FIELDS (orchestrator.py:1088); (6) remove result.confrontation consumer in narration_apply.py (engagement is router-driven); (7) update output_only_sdk.md §4 to note confrontation engagement is no longer narrator's concern; (8) amend ADR-111 with implementation note for engagement-criteria migration from begin_confrontation description to router Haiku prompt."
+    points: 8
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 59-3
+    acceptance_criteria:
+      - "Fixture: synthetic player action ('I block his way and call the bluff') → IntentRouter dispatches confrontation:negotiation → handler creates StructuredEncounter on snapshot BEFORE narrator runs. Verified via OTEL: intent_router.decompose → intent_router.dispatch.confrontation → encounter.created in order, all in one round"
+      - 'Retirement guard: assert narration_apply.py no longer instantiates an encounter from result.confrontation (search-based test on function body OR behavioral: set result.confrontation manually, assert no encounter created)'
+      - begin_confrontation tool removed from registry (agents/tools/__init__.py); file relocated to agents/tools/_retired/begin_confrontation.py with README pointer; no runtime re-export shim
+      - _SDK_TOOL_OWNED_FIELDS at orchestrator.py:1088 no longer contains confrontation entry; sibling fields (location, scene_mood, npcs_present, action_rewrite, etc.) untouched
+      - 'Live wiring test (CLAUDE.md): drive full turn pipeline (orchestrator → router → bank → narrator) end-to-end through fixture; assert encounter creation happens BEFORE narrator turn, not after, via OTEL span ordering'
+      - 'ADR-111 amended with implementation note: confrontation_trigger_constraint moves from begin_confrontation tool description to IntentRouter Haiku system prompt (still cached at system-block level); ADR-113 implementation-pointer updated to point at this story'
+      - 'Failure path (no fallbacks per memory feedback_no_fallbacks_hard): mock router to raise → assert intent_router.failed ERROR span emitted, ONE bounded retry attempted, then explicit failure surfaced (no silent narrator-only continuation)'
+      - Story 59-1 ACs targeting advance_confrontation invocation are formally superseded — note appended to 59-1's archived session file and to ADR-111's commentary that the engagement-criteria home moved again
+  - id: 59-5
+    title: Magic_working dispatch handler + sidecar engagement retirement
+    description: 'Same shape as 59-4, scaled down (less existing wiring to undo). Create subsystems/magic_working.py handler routing the magic_working dispatch to apply_magic_working (narration_apply.py:638). Add magic_working to router dispatch vocabulary (per ADR-113 §Decision §Dispatch vocabulary). Retire result.magic_working sidecar engagement path in narration_apply.py. Update narrator prompt: magic engagement is no longer narrator signal.'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 59-4
+    acceptance_criteria:
+      - 'Fixture: spellcasting action → router dispatches magic_working → handler invokes apply_magic_working BEFORE narrator runs (verified via OTEL span ordering)'
+      - 'Retirement guard: assert narration_apply.py no longer engages magic from result.magic_working sidecar field'
+      - Lie-detector (59-3) covers magic_working dispatch mismatches — verified by extending 59-3 AC4 vocabulary test
+      - 'Wiring test through pipeline: full turn drives router → magic_working handler → apply_magic_working'
+      - ADR-013 drift note updated to reference ADR-113 as the SDK successor for magic engagement (in addition to confrontation engagement already covered)
+  - id: 59-6
+    title: Scenario_clue dispatch handler — supplements footnotes (no retirement)
+    description: "Different from 59-4/59-5: clue advancement currently fires via narrator footnotes (fact_id-carrying) — a legitimate narrator emission (the narrator reveals what players learn, that's a narrator job). Router SUPPLEMENTS without retiring. Create subsystems/scenario_clue.py handler → consume_clue_footnotes (dispatch/scenario_clue_intake.py:34). Router dispatches scenario_clue when player action explicitly references investigation/discovery intent. Footnote-driven path stays alive. Idempotency-key uniqueness (already enforced in DispatchPackage validator) prevents double-engagement."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 59-4
+    acceptance_criteria:
+      - "Fixture: investigation action ('I search the desk') → router dispatches scenario_clue:investigation → handler advances prerequisite-eligible facts"
+      - 'Footnote-driven path unchanged: narrator emits fact_id footnote → narration_apply still calls consume_clue_footnotes (regression test)'
+      - 'No double-engagement: router-dispatched and footnote-driven paths share idempotency keys; DispatchPackage validator rejects duplicates (existing validator)'
+      - Lie-detector covers scenario_clue mismatches (extends 59-3 watcher vocabulary)
+  - id: 59-7
+    title: Wire three LocalDM subsystems (npc_agency, distinctive_detail_hint, reflect_absence)
+    description: These subsystem modules already exist in sidequest/agents/subsystems/ from the 2026-04 LocalDM build but have no live dispatch path. Now that the router is live (post 59-4), wire them through run_dispatch_bank. Pure additive — no engine retirement, no field zeroing changes. Subsystems wake for the first time since 2026-04-28 dormancy.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 59-4
+    acceptance_criteria:
+      - npc_agency dispatch engages its handler when the router emits it (fixture test mirroring 59-4 confrontation shape)
+      - distinctive_detail_hint dispatch engages its handler when the router emits it
+      - reflect_absence dispatch engages its handler when the router emits it
+      - 'redact_dispatch_package honored: visibility-tagged dispatches filtered before narrator sees them in narrator_instructions (existing prompt_redaction module)'
+      - Lie-detector watches these three subsystems (extends 59-3 watcher vocabulary)
+  - id: 59-8
+    title: Glenross playtest validation — folds 59-1 AC1 LLM behavior leg
+    description: The owed playtest. Folds Story 59-1 AC1's 'LLM free tool-choice playtest' carve-out and validates the broader Intent Router spine in a real Glenross (tea_and_murder) session against the SDK backend. Sebastien's mechanical-visibility perspective is load-bearing for the GM-panel router-trace evaluation per CLAUDE.md player rubric.
+    points: 2
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    depends_on: 59-7
+    acceptance_criteria:
+      - Run 30-turn Glenross (tea_and_murder) session against SDK backend with at least three distinct social confrontation triggers (negotiation, social_duel/scandal, trial or auction if reachable)
+      - All three confrontations engage — verified via OTEL intent_router.dispatch.confrontation + encounter.created spans on corresponding turns, and via GM-panel inspection
+      - Lie-detector emits zero dispatch_engagement.*.mismatch spans (no false positives in real play)
+      - 'Submit session writeup (~200 words) covering Sebastien-style mechanical-visibility perspective: is GM-panel router-trace usable for a mechanics-first player'
+      - 'Latency budget: per-turn router add < 1.2s (Haiku 4.5 expected 0.3-0.5s; budget includes pipeline overhead)'
+      - Capture any narrative misses or surprises in sprint/archive/59-8-session.md for post-mortem and feed-back into router prompt tuning
+    type: chore
