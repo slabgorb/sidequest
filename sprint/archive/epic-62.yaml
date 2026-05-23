@@ -3,17 +3,17 @@ type: epic
 title: Genre vs World Voice — Pack Catchphrases Stay at Pack
 description: "Genre packs own signature rhetorical moves (heavy_metal: 'Every empire is ending. Every spell costs.'; others vary). Worlds within a pack must resolve in their own voice — they may inherit the pack catchphrase but not template its rhetorical scaffold, and the catchphrase must fit the world's furniture. Currently heavy_metal/long_foundry and heavy_metal/evropi both close world.yaml descriptions with parallel 'Every X' constructions that mirror the pack's couplet, making distinct worlds feel like the same author writing the same closer. Worse, the chosen 'Every' nouns sometimes don't even apply across the world (Evrópí's 'Every crown' is wrong for the Bladtrablo, Aldkin, Jambiendo — peoples without crowns). This epic separates pack voice from world voice across the board: audit every live pack + workshopping pack, rewrite world descriptions that have flattened into the pack's rhetorical template, leave clean worlds alone. Pack-level descriptions are not touched."
 priority: p2
-status: backlog
+status: done
 repos: content
 stories:
   - id: 62-1
     title: Audit + rewrite world descriptions across all packs to decouple from pack catchphrase
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-23'
     repos: content
     workflow: trivial
-    type: chore
     acceptance_criteria:
       - 'Audit table produced (markdown or yaml in the story session): one row per (pack, world) pair across all 10 live packs + genre_workshopping packs. Each row records (a) the pack-level catchphrase or signature rhetorical move, (b) whether world.yaml description templates that scaffold, (c) whether the chosen catchphrase noun even fits the world''s furniture (e.g., crowns in a world that spans crown-less peoples). Verdict per row: CLEAN / TEMPLATES_PACK / FITS_WRONG.'
       - 'heavy_metal/long_foundry/world.yaml description rewritten in its own register (accounting / ledger / covenant language is the world''s native voice); the parallel "Every account is a little overdue" twin is dropped; pack catchphrase "Every empire is ending" may stay or go but the parallel "Every X" scaffold does not.'
@@ -22,3 +22,7 @@ stories:
       - 'For every (pack, world) marked TEMPLATES_PACK or FITS_WRONG in the audit, the world description is rewritten and the audit row is updated to CLEAN. Worlds marked CLEAN at audit time are left untouched.'
       - 'Pack-level pack.yaml descriptions are NOT modified in this story — the catchphrases live there and stay there.'
       - 'All affected packs still load cleanly. Run the genre-pack loader / validator (sidequest-server pack load test or equivalent CLI) against every touched pack and verify no regressions.'
+    completed: '2026-05-23'
+    type: chore
+    review_verdict: approved
+completed: '2026-05-23'

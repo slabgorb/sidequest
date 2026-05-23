@@ -13,6 +13,7 @@ completed_epics:
   - '54'
   - '58'
   - '50'
+  - '62'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -269,3 +270,8 @@ completed_stories:
     title: Parallelize pytest with pytest-xdist — isolate global-state fixtures, 5-6 min suite → ~1 min
     points: 5
     completed: '2026-05-21'
+  - id: 62-1
+    epic: '62'
+    title: Audit + rewrite world descriptions across all packs to decouple from pack catchphrase
+    points: 5
+    completed: '2026-05-23'
