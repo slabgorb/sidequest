@@ -47,7 +47,9 @@ stories:
     description: 'Two-surface alarm against the runaway pattern we just paid $313 for. Steady-state per-turn cost target is **~$0.03/turn** (60-4 post-fix estimate; healthy Sonnet narrator turn). The runaway pattern was ~$0.50-$1.50/turn at peak, 15-50x over target. (A) Runtime alarm in sidequest-server/sidequest/agents/anthropic_sdk_client.py: fire a loud OTEL emit + log when a single call''s cost_usd > 5x rolling baseline OR matches the 60K-in/12-out fingerprint (input_tokens > 2x baseline AND output_tokens < 50). Single-call detection, no daily-aggregate delay. (B) Token-budget guard in scripts/playtest.py and the SDK-replay workflow: print projected token cost before a scenario run starts (sum of per-action input estimates x N tool-loop iters x cache state), refuse to proceed past --max-projected-cost-usd (default $0.50, ~16x the per-turn target — generous headroom for warm-up + a 5-action scenario, tight enough to catch a runaway by the second turn) without an explicit --confirm-cost flag. Annotate captured /tmp/real_req_*.json dump files with token count + projected per-replay cost in a sidecar so the operator can see at a glance what each iteration will bill. The May 23 replay loop printed money silently for hours; this story makes it impossible to do that without explicitly opting in.'
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: slabgorb
+    started: '2026-05-23'
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -58,6 +60,7 @@ stories:
       - 'SDK replay workflow: any /tmp/real_req_*.json dump file gets a sibling .meta.json with input_tokens + projected_cost_per_replay_usd + per-iter projection. Operator can read at a glance before iterating against it.'
       - 'Regression test: synthesize a 60K-in/12-out call against the fake SDK and assert the runtime alarm fires (one OTEL emit, one ERROR log).'
       - 'Regression test: invoke scripts/playtest.py with a synthesized over-cap scenario and assert the projected-cost preflight emits and that the run halts when projection > $0.50.'
+    completed: '2026-05-23'
   - id: 61-5
     title: 'Architecture gate: new snapshot field must land a bounding decision (test fails otherwise)'
     points: 3
