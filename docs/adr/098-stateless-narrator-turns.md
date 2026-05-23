@@ -85,11 +85,13 @@ Three properties follow by construction:
   session-id read/write block.
 - `narrator_session_id` field removed from save schema. Old saves with the field load
   with it ignored.
-- A hard-budget guard (`SOFT_PROMPT_BUDGET_BYTES ≈ 2_000_000`) refuses the SDK call
+- A hard-budget guard (`PROMPT_BUDGET_BYTES_HARD ≈ 2_000_000`) refuses the SDK call
   when `len(system_prompt) + len(user_message)` exceeds the threshold. **Amended
   2026-05-23 by story 61-3** — was originally a soft canary that logged
   `logger.warning` and let the turn execute. Post-61-3 the same threshold becomes a
-  hard refuse: `_check_oversized_prompt()` at `sidequest-server/sidequest/agents/orchestrator.py:2966`
+  hard refuse: `_check_oversized_prompt()` at `sidequest-server/sidequest/agents/orchestrator.py:2966`.
+  Constant was named `SOFT_PROMPT_BUDGET_BYTES` until renamed by 61-8 §C1 (the soft
+  framing was misleading after the 61-3 promotion).
   returns `True` to make the caller short-circuit the SDK call, emits watcher event
   `prompt_oversized_hard` with `severity="error"`, and logs at `logger.error` level
   (`action=refuse`). The refused turn renders a distinct degraded line
