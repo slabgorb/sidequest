@@ -128,12 +128,15 @@ stories:
     description: "61-4's rolling-baseline-as-comparator has a structural blind spot: a runaway that ramps over many turns trains the baseline upward and trips the 5x-over-baseline alarm only on the spike, not on the sustained N-x-over-target regime. Confirmed in the wild by the 2026-05-23 annees_folles session (11 turns, avg $0.165/turn against ~$0.03/turn target — 5.5x sustained over, no 61-4 alarm fired): see story 60-7 for the full evidence trail. Three mitigations, all in scope: (A) clamp the rolling baseline at a hard ceiling derived from the ~$0.03/turn target so it cannot drift upward beyond ~3x target — the comparator stops being trainable; (B) absolute alarm floor on input_tokens (single-call > N tokens fires regardless of baseline) — catches single-turn spikes; (C) **SESSION-CUMULATIVE HARD KILL at $10.00** — total session API spend over $10.00 terminates the session: server refuses further narrator turns with a loud operator-facing error, GM panel turns red, no further requests issue regardless of per-turn cost. This is the structural backstop the project did not have when $313 burned in 48h. $10.00 = ~333 turns at target ($0.03/turn) — generous headroom for a real long session, tight enough that a 60-7-class regression at $0.165/turn caps at 60 turns / one playtest evening, not a weekend. The ceiling is per-session, NOT per-day or per-account — a long valid session should not be punished, but no single session should ever exceed $10 silently. Mirror the 60-7 closure discipline: this story closes only on a live test where a synthesized over-cap scenario actually triggers the hard kill (not just a unit test that asserts the kwargs)."
     points: 3
     priority: p0
-    status: in_progress
+    status: done
     assigned_to: slabgorb
     started: '2026-05-23'
+    completed: '2026-05-23'
     repos: server
     workflow: tdd
     branch: feat/61-followup-D-session-cumulative-hard-kill
+    pr: 'https://github.com/slabgorb/sidequest-server/pull/394'
+    closure_pending: 'Code merged; story body requires live $10 hard-kill integration test + manual playtest with SIDEQUEST_SESSION_COST_CEILING_USD=0.50 before operator-side closure. Mirrors 60-7 discipline.'
     type: refactor
     acceptance_criteria:
       - 'Rolling-baseline ceiling (A): the per-session rolling baseline used by 61-4''s fingerprint detector is clamped at <=3x the ~$0.03/turn target ($0.09/turn). A 60-7-style 4x-sustained runaway can no longer train the comparator into silence — the 5x-over-baseline rule fires against the clamp, not against the drifted baseline.'
