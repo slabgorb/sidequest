@@ -8,17 +8,23 @@ repos: server
 stories:
   - id: 61-1
     title: Wire LoreStore into production ToolContext (ADR-048 Phase E)
+    description: 'Already shipped via commit 06ad79c (2026-05-21, feat(24-10): wire world-grounding loaders + ToolContext fields at bootstrap) as a side-effect of story 24-10. The lore_store wiring at orchestrator.py:3502 was Phase E of ADR-048 — commit message and code comments make this explicit. Tests at tests/server/test_turn_context_sdk_wiring.py::test_build_turn_context_populates_world_session_store_lore + tests/agents/tools/test_query_lore.py::test_otel_attrs_on_hit cover the AC. Verified 2026-05-23 by TEA + SM: 16 passed. No new code or branch needed.'
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    assigned_to: slabgorb
+    started: '2026-05-23'
     repos: server
     workflow: tdd
+    completed: '2026-05-21'
     type: refactor
   - id: 61-2
     title: 'Extend snapshot drop-list to cover the seven growing fields (per-field: drop / bounded-projection / RAG)'
     points: 5
     priority: p0
-    status: backlog
+    status: in_progress
+    assigned_to: slabgorb
+    started: '2026-05-23'
     repos: server
     workflow: tdd
     type: refactor
