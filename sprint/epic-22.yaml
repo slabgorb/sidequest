@@ -21,10 +21,14 @@ stories:
     title: Seed trope content — author 20-30 seeds for tea_and_murder (dogfood pack) with flavor tags and NPC delivery hints; other-pack expansion follows as separate stories
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-23'
     repos: content
     workflow: trivial
     acceptance_criteria: []
+    completed: '2026-05-23'
+    review_findings: "Round 2: 1 NEW HIGH SOUL.md Agency violation at line 191 the_distillery_running_at_night delivery_hint 1 ('A player sees the lamps themselves, walking back from the inn after closing'). Same pattern as round 1's two fixes; rule-checker missed it round 1, Dev's round-2 self-rescan missed it too. Independent grep confirms it is the ONLY remaining bare-subject 'A player' / 'The player' delivery_hint in the file. One-line rewrite required. All other round-1 findings (6 of 6) verified resolved."
+    review_verdict: approved
   - id: 22-3
     title: Seed trope narrator injection — VALLEY-zone context for active seeds (ADR-009), Faded tag for expired ghosts
     points: 3
