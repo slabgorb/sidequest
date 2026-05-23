@@ -724,6 +724,161 @@ class Playtest:
 # ── CLI ─────────────────────────────────────────────────────────────────────
 
 
+# ── Story 61-4 — Preflight cost guard ───────────────────────────────────────
+#
+# Defense against the 2026-05-23 $313 runaway. ``preflight_cost_check``
+# runs BEFORE any scenario action fires, prints a cache-aware projection
+# and refuses to proceed past ``--max-projected-cost-usd`` (default $0.50
+# ≈ 16x the per-turn target) unless ``--confirm-cost`` is supplied. The
+# May 23 incident happened because nothing was ever printed; loud is the
+# point.
+#
+# Architect spec-check D (2026-05-23): the original worst-case math
+# (``N × 12_000 × 4 × $3/MTok = N × $0.144``) crossed $0.50 at N≥4 actions
+# — every real scenario except 1-3-action fixtures was refused by default.
+# Operators would alias ``--confirm-cost=$true`` within a day and the cap
+# would go silent — exactly the failure this story exists to prevent.
+# Cache-aware math (ADR-101: action 1 pays full input, actions 2+ ride
+# cache-read at $0.30/MTok) makes a 50-action scenario project ~$0.83
+# instead of $7.20 — preserves the cap as a real signal for runaway-shaped
+# scenarios while not false-positiving healthy multi-action playtests.
+#
+# Architect spec-check E (2026-05-23): the SDK-replay sidecar writer
+# (``write_meta_sidecar``) was cut — no producer of ``/tmp/real_req_*.json``
+# exists in tree today and no near-term consumer in the epic context, so
+# the writer was a textbook CLAUDE.md "No Stubbing" violation. The
+# capture path is its own story; re-implement the sidecar writer when the
+# SDK-replay capture path lands.
+
+# Conservative defaults for the preflight worst-case projection. Hard-coded
+# rather than imported from sidequest_server.agents.anthropic_cost so this
+# script stays runnable without the server venv (matches the rest of
+# playtest.py's "no server imports" stance — scenarios load standalone).
+_PREFLIGHT_INPUT_TOKENS_PER_ACTION = 12_000
+_PREFLIGHT_OUTPUT_TOKENS_PER_ACTION = 200
+_PREFLIGHT_ITERS_ASSUMED = 4
+_SONNET_INPUT_PER_MTOK_USD = 3.0
+_SONNET_OUTPUT_PER_MTOK_USD = 15.0
+_SONNET_CACHED_READ_PER_MTOK_USD = 0.30
+
+
+def _project_preflight_cost_usd(n_actions: int) -> float:
+    """Cache-aware projection for ``n_actions`` scenario actions.
+
+    Per ADR-101's four-region cache layout: action 1 pays the full Sonnet
+    input rate ($3/MTok); actions 2+ ride the cache-read rate
+    ($0.30/MTok) for the bulk of the prompt prefix (system + tools +
+    stable session blocks). Output is billed at the full rate every iter.
+
+    Math, per action × ``_PREFLIGHT_ITERS_ASSUMED`` (4) tool-loop iters:
+    - Action 1: ``12_000 × 4 × $3/MTok + 200 × 4 × $15/MTok ≈ $0.156``
+    - Actions 2..N: ``12_000 × 4 × $0.30/MTok + 200 × 4 × $15/MTok ≈ $0.0264`` each
+
+    This makes the canonical 7-action smoke_test scenario project ~$0.34
+    (under the $0.50 default cap) and a 50-action stress scenario
+    ~$1.45 — both legitimate signals: the cap fires on actual runaway
+    shapes, not on healthy multi-action playtests.
+
+    Architect spec-check D (2026-05-23): the prior worst-case-no-rebate
+    math made the default cap refuse smoke_test.yaml itself, which would
+    have driven operators to alias ``--confirm-cost`` permanently and
+    silenced the cap. Cache-aware math preserves the cap as a real signal.
+
+    Assumes the cache TTL exceeds inter-action latency; otherwise actions
+    land cold and projection underestimates. The default 1h TTL
+    (``SIDEQUEST_ANTHROPIC_CACHE_TTL``) covers typical playtests.
+    """
+    if n_actions <= 0:
+        return 0.0
+    per_iter_full_input_usd = (
+        _PREFLIGHT_INPUT_TOKENS_PER_ACTION * _SONNET_INPUT_PER_MTOK_USD / 1_000_000
+    )
+    per_iter_cached_input_usd = (
+        _PREFLIGHT_INPUT_TOKENS_PER_ACTION
+        * _SONNET_CACHED_READ_PER_MTOK_USD
+        / 1_000_000
+    )
+    per_iter_output_usd = (
+        _PREFLIGHT_OUTPUT_TOKENS_PER_ACTION * _SONNET_OUTPUT_PER_MTOK_USD / 1_000_000
+    )
+    first_action_usd = _PREFLIGHT_ITERS_ASSUMED * (
+        per_iter_full_input_usd + per_iter_output_usd
+    )
+    cached_action_usd = _PREFLIGHT_ITERS_ASSUMED * (
+        per_iter_cached_input_usd + per_iter_output_usd
+    )
+    return first_action_usd + (n_actions - 1) * cached_action_usd
+
+
+def preflight_cost_check(
+    scenario: dict[str, Any],
+    *,
+    max_projected_cost_usd: float,
+    confirm_cost: bool,
+) -> bool:
+    """Print projected cost; refuse if projection > cap without confirm.
+
+    AC4 + AC7: operator-facing cost guard. Returns ``True`` when the run
+    should proceed; returns ``False`` (after printing the loud refusal)
+    when the projection exceeds the cap and ``confirm_cost`` is False.
+
+    The projection is ALWAYS printed (even when under cap and even when
+    bypassed via ``confirm_cost``) so every run has an audit trail.
+
+    :param scenario: Loaded scenario dict (output of ``load_scenario``).
+    :param max_projected_cost_usd: Refuse threshold; the run halts when
+        the worst-case projection exceeds this.
+    :param confirm_cost: When True, bypasses the cap (still prints the
+        projection for the audit trail).
+    """
+    actions = scenario.get("actions") or []
+    n_actions = len(actions)
+    projected = _project_preflight_cost_usd(n_actions)
+
+    # Loud: top + bottom rule so a tailed log can't miss it.
+    rule = "=" * 68
+    print(rule, file=sys.stderr)
+    print(
+        f"[61-4 preflight] projected cost: ${projected:.2f} USD "
+        f"(N={n_actions} actions × "
+        f"{_PREFLIGHT_INPUT_TOKENS_PER_ACTION:,} input × "
+        f"{_PREFLIGHT_ITERS_ASSUMED} iters @ Sonnet rates; "
+        f"action 1 full-rate input, actions 2+ cached-read per ADR-101)",
+        file=sys.stderr,
+    )
+    print(
+        f"[61-4 preflight] cap: ${max_projected_cost_usd:.2f} USD "
+        f"(--max-projected-cost-usd; bypass with --confirm-cost)",
+        file=sys.stderr,
+    )
+
+    over_cap = projected > max_projected_cost_usd
+    if over_cap and not confirm_cost:
+        print(
+            f"[61-4 preflight] REFUSED — projected ${projected:.2f} USD "
+            f"exceeds cap ${max_projected_cost_usd:.2f} USD. "
+            "Re-run with --confirm-cost to override, or shrink the scenario.",
+            file=sys.stderr,
+        )
+        print(rule, file=sys.stderr)
+        return False
+
+    if over_cap and confirm_cost:
+        print(
+            f"[61-4 preflight] OVER CAP — proceeding (--confirm-cost supplied). "
+            f"projected ${projected:.2f} USD > cap ${max_projected_cost_usd:.2f} USD",
+            file=sys.stderr,
+        )
+    else:
+        print(
+            f"[61-4 preflight] OK — projected ${projected:.2f} USD ≤ cap "
+            f"${max_projected_cost_usd:.2f} USD",
+            file=sys.stderr,
+        )
+    print(rule, file=sys.stderr)
+    return True
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="playtest",
@@ -805,6 +960,32 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "(default: %(default)s)."
         ),
     )
+    # Story 61-4 — Preflight cost guard (defense against the 2026-05-23
+    # $313 runaway). Prints worst-case projected cost before the scenario
+    # runs and refuses to proceed past the cap unless --confirm-cost is
+    # supplied. See sprint/context/context-story-61-4.md decision D.
+    parser.add_argument(
+        "--max-projected-cost-usd",
+        type=float,
+        default=0.50,
+        help=(
+            "Refuse scenarios whose projected cost exceeds this USD cap "
+            "(default: %(default)s ≈ 16x the per-turn target). Projection "
+            "assumes cache-read on iters 2+ per ADR-101 (action 1 pays "
+            "full input rate; actions 2..N ride cache-read at $0.30/MTok). "
+            "Bypass with --confirm-cost. Story 61-4 defense against the "
+            "2026-05-23 runaway."
+        ),
+    )
+    parser.add_argument(
+        "--confirm-cost",
+        action="store_true",
+        help=(
+            "Bypass the --max-projected-cost-usd cap for this run. The "
+            "projection is still printed for the audit trail. Use when "
+            "you've eyeballed the cost and accept it."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -827,6 +1008,17 @@ async def amain(args: argparse.Namespace) -> int:
             scenario = load_scenario(args.scenario)
         except ScenarioError as exc:
             console.print(f"[bold red]Scenario error: {exc}[/bold red]")
+            return 2
+
+        # Story 61-4 preflight cost guard: refuse to spin up the WS
+        # session if the worst-case projection exceeds the cap. Skipped in
+        # fixture mode because fixtures don't carry a scripted action list
+        # (their cost shape is driven by the harness, not by --scenario).
+        if not preflight_cost_check(
+            scenario,
+            max_projected_cost_usd=args.max_projected_cost_usd,
+            confirm_cost=args.confirm_cost,
+        ):
             return 2
 
     pt = Playtest(
