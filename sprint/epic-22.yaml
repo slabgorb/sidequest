@@ -33,11 +33,12 @@ stories:
     title: Seed trope narrator injection — VALLEY-zone context for active seeds (ADR-009), Faded tag for expired ghosts
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     started: '2026-05-23'
     repos: server
     workflow: tdd
     acceptance_criteria: []
+    completed: '2026-05-23'
     branch: feat/22-3-seed-trope-narrator-injection
   - id: 22-4
     title: Seed trope OTEL + GM panel — seed_fired, seed_expired, seed_promoted spans
