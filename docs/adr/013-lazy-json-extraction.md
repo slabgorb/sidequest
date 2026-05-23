@@ -6,12 +6,24 @@ date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: [39, 101, 102]
+related: [39, 101, 102, 113]
 tags: [agent-system]
 implementation-status: drift
 implementation-pointer: 102
 ---
 
+> **Partially superseded 2026-05-23 (SDK path only).** ADR-113 (Intent
+> Router — Mechanical-Engagement Spine) retires the narrator-emits-sidecar
+> engagement model on the `anthropic_sdk` backend. Engagement fields
+> (`confrontation`, `magic_working`) move from narrator self-report
+> through this three-tier extractor to router-dispatched engine
+> invocation that fires BEFORE the narrator runs. The three-tier
+> extractor described below remains live for the legacy `claude -p`
+> ClaudeClient backend until that backend is retired. SDK-path
+> consumers of `result.confrontation` / `result.magic_working` are
+> removed in Epic 59 story 59-4 (confrontation) and 59-5 (magic).
+> See ADR-113 §Decision §Retirement of self-reported engagement fields.
+>
 > **Drift 2026-05-15.** Phase D of the Anthropic SDK migration (ADR-101)
 > introduces ADR-102 (Tool-Use Protocol for Structured Output) as the
 > narrator-side successor: structured fields now come from typed tool

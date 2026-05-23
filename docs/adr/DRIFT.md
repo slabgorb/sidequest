@@ -31,6 +31,7 @@
 | [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-106: Runtime Procedural Jaquaysed Megadungeon — Contiguous Edge-Expansion, maze-maker Family Port + Complication Ledger](106-runtime-procedural-jaquaysed-megadungeon.md) | ✓ accepted | docs/superpowers/specs/2026-05-16-sunden-deep-procedural-megadungeon-design.md |
 | [ADR-109: Persistent Location Descriptions + Mechanical Manifest](109-persistent-location-descriptions-mechanical-manifest.md) | ✓ accepted | docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md |
+| [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | ✓ accepted | sprint/current-sprint.yaml#57-3 |
 
 ## Deferred — accepted/proposed, not yet implemented
 
@@ -42,4 +43,4 @@
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | ✓ accepted | docs/adr/108-mp-item-attribution-recipient-tagging.md#implementation-guidance-for-dev |
 | [ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred](110-game-state-snapshot-slimming.md) | ✓ accepted | sprint/current-sprint.yaml#57-5 |
 | [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | sprint/current-sprint.yaml#57-4 |
-| [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | ✓ accepted | sprint/current-sprint.yaml#57-3 |
+| [ADR-113: Intent Router — Mechanical-Engagement Spine](113-intent-router-mechanical-engagement-spine.md) | ✓ accepted | sprint/current-sprint.yaml#59-2 |

@@ -1,8 +1,49 @@
 # LocalDM Offline-Only — Design
 
+> **REVERSED 2026-05-23 by ADR-113 (Intent Router — Mechanical-Engagement
+> Spine).** The live-path shelving decision below is no longer in force.
+> LocalDM returns to the live turn pipeline as `IntentRouter`, with a
+> Haiku-via-SDK adapter replacing the `claude -p` subprocess transport
+> that motivated the 2026-04-28 shelving. The latency premise has
+> changed: Haiku-via-SDK shares the narrator's transport (no extra
+> process spawn), runs ~0.3-0.5s for the router's input size, and
+> participates in the same prompt-caching layer as the narrator. The
+> 2026-04-28 reasoning ("two sequential `claude -p` subprocesses per
+> turn") describes a problem the SDK migration (ADR-101) already
+> solved.
+>
+> **What remains valid from this spec:**
+> - The dispatch-bank executor (`run_dispatch_bank`), `DispatchPackage`
+>   protocol, prompt redaction, and visibility-tag plumbing all stayed
+>   merged in tree and dormant, exactly as this spec planned. They wake
+>   up under ADR-113.
+> - The offline corpus runner concern (LocalDM training data mined from
+>   saves via `sidequest/corpus/`) is unchanged and additive. The
+>   IntentRouter and the offline corpus runner are independent consumers
+>   of the same LocalDM module; reviving the live consumer does not
+>   block the offline one.
+>
+> **What is reversed:**
+> - "Take LocalDM off the live turn entirely" — REVERSED. LocalDM
+>   returns as `IntentRouter` in Epic 59 story 59-2; lights up on the
+>   live pipeline in story 59-4 (confrontation cutover, atomic).
+> - "The narrator becomes the sole LLM call required before NARRATION
+>   emission" — REVERSED. A Haiku classifier pre-pass is the price of
+>   killing the Illusionism failure mode SOUL.md §Illusionism flags as
+>   structural.
+> - The `degraded → empty package → narrator-only` fallback path this
+>   spec preserved — REMOVED in ADR-113 §No-fallbacks discipline (and
+>   the `DispatchPackage.degraded` field is removed from the protocol
+>   in story 59-2).
+>
+> This spec is preserved as historical evidence of the shelving
+> rationale and to document the half-built infrastructure that ADR-113
+> re-engages. The original `# LocalDM Offline-Only — Design` content
+> follows unchanged below.
+
 **Date:** 2026-04-28
 **Author:** Architect (Leonard of Quirm)
-**Status:** Approved — pending implementation
+**Status:** Reversed — superseded by ADR-113 (2026-05-23). Original status was "Approved — pending implementation."
 **Revision:** 2026-04-28 — Pivoted §Components item 5: dropped the
 proposed runtime `turn_records.py` writer. The existing
 `sidequest/corpus/` module already mines training pairs from saves; the

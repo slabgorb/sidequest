@@ -6,11 +6,31 @@ date: 2026-05-19
 deciders: ["Keith Avery", "Major Margaret Houlihan (Architect)"]
 supersedes: []
 superseded-by: null
-related: [9, 98, 101, 102, 110]
+related: [9, 98, 101, 102, 110, 113]
 tags: [agent-system, prompt-engineering, observability]
 implementation-status: deferred
 implementation-pointer: sprint/current-sprint.yaml#57-4
 ---
+
+> **Amended 2026-05-23 by ADR-113.** The
+> `confrontation_trigger_constraint` guardrail (the largest of the
+> four, ~3 KB) governed the narrator's decision to populate
+> `game_patch.confrontation` and was migrated onto the
+> `begin_confrontation` tool description in story 59-1's amendment.
+> ADR-113 retires `begin_confrontation` in Epic 59 story 59-4 (atomic
+> migration to the IntentRouter spine). The engagement criteria
+> migrate again — from the tool description to the IntentRouter's
+> Haiku system prompt — and are no longer the narrator's concern.
+> Caching tier remains system-block (Stable zone); the rule's
+> "tool description is the cached home" intent generalizes to "the
+> cached home for an engagement criterion is the system block of the
+> agent that decides engagement." See ADR-113 §Decision §Retirement
+> of self-reported engagement fields and §Implementation Notes for the
+> sequencing detail. The other three guardrails
+> (`npc_intro_visual_constraint`, `npc_extraction_constraint`,
+> `location_patch_constraint`) are unaffected — they govern narrator
+> emission of presentation fields, not engagement, and remain on
+> their narrator-tool descriptions.
 
 # ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose
 
