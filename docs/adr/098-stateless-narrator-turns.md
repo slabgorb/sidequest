@@ -85,9 +85,20 @@ Three properties follow by construction:
   session-id read/write block.
 - `narrator_session_id` field removed from save schema. Old saves with the field load
   with it ignored.
-- A soft-budget canary (`SOFT_PROMPT_BUDGET_BYTES ≈ 2_000_000`) fires OTEL
-  `narrator.prompt_oversized` if a turn's prompt exceeds the threshold. It is a canary,
-  not a circuit breaker — the turn still executes.
+- A hard-budget guard (`SOFT_PROMPT_BUDGET_BYTES ≈ 2_000_000`) refuses the SDK call
+  when `len(system_prompt) + len(user_message)` exceeds the threshold. **Amended
+  2026-05-23 by story 61-3** — was originally a soft canary that logged
+  `logger.warning` and let the turn execute. Post-61-3 the same threshold becomes a
+  hard refuse: `_check_oversized_prompt()` at `sidequest-server/sidequest/agents/orchestrator.py:2966`
+  returns `True` to make the caller short-circuit the SDK call, emits watcher event
+  `prompt_oversized_hard` with `severity="error"`, and logs at `logger.error` level
+  (`action=refuse`). The refused turn renders a distinct degraded line
+  (`"[narrator-overload — operator paged]"`) so session-recording grep can
+  distinguish budget-refuse from SDK-error-refuse. The original cost-runaway
+  incident (2026-05-23, ~$313 in 48h) burned through a SOFT warning that
+  scrolled past unread overnight; the LOUD hard refuse is the operator-page that
+  the original ADR-098 §Bound canary section described as "canary, not circuit
+  breaker." It is now a circuit breaker.
 
 ## Implementation
 

@@ -63,11 +63,14 @@ stories:
     completed: '2026-05-23'
   - id: 61-5
     title: 'Architecture gate: new snapshot field must land a bounding decision (test fails otherwise)'
+    description: "Add a pydantic-reflection test in sidequest-server/tests/server/ (e.g. test_snapshot_field_governance.py) that enumerates GameSnapshot.model_fields and asserts every top-level field is in exactly one of three named registries: _PHASE_B_DROP_FIELDS (already in session_helpers.py:64), _PHASE_C_PROJECTIONS (new, to be introduced in session_helpers.py), or _BOUNDED_BY_CONSTRUCTION (new, for fields whose growth is bounded by their own structure — scalar fields, enum fields, fixed-size collections). REQUIRES introducing the two new registries explicitly so the gate test reflects over named tuples, NOT source-text-grep on session_helpers.py (banned by sidequest-server CLAUDE.md 'No Source-Text Wiring Tests'). The tripwire pattern at tests/dungeon/test_setpiece_attach_wiring.py is the model. Closes ADR-110 §Implementation Notes 2026-05-23 amendment loop: the un-enforced 'reviewed at every PR' rule becomes test-enforced. Prerequisite: 61-7 must land first so _PHASE_C_PROJECTIONS reflects the unified _npc_in_scene predicate (otherwise the registry would encode a known divergence from list_npcs_in_scene)."
     points: 3
     priority: p1
     status: backlog
     repos: server
     workflow: tdd
+    depends_on: 61-7
+    type: refactor
   - id: 61-6
     title: 'Playtest validation: 50-turn solo session, input_tokens@turn50 <= 1.2x input_tokens@turn5, per-turn cost flat'
     points: 2
@@ -77,3 +80,49 @@ stories:
     workflow: trivial
     depends_on: 61-2
     type: chore
+  - id: 61-7
+    title: 'Unify _npc_in_scene predicate with list_npcs_in_scene scene resolution'
+    description: "Adversarial probe in 61-2 verify-phase (test_npc_in_scene_predicate_divergence_from_list_npcs_in_scene_tool) measured a real divergence between session_helpers.py:_npc_in_scene (uses Npc.last_seen_location only) and sidequest/agents/tools/list_npcs_in_scene.py:102 (uses Npc.current_room / Npc.location). Three NPC fields signal scene membership today; narrator prose updates last_seen_location while structured state updates may set location/current_room. Unify into a single named predicate that both call sites consume so the snapshot projection and the tool see the same scene resolution. This story is the PREREQUISITE for 61-5 — without unification, the _PHASE_C_PROJECTIONS registry would encode a known divergence. Out-of-scope cleanup folded in (per 61-2 review-fix deferrals): _npc_in_scene signature `npc: object` -> `npc: Npc`, eliminate `payload['npcs'] = []` / `payload['room_states'] = {}` noise, adversarial-probe fixture NIT."
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    depends_on: 61-2
+    type: refactor
+  - id: 61-followup-A
+    title: 'Session-id-keyed baselines on AnthropicSdkClient (cross-session pollution on slug-reuse rejoin)'
+    description: "The 61-4 fingerprint detector's rolling baseline lives on the AnthropicSdkClient instance, not on a session key. Multiplayer session URLs are deterministic (memory: project_session_id_dropin — /play/{date}-{world}-mp rejoins existing session) and the client instance survives across rejoins, so the baseline from the prior session pollutes the new one. Key the baseline on session_id (or equivalent stable identifier) so a fresh rejoin starts with a fresh baseline window, and a slug-reuse rejoin inherits the prior session's baseline correctly."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 61-followup-B
+    title: 'Promote narrator.sdk.usage log line to a watcher INFO event for continuous cost-trend on GM panel'
+    description: "Today narrator.sdk.usage cost_usd=... fires only as a log line at INFO level. The GM panel cannot show a per-turn cost trend without a stable watcher event. Promote the log line to a watcher event with severity=info carrying (input_tokens, output_tokens, cost_usd, model, cache_read_tokens, cache_write_tokens). The 61-4 alarm fires at warn/error; this is the continuous baseline signal it implicitly compares against. Sebastien-grade lie-detector for cost. (Note: per CLAUDE.md, this is a Keith/dev observability concern, not a Sebastien player-facing feature — the framing is OTEL-side, not player-UI-side.)"
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: feature
+  - id: 61-followup-C
+    title: 'Wire SessionRoom.close_store() into a real teardown path so reset_baselines() stops being dormant infrastructure'
+    description: "61-4 added reset_baselines() on the SDK client and wired it to a SessionRoom teardown hook. There is no production caller of SessionRoom.close_store() today, so the baseline-reset never fires in practice. Identify or introduce the teardown path (websocket disconnect aggregation? game finish? session reap?) and wire close_store() into it. Until then, the rolling baseline behavior under session reuse is the bug-shaped infrastructure described in 61-followup-A — these two follow-ups are sibling fixes for the same cross-session-state hazard."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 61-followup-D
+    title: 'Hard ceiling on rolling baseline OR smarter absolute alarm floor (trained-into-silence mitigation)'
+    description: "61-4's rolling-baseline-as-comparator has a structural blind spot: a runaway that ramps over many turns trains the baseline upward and trips the 5x-over-baseline alarm only on the spike, not on the sustained 60K-input regime. Two mitigations to evaluate: (A) clamp the rolling baseline at a hard ceiling derived from the ~$0.03/turn target so it cannot drift upward beyond e.g. 3x target; (B) add an absolute alarm floor on input_tokens (single-call > N tokens fires regardless of baseline). Either prevents the trained-into-silence failure mode. Spec which (or both) lands and what the numbers are."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
