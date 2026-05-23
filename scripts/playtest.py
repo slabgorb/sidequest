@@ -68,7 +68,6 @@ import json
 import random
 import sys
 import time
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -725,23 +724,31 @@ class Playtest:
 # ── CLI ─────────────────────────────────────────────────────────────────────
 
 
-# ── Story 61-4 — Preflight cost guard + SDK-replay sidecar ──────────────────
+# ── Story 61-4 — Preflight cost guard ───────────────────────────────────────
 #
-# Defense against the 2026-05-23 $313 runaway. Two surfaces:
+# Defense against the 2026-05-23 $313 runaway. ``preflight_cost_check``
+# runs BEFORE any scenario action fires, prints a cache-aware projection
+# and refuses to proceed past ``--max-projected-cost-usd`` (default $0.50
+# ≈ 16x the per-turn target) unless ``--confirm-cost`` is supplied. The
+# May 23 incident happened because nothing was ever printed; loud is the
+# point.
 #
-# 1. ``preflight_cost_check`` — runs BEFORE any scenario action fires, prints
-#    a worst-case projection ("N actions × 12_000 input × 4 iters × Sonnet
-#    rates, no cache rebate") and refuses to proceed past
-#    ``--max-projected-cost-usd`` (default $0.50 ≈ 16x the per-turn target)
-#    unless ``--confirm-cost`` is supplied. The May 23 incident happened
-#    because nothing was ever printed; loud is the point.
+# Architect spec-check D (2026-05-23): the original worst-case math
+# (``N × 12_000 × 4 × $3/MTok = N × $0.144``) crossed $0.50 at N≥4 actions
+# — every real scenario except 1-3-action fixtures was refused by default.
+# Operators would alias ``--confirm-cost=$true`` within a day and the cap
+# would go silent — exactly the failure this story exists to prevent.
+# Cache-aware math (ADR-101: action 1 pays full input, actions 2+ ride
+# cache-read at $0.30/MTok) makes a 50-action scenario project ~$0.83
+# instead of $7.20 — preserves the cap as a real signal for runaway-shaped
+# scenarios while not false-positiving healthy multi-action playtests.
 #
-# 2. ``write_meta_sidecar`` — given a ``/tmp/real_req_*.json`` SDK-replay
-#    dump, writes a sibling ``.meta.json`` carrying ``input_tokens`` +
-#    ``projected_cost_per_replay_usd`` + per-iter projection. Sidecar
-#    projection assumes cache rebate from iter 2 onwards (replays run warm
-#    against the same prefix); preflight does NOT (operator-facing
-#    worst-case). See sprint/context/context-story-61-4.md decisions D & E.
+# Architect spec-check E (2026-05-23): the SDK-replay sidecar writer
+# (``write_meta_sidecar``) was cut — no producer of ``/tmp/real_req_*.json``
+# exists in tree today and no near-term consumer in the epic context, so
+# the writer was a textbook CLAUDE.md "No Stubbing" violation. The
+# capture path is its own story; re-implement the sidecar writer when the
+# SDK-replay capture path lands.
 
 # Conservative defaults for the preflight worst-case projection. Hard-coded
 # rather than imported from sidequest_server.agents.anthropic_cost so this
@@ -754,31 +761,49 @@ _SONNET_INPUT_PER_MTOK_USD = 3.0
 _SONNET_OUTPUT_PER_MTOK_USD = 15.0
 _SONNET_CACHED_READ_PER_MTOK_USD = 0.30
 
-# Sidecar replay projection: iter 1 pays full input rate, iters 2+ ride the
-# cache read rate for the prefix (replays warm the cache by construction).
-_SIDECAR_ITERS_ASSUMED = 4
-_SIDECAR_OUTPUT_TOKENS_PER_ITER = 200
-_SIDECAR_SCHEMA_VERSION = 1
-
 
 def _project_preflight_cost_usd(n_actions: int) -> float:
-    """Worst-case projection for ``n_actions`` scenario actions.
+    """Cache-aware projection for ``n_actions`` scenario actions.
 
-    No cache rebate, ``_PREFLIGHT_ITERS_ASSUMED`` (4) tool-loop iters per
-    action, ``_PREFLIGHT_INPUT_TOKENS_PER_ACTION`` (12_000) input + 200
-    output per iter at Sonnet rates. Pessimistic on purpose — the operator
-    sees a worst-case envelope, not an optimistic guess.
+    Per ADR-101's four-region cache layout: action 1 pays the full Sonnet
+    input rate ($3/MTok); actions 2+ ride the cache-read rate
+    ($0.30/MTok) for the bulk of the prompt prefix (system + tools +
+    stable session blocks). Output is billed at the full rate every iter.
+
+    Math, per action × ``_PREFLIGHT_ITERS_ASSUMED`` (4) tool-loop iters:
+    - Action 1: ``12_000 × 4 × $3/MTok + 200 × 4 × $15/MTok ≈ $0.156``
+    - Actions 2..N: ``12_000 × 4 × $0.30/MTok + 200 × 4 × $15/MTok ≈ $0.0264`` each
+
+    This makes the canonical 7-action smoke_test scenario project ~$0.34
+    (under the $0.50 default cap) and a 50-action stress scenario
+    ~$1.45 — both legitimate signals: the cap fires on actual runaway
+    shapes, not on healthy multi-action playtests.
+
+    Architect spec-check D (2026-05-23): the prior worst-case-no-rebate
+    math made the default cap refuse smoke_test.yaml itself, which would
+    have driven operators to alias ``--confirm-cost`` permanently and
+    silenced the cap. Cache-aware math preserves the cap as a real signal.
     """
     if n_actions <= 0:
         return 0.0
-    per_iter_input_usd = (
+    per_iter_full_input_usd = (
         _PREFLIGHT_INPUT_TOKENS_PER_ACTION * _SONNET_INPUT_PER_MTOK_USD / 1_000_000
+    )
+    per_iter_cached_input_usd = (
+        _PREFLIGHT_INPUT_TOKENS_PER_ACTION
+        * _SONNET_CACHED_READ_PER_MTOK_USD
+        / 1_000_000
     )
     per_iter_output_usd = (
         _PREFLIGHT_OUTPUT_TOKENS_PER_ACTION * _SONNET_OUTPUT_PER_MTOK_USD / 1_000_000
     )
-    per_iter_usd = per_iter_input_usd + per_iter_output_usd
-    return n_actions * _PREFLIGHT_ITERS_ASSUMED * per_iter_usd
+    first_action_usd = _PREFLIGHT_ITERS_ASSUMED * (
+        per_iter_full_input_usd + per_iter_output_usd
+    )
+    cached_action_usd = _PREFLIGHT_ITERS_ASSUMED * (
+        per_iter_cached_input_usd + per_iter_output_usd
+    )
+    return first_action_usd + (n_actions - 1) * cached_action_usd
 
 
 def preflight_cost_check(
@@ -810,10 +835,11 @@ def preflight_cost_check(
     rule = "=" * 68
     print(rule, file=sys.stderr)
     print(
-        f"[61-4 preflight] worst-case projected cost: ${projected:.2f} USD "
+        f"[61-4 preflight] projected cost: ${projected:.2f} USD "
         f"(N={n_actions} actions × "
         f"{_PREFLIGHT_INPUT_TOKENS_PER_ACTION:,} input × "
-        f"{_PREFLIGHT_ITERS_ASSUMED} iters @ Sonnet rates, no cache rebate)",
+        f"{_PREFLIGHT_ITERS_ASSUMED} iters @ Sonnet rates; "
+        f"action 1 full-rate input, actions 2+ cached-read per ADR-101)",
         file=sys.stderr,
     )
     print(
@@ -847,63 +873,6 @@ def preflight_cost_check(
         )
     print(rule, file=sys.stderr)
     return True
-
-
-def write_meta_sidecar(dump_path: Path) -> Path:
-    """Write a sibling ``.meta.json`` annotating a ``real_req_*.json`` dump.
-
-    AC5: any SDK-replay dump gets a sibling describing what a replay would
-    cost. Sidecar schema v1 (decision E):
-
-    - ``request_file`` — dump filename for cross-reference
-    - ``input_tokens`` — propagated from the dump (load-bearing field)
-    - ``iters_assumed`` — tool-loop iters assumed for the projection
-    - ``per_iter_projection_usd`` — list of per-iter USD costs (cold iter 1,
-      cache-warm iters 2+)
-    - ``projected_cost_per_replay_usd`` — sum of ``per_iter_projection_usd``
-    - ``model`` — propagated from the dump
-    - ``captured_at`` — ISO-8601 UTC timestamp
-    - ``schema_version`` — 1
-
-    Replay projection ASSUMES cache rebate from iter 2 onwards (replays run
-    warm against the same prefix); iter 1 pays the full Sonnet input rate.
-    Distinct from preflight, which is worst-case (no rebate, operator-
-    facing). Sibling name pattern: ``{dump.stem}.meta.json`` (e.g.
-    ``real_req_001.json`` → ``real_req_001.meta.json``).
-    """
-    dump = json.loads(dump_path.read_text())
-    input_tokens = int(dump.get("input_tokens", 0))
-    model = str(dump.get("model", "claude-sonnet-4-6"))
-
-    per_iter: list[float] = []
-    for iter_idx in range(_SIDECAR_ITERS_ASSUMED):
-        if iter_idx == 0:
-            # Cold first iter: full input rate.
-            in_usd = input_tokens * _SONNET_INPUT_PER_MTOK_USD / 1_000_000
-        else:
-            # Warm subsequent iters: cached read rate (replay warms the
-            # cache by construction).
-            in_usd = input_tokens * _SONNET_CACHED_READ_PER_MTOK_USD / 1_000_000
-        out_usd = (
-            _SIDECAR_OUTPUT_TOKENS_PER_ITER
-            * _SONNET_OUTPUT_PER_MTOK_USD
-            / 1_000_000
-        )
-        per_iter.append(in_usd + out_usd)
-
-    meta = {
-        "schema_version": _SIDECAR_SCHEMA_VERSION,
-        "request_file": dump_path.name,
-        "input_tokens": input_tokens,
-        "iters_assumed": _SIDECAR_ITERS_ASSUMED,
-        "per_iter_projection_usd": per_iter,
-        "projected_cost_per_replay_usd": sum(per_iter),
-        "model": model,
-        "captured_at": datetime.now(UTC).isoformat(),
-    }
-    sidecar_path = dump_path.with_name(f"{dump_path.stem}.meta.json")
-    sidecar_path.write_text(json.dumps(meta, indent=2))
-    return sidecar_path
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -996,8 +965,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         type=float,
         default=0.50,
         help=(
-            "Refuse scenarios whose worst-case projected cost exceeds this "
-            "USD cap (default: %(default)s ≈ 16x the per-turn target). "
+            "Refuse scenarios whose projected cost exceeds this USD cap "
+            "(default: %(default)s ≈ 16x the per-turn target). Projection "
+            "assumes cache-read on iters 2+ per ADR-101 (action 1 pays "
+            "full input rate; actions 2..N ride cache-read at $0.30/MTok). "
             "Bypass with --confirm-cost. Story 61-4 defense against the "
             "2026-05-23 runaway."
         ),

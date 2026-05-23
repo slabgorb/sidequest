@@ -1,42 +1,43 @@
-"""Story 61-4 — Playtest preflight cost guard + SDK-replay sidecar.
+"""Story 61-4 — Playtest preflight cost guard.
 
-RED-phase gate for the orchestrator-side half of 61-4 (ACs 4, 5, 7).
-The server-side runtime alarm tests live at
+RED-phase gate (now GREEN + Architect spec-check D applied) for the
+orchestrator-side preflight of 61-4 (ACs 4, 7). The server-side runtime
+alarm tests live at
 ``sidequest-server/tests/agents/test_61_4_cost_runaway_alarm.py``
 (ACs 2, 3, 6).
 
-Two surfaces here:
+**Preflight guard** (AC4, AC7): ``scripts/playtest.py`` MUST print a
+projected per-run cost before any scenario action fires, refuse to
+proceed past ``--max-projected-cost-usd`` (default $0.50) without
+``--confirm-cost``, and bypass cleanly when ``--confirm-cost`` is
+supplied.
 
-1. **Preflight guard** (AC4, AC7): ``scripts/playtest.py`` MUST print
-   a projected per-run cost before any scenario action fires, refuse
-   to proceed past ``--max-projected-cost-usd`` (default $0.50)
-   without ``--confirm-cost``, and bypass cleanly when ``--confirm-cost``
-   is supplied.
+Architect spec-check D (2026-05-23): the original RED tests asserted
+worst-case-no-cache math. That math made the cap refuse the canonical
+``smoke_test.yaml`` (7 actions → ~$1.01 worst-case > $0.50 default),
+which would have driven operators to alias ``--confirm-cost`` and
+silenced the cap. The math is now cache-aware per ADR-101 (action 1
+full-rate input, actions 2+ cached-read at $0.30/MTok). Cap stays at
+$0.50; the runaway-shape test below pushes per-action input to 60K to
+re-validate the refuse path.
 
-2. **SDK-replay sidecar** (AC5): a ``write_meta_sidecar`` helper
-   exposed from ``scripts/playtest.py`` (importable under the name
-   ``playtest``) MUST take a ``/tmp/real_req_*.json`` dump path and
-   write a sibling ``.meta.json`` carrying input_tokens +
-   projected_cost_per_replay_usd + per-iter projection on the locked
-   schema (see ``sprint/context/context-story-61-4.md`` decision E).
+Architect spec-check E (2026-05-23): ``write_meta_sidecar`` was cut —
+no producer of ``/tmp/real_req_*.json`` exists in tree and no consumer
+in the epic context, so the helper was a textbook "No Stubbing"
+violation. AC5 is deferred until the SDK-replay capture path lands as
+its own story.
 
 Locked design decisions (see ``sprint/context/context-story-61-4.md``):
 
-- **D. Preflight projection math.** Conservative worst-case:
-  ``N_actions × 12_000 input × 4 iters_assumed × Sonnet input rate
-  + 200 output × 4 iters × Sonnet output rate``. No cache rebate.
-- **E. Sidecar schema.** ``{request_file, input_tokens, iters_assumed,
-  per_iter_projection_usd[], projected_cost_per_replay_usd, model,
-  captured_at, schema_version=1}``. Sidecar assumes cache rebate
-  (replays run warm against the same prefix).
+- **D. Preflight projection math.** Cache-aware per ADR-101: action 1
+  pays full-rate input ($3/MTok); actions 2..N pay cached-read input
+  ($0.30/MTok). Output always full-rate. 4 iters_assumed per action.
 """
 
 from __future__ import annotations
 
-import argparse
 import importlib
 import importlib.util
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -143,8 +144,11 @@ def test_preflight_refuses_over_cap_scenario_without_confirm(
     cost, printed cap, exit non-zero) — the operator sees both the
     projection and the cap they exceeded.
 
-    50-action scenario × 12_000 input × 4 iters × $3/Mtok ≈ $7.20
-    worst-case, comfortably over $0.50 default cap.
+    50-action scenario with cache-aware projection (Architect spec-check
+    D, ADR-101): action 1 = $0.156, actions 2..50 = 49 × $0.0264 ≈
+    $1.29, total ~$1.45 — comfortably over $0.50 default cap. The cap
+    fires for genuinely-large scenarios; not for healthy
+    small-to-medium playtests (see ``test_smoke_test_projection_*``).
 
     Tests the preflight FUNCTION directly (not a full subprocess) so
     we don't need a running server. The function is expected at
@@ -240,13 +244,11 @@ def test_preflight_proceeds_when_confirm_cost_bypass_supplied(
 def test_preflight_proceeds_for_under_cap_scenario_no_confirm_needed(
     tmp_path: Path,
 ) -> None:
-    """A tiny scenario (3 actions) projects well under $0.50 — preflight
+    """A tiny scenario (2 actions) projects well under $0.50 — preflight
     MUST proceed without requiring --confirm-cost.
 
-    3 × 12_000 × 4 × $3/Mtok ≈ $0.43, under the $0.50 default cap.
-    Adjusted assertion: use 2 actions for a comfortable headroom
-    (~$0.29) so the test isn't brittle to ±10% projection rounding
-    decisions Dev might make.
+    Cache-aware projection (ADR-101): action 1 = $0.156, action 2 =
+    $0.0264, total ≈ $0.18, under the $0.50 default cap.
 
     Regression guard against "preflight refuses everything" / "default
     cap set to 0".
@@ -280,105 +282,141 @@ def test_preflight_proceeds_for_under_cap_scenario_no_confirm_needed(
 
 
 # ============================================================================
-# 3. AC5 — Sidecar .meta.json schema for /tmp/real_req_*.json dumps
+# 3. Architect spec-check D — cache-aware projection vs the canonical smoke_test
 # ============================================================================
 
 
-def test_write_meta_sidecar_creates_sibling_with_required_fields(
-    tmp_path: Path,
-) -> None:
-    """AC5: any ``/tmp/real_req_*.json`` dump gets a sibling
-    ``.meta.json`` carrying input_tokens + projected_cost_per_replay_usd
-    + per-iter projection.
+def test_smoke_test_projection_stays_under_default_cap(tmp_path: Path) -> None:
+    """``smoke_test.yaml`` (the canonical sanity scenario, 7 actions) MUST
+    project under the $0.50 default cap.
 
-    Synthesizes a request-dump fixture, calls the sidecar writer, and
-    asserts the resulting file shape matches decision E.
+    Architect spec-check D (2026-05-23): the original worst-case math
+    projected smoke_test at ~$1.01 and refused it by default — every
+    real scenario except 1-3-action fixtures was refused, which would
+    drive operators to alias ``--confirm-cost=$true`` and silence the
+    cap. Cache-aware math (ADR-101) preserves the cap as a real signal:
+    smoke_test projects ~$0.34 (under $0.50), the 50-action runaway
+    scenario still projects > $0.50 and refuses.
 
-    The dump format isn't owned by 61-4 (no producer exists today —
-    `grep -rn real_req` finds only doc references). Test uses a
-    minimal plausible shape with an Anthropic-style messages payload
-    that the sidecar can compute input_tokens against. If Dev's
-    sidecar requires a different input shape, adjust the fixture
-    rather than collapse the contract.
+    Math check (cache-aware): action 1 = ~$0.156, actions 2..7 = 6 ×
+    ~$0.0264 = ~$0.159, total ~$0.315 — comfortably under $0.50.
     """
     playtest = _import_playtest()
 
-    assert hasattr(playtest, "write_meta_sidecar"), (
-        "playtest MUST export write_meta_sidecar(dump_path) -> Path per "
-        "61-4 AC5. Without it the sidecar surface doesn't exist."
+    # Reproduce the smoke_test action count without coupling the test to
+    # the live scenario file (file is part of the orchestrator repo but
+    # the test contract is on the projection function, not the file).
+    scenario_path = _make_scenario(
+        tmp_path,
+        name="smoke_test_shape",
+        actions=[
+            "look around",
+            "talk to the nearest person",
+            "examine my surroundings more carefully",
+            "/status",
+            "/inventory",
+            "pick up something interesting",
+            "head somewhere new",
+        ],
+    )
+    scenario = playtest.load_scenario(scenario_path)
+
+    # Direct projection check — projection MUST be under cap.
+    projected = playtest._project_preflight_cost_usd(len(scenario["actions"]))
+    assert projected < 0.50, (
+        "Architect spec-check D: smoke_test.yaml (7 actions) MUST project "
+        f"under the $0.50 default cap (got ${projected:.4f}). If this "
+        "test fails the cache-aware projection has regressed to "
+        "worst-case math, which would refuse the canonical sanity "
+        "scenario by default and drive operators to alias "
+        "--confirm-cost. See sprint/context decision D."
     )
 
-    # Synthesize a request dump. ``input_tokens`` is the load-bearing
-    # field; we provide it pre-computed so the sidecar doesn't need a
-    # tokenizer dependency. (Real producer can compute it during capture.)
-    dump_path = tmp_path / "real_req_001.json"
-    dump_path.write_text(json.dumps({
-        "model": "claude-sonnet-4-6",
-        "input_tokens": 12_345,
-        "messages": [{"role": "user", "content": "stub"}],
-        "system": [{"type": "text", "text": "stub system"}],
-    }))
-
-    sidecar_path = playtest.write_meta_sidecar(dump_path)
-
-    assert sidecar_path.exists(), (
-        f"Sidecar MUST be written to {sidecar_path}; file does not exist."
+    # And the preflight MUST proceed without --confirm-cost.
+    result = playtest.preflight_cost_check(
+        scenario,
+        max_projected_cost_usd=0.50,
+        confirm_cost=False,
     )
-    # Path convention: sibling .meta.json (real_req_001.json →
-    # real_req_001.meta.json or real_req_001.json.meta.json — either
-    # acceptable as long as it sits next to the dump).
-    assert sidecar_path.parent == dump_path.parent, (
-        f"Sidecar MUST be a sibling of {dump_path.name}; got "
-        f"{sidecar_path}."
-    )
-    assert sidecar_path.name.endswith(".meta.json"), (
-        f"Sidecar name MUST end in .meta.json; got {sidecar_path.name!r}."
+    assert result is not False, (
+        "smoke_test.yaml shape MUST proceed under the default cap "
+        f"without --confirm-cost. Got {result!r}."
     )
 
-    meta = json.loads(sidecar_path.read_text())
 
-    # Required fields per decision E (locked schema).
-    for key in (
-        "input_tokens",
-        "projected_cost_per_replay_usd",
-        "per_iter_projection_usd",
-        "model",
-        "schema_version",
-    ):
-        assert key in meta, (
-            f"Sidecar schema MUST include {key!r} (decision E). "
-            f"Got keys={sorted(meta)}."
+def test_runaway_scenario_still_refuses(tmp_path: Path) -> None:
+    """The cap still fires for actual-runaway-shaped scenarios.
+
+    Architect spec-check D safety net: cache-aware math must not over-
+    correct and miss a genuine runaway. Synthesize a 50-action scenario
+    with per-action input bloat at 60K tokens (simulating snapshot bloat
+    pre-61-2). At 60K input the per-action cost rises 5x and the
+    projection MUST still exceed $0.50.
+
+    Because per-action input is hard-coded in playtest.py (operator
+    can't dial it from a flag), this test exercises the same scaling
+    by lifting the constant via monkeypatch to a runaway value, then
+    confirms refusal.
+    """
+    playtest = _import_playtest()
+
+    scenario_path = _make_scenario(
+        tmp_path,
+        name="runaway_shape",
+        actions=[f"action {i}" for i in range(50)],
+    )
+    scenario = playtest.load_scenario(scenario_path)
+
+    # Lift the per-action input constant to 60K (5x the healthy 12K).
+    # Cache-aware math at 60K input: action 1 = ~$0.732, actions 2..50
+    # = 49 × ~$0.084 = ~$4.12, total ~$4.85 — well over $0.50.
+    original = playtest._PREFLIGHT_INPUT_TOKENS_PER_ACTION
+    try:
+        playtest._PREFLIGHT_INPUT_TOKENS_PER_ACTION = 60_000
+        projected = playtest._project_preflight_cost_usd(
+            len(scenario["actions"])
+        )
+        assert projected > 0.50, (
+            f"Runaway-shape scenario MUST exceed the $0.50 cap (got "
+            f"${projected:.4f}). If this fails, the cache rebate is "
+            "swallowing a real runaway signal — the cap is no longer "
+            "operator-actionable."
         )
 
-    assert meta["input_tokens"] == 12_345, (
-        "input_tokens MUST be propagated from the dump verbatim. Got "
-        f"{meta['input_tokens']!r}"
-    )
-    assert meta["schema_version"] == 1, (
-        f"schema_version MUST be 1 (initial). Got {meta['schema_version']!r}"
-    )
-    assert isinstance(meta["per_iter_projection_usd"], list), (
-        "per_iter_projection_usd MUST be a list (one entry per assumed "
-        f"replay iter). Got type={type(meta['per_iter_projection_usd']).__name__}"
-    )
-    assert len(meta["per_iter_projection_usd"]) >= 1, (
-        "per_iter_projection_usd MUST contain at least one entry "
-        "(the first/cold iter). Empty list means projection wasn't "
-        "computed."
-    )
-    # Sanity: projected_cost_per_replay_usd ≈ sum(per_iter_projection_usd).
-    iter_sum = sum(meta["per_iter_projection_usd"])
-    assert abs(meta["projected_cost_per_replay_usd"] - iter_sum) < 1e-6, (
-        "projected_cost_per_replay_usd MUST equal "
-        "sum(per_iter_projection_usd) per decision E. Got "
-        f"projected={meta['projected_cost_per_replay_usd']!r}, "
-        f"sum={iter_sum!r}"
-    )
-    # Cold first iter > warm later iters (cache rebate assumption in
-    # decision E). Guards against "all iters projected at uncached rate".
-    if len(meta["per_iter_projection_usd"]) >= 2:
-        assert meta["per_iter_projection_usd"][0] > meta["per_iter_projection_usd"][1], (
-            "Per decision E, replay sidecar ASSUMES cache rebate after "
-            "iter 1. First iter projection MUST exceed subsequent iters. "
-            f"Got {meta['per_iter_projection_usd'][:2]}"
+        # The preflight MUST refuse.
+        result = playtest.preflight_cost_check(
+            scenario,
+            max_projected_cost_usd=0.50,
+            confirm_cost=False,
         )
+        assert result is False, (
+            "Runaway-shape scenario MUST refuse without --confirm-cost. "
+            f"Got {result!r}."
+        )
+    finally:
+        playtest._PREFLIGHT_INPUT_TOKENS_PER_ACTION = original
+
+
+# ============================================================================
+# 4. Architect spec-check E — sidecar writer cut (no producer, no consumer)
+# ============================================================================
+
+
+def test_write_meta_sidecar_removed_per_architect_e() -> None:
+    """Architect spec-check E (2026-05-23): ``write_meta_sidecar`` was a
+    textbook CLAUDE.md "No Stubbing" violation — no producer of
+    ``/tmp/real_req_*.json`` exists in tree, and the epic context has
+    no near-term consumer. Re-implement when the SDK-replay capture
+    path lands as its own story (AC5 is deferred to that work).
+
+    This negative test exists to make the deletion intentional. If a
+    future change re-adds ``write_meta_sidecar`` without a producer +
+    consumer, this test fails and forces the question.
+    """
+    playtest = _import_playtest()
+
+    assert not hasattr(playtest, "write_meta_sidecar"), (
+        "Architect spec-check E (2026-05-23): write_meta_sidecar was cut "
+        "as a stub (no producer of /tmp/real_req_*.json, no consumer). "
+        "Re-introduce only alongside a real capture path (its own story)."
+    )
