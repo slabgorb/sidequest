@@ -47,7 +47,7 @@ repos:
     path: sidequest-content
     type: content
     description: Genre packs, world data, and shared game content (single source of truth)
-    branch_strategy: github-flow
+    branch_strategy: gitflow
     default_branch: develop
     notes: |
       Genre packs and game content extracted from the orchestrator.
@@ -63,11 +63,11 @@ repos:
     build_command: "true"
     lint_command: ruff check .
     dev_command: python -m sidequest_daemon
-    branch_strategy: github-flow
+    branch_strategy: gitflow
     default_branch: develop
     notes: |
       Python media services extracted from sq-2.
-      Renderer daemon (Flux / Z-Image Turbo, MLX), audio mixer,
+      Renderer daemon (Z-Image Turbo, MLX), audio mixer,
       scene interpreter, subject extractor, beat filter.
       TTS pipeline (Kokoro/Piper) was removed in 2026-04 — see ADR-076.
       Communicates with sidequest-server via Unix socket / HTTP.
@@ -84,7 +84,7 @@ repos:
     build_command: "true"
     lint_command: ruff check .
     dev_command: uvicorn sidequest.server.app:app --reload
-    branch_strategy: github-flow
+    branch_strategy: gitflow
     default_branch: develop
     notes: |
       FastAPI + uvicorn + pydantic v2. Port target of the former
