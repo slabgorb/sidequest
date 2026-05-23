@@ -33,12 +33,13 @@ stories:
     title: Convert oversized-prompt canary from soft warn to hard refuse-or-truncate + loud OTEL emit
     points: 2
     priority: p0
-    status: in_progress
+    status: done
     assigned_to: slabgorb
     started: '2026-05-23'
     repos: server
     workflow: tdd
     depends_on: 61-2
+    completed: '2026-05-23'
     branch: feat/61-3-hard-cap-oversized-canary
     type: refactor
   - id: 61-4
