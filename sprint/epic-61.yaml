@@ -85,14 +85,17 @@ stories:
     description: "Adversarial probe in 61-2 verify-phase (test_npc_in_scene_predicate_divergence_from_list_npcs_in_scene_tool) measured a real divergence between session_helpers.py:_npc_in_scene (uses Npc.last_seen_location only) and sidequest/agents/tools/list_npcs_in_scene.py:102 (uses Npc.current_room / Npc.location). Three NPC fields signal scene membership today; narrator prose updates last_seen_location while structured state updates may set location/current_room. Unify into a single named predicate that both call sites consume so the snapshot projection and the tool see the same scene resolution. This story is the PREREQUISITE for 61-5 — without unification, the _PHASE_C_PROJECTIONS registry would encode a known divergence. Out-of-scope cleanup folded in (per 61-2 review-fix deferrals): _npc_in_scene signature `npc: object` -> `npc: Npc`, eliminate `payload['npcs'] = []` / `payload['room_states'] = {}` noise, adversarial-probe fixture NIT."
     points: 2
     priority: p1
-    status: in_progress
+    status: done
+    assigned_to: slabgorb
+    started: '2026-05-23'
     repos: server
     workflow: tdd
     depends_on: 61-2
-    assigned_to: slabgorb
-    started: '2026-05-23'
+    completed: '2026-05-23'
     branch: feat/61-7-unify-npc-in-scene-predicate
     type: refactor
+    review_findings: 'Round-2 fixes addressed all round-1 MUST-FIX + SHOULD-FIX items (3 MUST-FIX, 4 SHOULD-FIX, 1 architect-accepted Dev #2 deviation re upstream invariant). Direct-read of incremental diff clean; round-1 9-specialist fan-out coverage preserved.'
+    review_verdict: approved
   - id: 61-followup-A
     title: 'Session-id-keyed baselines on AnthropicSdkClient (cross-session pollution on slug-reuse rejoin)'
     description: "The 61-4 fingerprint detector's rolling baseline lives on the AnthropicSdkClient instance, not on a session key. Multiplayer session URLs are deterministic (memory: project_session_id_dropin — /play/{date}-{world}-mp rejoins existing session) and the client instance survives across rejoins, so the baseline from the prior session pollutes the new one. Key the baseline on session_id (or equivalent stable identifier) so a fresh rejoin starts with a fresh baseline window, and a slug-reuse rejoin inherits the prior session's baseline correctly."
