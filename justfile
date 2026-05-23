@@ -42,7 +42,7 @@ server *flags:
     DEV_SCENES="${DEV_SCENES:-1}" \
     SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
         uv run uvicorn sidequest.server.app:create_app \
-            --factory --reload --reload-dir sidequest \
+            --factory \
             --host 127.0.0.1 --port 8765 {{flags}} 2>&1 \
         | tee "$log"
 
@@ -253,7 +253,7 @@ up *flags:
         DEV_SCENES="${DEV_SCENES:-1}" \
         SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
         uv run uvicorn sidequest.server.app:create_app \
-            --factory --reload --reload-dir sidequest \
+            --factory \
             --host 127.0.0.1 --port 8765 >"$srv" 2>&1 ) &
     echo $! > {{logdir}}/sidequest-server.pid
 

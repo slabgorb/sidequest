@@ -1,0 +1,64 @@
+id: '61'
+type: epic
+title: 'Bounded Narrator Prompt: Slim Snapshot + Wire RAG'
+description: "Close the architecture-level invariant that ADRs 048/098/109/110 each touched but none owned: every growing field on snapshot must either be dropped from the prompt, RAG-retrieved on demand, or size-capped before serialization. The 2026-05-23 runaway burned ~$313 in 48h because seven snapshot fields (room_states, journal, npcs, known_facts, footnotes, belief_state, location_descriptions) flow into the Valley/Recency system_blocks unslimmed, with cache=False, multiplied by up to 8 tool-loop iterations per turn. Compounded by ADR-048's LoreStore being built but never wired into ToolContext — query_lore tool returns empty with lore_store_wired=False in production (agents/tools/query_lore.py:96-109), so the narrator gets the entire lore dumped wholesale every turn instead of retrieving on demand. Evidence: memory/project_runaway_valley_block_2026_05_23.md, sprint/archive/60-3-session.md. Closes the gap that epic 60 explicitly punted (Valley acquitted on cache-write churn but not on uncached growth). Epic acceptance: at session length 50 turns, per-turn cost stays flat (within 20% of warmup steady-state); a deliberate runaway attempt (revert 61-2) trips the 61-4 alarm within 3 turns instead of running silently."
+priority: p0
+status: backlog
+repos: server
+stories:
+  - id: 61-1
+    title: Wire LoreStore into production ToolContext (ADR-048 Phase E)
+    points: 3
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 61-2
+    title: 'Extend snapshot drop-list to cover the seven growing fields (per-field: drop / bounded-projection / RAG)'
+    points: 5
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 61-3
+    title: Convert oversized-prompt canary from soft warn to hard refuse-or-truncate + loud OTEL emit
+    points: 2
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+    depends_on: 61-2
+    type: refactor
+  - id: 61-4
+    title: Output-token-floor + input-bloat alarm in anthropic_sdk_client.py (60K-in/12-out fingerprint detector)
+    description: 'Two-surface alarm against the runaway pattern we just paid $313 for. (A) Runtime alarm in sidequest-server/sidequest/agents/anthropic_sdk_client.py: fire a loud OTEL emit + log when (input_tokens > N x rolling_baseline) AND (output_tokens < M) — the 60K-in/12-out fingerprint the 2026-05-23 incident exhibited. Single-call detection, no daily-aggregate delay. (B) Token-budget guard in scripts/playtest.py and the SDK-replay workflow: print projected token cost before a scenario run starts (sum of per-action input estimates x N tool-loop iters x cache state), refuse to proceed past a configurable cap without an explicit --confirm-cost flag. Also annotate the captured /tmp/real_req_*.json dump files with their token count + projected per-replay cost in a sidecar so the operator can see at a glance what each iteration will bill. The May 23 replay loop printed money silently for hours; this story makes it impossible to do that without explicitly opting in.'
+    points: 3
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - 'Runtime: a single Sonnet call with input_tokens > 2x rolling baseline AND output_tokens < 50 emits a loud watcher event (severity=warn, not info) AND logs at ERROR level. GM panel surfaces the event distinct from other events.'
+      - 'Runtime: rolling baseline is per-session, computed over the last K=10 calls with reasonable defaults; fingerprint detector activates after warmup (K calls observed).'
+      - 'playtest.py: before scenario execution starts, print projected per-run token cost (input × N iterations × cache state assumption) and refuse to run past --max-projected-cost-usd (default ~$1) without --confirm-cost flag. Failure mode is loud and operator-actionable.'
+      - 'SDK replay workflow: any /tmp/real_req_*.json dump file gets a sibling .meta.json with input_tokens + projected_cost_per_replay_usd + per-iter projection. Operator can read at a glance before iterating against it.'
+      - 'Regression test: synthesize a 60K-in/12-out call against the fake SDK and assert the runtime alarm fires (one OTEL emit, one ERROR log).'
+      - 'Regression test: invoke scripts/playtest.py with cache_diag_60_3 scenario and assert the projected-cost preflight emits and that the run halts when projection > the cap.'
+  - id: 61-5
+    title: 'Architecture gate: new snapshot field must land a bounding decision (test fails otherwise)'
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 61-6
+    title: 'Playtest validation: 50-turn solo session, input_tokens@turn50 <= 1.2x input_tokens@turn5, per-turn cost flat'
+    points: 2
+    priority: p1
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    depends_on: 61-2
+    type: chore

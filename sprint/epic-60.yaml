@@ -87,3 +87,12 @@ stories:
       - If the rebate does NOT materialize (cache_write_1h stays 0, or per-turn cost stays ~$0.116), file a bug story against 60-4 with the OTEL evidence. Do NOT silently accept under-performance — Epic 60 is closed only when the playtest confirms the savings.
       - "Secondary validation: confirm Reviewer's deferred items don't degrade the savings in practice — specifically, the old-SDK fallback (anthropic >= 0.51 is the live version; the fallback shouldn't fire) and the 'no silent under-billing' phrasing in the cost call site."
     type: chore
+  - id: 60-6
+    title: Stable-prefix byte-drift — re-open 60-1's original hypothesis with live-session evidence
+    points: 3
+    priority: p0
+    status: backlog
+    repos: server
+    workflow: tdd
+    depends_on: 60-2
+    type: bug

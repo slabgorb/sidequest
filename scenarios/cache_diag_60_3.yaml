@@ -1,0 +1,15 @@
+# 60-3 cache diagnosis — drives consecutive tea_and_murder/glenross turns
+# back-to-back so any TTL window (5m/1h) cannot expire between them.
+name: Cache Diag 60-3
+genre: tea_and_murder
+world: glenross
+
+character:
+  strategy: auto
+
+actions:
+  - "look around the room"
+  - "study the guests"
+  - "walk to the window"
+  - "ask about the missing letter"
+  - "wait and listen"

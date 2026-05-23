@@ -55,6 +55,14 @@ across turns:
 2. **`tools=` array entries** — each tool's `description` field is part of
    the cache key root. Tool descriptions sent on every turn cost once (on
    cache write) and amortize across the save.
+   > **NOTE (Story 60-3, 2026-05-22):** this "amortize across the save"
+   > assumption is currently broken for the SAME reason block 0 is — the
+   > narrator's tool-use loop continuation re-mints the whole cached prefix
+   > (system + tools) at 5m on every iter-2+ call, because the growing
+   > `tool_use`/`tool_result` conversation has no cache breakpoint. Until
+   > Story 60-4 adds a moving 1h breakpoint on the continuation, moving
+   > guardrails into tool descriptions does NOT realize the cache rebate.
+   > See `sprint/archive/60-3-session.md`.
 3. **The slimmed sidecar prose** (`narrator_prompts/output_only_sdk.md`)
    already lives in the Primacy/Stable cached zone via
    `Narrator.build_output_format(..., tool_backend=True)` at

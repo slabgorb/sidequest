@@ -66,12 +66,24 @@ genre-pack-static — sourced from `prompts.yaml` which is read once per
 session at pack load and never mutated mid-session — so per-turn
 recomputation pays no information dividend.
 
+> **⚠️ KNOWN ISSUE (Story 60-3, 2026-05-22): the amortization described in
+> this section does NOT currently materialize.** The Stable block IS byte-stable
+> and correctly marked 1h, but the narrator runs a tool-use loop, and every
+> continuation call re-mints the whole prefix at 5m because the growing
+> `tool_use`/`tool_result` conversation carries no cache breakpoint. So promoting
+> prose into Stable is still *correct* (it's the right zone), but the cache rebate
+> is not realized until Story 60-4 adds a moving 1h breakpoint on the continuation.
+> The byte-identity invariant below remains load-bearing and unchanged. See
+> `sprint/archive/60-3-session.md`.
+
 The cache contract behind the savings: ADR-101 Phase D ships three
 `system=` blocks; the first (Stable) carries `cache_control={"type":
-"ephemeral", "ttl": "1h"}` and amortizes its cost over every turn after
-cache warmup. The current allowlist's content is correctly cached; any
+"ephemeral", "ttl": "1h"}` and is *intended to* amortize its cost over every
+turn after cache warmup (but see the Known Issue above — amortization is
+defeated by the tool-loop continuation until 60-4). The current allowlist's
+content is correctly cached on the first (non-continuation) call; any
 section meeting the same byte-identity-across-turns invariant pays only
-on the first turn after the pack loads.
+on the first turn after the pack loads — once 60-4 lands.
 
 `STABLE_SECTION_NAMES` is described at `bucket.py:25–27` as
 *"Section names whose content is byte-identical across every turn of the

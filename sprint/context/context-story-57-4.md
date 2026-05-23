@@ -22,6 +22,8 @@ They live in the Recency zone by deliberate choice — the original schema-block
 
 ADR-111 supplies the structural target: native tool-use (ADR-102) gives a third caching surface — the `tools=` array's `description` field. Tool descriptions are part of the cache key root, sent on every turn, cost once on cache write, and amortize across the entire save. Migrating each guardrail from a Recency-zone prose block into the `description` of the *tool whose payload field it governs* moves the prose into a cached path while preserving the high-attention positioning the original choice was solving for (tool descriptions ride right next to the tool's schema, which the model attends to whenever it's about to emit the tool call).
 
+> **NOTE (Story 60-3, 2026-05-22):** the "amortize across the save" premise above is currently NOT realized — the narrator's tool-use loop continuation re-mints the whole cached prefix (system + tools) at 5m on every iter-2+ call, because the appended `tool_use`/`tool_result` messages carry no cache breakpoint. So moving prose into tool descriptions still costs a 5m re-write every turn until Story 60-4 adds a moving 1h breakpoint on the continuation. The migration is still worth doing (it's the right surface) but the token/cost win lands only after 60-4. See `sprint/archive/60-3-session.md`.
+
 This is the **single biggest token-reduction story** in epic 57 (~1.5 k tokens × every turn × playtest hours = the largest cost line).
 
 ## Technical Guardrails
