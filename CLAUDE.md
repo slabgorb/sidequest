@@ -50,14 +50,17 @@ orc-quest/                    # This repo (orchestrator, also cloned as oq-1 / o
 └── justfile                  # Cross-repo task runner
 
 sidequest-content/            # Genre packs — single source of truth (subrepo)
-├── genre_packs/              # Live, wired packs (7: caverns_and_claudes, elemental_harmony,
-│   │                         #   mutant_wasteland, road_warrior, space_opera,
-│   │                         #   spaghetti_western, tea_and_murder).
-│   │                         # heavy_metal/ exists as a stub (no pack.yaml — loader skips)
-│   │                         # until promoted from workshopping.
+├── genre_packs/              # Live, wired packs (10: caverns_and_claudes, elemental_harmony,
+│   │                         #   heavy_metal, mutant_wasteland, neon_dystopia, pulp_noir,
+│   │                         #   road_warrior, space_opera, spaghetti_western, tea_and_murder).
+│   │                         # heavy_metal re-promoted 2026-05-23 (loads clean, 2 worlds);
+│   │                         # neon_dystopia + pulp_noir promoted 2026-05-23 but still need
+│   │                         # world-tier openings.yaml authoring before they load.
+│   │                         # Asset gate (portraits, POI landscapes, generated OGG) not
+│   │                         # yet met for any of the three — see pack README.
 │   └── <genre>/worlds/<world>/   # World-specific overrides
 ├── genre_workshopping/       # Pre-wired packs in design (caverns_sunden — deprecated;
-│                             #   heavy_metal, low_fantasy, neon_dystopia, pulp_noir).
+│                             #   low_fantasy).
 │                             #   Subdirs named like a live pack hold in-progress
 │                             #   alternate worlds for that pack.
 ├── corpus/                   # Conlang word lists per culture (ADR-091)
