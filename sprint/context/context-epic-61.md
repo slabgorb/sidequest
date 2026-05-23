@@ -188,18 +188,49 @@ This story unblocks Layer 2's per-field decisions: fields routed to RAG
 
 ### Layer 2 — Snapshot slim (61-2)
 
-`session_helpers.py:64` defines `_PHASE_B_DROP_FIELDS`. Extend it. For
-each of the seven growing fields, make a **per-field decision**:
+`session_helpers.py:64` defines `_PHASE_B_DROP_FIELDS`. Extend it.
 
-| Field | Decision options | Notes |
+**Correction 2026-05-23 (post-61-2 red-phase):** the seven fields the
+epic preamble named are not all snapshot fields. Validation against
+`GameSnapshot.model_fields` showed **four ride the snapshot and got
+projected; three are decoys that ride other channels and got regression
+guards instead.** Total surface = 4 real growers + 1 bonus catch
+(`scenario_state.discovered_clues`).
+
+**Four real growers — projected in `_apply_phase_c_projections`:**
+
+| Field | Where it lives | Decision | Code anchor |
+|---|---|---|---|
+| `room_states` | top-level on `GameSnapshot` | Keep acting PC's `current_room_id` only; empty dict when absent (structural anchor) | `session_helpers.py:_apply_phase_c_projections` |
+| `npcs` | top-level on `GameSnapshot` | In-scene only (`last_seen_location == current_room_id` OR encounter actor); off-stage retain identity in `npc_pool` | `session_helpers.py:_npc_in_scene` + `_apply_phase_c_projections` |
+| `known_facts` | nested on `Character` (under `characters[*]`) | Tail-K=8 per PC (mirrors `persistence.py:889`) | `session_helpers.py:_apply_phase_c_projections` |
+| `belief_state` | nested on `Npc` (under `npcs[*]`) | Stripped from surviving in-scene entries (dispatch-side state, ADR-053; not prompt-side) | `session_helpers.py:_apply_phase_c_projections` |
+
+**Bonus catch (also nested) — projected in `_apply_phase_c_projections`:**
+
+| Field | Where it lives | Decision |
 |---|---|---|
-| `room_states` | Project to current-room + adjacent rooms only (ADR-055 room-graph navigation already isolates this) | Full retrievable history is dungeon-graph territory, not narrator-prompt territory |
-| `journal` | Drop entirely (ADR-100 journal pipeline has its own retrieval path) OR route through RAG | If journal entries are needed in-prompt, they're a RAG corpus, not a dump |
-| `npcs` | Project to NPCs-in-current-scene only (perception filter ADR-104 already isolates this); route others through RAG | The narrator already gets the in-scene NPC roster via dedicated prompt sections |
-| `known_facts` | Route through RAG (ADR-053 belief/clue graph is RAG-shaped already) | Per-NPC × per-clue cardinality grows fast — drop or RAG |
-| `footnotes` | Drop entirely from snapshot dump; surface in-prompt via the dedicated footnote section that 100 introduced | Already double-rendered (snapshot + dedicated section) — drop one |
-| `belief_state` | Route through RAG; only surface beliefs for NPCs currently in scene | ADR-053 belief propagation; same shape as `known_facts` |
-| `location_descriptions` | Project to active POI only; rest go through RAG | ADR-109's growth vector; the LOCATION_DESCRIPTION message already carries the active-POI text — don't duplicate in `<game_state>` |
+| `discovered_clues` | nested on `scenario_state` | Size cap at 12, sorted by clue id (source is `set[str]`) |
+
+**Three decoys — NOT snapshot fields; regression guards only:**
+
+| Field | Actual home | Why it's not on snapshot |
+|---|---|---|
+| `journal` | derived from `Character.known_facts` + event log via `JournalRequestHandler` (ADR-100) | Event-log-shaped, not snapshot-shaped |
+| `footnotes` | per-turn `NarrationResult.footnotes` (`orchestrator.py:452`) | Per-turn artifact, never persisted to snapshot |
+| `location_descriptions` | out-of-band via `LOCATION_DESCRIPTION` WebSocket messages, loaded from `cookbook/assemble.py` at room change (ADR-109) | Not in `<game_state>` — rides a separate prompt section / network message |
+
+The cost-runaway diagnosis stands on the four real bloat sources. The
+3-decoy correction means the original "seven fields growing into the
+Valley" framing was overstated — but the Valley *was* growing on the
+four (room_states with N rooms visited, npcs with N NPCs accumulated,
+known_facts with N facts per PC, belief_state with O(NPC × clue)
+cardinality), which is enough to fully account for the $313/48h
+amplitude regime at session lengths reached on 2026-05-22-23. Regression
+guards for the three decoys (the "anchor / regression guards" tests in
+`test_61_2_snapshot_seven_field_projection.py`) will fail fast if a
+future ADR-109-shaped change materializes any of them onto
+`GameSnapshot` without an explicit projection decision.
 
 The narrator-load-bearing audit method is in ADR-110 §Phase B:
 

@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [49, 98, 101, 102]
 tags: [agent-system, prompt-engineering, observability]
-implementation-status: deferred
-implementation-pointer: sprint/current-sprint.yaml#57-5
+implementation-status: partial
+implementation-pointer: sidequest-server/sidequest/server/session_helpers.py#_PHASE_B_DROP_FIELDS
 ---
 
 # ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred
@@ -20,6 +20,19 @@ Accepted. Implementation tracked under epic 57 (Narrator Prompt Token Reduction)
 story 57-5. This ADR ratifies the two-phase reduction path and explicitly defers
 the diff-with-anchor and tool-fetch options to a follow-up if Phase A+B savings
 prove inadequate.
+
+**Amendment 2026-05-23 (epic 61).** Phase A+B savings *did* prove inadequate
+at long session length — the 2026-05-23 cost-runaway incident (~$313 burned
+in 48h) was driven by snapshot fields that grew monotonically with session
+length but were not in Phase B's DROP list. Phase C (per-field projections,
+NOT diff-with-anchor) shipped under story **61-2** as a smaller, lower-risk
+slice of the original Option C: bounded projections (current-room-only,
+in-scene-only, tail-K, size-cap) rather than RFC-6902 patches against a
+periodic anchor. Diff-with-anchor (the literal Option C in the original
+decision table) remains deferred and would now be re-scored against the
+61-2 baseline if revisited. Option D (hierarchical lazy load via narrator
+tool call) remains deferred for the same reasons given in the original §Alternatives.
+See §Implementation Notes 2026-05-23 amendment below for details.
 
 ## Context
 
@@ -267,7 +280,77 @@ state, not the encoding-layer slimming this ADR addresses.
   field omission.
 - The DROP list is reviewed at every PR that adds a `GameSnapshot` field
   going forward. The schema-validation hook does not enforce this today —
-  flagged here as a follow-up consideration, not a blocker.
+  flagged here as a follow-up consideration, not a blocker. **Amendment
+  2026-05-23 (story 61-5).** "Reviewed at every PR" failed silently on
+  2026-05-19 when ADR-109 added `location_descriptions` as a growing
+  persistent field without updating the DROP list. Five days later the
+  cost runaway hit. Story **61-5** introduces a pydantic `model_fields`
+  reflection test (the "tripwire" pattern, per server CLAUDE.md "No
+  Source-Text Wiring Tests") that asserts every top-level `GameSnapshot`
+  field is in one of three registries — `_PHASE_B_DROP_FIELDS`,
+  `_PHASE_C_PROJECTIONS` (new), or `_BOUNDED_BY_CONSTRUCTION` (new) —
+  and fails the test suite when a new field lands without an explicit
+  decision. Makes the un-enforced review rule enforceable.
+
+### Amendment 2026-05-23 — Phase C landed under story 61-2
+
+Story 61-2 ("Extend snapshot drop-list to cover the seven growing
+fields") landed the per-field projection layer originally framed in the
+§Decision table as Phase C / Option C. The implementation is *narrower*
+than Option C as originally specified (no RFC-6902 patches, no periodic
+anchor) — instead, four bespoke projections fire on every turn:
+
+| Field | Projection | Code |
+|---|---|---|
+| `room_states` (top-level) | Keep only the acting PC's `current_room_id` entry; empty dict when room is absent (structural anchor preserved). | `session_helpers.py:_apply_phase_c_projections` |
+| `npcs` (top-level) | Keep only NPCs whose `last_seen_location == current_room_id` OR who appear in an unresolved encounter's `actors[*].name`. Off-stage NPCs retain identity via `npc_pool` (gaslighting-doctrine anchor). Surviving entries drop nested `belief_state`. | `session_helpers.py:_npc_in_scene` + `_apply_phase_c_projections` |
+| `characters[*].known_facts` (nested) | Tail-K=8 per PC (mirrors `persistence.py:889` journal-render tail). | `session_helpers.py:_apply_phase_c_projections` |
+| `scenario_state.discovered_clues` (nested) | Cap at 12, sorted by clue id for determinism (the source is a `set[str]`). | `session_helpers.py:_apply_phase_c_projections` |
+
+Test contract: `sidequest-server/tests/server/test_61_2_snapshot_seven_field_projection.py` (17 tests).
+OTEL: `prompt.game_state.bytes` span carries new count attributes
+`room_states_dropped`, `npcs_dropped`, `known_facts_truncated_total`,
+`clues_truncated`.
+
+**3-of-7 decoy finding.** Epic 61 named *seven* fields as bloat
+sources. Validation against `GameSnapshot.model_fields` during 61-2
+red-phase surfaced that **three of the seven are not snapshot fields at
+all**:
+
+- `journal` — derived from `Character.known_facts` + the event log via
+  `JournalRequestHandler` (ADR-100). Not persisted to `GameSnapshot`.
+- `footnotes` — per-turn `NarrationResult.footnotes`
+  (`orchestrator.py:452`); event-log-bound, never persisted to snapshot.
+- `location_descriptions` — ADR-109 manifests ride out-of-band via
+  `LOCATION_DESCRIPTION` WebSocket messages, loaded from
+  `cookbook/assemble.py` at room change. No `snapshot.location_descriptions`
+  field exists.
+
+These three got **regression guards** in the 61-2 test file (the seven
+anchor tests under "Passing tests" in the 61-2 red-phase notes) — if a
+future PR materializes any of them onto `GameSnapshot`, the guards fail
+fast and force an explicit projection decision. The cost-runaway diagnosis
+stands on the four real bloat sources; the 3-decoy correction is a
+documentation accuracy point, not a recission of the underlying claim.
+
+**Degraded-location gaslighting doctrine.** When
+`snapshot.party_location(perspective=...)` returns `None` or empty
+(degraded actor location), the `room_states` and `npcs` projections
+**skip** (pass-through the original data) rather than emitting empty
+collections. Reasoning: degraded location is not the same as "no NPCs
+exist" or "no rooms exist," and silently stripping them would gaslight
+the narrator into confabulating around an empty world. The
+`known_facts` and `discovered_clues` projections still run (PC- and
+scenario-scoped, independent of actor location). An
+`actor_location_empty` warning fires BEFORE the projection runs so the
+GM panel sees the degraded-location signal next to the skip outcome,
+not after.
+
+**Phase D (tool-fetched lazy load) remains deferred.** The
+narrator-doesn't-know-to-ask problem and the tool round-trip latency
+arguments from the original §Alternatives still apply. If 61-2's bounded
+projections still leave the Valley too large at session length 100+, a
+future ADR can revisit Phase D with concrete numbers.
 
 ## References
 
