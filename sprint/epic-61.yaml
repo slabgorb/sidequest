@@ -132,3 +132,66 @@ stories:
     repos: server
     workflow: tdd
     type: refactor
+  - id: 61-8
+    title: 'Epic 61 cleanup: scope-deferred items from 61-1/61-2/61-3/61-7'
+    description: |-
+      Bundle cleanup story for scope-deferred items surfaced across epic 61 stories 61-1, 61-2, 61-3, and 61-7. Each item is independent and small; land in one PR or split if a sub-section grows. Companion to followups A-D (61-followup-A/B/C/D) which cover 61-4's cross-session-state hazards.
+
+      ## §A. From 61-1 — defense-in-depth on lore_store wiring
+
+      Extend orchestrator.py:3472-3481 fail-loud guard (narrator.sdk_path.context_missing_ids) to alarm specifically when context.lore_store is None in production. The current umbrella warn fires only on context_missing_ids; a regression in _build_turn_context that forgets `lore_store=sd.lore_store` would slip past. Add matching unit test against sidequest-server/tests/server/test_turn_context_sdk_wiring.py.
+
+      ## §B. From 61-2 — npc_pool exhaustiveness audit
+
+      The Phase C npcs projection's identity preservation depends on world_materialization seeding npc_pool for every materialized NPC (off-stage names dropped from snap.npcs retain identity in npc_pool only if seeding stays exhaustive). Audit the materialization path; add a regression test that constructs a session with off-scene NPCs and asserts npc_pool covers them post-_apply_phase_c_projections. Documented as a follow-up audit in 61-2-session.md line 189.
+
+      ## §C. From 61-3 — constant rename + span attribute
+
+      (C1) Rename SOFT_PROMPT_BUDGET_BYTES → PROMPT_BUDGET_BYTES_HARD (or similar) to match its actual hard-cap-with-refuse behavior. Touches orchestrator.py + ~3 test files + docstring. Reviewer flagged as "lying name" but accepted-deferred in 61-3-session.md line 241.
+
+      (C2) Add refused_oversized=True span attribute on the open orchestrator_process_action_span at the refuse path (orchestrator.py:3485). Watcher event is the GM-panel signal; this is the per-span attribute for a future GM-panel per-turn coloring view. 61-3-session.md line 243.
+
+      (C3) GM-panel red-band subscriber for the prompt_oversized_hard watcher event. UI work (sidequest-ui); the loud emit isn't actually surfaced to the operator until something consumes it. 61-3-session.md line 253. Note: this sub-item is sidequest-ui scope — split into its own follow-up if §A/B/C land first.
+
+      ## §D. From 61-7 review fan-out — pre-existing silent-failure + test-coverage debt
+
+      (D1) silent-failure-hunter #1 (pre-existing in 61-2 code at session_helpers.py:163): the two-pass filter silently drops dict-entries with unresolvable names, counted as npcs_dropped, indistinguishable from off-scene drops. Add OTEL attribute to distinguish unresolvable_name_drop from off_scene_drop, or split the counter.
+
+      (D2) silent-failure-hunter #2 (pre-existing in list_npcs_in_scene.py): the `eff is None → full roster` fallback lacks an OTEL attribute to distinguish "encounter bypass" from "genuine filter". Add tool.npcs.encounter_bypassed boolean to the existing span.
+
+      (D3) test-analyzer #4: no test for empty encounter.actors list in the encounter-branch inclusion path. Add a regression test.
+
+      (D4) test-analyzer #5: no test for PC-with-no-current_room degraded-location path. The projection's degraded-location-skip doctrine handles this; the test is a regression guard, not a behavior change.
+
+      (D5) Empty-collection noise: `payload["npcs"] = []` / `payload["room_states"] = {}` in _apply_phase_c_projections. Cosmetic only, no behavior surface; deferred across 61-2 and 61-7 reviews. Either remove the assignments or document why they're load-bearing (signals "we ran the projection" to GM panel). If the latter, add a comment with the rationale.
+
+      (D6) Five pre-existing pyright errors in session_helpers.py. Out-of-scope across all of 61, flagged across multiple sessions. Either fix or annotate with `# type: ignore[<rule>]` plus reason.
+
+      ## §E. Type-design backlog (defer if surface is too broad)
+
+      (E1) Introduce RoomId / NpcName newtypes. Broader model change; only land if the surface stays small.
+      (E2) Sealed-variant Npc location field (current_room | last_seen_location | location consolidation). Npc model refactor; the 61-7 unification used a predicate; this would unify at the data shape.
+      (E3) `encounter` resolved-vs-None ambiguity — add an `active_encounter()` accessor on whatever holds the optional encounter field.
+      (E4) encounter_type stringly-typed in encounter.py. Pre-existing; not in 61's diff.
+
+      These E items are explicitly the lowest-priority bucket — file as their own story if anyone wants to take them, or drop if scope creeps.
+
+      ## §F. Workflow improvement (orchestrator, not server)
+
+      `just server-fmt` runs `ruff format .` repo-wide; the post-fix pass on 61-2 reformatted 106 unrelated files. Scope the recipe to `ruff format $(git diff --name-only)` or equivalent. 61-2-handoff-implement.md line 44. This is the only sub-item that touches orchestrator (justfile), not sidequest-server.
+
+      ## §G. Test live-content coupling (pre-existing, not 61's regression)
+
+      tests/server/test_61_*.py and the npc-in-scene tests reference `caverns_and_claudes`/`mawdeep` slugs directly. Pre-existing pattern per memory feedback_tests_not_point_at_content. Inventory the coupling and decide: switch to a test-only fixture pack, or accept the coupling and document why. Not blocking, surfaced by rule-checker in 61-7's fan-out.
+
+      ---
+
+      ## How to land
+
+      Suggested order: §A → §C1 (rename) → §C2 → §B (audit) → §D1+D2 (OTEL) → §D3+D4 (tests) → §D5+D6 (noise + pyright) → §F (justfile, separate repo) → §E/§G (separate stories if taken). Each sub-item is independently testable. §C3 is sidequest-ui — split if it lands separately.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
