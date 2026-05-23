@@ -15,6 +15,8 @@ projected-cost number. 61-4 wedges both gaps shut.
 - **Orchestrator surface** (`scripts/playtest.py` + SDK-replay sidecar):
   preflight projected-cost print + refuse past `--max-projected-cost-usd`,
   and a `.meta.json` sibling for any `/tmp/real_req_*.json` dump.
+  ~~AC5~~ (deferred — see Fix E in spec-fix phase; re-implement when
+  SDK-replay capture path lands)
 
 Steady-state target (AC1, load-bearing — every default in this story
 derives from it): **~$0.03/turn** (60-4 post-fix Sonnet narrator turn,
@@ -96,6 +98,8 @@ Operator override knobs: `--max-projected-cost-usd` (default $0.50,
 ~16x target), `--confirm-cost` bypass flag. Both surface in `--help`.
 
 ### E. `.meta.json` sidecar schema (locked)
+
+~~AC5~~ (deferred — see Fix E in spec-fix phase; re-implement when SDK-replay capture path lands)
 ```json
 {
   "request_file": "real_req_001.json",
@@ -134,7 +138,7 @@ new test roots invented.
 | 2 (loud alarm: warn watcher + ERROR log, single emit) | Server tests 1, 2, 5 |
 | 3 (rolling baseline K=10, warmup floor) | Server tests 3, 4 |
 | 4 (playtest preflight, refuse + bypass) | Orchestrator tests 1, 2, 3 |
-| 5 (.meta.json sidecar schema) | Orchestrator test 4 |
+| ~~5 (.meta.json sidecar schema)~~ (deferred — see Fix E in spec-fix phase; re-implement when SDK-replay capture path lands) | Orchestrator test 4 |
 | 6 (regression: 60K-in/12-out fingerprint) | Server test 1 |
 | 7 (regression: playtest over-cap halts) | Orchestrator test 2 |
 
@@ -151,7 +155,8 @@ new test roots invented.
 2. **Where exactly the SDK-replay dump is written.** No producer for
    `/tmp/real_req_*.json` exists in the tree today (verified via
    `grep -rn real_req` — only doc references). RED tests treat the
-   sidecar-writer as a callable function (`write_meta_sidecar`) on the
+   sidecar-writer as a callable function (`write_meta_sidecar`)
+   ~~(deferred — see Fix E in spec-fix phase; re-implement when SDK-replay capture path lands)~~ on the
    playtest module, exercised with a synthetic dump file. Dev wires the
    real producer (which doesn't exist yet) to call this function. If
    the producer turns out to live in `scripts/playtest_otlp.py` or a new

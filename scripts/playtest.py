@@ -783,6 +783,10 @@ def _project_preflight_cost_usd(n_actions: int) -> float:
     math made the default cap refuse smoke_test.yaml itself, which would
     have driven operators to alias ``--confirm-cost`` permanently and
     silenced the cap. Cache-aware math preserves the cap as a real signal.
+
+    Assumes the cache TTL exceeds inter-action latency; otherwise actions
+    land cold and projection underestimates. The default 1h TTL
+    (``SIDEQUEST_ANTHROPIC_CACHE_TTL``) covers typical playtests.
     """
     if n_actions <= 0:
         return 0.0
