@@ -1,8 +1,51 @@
-# Reference Pages v2 Implementation Plan
+# Reference Pages v3 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Wire structured-panel hyperlinks (CharacterSheet abilities + class, KnowledgeJournal entries, LocationPanel locations) and a lobby reference surface into the v1 reference pages, with a bad-anchor banner for loud failure.
+---
+
+## v3 amendment — chrome absorption from 2026-05-23 design bundle
+
+**What changed (2026-05-24).** The v2 plan (17 tasks, hyperlinks + lobby + bad-anchor banner) had not yet started when a fresh design bundle landed at `docs/design-bundles/2026-05-23-lore-and-rules/` from the Claude Design tool. The bundle is a full visual redesign of `/reference/{rules,lore}/...`: per-pack chrome (palette + display font + dinkus glyphs), a contents rail, a hero with the world name, a new lore section sourced from `lore.yaml`, and removal of the keeper-only tropes section. v3 absorbs that scope without disturbing v2.
+
+**Scope discipline.** The chrome amendment is *styling + wiki-like behavior only* — per-pack palette/typography from `theme.yaml`, world-name hero, lore section from `lore.yaml`, locked contents rail, anchored sections (already in v2), bad-anchor banner (already in v2). Anything beyond that — tweak panels, treatment switchers, density sliders, in-page settings UI — is **out of scope**. Bundle assets that exist only to let the *designer* compare variants are not features.
+
+**Task count: 27 total** (17 v2 + 10 new chrome).
+
+**Mechanism.** The pages stay **server-rendered Python** in `sidequest-server/sidequest/server/reference_renderer.py`. The bundle's `Lore and Rules*.html` + `*.jsx` files are a **visual contract, not runtime code** — Babel-standalone prototypes used by the design tool. The renderer's job is to emit byte-equivalent HTML. The bundle's `theme.css` + `styles.css` ship as-is via a static route. No React, no Babel, no build step on the page itself. The renderer emits the same DOM shape the bundle's JSX produces.
+
+**Scope preservation.** Tasks 1–17 (v2) are correct and unstarted. They land first, in order, unchanged. The new chrome work is appended as Tasks 18–27. The v2 plan's anchor / URL / protocol / banner contracts are unchanged: the chrome wraps around them. AC10 (`just check-all` passes) is now subsumed by Task 27's gate, and the original Task 17 is skipped in favour of Task 27.
+
+**Architecture decisions in this amendment (each documented + justified in the named tasks below):**
+
+| Decision | Resolution | Task |
+|---|---|---|
+| `display_font_family` | **Add it to `theme.yaml`.** Content-controlled, same surface as `web_font_family`. No silent fallback — pack without it = LOUD error span. Per-pack mapping in `theme.css` from the design bundle becomes the seed data the content team commits into each `theme.yaml`. | 19 |
+| CSS shipping | **Static asset route.** Existing `_STYLESHEET_HREF = "/reference/static/reference.css"` extends to also serve the bundled `theme.css` and `styles.css`. Renderer emits stable stylesheet `<link>` tags. No inlining — caching matters across page loads. | 20 |
+| Screenshots in repo | **Move out of `docs/`.** 1.3 MB of PNGs in a docs tree violates the "images go to R2, not LFS" rule even though we're not committing through LFS. Solve: the bundle is on disk but not yet git-tracked. Task 25 stages screenshots to R2 at `cdn.slabgorb.com/design-bundles/2026-05-23-lore-and-rules/screenshots/` and replaces the local `screenshots/` dir with a README pointer. HTML / CSS / JSX / chat transcripts stay in the docs tree — those are the actual design intent. | 25 |
+| Fixture pack extension | **Extend the existing Task 15 fixture pack** with a `theme.yaml` + `lore.yaml` + richer world layout (world name, history, cosmology, factions) so chrome tests reuse it. No second fixture pack — splitting would fracture test surface. Task 15's fixture authoring is amended in place via Task 26. | 26 |
+| Live-pack assertions | **Validator only.** A new `python -m sidequest.cli.validate reference-chrome <pack>` subcommand walks every live pack's `theme.yaml` for the required chrome fields and reports gaps loudly. Lives inside the existing click group at `sidequest-server/sidequest/cli/validate/__main__.py` next to `locations` / `audio` / `projection-check`. No pytest reads `genre_packs/*`. | 23 |
+| Tropes removal | **Author the kind-allowlist in `RENDERED_FILES` (or equivalent) explicitly.** v1 already excludes `npcs.yaml`; v3 adds `tropes.yaml` and `seed_tropes.yaml` to the exclusion. Loud — not silent. | 24 |
+| One mechanism per problem | The renderer is the single emitter of chrome. We do NOT add a parallel client-side enricher or post-render JS injection. The bad-anchor banner inline script (v2 Task 4) is one inline script; the contents-rail uses native CSS sticky + a tiny `IntersectionObserver` snippet from the bundle (~15 LOC), kept inline so the page stays self-contained. | 18, 21 |
+
+**Conflicts with the existing 17 tasks (and resolutions):**
+
+- **Task 4's `_wrap_document`** emits a single `<link rel="stylesheet">`. v3 Task 20 extends it to (a) emit two stylesheet links (`theme.css`, `styles.css`), (b) accept and emit `<html>` `data-pack` / `data-world` / `data-archetype` attributes, (c) preserve the v2 JSON island + bad-anchor banner unchanged. Task 4 lands first; Task 20 amends.
+- **Task 15's fixture pack** (`classes.yaml`, `cultures.yaml`, `worlds/fixture_world/{world,legends,locations}.yaml`) is fine for v2 anchor tests but lacks `theme.yaml` + `lore.yaml`. Task 26 amends the same fixture in place, adding the new files. Task 15's assertions stay valid (they don't read the new files).
+- **Task 2's namespacing** of list-of-dict ids (`class-knight`) now also has to coexist with the new lore section's emitted ids (`#reckoning`, faction cards). v3 keeps the namespacing rule and adds `cult-<slug>`, `stratum-<slug>` to the kind table in Task 22.
+- **Task 17's manual smoke** is replaced by Task 27, which also walks the new chrome (TOC sticks, hero shows world name, palette swap on `data-pack` change, validator surfaces a missing `display_font_family`).
+- **No conflicts elsewhere.** Tasks 1, 3, 5–14, 16 are independent of chrome.
+
+**Reading order for the implementer:**
+
+1. Read this amendment header in full.
+2. Execute Tasks 1–16 as written (v2).
+3. **Skip the original Task 17** — Task 27 replaces it.
+4. Execute Tasks 18–27 in order.
+
+---
+
+**Goal:** Wire structured-panel hyperlinks (CharacterSheet abilities + class, KnowledgeJournal entries, LocationPanel locations) and a lobby reference surface into the v1 reference pages, with a bad-anchor banner for loud failure. **v3 adds:** per-pack chrome (palette + fonts + dinkus + contents rail + hero + lore section) sourced from `theme.yaml` and `lore.yaml`, server-rendered, matching the design bundle at `docs/design-bundles/2026-05-23-lore-and-rules/` byte-equivalently.
 
 **Architecture:** Server emits a `reference_url` on protocol objects at construction time, computed by a new `reference_anchors` module that shares a `slugify` helper with the page renderer. The v1 renderer is updated to emit kind-namespaced ids (`class-burglar`, `culture-thornberry`) so cross-file name collisions can't dead-link. UI panels render an entity name as `<a target="_blank">` iff its `reference_url` is non-null; a JSON island + ~10-line inline script on each reference page toggles a hidden "anchor not found" banner when `location.hash` isn't in the page's slug set.
 
@@ -2192,7 +2235,11 @@ v2 has no slug override; slug stability follows name stability."
 
 ---
 
-## Task 17: Run the full gate
+## Task 17: SUPERSEDED — see Task 27
+
+> **v3:** This task is replaced by Task 27 (the full chrome-aware gate). Do not execute Task 17 in v3 mode; the chrome work in Tasks 18–26 changes the rendered HTML enough that Task 17's smoke steps would fail without the corresponding chrome assertions. Skip ahead to Task 18, then run Task 27 as the final gate.
+>
+> The original Task 17 content is preserved below for traceability only.
 
 - [ ] **Step 1: Server**
 
@@ -2262,11 +2309,890 @@ For the orchestrator (plan + spec doc), the plan was already committed to
 
 ---
 
+## Task 18: Renderer reads `theme.yaml` and emits chrome data attributes
+
+**Files:**
+- Modify: `sidequest-server/sidequest/server/reference_renderer.py` (`assemble_rules_page`, `assemble_lore_page`, `_wrap_document`)
+- New: `sidequest-server/sidequest/server/reference_theme.py` — pure loader that returns a `ReferenceTheme` dataclass from a pack's `theme.yaml` and (optionally) a world's `lore.yaml`.
+- Test: `sidequest-server/tests/server/test_reference_theme.py` (new)
+
+The bundle's HTML is keyed on `<html data-pack="heavy_metal" data-world="long_foundry" data-archetype="rugged" class="dark">`. Every per-pack rule in `theme.css` selects on those attributes. Without them the page renders as a no-pack default and looks broken. v3 reads the values from `theme.yaml` (`archetype` is already a field there per the heavy_metal example, plus `web_font_family`, palette, `dinkus.glyph.*`) and emits them.
+
+- [ ] **Step 1: Write the failing test**
+
+Create `sidequest-server/tests/server/test_reference_theme.py`:
+
+```python
+"""Pure loader for reference-page chrome theme inputs."""
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+import yaml
+
+from sidequest.server.reference_theme import (
+    ReferenceTheme,
+    MissingThemeFieldError,
+    load_reference_theme,
+)
+
+
+def _write(path: Path, data: dict) -> None:
+    path.write_text(yaml.safe_dump(data))
+
+
+def test_load_required_fields(tmp_path: Path) -> None:
+    pack_dir = tmp_path / "fixture_pack"
+    pack_dir.mkdir()
+    _write(pack_dir / "theme.yaml", {
+        "archetype": "rugged",
+        "web_font_family": "IM Fell English",
+        "display_font_family": "Pirata One",
+        "primary": "#8B0000",
+        "accent": "#B8860B",
+        "background": "#0F0A0A",
+        "dinkus": {"glyph": {"light": "†", "medium": "✠", "heavy": "⸸  ☥  ⸸"}},
+    })
+    theme = load_reference_theme(pack="fixture_pack", pack_dir=pack_dir)
+    assert theme.pack == "fixture_pack"
+    assert theme.archetype == "rugged"
+    assert theme.web_font_family == "IM Fell English"
+    assert theme.display_font_family == "Pirata One"
+    assert theme.dinkus_light == "†"
+    assert theme.dinkus_medium == "✠"
+    assert theme.dinkus_heavy == "⸸  ☥  ⸸"
+
+
+def test_missing_display_font_raises_loudly(tmp_path: Path) -> None:
+    pack_dir = tmp_path / "fixture_pack"
+    pack_dir.mkdir()
+    _write(pack_dir / "theme.yaml", {
+        "archetype": "rugged",
+        "web_font_family": "IM Fell English",
+        # display_font_family intentionally absent
+        "primary": "#8B0000",
+        "dinkus": {"glyph": {"light": "†", "medium": "✠", "heavy": "⸸"}},
+    })
+    with pytest.raises(MissingThemeFieldError) as exc:
+        load_reference_theme(pack="fixture_pack", pack_dir=pack_dir)
+    assert "display_font_family" in str(exc.value)
+
+
+def test_missing_archetype_raises_loudly(tmp_path: Path) -> None:
+    pack_dir = tmp_path / "fixture_pack"
+    pack_dir.mkdir()
+    _write(pack_dir / "theme.yaml", {"web_font_family": "x", "display_font_family": "y"})
+    with pytest.raises(MissingThemeFieldError):
+        load_reference_theme(pack="fixture_pack", pack_dir=pack_dir)
+```
+
+- [ ] **Step 2: Implement the loader**
+
+Create `sidequest-server/sidequest/server/reference_theme.py`:
+
+```python
+"""Loader for reference-page chrome theme inputs.
+
+Reads <pack>/theme.yaml and returns a frozen ReferenceTheme dataclass.
+Missing required fields raise MissingThemeFieldError — no silent fallback.
+The renderer uses this to emit <html data-pack data-world data-archetype>
+attributes and pack-keyed inline CSS variables.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+
+import yaml
+
+
+class MissingThemeFieldError(KeyError):
+    """Raised when theme.yaml is missing a field required by the renderer."""
+
+
+_REQUIRED = (
+    "archetype",
+    "web_font_family",
+    "display_font_family",
+    "primary",
+    "accent",
+    "background",
+)
+
+
+@dataclass(frozen=True)
+class ReferenceTheme:
+    pack: str
+    archetype: str
+    web_font_family: str
+    display_font_family: str
+    primary: str
+    accent: str
+    background: str
+    dinkus_light: str
+    dinkus_medium: str
+    dinkus_heavy: str
+
+
+def load_reference_theme(*, pack: str, pack_dir: Path) -> ReferenceTheme:
+    theme_path = pack_dir / "theme.yaml"
+    if not theme_path.exists():
+        raise MissingThemeFieldError(f"{pack}: theme.yaml not found at {theme_path}")
+    with theme_path.open() as fh:
+        data = yaml.safe_load(fh) or {}
+    for field in _REQUIRED:
+        if field not in data:
+            raise MissingThemeFieldError(f"{pack}: theme.yaml missing required field '{field}'")
+    dinkus = (data.get("dinkus") or {}).get("glyph") or {}
+    for w in ("light", "medium", "heavy"):
+        if w not in dinkus:
+            raise MissingThemeFieldError(f"{pack}: theme.yaml missing dinkus.glyph.{w}")
+    return ReferenceTheme(
+        pack=pack,
+        archetype=data["archetype"],
+        web_font_family=data["web_font_family"],
+        display_font_family=data["display_font_family"],
+        primary=data["primary"],
+        accent=data["accent"],
+        background=data["background"],
+        dinkus_light=dinkus["light"],
+        dinkus_medium=dinkus["medium"],
+        dinkus_heavy=dinkus["heavy"],
+    )
+```
+
+- [ ] **Step 3: Wire into the renderer's page assemblers**
+
+In `reference_renderer.py`, modify `assemble_rules_page(pack, pack_dir)` and `assemble_lore_page(pack, world, pack_dir, world_dir)` to call `load_reference_theme(pack=pack, pack_dir=pack_dir)` and thread the resulting `ReferenceTheme` into `_wrap_document(...)` (signature gains a `theme: ReferenceTheme` parameter). On `MissingThemeFieldError` the route handler must let it bubble — Task 24's validator is the proactive surface; the route handler converts to HTTP 500 with an `ERROR` OTEL span (`sidequest.reference.theme_missing`).
+
+- [ ] **Step 4: Run tests, lint, commit**
+
+```bash
+cd sidequest-server
+uv run pytest tests/server/test_reference_theme.py tests/server/test_reference_renderer.py tests/server/test_reference_routes.py -v
+uv run ruff check sidequest/server/reference_theme.py sidequest/server/reference_renderer.py
+uv run pyright sidequest/server/reference_theme.py sidequest/server/reference_renderer.py
+git add sidequest/server/reference_theme.py sidequest/server/reference_renderer.py tests/server/test_reference_theme.py
+git commit -m "feat(reference): load theme.yaml chrome inputs for renderer
+
+ReferenceTheme dataclass collects archetype, palette, web/display
+font, and the three dinkus glyphs from a pack's theme.yaml. Missing
+required field raises MissingThemeFieldError — loud, no fallback."
+```
+
+---
+
+## Task 19: Add `display_font_family` to `theme.yaml` schema
+
+**Files:**
+- Modify: `sidequest-content/CLAUDE.md` (append authoring note)
+- Modify: `sidequest-content/genre_packs/<each pack>/theme.yaml` — add `display_font_family:` (see seed table below)
+- Modify: `sidequest-content/genre_workshopping/<each pack>/theme.yaml` — same
+- Test: covered by Task 24's validator (no pytest)
+
+The design tool worked around `theme.yaml` having no display-font field by hardcoding the choice per pack in `theme.css`. v3 elevates that to a content-controlled field. Seed values come straight from the bundle's `theme.css` per-pack `--folio-font-display` lines + the design tool's note in `chats/chat1.md` (final assistant message).
+
+| Pack | `display_font_family` (seed value) |
+|---|---|
+| `heavy_metal` | `Pirata One` |
+| `caverns_and_claudes` | `Pirata One` |
+| `victoria` (if shipped) / `tea_and_murder` | `Playfair Display` |
+| `mutant_wasteland` | `Special Elite` |
+| `space_opera` | `Orbitron` |
+| `neon_dystopia` | `Orbitron` |
+| `pulp_noir` | `Playfair Display` (default — content team confirms) |
+| `road_warrior` | `Special Elite` (default — content team confirms) |
+| `spaghetti_western` | `Special Elite` (default — content team confirms) |
+| `elemental_harmony` | `Playfair Display` (default — content team confirms) |
+
+- [ ] **Step 1: Add the authoring note to `sidequest-content/CLAUDE.md`**
+
+Append under the existing "Reference page anchors" section from v2 Task 16, or at end:
+
+```markdown
+## Reference page chrome
+
+Every `theme.yaml` must declare:
+
+- `web_font_family` — body / narrative serif. Already shipped.
+- `display_font_family` — hero title / `<h1>` font. **Required by v3.** No silent fallback; missing field = pack fails to render its reference page and the validator surfaces the gap.
+- `archetype` — one of `rugged`, `terminal`, `parchment`. Selects the structural font stack (`--font-body`, `--font-ui`) and the page's `data-archetype` attribute.
+- `dinkus.glyph.{light,medium,heavy}` — three ornamental glyphs used between sections. All three required.
+
+When picking `display_font_family`, prefer a Google Font already imported by `reference/static/theme.css` to avoid network fetches: Pirata One, Playfair Display, Special Elite, Orbitron, IM Fell English, Rajdhani, Share Tech Mono.
+```
+
+- [ ] **Step 2: Edit each live pack's `theme.yaml`**
+
+Per the seed table. Each edit is a one-line addition. Do not change existing fields.
+
+- [ ] **Step 3: Run the validator (Task 24, once it lands) to confirm green**
+
+If Tasks 23 and 19 race, ship Task 19's content edits behind a `feat/reference-v3-display-font` content branch and merge after Task 23 is green on `develop`.
+
+- [ ] **Step 4: Commit (in `sidequest-content`)**
+
+```bash
+cd sidequest-content
+git add CLAUDE.md genre_packs/*/theme.yaml genre_workshopping/*/theme.yaml
+git commit -m "feat(theme): add display_font_family to every pack's theme.yaml
+
+Required by sidequest-server reference-page chrome (v3). Seed values
+match the design bundle's per-pack mapping; content team owns the
+choice going forward."
+```
+
+---
+
+## Task 20: Static CSS route serves bundled `theme.css` + `styles.css`
+
+**Files:**
+- Create: `sidequest-server/sidequest/server/reference_static.py` — small FastAPI sub-router serving the two CSS files.
+- Move: `docs/design-bundles/2026-05-23-lore-and-rules/project/{theme,styles}.css` → `sidequest-server/sidequest/server/static/reference/{theme,styles}.css` (these become production assets; the bundle copies are the historical source).
+- Modify: `sidequest-server/sidequest/server/reference_routes.py` — mount the static sub-router at `/reference/static/`.
+- Modify: `sidequest-server/sidequest/server/reference_renderer.py` — `_wrap_document` now emits `<link rel="stylesheet" href="/reference/static/theme.css">` and `<link rel="stylesheet" href="/reference/static/styles.css">` in that order (theme first so styles wins on conflict).
+- Test: `sidequest-server/tests/server/test_reference_static.py` (new)
+
+- [ ] **Step 1: Write the failing test**
+
+```python
+"""The static CSS sub-router serves the bundled theme + styles."""
+from __future__ import annotations
+
+from fastapi.testclient import TestClient
+
+from sidequest.server.app import create_app
+
+
+def test_theme_css_served() -> None:
+    client = TestClient(create_app())
+    response = client.get("/reference/static/theme.css")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/css")
+    # Bundle marker present (matches the first @import line).
+    assert "fonts.googleapis.com" in response.text
+
+
+def test_styles_css_served() -> None:
+    client = TestClient(create_app())
+    response = client.get("/reference/static/styles.css")
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/css")
+```
+
+- [ ] **Step 2: Move the CSS files into the server tree**
+
+```bash
+mkdir -p sidequest-server/sidequest/server/static/reference
+cp docs/design-bundles/2026-05-23-lore-and-rules/project/theme.css \
+   sidequest-server/sidequest/server/static/reference/theme.css
+cp docs/design-bundles/2026-05-23-lore-and-rules/project/styles.css \
+   sidequest-server/sidequest/server/static/reference/styles.css
+```
+
+(Do not delete the bundle copies — they remain the historical design source. The server copy is the production artifact.)
+
+- [ ] **Step 3: Implement the static sub-router**
+
+```python
+# sidequest-server/sidequest/server/reference_static.py
+from pathlib import Path
+from fastapi import APIRouter
+from fastapi.staticfiles import StaticFiles
+
+router = APIRouter()
+_STATIC_ROOT = Path(__file__).parent / "static" / "reference"
+router.mount("/", StaticFiles(directory=_STATIC_ROOT), name="reference-static")
+```
+
+Mount it in `reference_routes.py`:
+
+```python
+from sidequest.server.reference_static import router as reference_static_router
+app.include_router(reference_static_router, prefix="/reference/static")
+```
+
+- [ ] **Step 4: Update `_wrap_document` to emit both stylesheets + chrome attrs**
+
+```python
+def _wrap_document(title: str, body: str, theme: ReferenceTheme, world: str | None = None) -> str:
+    anchors = _collect_anchor_ids(body)
+    island = (
+        '<script id="ref-anchors" type="application/json">'
+        f"{json.dumps(anchors)}"
+        "</script>"
+    )
+    world_attr = f' data-world="{escape(world)}"' if world else ""
+    return (
+        "<!doctype html>"
+        f'<html lang="en" class="dark" data-pack="{escape(theme.pack)}"{world_attr} data-archetype="{escape(theme.archetype)}">'
+        "<head>"
+        '<meta charset="utf-8">'
+        f"<title>{escape(title)}</title>"
+        '<link rel="stylesheet" href="/reference/static/theme.css">'
+        '<link rel="stylesheet" href="/reference/static/styles.css">'
+        "</head>"
+        "<body>"
+        '<div class="background-canvas" aria-hidden="true"></div>'
+        f"{_BAD_ANCHOR_BANNER}"
+        f"{island}"
+        f"{_BAD_ANCHOR_SCRIPT}"
+        f'<div class="page">{body}</div>'
+        "</body>"
+        "</html>"
+    )
+```
+
+The bundle's HTML wraps `<body>` content in `<div class="page">…<div class="layout">…</div></div>`; `_wrap_document` only emits the outer `.page`. The hero (Task 21) + layout + TOC (Task 22) + sections live inside `body`.
+
+- [ ] **Step 5: Test + lint + commit**
+
+```bash
+cd sidequest-server
+uv run pytest tests/server/test_reference_static.py tests/server/test_reference_renderer_bad_anchor.py -v
+uv run ruff check sidequest/server/reference_static.py sidequest/server/reference_renderer.py
+git add sidequest/server/reference_static.py sidequest/server/static/reference/ sidequest/server/reference_routes.py sidequest/server/reference_renderer.py tests/server/test_reference_static.py
+git commit -m "feat(reference): static CSS route + chrome data attrs
+
+Bundled theme.css + styles.css are served from /reference/static/.
+Renderer emits <html data-pack data-world data-archetype> so per-pack
+selectors in theme.css fire. JSON island + banner from v2 preserved."
+```
+
+---
+
+## Task 21: Emit the hero section with world name
+
+**Files:**
+- Modify: `sidequest-server/sidequest/server/reference_renderer.py` — new `_render_hero(theme, lore_data)` helper called inside both `assemble_*` functions.
+- Modify: `assemble_lore_page` and `assemble_rules_page` to load `lore.yaml` (lore page: world-level; rules page: pack-level) and pass it into the hero.
+- Test: `sidequest-server/tests/server/test_reference_renderer_hero.py` (new)
+
+The hero block from the bundle (see `app.jsx` `Hero` component, lines 100-180):
+
+```html
+<header class="hero">
+  <div class="hero-eyebrow">
+    <span class="glyph">{dinkus_medium}</span>
+    <span class="eyebrow gilt">SideQuest · {pack_label} · World Reference</span>
+    <span class="rule"></span>
+  </div>
+  <div class="hero-kicker">{first sentence of world.description}</div>
+  <h1 class="hero-title">{world.name or pack_label}</h1>
+  <div class="hero-sub">{pack_label} · Lore &amp; Rules</div>
+  <div class="hero-epigraph narrative-flourish">{pack_epigraph_body}<span class="attrib">{attrib}</span></div>
+</header>
+```
+
+For the rules page (no world), `world.name` defaults to the pack's display label; `kicker` defaults to the pack's blurb. World names live in `worlds/<world>/lore.yaml` under `world.name` (per the bundle's `Hero` reading `lore?.world?.name`); the loader (Task 18 extension) returns it.
+
+- [ ] **Step 1: Extend the theme loader to optionally read `lore.yaml`**
+
+Modify `reference_theme.py` to add `load_reference_lore(world_dir: Path) -> dict`. Loud on missing file (no fallback): if a lore page is requested but `worlds/<world>/lore.yaml` doesn't exist, raise `MissingLoreFileError`. For rules pages, this loader is not called.
+
+- [ ] **Step 2: Author `PACK_LABELS` + `PACK_EPIGRAPHS` from the bundle**
+
+The bundle's `app.jsx` lines 12-67 hold the per-pack label, blurb, glyph, and epigraph. v3 ports those into a single Python constant in `reference_theme.py`:
+
+```python
+PACK_LABELS: dict[str, str] = {
+    "heavy_metal": "Heavy Metal",
+    "space_opera": "Space Opera",
+    "victoria": "Victoria",
+    "tea_and_murder": "Tea and Murder",
+    "mutant_wasteland": "Mutant Wasteland",
+    "caverns_and_claudes": "Caverns & Claudes",
+    "neon_dystopia": "Neon Dystopia",
+    "pulp_noir": "Pulp Noir",
+    "road_warrior": "Road Warrior",
+    "spaghetti_western": "Spaghetti Western",
+    "elemental_harmony": "Elemental Harmony",
+}
+```
+
+Same shape for `PACK_BLURBS` and `PACK_EPIGRAPHS` (port verbatim from `app.jsx`). An unknown pack key falls through to `(pack_key.title(), "", ...)` — but unknown packs are themselves a loud-fail upstream (the renderer never gets there), so this is dead-but-defensible.
+
+- [ ] **Step 3: Write the failing test**
+
+```python
+def test_hero_includes_world_name(tmp_path: Path) -> None:
+    # Use the Task 27 fixture pack — fixture_pack has theme.yaml + worlds/fixture_world/lore.yaml.
+    html = assemble_lore_page("fixture_pack", "fixture_world", FIXTURE_PACK_DIR, FIXTURE_WORLD_DIR)
+    assert '<h1 class="hero-title">Fixture World</h1>' in html
+    assert 'class="hero"' in html
+    assert 'class="hero-eyebrow"' in html
+
+def test_hero_falls_back_to_pack_label_on_rules_page(tmp_path: Path) -> None:
+    html = assemble_rules_page("fixture_pack", FIXTURE_PACK_DIR)
+    # Rules page has no world; hero title = pack display label.
+    assert '<h1 class="hero-title">Fixture Pack</h1>' in html
+```
+
+- [ ] **Step 4: Implement `_render_hero(theme, lore_data | None)` and wire**
+
+Standard string-escape every interpolation. Use `escape()` consistently (already imported). Stat strip (the bundle's `.stat-strip` block reading from `rules.yaml` / `progression.yaml`) is **deferred to Task 22** as part of the section walk — the hero only emits eyebrow + kicker + title + sub + epigraph.
+
+- [ ] **Step 5: Test + commit**
+
+```bash
+cd sidequest-server
+uv run pytest tests/server/test_reference_renderer_hero.py -v
+git commit -m "feat(reference): emit hero block with world name from lore.yaml
+
+Lore page hero shows world.name (e.g. 'The Long Foundry') instead of
+pack label. Rules page hero falls back to pack display label.
+Eyebrow, kicker, title, sub, epigraph all match bundle markup."
+```
+
+---
+
+## Task 22: Emit the contents rail (TOC) + layout + per-file section markup
+
+**Files:**
+- Modify: `sidequest-server/sidequest/server/reference_renderer.py` — wrap the existing per-file body in `<div class="layout"><aside class="toc-sticky">…</aside><main>…</main></div>`. Each `_render_file` output gets wrapped in a `<section class="section" id="<num-id>">` with `<SectionHead>` markup.
+- Modify: same — extend the `_kind_for_stem` table to include `cult` and `stratum` for lore-tier list-of-dict items (from `lore.yaml` factions).
+- Inline: ~15 LOC `IntersectionObserver` snippet (from `app.jsx` `Toc` component lines 220-262) for active-section highlight.
+- Test: `sidequest-server/tests/server/test_reference_renderer_toc.py` (new)
+
+The bundle's TOC is **not toggleable** per Keith's directive ("lock in contents rail we want that"). v3 emits it on every page.
+
+- [ ] **Step 1: Author the per-pack TOC table**
+
+The bundle's `PACK_TOC` (in `app.jsx` lines 183-218) lists the section numbering per pack. Port into `reference_theme.py`:
+
+```python
+PACK_TOC: dict[str, list[dict[str, str]]] = {
+    "heavy_metal": [
+        {"num": "I",    "id": "reckoning",      "label": "The Reckoning"},
+        {"num": "II",   "id": "bearing",        "label": "Bearing & Make"},
+        {"num": "III",  "id": "edge",           "label": "The Edge"},
+        {"num": "IV",   "id": "confrontations", "label": "Confrontations"},
+        {"num": "V",    "id": "affinities",     "label": "Affinities"},
+        {"num": "VI",   "id": "power-tiers",    "label": "Power Tiers"},
+        {"num": "VII",  "id": "inventory",      "label": "Inventory"},
+        {"num": "VIII", "id": "vocab",          "label": "Beat Vocabulary"},
+    ],
+    # ... rest from bundle ...
+}
+```
+
+Unknown packs fall through to a **two-item default** (`[{"num": "I", "id": "reckoning", "label": "The World"}, {"num": "II", "id": "bearing", "label": "Bearing & Make"}]`) AND an ERROR span `sidequest.reference.toc_missing` so the GM panel surfaces the gap. (Not silent — surfaces clearly that this pack has no TOC table yet.)
+
+- [ ] **Step 2: Write the failing test**
+
+```python
+def test_toc_sticky_emitted(tmp_path: Path) -> None:
+    html = assemble_rules_page("fixture_pack", FIXTURE_PACK_DIR)
+    assert '<aside class="toc-sticky">' in html
+    assert '<nav class="toc">' in html
+    assert "Contents" in html
+
+def test_toc_active_highlight_script_present(tmp_path: Path) -> None:
+    html = assemble_rules_page("fixture_pack", FIXTURE_PACK_DIR)
+    assert "IntersectionObserver" in html
+    assert "toc-num" in html
+
+def test_layout_wraps_main(tmp_path: Path) -> None:
+    html = assemble_rules_page("fixture_pack", FIXTURE_PACK_DIR)
+    # Hero outside layout, TOC + main inside.
+    assert '<div class="layout">' in html
+    assert '<main>' in html
+```
+
+- [ ] **Step 3: Implement the rail + layout wrap + inline observer**
+
+Inline observer script (port from `app.jsx` `Toc.useEffect`):
+
+```python
+_TOC_OBSERVER_SCRIPT = """
+<script>
+(function(){
+  var ids=Array.from(document.querySelectorAll('aside.toc-sticky nav.toc a')).map(function(a){return a.getAttribute('href').slice(1);});
+  var sections=ids.map(function(id){return document.getElementById(id);}).filter(Boolean);
+  var links={};
+  document.querySelectorAll('aside.toc-sticky nav.toc a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a;});
+  if(!sections.length)return;
+  var obs=new IntersectionObserver(function(entries){
+    var visible=entries.filter(function(e){return e.isIntersecting;}).sort(function(a,b){return a.boundingClientRect.top-b.boundingClientRect.top;});
+    if(visible[0]){
+      Object.values(links).forEach(function(a){a.classList.remove('active');});
+      var top=visible[0].target.id;
+      if(links[top])links[top].classList.add('active');
+    }
+  },{rootMargin:'-20% 0% -60% 0%',threshold:0});
+  sections.forEach(function(s){obs.observe(s);});
+})();
+</script>
+"""
+```
+
+This is the **second inline script** on the page (the first is the bad-anchor banner from v2). Both are minimal, no framework. No other inline JS is permitted.
+
+- [ ] **Step 4: Extend `_kind_for_stem` for lore items**
+
+```python
+_KIND_OVERRIDES: dict[str, str] = {
+    # ... existing v2 entries ...
+    "factions": "cult",       # NEW — lore.yaml.factions
+    # 'stratum' is derived inline (factions filtered by name suffix per the bundle's Lore component);
+    # _kind_for_stem stays clean — the section emitter handles the split.
+}
+```
+
+- [ ] **Step 5: Test + commit**
+
+```bash
+cd sidequest-server
+uv run pytest tests/server/test_reference_renderer_toc.py tests/server/test_reference_renderer_namespacing.py -v
+git commit -m "feat(reference): emit contents rail + IntersectionObserver
+
+Per-pack TOC table from the bundle; ~15-line vanilla-JS observer
+highlights the active section. Layout wraps hero outside; TOC +
+main inside (matches bundle DOM)."
+```
+
+---
+
+## Task 23: Live-pack validator — `python -m sidequest.cli.validate reference-chrome`
+
+**Files:**
+- Create: `sidequest-server/sidequest/cli/validate/reference_chrome.py`
+- Modify: `sidequest-server/sidequest/cli/validate/__main__.py` — register new subcommand next to `locations` / `audio` / `projection-check`.
+- Test: `sidequest-server/tests/cli/test_validate_reference_chrome.py` (new) — fixture-driven only, never reads `genre_packs/*`.
+
+Per the no-content-coupled-tests rule, every "Heavy Metal renders correctly" claim is the **validator's** job, not pytest's. The validator walks one pack's `theme.yaml` (or all live packs) and reports missing chrome fields with a non-zero exit code and a loud `[FAIL]` line per gap.
+
+- [ ] **Step 1: Failing test**
+
+```python
+"""Reference-chrome validator: fixture-driven, fail-loud."""
+from __future__ import annotations
+
+from pathlib import Path
+
+import yaml
+from click.testing import CliRunner
+
+from sidequest.cli.validate.reference_chrome import main
+
+
+def _pack(tmp_path: Path, name: str, theme: dict) -> Path:
+    p = tmp_path / name
+    p.mkdir()
+    (p / "theme.yaml").write_text(yaml.safe_dump(theme))
+    return p
+
+
+def test_passes_when_all_chrome_fields_present(tmp_path: Path) -> None:
+    pack = _pack(tmp_path, "good", {
+        "archetype": "rugged",
+        "web_font_family": "IM Fell English",
+        "display_font_family": "Pirata One",
+        "primary": "#8B0000", "accent": "#B8860B", "background": "#0F0A0A",
+        "dinkus": {"glyph": {"light": "†", "medium": "✠", "heavy": "⸸"}},
+    })
+    result = CliRunner().invoke(main, [str(pack)])
+    assert result.exit_code == 0, result.output
+
+
+def test_fails_loudly_on_missing_display_font(tmp_path: Path) -> None:
+    pack = _pack(tmp_path, "bad", {
+        "archetype": "rugged",
+        "web_font_family": "x",
+        # display_font_family missing
+        "primary": "#000", "accent": "#000", "background": "#000",
+        "dinkus": {"glyph": {"light": "†", "medium": "✠", "heavy": "⸸"}},
+    })
+    result = CliRunner().invoke(main, [str(pack)])
+    assert result.exit_code != 0
+    assert "display_font_family" in result.output
+    assert "[FAIL]" in result.output
+```
+
+- [ ] **Step 2: Implement the click command**
+
+```python
+# sidequest-server/sidequest/cli/validate/reference_chrome.py
+from __future__ import annotations
+from pathlib import Path
+import click
+from sidequest.server.reference_theme import load_reference_theme, MissingThemeFieldError
+
+
+@click.command(name="reference-chrome")
+@click.argument("pack_dir", type=click.Path(exists=True, file_okay=False))
+def main(pack_dir: str) -> None:
+    """Validate that <pack_dir>/theme.yaml carries every field the reference renderer requires."""
+    pack_path = Path(pack_dir)
+    pack_name = pack_path.name
+    try:
+        theme = load_reference_theme(pack=pack_name, pack_dir=pack_path)
+    except MissingThemeFieldError as exc:
+        click.echo(f"[FAIL] {pack_name}: {exc}", err=True)
+        raise SystemExit(1)
+    click.echo(f"[OK]   {pack_name}: theme={theme.archetype}/{theme.display_font_family}")
+```
+
+Register in `__main__.py`:
+
+```python
+from sidequest.cli.validate.reference_chrome import main as reference_chrome_main
+cli.add_command(reference_chrome_main, name="reference-chrome")
+```
+
+- [ ] **Step 3: Add `just content-validate` recipe (orchestrator)**
+
+```bash
+# justfile
+content-validate:
+    for d in sidequest-content/genre_packs/*/ ; do \
+        uv run --project sidequest-server python -m sidequest.cli.validate reference-chrome "$$d" || exit 1; \
+    done
+```
+
+- [ ] **Step 4: Test + commit**
+
+```bash
+cd sidequest-server
+uv run pytest tests/cli/test_validate_reference_chrome.py -v
+git commit -m "feat(validate): reference-chrome subcommand
+
+Walks a pack's theme.yaml and asserts every field the v3 reference
+renderer reads. Fail-loud with [FAIL] line + non-zero exit. Lives
+in the existing validate click group next to locations/audio."
+```
+
+---
+
+## Task 24: Explicit exclusion of `tropes.yaml` + `seed_tropes.yaml` from rendering
+
+**Files:**
+- Modify: `sidequest-server/sidequest/server/reference_renderer.py` — wherever `RENDERED_FILES` / the file walker decides what to render, add `tropes.yaml`, `seed_tropes.yaml` to the exclusion alongside `npcs.yaml`.
+- Test: `sidequest-server/tests/server/test_reference_renderer.py` — add a regression assertion that a fixture pack with `tropes.yaml` does NOT include trope content in the rendered HTML.
+
+Per the bundle's chat transcript ("Tropes section removed — keeper-side only") and Keith's table-talk principle (GM panel = dev tool, players don't see keeper artifacts), tropes are excluded from the player-facing reference page.
+
+- [ ] **Step 1: Read the current exclusion list**
+
+```bash
+cd sidequest-server && grep -n "npcs\|RENDERED_FILES\|EXCLUDED\|skip" sidequest/server/reference_renderer.py | head -10
+```
+
+- [ ] **Step 2: Add the regression test**
+
+```python
+def test_tropes_yaml_excluded(tmp_path: Path) -> None:
+    pack_dir = tmp_path / "fixture_pack"
+    pack_dir.mkdir()
+    (pack_dir / "tropes.yaml").write_text(yaml.safe_dump({"tropes": [{"name": "Keeper Only Trope"}]}))
+    # Plus the minimum theme.yaml so assemble_rules_page doesn't fail upstream.
+    _write_min_theme(pack_dir)
+    html = assemble_rules_page("fixture_pack", pack_dir)
+    assert "Keeper Only Trope" not in html
+    assert "tropes" not in html.lower()  # No section heading either.
+```
+
+- [ ] **Step 3: Implement + commit**
+
+```bash
+cd sidequest-server
+git commit -m "fix(reference): exclude tropes.yaml from rendered pages
+
+Tropes are keeper-side per the design bundle; players never see them
+on /reference/{rules,lore}. Joins npcs.yaml in the explicit exclusion
+list. Loud — the exclusion is a named set, not a silent skip."
+```
+
+---
+
+## Task 25: Stage screenshots to R2, replace local dir with pointer
+
+**Files:**
+- Move: `docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/*.png` → R2 at `cdn.slabgorb.com/design-bundles/2026-05-23-lore-and-rules/screenshots/`.
+- Create: `docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/README.md` with the R2 URL pattern.
+- Delete (after upload): the local PNG files.
+
+Per Keith's "images go to R2, not LFS" memory rule. The screenshots are reference material, not source code — they belong in object storage.
+
+- [ ] **Step 1: Audit current dir**
+
+```bash
+ls -lh docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/ | head
+du -sh docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/
+```
+
+- [ ] **Step 2: Upload to R2** (use whatever R2 CLI / `wrangler` / `rclone` Keith uses — same path he uses for genre-pack portraits).
+
+```bash
+# Example — adapt to actual tool
+rclone copy docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/ \
+    r2:slabgorb-cdn/design-bundles/2026-05-23-lore-and-rules/screenshots/
+```
+
+- [ ] **Step 3: Write the pointer README**
+
+```markdown
+# Screenshots — moved to R2
+
+The 1.3 MB of PNG references that lived here at design-handoff time were uploaded to R2 on 2026-05-24 per the project's "images go to R2, not LFS" convention.
+
+Browse: `https://cdn.slabgorb.com/design-bundles/2026-05-23-lore-and-rules/screenshots/`
+
+Naming follows the original bundle: `{NN}-{world-tag}.png`. See `chats/chat1.md` (final assistant message) for the per-page mapping.
+```
+
+- [ ] **Step 4: Remove local PNGs + commit**
+
+```bash
+rm docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/*.png
+git add docs/design-bundles/2026-05-23-lore-and-rules/project/screenshots/README.md
+git commit -m "chore(docs): move design-bundle screenshots to R2
+
+1.3 MB of reference PNGs out of the docs tree; pointer README left
+in place. Keith's 'images go to R2, not LFS' rule. HTML / CSS / JSX
+/ chat transcripts stay — those are the actual design intent."
+```
+
+---
+
+## Task 26: Extend Task 15's fixture pack with `theme.yaml` + `lore.yaml`
+
+**Files:**
+- Modify: `sidequest-server/tests/fixtures/genre_packs/fixture_pack/theme.yaml` (new)
+- Modify: `sidequest-server/tests/fixtures/genre_packs/fixture_pack/lore.yaml` (new — pack-level)
+- Modify: `sidequest-server/tests/fixtures/genre_packs/fixture_pack/worlds/fixture_world/lore.yaml` (new — world-level)
+
+This is an in-place extension. The Task 15 fixture (`classes.yaml`, `cultures.yaml`, `worlds/fixture_world/{world,legends,locations}.yaml`) keeps its existing files; v3 chrome tests (Tasks 18, 21–24) read these additions.
+
+```yaml
+# tests/fixtures/genre_packs/fixture_pack/theme.yaml
+archetype: rugged
+web_font_family: IM Fell English
+display_font_family: Pirata One
+primary:    "#8B0000"
+secondary:  "#2A1A1A"
+accent:     "#B8860B"
+background: "#0F0A0A"
+surface:    "#1C1414"
+text:       "#E8DFC8"
+dinkus:
+  enabled: true
+  glyph:
+    light:  "†"
+    medium: "✠"
+    heavy:  "⸸  ☥  ⸸"
+```
+
+```yaml
+# tests/fixtures/genre_packs/fixture_pack/lore.yaml  (pack-level)
+pack_description: A small fixture pack for renderer tests. Not a real genre.
+history:
+  - Once upon a time, the test world was authored just enough to satisfy the chrome.
+cosmology:
+  - The cosmos here exists only to populate a pull-quote.
+factions:
+  - name: The Test Cult
+    summary: A test faction.
+    description: This faction exists to verify the lore section emits cult cards.
+    disposition: wary
+```
+
+```yaml
+# tests/fixtures/genre_packs/fixture_pack/worlds/fixture_world/lore.yaml
+world:
+  name: Fixture World
+  description: A small test world. Exists so the hero shows a world name.
+  history:
+    - The first sentence of world history. Two sentences here for the drop-cap test.
+  factions:
+    - name: The Vicarage Council
+      summary: World-tier faction.
+      description: Verifies world-tier factions render alongside pack-tier ones.
+      disposition: cautious
+```
+
+- [ ] Add the three YAML files. No test file change required — Tasks 18, 21–24 reference these paths via the fixture root constant.
+- [ ] Commit:
+
+```bash
+cd sidequest-server
+git add tests/fixtures/genre_packs/fixture_pack/theme.yaml tests/fixtures/genre_packs/fixture_pack/lore.yaml tests/fixtures/genre_packs/fixture_pack/worlds/fixture_world/lore.yaml
+git commit -m "test(reference): extend fixture pack with theme + lore yaml
+
+In-place extension of the Task 15 fixture so Tasks 18, 21-24 can
+test the chrome end-to-end without touching live genre_packs/.
+Single fixture pack — no test surface fragmentation."
+```
+
+---
+
+## Task 27: Full chrome-aware gate (replaces Task 17)
+
+- [ ] **Step 1: Server**
+
+```bash
+cd sidequest-server && uv run ruff check . && uv run ruff format --check . && uv run pyright && uv run pytest -v
+```
+
+- [ ] **Step 2: UI**
+
+```bash
+cd sidequest-ui && npx tsc --noEmit && npx eslint src && npx vitest run
+```
+
+- [ ] **Step 3: Live content validator**
+
+```bash
+cd /Users/slabgorb/Projects/oq-1 && just content-validate
+```
+
+If any pack lacks `display_font_family` or another required field, this fails. Fix the content edit (Task 19) before proceeding.
+
+- [ ] **Step 4: Aggregate gate**
+
+```bash
+cd /Users/slabgorb/Projects/oq-1 && just check-all
+```
+
+- [ ] **Step 5: Manual smoke**
+
+```bash
+cd /Users/slabgorb/Projects/oq-1 && just up
+```
+
+Then in a browser:
+
+1. **Lobby surface (v2 AC5)** — same as the original Task 17 step 1. ConnectScreen disabled-state flows.
+2. **Hero shows world name** — open `/reference/lore/heavy_metal/long_foundry`. The hero `<h1>` shows "The Long Foundry", NOT "Heavy Metal" or "heavy_metal". On `/reference/rules/heavy_metal` (no world), the hero shows "Heavy Metal".
+3. **Per-pack chrome swap** — open `/reference/rules/heavy_metal` and then `/reference/rules/space_opera`. The two pages must look visibly different: heavy_metal = iron-red/brass on void-black with Pirata One title and IM Fell English body; space_opera = console blue/holo amber on near-black with Orbitron title and Rajdhani body.
+4. **Contents rail** — scroll the lore page; the TOC on the left sticks; the active item highlights as each section enters view; clicking a TOC link scrolls smoothly to the section.
+5. **Dinkus glyphs** — the three weights `† / ✠ / ⸸ ☥ ⸸` render between sections on heavy_metal (Noto Sans Symbols 2 must load for the heavy glyph to show).
+6. **No tropes** — `/reference/rules/heavy_metal` does not show a "Tropes" heading or any trope content. (View page source; grep for "trope".)
+7. **Bad-anchor banner (v2 AC7)** — manually edit URL to `…#class-this-does-not-exist`; reload; banner appears.
+8. **Validator catches missing field** — temporarily delete `display_font_family` from `sidequest-content/genre_packs/heavy_metal/theme.yaml`. Run `just content-validate`. Expect `[FAIL]` line naming the pack and field, exit code != 0. Restore the line.
+9. **OTEL** — check GM panel. `sidequest.reference.url_attached`, `url_skipped`, `theme_missing` (if step 8 ran while a route was hit), `toc_missing` (only if an unknown pack was requested) — at least the first two must appear.
+
+If any of these fails, stop, file the bug, do not merge.
+
+- [ ] **Step 6: Push branches and open PRs**
+
+For each subrepo (`sidequest-server`, `sidequest-ui`, `sidequest-content`):
+
+```bash
+git push -u origin feat/reference-v3
+# Open PR targeting `develop`, NOT main.
+```
+
+For the orchestrator (plan + spec doc), the v3 plan was already committed to `main` upstream of execution; no extra PR needed there.
+
+---
+
 ## Self-Review
 
-(Performed by the plan author against the spec.)
+(Performed by the plan author against the v2 spec + the v3 amendment.)
 
-**Spec coverage:**
+**v2 spec coverage:**
 
 | Spec AC | Plan task(s) |
 |---|---|
@@ -2280,7 +3206,28 @@ For the orchestrator (plan + spec doc), the plan was already committed to
 | AC8 (shared slug helper, no duplicate) | Task 1 |
 | AC8a (namespaced anchor ids, collision case) | Tasks 2, 15 |
 | AC9 (OTEL spans) | Task 5 + attach call sites in 6, 7, 8, 9 |
-| AC10 (`just check-all` passes) | Task 17 |
+| AC10 (`just check-all` passes) | Task 27 (replaces Task 17) |
+
+**v3 chrome scope coverage:**
+
+| v3 deliverable | Plan task(s) |
+|---|---|
+| Per-pack palette + font + dinkus from `theme.yaml` | Tasks 18, 19, 20 |
+| `display_font_family` added to schema | Task 19 |
+| Static CSS route serving bundled theme.css + styles.css | Task 20 |
+| Hero shows world name from `lore.yaml` | Task 21 |
+| Contents rail (TOC) — locked, not toggleable | Task 22 |
+| Lore section emitted from `lore.yaml` | Task 21 (loader) + Task 22 (section walk) |
+| Tropes section removed | Task 24 |
+| Dinkus glyphs from pack | Tasks 18, 22 |
+| Noto Sans Symbols 2 font stack | Shipped in bundled `theme.css` (Task 20) |
+| Live-pack chrome validator | Task 23 |
+| Fixture pack extended for chrome tests | Task 26 |
+| Screenshots staged to R2 | Task 25 |
+| OTEL coverage for new chrome subsystems | Spans in Tasks 18 (`theme_missing`), 22 (`toc_missing`); v2's `url_*` spans unchanged |
+| No content-coupled tests | Enforced by Task 23's validator + Task 26's fixture |
+
+All v2 ACs + all v3 deliverables covered.
 
 All ten ACs covered. Spec routing-table kinds (class, signature, archetype,
 culture, legend, location, history) all have tests in Task 3.

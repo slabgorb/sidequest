@@ -1,0 +1,64 @@
+id: '63'
+type: epic
+title: Reference pages v3 — chrome + wiki-like anchor links
+description: "Amend the bare-styled /reference/rules/<pack> + /reference/lore/<pack>/<world> pages with the design bundle's chrome (per-pack palettes/fonts from theme.yaml, lore section from lore.yaml, locked contents rail, world-name hero) AND wire CharacterSheet/KnowledgeJournal/LocationPanel/ConnectScreen panels to hyperlink IN via server-emitted reference_url fields. Plan: docs/superpowers/plans/2026-05-23-reference-pages-v3.md (27 tasks, 17 v2 anchor + 10 chrome). Bundle: docs/design-bundles/2026-05-23-lore-and-rules/. Scope discipline: JUST styling + wiki-like behavior, no tweak/treatment/density panels."
+priority: p2
+status: in_progress
+repos: server,ui,content
+stories:
+  - id: 63-1
+    title: 'Anchor core: slug helper, namespaced ids, URL builders, JSON island, OTEL'
+    description: 'CANCELED 2026-05-24: scope (Plan Tasks 1–5) already implemented on sidequest-server/develop via PR #395 (feat/reference-v2, merged 2026-05-23). TEA discovery: 44 tests passing for Tasks 1–4; Task 5 OTEL helpers exist (sidequest/telemetry/spans/reference.py), only test_reference_otel.py missing. Test gap rolled into 63-4 scope. See .session/archive/63-1-session.md TEA finding for details.'
+    points: 5
+    priority: p2
+    status: canceled
+    repos: server
+    workflow: tdd
+    branch: feat/63-1-reference-anchor-core
+    assignee: keith
+  - id: 63-2
+    title: Protocol reference_url fields wired to UI panel hyperlinks
+    description: 'CANCELED 2026-05-24: scope (Plan Tasks 6–14, 16) mostly implemented on develop via PR #395. T6–T9 protocol fields, T10–T13 UI panel hyperlinks, T16 content note all shipped. LocationPanel.reference.test.tsx test gap rolled into 63-4 scope.'
+    points: 8
+    priority: p2
+    status: canceled
+    repos: server,ui,content
+    workflow: tdd
+    depends_on: 63-1
+  - id: 63-3
+    title: Fixture pack + theme.yaml display_font_family field
+    description: "Add display_font_family field to all genre packs' theme.yaml (Plan Task 19) and add CLAUDE.md authoring note. Plan reference: docs/superpowers/plans/2026-05-23-reference-pages-v3.md Task 19 (lines 2486–2547). Originally Tasks 15+19; Task 15 (fixture pack integration test) already merged via PR #395. Repos: content only (theme.yaml + CLAUDE.md)."
+    points: 2
+    priority: p2
+    status: done
+    started: '2026-05-24'
+    repos: server,content
+    workflow: trivial
+    depends_on: 63-1
+    completed: '2026-05-24'
+    review_verdict: approved
+  - id: 63-4
+    title: 'Chrome rendering: theme injection, CSS route, hero, contents rail'
+    description: 'Server-side chrome for /reference/rules/<pack> + /reference/lore/<pack>/<world>. Plan: docs/superpowers/plans/2026-05-23-reference-pages-v3.md Tasks 18 + 20–22. Per-pack palettes/fonts from theme.yaml + display_font_family (requires 63-3); static CSS route serves bundled theme.css + styles.css; hero with world name + lore section; locked contents rail (TOC) + IntersectionObserver scroll-spy; markup wraps per-file sections. Bundle source of truth: docs/design-bundles/2026-05-23-lore-and-rules/project/{theme,styles}.css and *.html. Strip dead .tweaks-panel/.tweaks-toggle/.tweaks-body selectors during CSS copy in Task 20.'
+    points: 10
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 63-3
+    acceptance_criteria:
+      - Per-pack theme injection via <html data-pack data-world data-archetype>, palette + web_font_family + display_font_family pulled from theme.yaml; missing fields fail loud with ERROR span (no silent fallback).
+      - Static CSS route serves bundled theme.css + styles.css; both linked in _wrap_document; dead .tweaks-* selectors stripped before commit.
+      - Hero block renders world name from lore.yaml + epigraph; falls back to pack name only if world is unbound (then logs WARN span).
+      - Contents rail markup emitted server-side; locked (not toggleable); IntersectionObserver scroll-spy ~15 lines inline JS.
+      - 'ROLLED-IN from 63-1 cancellation: write tests/server/test_reference_otel.py covering reference URL attached/skipped/failed spans against the existing sidequest/telemetry/spans/reference.py helpers.'
+      - 'ROLLED-IN from 63-2 cancellation: write sidequest-ui/src/components/__tests__/LocationPanel.reference.test.tsx mirroring CharacterSheet.reference.test.tsx pattern.'
+  - id: 63-5
+    title: 'Cleanup: live-pack validator, tropes exclusion, R2 screenshots, final gate'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 63-4
+    type: chore
