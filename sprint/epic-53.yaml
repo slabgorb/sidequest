@@ -55,8 +55,9 @@ stories:
     title: scripts/render_common.slugify prefers item.slug over slugify(name)
     points: 1
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-05-24'
     repos: orchestrator
     workflow: trivial
+    completed: '2026-05-24'
     branch: feat/53-6-render-common-slugify-prefer-item-slug
