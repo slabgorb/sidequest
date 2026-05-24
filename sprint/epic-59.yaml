@@ -93,10 +93,11 @@ stories:
     description: 'Same shape as 59-4, scaled down (less existing wiring to undo). Create subsystems/magic_working.py handler routing the magic_working dispatch to apply_magic_working (narration_apply.py:638). Add magic_working to router dispatch vocabulary (per ADR-113 §Decision §Dispatch vocabulary). Retire result.magic_working sidecar engagement path in narration_apply.py. Update narrator prompt: magic engagement is no longer narrator signal.'
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-4
+    branch: feat/59-5-magic-working-dispatch
     acceptance_criteria:
       - 'Fixture: spellcasting action → router dispatches magic_working → handler invokes apply_magic_working BEFORE narrator runs (verified via OTEL span ordering)'
       - 'Retirement guard: assert narration_apply.py no longer engages magic from result.magic_working sidecar field'
