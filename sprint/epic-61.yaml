@@ -303,3 +303,12 @@ stories:
     branch: feat/61-12-compact-narrator-output-format-prose
     type: refactor
     review_verdict: approved
+  - id: 61-13
+    title: 'ADR-112 amendment: record genre_chargen demotion + extraction/keeper deferral rationale'
+    description: "Story 61-11 (sidequest-server PR #403, commit 476c3bd on develop) demoted genre_chargen from STABLE_SECTION_NAMES and gated its registration on TurnContext.opening_directive — a partial reversal of ADR-112 / Story 57-3's four-section promotion. The reversal is captured in the server-side in-code comments (sidequest-server/sidequest/agents/prompt_framework/bucket.py STABLE_SECTION_NAMES docstring + sidequest-server/sidequest/agents/orchestrator.py:1594-1607 comment block) but NOT in the ADR file itself. A future architect reading docs/adr/0112-genre-prose-stable-cache-promotion.md cold will see the original full-cache promotion and not know it's been walked back for genre_chargen. Add an Amendment section to ADR-112 recording: (1) genre_chargen demoted to User bucket; (2) predicate-gate on TurnContext.opening_directive (sole existing runtime signal); (3) genre_extraction + genre_keeper_monologue deferral — no existing runtime signal expresses their scene scope today; future stories must either build runtime signals or migrate to ADR-113 tool-attached scope; (4) genre_town stays per the original §Defer (high firing rate; needs profiling); (5) reference to 61-11 commit 476c3bd. Per memory feedback_adr_priority_current_over_history, make the amendment LOUD about the partial-reversal status. AC: amendment block visible at the top of the ADR or under a clearly-titled '## Amendments' section with today's date and the commit ref; grep 'genre_chargen' in docs/adr/0112-*.md returns a non-empty match."
+    points: 1
+    priority: p2
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    type: chore
