@@ -133,4 +133,36 @@ Designed by Architect (oq-2) on 2026-05-16, in parallel with oq-1's in-flight Pl
 
 ## Post-Implementation Corrections (as-built — CODE IS AUTHORITATIVE)
 
-_To be filled at execution. Record every divergence from the spec §7 contract this plan was written against versus the real merged Plan 5/6 APIs; reconcile to as-built if the plan is re-run._
+Divergences between the spec §7 contract this plan was written against and the real merged Plan 5/6 APIs, plus load-bearing deferrals. Code is authoritative. Recorded at Task 8 execution (Plan-2/3/4 precedent). Do not soften or elide item 14.
+
+1. **`themes_for_depth` call site** — plan prose `themes.themes_for_depth(palette, depth_score)` (module fn); REAL = instance method `palette.themes_for_depth(depth_score) -> list[DungeonTheme]`. Bound to the real instance method. (T2)
+
+2. **`theme_pool` type** — `generate_expansion`'s `theme_pool` is `list[str]` (theme ids), NOT `list[DungeonTheme]`; design maps `[t.id for t in eligible]`. (T2)
+
+3. **Interior grid dimensions** — spec §5.2 leaves dims unspecified; resolved as §12-style materializer-owned defaults `DEFAULT_INTERIOR_WIDTH=DEFAULT_INTERIOR_HEIGHT=49`, `ROOMCORRIDOR_MIN_DIM=25` (loud guard before roomcorridor); per-region seed = blake2b non-XOR mix (house `_subseed` idiom) with a loud guard against the `seed==0x5EED` (24301) braid fixed-point. (T3)
+
+4. **`assemble_region` seed types** — takes `campaign_seed: str`/`expansion_id: str`; `MaterializationRequest` carries ints; `str(...)` converted once at the seam. (T4)
+
+5. **`look`/`is_first_band_entry` sourcing** — not on the request or §12; `look` derived loudly from the theme↔look binding (`DungeonTheme.interior.algorithm == LookDef.generator_binding`; loud raise if unresolvable, never `looks[0]`); `is_first_band_entry` is an explicit threaded param, true band-entry-history computation deferred to a later (session/persistence) concern. (T4)
+
+6. **CR→Edge** — no shipped CR→HP table; Plan-7-owned `hp = max(1, round(cr*8))` (B/X-shaped, monotonic; banker's-rounding safe for SRD CRs at `_CR_HP=8`) funneled through the canonical edge-pool builder, which was PROMOTED from `session._creature_edge_pool_from_hp` to public `creature_core.creature_edge_pool_from_hp` (body MOVED, not copied; `session` keeps a thin back-compat alias). (T4)
+
+7. **Async pipeline** — `ClaudeClient.send` is async; `asyncio.run` would `RuntimeError` under the production async handler loop / Task-7 worker; therefore `materialize()` and `_stage_curate` were made `async def` (other stages stay sync plain calls inside the async coordinator). (T4)
+
+8. **`attach_set_piece` is a single coalescence entry point** — invoked once per (region, set_piece); it internally rolls/starts/seeds/opens-threads/emits `setpiece.attach` — NOT three separate plan-prose calls. (T5)
+
+9. **`DepthReport.as_dict()` shape** — has no `expansion_id`/`stage` (unlike `GenerationReport.as_dict()`); the `dungeon.materialize.attach` span helper drops the pre-baked `stage`; the "span attributes == DepthReport.as_dict() exactly" contract is honored at the routed `SPAN_ROUTES` extract layer (the established Task-2..6 byte-pinned pattern). (T5)
+
+10. **RECONCILE SEAM A (masks/setpiece-state)** — Plan 5 `commit_expansion` persists only `RegionNode.to_dict()` (id/expansion_id/theme/depth_score). `.rolled` (the spec §7 freeze target) persisted via the real `store.record_mutation(kind="setpiece_state", ...)` inside the one txn, never recomputed. **Mask persistence is a documented Plan-5-API gap**: no mask BLOB write path on `commit_expansion`, fill grids not threaded to commit, and no Plan 1–6 code consumes a persisted mask on reload (inert until a future plan). NOT papered over — flagged here. (T6)
+
+11. **Commit transaction** — Seed=Expansion-0 (fresh-save loudly detected, entrance committed as `Expansion(0,[entrance],[])` before the first generated expansion) + `conn.rollback()` on `PersistError` (SQLite no auto-rollback); ONE txn on the caller-owned connection accessed via `persistence._conn` — the sanctioned Plan 5 §7.5 caller-owned-boundary contract (DungeonStore deliberately exposes no public commit/rollback; Plan 5 tests drive the conn directly). (T6)
+
+12. **New-frontier-edge derivation** — each new region → `FrontierEdge(from_region_id=region, heading=request.heading, spawn_depth_score=frozen post-attach depth)`, deterministic blake2b `frontier_edge_id`, idempotent with `put_frontier`'s INSERT OR REPLACE. (T6)
+
+13. **Frontier hook point** — no dedicated region-transition fn exists; the hook lands on the REAL `GameSnapshot._apply_world_patch_inner` `patch.current_region` apply (the ADR-011 WorldStatePatch apply; ADR-055 `region_init` is turn-1 only; `room_movement` is room-level/deferred). New `frontier_hook.py` producer + `frontier.region_transition` span; fires only on a genuine region change. (T6)
+
+14. **LOAD-BEARING DEFERRAL — live-session registration not done.** `lookahead_worker.register_lookahead_worker` is a real, complete, wiring-tested worker (proven end-to-end against the REAL `apply_world_patch`→`notify_region_transition` producer with a non-circular teeth test) but has **ZERO production callers** — the live WebSocket session lifecycle does not yet construct a save-conn `DungeonStore` / resolve bundle/palette/pack_tropes/campaign_seed at session-open and call `register_lookahead_worker(...)`. **Therefore the ADR-106 "Plans 1–6 are pure substrate with zero non-test runtime consumers" bottleneck is REDUCED (the consuming runtime seam now exists and is proven) but NOT fully closed (no live session activates it; `observers=0` on live `frontier.region_transition` spans is the lie-detector signal).** This is a sanctioned honest-deferral (Task 7's three spec bullets do not mandate live-session registration; same real-seam+wiring-test precedent as Task 6's empty producer registry / Plan 5's "no materializer caller yet") — but it is an OPEN, TRACKED follow-up requiring a session-integration story, NOT closed. Do not let any doc claim Plan 7 removed the bottleneck. (T7)
+
+15. **Task-7 central constraint (locked)** — the sync `frontier_hook` observer NEVER re-raises out of `notify_region_transition`/`_apply_world_patch_inner` (the region transition already succeeded; a background-prefetch failure must not abort the party's crossing). Worker/observer-body failure surfaces ONLY as a loud routed terminal `frontier.lookahead` span (GM-panel lie-detector), never as an exception into the sync transition. `lookahead_breadth>1` is materialized serially within one background task (expansion_id race structurally eliminated); default `lookahead_breadth=1`. (T7)
+
+16. **ruff format reconciliation** — per-task steps ran `ruff check` (not `ruff format`); accumulated format drift on `materializer.py`/`test_materializer.py` reconciled here at Task 8 (Plan-5 Task-14 precedent). (T8)
