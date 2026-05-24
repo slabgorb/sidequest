@@ -591,3 +591,25 @@ adr-regen:
     #!/usr/bin/env bash
     set -euo pipefail
     python3 {{root}}/scripts/regenerate_adr_indexes.py
+
+# Validate reference-page visibility across every live pack.
+# Fails fast if any pack has YAML fields not classified in
+# reference_visibility.PUBLIC ∪ KEEPER for renderer-reachable stems.
+reference-validate-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    fail=0
+    for pack in {{root}}/sidequest-content/genre_packs/*/; do
+        name=$(basename "$pack")
+        echo "=== $name ==="
+        if ! (cd {{root}}/sidequest-server && uv run python -m sidequest.cli.validate_reference_visibility --only-renderer-stems "$pack"); then
+            fail=1
+        fi
+    done
+    if [[ $fail -eq 1 ]]; then
+        echo ""
+        echo "ERROR: at least one pack has unclassified renderer-reachable fields."
+        exit 1
+    fi
+    echo ""
+    echo "All packs OK."
