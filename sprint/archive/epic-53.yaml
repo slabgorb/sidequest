@@ -3,7 +3,7 @@ type: epic
 title: 'Road Warrior: Rig two-pool wiring + content alignment'
 description: 'Content-side rig overhaul landed in sidequest-content (rules.yaml edge_config, inventory.yaml vessel templates, classes.yaml signatures, npcs.yaml). Backend wiring needed: RigComposurePool extension to EdgePool model, materializer hooks for vessel item → rig pool, crash-event handler at Composure→0, OTEL spans per ADR-031. Also includes the slugify precedence fix in scripts/render_common.py.'
 priority: p1
-status: backlog
+status: done
 repos: sidequest-server,sidequest-content,sidequest-ui
 stories:
   - id: 53-1
@@ -48,10 +48,11 @@ stories:
     title: 'UI: surface RigComposure + Edge + injury tags on CharacterSheet'
     points: 2
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-05-24'
     repos: sidequest-ui
     workflow: tdd
-    started: '2026-05-24'
+    completed: '2026-05-24'
     branch: feat/53-5-ui-surface-rig-composure-edge-injury-tags
   - id: 53-6
     title: scripts/render_common.slugify prefers item.slug over slugify(name)
@@ -63,3 +64,4 @@ stories:
     workflow: trivial
     completed: '2026-05-24'
     branch: feat/53-6-render-common-slugify-prefer-item-slug
+completed: '2026-05-24'

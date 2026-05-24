@@ -14,6 +14,7 @@ completed_epics:
   - '58'
   - '50'
   - '62'
+  - '53'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -275,3 +276,33 @@ completed_stories:
     title: Audit + rewrite world descriptions across all packs to decouple from pack catchphrase
     points: 5
     completed: '2026-05-23'
+  - id: 53-1
+    epic: '53'
+    title: 'RigComposurePool: extend Edge framework for vessel-attached pools'
+    points: 3
+    completed: '2026-05-19'
+  - id: 53-2
+    epic: '53'
+    title: 'Materializer: instantiate rig vessel item → bind RigComposurePool to character'
+    points: 3
+    completed: '2026-05-19'
+  - id: 53-3
+    epic: '53'
+    title: 'Crash event handler: Composure→0 fires injury tag + Edge hit + dismount'
+    points: 3
+    completed: '2026-05-19'
+  - id: 53-4
+    epic: '53'
+    title: 'OTEL spans: rig_pool delta + rig_crash_event per ADR-031'
+    points: 2
+    completed: '2026-05-23'
+  - id: 53-5
+    epic: '53'
+    title: 'UI: surface RigComposure + Edge + injury tags on CharacterSheet'
+    points: 2
+    completed: '2026-05-24'
+  - id: 53-6
+    epic: '53'
+    title: scripts/render_common.slugify prefers item.slug over slugify(name)
+    points: 1
+    completed: '2026-05-24'
