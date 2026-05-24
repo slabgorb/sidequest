@@ -72,7 +72,7 @@ stories:
     description: "THE BIG MIGRATION — atomic, no parallel window per project memory feedback_one_mechanism_per_problem. In ONE PR: (1) wire confrontation dispatch handler at subsystems/confrontation.py → instantiate_encounter_from_trigger; (2) insert IntentRouter into the live turn pipeline pre-narrator with context.dispatch_package populated for real; (3) call run_dispatch_bank to engage engines before narrator runs; (4) retire begin_confrontation tool (relocate to agents/tools/_retired/, drop from per-turn tool list); (5) remove confrontation from _SDK_TOOL_OWNED_FIELDS (orchestrator.py:1088); (6) remove result.confrontation consumer in narration_apply.py (engagement is router-driven); (7) update output_only_sdk.md §4 to note confrontation engagement is no longer narrator's concern; (8) amend ADR-111 with implementation note for engagement-criteria migration from begin_confrontation description to router Haiku prompt."
     points: 8
     priority: p1
-    status: in_review
+    status: done
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-3
@@ -85,7 +85,9 @@ stories:
       - 'ADR-111 amended with implementation note: confrontation_trigger_constraint moves from begin_confrontation tool description to IntentRouter Haiku system prompt (still cached at system-block level); ADR-113 implementation-pointer updated to point at this story'
       - 'Failure path (no fallbacks per memory feedback_no_fallbacks_hard): mock router to raise → assert intent_router.failed ERROR span emitted, ONE bounded retry attempted, then explicit failure surfaced (no silent narrator-only continuation)'
       - Story 59-1 ACs targeting advance_confrontation invocation are formally superseded — note appended to 59-1's archived session file and to ADR-111's commentary that the engagement-criteria home moved again
+    completed: '2026-05-24'
     branch: feat/59-4-confrontation-cutover-router-wiring
+    review_verdict: approved
   - id: 59-5
     title: Magic_working dispatch handler + sidecar engagement retirement
     description: 'Same shape as 59-4, scaled down (less existing wiring to undo). Create subsystems/magic_working.py handler routing the magic_working dispatch to apply_magic_working (narration_apply.py:638). Add magic_working to router dispatch vocabulary (per ADR-113 §Decision §Dispatch vocabulary). Retire result.magic_working sidecar engagement path in narration_apply.py. Update narrator prompt: magic engagement is no longer narrator signal.'
