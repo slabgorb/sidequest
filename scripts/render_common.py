@@ -496,7 +496,7 @@ async def render_batch(
             out_dir = GENRE_PACKS_DIR / item["genre"] / "images" / image_subdir
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        slug = slugify(item["name"])
+        slug = item.get("slug") or slugify(item["name"])
         out_path = out_dir / f"{slug}.png"
 
         # Skip if already generated (unless --force)
