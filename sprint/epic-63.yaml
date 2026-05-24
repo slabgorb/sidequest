@@ -42,12 +42,11 @@ stories:
     description: 'Server-side chrome for /reference/rules/<pack> + /reference/lore/<pack>/<world>. Plan: docs/superpowers/plans/2026-05-23-reference-pages-v3.md Tasks 18 + 20–22. Per-pack palettes/fonts from theme.yaml + display_font_family (requires 63-3); static CSS route serves bundled theme.css + styles.css; hero with world name + lore section; locked contents rail (TOC) + IntersectionObserver scroll-spy; markup wraps per-file sections. Bundle source of truth: docs/design-bundles/2026-05-23-lore-and-rules/project/{theme,styles}.css and *.html. Strip dead .tweaks-panel/.tweaks-toggle/.tweaks-body selectors during CSS copy in Task 20.'
     points: 10
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-24'
     repos: server,content
     workflow: tdd
     depends_on: 63-3
-    branch: feat/63-4-ref-chrome-theme-css-hero
     acceptance_criteria:
       - Per-pack theme injection via <html data-pack data-world data-archetype>, palette + web_font_family + display_font_family pulled from theme.yaml; missing fields fail loud with ERROR span (no silent fallback).
       - Static CSS route serves bundled theme.css + styles.css; both linked in _wrap_document; dead .tweaks-* selectors stripped before commit.
@@ -55,6 +54,8 @@ stories:
       - Contents rail markup emitted server-side; locked (not toggleable); IntersectionObserver scroll-spy ~15 lines inline JS.
       - 'ROLLED-IN from 63-1 cancellation: write tests/server/test_reference_otel.py covering reference URL attached/skipped/failed spans against the existing sidequest/telemetry/spans/reference.py helpers.'
       - 'ROLLED-IN from 63-2 cancellation: write sidequest-ui/src/components/__tests__/LocationPanel.reference.test.tsx mirroring CharacterSheet.reference.test.tsx pattern.'
+    completed: '2026-05-24'
+    branch: feat/63-4-ref-chrome-theme-css-hero
   - id: 63-5
     title: 'Cleanup: live-pack validator, tropes exclusion, R2 screenshots, final gate'
     points: 5
@@ -64,3 +65,10 @@ stories:
     workflow: tdd
     depends_on: 63-4
     type: chore
+  - id: 63-6
+    title: Reference UI test parity for LocationPanel (rolled-in from 63-2)
+    points: 1
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: tdd
