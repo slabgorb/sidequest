@@ -267,9 +267,12 @@ stories:
     description: "genre_chargen, genre_extraction, and genre_keeper_monologue were promoted to STABLE_SECTION_NAMES under ADR-112 / Story 57-3 for cache stability — but unlike the rest of the stable set they are scene-typed: chargen prose only matters during character creation, extraction prose only when leaving the dungeon with loot, keeper_monologue only when the Keeper speaks (rare scripted beats). Carrying ~450 tok of out-of-scope prose on every neutral 'you walk into the tavern' turn is the wrong end of the cache-vs-relevance trade. The cache thrash argument ADR-112 used to defer genre_combat_voice / genre_chase_voice (encounter-boundary churn) does not apply here: chargen completes ONCE per session (single cache miss, amortized by turn 5), extraction/keeper_monologue fire on rare scene-type transitions. Scope: remove these three names from STABLE_SECTION_NAMES at sidequest/agents/prompt_framework/bucket.py:50-53. Add conditional registration in orchestrator.build_narrator_prompt (around the existing genre_prompts injection block at orchestrator.py:1491+) so each section only registers when its scene predicate is true (chargen_active, extraction_active, keeper_speaking). Predicates should be derived from existing session state — not new flags. genre_town stays on the stable list for now (frequent enough that profiling needed before moving). ADR-112 needs an amendment documenting the partial reversal and the predicate-gating rationale."
     points: 2
     priority: p2
-    status: backlog
+    status: started
     repos: server,content
     workflow: tdd
+    assigned_to: slabgorb
+    started: '2026-05-24'
+    branch: feat/61-11-scene-gate-stable-sections
     acceptance_criteria:
       - genre_chargen, genre_extraction, genre_keeper_monologue are removed from STABLE_SECTION_NAMES
       - Each of the three sections is registered conditionally in build_narrator_prompt only when its scene predicate is true; the predicates are derived from existing TurnContext / GameState fields, no new state flags introduced
