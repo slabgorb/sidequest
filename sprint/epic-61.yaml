@@ -66,14 +66,16 @@ stories:
     description: "Add a pydantic-reflection test in sidequest-server/tests/server/ (e.g. test_snapshot_field_governance.py) that enumerates GameSnapshot.model_fields and asserts every top-level field is in exactly one of three named registries: _PHASE_B_DROP_FIELDS (already in session_helpers.py:64), _PHASE_C_PROJECTIONS (new, to be introduced in session_helpers.py), or _BOUNDED_BY_CONSTRUCTION (new, for fields whose growth is bounded by their own structure — scalar fields, enum fields, fixed-size collections). REQUIRES introducing the two new registries explicitly so the gate test reflects over named tuples, NOT source-text-grep on session_helpers.py (banned by sidequest-server CLAUDE.md 'No Source-Text Wiring Tests'). The tripwire pattern at tests/dungeon/test_setpiece_attach_wiring.py is the model. Closes ADR-110 §Implementation Notes 2026-05-23 amendment loop: the un-enforced 'reviewed at every PR' rule becomes test-enforced. Prerequisite: 61-7 must land first so _PHASE_C_PROJECTIONS reflects the unified _npc_in_scene predicate (otherwise the registry would encode a known divergence from list_npcs_in_scene)."
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     assigned_to: slabgorb
     started: '2026-05-24'
     repos: server
     workflow: tdd
     depends_on: 61-7
+    completed: '2026-05-24'
     type: refactor
     branch: feat/61-5-snapshot-field-governance
+    review_verdict: approved
   - id: 61-6
     title: 'Playtest validation: 50-turn solo session, input_tokens@turn50 <= 1.2x input_tokens@turn5, per-turn cost flat'
     points: 2
