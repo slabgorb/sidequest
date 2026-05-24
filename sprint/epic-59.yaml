@@ -54,11 +54,10 @@ stories:
     description: Change confrontation_intent_validator trigger from narrator-action_rewrite vs engaged-encounter mismatch to router-dispatched-subsystem vs engine-engaged-on-snapshot mismatch. Broaden semantics across the full dispatch vocabulary (confrontation, magic_working, scenario_clue). Watcher is a pure function (package, post_turn_snapshot) → optional[mismatch_span] running post-turn. Replaces both the deleted _CONFRONTATION_TRIGGER_PATTERNS keyword scanner (93c7659) and the 59-1-shipped confrontation_intent_mismatch_reprompt_failed_span self-report-reprompt flow. One mechanism per project memory feedback_one_mechanism_per_problem.
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-2
-    branch: feat/59-3-router-vs-engine-watcher
     acceptance_criteria:
       - Router dispatched confrontation:negotiation + snapshot has no encounter → mismatch span fires (reuse existing confrontation_unengaged_turn_span)
       - Router dispatched confrontation:negotiation + snapshot has matching encounter → no span (no false positive)
@@ -66,6 +65,8 @@ stories:
       - Watcher covers magic_working and scenario_clue dispatch mismatches with new spans dispatch_engagement.{subsystem}.mismatch (extends span family beyond confrontation)
       - 'Wiring test (CLAUDE.md): drive a synthetic router-dispatched-not-engaged turn through the real watcher hook (not unit-test mock); assert span emission via OTEL not source-text grep'
       - 59-1-shipped confrontation_intent_mismatch_reprompt_failed_span self-report-reprompt path is REMOVED (replaced by watcher; one mechanism)
+    completed: '2026-05-24'
+    branch: feat/59-3-router-vs-engine-watcher
   - id: 59-4
     title: 'Confrontation cutover: live IntentRouter wiring + retire begin_confrontation (atomic)'
     description: "THE BIG MIGRATION — atomic, no parallel window per project memory feedback_one_mechanism_per_problem. In ONE PR: (1) wire confrontation dispatch handler at subsystems/confrontation.py → instantiate_encounter_from_trigger; (2) insert IntentRouter into the live turn pipeline pre-narrator with context.dispatch_package populated for real; (3) call run_dispatch_bank to engage engines before narrator runs; (4) retire begin_confrontation tool (relocate to agents/tools/_retired/, drop from per-turn tool list); (5) remove confrontation from _SDK_TOOL_OWNED_FIELDS (orchestrator.py:1088); (6) remove result.confrontation consumer in narration_apply.py (engagement is router-driven); (7) update output_only_sdk.md §4 to note confrontation engagement is no longer narrator's concern; (8) amend ADR-111 with implementation note for engagement-criteria migration from begin_confrontation description to router Haiku prompt."
