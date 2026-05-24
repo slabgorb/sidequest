@@ -111,7 +111,8 @@ stories:
     description: "Different from 59-4/59-5: clue advancement currently fires via narrator footnotes (fact_id-carrying) — a legitimate narrator emission (the narrator reveals what players learn, that's a narrator job). Router SUPPLEMENTS without retiring. Create subsystems/scenario_clue.py handler → consume_clue_footnotes (dispatch/scenario_clue_intake.py:34). Router dispatches scenario_clue when player action explicitly references investigation/discovery intent. Footnote-driven path stays alive. Idempotency-key uniqueness (already enforced in DispatchPackage validator) prevents double-engagement."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-24'
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-4
@@ -120,6 +121,7 @@ stories:
       - 'Footnote-driven path unchanged: narrator emits fact_id footnote → narration_apply still calls consume_clue_footnotes (regression test)'
       - 'No double-engagement: router-dispatched and footnote-driven paths share idempotency keys; DispatchPackage validator rejects duplicates (existing validator)'
       - Lie-detector covers scenario_clue mismatches (extends 59-3 watcher vocabulary)
+    completed: '2026-05-24'
   - id: 59-7
     title: Wire three LocalDM subsystems (npc_agency, distinctive_detail_hint, reflect_absence)
     description: These subsystem modules already exist in sidequest/agents/subsystems/ from the 2026-04 LocalDM build but have no live dispatch path. Now that the router is live (post 59-4), wire them through run_dispatch_bank. Pure additive — no engine retirement, no field zeroing changes. Subsystems wake for the first time since 2026-04-28 dormancy.
