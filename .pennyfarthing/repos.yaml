@@ -36,7 +36,7 @@ repos:
     build_command: tsc -b && vite build
     lint_command: eslint .
     dev_command: vite
-    branch_strategy: github-flow
+    branch_strategy: gitflow
     default_branch: develop
     notes: |
       React 19 + Vite + TypeScript + Tailwind CSS + shadcn/ui.
