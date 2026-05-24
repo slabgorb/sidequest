@@ -60,10 +60,13 @@ stories:
     title: 'Cleanup: live-pack validator, tropes exclusion, R2 screenshots, final gate'
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-24'
     repos: server,content
     workflow: tdd
     depends_on: 63-4
+    branch: feat/63-5-cleanup-validator-tropes-r2-final-gate
+    assignee: slabgorb
     type: chore
   - id: 63-6
     title: Reference UI test parity for LocationPanel (rolled-in from 63-2)
@@ -72,3 +75,13 @@ stories:
     status: backlog
     repos: ui
     workflow: tdd
+  - id: 63-7
+    title: Reference chrome markup contract alignment per v3 plan Tasks 20-22
+    points: 5
+    priority: p2
+    status: done
+    started: '2026-05-24'
+    repos: server
+    workflow: tdd
+    completed: '2026-05-24'
+    type: bug
