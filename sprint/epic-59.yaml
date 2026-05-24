@@ -93,17 +93,19 @@ stories:
     description: 'Same shape as 59-4, scaled down (less existing wiring to undo). Create subsystems/magic_working.py handler routing the magic_working dispatch to apply_magic_working (narration_apply.py:638). Add magic_working to router dispatch vocabulary (per ADR-113 §Decision §Dispatch vocabulary). Retire result.magic_working sidecar engagement path in narration_apply.py. Update narrator prompt: magic engagement is no longer narrator signal.'
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-4
-    branch: feat/59-5-magic-working-dispatch
     acceptance_criteria:
       - 'Fixture: spellcasting action → router dispatches magic_working → handler invokes apply_magic_working BEFORE narrator runs (verified via OTEL span ordering)'
       - 'Retirement guard: assert narration_apply.py no longer engages magic from result.magic_working sidecar field'
       - Lie-detector (59-3) covers magic_working dispatch mismatches — verified by extending 59-3 AC4 vocabulary test
       - 'Wiring test through pipeline: full turn drives router → magic_working handler → apply_magic_working'
       - ADR-013 drift note updated to reference ADR-113 as the SDK successor for magic engagement (in addition to confrontation engagement already covered)
+    completed: '2026-05-24'
+    branch: feat/59-5-magic-working-dispatch
+    review_verdict: approved
   - id: 59-6
     title: Scenario_clue dispatch handler — supplements footnotes (no retirement)
     description: "Different from 59-4/59-5: clue advancement currently fires via narrator footnotes (fact_id-carrying) — a legitimate narrator emission (the narrator reveals what players learn, that's a narrator job). Router SUPPLEMENTS without retiring. Create subsystems/scenario_clue.py handler → consume_clue_footnotes (dispatch/scenario_clue_intake.py:34). Router dispatches scenario_clue when player action explicitly references investigation/discovery intent. Footnote-driven path stays alive. Idempotency-key uniqueness (already enforced in DispatchPackage validator) prevents double-engagement."
