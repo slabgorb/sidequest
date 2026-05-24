@@ -56,6 +56,18 @@ workflow: "tdd"
 > (2) `sprint/context/context-story-59-1.md` → **Architecture Decision**, and
 > (3) the **TEA Assessment** + **Delivery Findings** in this file. Read those;
 > treat everything in this section as historical.
+>
+> **⚠ FURTHER SUPERSEDED (Story 59-4, 2026-05-24, ADR-113).** Story 59-1
+> shipped the narrator-owned engagement signal (`begin_confrontation` SDK
+> tool → `result.confrontation` lift → `narration_apply` consumer); Story 59-4
+> retired that entire chain atomically and migrated confrontation engagement
+> onto the Intent Router engagement spine. ACs 1–6 here (which describe the
+> `begin_confrontation` / `result.confrontation` mechanism) are now historical
+> — the live engagement mechanism is
+> `sidequest/server/intent_router_pass.execute_intent_router_pre_narrator_pass`
+> → `sidequest/agents/subsystems/confrontation.run_confrontation_dispatch`,
+> running BEFORE the narrator. See `sprint/archive/59-4-session.md` and
+> `docs/adr/113-intent-router-mechanical-engagement-spine.md`.
 
 ### Problem Statement
 
