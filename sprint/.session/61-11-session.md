@@ -11,7 +11,7 @@ workflow: "tdd"
 - **Workflow:** tdd
 - **Points:** 2
 - **Type:** refactor
-- **Repos:** server, content
+- **Repos:** server
 
 ## Story Summary
 

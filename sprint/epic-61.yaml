@@ -268,7 +268,7 @@ stories:
     points: 2
     priority: p2
     status: started
-    repos: server,content
+    repos: server
     workflow: tdd
     assigned_to: slabgorb
     started: '2026-05-24'
