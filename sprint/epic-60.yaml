@@ -91,11 +91,14 @@ stories:
     title: Stable-prefix byte-drift — re-open 60-1's original hypothesis with live-session evidence
     points: 3
     priority: p0
-    status: backlog
+    status: done
+    started: '2026-05-24'
     repos: server
     workflow: tdd
     depends_on: 60-2
+    completed: '2026-05-24'
     type: bug
+    review_verdict: approved
   - id: 60-7
     title: Diagnose + fix 60-4 cache fix that fails on live playtest (5m writes still firing per turn)
     description: '60-4 shipped with passing unit tests and a measured-in-isolation rebate, but the first live tea_and_murder/glenross session (2026-05-23, 11 turns, save ~/.sidequest/saves/games/2026-05-23-annees_folles/save.db) shows the fix is NOT holding. Per-turn evidence pulled from `turn_telemetry` prompt_assembled.cache_usage: avg $0.165/turn vs 60-4''s $0.04 target (4x over). Cold turn 1: $0.218 (3x over the predicted $0.07). Every turn after T1 fires BOTH a ~14k cache_write_5m AND a ~15k cache_write_1h — 60-4 AC-1 explicitly required `ephemeral_5m_input_tokens == 0`. Total session spend: $1.82 over 11 turns. Cached blocks ARE byte-stable across all 11 turns (stable=8e44bca5, recency=02eaadf1, tools=7f235376 — identical every turn), so the 60-3 diagnosis (prefix doesn''t drift) holds; the bug is in the 1h marker not suppressing the default 5m write. Party-mode generated three live hypotheses to test (in order of likely cost): (A) the `anthropic-beta: extended-cache-ttl-...` header is set once at the top of `complete_with_tools` but the SDK may not propagate it to every internal `messages.create` during the tool-use loop, causing the API to silently downgrade message-level 1h markers to 5m on iter 2+; (B) `cache_control` on a user-message content block has different API semantics than on system/tools (it creates a separate cached segment whose TTL may default to 5m without the beta header in scope on that exact call); (C) A+B compound. Sensitization context: Keith recently took a $300 runaway-credits hit and is acutely cost-sensitive — this story is p0 because the cost-control system shipped, claimed verified, and is silently failing. Sibling 60-5 (playtest validation) is the parent dependency — this story IS the bug-file 60-5 AC-5 said to create if the rebate did not materialize.'
