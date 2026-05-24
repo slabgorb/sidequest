@@ -220,3 +220,66 @@ stories:
     type: refactor
     review_findings: 'Round 3 APPROVED. Round-1 found 3 MUST-FIX + 8 SHOULD-FIX via 9-specialist fan-out. Round-2 addressed all 11 (with the reviewer-audit umbrella context_missing_ids OTEL gap folded in). Round-3 cleared the round-2 unused-json-import lint regression. Tests 7327 passed, ruff clean, pyright clean on session_helpers.py. Ready for SM finish.'
     review_verdict: approved
+  - id: 61-9
+    title: 'Commit to SDK narrator: remove legacy output_only prose and claude -p/Ollama narrator paths'
+    description: "Commit to the Anthropic SDK (ADR-101 / ADR-102) as the sole narrator backend and remove the legacy output_only prose path. The legacy 'output_only.md' (24,698 B / ~3,610 tok) ships byte-identical to pre-E1.5-A behavior so the model is told to emit a FULL sidecar covering the 8 tool-owned categories that the SDK path zeroes — divergence-by-construction the moment you flip backends. With anthropic_sdk as the production default (SIDEQUEST_LLM_BACKEND), the legacy prose has zero live consumer, doubles the maintenance surface of every narrator-prompt change, and forces every tool-routing test to gate twice. Removal is in-scope; keeping claude -p / Ollama as narrator backends with the SDK prose would silently break them (told to call tools they do not have) — a NO-FALLBACK violation. Files: sidequest/agents/narrator_prompts/output_only.md (delete); sidequest/agents/narrator_prompts/output_only_sdk.md (rename to output_only.md — keep the file name the tests already know); narrator_prompts/__init__.py (drop NARRATOR_OUTPUT_ONLY, rename NARRATOR_OUTPUT_ONLY_SDK -> NARRATOR_OUTPUT_ONLY); narrator.py:252-301 build_output_format (drop tool_backend kwarg, drop the gating branch — always SDK prose); orchestrator.py:1465 (drop tool_backend kwarg at call site); orchestrator.py:2225-2233 (telemetry tool_backend attr now always True — collapse the conditional or drop the attribute). Tests touched (rewrite to assert SDK prose only, drop dual-backend parameterization): test_narrator_output_format_backend_gate.py (entire file pivots — keep the wrapper-shape assertion, drop the legacy-vs-SDK divergence assertions); test_50_24_player_check_seam.py (drop tool_backend=False branch); test_57_4_recency_guardrails_migration.py (drop tool_backend=False assertions and the legacy-path span shape); test_47_9_innate_proactive.py / test_narrator_pre_prompt.py / test_narrator_prompt.py / test_50_2_confrontation_trigger_prompt.py / test_50_24_dice_contract_parity.py / test_narrator.py (all assert content of NARRATOR_OUTPUT_ONLY — after the rename these assert SDK prose, no logic change). Decision flagged for review: this story REMOVES claude -p and Ollama as narrator backends in llm_factory.py (they error loudly if SIDEQUEST_LLM_BACKEND=claude_cli or =ollama). claude -p stays available for non-narrator callers (dungeon 'curate'). ADR-101 update: add an amendment noting the legacy backends are gone for narration — non-narrator usage continues."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - narrator_prompts/output_only.md is deleted; the file currently named output_only_sdk.md is renamed to output_only.md (one file, SDK prose)
+      - NarratorAgent.build_output_format no longer accepts a tool_backend parameter; orchestrator.build_narrator_prompt no longer passes one
+      - llm_factory.py raises a loud error (no silent fallback) if SIDEQUEST_LLM_BACKEND is set to claude_cli or ollama for narrator construction; non-narrator callers of claude_client.py (dungeon curate) continue to work
+      - All tests under tests/agents/ and tests/magic/ that previously parameterized over tool_backend assert SDK prose only; the file test_narrator_output_format_backend_gate.py is rewritten or deleted (no remaining backend-gate assertions)
+      - Full server test suite passes (uv run pytest -v) with zero references to NARRATOR_OUTPUT_ONLY_SDK in production code or tests (the const is gone — the SDK prose is now NARRATOR_OUTPUT_ONLY)
+      - ADR-101 receives an amendment noting claude -p / Ollama are no longer supported narrator backends (with the date and the link to this story)
+    type: refactor
+  - id: 61-10
+    title: Promote six byte-static narrator prose sections into the System-bucket cache
+    description: "Six byte-static narrator prose sections currently land in the User bucket (re-sent in full on every turn) despite meeting STABLE_SECTION_NAMES' own criterion — 'byte-identical across every turn of the same game'. Total: ~764 tok/turn that could ride the cached system prefix as a one-time cost. From bucket.py:28 — 'Adding a section here is a load-bearing decision: it must remain stable turn-to-turn.' All six qualify; they were left out at ADR-098 / 111 cutover, not by deliberate exemption. Sections to promote (sources at narrator_prompts/*.md, all loaded byte-exact by narrator_prompts/__init__.py): narrator_constraints (constraints.md, ~112 tok), narrator_agency (agency.md, ~201 tok), narrator_consequences (consequences.md, ~71 tok), narrator_pov_rules (pov_rules.md, ~200 tok), narrator_referral_rule (referral_rule.md, ~65 tok), narrator_output_style (output_style.md, ~115 tok). The change is a single frozenset edit at sidequest/agents/prompt_framework/bucket.py:28 plus a regression test asserting each section now lands in SectionBucket.System. Cost: one cache-prefix invalidation on first deploy. Benefit: ~764 tok/turn savings amortized after turn 1."
+    points: 2
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - All six sections appear in STABLE_SECTION_NAMES in prompt_framework/bucket.py
+      - default_bucket_for_section returns SectionBucket.System for each of the six names
+      - A regression test in tests/agents/test_prompt_framework/test_bucket.py asserts each name maps to System and is included in a snapshot of STABLE_SECTION_NAMES
+      - An OTEL span on the next playtest's first narrator turn confirms system_blocks contains the six new sections and user_message does not (per the dashboard's Prompt panel zone breakdown)
+      - Total per-turn token count of the user_message (post-warmup, neutral action) drops by at least ~700 tok versus a baseline turn captured immediately before the change
+    type: refactor
+  - id: 61-11
+    title: Scene-gate genre_chargen / genre_extraction / genre_keeper_monologue (drop from STABLE_SECTION_NAMES)
+    description: "genre_chargen, genre_extraction, and genre_keeper_monologue were promoted to STABLE_SECTION_NAMES under ADR-112 / Story 57-3 for cache stability — but unlike the rest of the stable set they are scene-typed: chargen prose only matters during character creation, extraction prose only when leaving the dungeon with loot, keeper_monologue only when the Keeper speaks (rare scripted beats). Carrying ~450 tok of out-of-scope prose on every neutral 'you walk into the tavern' turn is the wrong end of the cache-vs-relevance trade. The cache thrash argument ADR-112 used to defer genre_combat_voice / genre_chase_voice (encounter-boundary churn) does not apply here: chargen completes ONCE per session (single cache miss, amortized by turn 5), extraction/keeper_monologue fire on rare scene-type transitions. Scope: remove these three names from STABLE_SECTION_NAMES at sidequest/agents/prompt_framework/bucket.py:50-53. Add conditional registration in orchestrator.build_narrator_prompt (around the existing genre_prompts injection block at orchestrator.py:1491+) so each section only registers when its scene predicate is true (chargen_active, extraction_active, keeper_speaking). Predicates should be derived from existing session state — not new flags. genre_town stays on the stable list for now (frequent enough that profiling needed before moving). ADR-112 needs an amendment documenting the partial reversal and the predicate-gating rationale."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    acceptance_criteria:
+      - genre_chargen, genre_extraction, genre_keeper_monologue are removed from STABLE_SECTION_NAMES
+      - Each of the three sections is registered conditionally in build_narrator_prompt only when its scene predicate is true; the predicates are derived from existing TurnContext / GameState fields, no new state flags introduced
+      - A unit test in tests/agents/test_prompt_framework/test_bucket.py asserts each name now maps to SectionBucket.User
+      - A fixture-driven behavior test in tests/agents/ constructs a chargen-active TurnContext, calls build_narrator_prompt, asserts genre_chargen lands in user_message; then constructs a post-chargen TurnContext and asserts genre_chargen is absent. Mirror tests for extraction and keeper_monologue
+      - ADR-112 receives an amendment recording the three sections' demotion from STABLE plus the predicate-gating decision
+    type: refactor
+  - id: 61-12
+    title: Compact narrator output_format prose (~50% reduction) and fix npcs_present/npcs_met field drift
+    description: "Compact narrator_prompts/output_only_sdk.md (currently 3,610 tok — 28% of the whole 13,105-tok per-turn prompt) by eliminating in-file restatement, moving plugin-conditional prose out, and collapsing the inventory quartet. Plus a content-bug fix: the file uses both 'npcs_met' (the actual sidecar field, line 208) AND 'npcs_present' (line 281-283 ROSTER DISCIPLINE block) — the narrator is being told to emit a field that does not exist on the parser side. Specific compaction passes (target: 3,610 -> ~1,800-2,000 tok): (1) collapse the four items_gained / items_lost / items_discarded / items_consumed paragraphs into one table (field • when-to-emit • shared format) — saves ~150 tok; (2) move the CRITICAL MAGIC EFFECT RULE (§1) and the CRITICAL MAGIC RULE + NEGATIVE CASE (§3) prose to a conditional section that only registers when world.has_active_magic_plugin() is true — saves ~400 tok on non-magic worlds (road_warrior, pulp_noir, tea_and_murder, spaghetti_western); (3) demote ~12 CRITICAL banners to ~3 — when everything is CRITICAL nothing reads as critical; (4) eliminate the tail self-restatement (STRICT SPLIT, PERCEPTION FIREWALL, WHEN TO ATTACH visual_scene, ROSTER DISCIPLINE) — each restates a rule already given upstream in the same file; (5) tighten §4 TRIGGER CRITERIA's 9-bullet enumeration to the general principle plus a pointer to the begin_confrontation tool's enum (which already lists ship_combat / dogfight / social_duel / trial / auction / scandal). The npcs_present -> npcs_met fix is a correctness change, not just cosmetic — do it first. NO new rules introduced. The discipline is preservation-by-rewrite: every rule stated today MUST still be expressible. Test surface: tests/agents/test_narrator.py, test_50_2_confrontation_trigger_prompt.py, test_47_9_innate_proactive.py, test_narrator_prompt.py — these assert specific phrases/tokens from the prose. After the rewrite the assertions need to match the new spelling. Coordinate sequencing with 61-9 (which renames the file)."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - narrator_prompts/output_only.md (post-61-9 rename) ships with ZERO occurrences of the string 'npcs_present' — only 'npcs_met' (the actual sidecar field name)
+      - Total token count of NARRATOR_OUTPUT_ONLY (measured via tiktoken or actual cache report) is reduced to <= 2,000 tok (from ~3,610 today)
+      - The CRITICAL MAGIC EFFECT RULE and CRITICAL MAGIC RULE prose are moved out of NARRATOR_OUTPUT_ONLY into a conditional registration that only fires when an active magic plugin is detected on the loaded world
+      - The four items_* field rules are consolidated into one table/block (not four near-identical paragraphs)
+      - At most 4 CRITICAL or MANDATORY banner-words remain in the file (down from ~19 today)
+      - All existing prose-content tests pass against the rewritten file — every rule the test suite currently asserts is still expressible. No test is xfailed or skipped; phrase-match assertions are updated to the new spelling where the rule survived a rewrite, deleted only where the rule itself was moved (e.g. magic prose, now under a different registration)
+      - Per-turn token count on a non-magic-world playtest turn (e.g. tea_and_murder) drops by at least 1,500 tok versus a pre-change baseline captured on the same scenario
+    type: refactor
