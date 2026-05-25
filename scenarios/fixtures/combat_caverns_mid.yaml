@@ -1,0 +1,113 @@
+# Combat fixture — mid-difficulty encounter in beneath_sunden (mid-band).
+# An Otyugh in a flooded sump four levels down. The thing squats in the
+# drainage basin where the old hold dumped its offal; it has had centuries
+# to grow into the space.
+# Usage: http://localhost:5173/?scene=combat_caverns_mid (requires DEV_SCENES=1)
+
+name: Combat — The Sump
+genre: caverns_and_claudes
+world: beneath_sunden
+player_name: Fixture-Sump
+location: Flooded Sump, Fourth Level
+turn: 3
+
+character:
+  name: Maren
+  description: A broad-shouldered cleric with a war hammer and a lantern hung from her belt
+  personality: Steady, quiet, does not waste words underground
+  level: 3
+  hp: 18
+  max_hp: 18
+  ac: 14
+  inventory:
+    items:
+      - id: hammer_war
+        name: War Hammer
+        description: Iron-headed, the haft wrapped in cord for the wet
+        category: weapon
+        value: 15
+        weight: 4.0
+        rarity: common
+        narrative_weight: 0.6
+        tags: [melee, bludgeoning]
+        equipped: true
+        quantity: 1
+      - id: leather_armor
+        name: Leather Armor
+        description: Hardened hide, patched at the shoulder
+        category: armor
+        value: 20
+        weight: 10.0
+        rarity: common
+        narrative_weight: 0.3
+        tags: [armor, light]
+        equipped: true
+        quantity: 1
+      - id: shield_wood
+        name: Wooden Shield
+        description: Iron-rimmed, the boss dented
+        category: armor
+        value: 10
+        weight: 6.0
+        rarity: common
+        narrative_weight: 0.4
+        tags: [armor, shield]
+        equipped: true
+        quantity: 1
+      - id: holy_symbol
+        name: Holy Symbol
+        description: A stone disc carved with a sun that no longer shines down here
+        category: tool
+        value: 25
+        weight: 0.5
+        rarity: uncommon
+        narrative_weight: 0.5
+        tags: [divine, focus]
+        equipped: true
+        quantity: 1
+      - id: torch
+        name: Torch
+        description: Pitch-soaked, burning
+        category: light
+        value: 1
+        weight: 0.5
+        rarity: common
+        narrative_weight: 0.3
+        tags: [light, consumable, essential]
+        equipped: false
+        quantity: 3
+      - id: potion_healing
+        name: Healing Potion
+        description: Thick and bitter, sealed with wax
+        category: consumable
+        value: 50
+        weight: 0.5
+        rarity: uncommon
+        narrative_weight: 0.5
+        tags: [consumable, healing]
+        equipped: false
+        quantity: 1
+    gold: 12
+  statuses: []
+  backstory: A cleric whose congregation is the count of names on the board at Ropefoot
+  narrative_state: Knee-deep in black water at the edge of the sump basin
+  hooks:
+    - The water is moving against the current
+  char_class: Cleric
+  race: Human
+  pronouns: she/her
+  stats:
+    STR: 13
+    DEX: 10
+    CON: 14
+    INT: 10
+    WIS: 15
+    CHA: 12
+
+npcs:
+  - name: Otyugh
+    role: hostile
+    disposition: -25
+
+encounter:
+  type: combat

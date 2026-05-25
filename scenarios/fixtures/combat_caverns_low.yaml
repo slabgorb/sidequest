@@ -1,0 +1,89 @@
+# Combat fixture — low-difficulty encounter in beneath_sunden (mid-band).
+# A lone Wight in a collapsed guard post two levels below the Dropmouth.
+# Usage: http://localhost:5173/?scene=combat_caverns_low (requires DEV_SCENES=1)
+
+name: Combat — Collapsed Guard Post
+genre: caverns_and_claudes
+world: beneath_sunden
+player_name: Fixture-Delver
+location: Collapsed Guard Post, Second Level
+turn: 3
+
+character:
+  name: Halke
+  description: A lean delver with rope-scarred hands and a lantern wired to his pack frame
+  personality: Methodical, counts everything twice
+  level: 1
+  hp: 8
+  max_hp: 8
+  ac: 13
+  inventory:
+    items:
+      - id: sword_short
+        name: Short Sword
+        description: Dwarf-made, the edge still holds
+        category: weapon
+        value: 10
+        weight: 2.0
+        rarity: common
+        narrative_weight: 0.6
+        tags: [melee, slashing]
+        equipped: true
+        quantity: 1
+      - id: shield_wood
+        name: Wooden Shield
+        description: Iron-bossed round shield, scarred from use
+        category: armor
+        value: 10
+        weight: 6.0
+        rarity: common
+        narrative_weight: 0.4
+        tags: [armor, shield]
+        equipped: true
+        quantity: 1
+      - id: torch
+        name: Torch
+        description: Pitch-soaked, burning low
+        category: light
+        value: 1
+        weight: 0.5
+        rarity: common
+        narrative_weight: 0.3
+        tags: [light, consumable, essential]
+        equipped: false
+        quantity: 2
+      - id: rope_hemp
+        name: Hemp Rope
+        description: Fifty feet, fraying at the splice
+        category: tool
+        value: 1
+        weight: 5.0
+        rarity: common
+        narrative_weight: 0.2
+        tags: [utility, essential]
+        equipped: false
+        quantity: 1
+    gold: 3
+  statuses: []
+  backstory: Came up the dead road on the rumor of an unspent hold and has been down twice before
+  narrative_state: Alone in a collapsed guard post, lantern guttering
+  hooks:
+    - The guard post door is jammed half-open and something behind it is not dust
+  char_class: Fighter
+  race: Human
+  pronouns: he/him
+  stats:
+    STR: 14
+    DEX: 11
+    CON: 13
+    INT: 10
+    WIS: 10
+    CHA: 9
+
+npcs:
+  - name: Wight
+    role: hostile
+    disposition: -30
+
+encounter:
+  type: combat
