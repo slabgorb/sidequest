@@ -98,3 +98,6 @@ tui-pid
 
 # Zeitgoose persona bindings (local)
 .claude/zeitgoose/
+
+# Asset contact sheets (generate_image_sheets.py) — regenerable, not tracked
+image_sheets/
