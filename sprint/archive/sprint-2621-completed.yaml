@@ -18,6 +18,7 @@ completed_epics:
   - '24'
   - '60'
   - '22'
+  - '51'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -418,4 +419,19 @@ completed_stories:
     epic: '22'
     title: Engagement-triggered seed drops — passive player pacing, mid-session seed injection
     points: 3
+    completed: '2026-05-25'
+  - id: 51-1
+    epic: '51'
+    title: Retarget combat-tier caverns fixtures (low/mid/high) to beneath_sunden
+    points: 3
+    completed: '2026-05-25'
+  - id: 51-2
+    epic: '51'
+    title: Retarget social_tavern + veteran_drop caverns fixtures to beneath_sunden
+    points: 2
+    completed: '2026-05-25'
+  - id: 51-3
+    epic: '51'
+    title: Wave-1 12-fixture hydration sweep + CHANGELOG; assert no caverns_sunden slug remains
+    points: 1
     completed: '2026-05-25'

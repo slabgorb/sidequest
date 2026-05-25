@@ -3,7 +3,7 @@ type: epic
 title: Scenario Fixture Library Wave 1 — Retarget Caverns Fixtures to beneath_sunden
 description: 'Wave 1 shipped 7/12 fixtures; the 5 unshipped targeted the deprecated caverns_sunden. Re-author them against the live beneath_sunden world for caverns combat-tier and social coverage. (ADR-092 scene harness; per Architect: retarget, do not de-scope.)'
 priority: p2
-status: ready
+status: done
 repos: orchestrator
 stories:
   - id: 51-1
@@ -31,8 +31,10 @@ stories:
     title: Wave-1 12-fixture hydration sweep + CHANGELOG; assert no caverns_sunden slug remains
     points: 1
     priority: p2
-    status: in_progress
+    status: done
     repos: orchestrator,content,server
     workflow: trivial
+    completed: '2026-05-25'
     type: chore
     branch: feat/51-3-fixture-hydration-sweep
+completed: '2026-05-25'
