@@ -426,7 +426,7 @@ preview-style genre world:
 check-all: server-check client-lint client-typecheck client-test daemon-lint daemon-test
 
 # Content validation — reference visibility across all live packs
-content-validate: reference-validate-all
+content-validate-references: reference-validate-all
 
 # OTEL dashboard — opens the browser-friendly /ws/watcher viewer
 # served by sidequest-server itself. Server must already be running
