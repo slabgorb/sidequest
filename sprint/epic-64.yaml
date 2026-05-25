@@ -38,7 +38,7 @@ stories:
     description: 'The pack validator (sidequest/cli/validate/pack.py) is structural-only: it checks file/dir existence and extension backing files, but never parses file CONTENTS. Zero model_validate calls. A tropes.yaml with the wrong fields, or garbage YAML, passes as long as the file exists — proven during epic 64 review, where the 7 new world files had to be hand-loaded through pydantic separately to confirm they parse. Wire the real loaders/models into the validator: for each present file with a known schema, run it through its pydantic model (NpcArchetype, TropeDefinition, PortraitManifestEntry, ArchetypeConstraints, projection rules, DungeonTheme palette, etc.) and report parse failures as ERRORs with filename + pydantic message. Note: pack.py:203-204 silently swallows world.yaml YAMLError (pass) — a no-silent-fallback violation to fix in the same pass. Likely depends on 64-6 (circular import) since importing the loader graph is on the path.'
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -46,6 +46,8 @@ stories:
       - A deliberately malformed world tropes.yaml/archetypes.yaml produces a FAIL, not a PASS
       - world.yaml YAML parse errors are reported loudly, not swallowed (pack.py:203-204)
       - All 10 live packs still PASS after the content-validation pass is added
+    completed: '2026-05-25'
+    review_verdict: approved
   - id: 64-5
     title: Cross-reference content lint — ID membership + adjacency closure
     description: "Builds on 64-4. Once file contents parse, add a content-lint layer that validates CROSS-references the per-file pydantic models can't see on their own: (1) trope IDs referenced in history.yaml chapters / adjacency exist in the resolved trope set; (2) archetype typical_classes/typical_races resolve against the pack's rules.yaml allowed_classes/allowed_races; (3) archetype_constraints valid_pairings jungian/role IDs are from the canonical 12 jungian x 7 roles, and genre_flavor covers all of them with no extras (these were hand-audited in epic 64 review); (4) theme palette adjacency closure (prefers/avoids refs exist) — already enforced in load_theme_palette, surface it here too. Report each as an ERROR with the offending id + file."
