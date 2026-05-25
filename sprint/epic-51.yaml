@@ -31,7 +31,8 @@ stories:
     title: Wave-1 12-fixture hydration sweep + CHANGELOG; assert no caverns_sunden slug remains
     points: 1
     priority: p2
-    status: backlog
-    repos: orchestrator
+    status: in_progress
+    repos: orchestrator,content,server
     workflow: trivial
     type: chore
+    branch: feat/51-3-fixture-hydration-sweep

@@ -17,6 +17,12 @@ keep their own CHANGELOGs; this file tracks orchestrator-side changes only.
   veteran-drop caverns scene. Replaces the four original fixtures
   (combat_test/dogfight/negotiation/poker), three of which targeted
   workshopping worlds. Spec: docs/superpowers/specs/2026-05-14-scenario-fixture-library-wave-1-design.md.
+- Wave-1 caverns fixtures retargeted from deprecated `caverns_sunden` to
+  live `beneath_sunden` world (stories 51-1, 51-2). All 5 caverns
+  fixtures (combat_caverns_low/mid/high, social_tavern_caverns,
+  social_veteran_drop_caverns) confirmed on `beneath_sunden`. Hydration
+  sweep validated all 12 fixtures load cleanly with correct genre/world
+  bindings (story 51-3).
 - Filed 5 scene-harness hydrator extension stories (Wave 2): known_facts,
   scenario_state, StructuredEncounter, magic_state + abilities, multi-PC
   characters list. 18 pts total.
