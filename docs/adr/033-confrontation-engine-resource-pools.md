@@ -6,7 +6,7 @@ date: 2026-03-31
 deciders: [Keith]
 supersedes: [17]
 superseded-by: null
-related: [11]
+related: [11, 114]
 tags: [genre-mechanics]
 implementation-status: partial
 implementation-pointer: 87
@@ -368,3 +368,17 @@ audit the heavy_metal `audio.yaml` declarations against actual mood-track
 keys. Tracked in [ADR-087](087-post-port-subsystem-restoration-plan.md).
 The Epic 28 / Confrontation Engine port-drift audit is complete; what
 remains is a polish item, not a port-casualty.
+
+## Re-slot 2026-05-25 — dials sit atop the HP substrate (ADR-114)
+
+[ADR-114](114-ablative-hp-substrate.md) reintroduces ablative HP as a lethality
+substrate *underneath* the confrontation dials. The `momentum` / `leverage` /
+`engagement_range` metric dials and the beat structure described in this ADR are
+**unchanged** — they remain the narrative pacing layer (*how the fiction moves this
+round*). Beats additionally gain an optional HP-damage channel: a `strike` beat
+deals dice-rolled weapon damage to HP (via the ADR-074/075 dice overlay), a `brace`
+beat mitigates it, and `angle`/`push` beats stay dial-only. The dials are not a
+replacement for HP and HP is not a replacement for the dials; they are two layers
+resolved in one turn. The push-currency `ResourcePool` machinery (Pillar 2) is
+likewise untouched — ADR-078's `voice`/`flesh`/`ledger` rituals ride it and survive
+ADR-114's supersession of ADR-078. See ADR-114 §2 for the damage-channel design.
