@@ -1,18 +1,29 @@
 ---
 id: 78
 title: "Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals"
-status: accepted
+status: superseded
 date: 2026-04-15
 deciders: [Keith]
 supersedes: []
-superseded-by: null
-related: [14, 21, 33]
+superseded-by: 114
+related: [14, 21, 33, 114]
 tags: [game-systems]
-implementation-status: partial
-implementation-pointer: 87
+implementation-status: retired
+implementation-pointer: 114
 ---
 
 # ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals
+
+> **SUPERSEDED by [ADR-114](114-ablative-hp-substrate.md) (2026-05-25).** This ADR's
+> central decision — deleting HP and replacing it with `EdgePool` as the personal
+> vitality/damage track — is reversed: ablative HP reclaims that role. By direct
+> playgroup mandate (Sebastien + Jade), SideQuest adopts SWN-style HP, which has no
+> composure track. **Not everything here is retired:** the push-currency rituals
+> (§6) ride genre `ResourcePool`s (`voice`/`flesh`/`ledger`), *not* Edge, and
+> survive untouched; the progression→engine advancement link (§5) survives with its
+> vitality variants re-pointed from Edge to HP (`EdgeMaxBonus` → `HpMaxBonus`, etc.).
+> Read ADR-114 §4 for the precise disposition of each piece. Kept for the history of
+> why Edge was tried, and the phantom-HP diagnosis (§Context) that still holds.
 
 **Epic:** TBD (proposed: Epic-Edge, post-Sprint-2)
 - ADR-021 (Four-Track Progression) — first hard link from progression to engine state

@@ -6,7 +6,7 @@ date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [114]
 tags: [narrator]
 implementation-status: live
 implementation-pointer: null
@@ -58,3 +58,17 @@ Implemented in: `sidequest-game/src/narrative_sheet.rs`
 **Negative:**
 - GM tooling that needs mechanical precision (balancing, debugging) must go through OTEL telemetry or a separate internal representation — `NarrativeSheet` alone is insufficient for game masters who need exact values.
 - Six fixed health bands may not fit all genres well; some genre packs may want more or fewer gradations. Extending the banding system requires a code change, not just YAML configuration.
+
+## Amendment 2026-05-25 — HP lethality number is visible (ADR-114)
+
+[ADR-114](114-ablative-hp-substrate.md) reintroduces ablative HP as the personal
+lethality substrate and, by direct playgroup mandate (Sebastien + Jade, the two
+mechanics-first players), exposes the **HP number** on the character sheet. This is
+a deliberate, narrow exception to this ADR's no-raw-stats decision: the **lethality
+number only**. All other stats — abilities, ability scores, non-lethality
+mechanical effects — remain narrative per the original decision above. The
+six-band `describe_health()` framing may continue alongside the raw number; the
+number is additive, not a replacement of the narrative health language. The
+justification is in ADR-114 §8: the dice overlay (ADR-074/075) already shows damage
+rolling on the table, and a hidden HP number behind a "badly wounded" band defeats
+the purpose of the reintroduction.

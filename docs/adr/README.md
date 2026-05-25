@@ -112,13 +112,13 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-025: Pacing Detection](025-pacing-detection.md) | ✓ accepted | live |
 | [ADR-074: Dice Resolution Protocol — Player-Facing Rolls via WebSocket](074-dice-resolution-protocol.md) | ✓ accepted | live |
 | [ADR-077: Dogfight Subsystem via StructuredEncounter Extension](077-dogfight-subsystem.md) | ✓ accepted | live |
-| [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | ✓ accepted | *partial* → ADR-087 |
 | [ADR-080: Unified Narrative Weight Trait](080-unified-narrative-weight-trait.md) | ✓ accepted | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | ✓ accepted | deferred → ADR-087 |
 | [ADR-095: Class Mechanical Surface — One Signature Ability Per Non-Magical Class](097-class-mechanical-surface.md) | ✓ accepted | live |
 | [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | ✓ accepted | *partial* → ADR-106 |
 | [ADR-106: Runtime Procedural Jaquaysed Megadungeon — Contiguous Edge-Expansion, maze-maker Family Port + Complication Ledger](106-runtime-procedural-jaquaysed-megadungeon.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-16-sunden-deep-procedural-megadungeon-design.md |
 | [ADR-109: Persistent Location Descriptions + Mechanical Manifest](109-persistent-location-descriptions-mechanical-manifest.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md |
+| [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | ✓ accepted | *partial* → docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 
 ## Frontend / Protocol
 
@@ -267,6 +267,7 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | [ADR-069: Scenario Fixtures — Pre-configured World States for Testing](069-scenario-fixtures.md) | ✗ superseded | [ADR-092](092-scene-harness-http-endpoint.md) |
 | [ADR-071: Tactical ASCII Grid Maps — Deterministic Room Layout via ASCII Art](071-tactical-ascii-grid-maps.md) | ✗ superseded | [ADR-086](086-image-composition-taxonomy.md) |
 | [ADR-072: System/Milieu Decomposition — Separating Mechanics from Aesthetic](072-system-milieu-decomposition.md) | ✗ historical | — |
+| [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | ✗ superseded | [ADR-114](114-ablative-hp-substrate.md) |
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | ✗ historical | — |
 | [ADR-084: Compositional-Dimension Specialization for Style LoRAs](084-lora-composition-dimension.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 | [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | ✗ superseded | [ADR-096](096-cavern-renderer-revival.md) |
@@ -291,7 +292,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-055: Room Graph Navigation](055-room-graph-navigation.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay](075-3d-dice-rendering.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | *partial* | [ADR-106](106-runtime-procedural-jaquaysed-megadungeon.md) |
 | [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
@@ -305,5 +305,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred](110-game-state-snapshot-slimming.md) | *partial* | sidequest-server/sidequest/server/session_helpers.py#_PHASE_B_DROP_FIELDS |
 | [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | *partial* | sprint/current-sprint.yaml#57-3 |
 | [ADR-113: Intent Router — Mechanical-Engagement Spine](113-intent-router-mechanical-engagement-spine.md) | *partial* | sprint/epic-59.yaml#59-4 |
+| [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | *partial* | docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 
 <!-- ADR-INDEX:GENERATED:END -->

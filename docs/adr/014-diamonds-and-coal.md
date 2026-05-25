@@ -6,7 +6,7 @@ date: 2026-03-25
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [114]
 tags: [game-systems]
 implementation-status: not-applicable
 implementation-pointer: null

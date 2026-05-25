@@ -66,6 +66,10 @@
 
 - [ADR-028: Perception Rewriter](028-perception-rewriter.md) — superseded
 
+### Superseded by [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md)
+
+- [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) — superseded
+
 ## Historical — no successor
 
 These ADRs describe features or decisions that were cut without direct replacement.

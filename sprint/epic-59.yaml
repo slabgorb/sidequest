@@ -169,8 +169,9 @@ stories:
     title: Feed genre confrontation types to Intent Router user prompt + clean 15 stale tests
     points: 3
     priority: p1
-    status: in_progress
+    status: done
     started: '2026-05-25'
+    completed: '2026-05-25'
     repos: server
     workflow: tdd
     type: bug
