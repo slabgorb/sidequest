@@ -252,9 +252,12 @@ stories:
     description: "Six byte-static narrator prose sections currently land in the User bucket (re-sent in full on every turn) despite meeting STABLE_SECTION_NAMES' own criterion — 'byte-identical across every turn of the same game'. Total: ~764 tok/turn that could ride the cached system prefix as a one-time cost. From bucket.py:28 — 'Adding a section here is a load-bearing decision: it must remain stable turn-to-turn.' All six qualify; they were left out at ADR-098 / 111 cutover, not by deliberate exemption. Sections to promote (sources at narrator_prompts/*.md, all loaded byte-exact by narrator_prompts/__init__.py): narrator_constraints (constraints.md, ~112 tok), narrator_agency (agency.md, ~201 tok), narrator_consequences (consequences.md, ~71 tok), narrator_pov_rules (pov_rules.md, ~200 tok), narrator_referral_rule (referral_rule.md, ~65 tok), narrator_output_style (output_style.md, ~115 tok). The change is a single frozenset edit at sidequest/agents/prompt_framework/bucket.py:28 plus a regression test asserting each section now lands in SectionBucket.System. Cost: one cache-prefix invalidation on first deploy. Benefit: ~764 tok/turn savings amortized after turn 1."
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
+    assigned_to: slabgorb
+    started: '2026-05-25'
     repos: server
     workflow: tdd
+    branch: feat/61-10-promote-byte-static-narrator-prose
     acceptance_criteria:
       - All six sections appear in STABLE_SECTION_NAMES in prompt_framework/bucket.py
       - default_bucket_for_section returns SectionBucket.System for each of the six names
