@@ -1,0 +1,32 @@
+id: '64'
+type: epic
+title: Content Schema Compliance — Close Pack Validator Gaps
+description: 'Close all ERROR-level gaps surfaced by `pf validate pack` after the genre pack filesystem schema landed. Two categories: (1) packs declaring extensions without backing files (5 packs), (2) worlds missing required files like tropes.yaml/archetypes.yaml/portrait_manifest.yaml (5 worlds). Goal: every live pack passes `just content-validate-all` with zero errors.'
+priority: p2
+status: backlog
+repos: content,server
+stories:
+  - id: 64-1
+    title: Fill missing world-level required files (tropes, archetypes, portrait_manifest)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: tdd
+    type: chore
+  - id: 64-2
+    title: Remove or fulfill undeclared pack extensions (5 packs)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: tdd
+    type: chore
+  - id: 64-3
+    title: Decouple test_themes_wiring from live content — replace with fixtures
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: refactor
