@@ -117,7 +117,11 @@ stories:
         tint from the world's accent color)
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-25'
     repos: server,content
     workflow: tdd
+    completed: '2026-05-25'
     type: feature
+    review_findings: Unescaped palette_accent in <img> style= (escaping-invariant break / future stored-XSS) — one-line html.escape fix; plus LOW silent world-None return + shared-parser dedup recommendation
+    review_verdict: approved
