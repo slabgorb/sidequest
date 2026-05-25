@@ -1,0 +1,22 @@
+id: '66'
+type: epic
+title: Character Creation Depth
+description: 'Mechanical depth and correctness of the character-creation pipeline (chargen): differentiated statlines, class/race/mutation mechanical surface, and the player-facing crunch Sebastien expects. Spun out of Playtest 2026-05-25 (mutant_wasteland/flickering_reach) findings.'
+priority: p2
+status: backlog
+repos: sidequest-server,sidequest-content
+stories:
+  - id: 66-1
+    title: Differentiated statlines via thematic stat_bonuses on chargen choices
+    description: "Every PC in mutant_wasteland rolls the identical statline [13,13,13,12,12,12] (Brawn/Reflexes/Toughness 13, Wits/Instinct/Presence 12). Root cause (confirmed in code during Playtest 2026-05-25): mutant_wasteland/rules.yaml selects stat_generation: point_buy (budget 27); _allocate_point_buy() in sidequest-server/sidequest/game/builder.py:2330-2363 is a deterministic round-robin → ALWAYS [13,13,13,12,12,12] for 6 stats. The race/mutation/calling differentiation block (builder.py:2417-2435) keys on hint PRESENCE (is not None), not hint VALUE, with hardcoded deltas — so two characters that both have race+class+mutation hints receive IDENTICAL deltas regardless of which choices they made. The genuinely-correct path is already fully wired and method-agnostic: stat_bonuses is a real field on MechanicalEffects (genre/models/character.py:78), accumulates into acc.stat_bonuses (builder.py:1185-1186), and is applied UNCONDITIONALLY for every method including point_buy (builder.py:2410-2412), correctly skipping the derivation block when present (not acc.stat_bonuses guard at :2418). So the fix is CONTENT, ZERO server change: author thematic stat_bonuses onto the class/race/mutation choices in mutant_wasteland/char_creation.yaml. Balance numbers are Sebastien-facing crunch — Keith authors the values (e.g. Scavenger→+Wits/+Instinct, Plant Person→+Toughness/−Reflexes). Supporting piece: a thin load-time VALIDATOR (per feedback_no_content_coupled_tests — a separate CLI/load check, NOT a content-coupled pytest) that warns LOUD when a point_buy genre ships chargen choices with no differentiating stat_bonuses, so this gap fails at load instead of surfacing in a playtest. DO NOT extend the builder.py:2419 guard — it keys on hint presence not value and would still produce identical deltas; standard_array's presence-based behavior is also locked by test_builder_stats.py:234-250 (Rust parity). Reference: ping-pong [BUG] All PCs roll identical flat statlines."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-content,sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - Author thematic stat_bonuses (Keith's balance values) onto class/race/mutation choices in mutant_wasteland/char_creation.yaml so different choices yield different, sensible stat deltas
+      - Two distinct mutant_wasteland characters (e.g. Mutant Human/Scavenger vs Plant Person/Mutant) produce DIFFERENT statlines (verified via a world validator, not a content-coupled unit test)
+      - Thin load-time validator warns LOUD when a point_buy genre ships chargen choices with no differentiating stat_bonuses
+      - No change to _allocate_point_buy or the builder.py:2419 presence-keyed guard; standard_array parity tests stay green
+      - 'OTEL: chargen emits a stat-assignment span (method + per-stat final + which modifiers applied) so the GM panel confirms differentiation fired'
