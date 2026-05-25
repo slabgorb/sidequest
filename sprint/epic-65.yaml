@@ -79,3 +79,44 @@ stories:
     repos: server,content
     workflow: tdd
     type: feature
+  - id: 65-3
+    title: Pulp-noir visual_style cleanup — strip incidental setting bleed, make rain a deliberate per-shot layer
+    description: |
+      pulp_noir/annees_folles/visual_style.yaml positive_suffix contains
+      concrete setting nouns — "rain-slicked streets, Montmartre rooftops,
+      Seine reflections" — that bleed into EVERY render in the world. A
+      head-and-shoulders portrait gets a rainy Paris street behind it
+      whether the shot wants one or not. Violates the file's own authoring
+      rule (style/medium/palette vocabulary only, no concrete nouns).
+
+      Rain is good for POI landscapes (the POI IS the rainy street) but
+      wrong for portraits and interior/character shots. It should be
+      DELIBERATELY applied per shot-type, not incidental.
+
+      Fix:
+      - World suffix → pure style only: noir illustration, heavy ink
+        shadows, high-contrast chiaroscuro, amber-and-teal palette,
+        visible brushwork. No rain, no streets, no rooftops, no Seine.
+      - Delete the negative_prompt (Z-Image ignores it at
+        guidance_scale=0 — dead weight).
+      - Rain/streets move INTO the layers that want them:
+        - POI prompts: each POI's solo/backdrop already describes its
+          own setting — confirm rain is present where wanted
+        - Portraits: simple/dark background by default; outdoor setting
+          only where the character's element_visual deliberately places
+          them there (e.g. "under a café awning")
+      - Regenerate all 12 portraits + 12 POIs after the change; portraits
+        should lose the incidental street, POIs should keep their rain.
+
+      Generalizes: audit other worlds' visual_style.yaml for the same
+      concrete-noun bleed (the authoring-rule comment block exists in
+      coyote_star and glenross but pulp_noir predates it).
+
+      See PROMPTING_Z_IMAGE.md "World style suffix bleeds concrete nouns
+      into every portrait" (added 2026-05-25).
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore
