@@ -157,3 +157,11 @@ stories:
       - 'Latency budget: per-turn router add < 1.2s (Haiku 4.5 expected 0.3-0.5s; budget includes pipeline overhead)'
       - Capture any narrative misses or surprises in sprint/archive/59-8-session.md for post-mortem and feed-back into router prompt tuning
     type: chore
+  - id: 59-9
+    title: Fix cross_player redaction gap in redact_dispatch_package
+    points: 1
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug
