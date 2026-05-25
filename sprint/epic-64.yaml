@@ -65,11 +65,14 @@ stories:
     description: "Pre-existing circular import surfaced during epic 64 review: tests/dungeon/test_region_projection_wiring.py::test_dungeon_map_frame_is_emitted_to_ui fails in isolation with 'cannot import name WebSocketSessionHandler from partially initialized module sidequest.server.websocket_session_handler'. The cycle: session_handler.py:640 re-exports WebSocketSessionHandler from websocket_session_handler.py (back-compat), while websocket_session_handler.py:144 imports _SessionData/_State/etc back from session_handler.py. Importing either module first in a fresh interpreter can hit the half-initialized partner. Break the cycle (move shared types to a leaf module, or drop the back-compat re-export if unused) so the dungeon suite passes in isolation. Blocks 64-4 if the validator imports the loader graph that transitively pulls these modules."
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-25'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - test_region_projection_wiring.py::test_dungeon_map_frame_is_emitted_to_ui passes when run in isolation
       - No import cycle between session_handler and websocket_session_handler (verified by importing each first in a fresh interpreter)
       - Full dungeon suite green; no regression in server suite
+    completed: '2026-05-25'
     type: bug
+    review_verdict: approved
