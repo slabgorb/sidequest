@@ -127,7 +127,8 @@ stories:
     description: These subsystem modules already exist in sidequest/agents/subsystems/ from the 2026-04 LocalDM build but have no live dispatch path. Now that the router is live (post 59-4), wire them through run_dispatch_bank. Pure additive — no engine retirement, no field zeroing changes. Subsystems wake for the first time since 2026-04-28 dormancy.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-25'
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-4
@@ -137,6 +138,8 @@ stories:
       - reflect_absence dispatch engages its handler when the router emits it
       - 'redact_dispatch_package honored: visibility-tagged dispatches filtered before narrator sees them in narrator_instructions (existing prompt_redaction module)'
       - Lie-detector watches these three subsystems (extends 59-3 watcher vocabulary)
+    completed: '2026-05-25'
+    review_verdict: approved
   - id: 59-8
     title: Glenross playtest validation — folds 59-1 AC1 LLM behavior leg
     description: The owed playtest. Folds Story 59-1 AC1's 'LLM free tool-choice playtest' carve-out and validates the broader Intent Router spine in a real Glenross (tea_and_murder) session against the SDK backend. Sebastien's mechanical-visibility perspective is load-bearing for the GM-panel router-trace evaluation per CLAUDE.md player rubric.
