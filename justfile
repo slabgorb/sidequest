@@ -425,8 +425,8 @@ preview-style genre world:
 
 check-all: server-check client-lint client-typecheck client-test daemon-lint daemon-test
 
-# Content validation — reference visibility across all live packs
-content-validate-references: reference-validate-all
+# Content validation — reference chrome + visibility across all live packs
+content-validate-references: reference-chrome-validate reference-validate-all
 
 # OTEL dashboard — opens the browser-friendly /ws/watcher viewer
 # served by sidequest-server itself. Server must already be running
@@ -601,6 +601,23 @@ content-validate genre:
 # Validate all genre pack directories against pack_schema.yaml.
 content-validate-all:
     cd {{root}}/sidequest-server && uv run python -m sidequest.cli.validate pack {{root}}/sidequest-content/genre_packs
+
+# Validate that every live pack's theme.yaml carries every field the
+# v3 reference renderer requires (archetype, palette, fonts, dinkus).
+reference-chrome-validate:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    fail=0
+    for pack in {{root}}/sidequest-content/genre_packs/*/; do
+        if ! (cd {{root}}/sidequest-server && uv run python -m sidequest.cli.validate reference-chrome "$pack"); then
+            fail=1
+        fi
+    done
+    if [[ $fail -eq 1 ]]; then
+        echo ""
+        echo "ERROR: at least one pack has missing reference-chrome fields."
+        exit 1
+    fi
 
 # Validate reference-page visibility across every live pack.
 # Fails fast if any pack has YAML fields not classified in
