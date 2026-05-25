@@ -20,10 +20,13 @@ stories:
     title: Retarget social_tavern + veteran_drop caverns fixtures to beneath_sunden
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: orchestrator
     workflow: trivial
+    completed: '2026-05-25'
     type: chore
+    branch: feat/51-2-retarget-social-fixtures-beneath-sunden
+    review_verdict: approved
   - id: 51-3
     title: Wave-1 12-fixture hydration sweep + CHANGELOG; assert no caverns_sunden slug remains
     points: 1
