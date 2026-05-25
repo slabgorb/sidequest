@@ -10,7 +10,7 @@ stories:
     title: Stop cache-writing the volatile game_state snapshot segment — reposition cache_control breakpoint
     points: 3
     priority: p2
-    status: split
+    status: canceled
     repos: server
     workflow: tdd
     split_into:
