@@ -17,6 +17,7 @@ completed_epics:
   - '53'
   - '24'
   - '60'
+  - '22'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -393,3 +394,28 @@ completed_stories:
     title: Diagnose + fix 60-4 cache fix that fails on live playtest (5m writes still firing per turn)
     points: 5
     completed: '2026-05-24'
+  - id: 22-1
+    epic: '22'
+    title: Seed trope schema + deck engine in sidequest-server — SeedTrope sibling type, lifespan, flavor tags, draw-without-replacement, ghost retention persisted in ADR-023 session DB
+    points: 5
+    completed: '2026-05-21'
+  - id: 22-2
+    epic: '22'
+    title: Seed trope content — author 20-30 seeds for tea_and_murder (dogfood pack) with flavor tags and NPC delivery hints; other-pack expansion follows as separate stories
+    points: 3
+    completed: '2026-05-23'
+  - id: 22-3
+    epic: '22'
+    title: Seed trope narrator injection — VALLEY-zone context for active seeds (ADR-009), Faded tag for expired ghosts
+    points: 3
+    completed: '2026-05-23'
+  - id: 22-4
+    epic: '22'
+    title: Seed trope OTEL + GM panel — seed_fired, seed_expired, seed_promoted spans
+    points: 2
+    completed: '2026-05-25'
+  - id: 22-5
+    epic: '22'
+    title: Engagement-triggered seed drops — passive player pacing, mid-session seed injection
+    points: 3
+    completed: '2026-05-25'

@@ -3,7 +3,7 @@ type: epic
 title: "Epic: Seed Tropes — Narrative Variety via Schrödinger's Gun"
 description: "Expand the trope engine with short-arc 'seed' tropes — deliberately vague narrative events (a sealed letter, a missing item, an uneasy innkeeper) randomly dealt each session from a per-pack deck. Seeds inject as background context; the LLM narrator retroactively connects them to macro-trope escalations, creating emergent foreshadowing. Expired seeds linger as ghosts for cross-session callbacks. The player experiences a world with narrative memory and variety. ARCHITECTURE POINTERS: (a) Backend is Python post-ADR-082 — no Rust. (b) ADR-018 Trope Engine is live — existing TropeDefinition at sidequest-server/sidequest/genre/models/tropes.py:42 has escalation/passive_progression/tags; seed tropes likely want a sibling SeedTrope type, not field extension (different lifecycle: short-arc + deck draw + ghost retention). (c) ADR-009 VALLEY zone is live — 22-3 injection target is real. Note ADR-111/112 are deferred work that may migrate guardrail prose; seeds belong in VALLEY (context), not Recency, so unaffected. (d) Persistence: ghost retention extends ADR-023 session DB (~/.sidequest/saves/*.db) — new table or trope-state column. (e) Phase 1: dogfood one pack (tea_and_murder) to align with epic 24 grounding playtest; other-pack seeds follow as separate stories once the loop is proven. Doctrine note: 'sealed letter' here is a thematic seed example, NOT the multiplayer submit-and-wait barrier — see memory project_sealed_letter_doctrine."
 priority: p1
-status: backlog
+status: done
 repos: server,content,orchestrator
 stories:
   - id: 22-1
@@ -55,7 +55,11 @@ stories:
     title: Engagement-triggered seed drops — passive player pacing, mid-session seed injection
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-25'
     repos: server
     workflow: tdd
     acceptance_criteria: []
+    completed: '2026-05-25'
+    branch: feat/22-5-engagement-triggered-seed-drops
+completed: '2026-05-25'
