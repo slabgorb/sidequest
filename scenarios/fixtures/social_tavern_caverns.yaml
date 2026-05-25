@@ -1,0 +1,82 @@
+# Social fixture — the fire at Ropefoot, beneath_sunden's only gathering point.
+# A delver sits down at the kept fire among rope-keepers and the undeparted.
+# Usage: http://localhost:5173/?scene=social_tavern_caverns (requires DEV_SCENES=1)
+
+name: Social — The Kept Fire
+genre: caverns_and_claudes
+world: beneath_sunden
+player_name: fixture-tavern-caverns
+description: The fire at Ropefoot. Three rope-keepers, a mug of something warm, and the board at your shoulder.
+location: Ropefoot, the kept fire
+turn: 3
+
+character:
+  name: Ersi
+  description: A thin-wristed delver who talks more than she digs, and has outlived two crews because of it
+  personality: Watchful, wry without being light, asks the question no one else will
+  level: 2
+  hp: 10
+  max_hp: 10
+  ac: 11
+  inventory:
+    items:
+      - id: lantern_hooded
+        name: Hooded Lantern
+        description: Oil-fed, the shutters work
+        category: light
+        value: 5
+        weight: 2.0
+        rarity: common
+        narrative_weight: 0.4
+        tags: [light, essential]
+        equipped: false
+        quantity: 1
+      - id: knife_belt
+        name: Belt Knife
+        description: Dwarf-make, good steel, worn smooth at the grip
+        category: weapon
+        value: 5
+        weight: 1.0
+        rarity: common
+        narrative_weight: 0.3
+        tags: [melee, slashing, utility]
+        equipped: true
+        quantity: 1
+      - id: charcoal_stick
+        name: Charcoal Stick
+        description: For marking passage walls, or names
+        category: tool
+        value: 0
+        weight: 0.1
+        rarity: common
+        narrative_weight: 0.5
+        tags: [utility]
+        equipped: false
+        quantity: 3
+    gold: 7
+  statuses: []
+  backstory: Came up the dead road three seasons ago on the same rumor everyone comes up on. Has been down twice and come back both times lighter a pack-mate.
+  narrative_state: Seated at the fire, mug in hand, watching the board
+  hooks:
+    - The winch-keeper counted four going down this morning and the rope brought three back before dark
+  char_class: Rogue
+  race: Human
+  pronouns: she/her
+  stats:
+    STR: 10
+    DEX: 14
+    CON: 11
+    INT: 13
+    WIS: 12
+    CHA: 14
+
+npcs:
+  - name: Stenn
+    role: winch-keeper, camp's institutional memory
+    disposition: 5
+  - name: Orda
+    role: retired delver who will not go down again
+    disposition: 15
+  - name: Kael
+    role: new arrival, still deciding about the rope
+    disposition: 0

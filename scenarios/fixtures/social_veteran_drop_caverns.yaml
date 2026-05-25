@@ -1,0 +1,94 @@
+# Social fixture — a veteran delver at Ropefoot with knowledge to trade.
+# Someone who has been deep enough to know what is down there, and has not
+# gone back. The conversation is the price of what they know.
+# Usage: http://localhost:5173/?scene=social_veteran_drop_caverns (requires DEV_SCENES=1)
+
+name: Social — The One Who Came Back
+genre: caverns_and_claudes
+world: beneath_sunden
+player_name: fixture-veteran-caverns
+description: A veteran delver at Ropefoot who went deep and came back wrong. She knows the lower galleries. The question is what she wants for it.
+location: Ropefoot, the winch-house lee
+turn: 3
+
+character:
+  name: Gird
+  description: A broad-shouldered delver with a count-book and no patience for the unprepared
+  personality: Blunt, methodical, does not waste words on people who have not been down
+  level: 3
+  hp: 14
+  max_hp: 14
+  ac: 14
+  inventory:
+    items:
+      - id: axe_hand
+        name: Hand Axe
+        description: Notched from use on things that were not wood
+        category: weapon
+        value: 8
+        weight: 2.0
+        rarity: common
+        narrative_weight: 0.5
+        tags: [melee, slashing]
+        equipped: true
+        quantity: 1
+      - id: count_book
+        name: Count-Book
+        description: A palm-sized ledger with names and depths, some crossed out
+        category: tool
+        value: 0
+        weight: 0.3
+        rarity: common
+        narrative_weight: 0.7
+        tags: [utility, record]
+        equipped: true
+        quantity: 1
+      - id: rope_silk
+        name: Silk Rope
+        description: Fifty feet, lightweight, a delver's second life
+        category: tool
+        value: 10
+        weight: 3.0
+        rarity: uncommon
+        narrative_weight: 0.3
+        tags: [utility, essential]
+        equipped: false
+        quantity: 1
+      - id: ration_dried
+        name: Dried Rations
+        description: Hard bread and salt meat, packed tight
+        category: consumable
+        value: 1
+        weight: 1.0
+        rarity: common
+        narrative_weight: 0.2
+        tags: [food, consumable]
+        equipped: false
+        quantity: 4
+    gold: 22
+  statuses: []
+  backstory: Has been down seven times and come back seven times. Keeps the count in a book and will not tell you what he saw past the fourth gallery. He is at Ropefoot because he has not decided to leave, and he will not go down an eighth time.
+  narrative_state: Leaning against the winch-house wall, watching a new crew rig at the benches
+  hooks:
+    - The veteran has been watching the new crew rig and has not said a word to them
+  char_class: Fighter
+  race: Human
+  pronouns: he/him
+  stats:
+    STR: 15
+    DEX: 12
+    CON: 14
+    INT: 11
+    WIS: 13
+    CHA: 10
+
+npcs:
+  - name: Torve
+    role: veteran delver, went deep and came back changed
+    disposition: -10
+  - name: Ulke
+    role: Torve's former crew-mate, protective and wary
+    disposition: -5
+  - name: Stenn
+    role: winch-keeper, neutral observer
+    disposition: 5
