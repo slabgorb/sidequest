@@ -3,7 +3,7 @@ type: epic
 title: 'Epic: Procedural World-Grounding Systems'
 description: 'Anti-mode-collapse infrastructure: weather, demographics, NPC schedules, economy, establishments, calendar — following Monster Manual pattern (ADR-059; note drift, successor pointer ADR-087 — implementer reads both). Phase 1: schemas + tea_and_murder/glenross proof of concept. Generator lives in sidequest-server (Python; ADR-082 retired the Rust backend). Packs remain monolithic — ADR-072 (system/milieu split) is retired (historical 2026-05-02), so weather/demographics/calendar YAML go in sidequest-content/genre_packs/<pack>/ alongside existing top-level pack files, NOT in a layered system/ folder. Existing seam: genre/models/scenario.py:132 SceneSetting.weather is a free-form str — the new system populates it from typed state. Genre fit note (tea_and_murder): cozy mystery benefits hard from grounding — Scottish-village weather/seasons drive scene framing, glenross demographics give the narrator a stable cast for "who is in the post office today", calendar gates festivals and tea-room hours.'
 priority: p1
-status: backlog
+status: done
 repos: server,content,orchestrator
 stories:
   - id: 24-1
@@ -127,3 +127,4 @@ stories:
     depends_on: 24-7
     completed: '2026-05-21'
     review_verdict: approved
+completed: '2026-05-25'

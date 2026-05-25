@@ -3,7 +3,7 @@ type: epic
 title: Narrator Token & Cost Budget — Cache-Write Efficiency
 description: 'Continuation of archived epic 57 (Narrator Prompt Token Reduction). A 2026-05-21 tea_and_murder/glenross playtest surfaced ~$0.046/call of wasted cache_write. ROOT CAUSE — CORRECTED by story 60-3 (measured 2026-05-22; the earlier "mis-zoned state sections" hypothesis was DISPROVED): the cached prefix (system_blocks[0] Primacy+Early + the tools array) is byte-stable and does NOT drift, and the three suspected state sections (narrator_available_confrontations, trope_beat_directives, npc_roster) are User-bucket -> ride the uncached user message -> never touch block 0. The real cost is the narrator tool-use LOOP: the first call of a turn caches the prefix at 1h, but every continuation call (iter 2+, carrying tool_use/tool_result) re-mints the whole ~11.7k prefix at the default 5m TTL, because the growing conversation has no cache_control breakpoint (markers sit only on system+tools). At submit-and-wait cadence the 5m copy expires between turns, so the prefix is re-paid every turn. The game_state snapshot was always innocent (uncached Valley block). Three-story arc: 60-2 OTEL eyes (per-block cache attribution + prefix digest + cache usage) -> 60-3 diagnose/confirm (DONE; disproved the zoning hypothesis, found the tool-loop cause; see sprint/archive/60-3-session.md) -> 60-4 add a moving 1h cache_control breakpoint on the tool-loop continuation (NOT re-zoning) + fix the bucket-blind mis_zoned flag. The original 60-1 framing was wrong and dropped; 60-1 split into 60-2/60-3/60-4.'
 priority: p2
-status: backlog
+status: done
 repos: server
 stories:
   - id: 60-1
@@ -124,3 +124,4 @@ stories:
     type: bug
     review_findings: '5 high-confidence findings (non-blocking, bounded): 1 silent-fallback rule violation in _build_messages_payload non-dict path, 4 stale comments (production + test files), 2 test coverage gaps (iter=2 marker count, 5m bare-string promotion). Rework sequence: TEA adds 2 tests + fixes 3 test comments; Dev adds logger.warning else-branch + fixes 1 production comment + optional 1 doc-path fix. ~30 minutes total.'
     review_verdict: approved
+completed: '2026-05-25'
