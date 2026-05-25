@@ -69,8 +69,6 @@ _server-cmd *flags:
     SIDEQUEST_RENDER_ENABLED=1 \
     SIDEQUEST_NARRATOR_STREAMING="${SIDEQUEST_NARRATOR_STREAMING:-1}" \
     SIDEQUEST_ASSET_BASE_URL="${SIDEQUEST_ASSET_BASE_URL:-https://cdn.slabgorb.com}" \
-    DEV_SCENES="${DEV_SCENES:-1}" \
-    SIDEQUEST_FIXTURES_DIR="${SIDEQUEST_FIXTURES_DIR:-{{root}}/scenarios/fixtures}" \
         exec uv run uvicorn sidequest.server.app:create_app \
             --factory \
             --host 127.0.0.1 --port 8765 {{flags}}
@@ -116,7 +114,7 @@ server *flags:
 #   request.url and client IP reflect the public hostname (https) instead of localhost.
 #
 # Standalone of _server-cmd because flags + env differ (UI_DIST mount,
-# --proxy-headers, no DEV_SCENES/FIXTURES_DIR).
+# --proxy-headers).
 serve *flags:
     #!/usr/bin/env bash
     set -euo pipefail
