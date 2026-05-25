@@ -60,14 +60,17 @@ stories:
     title: 'Cleanup: live-pack validator, tropes exclusion, R2 screenshots, final gate'
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-24'
     repos: server,content
     workflow: tdd
     depends_on: 63-4
+    completed: '2026-05-25'
     branch: feat/63-5-cleanup-validator-tropes-r2-final-gate
     assignee: slabgorb
     type: chore
+    review_findings: "Branch-introduced test failure: test_kind_for_stem[tropes-trope] in test_reference_renderer_namespacing.py:43 — stale parametrize entry orphaned by intentional _KIND_OVERRIDES[tropes] removal. Remove the ('tropes','trope') entry. Green rework."
+    review_verdict: approved
   - id: 63-6
     title: Reference UI test parity for LocationPanel (rolled-in from 63-2)
     points: 1
