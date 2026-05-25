@@ -10,10 +10,11 @@ stories:
     title: Retarget combat-tier caverns fixtures (low/mid/high) to beneath_sunden
     points: 3
     priority: p2
-    status: backlog
-    repos: orchestrator
+    status: in_review
+    repos: content,server
     workflow: trivial
     type: chore
+    review_verdict: approved
   - id: 51-2
     title: Retarget social_tavern + veteran_drop caverns fixtures to beneath_sunden
     points: 2
