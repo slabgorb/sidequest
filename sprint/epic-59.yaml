@@ -223,3 +223,17 @@ stories:
     repos: server
     workflow: trivial
     type: chore
+  - id: 59-16
+    title: 'Confrontation beats: collapse to one filtered delivery path (kill emitter firewall bypass)'
+    description: "Solo Fighter is offered other classes' confrontation beats (Backstab/Cast Cantrip/Cast Spell/Turn Undead/Pray for Aid). Root cause (confirmed 2026-05-26): beats reach clients via TWO racing mechanisms (Story 49-7) — an unfiltered full-union CONFRONTATION broadcast + a per-PC class-filtered overlay queued behind it (UI is last-message-wins). Mechanical trigger: emitters.py project_emitter = author_player_id is not None; the CONFRONTATION emit passes no author, so the emitter raw-bypasses the ADR-105 projection firewall (Invariant 3) and out_to_self is the raw union. In solo the player IS the emitter -> always gets the union; the overlay loses the race after a flee/reconnect. handlers/connect.py:1474 (resume) filters in one clean call -> correct on first load. Locked design (Keith): ONE delivery path — beat/class logic stays in the encounter layer; canonical union -> EventLog only (never a client socket); one per-recipient class-filtered fan-out to EVERY connected socket including the emitter; delete both overlay loops (wssh:4614-4657, dice.py:667-704); fail LOUD (no silent union fallback) if a seated+connected PC won't resolve. Full plan: docs/superpowers/specs/2026-05-26-confrontation-single-filtered-delivery.md. Branch: feat/confrontation-single-filtered-delivery (sidequest-server). Adjacent firewall surface: 59-9."
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - Solo Fighter never receives non-Fighter beats on ANY emit path (confrontation start, mid-turn/flee, reconnect) — red-first fixture test on the emitter's own delivered frame
+      - No CONFRONTATION full-union payload ever reaches a client socket; EventLog still persists the canonical union row for replay/audit
+      - Both overlay loops deleted; emit_event gains a per-recipient payload supplier that also covers the emitter (Invariant 3 overridden for this emit only)
+      - confrontation_beat_filter_span fires once per recipient on the single path; existing overlay tests (test_confrontation_per_pc_projection/_call_site_audit/_mp_broadcast) rewritten to the new shape (not reverted); full server suite green
+    type: bug
