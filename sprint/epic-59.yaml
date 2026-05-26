@@ -171,9 +171,9 @@ stories:
     priority: p1
     status: done
     started: '2026-05-25'
-    completed: '2026-05-25'
     repos: server
     workflow: tdd
+    completed: '2026-05-25'
     type: bug
   - id: 59-11
     title: Retire the orchestrator's redundant second dispatch-bank run (engage once, collect directives without re-engaging)
@@ -190,3 +190,35 @@ stories:
       - OTEL Subsystems tab shows each subsystem exercised once per turn — no spurious TypeError rows; dispatch_bank + subsystem_exercise spans fire exactly once
       - 'Regression: a confrontation turn shows zero subsystem errors in OTEL when engagement succeeds (the clean-Subsystems-tab signal)'
     type: refactor
+  - id: 59-12
+    title: 'Movement #456 dispatch fix — bind PC onto a live dungeon-graph node (surface->deep handoff) so run_movement_dispatch resolves; fix movement double-dispatch missing-kwargs'
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 59-13
+    title: Chase confrontation write-back — apply beat metric delta, transition Setup->active, seat opponent (INERT-chase dual-dial frozen 0/7)
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 59-14
+    title: magic_working — load magic_state for worlds with caster classes (or degrade cleanly) so Mage casting isn't a no-op
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: bug
+  - id: 59-15
+    title: 'Engagement e2e validation — beneath_sunden + road_warrior: confrontation/movement/magic actually fire mechanically (OTEL span proof)'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: chore

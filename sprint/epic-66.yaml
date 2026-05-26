@@ -33,3 +33,11 @@ stories:
       - A Lv1 character of each class surfaces its signature ability / class moves in the Abilities tab (verified via a world validator, not a content-coupled unit test)
       - Load-time validator warns LOUD when a non-magical class ships with no signature ability / class moves
       - 'OTEL: chargen ability-materialization emits a span (class + abilities materialized) so the GM panel confirms surfacing fired'
+  - id: 66-3
+    title: Chargen names-step extraction — split rider road-name vs rig-name from prose (or use followup answer); stop storing whole sentence as char_name
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug

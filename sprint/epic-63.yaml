@@ -125,3 +125,27 @@ stories:
     type: feature
     review_findings: Unescaped palette_accent in <img> style= (escaping-invariant break / future stored-XSS) — one-line html.escape fix; plus LOW silent world-None return + shared-parser dedup recommendation
     review_verdict: approved
+  - id: 63-9
+    title: Reference renderer humanization guard — never emit raw key/dict/snake_case/bool/dev-note prose; humanize section-key headings; + output-scan test
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 63-10
+    title: Lore surface renders WORLD lore only — stop rendering genre-level lore (Keepers/Maw) + banner intro; resolve genre/world contradiction
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: bug
+  - id: 63-11
+    title: Reference — suppress or author empty Beat-Vocabulary + Achievements sections (cross-pack)
+    points: 1
+    priority: p3
+    status: backlog
+    repos: server,content
+    workflow: trivial
+    type: bug

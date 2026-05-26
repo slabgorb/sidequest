@@ -1,0 +1,32 @@
+id: '68'
+type: epic
+title: Genre tone, terminology & narrator reliability
+description: "Playtest-3 findings: keep mechanics legible without breaking genre tone, and make the aside (ADR-107) actually answer. Per-genre reskin of the survivability pool label (social packs => Composure/Standing/Poise, not 'HP/Vitality'); paired content+server field (genre models are extra=forbid). Sweep stale mechanical tokens out of player-facing ability prose ('per Edge math', raw 'player_metric'). Fix the aside happy-path so a good GM answer isn't rejected by the outcome-allowlist (_SYSTEM_PROMPT must emit outcome:answered). Source: sq-playtest-pingpong.md."
+priority: p2
+status: backlog
+repos: content,server,ui
+stories:
+  - id: 68-1
+    title: Per-genre survivability-pool label reskin — social packs show Composure/Standing/Poise (paired content+server field, extra=forbid)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content,server,ui
+    workflow: tdd
+    type: bug
+  - id: 68-2
+    title: Sweep stale mechanical tokens from player-facing ability prose ('per Edge math', raw player_metric)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: bug
+  - id: 68-3
+    title: Aside happy-path fix — _SYSTEM_PROMPT must emit outcome:answered so a good GM answer isn't rejected (ADR-107)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug

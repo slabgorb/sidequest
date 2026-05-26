@@ -1,0 +1,40 @@
+id: '67'
+type: epic
+title: Multiplayer resilience & presence
+description: "Playtest-3 findings: MP turn/socket robustness and shared-turn presence. A client-side GameBoard render crash must not tear down the WebSocket and orphan the whole table's in-flight turn (apply+persist server-side, reconnect replays). ACTION_REVEAL delivery must be resilient so a sealed peer never stalls at 'Composing'. Peer-visibility/shared-turn status (Keith-requested) consolidated to one canonical surface + slow-typist reassurance. MP identity mapping (player-vs-character) so headers stop rendering doubled 'X— X'. Source: sq-playtest-pingpong.md."
+priority: p1
+status: backlog
+repos: server,ui
+stories:
+  - id: 67-1
+    title: GameBoard render crash must not orphan the table's turn — survive client subtree errors server-side
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+    type: bug
+  - id: 67-2
+    title: ACTION_REVEAL delivery resilience — retry/backfill on reconnect so a sealed peer never stalls at Composing
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+    type: bug
+  - id: 67-3
+    title: MP peer-visibility consolidation + slow-typist reassurance (one canonical surface, Composing/Sealed/Resolving)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: trivial
+    type: bug
+  - id: 67-4
+    title: MP identity mapping (player-vs-character) — stop rendering doubled 'X— X' header
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+    type: bug
