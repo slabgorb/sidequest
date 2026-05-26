@@ -494,6 +494,24 @@ jaeger-stop:
 jaeger-ui:
     uv run python3 -m webbrowser http://localhost:16686
 
+# ---------------------------------------------------------------------------
+# Postgres substrate (ADR-115) — local dev provisioning (Homebrew + launchd)
+# postgresql@18 is keg-only, so its bin dir is not on PATH — reference it explicitly.
+# ---------------------------------------------------------------------------
+
+# Install + start PostgreSQL 18 and create the dev/test databases.
+pg-up:
+    brew install postgresql@18
+    brew services start postgresql@18
+    /opt/homebrew/opt/postgresql@18/bin/createdb sidequest 2>/dev/null || true
+    /opt/homebrew/opt/postgresql@18/bin/createdb sidequest_test 2>/dev/null || true
+    @echo "Postgres 18 running. Set SIDEQUEST_DATABASE_URL=postgresql://$USER@localhost:5432/sidequest"
+    @echo "Tests use SIDEQUEST_TEST_DATABASE_URL=postgresql://$USER@localhost:5432/sidequest_test"
+
+# Show the status of the local PostgreSQL 18 service.
+pg-status:
+    brew services info postgresql@18
+
 # Boot all services with OTLP export wired to local Jaeger AND every
 # watcher event mirrored as a synthetic OTEL span. Requires `just jaeger`
 # already running. Without SIDEQUEST_WATCHER_AS_SPANS, Jaeger only sees
