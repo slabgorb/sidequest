@@ -76,7 +76,8 @@ stories:
     description: "RE-SCOPED 2026-05-26 (was '1pt UI test parity'): the LocationPanel region-header deep-link the parity test was meant to cover was NEVER built. Verified on develop + branch: LocationDescriptionPayload has no reference_url field (server protocol/models.py OR ui types/payloads.ts), and LocationPanel.tsx:83 renders the region header as a plain <span>. The only location-side reference_url that shipped in 63-4 is LocationEntity.reference_url, but entities are deliberately unrendered in LocationPanel (Zork doctrine, ADR-109/54-9). This is now the real AC8 feature: add the region-header deep-link end to end (server emit + ui render), THEN the mirror test. repos: server,ui (NOTE: YAML repos field still says 'ui' — CLI has no --repos flag; session Repos line updated to server,ui and a server branch will be created)."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-26'
     repos: ui
     workflow: tdd
     acceptance_criteria:
@@ -85,6 +86,9 @@ stories:
       - 'UI render: LocationPanel.tsx region header (line ~83) renders as <a target=_blank rel=noopener href={reference_url}> when set, plain <span> when null/undefined. Mirrors CharacterSheet class subtitle anchor pattern. Do NOT render entities (Zork doctrine stays).'
       - 'Test (RED→GREEN): src/components/__tests__/LocationPanel.reference.test.tsx mirrors CharacterSheet.reference.test.tsx — three cases: reference_url set → anchor with href+target+rel noopener; null → plain text no link; omitted → plain text no link.'
       - 'OTEL: region-header anchor emission is a reference-anchor decision — confirm it rides the existing telemetry/spans/reference.py span (added in 63-4) so the GM panel can verify location anchors resolve, not just character ones.'
+    completed: '2026-05-26'
+    review_findings: 'Approved. preflight PASS (27 server + 16 UI green, lint/tsc clean), security clean. 1 non-blocking Minor (R1): harden _maybe_emit_location_description vs malformed history.yaml — load_poi_image_slugs raises unguarded in a graceful path; recommend catch + reference_url_failed_span + degrade to None (deferred; pre-existing identical exposure at assemble_lore_page).'
+    review_verdict: approved
   - id: 63-7
     title: Reference chrome markup contract alignment per v3 plan Tasks 20-22
     points: 5
