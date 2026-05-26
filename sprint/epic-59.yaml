@@ -239,3 +239,11 @@ stories:
       - Both overlay loops deleted; emit_event gains a per-recipient payload supplier that also covers the emitter (Invariant 3 overridden for this emit only)
       - confrontation_beat_filter_span fires once per recipient on the single path; existing overlay tests (test_confrontation_per_pc_projection/_call_site_audit/_mp_broadcast) rewritten to the new shape (not reverted); full server suite green
     type: bug
+  - id: 59-17
+    title: Dogfight confrontation fails to instantiate via production path
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
