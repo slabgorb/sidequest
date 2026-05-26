@@ -343,3 +343,82 @@ The closest existing system is probably **NFT royalty chains but enforced becaus
 - H8/H9 (creator-comp vs platform-comp; do strangers play UGC worlds at all?) — still need answers.
 - N=1 persona validation — find a second forever-DM, not in Keith's household, who would author. Still the largest qualitative risk.
 - CLAUDE.md "Who This Is For" rewrite — small surgical change, but load-bearing for orientation of future agents.
+
+---
+
+## 12. Competitive Landscape & Differentiation
+
+**Source:** BA competitive scan, 2026-05-25 (/pf-ba session, Keith). Triggered by Keith's hypothesis that SideQuest's effort went disproportionately into *flexibility*. The scan tested that hypothesis against the live AI-DM field and forced a reframe.
+
+### 12.1 The competitive set
+
+| Tool | Input model | Mechanical backing | Rules system | Multiplayer | Creator content | Creator $$ |
+|---|---|---|---|---|---|---|
+| **AI Dungeon** | Freeform NL | None ("no dice, no sheets, no skill checks") | None | Yes (shared session) | Scenario library, story cards | No |
+| **Voyage** | Freeform NL | Proprietary "World Engine" | Non-traditional | Yes | Community worlds | No |
+| **AI Realm** | Freeform NL | D&D 5e SRD, character sheets | D&D 5e | Up to 4 | NPC cards | No |
+| **Friends & Fables** | Freeform NL + tactical battlemap | Structured DB state, rules enforcement | D&D 5e (locked) | Up to 6 (Discord) | "Thousands" of player worlds, generators, map editor, sharing | **No** |
+| **RoleForge** | Freeform NL + real dice | Dice-resolved | Multi-system | Roadmap (solo-first) | None | No |
+| **SideQuest** | Freeform NL | Genre-pack mechanics + OTEL-verified | **Swappable per genre pack (not 5e-locked)** | Sealed simultaneous rounds + asymmetric info | World + **genre/mechanics-layer** authoring | **Single-hop royalty / RCATC (designed)** |
+
+### 12.2 The reframe: flexibility is table stakes, not a moat
+
+The hypothesis going in was "we win on flexibility." The scan refuted it as a *headline* claim: **every serious competitor already accepts freeform natural-language input.** The Zork Problem (SOUL.md's founding wedge — removing the finite verb set) was genuinely novel when AI Dungeon shipped it in 2019; by 2026 the entire field solved it. Nobody gates players behind menus anymore.
+
+What's actually true is that the field forked into a trade-off SideQuest is the only one refusing:
+
+- **Pure-freeform camp (AI Dungeon, Voyage):** maximum flexibility, *no* mechanical backing — hallucinates, no durable consistency, no real resolution.
+- **Rules-enforced camp (Friends & Fables, AI Realm, RoleForge):** real mechanics and structured state, but **chained to D&D 5e.**
+
+SideQuest is the only entrant with **open player action AND real mechanical scaffold AND a swappable, non-5e rulebook** (genre packs, ADR-003). The differentiator is the *combination*, never "flexibility" as a standalone axis. Marketing "we're more flexible" loses — AI Dungeon is strictly more freeform. Marketing "flexible *and* mechanically honest *and* genre-agnostic" wins, and the OTEL lie-detector is what makes the "honest" half provable where competitors can only assert it.
+
+### 12.3 Reasons not to lose vs. reasons to win
+
+Keith's instinct surfaced four claimed differentiators. The scan re-tagged them. **Three are "reasons not to lose" — table stakes you must match to stay credible. Two are "reasons to win" — uncontested or architecturally uncopyable.** (Multiplayer appears in both columns because the bare word is table stakes; the *kind* of multiplayer is a reason to win — see 12.4.)
+
+| Claimed differentiator | Verdict | Why |
+|---|---|---|
+| Better flexibility | ❌ Not a standalone moat | Field-wide table stakes. Reframe as the *combination* (12.2). |
+| Better recordkeeping / consistency / long-term | ⚠️ Contested | F&F makes the **identical** pitch ("purpose-built DB… prevents hallucinations… state checks"). Win on *degree + provability*: durable years-not-weeks retention ([[feedback_durable_retention]]), KnownFacts/footnotes coherence (ADR-100), OTEL-verifiable state. Not on existence. |
+| Multiplayer (bare) | ⚠️ Table stakes | F&F (6), AI Realm (4), AI Dungeon, Voyage all have it. The *word* loses. |
+| **Concurrent + asymmetric multiplayer** | ✅ **Reason to win** | See 12.4. Architecturally uncopyable by chat-bot competitors. |
+| **Bring-your-own-content** | ✅ **Reason to win (qualified)** | See 12.5. World-flavor BYOC is crowded; *genre/mechanics-layer* authoring + creator economy is open water. |
+
+### 12.4 Reason to win #1 — Concurrent, asymmetric-information multiplayer
+
+Keith's sharpening: *"players taking turns talking isn't really multiplayer."* Correct, and it splits the category into two axes competitors conflate:
+
+- **Concurrency.** SideQuest uses sealed simultaneous rounds (ADR-036): everyone submits, *then* the world resolves — **in every scene.** Competitors are sequential. F&F's case is now confirmed (Keith, firsthand, 2026-05-25): it only enforces "wait for your turn" **in combat**, via standard 5e initiative order — i.e. one player at a time, the *opposite* of sealed-simultaneous. Two consequences fall out, and both favor SideQuest:
+  - **In combat:** F&F = sequential initiative (take turns talking, just ordered). SideQuest = simultaneous submission. Different model.
+  - **Out of combat:** F&F *does* batch — it collects player input, heuristically infers "this is a turn," and submits the batch to the narrator. So the models are **somewhat** similar at the batching layer. The decisive difference is the **fairness lock**: F&F's boundary is an inferred signal with **no roster-keyed barrier and no per-player screen-time guard** — nothing structurally prevents one player from dominating the batch and driving every turn. SideQuest's sealed round is a *completion-gated barrier keyed to the seated roster*: resolution blocks until every seated player has submitted, and parity is enforced by a lock, not by hoping a heuristic happened to be fair. This is the difference between "we batch input" and "we guarantee each player a turn." The Alex constraint (no fast-typist monopoly, never rush a slow player) is enforced **structurally** in SideQuest; in F&F it is left to chance.
+- **Asymmetric information** — *the architectural moat.* SideQuest can show player A what player B cannot see (ADR-104/105 perception firewall). **A shared-channel/Discord competitor physically cannot do this** — every player reads every message. Per-player private info requires per-player rendering + a server-side perception layer, i.e. you cannot be a chat-room bot. This is written into SOUL.md as the thesis ("Tabletop First, Then Better… asymmetric message passing (private info per player)"): the medium exceeding a human DM, who can only pass clumsy secret notes.
+
+**Latent differentiator — sealed-letter (hidden simultaneous submission).** Players submit without seeing each other's actions until the round resolves. Almost certainly **novel vs. the entire field** — no shared-buffer/Discord competitor can offer it (everyone reads every message). Status, stated precisely so nobody markets it prematurely:
+  - **Not live today, but planned — deferred, not rejected.** ADR-036's 2026-05-03 amendment deliberately keeps peer action text *visible* during the wait phase (collaborative visibility; "sealed visibility" is PvP-reserved). So sealed-letter is **not a current capability** and must not be claimed as one until content requiring it ships.
+  - **Deferred for a primary-audience preference, not a technical barrier.** Keith's playgroup dislikes PvP-style sealed play; *other DMs' tables want it.* Under this PRD's own reframe (customer = the DM, not Keith-the-player), **those DMs are customers** — this is a capability the primary audience gates but the customer base demands. A clean case of customer ⊋ primary-player.
+  - **Sealed was the original behavior; visibility is the *additive* feature.** History (Keith, 2026-05-25): the first implementation was *completely sealed*. Peer-action visibility was added later as an **extra feature** because the co-op playgroup struggled to coordinate team/group actions without it. So sealed-letter is not an unbuilt capability — it is **proven prior behavior currently masked by the additive visibility layer.** PvP mode = turn the extra feature *off*. This is lower-risk than net-new work: the mechanic already ran in production.
+  - **It unlocks a genre category, not just a mode.** Hidden simultaneous submission *is* the core mechanic of social-deduction play (Mafia / Werewolf / hidden-traitor). In those games coordination-blindness is the point — the visible-peer co-op model structurally *cannot* host them. Sealed-letter therefore opens an entire genre family the field's shared-buffer competitors cannot serve at all. Frame it as genre-reach (new content surface for creators), not a UI preference.
+  - **Net:** a reason-to-win that (a) the field structurally cannot match, (b) already shipped once so it's proven, and (c) re-enables by subtraction. Still *latent* in current default UX — market it only once content that uses it ships, but treat the build cost as near-zero and the genre upside as real.
+
+**Positioning rule:** never market the bare word "multiplayer" (everyone sounds identical). Market "concurrent, asymmetric-information multiplayer" and let the competition's turn-passing read as the budget option.
+
+### 12.5 Reason to win #2 — Genre-layer authoring + creator economy
+
+World-*flavor* BYOC is crowded: F&F advertises "thousands" of player worlds plus generators, map editors, and sharing; Voyage has community worlds; AI Dungeon has a scenario library. SideQuest does **not** win on "users can make worlds." The genuine whitespace, confirmed by the scan:
+
+1. **Authoring at the genre/mechanics layer.** Every rules-enforced competitor is D&D-5e-locked — you can build a *world*, never a new *rulebook*. SideQuest genre packs are complete rule systems. **Nobody else lets a creator ship new mechanics.** This is the answer to §4.7's "competes with our own polished packs" — the external counter to F&F's "thousands of worlds" is *"ours are rulebooks, theirs are reskins,"* which only lands if genre-layer authoring is actually exposed to creators (gated on H1).
+2. **Creator monetization.** Searched specifically: the **entire category has zero creator-earnings program.** F&F has world-sharing but no royalty. SideQuest's single-hop royalty / RCATC / Class 1-2-3 model (§10) is in open water — the commercial articulation of the play layer's structural advantage (content is already forkable YAML on disk, §10.6).
+
+### 12.6 The one-line positioning that falls out
+
+> **SideQuest is the only AI Game Master that refuses the freeform-vs-rigorous trade — open player action, real swappable mechanics, concurrent asymmetric-information multiplayer, and the only creator economy in the category.**
+
+Both reasons-to-win share a property that *validates the §1.1 reframe*: they are differences a **forever-DM notices and a casual player doesn't** (private-info play; authoring at the rulebook layer; getting paid for a hit). The moat is not the play experience for casuals (contested) — it is the **creator-economy-on-genre-layer-authoring** plus **table-grade multiplayer**, aimed squarely at the customer the PRD already identified as the DM-builder.
+
+### 12.7 Evidence gaps before any public claim
+
+- **F&F turn-model: confirmed sequential (combat-only "wait for turn"), per Keith firsthand 2026-05-25.** The "only real multiplayer" claim is safe *against F&F*. **AI Realm's model remains inferred** (D&D 5e SRD + 4-player → likely initiative-order, unverified) — confirm before a category-wide claim. Also confirm none of the freeform tools (AI Dungeon, Voyage) quietly added simultaneous submission.
+- **F&F creator monetization** read as absent from public marketing as of 2026-05; confirm they haven't launched a quiet royalty/partner program before claiming "only creator economy."
+- Scan is a point-in-time snapshot (2026-05-25). Pricing and feature claims drift fast in this category (F&F already raised prices Dec 2025); re-scan before any positioning doc goes to market.
+
+**Sources:** [RoleForge five-tool comparison](https://roleforge.ai/blog/best-ai-game-master-tools-compared/) · [Friends & Fables — how it differs from ChatGPT/AI Dungeon/NovelAI](https://fables.gg/blog/how-is-friends-and-fables-different-from-chatgpt-ai-dungeon-or-novelai) · [Friends & Fables](https://fables.gg/) · [AIDungeonMaster.ai 2026 roundup](https://aidungeonmaster.ai/blog/best-ai-dungeon-masters-2026/) · [StoryRoll platform comparison](https://storyroll.app/blog/best-ai-dungeon-masters-2026)
