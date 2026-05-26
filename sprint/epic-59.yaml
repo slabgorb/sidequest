@@ -156,6 +156,7 @@ stories:
       - 'Submit session writeup (~200 words) covering Sebastien-style mechanical-visibility perspective: is GM-panel router-trace usable for a mechanics-first player'
       - 'Latency budget: per-turn router add < 1.2s (Haiku 4.5 expected 0.3-0.5s; budget includes pipeline overhead)'
       - Capture any narrative misses or surprises in sprint/archive/59-8-session.md for post-mortem and feed-back into router prompt tuning
+      - "VERIFICATION ATTEMPTED 2026-05-26 (log audit, SM) — CANNOT VERIFY COMPLETE. No qualifying ~30-turn Glenross/tea_and_murder SDK session exists in any rotated server log (~/.sidequest/logs/sidequest-server.log*). Only two real Glenross sessions found: 005245 (~16 turns) and 003023 (~5 turns); both ZERO confrontations engaged. encounter.created and intent_router.dispatch.confrontation spans absent from the ENTIRE log tree. Root causes observed: (a) 005245 intent_router degraded every turn (unparseable JSON → dispatch_package=None); (b) 003023 dispatch crashed: 'run_scenario_clue_dispatch() missing 1 required keyword-only argument: snapshot' (same kw-only TypeError family as the confrontation wiring trap). Latency: no router timing logged. To close: run an actual 30-turn Glenross session against the SDK backend with confrontations engaging, on a server build where the dispatch seam does not throw."
     type: chore
   - id: 59-9
     title: Fix cross_player redaction gap in redact_dispatch_package

@@ -80,10 +80,14 @@ stories:
     title: 'Playtest validation: 50-turn solo session, input_tokens@turn50 <= 1.2x input_tokens@turn5, per-turn cost flat'
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: orchestrator
     workflow: trivial
     depends_on: 61-2
+    acceptance_criteria:
+      - 'VERIFICATION ATTEMPTED 2026-05-26 (log audit, SM) — CANNOT VERIFY COMPLETE. No 50-turn solo session exists in any rotated server log. Longest contiguous SOLO session found is 17 turns (server.log.20260525-005245, tea_and_murder/glenross, player=Neil). turn=30/117 hits are session.slug_resumed of persisted saves (and coyote_star turn=117 is multiplayer -mp, not solo). NOTE: the desired BEHAVIOR passes on the 17-turn sample — input_total@17/input_total@5 = 1.02 (flat, well under 1.2x ceiling; snapshot slimming from 61-2 held), warm per-turn cost flat at ~$0.082 (cold turn1 $0.145). But the literal AC (single 50-turn solo session, turn5 vs turn50 measurement) has no supporting evidence. To close: run one actual ~50-turn solo session WITHOUT rotating the log mid-session, then compare input_tokens@turn50 vs @turn5.'
+      - 'CLOSED 2026-05-26 by Keith: accepted on the 17-turn solo evidence — token growth flat (input@17/@5 = 1.02, well under 1.2x) and warm per-turn cost flat (~$0.082). 61-2 snapshot slimming demonstrably held; the runaway-balloon pattern is gone. Literal 50-turn measurement deferred to the next real game as a follow-up confirmation, not a blocker.'
+    completed: '2026-05-26'
     type: chore
   - id: 61-7
     title: 'Unify _npc_in_scene predicate with list_npcs_in_scene scene resolution'

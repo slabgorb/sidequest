@@ -10,11 +10,13 @@ stories:
     title: GameBoard render crash must not orphan the table's turn — survive client subtree errors server-side
     points: 5
     priority: p1
-    status: in_progress
+    status: done
     repos: server,ui
     workflow: tdd
+    completed: '2026-05-26'
     type: bug
     branch: feat/67-1-gameboard-crash-server-survive-turn
+    review_verdict: approved
   - id: 67-2
     title: ACTION_REVEAL delivery resilience — retry/backfill on reconnect so a sealed peer never stalls at Composing
     points: 3
