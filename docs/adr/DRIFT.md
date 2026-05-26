@@ -44,4 +44,3 @@
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | ✓ accepted | — |
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | ✓ accepted | docs/adr/108-mp-item-attribution-recipient-tagging.md#implementation-guidance-for-dev |
 | [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | sprint/current-sprint.yaml#57-4 |
-| [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ◇ proposed | — |

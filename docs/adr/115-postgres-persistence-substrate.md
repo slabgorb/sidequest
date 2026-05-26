@@ -1,18 +1,33 @@
 ---
 id: 115
 title: "Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL"
-status: proposed
+status: accepted
 date: 2026-05-26
 deciders: ["Keith Avery", "Major Margaret Houlihan (Architect)"]
 supersedes: []
 superseded-by: null
 related: [23, 36, 37, 82, 103]
 tags: [core-architecture, transport-infrastructure, project-lifecycle]
-implementation-status: deferred
-implementation-pointer: null
+implementation-status: in-progress
+implementation-pointer: "docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md"
 ---
 
 # ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL
+
+> **Amendment 2026-05-26 (sequencing reversal).** This ADR originally locked
+> an incremental strangler (Phase 0 SQLite seam → Phase 1 Postgres → Phase 3
+> portability → Phase 2 cutover) and rejected the big-bang port. After Slice
+> 1a shipped (`SaveRepository` seam, PR #459), scoping Slice 1b exposed that
+> the backend is an **all-or-nothing property of one shared
+> `sqlite3.Connection`**: `DungeonStore`, the telemetry sink, forensic reads,
+> the scrapbook writers, and the save tables all ride the same connection,
+> so they must port together — a save-domain-only Postgres swap is
+> unbuildable, and an inert SQLite-only Phase-0 milestone parks the tree in a
+> high-cost "which backend / typed-or-raw?" limbo. The migration is therefore
+> a **direct port of every connection-sharing consumer**, reversing the
+> big-bang rejection. The driver is **`psycopg3` (sync) + `psycopg_pool`**,
+> not `asyncpg`. See the design spec (implementation-pointer above) for the
+> governing DAL-isolation principle and task-group decomposition.
 
 ## Context
 
@@ -134,16 +149,18 @@ load-path checkpoint, and the `?mode=ro` forensic discipline.**
 
 Concretely:
 
-1. **Driver / access layer.** `asyncpg` (or `psycopg3` async) behind a thin
-   repository interface (`SaveRepository`) that mirrors the current
-   `SqliteStore` surface (`save`, `load`, `append_narrative`,
-   `query_encounter_events`, telemetry sink, dungeon persistence). Call
-   sites depend on the interface, not on `sqlite3`. A connection **pool**
-   replaces the single shared connection; each logical operation borrows a
-   pooled connection, so two players' writes proceed on independent
-   connections without a global lock. The Postgres instance is whatever is
-   convenient — a local `brew`/launchd daemon, a Docker container, or a box
-   on the LAN; cloud is **not** implied or required.
+1. **Driver / access layer.** **`psycopg3` (sync) + `psycopg_pool.ConnectionPool`**
+   behind domain repository interfaces (`SaveRepository`, `DungeonRepository`,
+   `TelemetrySink`, `ForensicReader`) that together cover the full
+   `SqliteStore`/shared-connection surface. Call sites depend on the
+   interfaces, not on `sqlite3` — **no raw connection ever escapes a
+   repository** (the invariant that makes the backend a swappable detail).
+   The pool replaces the single shared connection; each logical operation
+   borrows a pooled connection, so two players' writes proceed on independent
+   connections without a global lock. Calls from async handlers offload via
+   `anyio.to_thread`. The Postgres instance runs natively (Homebrew/launchd
+   locally, `services: postgres` in CI); **no Docker** dependency in
+   `just up`, and cloud is **not** implied or required.
 2. **Schema.** One logical database. Existing per-table shapes are preserved
    but gain a `session_slug` (or integer `session_id`) column and composite
    indexes. The append-only `events` table keeps its `seq` semantics via a
@@ -180,11 +197,13 @@ Concretely:
 
 ### Negative / cost
 
-- **Large port.** `game/persistence.py` (~900 lines), `dungeon/persistence.py`,
+- **Large port.** `game/persistence.py` (~960 lines), `dungeon/persistence.py`,
   `event_log`, `projection_cache`, `forensic_query`, the telemetry sink, the
-  ~14 lock sites, and the `rest.py` save-reading endpoints all touch the
-  store. This is a multi-story epic, landing right after the Rust→Python
-  port (ADR-082) — appetite and sequencing are real concerns.
+  33 lock sites, and the `rest.py` save-reading endpoints all touch the
+  store. This is a multi-task epic. Per the 2026-05-26 amendment it is done
+  as one direct port (not phased), decomposed into task-groups within a
+  single plan; the difficulty is concentrated in the accumulated
+  raw-connection reach-through, which the DAL closes.
 - **Operational weight.** A Postgres server must run: added to `just up` /
   `just setup`, installed locally (Homebrew or a Docker compose service),
   and provided as a CI service container. `just up` stops being
@@ -246,19 +265,33 @@ for local use and worse than Postgres for hosted use.
 
 DuckDB is OLAP, not OLTP; wrong tool for transactional turn writes. Rejected.
 
-## Migration Plan (phased, reversible per phase)
+## Migration Plan (direct port, per 2026-05-26 amendment)
 
-- **Phase 0 — DAL seam (no behavior change).** Introduce `SaveRepository`
-  over the existing `SqliteStore`; migrate call sites to the interface.
-  Ships value immediately (decouples ~70 game modules from `sqlite3`) and is
-  independently revertible.
-- **Phase 1 — Postgres backend.** Implement the repository against Postgres
-  + asyncpg + Alembic. Run the existing suite against both backends.
-- **Phase 2 — Importer + cutover.** One-shot importer for existing saves;
-  switch the default backend; delete `SAVE_WRITE_LOCK` and the WAL
-  machinery. Keep a read-only SQLite path for archived saves if needed.
-- **Phase 3 — Portability tooling.** Save-export/import to a portable
-  artifact so `cp save.db`-class workflows survive. **Gate Phase 2 on this.**
+The original phased strangler is superseded — see the amendment note at the
+top of this ADR. Because the backend is an all-or-nothing property of the
+one shared connection, the port is a single coherent direction, decomposed
+into task-groups inside one plan (not independently-shipped phases). 1a's
+`SaveRepository` seam (PR #459) is the reused foundation.
+
+1. **Postgres infra + schema + Alembic** — brew/launchd local, CI
+   `services: postgres`, `sessions` table + `session_id`/`session_slug`
+   keying, `events` PK `(session_id, seq)`.
+2. **`psycopg3` pooled backend for every repository** — `SaveRepository`,
+   `DungeonRepository`, `TelemetrySink`, `ForensicReader`, all on one pool.
+3. **Lift every consumer onto the interfaces** — the ~30 raw-connection /
+   `SqliteStore` reach-through sites, no carve-outs; this is the DAL.
+4. **Importer (ahead of cutover, dry-run on a save copy)** — SQLite
+   read-only reader → versioned JSON bundle → Postgres, FK-ordered.
+5. **Cutover + retirements** — flip the backend, import the live saves
+   (`beneath_sunden-mp`, `coyote_star`, `glenross`), delete `SAVE_WRITE_LOCK`
+   + WAL machinery + `?mode=ro` plumbing + `SqliteStore.connection()`.
+
+The importer / portability tooling is a **hard cutover gate** (durable-
+retention doctrine: existing saves are never sacrificed). A read-only SQLite
+reader is retained for archived saves.
+
+Full design and task-group detail:
+`docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md`.
 
 ## What this ADR does **not** do
 

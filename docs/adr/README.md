@@ -72,7 +72,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-006: Graceful Degradation](006-graceful-degradation.md) | ✓ accepted | live |
 | [ADR-007: Unified Character Model](007-unified-character-model.md) | ✓ accepted | live |
 | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ✓ accepted | *partial* → Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103. |
-| [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ◇ proposed | deferred |
+| [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ✓ accepted | in-progress → docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md |
 
 ## Prompt Engineering
 
@@ -284,7 +284,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | deferred | — |
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | deferred | docs/adr/108-mp-item-attribution-recipient-tagging.md#implementation-guidance-for-dev |
 | [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | deferred | sprint/current-sprint.yaml#57-4 |
-| [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | deferred | — |
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | **drift** | [ADR-102](102-tool-use-protocol-for-structured-output.md) |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
