@@ -90,26 +90,39 @@ around SQLite's single-writer-per-database model:
 Each fix spawns the next. This is the "we don't know what's actually
 happening" debugging cost the project explicitly tries to avoid.
 
-### The product-direction fork
+### Two orthogonal axes (do not conflate them)
 
-The decision hinges less on the bug than on where SideQuest is going:
+A common error — made in this ADR's first draft — is to equate "Postgres"
+with "cloud/hosted." They are independent decisions:
 
-- **A local tool for the table** (one host process, 2–5 players) does not
-  *need* Postgres. A single shared connection per session (Alternative 1)
-  fixes the deadlock and removes most scar tissue while preserving file
-  portability.
-- **A hosted, subscription, multi-tenant service** — the direction in
-  `docs/prd/prd-creator-authoring-monetization.md` and
-  `docs/prd/prd-monetization-web-subscription.md` (customer = the
-  forever-DM, viral "friend of a player" acquisition) — *cannot* be backed
-  by per-file SQLite. Concurrent sessions, cross-process workers, and a
-  managed backup/restore story all assume a real client-server database.
-  For that future, "too complicated" merely defers an inevitable cost to a
-  worse time.
+1. **Embedded single-writer DB vs client-server multi-writer DB.** This is
+   the concurrency decision. SQLite serializes all writes to a database;
+   Postgres gives MVCC + row-level locking so concurrent writers proceed.
+   This benefit is identical whether Postgres runs as a `brew`/launchd
+   daemon on the dev box, a box in the closet on the LAN, or a managed cloud
+   instance. **This is what this ADR is actually about.**
+2. **Where the database runs.** Same machine, the closet server, the LAN,
+   or a cloud provider. This is a *deployment* decision, fully separable and
+   deferrable. The internet (and Postgres) predate cloud services; a
+   self-hosted Postgres is a first-class, boring option.
 
-This ADR proposes Postgres on the premise that the hosted direction is real.
-If it is not, Alternative 1 is the better call and this ADR should be
-rejected in its favor.
+So the real trade for SideQuest **as it exists today** (a local table tool,
+one host process, 2–5 players) is not "local vs hosted." It is:
+
+- **Postgres (runnable locally):** permanently deletes the
+  `database is locked` class and all the lock scar tissue, gives concurrency
+  headroom, and — should a hosted/subscription future
+  (`docs/prd/prd-creator-authoring-monetization.md`,
+  `docs/prd/prd-monetization-web-subscription.md`) ever arrive — is already
+  the right substrate. Costs a running daemon and the loss of file
+  portability (below).
+- **One shared connection per session (SQLite, Alternative 1):** the minimal
+  fix — kills the specific deadlock, keeps `cp save.db` portability and
+  zero-ops, but leaves the embedded single-writer ceiling in place.
+
+The decision turns on how much weight to put on *permanently* killing the
+lock class + concurrency headroom versus file-portability + zero added ops.
+It does **not** require committing to cloud hosting or multi-tenancy.
 
 ## Decision
 
@@ -128,7 +141,9 @@ Concretely:
    sites depend on the interface, not on `sqlite3`. A connection **pool**
    replaces the single shared connection; each logical operation borrows a
    pooled connection, so two players' writes proceed on independent
-   connections without a global lock.
+   connections without a global lock. The Postgres instance is whatever is
+   convenient — a local `brew`/launchd daemon, a Docker container, or a box
+   on the LAN; cloud is **not** implied or required.
 2. **Schema.** One logical database. Existing per-table shapes are preserved
    but gain a `session_slug` (or integer `session_id`) column and composite
    indexes. The append-only `events` table keeps its `seq` semantics via a
@@ -155,8 +170,10 @@ Concretely:
   Concurrent MP writers are a first-class capability, not a hazard.
 - Readers never block writers. Forensics/dashboard/`/api/debug/state` become
   plain queries; the save-clobber discipline and `?mode=ro` plumbing retire.
-- **Hosted-ready.** A subscription service can run many concurrent sessions
-  against one managed database with one backup/restore story.
+- **Deployment-flexible.** Runs as a local daemon on the dev box, a server
+  in the closet, or a LAN box — and *if* a hosted/subscription future ever
+  arrives, the same substrate serves it. The concurrency win is identical in
+  all cases; hosting is a later, separate decision, not a prerequisite.
 - One migration tool (Alembic), one schema, one connection-pool config —
   versus today's hand-rolled `_apply_migrations` + per-file lifecycle.
 - Removes a whole category of "did this writer take the lock?" review load.
@@ -203,11 +220,14 @@ connections. This eliminates the triggering deadlock and most of the
 connection-identity scar tissue, **preserves every file-portability
 workflow**, needs no new service, and is roughly one story.
 
-It does **not** enable concurrent cross-process writers or hosted
-multi-tenancy. If SideQuest stays a table tool, this is the correct,
-proportionate fix and Postgres is over-engineering. This ADR should be
-rejected in favor of this alternative unless the hosted direction is
-committed.
+It does **not** lift the embedded single-writer ceiling — write throughput
+stays one-at-a-time per session and there is no path to concurrent
+cross-process writers. The choice between this and the Decision is the
+file-portability-and-zero-ops vs kill-the-lock-class-permanently trade
+described above — **not** a local-vs-hosted question (Postgres runs locally
+just fine). Reject ADR-115 in favor of this alternative if preserving
+`cp save.db` portability and adding no running service outweighs
+permanently removing the lock class.
 
 ### 2. Status quo + targeted lock patches
 
@@ -246,7 +266,8 @@ DuckDB is OLAP, not OLTP; wrong tool for transactional turn writes. Rejected.
   store beneath the repository interface.
 - Does not commit to dual-backend support; that is an optional dev/test
   convenience, not a requirement.
-- Does not, by itself, decide the local-vs-hosted product question — it makes
-  the technical consequences of each explicit so that decision can be made
-  deliberately. Acceptance of this ADR *is* the commitment to the hosted
-  direction.
+- Does **not** decide where the database runs or commit to cloud hosting /
+  multi-tenancy. Acceptance commits only to a client-server DB substrate;
+  deployment (local daemon, closet/LAN server, or — if ever wanted — cloud)
+  is a separate, deferred decision. Self-hosted is expected to be the
+  default, not a fallback.
