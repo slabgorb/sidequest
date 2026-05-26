@@ -1,0 +1,32 @@
+id: '70'
+type: epic
+title: Daemon media pipeline reliability
+description: 'Daemon-side image composition and socket-liveness defects surfaced by the failing daemon test suite (tests/test_composer.py, test_daemon_smoke.py, test_daemon_socket_lifecycle.py). The portrait prompt composer is dropping the DIRECTION_CAMERA recipe layer, and the JSON-RPC socket is not answering ping in two lifecycle tests (triage: environmental no-GPU/no-warmup vs real regression). No existing epic owns the daemon media pipeline; this epic is its home.'
+priority: p2
+status: backlog
+repos: daemon
+stories:
+  - id: 70-1
+    title: Portrait composer drops DIRECTION_CAMERA recipe-default layer
+    description: "3 failures in tests/test_composer.py (test_portrait_camera_uses_recipe_default, test_compose_portrait_assembles_in_order, test_golden_portrait): the DIRECTION_CAMERA layer is not resolving its recipe default — 'three-quarter' camera tokens absent from the composed portrait prompt. Restore recipe-default resolution for the camera slot."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: daemon
+    workflow: tdd
+    acceptance_criteria:
+      - Portrait composer resolves the DIRECTION_CAMERA recipe default ('three-quarter')
+      - All three test_composer.py portrait tests pass including the golden test
+    type: bug
+  - id: 70-2
+    title: Daemon socket does not answer ping in lifecycle tests — triage env vs regression
+    description: '2 failures (test_daemon_smoke.py::test_daemon_ping, test_daemon_socket_lifecycle.py::test_socket_survives_warmup_helper_invocation): daemon starts and socket connects but never answers JSON-RPC ping within 5s. TRIAGE FIRST — do not assume: confirm whether this is an environmental no-GPU/no-warmup test-harness condition or a real socket-handler regression. Measure the actual ping request/response before fixing.'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: daemon
+    workflow: tdd
+    acceptance_criteria:
+      - Root cause established with evidence (env vs regression), not asserted
+      - 'If regression: daemon answers ping within timeout and both tests pass. If env-only: tests are gated/skipped with a documented condition rather than silently failing'
+    type: bug

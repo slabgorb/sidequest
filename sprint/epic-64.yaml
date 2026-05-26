@@ -78,3 +78,28 @@ stories:
     completed: '2026-05-25'
     type: bug
     review_verdict: approved
+  - id: 64-7
+    title: Expand 61 missing namegen corpus files flagged by audit
+    description: '4 failures in tests/scripts/test_audit_namegen_corpora.py (audit exits rc=1): 61 corpus files MISSING from disk (0 words) across elemental_harmony, mutant_wasteland, neon_dystopia, space_opera and others — culture-corpus word lists per ADR-091. Author/expand the missing corpus files. Content authoring — coordinate with the conlang agent.'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: tdd
+    acceptance_criteria:
+      - All 61 missing corpus files authored with sufficient word counts
+      - Live-tree audit (test_audit_live_tree_exits_zero_after_corpus_expansion) exits 0
+      - Named-thin corpora resolve (e.g. 'Span Aristocracy') and all corpora clear the warn threshold
+    type: bug
+  - id: 64-8
+    title: Add missing world-level visual_style.yaml for caverns_and_claudes/mawdeep
+    description: 'tests/test_preview_style.py::test_style_wires_into_real_caverns_and_claudes_pack (daemon suite) fails: genre_packs/caverns_and_claudes/worlds/mawdeep/visual_style.yaml does not exist (genre-level present, world-level override missing). Author the world-level visual_style.yaml so the real pack wires through.'
+    points: 1
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: trivial
+    acceptance_criteria:
+      - genre_packs/caverns_and_claudes/worlds/mawdeep/visual_style.yaml exists and is schema-valid
+      - test_style_wires_into_real_caverns_and_claudes_pack passes
+    type: bug

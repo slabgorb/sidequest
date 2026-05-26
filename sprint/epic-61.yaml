@@ -321,3 +321,29 @@ stories:
     workflow: trivial
     completed: '2026-05-25'
     type: chore
+  - id: 61-14
+    title: Reconcile required scene-mechanic rule tokens dropped by 61-12 output compaction
+    description: '8 failures in tests/agents/test_61_12_output_format_compaction.py::test_required_rule_token_still_present[ship_combat|dogfight|social_duel|trial|auction|scandal|negotiation|chase]. Story 61-12 (done) compacted output_only.md; AC#5 replaced the §4 TRIGGER CRITERIA enumeration with a pointer to the begin_confrontation tool enum, removing these tokens from NARRATOR_OUTPUT_ONLY. The guardrail test asserts they MUST still be present. CONFLICT — do not guess: either (a) tokens legitimately moved to the tool enum and the test is stale (retarget it to assert the tool enum carries them), or (b) compaction over-removed and the prose must still name them. Measure the live prompt before deciding.'
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - 'Root cause decided with evidence from the live narrator prompt (not asserted): tokens belong in prose OR in the tool enum'
+      - All 8 test_required_rule_token_still_present cases pass
+      - If test was stale, it asserts the authoritative source (begin_confrontation enum); if prose was wrong, NARRATOR_OUTPUT_ONLY names all 8 mechanics
+    type: bug
+  - id: 61-15
+    title: Prompt-cache attribution — narrator_constraints guardrail rides cached system block
+    description: 'tests/agents/test_prompt_cache_attribution_otel.py::test_zones_carry_cache_boundary_flag fails: narrator_constraints section reports cached=True, expected False. A User-bucket guardrail is attached to cached system_blocks[0] so it inherits the cache-boundary flag instead of riding the uncached User zone. Fix the zone assignment so the constraint carries cached=False.'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - test_zones_carry_cache_boundary_flag passes
+      - narrator_constraints guardrail rides the uncached User zone, not cached system_blocks[0]
+      - OTEL cache-attribution span confirms cached=False for the constraint zone
+    type: bug
