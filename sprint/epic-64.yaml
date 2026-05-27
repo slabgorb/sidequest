@@ -92,14 +92,15 @@ stories:
       - Named-thin corpora resolve (e.g. 'Span Aristocracy') and all corpora clear the warn threshold
     type: bug
   - id: 64-8
-    title: Add missing world-level visual_style.yaml for caverns_and_claudes/mawdeep
-    description: 'tests/test_preview_style.py::test_style_wires_into_real_caverns_and_claudes_pack (daemon suite) fails: genre_packs/caverns_and_claudes/worlds/mawdeep/visual_style.yaml does not exist (genre-level present, world-level override missing). Author the world-level visual_style.yaml so the real pack wires through.'
+    title: Repoint daemon preview-style test off the dead mawdeep world
+    description: 'tests/test_preview_style.py::test_style_wires_into_real_caverns_and_claudes_pack (daemon suite) fails because it hardcodes --world mawdeep (lines 127, 134), but mawdeep no longer exists — caverns_and_claudes has only beneath_sunden on disk. Do NOT author a mawdeep visual_style.yaml; that resurrects a dead world. Instead repoint the test onto a live world (beneath_sunden) or a test-only fixture pack per the no-content-coupled-tests rule, and fix the stale "mawdeep is a real C&C world" comment at line 127. Broader server-test mawdeep coupling is tracked separately at epic-61:218.'
     points: 1
     priority: p2
     status: backlog
-    repos: content
+    repos: daemon
     workflow: trivial
     acceptance_criteria:
-      - genre_packs/caverns_and_claudes/worlds/mawdeep/visual_style.yaml exists and is schema-valid
-      - test_style_wires_into_real_caverns_and_claudes_pack passes
+      - test_preview_style.py no longer references the dead world "mawdeep"; it targets a live world (beneath_sunden) or a test-only fixture pack
+      - test_style_wires_into_real_caverns_and_claudes_pack passes without creating any genre_packs/caverns_and_claudes/worlds/mawdeep/ files
+      - The stale "mawdeep is a real C&C world" comment at test_preview_style.py:127 is corrected
     type: bug
