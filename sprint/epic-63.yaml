@@ -165,12 +165,15 @@ stories:
     description: '2 failures in src/__tests__/chrome-archetype-css.test.ts (terminal emphasis two-channel identity): .narr-text em renders color var(--em-color), test expects var(--accent); em and strong must be distinct channels (accent != primary). Resolve the drift — confirm whether the CSS or the test is authoritative for the two-channel em/strong identity, then align so em rides the accent channel.'
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-26'
     repos: ui
     workflow: tdd
     acceptance_criteria:
       - Both terminal emphasis two-channel identity tests pass
       - em and strong resolve to distinct channels (accent != primary) with the authoritative source documented
+    completed: '2026-05-26'
+    assignee: keith
     type: bug
   - id: 63-13
     title: Location validator reports malformed world YAML as a clean Issue, never a traceback (+ runtime degrade)
