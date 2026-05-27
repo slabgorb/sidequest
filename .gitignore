@@ -80,6 +80,9 @@ node_modules/
 .cargo-home/
 .envrc
 
+# Per-clone local config loaded by `set dotenv-load` (see .env.example)
+.env
+
 # Frame server runtime files
 .frame-port
 frame-pid

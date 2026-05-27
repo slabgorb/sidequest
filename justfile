@@ -9,6 +9,13 @@ content := root / "sidequest-content" / "genre_packs"
 logdir  := home_directory() / ".sidequest" / "logs"
 rundir  := "/tmp"
 
+# Load per-clone local config from .env (NOT committed; see .env.example).
+# These vars are injected into every recipe's environment, so the four
+# SIDEQUEST_DATABASE_URL / INTENT_ROUTER / OTLP / WATCHER values that used to
+# be hardcoded in _server-cmd now live in .env and reach uvicorn via inherited
+# env. Shell exports still override .env (just precedence: env > dotenv).
+set dotenv-load
+
 import '.pennyfarthing/justfile.pf'
 
 # Default: run everything the way I always run it.
@@ -65,6 +72,10 @@ _server-cmd *flags:
     ANTHROPIC_API_KEY="$(just _resolve-anthropic-key)"
     export ANTHROPIC_API_KEY
     cd {{root}}/sidequest-server
+    # SIDEQUEST_DATABASE_URL (ADR-115 Postgres), INTENT_ROUTER_DEGRADE_ON_FAIL,
+    # OTLP_ENDPOINT and WATCHER_AS_SPANS come from .env via `set dotenv-load`
+    # (top of file) and are inherited by `exec uv run uvicorn` below — no longer
+    # hardcoded here. Shell exports still override the .env values.
     SIDEQUEST_GENRE_PACKS={{content}} \
     SIDEQUEST_RENDER_ENABLED=1 \
     SIDEQUEST_NARRATOR_STREAMING="${SIDEQUEST_NARRATOR_STREAMING:-1}" \
