@@ -9,7 +9,6 @@ Per CLAUDE.md no-silent-fallbacks rule: any HTTP error aborts the run.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import logging
 import os
 import sys
@@ -20,7 +19,7 @@ import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 
-from scripts.r2_manifest import build_manifest_entry, write_manifest
+from scripts.r2_manifest import _md5_of, build_manifest_entry, write_manifest
 
 LFS_EXTENSIONS: frozenset[str] = frozenset(
     {".ogg", ".png", ".wav", ".mp3", ".jpg", ".jpeg", ".webp", ".flac"}
@@ -57,14 +56,6 @@ def iter_media_files(root: Path) -> Iterator[Path]:
         if path.suffix.lower() not in LFS_EXTENSIONS:
             continue
         yield path
-
-
-def _md5_of(path: Path) -> str:
-    h = hashlib.md5(usedforsecurity=False)
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def _remote_etag(client: BaseClient, bucket: str, key: str) -> str | None:
