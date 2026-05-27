@@ -89,3 +89,27 @@ precedent in the same epic file (`status: done`, `completed: <date>`, `pr:`, `br
 — see 61-followup-A / 61-followup-D), remove the `.session/` file (archive copy already
 exists), commit to main (orchestrator targets main, not develop). FIX: pf story-ID
 parser should accept `N-followup-[A-Z]` and `N-N` alike.
+
+## Finish ceremony does NOT merge code; `develop` is protected (2026-05-27, 65-2)
+`pf sprint story finish` marks the story `done`, archives the session, and updates
+sprint YAML — but its `merge_pr` step is a **no-op here** (no `pr_strategy` in repos.yaml):
+it creates no PR and merges nothing. After finish, the feature branches still hold the
+code. **You must integrate manually**, and `develop` is a **protected branch** — a
+direct `git push origin develop` is blocked by a PreToolUse hook. Use
+`gh pr create --base develop --head <branch>` then `gh pr merge <#> --merge --delete-branch`
+per subrepo. The orchestrator targets `main` (also via PR, e.g. 65-1 #302 / 65-2 #303),
+but `main` itself is **not** push-protected. Always verify post-finish that the code
+actually reached develop (`git cat-file -e origin/develop:<file>`), not just that status=done.
+
+## Root `.session` must be a symlink to `sprint/.session` (2026-05-27)
+`pf handoff complete-phase` resolves the session at `<repo_root>/.session/{id}-session.md`,
+but sm-setup writes/commits sessions to `sprint/.session/`. The bridge is a symlink
+`<root>/.session -> sprint/.session`. If that symlink gets clobbered into a real dir
+(stray tooling writing into it), complete-phase fails "Session file not found." Fix:
+collapse the real dir's contents into `sprint/.session/` and recreate the symlink.
+
+## pg test suite env (2026-05-27)
+`tests/persistence/*` + any test using the `migrated_db` fixture SKIP unless
+`SIDEQUEST_TEST_DATABASE_URL` is set (e.g. `postgresql://$USER@localhost:5432/sidequest_test`,
+provisioned by `just pg-up`). A "skip" is NOT a passing RED/GREEN — set the env first.
+Use `-n0` to disable xdist (it's in addopts); `-p no:xdist` breaks the `-n` flag.
