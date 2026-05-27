@@ -91,19 +91,14 @@ is the truthful state, not a fallback.
 
 ### SRD fidelity — what is looked up, not asserted
 
-This design assumes **individual** initiative, rolled **once** and persisted, descending
-order. The following are SRD details I will **not** assert from memory; they are looked up
-in the PDF at implementation time and pinned into `SwnConfig` (logged honestly per
-`feedback_measure_dont_assert`):
+**Confirmed by the decision-driver (Keith, 40-year SWN veteran):** SWN rolls
+**1d8 + DEX, once at combat start, individual** — descending order, persisted. This is the
+design, not a working assumption.
 
-- per-round re-roll vs once-per-combat;
-- individual vs group(-by-side) initiative;
-- the tie-break rule;
-- the die and modifier source (`1d8 + DEX` is the working assumption, marked `[SRD]`).
-
-If the PDF contradicts the working assumption, the implementation follows the PDF and the
-plan records the correction. The constant block lives in `SwnConfig`, never as literals in
-`swn.py`.
+The one detail still looked up in the PDF at implementation time (not asserted from memory,
+per `feedback_measure_dont_assert`) is the **tie-break rule**. It is pinned into `SwnConfig`
+alongside the die/modifier source; the constant block lives in `SwnConfig`, never as
+literals in `swn.py` (ADR-068).
 
 ## 4. The polygraph
 
@@ -201,9 +196,9 @@ No new wire message type. No UI commit-model change. `InitiativeEntry` already e
 
 ## 11. Risks
 
-- **SRD detail drift.** The per-round/group/tie-break/die specifics are assumed, not known.
-  Mitigated by §3's explicit PDF lookup + `SwnConfig` pinning at implementation time; the
-  plan records any correction.
+- **SRD detail drift.** The core rule (1d8 + DEX, once, individual) is confirmed; only the
+  tie-break is an open PDF lookup. Mitigated by §3's pinning into `SwnConfig` at
+  implementation time; the plan records the tie-break rule it finds.
 - **Touching the instantiation seam.** `instantiate_encounter_from_trigger` already does
   hp_depletion seeding; adding the initiative roll is additive at the same seam. Mitigated
   by the characterization guard (native unchanged) and the OTEL wiring test.
