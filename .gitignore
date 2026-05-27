@@ -32,6 +32,10 @@ sq-playtest-screenshots/
 .sample-renders/
 
 # Pennyfarthing runtime
+# Canonical session dir is sprint/.session; .session is a symlink to it (tracked).
+# Ignore runtime artifacts (logs, handoff scratch, agents/) but keep session files.
+sprint/.session/*
+!sprint/.session/*-session.md
 .session/*
 !.session/.gitkeep
 .claude/settings.local.json

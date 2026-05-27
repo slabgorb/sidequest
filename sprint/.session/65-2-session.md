@@ -62,16 +62,33 @@ Runtime-generated images (portraits, scene illustrations, POI renders triggered 
 
 **No re-render on resume:** The whole point — when a player loads a save, the UI should find the portraits and illustrations in the ledger and load from CDN without triggering new daemon renders. This requires ledger writes to be *eager* and *complete* on each upload.
 
+## Sm Assessment
+
+**Disposition:** Ready for RED. Story is fully scoped — six AC clusters spanning server (SQLite `asset_ledger` schema, `daemon_client` upsert writes, `GET /api/session/{slug}/assets`), UI (`ImageBus` reconnect read + CDN preload), and audit (`r2_audit.py` cross-reference). Direct continuation of 65-1, which landed `r2_manifest.json` and `r2_audit.py`; this story closes the loop by linking saves to their R2 keys.
+
+**Technical approach for TEA/Dev:**
+- Schema migration adds `asset_ledger` keyed on `r2_key` (upsert/idempotent); columns enumerated in AC.
+- Write path hangs off `daemon_client.upload_complete()` — verify the daemon already returns r2_key/md5/size_bytes (65-1's manifest plumbing) so this is wiring, not reinvention.
+- REST endpoint must be reachable on resume/reconnect; `ImageBus` consumes it to preload portraits/illustrations without re-rendering.
+- Audit reuses 65-1's `r2_audit.py` — extend, don't fork — to flag orphans (manifest∖ledgers) and dangling rows (ledger∖manifest).
+
+**Durable-retention invariant:** save-referenced R2 keys are permanent — never reaped on a timer. RED tests must pin this.
+
+**Wiring gate:** per project rules, RED must include an integration test proving the ledger write fires from the production upload path and the endpoint is hit by `ImageBus` on reconnect — not just unit coverage of the table.
+
+**Risks:** cross-repo (server + content + ui touched by ACs though `repos: server,content` — UI ACs may spill into sidequest-ui; flag if so). No blockers; 65-1 merged.
+
 ## Workflow Tracking
 
 **Workflow:** tdd
-**Phase:** setup
-**Phase Started:** 2026-05-27T00:00:00Z
+**Phase:** red
+**Phase Started:** 2026-05-27T15:44:33Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
 |-------|---------|-------|----------|
-| setup | 2026-05-27 | - | - |
+| setup | 2026-05-27 | 2026-05-27T15:44:33Z | 15h 44m |
+| red | 2026-05-27T15:44:33Z | - | - |
 
 ## Delivery Findings
 
