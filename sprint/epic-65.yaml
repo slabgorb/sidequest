@@ -79,9 +79,10 @@ stories:
       never reap save-referenced R2 assets on a timer.
     points: 3
     priority: p1
-    status: in_review
+    status: done
     repos: server,ui
     workflow: tdd
+    completed: '2026-05-27'
     type: feature
     branch: feat/65-2-per-session-asset-ledger
     session_file: .session/65-2-session.md
