@@ -33,14 +33,15 @@ Full context available at: `sprint/context/context-story-67-2.md`
 
 ## Workflow Tracking
 **Workflow:** tdd
-**Phase:** red
-**Phase Started:** 2026-05-27T20:09:14Z
+**Phase:** green
+**Phase Started:** 2026-05-27T20:23:07Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
 |-------|---------|-------|----------|
 | setup | 2026-05-27T20:06:50Z | 2026-05-27T20:09:14Z | 2m 24s |
-| red | 2026-05-27T20:09:14Z | - | - |
+| red | 2026-05-27T20:09:14Z | 2026-05-27T20:23:07Z | 13m 53s |
+| green | 2026-05-27T20:23:07Z | - | - |
 
 ## SM Assessment
 
@@ -68,6 +69,10 @@ Each finding is one list item. Use "No upstream findings" if none.
 - **Gap** (blocking): The connect-wiring test (AC2/AC5) cannot run without Postgres. Affects `sidequest-server/tests/server/test_seal_reconcile_on_connect.py` (Dev must run `just pg-up` and `uv run pytest tests/server/test_seal_reconcile_on_connect.py` before claiming GREEN — the local run skipped it, do not treat the skip as passing). *Found by TEA during test design.*
 - **Question** (non-blocking): Once the barrier has fired (`recheck_barrier` via 67-1's crash-release path), a crashed/released awaiter who never submitted is still projected `submitted` by the all-submitted terminal projection. This matches the existing `player_action.py:568-574` behavior, so it's consistent — but if Dev finds the crash-release + reconnect combination needs a distinct status, flag to SM. Affects `sidequest-server/sidequest/server/turn_status_roster.py` (reconcile helper semantics). *Found by TEA during test design.*
 - **Improvement** (non-blocking): `PeerRevealList` (sidequest-ui) only renders rows for peers already in the `reveals` map — a sealed peer with no ACTION_REVEAL gets no *reveal-text* row (the roster-driven TurnStatusPanel covers the seal indicator, so this is not a 67-2 strand). The reveal-text surface consolidation is explicitly 67-3 scope; noting so 67-3 picks it up. Affects `sidequest-ui/src/components/PeerRevealList.tsx`. *Found by TEA during test design.*
+
+### Dev (implementation)
+- **Improvement** (non-blocking): The connect-time reconcile sends the full roster on EVERY MP reconnect, not only when a seal is outstanding. This is intentional (it also corrects the per-tab denominator), and cheap (roster recompute is O(players)), but a future optimization could skip the frame when the roster is all-pending. Affects `sidequest-server/sidequest/handlers/connect.py` (reconcile gate). *Found by Dev during implementation.*
+- **Question** (non-blocking): The `broadcast.recipient_dropped` watcher now fires from `SessionRoom.broadcast` for ANY message type when a connected recipient lacks a queue — not just seal frames. This is correct (any silent drop is a blind spot) but will surface drops on narration/image broadcasts too during socket churn. If the GM panel gets noisy, consider rate-limiting or a per-type filter. Affects `sidequest-server/sidequest/server/session_room.py`. *Found by Dev during implementation.*
 
 ## TEA Assessment
 
@@ -165,3 +170,50 @@ Each entry: what was changed, what the spec said, and why.
   - Rationale: Confirmed TurnStatusPanel renders from the roster directly and App.tsx:798-808 already replaces entries on a batch TURN_STATUS — the reconcile's output surfaces with zero UI change.
   - Severity: minor
   - Forward impact: none — Dev's work is server-only unless a UI gap surfaces in GREEN.
+
+### Dev (implementation)
+- **Adopted TEA's proposed helper name `build_seal_reconcile_roster` verbatim**
+  - Spec source: context-story-67-2.md, Technical Guardrails; TEA Dev-contract note 1
+  - Spec text: "on (re)connect, re-derive and send the current roster … name is adjustable"
+  - Implementation: Added `build_seal_reconcile_roster(snapshot, playing_player_ids)` to `turn_status_roster.py` exactly as TEA proposed — phase-aware (defers to `build_turn_status_roster` during InputCollection; projects all-submitted once the barrier fired). No rename, so no test edits needed.
+  - Rationale: TEA's contract matched the existing terminal-projection precedent (player_action.py:568-574). No reason to diverge.
+  - Severity: none (confirms spec)
+  - Forward impact: none
+- **Reconcile TURN_STATUS uses inert payload-level `status="pending"`**
+  - Spec source: TEA test `test_reconnect_reconciles_sealed_peer_into_turn_status` (asserts `entries`, not payload status)
+  - Spec text: "out_queue must carry a TURN_STATUS marking the sealed peer submitted"
+  - Implementation: The reconcile frame sets payload `status="pending"` so the UI's TURN_STATUS handler hits NO transition branch and NO per-player push — only the batch-entries path (App.tsx:798-808) runs, replacing the roster cleanly. Seal truth rides `entries`.
+  - Rationale: active/resolving/resolved would each fire an unwanted side-effect (active banner / narrationInFlight / clear). "pending" is the only inert payload status.
+  - Severity: minor
+  - Forward impact: none — adoptable to a future "roster snapshot" status if 67-3 introduces one.
+- **Corrected TEA's connect wiring test to observe the return value, not the broadcast out_queue**
+  - Spec source: TEA test `test_seal_reconcile_on_connect.py` (AC2)
+  - Spec text: test drained the connecting socket's `out_queue` to find the reconcile frame
+  - Implementation: Changed `_connect` to return `handle_message(...)`'s result and assert against it. The connect handler RETURNS `[*bootstrap_msgs, *replay_msgs]` (connect.py:1648) — the real per-socket delivery channel — rather than enqueueing onto the broadcast `out_queue`.
+  - Rationale: Corrects WHERE the test observes delivery to match production; does not weaken the assertion (still requires Adam `submitted` in a real TURN_STATUS frame). The AC5 watcher test was unaffected and passed throughout.
+  - Severity: minor
+  - Forward impact: none — establishes the correct connect-test observation pattern (inspect the return) for sibling stories.
+
+## Dev Assessment
+
+**Implementation Complete:** Yes
+
+**Files Changed (sidequest-server):**
+- `sidequest/server/turn_status_roster.py` — added phase-aware `build_seal_reconcile_roster` (AC1, AC1-barrier-fired edge, AC6 read-only).
+- `sidequest/server/session_room.py` — `broadcast` now detects a connected-but-queueless recipient and emits a loud `broadcast.recipient_dropped` watcher (warning) + log (AC4). No silent drop.
+- `sidequest/handlers/connect.py` — MP-only seal reconcile in `_State.Playing`: re-derive the roster, append a `TURN_STATUS` to the connecting socket's bootstrap frames, emit `turn_status.reconciled_on_connect` (AC2, AC5).
+- `tests/server/test_seal_reconcile_on_connect.py` — corrected observation channel (see deviation).
+
+**UI:** No code changes — TurnStatusPanel + App batch-entries path already surface the reconciled roster (AC3 verified green).
+
+**Tests:** 9/9 (67-2) GREEN · 64/64 regression on touched subsystems GREEN · 43/43 UI GREEN (run_id 67-2-dev-green). Lint clean (ruff). Postgres-backed connect tests verified with `just pg-up`.
+
+**Branch:** `feat/67-2-action-reveal-delivery-resilience` (pushed, both repos).
+
+**Self-review:**
+- ✅ Wired end-to-end: reconcile fires from the real `connect` handler, frame reaches the connecting socket, UI consumes it.
+- ✅ Follows project patterns: mirrors 67-1's drop-watcher shape; reuses existing roster builder; no new infra (CLAUDE.md "wire up what exists").
+- ✅ All 6 ACs met. Error path (broadcast drop) surfaces loudly per OTEL principle + No Silent Fallbacks.
+- ✅ AC6 guardrail: reconcile is read-only — does not touch `_submitted`/phase/dispatch.
+
+**Handoff:** To Reviewer (Colonel Potter).
