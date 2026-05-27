@@ -33,8 +33,8 @@ Full context available at: `sprint/context/context-story-67-2.md`
 
 ## Workflow Tracking
 **Workflow:** tdd
-**Phase:** spec-reconcile
-**Phase Started:** 2026-05-27T20:48:50Z
+**Phase:** finish
+**Phase Started:** 2026-05-27T20:50:49Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -45,7 +45,8 @@ Full context available at: `sprint/context/context-story-67-2.md`
 | spec-check | 2026-05-27T20:32:47Z | 2026-05-27T20:34:32Z | 1m 45s |
 | verify | 2026-05-27T20:34:32Z | 2026-05-27T20:42:04Z | 7m 32s |
 | review | 2026-05-27T20:42:04Z | 2026-05-27T20:48:50Z | 6m 46s |
-| spec-reconcile | 2026-05-27T20:48:50Z | - | - |
+| spec-reconcile | 2026-05-27T20:48:50Z | 2026-05-27T20:50:49Z | 1m 59s |
+| finish | 2026-05-27T20:50:49Z | - | - |
 
 ## SM Assessment
 
@@ -83,6 +84,57 @@ Each finding is one list item. Use "No upstream findings" if none.
 
 ### Architect (reconcile)
 - **Gap** (non-blocking): The `_send_message` send-exception path (`ws.send_failed`, websocket.py:248-252) — the seam that produced the literal 2026-05-27 `ws.send_failed type=ACTION_REVEAL` repro — still drops with a WARNING log but NO watcher event. 67-2 instrumented the separate `SessionRoom.broadcast` no-queue seam (per the in-scope wording) and the AC2 reconcile heals the strand regardless, so this is observability parity only, not a recovery gap. Recommend a small epic-67 follow-up to emit a watcher at websocket.py:252. Affects `sidequest-server/sidequest/server/websocket.py`. *Found by Architect during spec-reconcile.*
+
+## Impact Summary
+
+**Upstream Effects:** 3 findings (1 Gap, 0 Conflict, 1 Question, 1 Improvement)
+**Blocking:** 1 BLOCKING items — see below
+
+**BLOCKING:**
+- **Gap:** The connect-wiring test (AC2/AC5) cannot run without Postgres. Affects `sidequest-server/tests/server/test_seal_reconcile_on_connect.py`.
+
+- **Question:** Once the barrier has fired (`recheck_barrier` via 67-1's crash-release path), a crashed/released awaiter who never submitted is still projected `submitted` by the all-submitted terminal projection. This matches the existing `player_action.py:568-574` behavior, so it's consistent — but if Dev finds the crash-release + reconnect combination needs a distinct status, flag to SM. Affects `sidequest-server/sidequest/server/turn_status_roster.py`.
+- **Improvement:** The connect-time reconcile sends the full roster on EVERY MP reconnect, not only when a seal is outstanding. This is intentional (it also corrects the per-tab denominator), and cheap (roster recompute is O(players)), but a future optimization could skip the frame when the roster is all-pending. Affects `sidequest-server/sidequest/handlers/connect.py`.
+
+### Downstream Effects
+
+Cross-module impact: 3 findings across 3 modules
+
+- **`sidequest-server/sidequest/handlers`** — 1 finding
+- **`sidequest-server/sidequest/server`** — 1 finding
+- **`sidequest-server/tests/server`** — 1 finding
+
+### Deviation Justifications
+
+7 deviations
+
+- **Verify-phase simplify touched the unchanged `player_action.py` to DRY the all-submitted projection**
+  - Rationale: The all-submitted projection now has two callers (on-submission broadcast + on-connect reconcile); a shared helper prevents the two seal-projection semantics from diverging (a divergence would flip a sealed table back to "Composing"). Applied per the verify-workflow's apply-high-confidence-fixes step; 101 barrier/sealed-letter tests green after.
+  - Severity: minor
+  - Forward impact: none — pure refactor, behavior identical (verified by the existing barrier_fired tests).
+- **Proposed a new helper symbol (`build_seal_reconcile_roster`) rather than testing only the existing `build_turn_status_roster`**
+  - Rationale: Reusing `build_turn_status_roster` unchanged would silently fail the post-barrier-fire reconnect (regress sealed peers to pending). A phase-aware reconcile builder is the honest contract; the unit test pins both phases.
+  - Severity: minor
+  - Forward impact: Dev adds one helper (or extends the existing one with phase-awareness); connect calls it. Name is adjustable per Dev contract note 1.
+- **AC3 server-recommended UI work reduced to verification (no new UI code)**
+  - Rationale: Confirmed TurnStatusPanel renders from the roster directly and App.tsx:798-808 already replaces entries on a batch TURN_STATUS — the reconcile's output surfaces with zero UI change.
+  - Severity: minor
+  - Forward impact: none — Dev's work is server-only unless a UI gap surfaces in GREEN.
+- **Adopted TEA's proposed helper name `build_seal_reconcile_roster` verbatim**
+  - Rationale: TEA's contract matched the existing terminal-projection precedent (player_action.py:568-574). No reason to diverge.
+  - Severity: none (confirms spec)
+- **Reconcile TURN_STATUS uses inert payload-level `status="pending"`**
+  - Rationale: active/resolving/resolved would each fire an unwanted side-effect (active banner / narrationInFlight / clear). "pending" is the only inert payload status.
+  - Severity: minor
+  - Forward impact: none — adoptable to a future "roster snapshot" status if 67-3 introduces one.
+- **Corrected TEA's connect wiring test to observe the return value, not the broadcast out_queue**
+  - Rationale: Corrects WHERE the test observes delivery to match production; does not weaken the assertion (still requires Adam `submitted` in a real TURN_STATUS frame). The AC5 watcher test was unaffected and passed throughout.
+  - Severity: minor
+  - Forward impact: none — establishes the correct connect-test observation pattern (inspect the return) for sibling stories.
+- **AC4 observability lands on the broadcast no-queue seam, NOT the `_send_message` send-exception seam that produced the literal repro**
+  - Rationale: The context's **in-scope** wording explicitly narrows the observability fix to "the `SessionRoom.broadcast` path," and AC4's test wording is "queue/socket is gone" — both of which Dev satisfied. More importantly, the story's PRIMARY fix (AC1/AC2 connect-time reconcile) heals the strand regardless of which seam dropped the frame: the reconnecting peer re-derives the seal roster either way. So the observed bug (stranded at "Composing") is fully resolved; only the *telemetry* for the `_send_message` send-exception drop remains a log-without-watcher.
+  - Severity: minor
+  - Forward impact: A follow-up (epic-67 sibling or a small chore) should add a watcher emit at websocket.py:252 so the GM panel also sees send-exception drops (the literal `ws.send_failed` class), completing the OTEL lie-detector coverage. Not required for 67-2's acceptance — recovery is complete; this is observability parity.
 
 ## TEA Assessment
 
@@ -282,7 +334,7 @@ Verified every TEA and Dev deviation entry: all spec-source paths exist, quoted 
 
 ## TEA Assessment (verify)
 
-**Phase:** spec-reconcile
+**Phase:** finish
 **Status:** GREEN confirmed
 
 ### Simplify Report

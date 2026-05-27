@@ -21,13 +21,15 @@ stories:
     title: ACTION_REVEAL delivery resilience — retry/backfill on reconnect so a sealed peer never stalls at Composing
     points: 3
     priority: p2
-    status: in_progress
-    repos: server,ui
-    workflow: tdd
-    type: bug
-    branch: feat/67-2-action-reveal-delivery-resilience
+    status: done
     assigned_to: slabgorb
     started: '2026-05-27'
+    repos: server,ui
+    workflow: tdd
+    completed: '2026-05-27'
+    type: bug
+    branch: feat/67-2-action-reveal-delivery-resilience
+    review_verdict: approved
   - id: 67-3
     title: MP peer-visibility consolidation + slow-typist reassurance (one canonical surface, Composing/Sealed/Resolving)
     points: 3
