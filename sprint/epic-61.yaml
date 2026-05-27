@@ -330,13 +330,15 @@ stories:
     description: '8 failures in tests/agents/test_61_12_output_format_compaction.py::test_required_rule_token_still_present[ship_combat|dogfight|social_duel|trial|auction|scandal|negotiation|chase]. Story 61-12 (done) compacted output_only.md; AC#5 replaced the §4 TRIGGER CRITERIA enumeration with a pointer to the begin_confrontation tool enum, removing these tokens from NARRATOR_OUTPUT_ONLY. The guardrail test asserts they MUST still be present. CONFLICT — do not guess: either (a) tokens legitimately moved to the tool enum and the test is stale (retarget it to assert the tool enum carries them), or (b) compaction over-removed and the prose must still name them. Measure the live prompt before deciding.'
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-27'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - 'Root cause decided with evidence from the live narrator prompt (not asserted): tokens belong in prose OR in the tool enum'
       - All 8 test_required_rule_token_still_present cases pass
       - If test was stale, it asserts the authoritative source (begin_confrontation enum); if prose was wrong, NARRATOR_OUTPUT_ONLY names all 8 mechanics
+    completed: '2026-05-27'
     type: bug
   - id: 61-15
     title: Prompt-cache attribution — narrator_constraints guardrail rides cached system block
@@ -359,3 +361,19 @@ stories:
     repos: server
     workflow: tdd
     type: bug
+  - id: 61-17
+    title: Fix stale test_zones_carry_cache_boundary_flag — 61-10 promoted narrator_constraints to System/cached bucket (#434) but test still asserts User-bucket cached=False
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: bug
+  - id: 61-18
+    title: Audit CONFRONTATION_TRIGGER_CONSTRAINT dead-prose on SDK narrator path — only injects on retired legacy backend (_maybe_register_legacy_guardrail SDK-gate); migrate to tool/cached-prose per ADR-111 or confirm Intent Router owns it
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
