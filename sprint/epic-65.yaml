@@ -34,10 +34,14 @@ stories:
         cdn.slabgorb.com into the correct workspace paths
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: content
     workflow: tdd
+    completed: '2026-05-27'
     type: feature
+    branch: feat/65-1-r2-asset-manifest-audit
+    session_file: .session/65-1-session.md
+    review_verdict: approved
   - id: 65-2
     title: Per-session asset ledger — track runtime-generated images per save file
     description: |
