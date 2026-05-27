@@ -28,6 +28,7 @@ from pathlib import Path
 import yaml
 
 from scripts.r2_manifest import load_manifest
+from scripts.render_common import slugify as _poi_slugify
 
 # Local media extensions that map 1:1 to R2 keys (subset of r2_sync_packs).
 _MEDIA_EXTENSIONS = frozenset({".png", ".ogg"})
@@ -79,16 +80,27 @@ def _poi_keys(genre: str, genre_dir: Path) -> set[str]:
         rel_parts = history_path.relative_to(genre_dir).parts
         world = rel_parts[1] if len(rel_parts) >= 2 and rel_parts[0] == "worlds" else None
         data = _load_yaml(history_path)
-        chapters = data.get("chapters", {}) or {}
-        for chapter in chapters.values():
+        chapters = data.get("chapters") or []
+        # Real history.yaml defines `chapters:` as a list of chapter dicts; a
+        # mapping form is also tolerated. Normalize to an iterable of dicts.
+        chapter_dicts = chapters if isinstance(chapters, list) else list(chapters.values())
+        for chapter in chapter_dicts:
             if not isinstance(chapter, dict):
                 continue
             for poi in chapter.get("points_of_interest", []) or []:
+                # Mirror render_batch's slug resolution: an explicit `slug` is
+                # used verbatim; otherwise the renderer falls back to
+                # slugify(name). A POI with neither slug nor name is
+                # underivable — fail loudly (no silent skip).
                 slug = poi.get("slug")
                 if not slug:
-                    raise ValueError(
-                        f"POI entry missing 'slug' in {history_path}: {poi!r}"
-                    )
+                    name = poi.get("name")
+                    if not name:
+                        raise ValueError(
+                            f"POI entry has neither 'slug' nor 'name' in "
+                            f"{history_path}: {poi!r}"
+                        )
+                    slug = _poi_slugify(name)
                 if world is None:
                     raise ValueError(
                         f"POI {slug!r} in genre-level {history_path} has no world; "

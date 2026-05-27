@@ -24,11 +24,15 @@ def _build_pack(root: Path) -> Path:
     gp = root / "genre_packs" / "demo"
     world = gp / "worlds" / "village"
     world.mkdir(parents=True)
+    # Real history.yaml shapes `chapters:` as a LIST of chapter dicts (see
+    # genre_packs/*/worlds/*/history.yaml), not a mapping — the fixture must
+    # match reality or the audit passes tests but crashes on real data.
     (world / "history.yaml").write_text(
         textwrap.dedent(
             """
             chapters:
-              ch1:
+              - id: ch1
+                label: Chapter One
                 points_of_interest:
                   - slug: the_inn
                     name: The Inn
@@ -92,15 +96,29 @@ def test_expected_keys_music(tmp_path: Path) -> None:
     assert "genre_packs/demo/audio/music/theme.ogg" in keys
 
 
-def test_expected_keys_missing_slug_fails_loudly(tmp_path: Path) -> None:
-    # No silent fallback (CLAUDE.md): a POI entry with no slug must raise.
+def test_expected_keys_poi_without_slug_falls_back_to_name(tmp_path: Path) -> None:
+    # Real history.yaml has narrative POIs with a name but no slug; the renderer
+    # falls back to slugify(name), so the audit must too (not raise).
     gp = tmp_path / "genre_packs" / "demo" / "worlds" / "v"
     gp.mkdir(parents=True)
     (gp / "history.yaml").write_text(
-        "chapters:\n  c:\n    points_of_interest:\n      - name: No Slug\n",
+        "chapters:\n  - id: c\n    points_of_interest:\n      - name: The Study\n",
         encoding="utf-8",
     )
-    with pytest.raises((KeyError, ValueError)):
+    keys = expected_keys(tmp_path)
+    assert "genre_packs/demo/worlds/v/assets/poi/the_study.png" in keys
+
+
+def test_expected_keys_poi_without_slug_or_name_fails_loudly(tmp_path: Path) -> None:
+    # No silent fallback (CLAUDE.md): a POI with neither slug nor name is
+    # underivable and must raise.
+    gp = tmp_path / "genre_packs" / "demo" / "worlds" / "v"
+    gp.mkdir(parents=True)
+    (gp / "history.yaml").write_text(
+        "chapters:\n  - id: c\n    points_of_interest:\n      - type: room\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError):
         expected_keys(tmp_path)
 
 
