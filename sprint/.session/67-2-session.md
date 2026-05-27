@@ -33,8 +33,8 @@ Full context available at: `sprint/context/context-story-67-2.md`
 
 ## Workflow Tracking
 **Workflow:** tdd
-**Phase:** verify
-**Phase Started:** 2026-05-27T20:34:32Z
+**Phase:** review
+**Phase Started:** 2026-05-27T20:42:04Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -43,7 +43,8 @@ Full context available at: `sprint/context/context-story-67-2.md`
 | red | 2026-05-27T20:09:14Z | 2026-05-27T20:23:07Z | 13m 53s |
 | green | 2026-05-27T20:23:07Z | 2026-05-27T20:32:47Z | 9m 40s |
 | spec-check | 2026-05-27T20:32:47Z | 2026-05-27T20:34:32Z | 1m 45s |
-| verify | 2026-05-27T20:34:32Z | - | - |
+| verify | 2026-05-27T20:34:32Z | 2026-05-27T20:42:04Z | 7m 32s |
+| review | 2026-05-27T20:42:04Z | - | - |
 
 ## SM Assessment
 
@@ -75,6 +76,9 @@ Each finding is one list item. Use "No upstream findings" if none.
 ### Dev (implementation)
 - **Improvement** (non-blocking): The connect-time reconcile sends the full roster on EVERY MP reconnect, not only when a seal is outstanding. This is intentional (it also corrects the per-tab denominator), and cheap (roster recompute is O(players)), but a future optimization could skip the frame when the roster is all-pending. Affects `sidequest-server/sidequest/handlers/connect.py` (reconcile gate). *Found by Dev during implementation.*
 - **Question** (non-blocking): The `broadcast.recipient_dropped` watcher now fires from `SessionRoom.broadcast` for ANY message type when a connected recipient lacks a queue — not just seal frames. This is correct (any silent drop is a blind spot) but will surface drops on narration/image broadcasts too during socket churn. If the GM panel gets noisy, consider rate-limiting or a per-type filter. Affects `sidequest-server/sidequest/server/session_room.py`. *Found by Dev during implementation.*
+
+### Reviewer (code review)
+- **Improvement** (non-blocking): The `broadcast.recipient_dropped` watcher emits `socket_id` (internal asyncio-queue routing handle) onto the unauthenticated dev-side `/ws/watcher` channel. Not a credential and not exploitable (expires on disconnect), and `socket_id` is genuinely useful for correlating a drop to the connect/disconnect that share it (diagnostic value for the exact socket-churn class 67-2 targets). Non-blocking; flagged only for awareness. Affects `sidequest-server/sidequest/server/session_room.py`. *Found by Reviewer during code review.*
 
 ## TEA Assessment
 
@@ -225,6 +229,17 @@ Each entry: what was changed, what the spec said, and why.
   - Severity: minor
   - Forward impact: none — establishes the correct connect-test observation pattern (inspect the return) for sibling stories.
 
+### Reviewer (audit)
+All logged deviations reviewed and stamped:
+- **TEA — verify-phase simplify touched `player_action.py`** → ✓ ACCEPTED: pure refactor extracting `project_all_submitted`; the existing barrier_fired tests (sealed-letter dispatch integration, 11 passed) prove behavior is identical. DRY-ing the two seal-projection sites is sound.
+- **TEA — new helper `build_seal_reconcile_roster`** → ✓ ACCEPTED: phase-awareness is required (turn.py clears `_submitted` on barrier fire); the inline player_action projection was not reusable. Correct.
+- **TEA — AC3 reduced to verification (no new UI code)** → ✓ ACCEPTED: confirmed `TurnStatusPanel` + App.tsx:798-808 already consume the roster; "wire up what exists."
+- **Dev — adopted helper name verbatim** → ✓ ACCEPTED: no divergence from spec.
+- **Dev — reconcile uses inert `status="pending"`** → ✓ ACCEPTED: verified against App.tsx TURN_STATUS handler — `pending` hits no transition branch and no per-player push; only the batch-entries path runs. Correct, side-effect-free choice.
+- **Dev — corrected wiring test to observe return value** → ✓ ACCEPTED: `handle_message` returns the connecting socket's frames (connect.py:1648); inspecting the return is the correct delivery channel, and the assertion is not weakened (still requires Adam `submitted`).
+
+**Undocumented spec deviations found:** None. The code matches the context's recommended approach and all 6 ACs.
+
 ## Dev Assessment
 
 **Implementation Complete:** Yes
@@ -251,7 +266,7 @@ Each entry: what was changed, what the spec said, and why.
 
 ## TEA Assessment (verify)
 
-**Phase:** verify
+**Phase:** review
 **Status:** GREEN confirmed
 
 ### Simplify Report
@@ -281,3 +296,60 @@ Each entry: what was changed, what the spec said, and why.
 
 **Quality Checks:** lint (ruff) clean on all changed files; targeted + full regression green except the unrelated content-audit failures.
 **Handoff:** To Reviewer (Colonel Potter).
+## Subagent Results
+
+| # | Specialist | Received | Status | Findings | Decision |
+|---|-----------|----------|--------|----------|----------|
+| 1 | reviewer-preflight | Yes | clean | 0 smells; 36/36 in-scope tests green; ruff clean | N/A |
+| 2 | reviewer-edge-hunter | Skipped | disabled | N/A | Disabled via settings — edges assessed manually (see Devil's Advocate) |
+| 3 | reviewer-silent-failure-hunter | Skipped | disabled | N/A | Disabled via settings — silent-drop is the story's core fix; assessed manually |
+| 4 | reviewer-test-analyzer | Skipped | disabled | N/A | Disabled via settings — test quality assessed in verify phase + manually |
+| 5 | reviewer-comment-analyzer | Skipped | disabled | N/A | Disabled via settings |
+| 6 | reviewer-type-design | Skipped | disabled | N/A | Disabled via settings — types assessed manually |
+| 7 | reviewer-security | Yes | findings | 1 low (socket_id in watcher) | confirmed 1 (non-blocking), firewall clean |
+| 8 | reviewer-simplifier | Skipped | disabled | N/A | Disabled via settings — simplify ran in verify phase (1 fix applied) |
+| 9 | reviewer-rule-checker | Skipped | disabled | N/A | Disabled via settings — lang-review rules checked manually below |
+
+**All received:** Yes (2 enabled returned; 7 disabled via `workflow.reviewer_subagents`)
+**Total findings:** 1 confirmed (low, non-blocking), 0 dismissed, 0 deferred
+
+## Reviewer Assessment
+
+**Verdict:** APPROVED
+
+A presence-display resilience fix with a tight blast radius. Reuses existing infrastructure (roster builder, watcher hub, connect bootstrap channel) — no new components. All 6 ACs met; preflight green; perception firewall verified intact.
+
+**Dispatch-tag coverage (8 tags):**
+- `[SEC]` — **reviewer-security (ran):** Perception firewall (ADR-104/105) CLEAN — the reconcile frame routes point-to-point to the connecting socket's own `out_queue` (NOT `room.broadcast`), and `TurnStatusEntry` carries only shared-world facts (player_id, seat character_name, pending/submitted). One LOW finding: `socket_id` in the `broadcast.recipient_dropped` watcher on the unauthenticated dev-side `/ws/watcher`. Confirmed non-blocking — not a credential, expires on disconnect, and diagnostically useful for socket-churn correlation. The unauthenticated endpoint is pre-existing, out of scope.
+- `[SILENT]` (disabled — assessed manually): The story's whole point is killing a silent drop. `session_room.py:898-932` now surfaces a connected-but-queueless recipient via `_log.warning` + `broadcast.recipient_dropped` watcher (severity=warning). No swallowed errors introduced. `player_action.py:598`'s broad `except Exception: logger.warning` is pre-existing and logged (not silent). VERIFIED.
+- `[EDGE]` (disabled — assessed manually): see Devil's Advocate — barrier-fired/`_submitted`-cleared, multi-socket, attach_outbound window, round boundary, empty-roster guard all traced.
+- `[TEST]` (disabled — assessed manually): 12 tests across 6 ACs; both phase-worlds pinned; wiring test drives the real connect handler. Verify-phase simplify left them green. VERIFIED.
+- `[TYPE]` (disabled — assessed manually): `build_seal_reconcile_roster`/`project_all_submitted` fully annotated (`-> list[TurnStatusEntry]`); `NonBlankString` enforces non-blank payload fields. `turn_status_roster.py` pyright-clean.
+- `[DOC]` (disabled — assessed manually): new functions carry substantive docstrings explaining the phase-dependence and read-only contract; the connect block has a thorough inline rationale. No stale comments.
+- `[SIMPLE]` (disabled — ran in verify): simplify fan-out in verify applied 1 high-confidence fix (`project_all_submitted` extraction); efficiency confirmed the broadcast drop-detect is O(players) on a non-hot path.
+- `[RULE]` (disabled — checked manually below in Rule Compliance).
+
+### Rule Compliance (lang-review/python.md)
+- **#1 silent exceptions:** No new bare/swallowed excepts. The drop is loud. PASS.
+- **#3 type annotations:** Both new functions fully annotated. PASS.
+- **#4 logging coverage/severity:** Drop → `warning` (correct for a delivery failure); reconcile → `info`. f-string-free lazy logging (`%s`). PASS.
+- **#6 test quality:** Assertions check concrete values/sets, not truthiness; no vacuous asserts; wiring test present. PASS.
+- **#9 async pitfalls:** Reconcile runs in the async connect handler but does only in-memory work (roster build) + non-blocking `put_nowait`/watcher publish — no blocking call, no missing await. `broadcast` is sync. PASS.
+- **#10 import hygiene:** All new imports explicit; no star imports; no cycle (`turn_status_roster` is leaf-level, already imported by `player_action`). PASS.
+- **#11 input validation:** `NonBlankString` enforces non-blank entry/payload fields; `display_name` guaranteed non-empty via connect.py:317-326 fallback to `player_id`. PASS.
+
+### Observations
+- `[VERIFIED]` **Firewall safe** — reconcile frame delivered only to the connecting socket via `handle_message` return → `out_queue` (connect.py:1648, websocket write); never `room.broadcast`. Evidence: connect.py:1474-1490 appends to `bootstrap_msgs`, not a broadcast call. Complies with ADR-104/105 (membership, not private content).
+- `[VERIFIED]` **No NonBlankString crash** — `NonBlankString(display_name)` cannot raise: display_name falls back to non-empty `player_id` at connect.py:318-326.
+- `[VERIFIED]` **Read-only barrier guard (AC6)** — `build_seal_reconcile_roster`/`project_all_submitted` use `model_copy` and never mutate `_submitted`/phase; test `test_reconcile_is_read_only_and_does_not_touch_the_barrier` enforces it.
+- `[VERIFIED]` **DRY refactor behavior-preserving** — `project_all_submitted` shared by `player_action.py` barrier_fired branch + reconcile; 11 sealed-letter dispatch integration tests green.
+- `[LOW]` `[SEC]` `socket_id` on the dev-side watcher channel — non-blocking (logged as a delivery finding).
+- `[VERIFIED]` **Wiring end-to-end** — reconcile fires from real connect handler (test_seal_reconcile_on_connect), drop fires from real SessionRoom.broadcast (test_broadcast_recipient_drop), UI consumes via existing batch path (UI test + App.tsx:798-808).
+
+### Devil's Advocate
+Assume this is broken. **Empty display_name** → `NonBlankString` raises mid-connect, breaking a reconnect — but connect.py:318-326 forces `display_name = player_id` (non-empty), so it cannot. **A malicious/confused reconnect spam** → each reconnect re-sends the roster; it's read-only and O(players), no state mutation, so spam costs only cheap recomputes — no barrier perturbation, no double-dispatch (AC6 + the read-only test guard this). **The attach_outbound window** → between `room.connect()` (sets `_connected`) and `room.attach_outbound()` (connect.py:368), a concurrent broadcast could flag the just-connecting player as a "drop." That is a *true* observation (they genuinely can't receive yet) emitted at `warning`, not an error — noise, not incorrect, and Dev already logged it as a finding. **Barrier-fired crash-release (67-1 path)** → a released awaiter who never submitted is projected `submitted` by `project_all_submitted`; this exactly mirrors the pre-existing `player_action.py:568-574` terminal projection, so it introduces no new inconsistency (TEA logged it as a Question). **Round boundary** → if a peer reconnects exactly as `record_interaction` resets phase to InputCollection and clears `_submitted`, the roster correctly reads all-pending (fresh round) — no stale seal pinned. **Empty roster** (everyone in CHARGEN, none PLAYING) → `if reconcile_roster:` guards the send; no empty frame. **Cross-player leak** → the frame never fans out (point-to-point), and contains only seat names + seal status that every tab already sees via the live broadcast. I could not turn any of these into a correctness or security defect. The one residual is cosmetic watcher noise, already acknowledged.
+
+**Data flow traced:** reconnecting peer `SESSION_EVENT{connect}` → `connect` handler `_State.Playing` → `build_seal_reconcile_roster(snapshot, room.playing_player_ids())` (read-only) → `TurnStatusMessage` → `bootstrap_msgs` → `handle_message` return → connecting socket's `out_queue` only → UI `App.tsx:798-808` batch-entries → `TurnStatusPanel` "✓ Sealed". Safe: point-to-point, shared-world data, no mutation.
+**Pattern observed:** mirrors 67-1's `broadcast.recipient_dropped` instrumentation and the existing roster-broadcast pattern — `sidequest/server/session_room.py:898-932`, `sidequest/handlers/connect.py:1457-1516`.
+**Error handling:** the failure mode this story addresses (dropped frame) is now surfaced loudly; no new failure path swallowed.
+**Handoff:** To SM for finish-story.
