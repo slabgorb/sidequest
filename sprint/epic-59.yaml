@@ -248,10 +248,15 @@ stories:
     title: Dogfight confrontation fails to instantiate via production path
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-27'
     repos: server
     workflow: tdd
+    completed: '2026-05-27'
     type: bug
+    branch: feat/59-17-dogfight-instantiation-production-path
+    review_findings: '[HIGH] Guard relaxation at encounter_lifecycle.py:494 regresses Story 45-33: a lone bystander (npc_role_id=bystander) at the location is silently seated into a sealed-letter duel — test_sealed_letter_empty_npcs_present_raises_without_consuming_fallback is RED (DID NOT RAISE). Fix: sealed-letter fallback must filter candidates to adversarial-role NPCs (key on npc_role_id, not disposition/category); lone bystander => 0 candidates => arity raises. Add a dispatch-level bystander-only sealed-letter test.'
+    review_verdict: approved
   - id: 59-18
     title: space_opera SWN combat + armor-class seeding broken — tests/server/test_space_opera_swn_combat_e2e.py (5), tests/genre/test_space_opera_loads_swn.py (1), tests/game/test_materialize_armor_class.py (3)
     description: "DONE by landed work (not via this story's own PR). All 9 named tests pass (test_space_opera_swn_combat_e2e ×5, test_space_opera_loads_swn ×1, test_materialize_armor_class ×3, verified green 2026-05-27 -n0). The SWN combat + armor-class features the failing-test premise described landed via server PR #469 (attack-vs-AC + hp_depletion) + #471 (P4 initiative spine) and content PR #267 (space_opera→SWN bind) + #268 (opponent dexterity). Stale playtest-snapshot story overtaken by faster fixes. Closed by SM during 59-18 setup verification."
