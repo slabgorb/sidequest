@@ -33,15 +33,16 @@ Full context available at: `sprint/context/context-story-67-2.md`
 
 ## Workflow Tracking
 **Workflow:** tdd
-**Phase:** green
-**Phase Started:** 2026-05-27T20:23:07Z
+**Phase:** spec-check
+**Phase Started:** 2026-05-27T20:32:47Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
 |-------|---------|-------|----------|
 | setup | 2026-05-27T20:06:50Z | 2026-05-27T20:09:14Z | 2m 24s |
 | red | 2026-05-27T20:09:14Z | 2026-05-27T20:23:07Z | 13m 53s |
-| green | 2026-05-27T20:23:07Z | - | - |
+| green | 2026-05-27T20:23:07Z | 2026-05-27T20:32:47Z | 9m 40s |
+| spec-check | 2026-05-27T20:32:47Z | - | - |
 
 ## SM Assessment
 
@@ -147,6 +148,28 @@ fix is delivery/observability — silent-fallback #1 and logging #4 are the load
    `field`/`event`-keyed or any event_type containing "reconcile" — pick one and emit it.
 4. **AC6 is a guardrail:** the reconcile read must NOT mutate `_submitted` or `phase`.
    Build into a local, send; never advance the barrier from the recovery path.
+
+## Architect Assessment (spec-check)
+
+**Spec Alignment:** Aligned
+**Mismatches Found:** None (two intent-aligned observations below, both already logged as Dev findings — recommend Accept)
+
+Read the full diff of all three changed modules against the 6 ACs in `context-story-67-2.md`. The implementation is faithful to the Architect-recommended approach and reuses existing infrastructure (no new components) per the reuse-first mandate.
+
+**AC-by-AC:**
+- **AC1 / AC2** — `build_seal_reconcile_roster` recovers the seal truth; connect.py sends it as a `TURN_STATUS` to the connecting socket via `bootstrap_msgs` (RETURNED to that socket, not broadcast). Matches "send to the connecting socket only." ✓
+- **AC3** — surfaced by existing `TurnStatusPanel` + App batch-entries path; verified green, zero UI code. Correct "wire up what exists." ✓
+- **AC4** — `broadcast.recipient_dropped` watcher + warning log on the `SessionRoom.broadcast` seam; shape mirrors 67-1's `_deliver_fanout` (`component=broadcast`, `severity=warning`, `recipient_player_id`, `type`). Context permitted `multiplayer|broadcast`. ✓
+- **AC5** — `turn_status.reconciled_on_connect` watcher carries `sealed_count` + `phase` for GM-panel verification. ✓
+- **AC6** — read-only confirmed: `build_seal_reconcile_roster` uses `model_copy`, never mutates `_submitted`/phase; connect path only appends a message + emits a watcher. The barrier/CAS dispatcher is untouched. ✓
+
+**Perception-firewall constraint (ADR-104/105) — explicitly verified:** the reconcile `TURN_STATUS` is appended un-projected to `bootstrap_msgs`. This is *correct*, not a bypass: seal membership ("who has sealed") is shared-world table state, not per-player canonical content — it leaks nothing the player's own reveal text would. It is already broadcast unfiltered via `room.broadcast` in `player_action.py:587`. The implementation is consistent with the established pattern; no per-recipient projection is required for a seal roster.
+
+**Intent-aligned observations (no action — recommend Accept):**
+- **Broadcast-wide drop instrumentation** (Dev Question finding): `broadcast.recipient_dropped` now fires for *any* message type, not only seal frames. This is exactly the context scope ("replace the silent … drop … on the `SessionRoom.broadcast` path") — instrumenting the whole seam is the correct reading, not scope creep. Category: Extra-in-code → **Behavioral, Trivial**. Resolution **A (accept)**; the GM-panel-noise tuning note is a legitimate future concern, not a 67-2 defect.
+- **Reconcile fires on every MP reconnect** (Dev Improvement finding): sends the roster whenever playing peers exist, even all-pending. Matches the context's "so seal state is **always** reconciled" (and corrects the per-tab denominator as a bonus). Category: Different-behavior → **Behavioral, Minor**. Resolution **A (accept)**; the skip-when-all-pending optimization is optional future work.
+
+**Decision:** Proceed to review (TEA verify next). No hand-back to Dev.
 
 ## Design Deviations
 
