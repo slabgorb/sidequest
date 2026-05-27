@@ -18,7 +18,10 @@ stories:
     title: Opening gameboard — full-width action input under narrative + co-located high-contrast HP pip scale
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-27'
     repos: ui
     workflow: tdd
+    completed: '2026-05-27'
     type: bug
+    review_verdict: approved
