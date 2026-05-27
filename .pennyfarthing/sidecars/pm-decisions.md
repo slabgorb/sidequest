@@ -46,3 +46,8 @@
 
 ### Hardware context (for sizing and routing)
 - **MacBook Pro M3 Max 128GB.** Can run Flux locally without VRAM constraints. No CUDA — Metal Performance Shaders or CPU only. Unified memory means ML workloads don't round-trip across PCIe. Size ML-adjacent stories knowing this is the target hardware.
+
+## Migrated from auto-memory (2026-05-26)
+
+- **The customer is the DM, not the player (2026-05-22 reframe).** SideQuest's paying customer is the forever-DM / world-builder; players are acquired downstream by the DM committing. Implication: the GM panel, sq-world-builder, sq-audit/poi/music, OTEL, and scenario fixtures ARE the product surface for the paying customer (not just dev scaffolding); price per-DM-seat / per-world, not per-player; target DM communities (World Anvil, r/DnDBehindTheScreen, OSR). Live brief: `docs/prd/prd-creator-authoring-monetization.md`.
+- **Load-bearing monetization datapoint:** 2026-05-17 Sebastien + a friend played 141 turns over 5 unscheduled after-hours hours on a world Keith built — the only real-world product-grip evidence (everything else is a model). Target persona is "friend of a player" (mechanics-curious 20-something brought in virally), not Reddit/paid traffic. Engineered cost-consistency is a moat (~1% input-token variance across 23 Sonnet turns via ADR-098/100/048/102). Do NOT re-derive per-turn cost from this session (predates cache changes); re-measurement blocked on the next 100+ turn organic session.

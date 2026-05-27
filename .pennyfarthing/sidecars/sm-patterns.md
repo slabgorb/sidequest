@@ -44,3 +44,7 @@
 ### Context discipline (SM's particular responsibility during high-ceremony sessions)
 - **Thoroughness over speed.** Context pressure is not my problem — the system manages it via TirePump, relay, `/clear`. Don't rush a handoff, skip subagent results, or abbreviate a gate check to save tokens. Cutting corners costs more context than doing it right. If a gate fails because I cut corners, the whole phase repeats.
 - **The right response to high context is a clean handoff, not a rushed one.** Complete the assessment, run the exit protocol, trust relay mode.
+
+## Migrated from auto-memory (2026-05-26)
+
+- **SideQuest runs kanban, not scrum — sprints have NO capacity.** Never frame proposals as capacity-budget trades ("we're at 18 pts, drop 2") or invoke velocity/remaining-capacity. Points remain useful as a complexity/effort estimate that informs ordering and flags fat stories to split. The scheduling question is "is this worth doing now?", not "do we have room?"
