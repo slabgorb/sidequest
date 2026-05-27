@@ -65,17 +65,23 @@ truthy (R2 path, not the legacy local-tmpdir branch), write a ledger row before 
 `tier`, subject/entity hints), `player_id`, and the session. The ledger write must be
 idempotent (`INSERT ... ON CONFLICT (r2_key) DO UPDATE`).
 
-**`md5` / `size_bytes` sourcing — UNRESOLVED, see Open Questions / AC2.** The render
-`reply` carries only `{image_url, r2_key, width, height, elapsed_ms}` (image tier) —
-**no `md5`, no `size_bytes`** (verified in `_run_render_inner` and
-`sidequest-daemon/.../media/daemon.py`). And `r2_manifest.json` tracks **authored pack
-assets**, not runtime renders, so a runtime portrait will never appear in it — the AC's
-"md5 from r2_manifest.json" is not achievable for the assets this table exists to track.
-**Guardrail:** model `md5` and `size_bytes` as **NULLABLE** and populate them only when a
-real source exists. Enriching the daemon reply to return md5/size is a daemon-side change
-(`sidequest-daemon`) that is **out of scope** for this story unless the Doctor expands it
-— RED tests must therefore accept NULL md5/size and must **not** assert they are sourced
-from `r2_manifest.json`.
+**`md5` / `size_bytes` sourcing — RESOLVED: enrich the daemon reply (Doctor decision
+2026-05-27).** The image render `reply` currently carries only
+`{image_url, r2_key, width, height, elapsed_ms}` — **no `md5`, no `size_bytes`**
+(verified in `_run_render_inner` and `sidequest-daemon/.../media/daemon.py`), and
+`r2_manifest.json` tracks authored pack assets only, so it cannot supply them for runtime
+renders. **Decision:** the daemon owns the bytes at R2-upload time, so it computes and
+returns `md5` + `size_bytes` in the image render result. The server then writes them onto
+the ledger row. Therefore:
+- **`sidequest-daemon` is in scope.** The image render result (`media/daemon.py`, image
+  tier — note image dispatch is still inline in `_handle_client`; the result-wrapping
+  near lines ~338/351 is where md5/size get added) must include `md5` (hex digest of the
+  uploaded bytes) and `size_bytes` (int).
+- The ledger columns are therefore **NOT NULL** — every R2 runtime asset has a known
+  hash and size at write time. RED tests assert the daemon result carries both and that
+  the ledger row persists them (non-null).
+- Compute md5 from the same bytes uploaded to R2 (the upload already streams them);
+  do not re-read from disk or recompute from a stale path (No Silent Fallbacks).
 
 **REST endpoint (corrects "/api/session/{slug}/assets"):** add
 `@router.get("/api/sessions/{slug}/assets")` — note plural `sessions`, matching the
@@ -84,7 +90,10 @@ existing convention (`sidequest/server/rest.py:689`
 `pg_sessions.resolve_session_id`; return a JSON array of ledger rows. Unknown slug → 404,
 not a silent empty list (No Silent Fallbacks).
 
-**UI reconnect preload (corrects "ImageBus reads on reconnect"):** `ImageBusProvider`
+**UI reconnect preload — IN SCOPE (Doctor decision 2026-05-27):** this story ships the
+full resume experience end-to-end, so `sidequest-ui` work is part of 65-2 (not a
+follow-up). **ImageBus reconnect preload (corrects "ImageBus reads on reconnect"):**
+`ImageBusProvider`
 (`sidequest-ui/src/providers/ImageBusProvider.tsx`) is a **pure `useMemo` reducer over
 message history** — it has no side effects and no WebSocket lifecycle. Reconnect lives in
 `hooks/useGameSocket.ts` / `hooks/useWebSocket.ts`. The preload fetch
@@ -121,27 +130,28 @@ even then reaping is out of scope here — this story only *detects*.
 ## Scope Boundaries
 
 **In scope:**
-- `asset_ledger` Postgres table via new Alembic migration (columns: `r2_key` PK,
-  `asset_type`, `entity_ref`, `created_turn`, `md5` NULLABLE, `size_bytes` NULLABLE,
-  `session_id` FK, `created_at`).
+- **Daemon:** image render result returns `md5` (hex digest of uploaded bytes) +
+  `size_bytes` (`sidequest-daemon`, `media/daemon.py` image tier).
+- **Server:** `asset_ledger` Postgres table via new Alembic migration (columns:
+  `r2_key` PK, `asset_type`, `entity_ref`, `created_turn`, `md5` NOT NULL,
+  `size_bytes` NOT NULL, `session_id` FK, `created_at`).
 - `PgAssetLedgerStore` + wiring into `PgSaveRepository`.
 - Idempotent ledger write hooked into `_run_render_inner` at the `r2_key` extraction
-  point, with an OTEL span.
+  point (reading md5/size from the enriched reply), with an OTEL span.
 - `GET /api/sessions/{slug}/assets` REST endpoint.
-- App/GameStateProvider-level reconnect preload that fetches the endpoint and feeds the
-  image pipeline (UI repo — see scope note).
-- `r2_audit.py` extension: orphan + dangling-row detection against the Postgres ledger.
+- **UI:** App/GameStateProvider-level reconnect preload that fetches the endpoint and
+  feeds the image pipeline (`sidequest-ui`).
+- **Scripts:** `r2_audit.py` extension — orphan + dangling-row detection against the
+  Postgres ledger.
 
-**Scope note — repos:** the session lists `repos: server, content`, but the real surface
-is **sidequest-server** (table, store, hook, REST), **sidequest-ui** (reconnect preload —
-the session undercounted this), and the **orchestrator** `scripts/` (audit extension; the
-"content" artifact `r2_manifest.json` is committed under `sidequest-content/`). Flagged
-for the Doctor: confirm whether the UI preload (AC cluster 4) ships in this story or
-splits to a follow-up.
+**Scope note — repos (Doctor decision 2026-05-27):** the real surface is **four repos** —
+`sidequest-server` (table, store, hook, REST), `sidequest-daemon` (md5/size in render
+result), `sidequest-ui` (reconnect preload), and the orchestrator `scripts/` (audit; the
+`r2_manifest.json` artifact is committed under `sidequest-content/`). The session's
+`repos: server, content` field is **undercounted** — SM must add `daemon` + `ui` and cut
+their feature branches before Dev's GREEN phase.
 
 **Out of scope:**
-- Enriching the daemon render reply with `md5`/`size_bytes` (a `sidequest-daemon` change)
-  — ledger stores NULL until a source exists. Defer to a follow-up unless expanded.
 - Any **reaping/TTL** of orphaned R2 assets — this story detects, never deletes.
 - Backfilling ledger rows for assets generated before this story shipped.
 - Migrating or extending `scrapbook_entries` — adjacent table, left untouched.
@@ -158,17 +168,21 @@ splits to a follow-up.
   `r2_key TEXT PRIMARY KEY`, `asset_type TEXT NOT NULL` (portrait|illustration|poi),
   `entity_ref TEXT NOT NULL`, `created_turn INTEGER NOT NULL`,
   `session_id BIGINT NOT NULL REFERENCES sessions(session_id) ON DELETE CASCADE`,
-  `md5 TEXT NULL`, `size_bytes INTEGER NULL`, `created_at TEXT NOT NULL`. Index on
-  `(session_id)`.
+  `md5 TEXT NOT NULL`, `size_bytes INTEGER NOT NULL`, `created_at TEXT NOT NULL`. Index
+  on `(session_id)`.
 - `upgrade()`/`downgrade()` symmetric (downgrade drops the table), mirroring `0001`.
 - Test: applying the migration creates the table with the expected columns/constraints;
   `asset_type` outside the enum and a dangling `session_id` are rejected.
 
-**AC2 — ledger write is idempotent and durable.**
+**AC2 — daemon render result carries md5 + size_bytes; ledger write is idempotent and
+durable.**
+- The image render result includes `md5` (hex digest of the bytes uploaded to R2) and
+  `size_bytes` (int). Daemon test: a render result for an R2 upload exposes both, derived
+  from the uploaded bytes (not recomputed from a stale path).
 - `PgAssetLedgerStore.append(...)` performs `INSERT ... ON CONFLICT (r2_key) DO UPDATE`
   — writing the same `r2_key` twice yields one row (upsert), not a duplicate or crash.
-- `md5`/`size_bytes` accept NULL (the runtime render reply has no such fields); a NULL
-  write is valid. Tests must **not** assert these come from `r2_manifest.json`.
+- `md5`/`size_bytes` are NOT NULL and are persisted from the enriched reply; a write
+  missing either fails loudly (No Silent Fallbacks).
 - Durable retention: nothing in the write path schedules reaping of a ledger-referenced
   key.
 
@@ -193,7 +207,6 @@ splits to a follow-up.
 - `ImageBusProvider` stays a pure reducer — the fetch/lifecycle lives outside it.
 - Test (vitest): on reconnect, the fetch is issued and resolved URLs reach the gallery;
   no render request is emitted for already-ledgered assets.
-- *(Subject to the Scope-note decision: may split to a UI follow-up.)*
 
 **AC6 — `r2_audit.py` cross-references the ledger.**
 - Extends `audit()`/`AuditResult`: detects orphans (in manifest/R2, referenced by no
