@@ -119,6 +119,27 @@ No upstream findings (setup phase).
 
 ## Design Deviations
 
-None yet.
-
 <!-- Agents: append deviations below this line. Do not edit other agents' entries. -->
+
+### Architect (reconcile)
+- **Drop `md5`/`size_bytes`; daemon out of scope**
+  - Spec source: context-story-65-2.md, AC2 (prior rev) + Doctor decision 2026-05-27 "expand scope to daemon"
+  - Spec text: "the daemon owns the bytes at R2-upload time, so it computes and returns `md5` + `size_bytes` in the image render result … ledger columns are therefore NOT NULL"
+  - Implementation: ledger stores neither column; content sha256 is already embedded in `r2_key` (`artifacts/<world>/<session>/<kind>/<sha256>.<ext>`, `r2_writer.py:91`), so it is persisted for free via the PK; `size_bytes` has no resume consumer
+  - Rationale: avoids a redundant second hash and an unnecessary change to in-flux image-tier daemon code (`dispatch_request` NotImplementedError, "Task 12"); reuse-first
+  - Severity: major (reverses a Doctor decision on new evidence — flagged for veto)
+  - Forward impact: `sidequest-daemon` exits scope; `size_bytes` re-addable in the AC6 follow-up if a consumer appears
+- **AC6 (ledger↔manifest audit) deferred to a follow-up**
+  - Spec source: context-story-65-2.md, AC6 (prior rev)
+  - Spec text: "extends `audit()`/`AuditResult`: detects orphans (in manifest/R2…) and dangling rows (ledger row whose `r2_key` is absent from the manifest)"
+  - Implementation: AC6 removed from 65-2; no RED test written for it; filed as "Runtime-artifact R2 audit" follow-up
+  - Rationale: ledger keys (`artifacts/…`) and manifest keys (`genre_packs/…`) are disjoint namespaces (`r2_writer.py:196`), so the diff is all-noise; a real audit needs an R2-listing capability that does not exist + an undesigned retention policy
+  - Severity: major (removes an AC cluster)
+  - Forward impact: `scripts/` + `sidequest-content` exit scope; follow-up story owns runtime-artifact retention + R2 listing
+- **Repos reduced to server + ui**
+  - Spec source: epic-65.yaml 65-2 `repos: server,content,daemon,ui`
+  - Spec text: "repos: server,content,daemon,ui"
+  - Implementation: effective scope is `server, ui`; SM to update the field and retire the unused `feat/65-2-*` branches in `sidequest-daemon` and `sidequest-content`
+  - Rationale: consequence of the two deviations above
+  - Severity: minor
+  - Forward impact: fewer branches to finish/merge at story close
