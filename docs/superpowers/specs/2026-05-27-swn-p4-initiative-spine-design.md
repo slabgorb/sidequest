@@ -61,33 +61,72 @@ signal and its narrator adjudication.
 
 ## 3. The roll — module-owned, rolled once
 
-New **optional** method on `RulesetModule` (`game/ruleset/base.py`):
+**The module stays pure.** `CreatureCore`/`Npc` carry **no ability scores** (verified:
+`Npc.core` is a `CreatureCore` with `hp`/`armor_class` but no `stats`; PC stats live on
+`Character.stats`). So the module must NOT reach for a `core_resolver` to find DEX — the
+dispatch seam resolves each actor's DEX *score* and hands the module a plain map. New
+**optional** method on `RulesetModule` (`game/ruleset/base.py`):
 
 ```python
 def roll_initiative(
     self,
-    actors: list[EncounterActor],
-    core_resolver: Callable[[str], CreatureCore | None],
+    *,
+    actor_dex_scores: dict[str, int],   # actor name -> raw DEX score
     rng: random.Random,
 ) -> list[InitiativeEntry] | None:
-    """Resolution order for a confrontation round, or None for no ordering."""
+    """Resolution order (descending) for a confrontation, or None for no ordering."""
 ```
 
 - **`NativeRulesetModule`** returns `None` → no ordering; current behavior preserved.
-- **`SwnRulesetModule`** rolls **1d8 + DEX-modifier per actor**, sorts descending, returns
-  the populated `InitiativeEntry` list. Real RNG (`rng.randint`), no client round-trip.
-- The DEX modifier comes through the existing SWN modifier curve already in `SwnConfig`
-  (`stat_modifier`), so no new constants leak in as magic literals (ADR-068).
+- **`SwnRulesetModule`** rolls **1d8 + `swn_attribute_modifier(score)`** per actor, sorts
+  descending, returns the populated `InitiativeEntry` list (`token_id=name`, `value=total`).
+  Real RNG (`rng.randint`), no client round-trip. Reuses the existing `swn_attribute_modifier`
+  curve in `swn.py`, so no new constants leak in (ADR-068).
 
-**Where it fires:** `server/dispatch/encounter_lifecycle.instantiate_encounter_from_trigger`,
-immediately after actors and `CreatureCore`s are seated (the same seam that already runs
-`_seed_combat_hp_depletion_to_npcs`). The engine calls `ruleset.roll_initiative(...)` and
-**persists** the result.
+**Where the DEX scores come from (the seam, not the module):** at
+`server/dispatch/encounter_lifecycle.instantiate_encounter_from_trigger`, immediately after
+actors and `CreatureCore`s are seated (the same seam that runs
+`_seed_combat_hp_depletion_to_npcs`), the dispatcher builds `actor_dex_scores`:
+- **player-side** actor → `Character.stats[cfg.attribute_map["DEXTERITY"]]` (in `space_opera`,
+  the flavor key is `"Reflex"`);
+- **opponent-side** actor → `cdef.opponent_dexterity` (the new reserved key, §3a).
+
+It then calls `ruleset.roll_initiative(actor_dex_scores=..., rng=...)` and **persists** the
+result. A seated actor with no resolvable DEX score is a **fail-loud** error (no neutral 0);
+for opponents this can't happen because the load-time validator (§3a) already guarantees it.
 
 **Persistence:** a new field `StructuredEncounter.initiative: list[InitiativeEntry] =
 Field(default_factory=list)`. Rolled once at instantiation, reused every round. An empty
 list means "this ruleset/encounter has no ordering" (native, or non-confrontation), which
 is the truthful state, not a fallback.
+
+## 3a. The opponent-DEX contract — enforced at pack load, not at seating
+
+Initiative is `1d8 + DEX` for **every** actor, including the opponent. But
+`opponent_default_stats` today authors only `hp` and `armor_class` (the two reserved combat
+keys in `OPPONENT_RESERVED_STAT_KEYS`). A silent `+0` for an un-authored opponent DEX would
+be exactly the fallback CLAUDE.md forbids. So opponent DEX becomes a **third reserved combat
+key**, and the existing genre-contract validator is extended to require it:
+
+- Add `"dexterity"` to `OPPONENT_RESERVED_STAT_KEYS` (`genre/models/rules.py`). It is a raw
+  SWN DEX *score*; the engine applies `swn_attribute_modifier` to it.
+- Add an `opponent_dexterity` property mirroring `opponent_hp` / `opponent_armor_class`.
+- Extend `ConfrontationDef._validate` (the existing `@model_validator(mode="after")` at
+  `rules.py:437`): for `category == "combat" and win_condition == hp_depletion`, require
+  `dexterity` alongside `hp` and `armor_class`, with `dexterity >= 3` (the SWN score floor).
+  This runs on **every** pack load (server boot, tests, CLI), so a non-conforming pack
+  cannot load — the contract is caught when Jade authors the stat block, not mid-fight.
+- **Content:** add `dexterity: <n>` to each `space_opera` `opponent_default_stats` block (the
+  ship and the boarder). Values are feel-calibrated placeholders pending Keith's playtest,
+  like the existing `hp`/`armor_class`.
+
+The redundant runtime `hp`/`ac` `ValueError` in `_seed_combat_hp_depletion_to_npcs` is now
+fully subsumed by the load-time validator; the plan removes it (CLAUDE.md "dead code is
+worse than no code") rather than adding a third runtime check for DEX.
+
+This is a *narrow extension of an existing contract validator*, not a new framework. A
+broader "does every world fulfill its genre contract" audit is the same pydantic-validator
+pattern applied across more surfaces — tracked as possible future work, out of P4 scope.
 
 ### SRD fidelity — what is looked up, not asserted
 
@@ -155,16 +194,20 @@ input states the rule so prose stays correct until then.
 
 | Change | File |
 |--------|------|
-| `roll_initiative(...) -> list[InitiativeEntry] \| None` (optional, default `None`) | `game/ruleset/base.py` |
+| `roll_initiative(*, actor_dex_scores, rng) -> list[InitiativeEntry] \| None` (optional, default `None`) | `game/ruleset/base.py` |
 | Native impl returns `None` | `game/ruleset/native.py` |
-| SWN impl: 1d8 + DEX-mod per actor, sorted, persisted | `game/ruleset/swn.py` |
+| SWN impl: 1d8 + `swn_attribute_modifier(score)` per actor, sorted desc | `game/ruleset/swn.py` |
+| `dexterity` reserved key + `opponent_dexterity` property + validator requires it | `genre/models/rules.py` |
 | `StructuredEncounter.initiative: list[InitiativeEntry]` | `game/encounter.py` |
-| Roll + persist at instantiation seam | `server/dispatch/encounter_lifecycle.py` |
-| `encounter.initiative_rolled` span | `telemetry/spans.py` |
-| Populate payload `initiative` field | `server/dispatch/confrontation.py` |
+| Resolve per-actor DEX, call `roll_initiative`, persist; drop redundant runtime hp/ac `ValueError` | `server/dispatch/encounter_lifecycle.py` |
+| `encounter_initiative_rolled_span` | `telemetry/spans/encounter.py` |
+| Add `initiative_order` field + populate it | `protocol/messages.py` (`ConfrontationPayload`) + `server/dispatch/confrontation.py` |
 | Thread order into narrator turn input | `handlers/player_action.py` (`dispatch_fired_barrier`) |
+| **Content:** `dexterity: <n>` in both opponent blocks | `sidequest-content/genre_packs/space_opera/rules.yaml` |
 
-No new wire message type. No UI commit-model change. `InitiativeEntry` already exists.
+No new wire message type. No UI commit-model change. `InitiativeEntry` already exists
+(`protocol/models.py`). **Two repos** touched (server + content); content PR merges first
+(the server e2e loads the pack).
 
 ## 9. Testing
 
