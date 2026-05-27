@@ -80,7 +80,7 @@ stories:
     points: 3
     priority: p1
     status: in_progress
-    repos: server,content
+    repos: server,content,daemon,ui
     workflow: tdd
     type: feature
     branch: feat/65-2-per-session-asset-ledger
