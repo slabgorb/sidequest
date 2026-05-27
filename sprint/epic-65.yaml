@@ -128,3 +128,17 @@ stories:
     repos: content
     workflow: trivial
     type: chore
+  - id: 65-4
+    title: Mount useAssetPreload in App + ImageBus preload feed (AC5 follow-up from 65-2)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: tdd
+  - id: 65-5
+    title: Runtime-artifact R2 audit — ledger vs artifacts/ R2 listing + retention policy (AC6 follow-up from 65-2)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
