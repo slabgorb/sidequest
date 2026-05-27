@@ -33,8 +33,8 @@ Full context available at: `sprint/context/context-story-67-2.md`
 
 ## Workflow Tracking
 **Workflow:** tdd
-**Phase:** spec-check
-**Phase Started:** 2026-05-27T20:32:47Z
+**Phase:** verify
+**Phase Started:** 2026-05-27T20:34:32Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -42,7 +42,8 @@ Full context available at: `sprint/context/context-story-67-2.md`
 | setup | 2026-05-27T20:06:50Z | 2026-05-27T20:09:14Z | 2m 24s |
 | red | 2026-05-27T20:09:14Z | 2026-05-27T20:23:07Z | 13m 53s |
 | green | 2026-05-27T20:23:07Z | 2026-05-27T20:32:47Z | 9m 40s |
-| spec-check | 2026-05-27T20:32:47Z | - | - |
+| spec-check | 2026-05-27T20:32:47Z | 2026-05-27T20:34:32Z | 1m 45s |
+| verify | 2026-05-27T20:34:32Z | - | - |
 
 ## SM Assessment
 
@@ -179,6 +180,13 @@ Each entry: what was changed, what the spec said, and why.
 <!-- Agents: append deviations below this line. Do not edit other agents' entries. -->
 
 ### TEA (test design)
+- **Verify-phase simplify touched the unchanged `player_action.py` to DRY the all-submitted projection**
+  - Spec source: simplify-reuse finding (high-confidence), STORY_ID 67-2 verify
+  - Spec text: "Extract a helper … use it from player_action.py:570 to DRY the identical list comprehension"
+  - Implementation: Extracted `project_all_submitted()` into `turn_status_roster.py`; rewired `player_action.py` barrier_fired branch (568-574) to call it instead of an inline comprehension. `player_action.py` was not in the story's original change set.
+  - Rationale: The all-submitted projection now has two callers (on-submission broadcast + on-connect reconcile); a shared helper prevents the two seal-projection semantics from diverging (a divergence would flip a sealed table back to "Composing"). Applied per the verify-workflow's apply-high-confidence-fixes step; 101 barrier/sealed-letter tests green after.
+  - Severity: minor
+  - Forward impact: none — pure refactor, behavior identical (verified by the existing barrier_fired tests).
 - **Proposed a new helper symbol (`build_seal_reconcile_roster`) rather than testing only the existing `build_turn_status_roster`**
   - Spec source: context-story-67-2.md, Technical Guardrails + Assumptions
   - Spec text: "on (re)connect, re-derive and send the current `build_turn_status_roster`"
@@ -239,4 +247,37 @@ Each entry: what was changed, what the spec said, and why.
 - ✅ All 6 ACs met. Error path (broadcast drop) surfaces loudly per OTEL principle + No Silent Fallbacks.
 - ✅ AC6 guardrail: reconcile is read-only — does not touch `_submitted`/phase/dispatch.
 
+**Handoff:** To Reviewer (Colonel Potter).
+
+## TEA Assessment (verify)
+
+**Phase:** verify
+**Status:** GREEN confirmed
+
+### Simplify Report
+
+**Teammates:** reuse, quality, efficiency
+**Files Analyzed:** 7 (3 server source, 3 server test, 1 UI test)
+
+| Teammate | Status | Findings |
+|----------|--------|----------|
+| simplify-reuse | 1 high + 1 medium | All-submitted projection duplicated between `player_action.py:568-574` and `build_seal_reconcile_roster` — extract shared helper |
+| simplify-quality | clean | Naming/architecture/type-safety/wiring all pass |
+| simplify-efficiency | clean | Broadcast drop-detect is O(players) on a non-hot path; `model_copy` allocation is required for the read-only contract |
+
+**Applied:** 1 high-confidence fix — extracted `project_all_submitted(roster)` into `turn_status_roster.py` and wired BOTH call sites (`build_seal_reconcile_roster` + `player_action.py` barrier_fired branch). The medium finding is the same refactor's second half, so it's resolved by the same change.
+**Flagged for Review:** 0
+**Noted:** 0
+**Reverted:** 0
+
+**Overall:** simplify: applied 1 fix
+
+### Regression after simplify
+
+- 67-2 suite + roster: 21 passed.
+- barrier / sealed-letter / player_action / turn_status (`-k`): 101 passed, 2 skipped (pre-existing skips).
+- Full server suite: 8341 passed, 376 skipped, **6 failed**. All 6 failures are in `tests/cli/validate/test_pack_validator.py` and `tests/scripts/test_audit_namegen_corpora.py` — content/corpus completeness audits over the `sidequest-content` tree, which this branch does not touch (verified via `git diff --name-only develop...HEAD`). **Pre-existing/environmental, unrelated to 67-2** (consistent with the known live-pack content-gate notes in CLAUDE.md). Not reverting — the refactor caused none of them.
+- `pyright`: `turn_status_roster.py` (the refactored file) is 0-errors. The broader baseline errors in `connect.py`/`player_action.py` are pre-existing (large files with established `# type: ignore` patterns); the project quality gate is ruff + pytest, both green on the changed lines.
+
+**Quality Checks:** lint (ruff) clean on all changed files; targeted + full regression green except the unrelated content-audit failures.
 **Handoff:** To Reviewer (Colonel Potter).
