@@ -46,3 +46,11 @@ stories:
     repos: server,ui
     workflow: tdd
     type: bug
+  - id: 67-5
+    title: ws.send_failed observability — emit broadcast.recipient_dropped watcher at _send_message send-exception seam (websocket.py:252)
+    points: 2
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    type: chore
