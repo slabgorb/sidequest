@@ -1,0 +1,56 @@
+id: '71'
+type: epic
+title: Playtest bugfix — uncovered findings (coyote_star MP, 2026-05-27)
+description: Open playtest findings from the 2026-05-27 coyote_star MP run (and carryover) NOT already covered by epics 59/61/63/64/65/66/67/68/69/70. Cross-referenced from the ping-pong tracker. Excludes findings covered by the dispatch-bank consolidation (59-11), reference-renderer epic (63), MP-resilience epic (67), genre-tone epic (68), gameboard-UX epic (69), daemon-media epic (70); excludes the beneath_sunden unmapped-deep QUESTION (by design, ADR-106).
+priority: p2
+status: backlog
+repos: sidequest-ui,sidequest-server
+stories:
+  - id: 71-1
+    title: space_opera Rules page — render per-class signature ability in the class picker
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 71-2
+    title: Orrery ring label — apply ADR-094 upright-flip on far-arc tangent labels
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-ui
+    workflow: trivial
+    type: bug
+  - id: 71-3
+    title: WS reconnect error banner auto-clears on successful reconnect/turn round-trip
+    points: 2
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: trivial
+    type: bug
+  - id: 71-4
+    title: Player-action transcript — contrast bump on own-echo + persist peer action post-resolution
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    type: bug
+  - id: 71-5
+    title: MP opening narration — POV-swap the driving player's own card (not raw-bypass)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 71-6
+    title: Narration POV person-agreement — anchor-PC bare-possessive + mixed-person slips
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug
