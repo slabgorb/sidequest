@@ -247,3 +247,19 @@ stories:
     repos: server
     workflow: tdd
     type: bug
+  - id: 59-18
+    title: space_opera SWN combat + armor-class seeding broken — tests/server/test_space_opera_swn_combat_e2e.py (5), tests/genre/test_space_opera_loads_swn.py (1), tests/game/test_materialize_armor_class.py (3)
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: bug
+  - id: 59-19
+    title: Dogfight smoke fails to resolve through production path — tests/integration/test_dogfight_playtest_smoke.py::test_three_turn_dogfight_resolves_through_production_path
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug

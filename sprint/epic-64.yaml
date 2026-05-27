@@ -107,3 +107,19 @@ stories:
     completed: '2026-05-26'
     type: bug
     review_verdict: approved
+  - id: 64-9
+    title: Namegen corpus audit fails on live tree post-expansion — tests/scripts/test_audit_namegen_corpora.py (4 tests)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content,server
+    workflow: tdd
+    type: bug
+  - id: 64-10
+    title: Live pack content validation failing — tests/cli/validate/test_pack_validator.py::TestContentValidation::test_all_live_packs_pass_content_validation
+    points: 2
+    priority: p2
+    status: backlog
+    repos: content,server
+    workflow: tdd
+    type: bug

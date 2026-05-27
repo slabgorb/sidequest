@@ -127,10 +127,10 @@ stories:
     status: done
     repos: server
     workflow: tdd
-    type: feature
-    review_verdict: approved
     completed: '2026-05-27'
     pr: 'https://github.com/slabgorb/sidequest-server/pull/470'
+    type: feature
+    review_verdict: approved
     branch: feat/61-followup-B-promote-sdk-usage-watcher-event
   - id: 61-followup-C
     title: 'Wire SessionRoom.close_store() into a real teardown path so reset_baselines() stops being dormant infrastructure'
@@ -350,4 +350,12 @@ stories:
       - test_zones_carry_cache_boundary_flag passes
       - narrator_constraints guardrail rides the uncached User zone, not cached system_blocks[0]
       - OTEL cache-attribution span confirms cached=False for the constraint zone
+    type: bug
+  - id: 61-16
+    title: Narrator output-format compaction drops required rule tokens for 8 scene types — tests/agents/test_61_12_output_format_compaction.py (scandal/trial/auction/dogfight/social_duel/negotiation/chase/ship_combat)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
     type: bug
