@@ -81,8 +81,8 @@ Runtime-generated images (portraits, scene illustrations, POI renders triggered 
 ## Workflow Tracking
 
 **Workflow:** tdd
-**Phase:** verify
-**Phase Started:** 2026-05-27T17:43:43Z
+**Phase:** review
+**Phase Started:** 2026-05-27T17:48:53Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -91,7 +91,8 @@ Runtime-generated images (portraits, scene illustrations, POI renders triggered 
 | red | 2026-05-27T15:44:33Z | 2026-05-27T17:26:45Z | 1h 42m |
 | green | 2026-05-27T17:26:45Z | 2026-05-27T17:42:44Z | 15m 59s |
 | spec-check | 2026-05-27T17:42:44Z | 2026-05-27T17:43:43Z | 59s |
-| verify | 2026-05-27T17:43:43Z | - | - |
+| verify | 2026-05-27T17:43:43Z | 2026-05-27T17:48:53Z | 5m 10s |
+| review | 2026-05-27T17:48:53Z | - | - |
 
 ## Delivery Findings
 
@@ -165,7 +166,7 @@ No upstream findings (setup phase).
 ## TEA Assessment
 
 **Tests Required:** Yes
-**Phase:** verify — RED confirmed (failing, ready for Dev)
+**Phase:** review — RED confirmed (failing, ready for Dev)
 
 **Earlier blocking findings:** RESOLVED by the Architect reconciliation (2026-05-27) —
 md5/sha256, disjoint-namespace AC6, and the daemon mid-refactor are all dispositioned in
@@ -350,7 +351,7 @@ level (disjoint-namespace audit).
 already-decided deferrals/improvements, not unaddressed drift.
 ## TEA Assessment (verify)
 
-**Phase:** verify
+**Phase:** review
 **Status:** GREEN confirmed (21/21 new tests; 36 render/rest/save-repo regression tests pass)
 
 ### Simplify Report
@@ -394,3 +395,80 @@ at unrelated lines); eslint clean; render/rest/save-repo regression 36/36 green.
   (good standalone chore). *Found by TEA during test verification.*
 
 **Handoff:** To Reviewer for code review.
+## Subagent Results
+
+| # | Specialist | Received | Status | Findings | Decision |
+|---|-----------|----------|--------|----------|----------|
+| 1 | reviewer-preflight | Yes | clean | 0 smells; 21/21 tests GREEN; lint clean on story files | N/A |
+| 2 | reviewer-edge-hunter | No | Skipped | disabled | Disabled via settings — assessed manually (see [EDGE]) |
+| 3 | reviewer-silent-failure-hunter | No | Skipped | disabled | Disabled via settings — assessed manually (see [SILENT]) |
+| 4 | reviewer-test-analyzer | No | Skipped | disabled | Disabled via settings — assessed manually (see [TEST]) |
+| 5 | reviewer-comment-analyzer | No | Skipped | disabled | Disabled via settings — assessed manually (see [DOC]) |
+| 6 | reviewer-type-design | No | Skipped | disabled | Disabled via settings — assessed manually (see [TYPE]) |
+| 7 | reviewer-security | Yes | findings | 6 (all med/low) | confirmed 6 (all downgraded to LOW), dismissed 0, deferred 0 |
+| 8 | reviewer-simplifier | No | Skipped | disabled | Disabled via settings — verify-phase simplify already applied 2 fixes (see [SIMPLE]) |
+| 9 | reviewer-rule-checker | No | Skipped | disabled | Disabled via settings — assessed manually (see [RULE]) |
+
+**All received:** Yes (2 enabled returned; 7 disabled via workflow.reviewer_subagents)
+**Total findings:** 6 confirmed (all LOW, non-blocking), 0 dismissed, 0 deferred
+
+## Reviewer Assessment
+
+**Verdict:** APPROVED
+
+**Data flow traced:** daemon render reply `r2_key` → `_run_render_inner` (asset_type from key `<kind>` segment, entity_ref from params) → `PgSaveRepository.append_asset_ledger` → `asset_ledger` row (parameterized, session-scoped) → `GET /api/sessions/{slug}/assets` resolves each row to a CDN `url` → `useAssetPreload` fetches on reconnect edge. Safe: every DB query is parameterized and carries `session_id = %s`; the endpoint 404s on unknown slug; no cross-session read path.
+
+**Pattern observed:** `PgAssetLedgerStore` faithfully mirrors `PgScrapbookStore` (session_tx writes, pooled reads, session_id predicate) — `sidequest/game/pg/asset_ledger.py`. Good consistency with the ADR-115 pg-store family.
+
+**Error handling:** render-path ledger write wrapped in try/except that logs `error` + emits `op=write_failed` watcher event (loud, not swallowed) and deliberately does not fail image delivery — `websocket_session_handler.py:3050`. Justified `noqa: BLE001` with comment.
+
+### Observations (subagent findings tagged + manual coverage for disabled lanes)
+
+- **[SEC]** 6 findings, all confirmed at **LOW**: (a) 404 echoes slug — matches 3 pre-existing sibling endpoints, codebase convention; (b) public unauth endpoint — entire REST surface is unauth by design (LAN server, trusted playgroup); (c) `encodeURIComponent(slug)` missing in the hook — cheap hardening, folds into AC5 follow-up; (d) UI soft-fail logs to console (not silent); (e) asset_type `or ""` fallback — see [SILENT]/[RULE]; (f) entity_ref in OTEL — watcher is a localhost GM tool, names in the GM panel are the intended operator view, not PII leakage.
+- **[SILENT]** (lane disabled — manual): render-hook `except` logs+emits a watcher event (not silent); UI `!resp.ok` path logs via `console.error` then soft-returns — acceptable for a best-effort preload. The `asset_type = … else params.get("tier") or ""` fallback is the one genuine silent-fallback smell — see [RULE]. **[LOW]**
+- **[EDGE]** (disabled — manual): boundaries covered by tests — unknown slug→404, known-session-no-assets→`[]`, no-`r2_key`→no write, reconnect rising edge, idempotent re-write, cross-session isolation, FK/PK violations. No unhandled path found.
+- **[TEST]** (disabled — manual): 21 tests incl. the mandatory production-path wiring test (`test_render_with_r2_key_writes_asset_ledger` drives `_run_render_inner`). Two RED-vacuous tests (404, no-write) noted by TEA — valid GREEN guards. Assertions check values, not truthiness. Good.
+- **[DOC]** (disabled — manual): docstrings present + accurate on the store, endpoint, hook; the no-hasattr rationale is commented. **[LOW]** stale: `epic-65.yaml` 65-2 *description* still carries the pre-reconciliation prose (SqliteStore/daemon_client/md5) — it's the original story text, not code; the context-story doc + deviations are authoritative. Non-blocking.
+- **[TYPE]** (disabled — manual): `SaveRepository` Protocol surface extended honestly (`session_id` property, `append_asset_ledger`, `list_asset_ledger`); `PgSaveRepository` satisfies it; pyright adds 0 new errors. `list_assets() -> list[dict]` is loosely typed but matches the codebase's pg-store return convention. **[LOW]**
+- **[SIMPLE]** (disabled — manual): verify-phase simplify already applied 2 fixes (CDN url resolution, dead hasattr-guard removal). The render-hook block is linear and readable. No over-engineering.
+- **[RULE]** (disabled — manual): python.md #11 parameterized SQL — ✓ all 4 queries; #1 no silent swallow — render-hook except is loud (✓); OTEL principle — `asset_ledger.write` watcher event present (✓); **No-Silent-Fallbacks `<critical>`** — the asset_type `… or ""` fallback is a CONFIRMED rule-matching finding, downgraded to **[LOW]** because the branch is unreachable with the real daemon (`upload_artifact` always emits a 5-segment key) and the tier-fallback is a documented Architect/Dev design choice. Recommend tightening (raise/skip-loud on a truly-unparseable key) as a fast-follow.
+
+### Rule Compliance
+
+| Rule (python.md / CLAUDE.md) | Instances checked | Verdict |
+|---|---|---|
+| #11 Parameterized SQL (no f-string) | append INSERT, list_assets SELECT, resolve_session_id, ensure_session | Compliant (all `%s`) |
+| #11 Input validation at boundary | REST slug → resolve_session_id → 404 | Compliant |
+| #1 No silent exception swallow | render-hook except (logs error + watcher event) | Compliant |
+| No-Silent-Fallbacks `<critical>` | asset_type key-parse fallback | LOW finding (unreachable branch; documented) — confirmed, not dismissed |
+| OTEL: subsystem decision emits span | `asset_ledger` write/write_failed watcher events | Compliant |
+| Session isolation (session_id predicate) | append, list_assets, REST resolution | Compliant |
+| Durable retention (no reaping) | no timer/TTL on ledger keys | Compliant |
+
+### Devil's Advocate
+
+Suppose this is broken. A malicious or confused caller hits `GET /api/sessions/<guess>/assets`: the endpoint is public and unauthenticated, so a slug-guesser learns a session's r2_keys (which encode world/session/kind/sha) and entity_refs (character/NPC names). Is that a breach? For a LAN game server with a trusted playgroup it is the same exposure as every sibling REST endpoint (encounter_events, games/{slug}) — consistent, deliberate, and the slug is high-entropy (date+world+mode). Not a new hole. A confused dev mounting the hook later passes a slug with a slash — `encodeURIComponent` is absent, so the fetch could land on a different same-origin route; mitigated because FastAPI `{slug}` won't match `/`, and the server resolves via DB lookup not filesystem. The daemon could send a malformed `r2_key`: asset_type then silently becomes the tier or `""` — a real data-quality smell, but `upload_artifact` provably emits the 5-segment artifact key, so the bad branch is dead today. A stressed DB: `session_tx` takes a per-session row lock and commits on clean exit; a write failure logs + emits + does not lose the image (correct priority — the player still sees their art). Race: two renders for the same r2_key upsert idempotently. The UI hook fired twice on a flapping connection: the rising-edge ref (`!wasConnected.current`) collapses it to one fetch per reconnect. Nothing here corrupts state or loses the player's image. The worst real outcome is an unlabeled ledger row on a daemon contract violation that cannot occur with current code. No Critical/High surfaces.
+
+### Deviation Audit
+
+(See `### Reviewer (audit)` under Design Deviations.)
+
+**Handoff:** To SM for finish-story.
+
+### Reviewer (audit)
+All logged deviations reviewed and stamped:
+- **TEA: AC6 has no RED test (descoped)** → ✓ ACCEPTED — AC6 is incoherent against disjoint R2 namespaces (Architect-verified); correctly deferred.
+- **TEA: two RED-vacuous tests** → ✓ ACCEPTED — both remain meaningful GREEN guards; agrees with author reasoning.
+- **Architect: drop md5/size_bytes; daemon out of scope** → ✓ ACCEPTED — sha256 is provably embedded in `r2_key` (`upload_artifact`, r2_writer.py:91); avoiding a redundant hash + in-flux daemon code is sound.
+- **Architect: AC6 deferred to follow-up** → ✓ ACCEPTED — disjoint namespaces + no R2-listing capability; cannot be built as a 65-1 extension.
+- **Architect: repos reduced to server+ui** → ✓ ACCEPTED — consequence of the above; branches retired cleanly.
+- **Dev: asset_type from r2_key `<kind>` segment** → ✓ ACCEPTED — key segment is ground truth; tier fallback documented (note: tighten the `or ""` tail — see LOW finding).
+- **Dev: test-fixture per-test-unique r2_keys** → ✓ ACCEPTED — correct; global PK + shared session-scoped test DB required it; no assertion weakened.
+- **Dev: SaveRepository Protocol gained session_id + ledger methods** → ✓ ACCEPTED — honest Protocol surface; satisfied by PgSaveRepository.
+- **Dev: AC5 app-wiring split to follow-up** → ✓ ACCEPTED — Doctor-approved (2026-05-27); ImageBus pure-reducer feed is a genuine separate design. SM must file the follow-up.
+
+### Reviewer (code review)
+- **Improvement** (non-blocking): Tighten asset_type derivation — raise/skip-loud on an r2_key that doesn't match `artifacts/<world>/<session>/<kind>/<sha>.<ext>` instead of falling back to `tier or ""`. Affects `sidequest/server/websocket_session_handler.py` (~line 3043). Unreachable with the current daemon; matches the No-Silent-Fallbacks rule. *Found by Reviewer during code review.*
+- **Improvement** (non-blocking): Add `encodeURIComponent(slug)` + an `onError` callback to `useAssetPreload`; fold into the AC5 app-wiring follow-up. Affects `sidequest-ui/src/hooks/useAssetPreload.ts`. *Found by Reviewer during code review.*
+- **Gap** (non-blocking): `epic-65.yaml` 65-2 *description* still carries pre-reconciliation prose (SqliteStore/daemon_client/md5/AC6); the context-story doc + deviations are authoritative, but the stale epic text could mislead. Affects `sprint/epic-65.yaml`. *Found by Reviewer during code review.*
+- **Reminder** (non-blocking): SM to file the AC5 app-wiring follow-up story ("Mount useAssetPreload in App + ImageBus preload feed, with wiring test; include encodeURIComponent + onError"). *Found by Reviewer during code review.*
