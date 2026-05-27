@@ -96,6 +96,27 @@ No upstream findings (setup phase).
 
 <!-- Agents: append findings below this line. Do not edit other agents' entries. -->
 
+### TEA (test design)
+- **Conflict** (blocking): The ledger `md5` column has no runtime source. The runtime
+  artifact uploader computes **sha256** (`hashlib.sha256(content_bytes).hexdigest()`) and
+  embeds it in the key; no md5 is computed anywhere on the render path. Affects
+  `sidequest-daemon/sidequest_daemon/media/r2_writer.py:91` and the ledger schema
+  (`asset_ledger.md5`) — column should reuse the existing sha256, not compute a second
+  hash. *Found by TEA during test design.*
+- **Conflict** (blocking): Runtime renders and authored pack assets occupy **disjoint R2
+  namespaces** — runtime → `artifacts/{world}/{session}/{kind}/{sha}.{ext}`; manifest/pack
+  → `genre_packs/...` (the pack uploader *requires* the `genre_packs/` prefix). Affects
+  `sidequest-daemon/.../r2_writer.py:196` and **AC6** (`scripts/r2_audit.py` ledger
+  cross-reference): comparing ledger keys against the manifest compares disjoint sets, so
+  every ledger row is spuriously "dangling" and orphan detection is meaningless as
+  specified. AC6 needs redefinition (e.g. cross-ref against the `artifacts/` R2 listing,
+  not the manifest) before it can be tested. *Found by TEA during test design.*
+- **Gap** (blocking): The daemon image render result is mid-refactor —
+  `sidequest-daemon/.../media/daemon.py` `dispatch_request` raises `NotImplementedError`
+  for the image tier ("inline in `_handle_client` until Task 12"). Adding md5/size to the
+  image render result (AC2) lands in code explicitly in flux; the wiring target is
+  unstable. *Found by TEA during test design.*
+
 ## Design Deviations
 
 None yet.
