@@ -20,6 +20,8 @@ import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 
+from scripts.r2_manifest import build_manifest_entry, write_manifest
+
 LFS_EXTENSIONS: frozenset[str] = frozenset(
     {".ogg", ".png", ".wav", ".mp3", ".jpg", ".jpeg", ".webp", ".flac"}
 )
@@ -92,6 +94,7 @@ def sync(
     bucket: str = "sidequest",
     dry_run: bool = False,
     files: list[Path] | None = None,
+    manifest_path: Path | None = None,
 ) -> dict[str, int]:
     """Upload LFS-tracked media to R2. Returns counts.
 
@@ -100,6 +103,11 @@ def sync(
     their location relative to ``content_root``) — every file must be a real,
     LFS-tracked media file under ``content_root`` or the run aborts (no silent
     skip, per CLAUDE.md).
+
+    If ``manifest_path`` is given, a committed-style manifest (one entry per
+    candidate file, keyed by its R2 key) is written atomically after the run —
+    even on a ``dry_run`` so the manifest can be regenerated without uploading.
+    See Story 65-1 / scripts/r2_manifest.py.
     """
     content_root = content_root.resolve()
     if not (content_root / "genre_packs").is_dir():
@@ -125,12 +133,15 @@ def sync(
     skipped = 0
     uploaded = 0
     bytes_uploaded = 0
+    manifest_entries: list[dict[str, object]] = []
 
     for path in candidates:
         rel = path.relative_to(content_root.resolve()).as_posix()
         key = rel  # 1:1 mirror, e.g. genre_packs/<genre>/audio/<f>.ogg
         size = path.stat().st_size
         local_md5 = _md5_of(path)
+        if manifest_path is not None:
+            manifest_entries.append(build_manifest_entry(path, content_root))
 
         if dry_run:
             logger.info("DRY would upload key=%s size=%d md5=%s", key, size, local_md5)
@@ -160,6 +171,9 @@ def sync(
         uploaded += 1
         bytes_uploaded += size
 
+    if manifest_path is not None:
+        write_manifest(manifest_entries, manifest_path)
+
     return {"uploaded": uploaded, "skipped": skipped, "bytes_uploaded": bytes_uploaded}
 
 
@@ -185,6 +199,15 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument("--log-file", type=Path, default=Path("/tmp/r2-sync.log"))
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=None,
+        help=(
+            "Write a committed r2_manifest.json (one entry per file, keyed by "
+            "R2 key) after the run. Pass e.g. <content-root>/r2_manifest.json."
+        ),
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(
@@ -197,7 +220,11 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     counts = sync(
-        args.content_root, bucket=args.bucket, dry_run=args.dry_run, files=args.files
+        args.content_root,
+        bucket=args.bucket,
+        dry_run=args.dry_run,
+        files=args.files,
+        manifest_path=args.manifest,
     )
     logger.info(
         "DONE uploaded=%d skipped=%d bytes=%d",
