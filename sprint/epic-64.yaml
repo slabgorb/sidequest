@@ -152,7 +152,8 @@ stories:
       Verify legacy (non-catalog) render path does not require params['negative_prompt'] before removing the script param. Run server+daemon+scripts test suites. NOTE overlap: story 65-3 sets negative_prompt: '' in pulp_noir pack+world visual_style.yaml on its own branch — expect a trivial merge conflict on those 2 files (resolve by taking the deletion).
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: content,server,daemon
     workflow: tdd
+    completed: '2026-05-28'
     type: refactor

@@ -124,9 +124,10 @@ stories:
       into every portrait" (added 2026-05-25).
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     repos: content
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
     branch: feat/65-3-pulp-noir-visual-style-cleanup
     session_file: .session/65-3-session.md
@@ -173,9 +174,10 @@ stories:
       5. Audit other packs/worlds for the same genre-flat portrait layout and relocate (or file follow-ups).
 
       Open question to resolve in design: exact runtime surface(s) that should display NPC portraits. Coordinate with reference-page slug-anchor convention (slugify name).
-    points: 5
+    points: 8
     priority: p2
-    status: backlog
+    status: done
     repos: content,server
     workflow: tdd
+    completed: '2026-05-28'
     type: refactor
