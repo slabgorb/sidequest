@@ -112,14 +112,16 @@ span.set_attribute("textpath_upright_flip", needs_upright_flip)
 ## Workflow Tracking
 
 **Workflow:** trivial (quick fix, no TDD ceremony)  
-**Phase:** implement (current)  
-**Phase Started:** 2026-05-28T04:37:22Z
+**Phase:** finish (current)  
+**Phase Started:** 2026-05-28T07:09:39Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
 |-------|---------|-------|----------|
 | setup | 2026-05-28 | 2026-05-28T04:37:22Z | 4h 37m |
-| implement | 2026-05-28T04:37:22Z | - | - |
+| implement | 2026-05-28T04:37:22Z | 2026-05-28T07:02:20Z | 2h 24m |
+| review | 2026-05-28T07:02:20Z | 2026-05-28T07:09:39Z | 7m 19s |
+| finish | 2026-05-28T07:09:39Z | - | - |
 
 ## Sm Assessment
 
@@ -166,7 +168,104 @@ Dev investigated then stopped at a clean boundary (context limit). Build to this
 
 ## Design Deviations
 
-None yet; will be recorded as implementation progresses.
+### Dev (implementation)
+- No deviations from spec.
+
+### Reviewer (audit)
+- No undocumented deviations found. Dev's design deviations entry (`No deviations from spec.`) → ✓ ACCEPTED by Reviewer: agrees with author reasoning. The implementation follows the spec in all material respects.
+
+## Subagent Results
+
+| # | Specialist | Received | Status | Findings | Decision |
+|---|-----------|----------|--------|----------|----------|
+| 1 | reviewer-preflight | Yes | clean | none | N/A |
+| 2 | reviewer-edge-hunter | Yes | Skipped | disabled | N/A | Disabled via settings |
+| 3 | reviewer-silent-failure-hunter | Yes | Skipped | disabled | N/A | Disabled via settings |
+| 4 | reviewer-test-analyzer | Yes | Skipped | disabled | N/A | Disabled via settings |
+| 5 | reviewer-comment-analyzer | Yes | Skipped | disabled | N/A | Disabled via settings |
+| 6 | reviewer-type-design | Yes | Skipped | disabled | N/A | Disabled via settings |
+| 7 | reviewer-security | Yes | clean | none | N/A |
+| 8 | reviewer-simplifier | Yes | Skipped | disabled | N/A | Disabled via settings |
+| 9 | reviewer-rule-checker | Yes | Skipped | disabled | N/A | Disabled via settings |
+
+**All received:** Yes (2 ran, 0 findings; 7 skipped per settings)
+
+## Dev Assessment
+
+**Implementation Complete:** Yes
+**Files Changed:**
+- `sidequest/orbital/render.py` — `_resolve_curve_along` now returns 5-tuple (adds midpoint); `_engraved_label_textpath` and `_emit_textpath_label` accept `needs_upright_flip/center_x/center_y`; `_render_annotation` passes flip flags from midpoint; strategy dispatch loop pre-computes upright_flip_by_body; wires flip into both OTEL span emission and `_emit_textpath_label` call.
+- `sidequest/telemetry/spans/chart.py` — `emit_chart_label_strategy` gains `textpath_upright_flip: bool = False` kwarg (AC5).
+- `tests/orbital/test_render_orrery_v2.py` — `TestUprightFlipADR094` class with 3 behavioral tests.
+- `tests/orbital/snapshots/*.svg` — 6 snapshots updated with `rotate(180 cx cy)` transforms on orbit ring labels.
+
+**Tests:** 20/20 passing for new + snapshot + callout suites; 313/313 full orbital suite (GREEN)
+**Branch:** feat/71-2-orrery-ring-label-adr094-upright-flip (pushed to origin)
+
+**OPEN ITEM resolved:** `(cx, cy)` source decision — computed geometrically from `_resolve_curve_along` return values: for `orbit_*` paths `midpoint=(cx, cy+ry)` (ellipse bottom, always far arc); for `body:` arc paths `midpoint=_polar_to_cartesian(semi_major_au, (from_deg+to_deg)/2, au_to_px)`. No string parsing of path_d required.
+
+**TRAP #1 handled:** SVG `transform-origin` is CSS-only and has no effect on `<text>`. Explicit `rotate(180 cx cy)` syntax used everywhere. No `transform-origin` in the SVG output.
+
+**TRAP #2 handled:** Flip strictly gated on `midpoint[1] > 0`; radial and callout strategy paths are untouched; upper-arc arc_belt (y < 0) tested and confirmed no transform.
+
+**Handoff:** To review (Colonel Potter)
+
+## Reviewer Assessment
+
+**Verdict:** APPROVED
+
+### Rule Compliance (Python lang-review checklist)
+
+Checked all 14 rules against changed `.py` files (`render.py`, `chart.py`, `test_render_orrery_v2.py`):
+
+1. **Silent exception swallowing** — No bare except, no swallowed exceptions in changed code. `_render_annotation` catches only `_CurveScopeMismatch` (unchanged). ✓
+2. **Mutable default arguments** — `needs_upright_flip: bool = False`, `center_x: float = 0.0`, `center_y: float = 0.0` are all immutable defaults. ✓
+3. **Type annotation gaps** — `_resolve_curve_along` return type updated to `tuple[str, str, str, float, tuple[float, float]]`. `_engraved_label_textpath` and `_emit_textpath_label` have typed new params. `emit_chart_label_strategy` kwarg typed `bool`. ✓
+4. **Logging coverage** — No logging in this module (SVG renderer). OTEL spans are the observability mechanism. ✓
+5. **Path handling** — No filesystem paths in changed code. ✓
+6. **Test quality** — `test_far_arc_flavor_label_has_rotate_transform`: asserts specific SVG attribute presence; `test_far_arc_flavor_label_rotates_around_own_center_not_origin`: asserts specific strings absent; `test_upper_arc_arc_belt_label_has_no_transform`: asserts content present AND no flip transform. No vacuous assertions. ✓
+7. **Resource leaks** — No file handles, connections, or locks in changed code. ✓
+8. **Unsafe deserialization** — No pickle/eval/yaml.load in changed code. ✓
+9. **Async pitfalls** — No async code in changed code. ✓
+10. **Import hygiene** — No new imports added. ✓
+11. **Input validation** — `center_x/center_y` are floats from internal math operations, not user input. ✓
+12. **Dependency hygiene** — No dependency changes. ✓
+13. **Fix-introduced regressions** — Checked. ✓
+14. **State cleanup ordering** — No lifecycle queues/buffers in changed code. ✓
+
+### Data Flow Traced
+
+SVG text element for orbit ring label: `chart.annotations[engraved_label].curve_along` → `_resolve_curve_along()` → `midpoint=(cx, cy+ry)` where `cy=0.0, ry>0` → `needs_flip=True` → `_engraved_label_textpath(..., needs_upright_flip=True, center_x=cx, center_y=ry)` → `elem["transform"] = f"rotate(180 {cx} {ry})"` — the rotation center is the label's own geometric midpoint, derived from internally-validated `BodyDef` geometry. No user input in the chain.
+
+### Observations
+
+[VERIFIED] **TRAP #1 — Rotation around label's own center:** Snapshots confirm `rotate(180 -0.0 333.33...)` pattern — `x=-0.0` is the eccentricity offset (zero for circular orbits), `y=333.33...` is `ry` (always > 0). Test `test_far_arc_flavor_label_rotates_around_own_center_not_origin` asserts `"rotate(180 0 0)"` and `"rotate(180 0.0 0.0)"` are absent. Evidence: `render.py:651 f"rotate(180 {center_x} {center_y})"` with `center_y = midpoint[1] = ry > 0`. Complies with TRAP #1 spec requirement. ✓
+
+[VERIFIED] **TRAP #2 — No upper-arc regression:** `test_upper_arc_arc_belt_label_has_no_transform` exercises an arc_belt with `epoch_phase_deg=75, arc_extent_deg=30` → `mid_deg=90` → `y = -r*sin(90°) = -r < 0` → `midpoint[1] < 0` → `needs_flip = False`. SVG contains no `rotate(180)`. Radial and callout code paths at lines 1912-1918 unchanged from base. ✓
+
+[VERIFIED] **OTEL attribute correctly gated:** `upright_flip_by_body` pre-computed at line 1858-1864; `emit_chart_label_strategy(..., textpath_upright_flip=upright_flip_by_body.get(d.body_id, False))` at line 1878. Non-textpath decisions default to `False`. TEXTPATH decisions use `tp_data[2][1] > 0` — same computation as rendering. Consistent. ✓
+
+[SEC][VERIFIED] **Security — no SVG injection:** `center_x` and `center_y` are Python `float` results of `math.cos`/`math.sin` on internally-validated `BodyDef.semi_major_au` values. No user-controlled input reaches these values. `textpath_upright_flip` OTEL attr is a pure bool (no sensitive data). Confirmed by security subagent: clean on all 6 rules checked. ✓
+
+[LOW] **Dead-code else branch** at `render.py:1910-1911`: `g.add(_emit_textpath_label(d, vp))` is unreachable — a body only gets TEXTPATH strategy when it's in `textpath_by_body`, so `tp_data is None` is impossible at that branch. Strictly speaking this is a silent no-flip fallback (soft violation of "No Silent Fallbacks"), but it replicates the pre-existing pre-fix behavior unconditionally. Non-blocking; does not introduce new behavior. Defer to a future cleanup chore.
+
+### Devil's Advocate
+
+Could this break? Consider: (1) An author creates a highly eccentric orbit (e = 0.95). The ellipse center shifts to `cx = -a*e*scale` — a large negative value. The midpoint is `(cx, ry) = (-0.95*a*scale, ry)`. The rotation is `rotate(180 {-big_negative} {ry})`. The label rotates 180° around the left-shifted midpoint. Is this correct? Yes — the ellipse path still starts at `(cx, cy-ry)`, passes through the right half at the widest extent, and reaches the bottom at `(cx, cy+ry)`. The 50% point is geometrically correct regardless of eccentricity (proven: the minor-axis tips split the ellipse into two arc-length-equal halves). (2) An arc_belt wraps 360° starting at an unusual angle. mid_deg calculation handles full-circle arcs via trig periodicity. (3) What if `arc_extent_deg = 0.001`? Circumference is essentially 0, textpath circumference check fails, TEXTPATH strategy never chosen, flip never applied. No crash. (4) What if both the flavor layer AND the strategy dispatch apply the flip to the same non-arc_belt body? The label renders twice on top of itself (slightly bolder), both with the correct flip. Cosmetically different but not broken — this is the pre-existing double-render design documented in `_arc_belt_bodies_with_textpath_annotation`. None of these scenarios reveal a correctness issue.
+
+**Pattern observed:** Geometric midpoint threading through `_resolve_curve_along` return tuple — clean, algebraically exact, no fragile string parsing. Evidence: `render.py:535` for orbit case, `render.py:570` for arc case.
+
+**Error handling:** Invalid `arc_extent_deg` (None) is guarded by existing `if body.arc_extent_deg is None: raise ValueError` at `render.py:548-556`. Malformed `curve_along` values raise `ValueError` that propagates up from `_resolve_curve_along`. Unchanged from pre-fix behavior.
+
+**Handoff:** To SM (Hawkeye Pierce) for finish-story
+
+## Delivery Findings
+
+### Dev (implementation)
+- No upstream findings during implementation.
+
+### Reviewer (code review)
+- No upstream findings during code review.
 
 ## Next Steps
 

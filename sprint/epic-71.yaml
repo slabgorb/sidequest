@@ -21,10 +21,13 @@ stories:
     title: Orrery ring label — apply ADR-094 upright-flip on far-arc tangent labels
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-ui
     workflow: trivial
+    completed: '2026-05-28'
     type: bug
+    review_verdict: approved
   - id: 71-3
     title: WS reconnect error banner auto-clears on successful reconnect/turn round-trip
     points: 2
