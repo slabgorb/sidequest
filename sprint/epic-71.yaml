@@ -54,3 +54,12 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: bug
+  - id: 71-7
+    title: Authored chassis crew silently skipped when chapter seeds placeholder PC
+    points: 3
+    priority: p1
+    status: done
+    repos: server
+    workflow: tdd
+    completed: '2026-05-27'
+    type: bug
