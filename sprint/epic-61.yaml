@@ -368,10 +368,13 @@ stories:
     title: Fix stale test_zones_carry_cache_boundary_flag — 61-10 promoted narrator_constraints to System/cached bucket (#434) but test still asserts User-bucket cached=False
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: server
     workflow: trivial
+    completed: '2026-05-28'
     type: bug
+    review_verdict: approved
   - id: 61-18
     title: Audit CONFRONTATION_TRIGGER_CONSTRAINT dead-prose on SDK narrator path — only injects on retired legacy backend (_maybe_register_legacy_guardrail SDK-gate); migrate to tool/cached-prose per ADR-111 or confirm Intent Router owns it
     points: 3
