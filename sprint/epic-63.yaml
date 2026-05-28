@@ -150,12 +150,13 @@ stories:
     title: Lore surface renders WORLD lore only — stop rendering genre-level lore (Keepers/Maw) + banner intro; resolve genre/world contradiction
     points: 3
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-05-27'
     repos: server,content
     workflow: tdd
+    completed: '2026-05-27'
     type: bug
     branch: feat/63-10-lore-surface-world-only
-    started: '2026-05-27'
   - id: 63-11
     title: Reference — suppress or author empty Beat-Vocabulary + Achievements sections (cross-pack)
     points: 1
