@@ -99,10 +99,12 @@ stories:
     title: Migrate dice-overlay-wiring-34-5 source-text wiring test to behavioral assertion
     points: 1
     priority: p3
-    status: backlog
+    status: in_progress
     repos: sidequest-ui
     workflow: trivial
     type: chore
+    branch: feat/71-9-migrate-dice-overlay-wiring-34-5-behavioral-assertion
+    started: '2026-05-28T19:50:02Z'
   - id: 71-10
     title: 'Peer-action transcript: anchor by exact round (add round to PlayerActionPayload) — replaces positional placement'
     points: 3
