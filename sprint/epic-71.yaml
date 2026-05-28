@@ -27,7 +27,8 @@ stories:
     workflow: trivial
     completed: '2026-05-28'
     type: bug
-    review_verdict: approved
+    review_verdict: rejected
+    review_findings: 'Snapshot regression: coyote_star_callouts_system_t0.svg not re-baselined. test_coyote_star_callouts_byte_identical fails (1 failed, 315 passed). Fix: re-generate snapshot. All other checks pass — TRAP #1, TRAP #2, AC5 all verified correct.'
   - id: 71-3
     title: WS reconnect error banner auto-clears on successful reconnect/turn round-trip
     points: 2
@@ -65,10 +66,14 @@ stories:
     title: Narration POV person-agreement — anchor-PC bare-possessive + mixed-person slips
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28T07:17:35Z'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-05-28'
     type: bug
+    review_findings: "NPC-name-after-connector regression: Pass 8/9 adverb-skip uses only _is_pronoun(word1) guard; does not protect NPC proper names. 'Carl nods, Maria steps forward.' → 'You nod, Maria step forward.' Fix: add word1[0:1].islower() to adverb-skip guard in both _and_verb_sub and _comma_verb_sub. Add 2 tests."
+    review_verdict: approved
   - id: 71-7
     title: Authored chassis crew silently skipped when chapter seeds placeholder PC
     points: 3
