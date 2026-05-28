@@ -94,8 +94,8 @@ Per CLAUDE.md, every backend fix touching narration/POV must emit OTEL watcher e
 ## Workflow Tracking
 
 **Workflow:** tdd
-**Phase:** review
-**Phase Started:** 2026-05-28T04:15:03Z
+**Phase:** spec-reconcile
+**Phase Started:** 2026-05-28T04:27:35Z
 
 ### Phase History
 | Phase | Started | Ended | Duration |
@@ -128,6 +128,11 @@ Branch `feat/71-5-mp-opening-narration-pov-swap` off sidequest-server develop (0
 - **Finding 2 — RESOLVED (NO stamp)**: the cold-open seed NARRATION is a bare `NarrationPayload(text=...)` with NO `_visibility` sidecar (websocket_session_handler.py:2476). Architect REVISED ruling (2026-05-28) supersedes the earlier "stamp the seed" instruction: **Dev must NOT stamp a synthetic anchor.** Generic seeds are scene-hooks with no PC reference → `_apply_pov_swap` correctly NO-OPS. Tests (commit 0c9cecd) match production: the canned seed carries NO sidecar and asserts it is UNCHANGED; only the driver-anchored PROSE card swaps. *Found by TEA; resolved by Architect.*
 - **Finding 3 — Question** (non-blocking): I recommended a thin `_pov_swap_opening_for_driver(messages, *, driver_player_id, view, snapshot)` helper as the testable seam; team-lead directed the integration harness instead. The test now drives `_chargen_confirmation` end-to-end. If Dev extracts such a helper anyway, a faster unit test could supplement. *Found by TEA during test design.*
 
+### Reviewer (code review)
+- **Improvement** (non-blocking, hygiene): the GREEN report claimed "zero new pyright" but the branch adds **+15 new pyright errors, ALL in the two NEW test files** (production `_pov_swap_opening_for_driver` is pyright-clean — confirmed). Breakdown: (a) 2 `reportCallIssue` on `visibility_sidecar=` in both test files — these are **FALSE POSITIVES** from the pydantic `Field(alias="_visibility")` + populate-by-name pattern (`messages.py:87`); pyright models the init param as the alias `_visibility`, but the runtime field name is `visibility_sidecar` (proven: helper units pass AND the swap fires AND `payload.visibility_sidecar` is read by name). (b) ~13 e2e/test type-looseness errors (psycopg `execute` template types, `reportOptionalMemberAccess` on un-narrowed None). Recommend a test-file pyright cleanup (`# pyright: ignore[call-arg]` on the alias calls; narrow the e2e Optionals). Affects `tests/server/test_opening_pov_swap_71_5.py` + `tests/server/test_pov_swap_opening_helper_71_5.py`. Non-blocking: pyright is not in the aggregate gate (`check-all` = lint + test), production is clean, and the codebase carries a 2518-error pyright baseline. *Found by Reviewer during code review.*
+- **No firewall/regression finding.** Independently traced the driver-vs-peer paths and ran the build: driver gets `driver_copies` (swapped) via `out.extend` (chargen_mixin:1578); peers get the untouched original `opening_messages` via `room.broadcast` (1593-1594); the helper never mutates inputs (fresh JSON-roundtrip dicts, `model_copy` for swapped, originals passed through for no-swap). Peer bytes byte-identical to pre-diff. reviewer-security concurs (no aliasing). *Confirmed by Reviewer during code review.*
+- **Green-report claim corrections** (accuracy, non-blocking): (1) the e2e `test_opening_block_swaps_driver_card_and_broadcasts_raw_to_peers` SKIPS without PG (not "ran" in a PG-less env) — TEA correctly logged this as an environment note; **I provisioned PG (`just pg-up`) and ran it independently → 1 passed**, so the wiring IS verified. (2) `ruff check .` exits 1 with 2 errors (`tests/dungeon/conftest.py` I001, `test_arc_embedding_durability.py` UP037) — both **pre-existing and outside the 71-5 diff**; the three 71-5 files are ruff-clean. (3) full-suite pass count is env-dependent (PG-less skips); no new failures attributable to 71-5; `test_chargen_complete_no_hp_leak` confirmed failing identically on develop. *Verified by Reviewer during code review.*
+
 ## Design Deviations
 
 ### TEA (test design)
@@ -154,6 +159,28 @@ Branch `feat/71-5-mp-opening-narration-pov-swap` off sidequest-server develop (0
   - Rationale: simpler, pyright-clean, and correct under the confirmed invariant.
   - Severity: trivial
   - Forward impact: none.
+
+### Reviewer (audit)
+- **TEA: opening mocked / fire forced / MP room rebuilt** → ✓ ACCEPTED. `_chargen_confirmation` has no isolatable seam; the canned anchored opening + forced fire exercise the real opening-broadcast block (driver `out` swap + peer `room.broadcast`), which IS the fix's locus. I independently ran the e2e with PG → PASS, so the harness genuinely verifies the wiring.
+- **TEA: requires Postgres (skips when unset)** → ✓ ACCEPTED (environment note, not a spec deviation). I verified by provisioning PG and running it green; the skip is clean and conditional, not a hidden failure.
+- **Dev: driver identity = `sd.player_id` (not handler `player_id`)** → ✓ ACCEPTED. Anchor must match the seated driver whose PC == narration `anchor_pc`; reviewer-security confirmed `sd.player_id` is typed `str` (session_state.py:189) so `or player_id` is purely defensive, and `player_seats` (bound at chargen_mixin:1303) is authoritative at opening time. Correct.
+- **Dev: view pid→PC from `player_seats` only (removed room-slot fallback)** → ✓ ACCEPTED. Simpler, correct under the seat==core.name==anchor invariant, and avoids 3 needless pyright errors. Good call.
+- No undocumented deviations found.
+
+### Architect (reconcile)
+
+Reviewed every prior deviation entry (TEA ×2, Dev ×2, Reviewer ×3) against the shipped code at `7477bb3`. All are accurate, substantive, and match what I verified independently at spec-check — no corrections. The implementation reconciles with the story context, my pinned Seam-A contract, the driver-only single-anchor scope, and ADR-036 / 49-8 / 104 / 105.
+
+- **No additional deviations found.** The fix is the targeted Option-A seam exactly as ruled: `_pov_swap_opening_for_driver` reuses `_apply_pov_swap` + `_pronouns_for_pc` (no reimplemented POV logic), swaps only the driver's separate copy, leaves the peer `room.broadcast` of the original `opening_messages` byte-identical, strips the consumed `_visibility` on the swapped card, and emits `opening.narration_pov_swapped` only on `swap_count > 0`. Firewall intact (private `NARRATION_SEGMENT`s are not in `opening_messages`); no double-swap; anchor identity (`sd.player_id`) correct under the seat==core.name==anchor_pc invariant.
+
+**Three pre-adjudicated items — confirmed they reconcile (no re-litigation):**
+1. **LOW: +15 pyright errors, all in the two NEW test files** (production helper is pyright-clean) — 2 are `visibility_sidecar`/`_visibility` alias false-positives (`Field(alias=...)` + populate-by-name), ~13 are test type-looseness. Filed as **71-14** (test-file pyright cleanup; pyright is not in `check-all`). Reconciles: no production type defect.
+2. **My two earlier non-blocking notes** — universal `_visibility` egress-strip (currently swap-path only; peer/non-swapped wire still carries it, PRE-EXISTING) → **71-13**; 0-replacement-rebuild → accepted/harmless. Reconciles.
+3. **Green-report accuracy gaps** (repo-wide ruff has 2 pre-existing errors outside the diff; pyright +15 is test-only; e2e skips without PG) — Potter corrected them and independently ran the e2e green with PG. Reconciles: production clean, no functional defect, wiring verified.
+
+**Scope / AC accountability:** all 4 ACs DONE for the chartered driver-only scope. No ACs deferred *within* 71-5. The broader **anchor-is-a-peer live-broadcast bug** (peers who ARE the classified anchor see raw 3rd-person live, swap only on reconnect) is explicitly OUT of 71-5's scope and tracked as **71-13** (route the opening through `emit_event(author_player_id)` for uniform per-recipient POV + perception fanout + event-sourcing + the universal egress-strip). That is the correct home for it, not a 71-5 gap.
+
+**Reconcile verdict:** Reconciles clean. Targeted seam as ruled, firewall intact, anchor identity correct, peers unregressed, follow-ups (71-13, 71-14) properly filed. Clear to finish.
 
 ## Dev Assessment
 
@@ -214,3 +241,75 @@ Branch `feat/71-5-mp-opening-narration-pov-swap` off sidequest-server develop (0
 **Findings 2 & 3 resolved:** Finding 2 (cold-open seed) RULED — seed is a natural no-op, no stamping (AC1 updated). Finding 3 (helper seam) APPROVED — tests pinned to the helper.
 
 **Handoff:** To Dev for GREEN.
+
+## Subagent Results
+
+Toggles (`workflow.reviewer_subagents`): only `preflight` + `security` enabled; the other seven disabled, pre-filled Skipped.
+
+| # | Specialist | Received | Status | Findings | Decision |
+|---|-----------|----------|--------|----------|----------|
+| 1 | reviewer-preflight | Yes | findings | helper units 5/5 PASS; e2e SKIPPED (no-PG env) → **Reviewer re-ran with PG: 1 PASS**; ruff 2 pre-existing unrelated; pyright +15 in test files (prod clean); no new suite failures | confirmed: build clean for 71-5; corrected 3 inaccurate green-report claims |
+| 2 | reviewer-edge-hunter | Skipped | disabled | N/A | Disabled — self-assessed (no-swap/anchor≠driver/generic-seed paths) |
+| 3 | reviewer-silent-failure-hunter | Skipped | disabled | N/A | Disabled — self-assessed (no swallowed errors; OTEL gated swap_count>0) |
+| 4 | reviewer-test-analyzer | Skipped | disabled | N/A | Disabled — self-assessed (5 unit valid + e2e ran green; pyright alias false-positive resolved) |
+| 5 | reviewer-comment-analyzer | Skipped | disabled | N/A | Disabled — self-assessed (comments accurate, cite ADR/Architect) |
+| 6 | reviewer-type-design | Skipped | disabled | N/A | Disabled — self-assessed (prod pyright-clean; test-file noise) |
+| 7 | reviewer-security | Yes | clean | 0 (no aliasing, sidecar consumed, anchor correct, OTEL leak-free) | confirmed firewall/no-regression CLEAN |
+| 8 | reviewer-simplifier | Skipped | disabled | N/A | Disabled — self-assessed (reuses helpers; OTEL double-compute INFO) |
+| 9 | reviewer-rule-checker | Skipped | disabled | N/A | Disabled — Rule Compliance by Reviewer |
+
+**All received:** Yes (2 enabled returned; 7 disabled, pre-filled Skipped)
+**Total findings:** 0 blocking. 1 LOW (test-file pyright +15, prod clean) + 3 green-report accuracy corrections. Firewall/no-regression CLEAN (independently traced + security concur + e2e ran green with PG).
+
+## Reviewer Assessment
+
+**Verdict:** APPROVED
+
+The load-bearing risk — regressing peers or double-swapping while adding the driver's own POV swap — is cleared. I traced both paths, ran the build (including provisioning PG to execute the e2e that the preflight env skipped), and confirmed the production code is correct. The GREEN report carried three inaccurate claims, but every one is an environment/hygiene matter, not a functional 71-5 defect — and my independent verification ultimately vindicates the code.
+
+**Dispatched subagent coverage (tags):**
+- `[SEC]` reviewer-security (enabled): CLEAN — no aliasing (driver copy independent of broadcast objects), `_visibility` consumed-not-leaked on the driver's swapped card, anchor identity correct (`sd.player_id` typed `str`, `player_seats` authoritative), OTEL emits ids/counts/lengths only (no prose/PII), gated `swap_count>0`.
+- `[EDGE]` (disabled — self-assessed): no-swap branch passes the ORIGINAL object through (peer-safe); anchor≠driver → no-op (tested); generic seed (no sidecar) → no-op (tested). The `swapped_dict is raw_dict` identity check correctly distinguishes swap from no-op.
+- `[SILENT]` (disabled — self-assessed): no swallowed errors in the helper; OTEL fires only on real swaps.
+- `[TEST]` (disabled — self-assessed): 5 helper units VALID (proven: swap fires + sidecar stripped, accessed by field name) + 1 e2e wiring (driver swaps, peers raw) — **I ran the e2e with PG: PASS**. The `visibility_sidecar` pyright errors are alias false-positives, NOT vacuous tests.
+- `[DOC]` (disabled — self-assessed): helper docstring accurate (Architect seam, reuse, consumed-not-leaked, OTEL gating); comments cite ADR-036/105 and the seat==core.name==anchor invariant correctly.
+- `[TYPE]` (disabled — self-assessed): production `_pov_swap_opening_for_driver` is pyright-clean. The +15 new errors are TEST-file only (2 alias false-positives + e2e type-looseness) — LOW hygiene, see Delivery Findings.
+- `[SIMPLE]` (disabled — self-assessed): reuses `_apply_pov_swap`/`_pronouns_for_pc`/`swap_to_second_person` — no reimplemented POV logic. One INFO: the OTEL swap-count is re-derived by a second `swap_to_second_person` call (lines 173-177) — deliberate/documented (telemetry-only), slightly redundant; acceptable.
+- `[RULE]` (disabled — self-assessed): see Rule Compliance.
+
+### No-regression trace (the load-bearing check) — VERIFIED
+
+`opening_messages` (from `_run_opening_turn_narration`) → `driver_copies = _pov_swap_opening_for_driver(opening_messages, driver_player_id=(sd.player_id or player_id), view=player_seats, snapshot)` (chargen_mixin:1572-1577) → `out.extend(driver_copies)` (1578, the DRIVER's swapped local return) → peers get the UNTOUCHED original `opening_messages` via `for _msg in opening_messages: room.broadcast(_msg, exclude_socket_id=self._socket_id)` (1593-1594). The helper never mutates inputs: fresh `json.loads(payload.model_dump_json())` dict per message; no-swap → original object passed through; swap → `model_copy(update={payload})` fresh copy with `_visibility` popped. **Driver gets exactly one swap; peer broadcast bytes are byte-identical to pre-diff; no double-swap.** reviewer-security independently confirmed the aliasing safety; the e2e (`...broadcasts_raw_to_peers`, which I ran green) asserts it end-to-end.
+
+### OTEL (doctrine) — reachable, not dead
+
+`opening.narration_pov_swapped` (`_watcher_publish`, chargen_mixin:190-202) fires only when `total_swap_count>0`, with 6 attrs (driver_player_id, anchor_pc, anchor_pronouns, swap_count, original/swapped lengths). Reachable from production: the helper is called at line 1572 inside the real `_should_fire_opening_narration` block — exercised by the e2e (`test_watcher_event_emitted_with_attrs_when_swap_fires` unit + the e2e). The GM panel can verify the swap fired. CLAUDE.md OTEL principle satisfied.
+
+### Rule Compliance
+
+Python lang-review (`.pennyfarthing/gates/lang-review/python.md`):
+| # | Rule | Verdict |
+|---|------|---------|
+| 1 | Silent exceptions | PASS — no try/except in the helper |
+| 2 | Mutable defaults | PASS — none |
+| 3 | Type annotations | PASS — helper fully annotated (`-> list[Any]`, kw-only typed) |
+| 6 | Test quality | PASS — specific assertions (swapped text, stripped sidecar, OTEL attrs, no-op cases); e2e behavioral. The alias pyright noise is a false-positive, not a vacuous test |
+| 8 | Unsafe deser | N/A — `json.loads` on the model's own `model_dump_json()` (trusted, self-produced) |
+| 11 | Input validation / leak | PASS — sidecar consumed-not-leaked; OTEL logs no prose |
+| 4,5,7,9,10,12,13,14 | (logging/path/resource/async/import/deps/fix-regress/state-order) | N/A or PASS — none implicated |
+
+Project rules (`sidequest-server/CLAUDE.md`): No Silent Fallbacks — PASS. No Stubbing — PASS. Wire Up What Exists / Don't Reinvent — PASS (reuses the existing swap+pronoun helpers; this is the whole point of the fix). Verify Wiring — PASS (helper called from the real opening block; e2e proves it, run green with PG). Every Test Suite Needs a Wiring Test — PASS (the e2e). OTEL Observability — PASS (the new watcher emit; doctrine explicitly requires it for a narration-subsystem fix, and it's present + reachable).
+
+### Devil's Advocate
+
+Hardest attack — **regress peers / leak.** The broadcast loop feeds peers the original `opening_messages`, which the helper provably never mutates (fresh dicts, model_copy, originals passed through on no-op). Peers can't get the driver-anchored swap; can't double-swap (projection re-anchors per peer independently; live broadcast is raw single-anchor, correct per TEA Finding 1). **Vacuous-test attack:** the `visibility_sidecar` pyright error tempted a "tests don't really exercise the sidecar" conclusion — but I proved the opposite: the swap assertions fire (sidecar populated + serialized as `_visibility`) and the strip is read by field name. The pyright error is alias friction, not a vacuity. **Anchor-confusion attack:** anchor identity is the seated driver's pid against `player_seats`; an anchor≠driver card no-ops (tested). **Dead-OTEL attack:** the emit is reachable from the real opening block and e2e-exercised, gated on swap_count>0. **Env-masking attack (the real one):** the green report claimed the e2e ran when the CI-like env skips it — so I provisioned PG and ran it myself rather than trust the claim; it passes. Nothing the devil surfaced is a functional defect. The only real residue is test-file pyright hygiene (LOW).
+
+### Non-blocking observations
+- **[LOW]** +15 new pyright errors in the two new test files (production clean). 2 are `visibility_sidecar` alias false-positives; ~13 are e2e/test type-looseness. Recommend test-file cleanup. Not in the aggregate gate.
+- **[INFO]** OTEL swap-count re-derived via a second `swap_to_second_person` call — telemetry-only, deliberate, slightly redundant.
+- **[INFO]** GREEN-report claim corrections (e2e skips without PG — I ran it green with PG; ruff repo-wide has 2 pre-existing unrelated errors; pyright +15 test-only). Accuracy, not 71-5 defects.
+- Pre-existing `_visibility` egress leak on peer/non-swapped cards → folded into 71-13 (scoped out, acknowledged).
+
+**Data flow traced:** narrator opening → driver: helper swaps anchored card (2nd person), strips sidecar → `out` → driver's socket; peers: original messages → `room.broadcast` (raw 3rd-person, single-anchor correct). Safe at every hop.
+
+**Handoff:** APPROVED → Architect for spec-reconcile → finish. Recommend a quick test-file pyright cleanup (non-blocking) and noting the e2e requires PG to run.

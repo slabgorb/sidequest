@@ -51,11 +51,13 @@ stories:
     title: MP opening narration — POV-swap the driving player's own card (not raw-bypass)
     points: 3
     priority: p2
-    status: in_review
+    status: done
     started: '2026-05-27'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
+    review_verdict: approved
   - id: 71-6
     title: Narration POV person-agreement — anchor-PC bare-possessive + mixed-person slips
     points: 2
@@ -121,3 +123,11 @@ stories:
     repos: sidequest-server
     workflow: tdd
     type: bug
+  - id: 71-14
+    title: Test-file pyright cleanup for 71-5 — +13 type-looseness in opening-POV test files + 2 visibility_sidecar alias false-positives (pyright-ignore)
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore
