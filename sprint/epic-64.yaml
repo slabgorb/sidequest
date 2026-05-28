@@ -119,9 +119,11 @@ stories:
     type: bug
   - id: 64-10
     title: Live pack content validation failing — tests/cli/validate/test_pack_validator.py::TestContentValidation::test_all_live_packs_pass_content_validation
+    description: "RESOLVED BY 64-5 (no separate work). The cited test test_all_live_packs_pass_content_validation was failing on the AC2 archetype class/race violations (Frontier/Half-Orc/Detective) in space_opera, heavy_metal/evropi, neon_dystopia. 64-5's cross-reference lint surfaced them and the Keith-approved remaps (Frontier->Colonial, Half-Orc->Human, Detective->Solo, content PR #274) fixed them. Test verified passing 2026-05-28 (1 passed). No PR of its own."
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: content,server
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
