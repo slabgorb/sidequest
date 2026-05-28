@@ -342,24 +342,27 @@ stories:
     type: bug
   - id: 61-15
     title: Prompt-cache attribution — narrator_constraints guardrail rides cached system block
-    description: 'tests/agents/test_prompt_cache_attribution_otel.py::test_zones_carry_cache_boundary_flag fails: narrator_constraints section reports cached=True, expected False. A User-bucket guardrail is attached to cached system_blocks[0] so it inherits the cache-boundary flag instead of riding the uncached User zone. Fix the zone assignment so the constraint carries cached=False.'
+    description: 'CLOSED 2026-05-28 (canceled, superseded). Premise inverted by 61-10 (#434), which deliberately promoted narrator_constraints to STABLE_SECTION_NAMES (System/cached bucket) because it is byte-static prose with no runtime interpolation (bucket.py:71). This story''s ''fix the code to carry cached=False'' would REVERT that optimization. The failing test test_zones_carry_cache_boundary_flag is stale on the TEST side, not the code; the correct fix lives in 61-17. ORIGINAL: tests/agents/test_prompt_cache_attribution_otel.py::test_zones_carry_cache_boundary_flag fails: narrator_constraints reports cached=True, expected False. A User-bucket guardrail is attached to cached system_blocks[0] so it inherits the cache-boundary flag instead of riding the uncached User zone. Fix the zone assignment so the constraint carries cached=False.'
     points: 2
     priority: p2
-    status: backlog
+    status: canceled
     repos: server
     workflow: tdd
     acceptance_criteria:
       - test_zones_carry_cache_boundary_flag passes
       - narrator_constraints guardrail rides the uncached User zone, not cached system_blocks[0]
       - OTEL cache-attribution span confirms cached=False for the constraint zone
+    completed: '2026-05-28'
     type: bug
   - id: 61-16
     title: Narrator output-format compaction drops required rule tokens for 8 scene types — tests/agents/test_61_12_output_format_compaction.py (scandal/trial/auction/dogfight/social_duel/negotiation/chase/ship_combat)
+    description: 'CLOSED 2026-05-28 (done, no separate work). Resolved by 61-14 (test(61-14): retarget stale confrontation-type guardrail tokens, #474). The cited test tests/agents/test_61_12_output_format_compaction.py is fully green (31 passed 2026-05-28); all 8 scene types (scandal/trial/auction/dogfight/social_duel/negotiation/chase/ship_combat) are covered by the parametrized test_required_rule_token_still_present and pass. No PR of its own.'
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
   - id: 61-17
     title: Fix stale test_zones_carry_cache_boundary_flag — 61-10 promoted narrator_constraints to System/cached bucket (#434) but test still asserts User-bucket cached=False
