@@ -127,10 +127,13 @@ stories:
     title: MP opening live-broadcast bypasses emit_event — route opening through emit_event(author_player_id) for uniform per-recipient POV + perception fanout + event-sourcing (anchor-peer live-swap + visible_to private-segment leak)
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-28T09:44:46Z'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
+    review_verdict: approved
   - id: 71-14
     title: Test-file pyright cleanup for 71-5 — +13 type-looseness in opening-POV test files + 2 visibility_sidecar alias false-positives (pyright-ignore)
     points: 1
