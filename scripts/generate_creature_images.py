@@ -58,13 +58,12 @@ def collect_creatures(genre_dir: Path) -> list[dict]:
     return creatures
 
 
-def compose_prompt(creature: dict, visual_style: dict) -> tuple[str, str, str, int]:
-    """Compose subject description, CLIP prompt, negative prompt, and seed.
+def compose_prompt(creature: dict, visual_style: dict) -> tuple[str, str, int]:
+    """Compose subject description, CLIP prompt, and seed.
 
     Returns the subject (not a pre-composed prompt). The daemon's PromptComposer
     handles style injection via art_style, visual_tag_overrides, and LoRA.
     """
-    negative = visual_style.get("negative_prompt", "")
     base_seed = visual_style.get("base_seed", 42)
 
     description = creature.get("description", "")
@@ -88,7 +87,7 @@ def compose_prompt(creature: dict, visual_style: dict) -> tuple[str, str, str, i
 
     seed = deterministic_seed(f"creature-{creature['genre']}-{creature['id']}", base_seed)
 
-    return subject, clip, negative, seed
+    return subject, clip, seed
 
 
 def main():

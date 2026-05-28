@@ -70,13 +70,12 @@ def collect_characters(genre_dir: Path) -> list[dict]:
     return characters
 
 
-def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, str, int]:
-    """Compose subject description, CLIP prompt, negative prompt, and seed.
+def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, int]:
+    """Compose subject description, CLIP prompt, and seed.
 
     Returns the subject (not a pre-composed prompt). The daemon's PromptComposer
     handles style injection via art_style, visual_tag_overrides, and LoRA.
     """
-    negative = visual_style.get("negative_prompt", "")
     base_seed = visual_style.get("base_seed", 42)
 
     parts = [f"{char['name']}, {char['role']}."]
@@ -95,7 +94,7 @@ def compose_prompt(char: dict, visual_style: dict) -> tuple[str, str, str, int]:
     seed_key = f"{char['genre']}:{char['world']}:{char['name']}:portrait"
     seed = deterministic_seed(seed_key, base_seed)
 
-    return subject, clip, negative, seed
+    return subject, clip, seed
 
 
 async def main() -> None:

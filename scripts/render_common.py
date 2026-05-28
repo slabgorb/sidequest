@@ -51,7 +51,7 @@ def load_visual_style(
 ) -> dict:
     """Load visual_style.yaml — genre-level base, world-level overrides on top.
 
-    Genre-level provides the base style (positive_suffix, negative_prompt,
+    Genre-level provides the base style (positive_suffix,
     preferred_model, LoRA config). World-level can override or extend with
     world-specific fields (style_prompt, color_palette, etc.). The merge
     ensures world overrides don't lose genre-level rendering fields.
@@ -266,7 +266,6 @@ async def send_render(
     tier: str,
     positive: str,
     clip: str,
-    negative: str,
     seed: int,
     steps: int = 15,
     *,
@@ -292,9 +291,14 @@ async def send_render(
     """
     reader, writer = await asyncio.open_unix_connection(str(SOCKET_PATH))
 
+    # No negative_prompt is sent: Z-Image ignores negatives at
+    # guidance_scale=0, and for catalog-composed renders the daemon
+    # overwrites any config-supplied negative with its own runtime
+    # _BASE_NEGATIVES (daemon.py: params["negative_prompt"] =
+    # composed.negative_prompt). The zimage worker treats an absent
+    # negative_prompt as None. Story 64-11 removed the dead config field.
     params: dict = {
         "tier": tier,
-        "negative_prompt": negative,
         "seed": seed,
         "fidelity": fidelity,
     }
@@ -442,7 +446,7 @@ async def render_batch(
 
     Args:
         items: List of dicts, each with 'genre', 'world', 'name', '_visual_style'.
-        compose_fn: Function(item, visual_style) -> (positive, clip, negative, seed).
+        compose_fn: Function(item, visual_style) -> (positive, clip, seed).
         tier: Renderer tier ('portrait', 'landscape', etc.).
         image_subdir: Subdirectory under images/ ('portraits', 'poi', etc.).
             When ``image_subdir == "poi"``, output is auto-bridged to the
@@ -496,7 +500,7 @@ async def render_batch(
 
     for i, item in enumerate(items, 1):
         visual_style = item.pop("_visual_style")
-        positive, clip, negative, seed = compose_fn(item, visual_style)
+        positive, clip, seed = compose_fn(item, visual_style)
 
         suffix = visual_style.get("positive_suffix", "")
         full_positive = f"{positive}, {suffix}" if suffix else positive
@@ -590,8 +594,6 @@ async def render_batch(
                 print(f"  {full_positive}")
                 print("\nCLIP prompt:")
                 print(f"  {clip}")
-                print("\nNegative prompt:")
-                print(f"  {negative}")
             print(f"\nOutput: {out_path}")
             continue
 
@@ -599,7 +601,7 @@ async def render_batch(
             lora_paths, lora_scales = resolve_lora_args(visual_style)
             if use_catalog:
                 result = await send_render(
-                    tier, "", "", negative, seed, steps,
+                    tier, "", "", seed, steps,
                     subject=catalog_subject,
                     genre=item["genre"],
                     world=item["world"],
@@ -610,7 +612,7 @@ async def render_batch(
                 )
             else:
                 result = await send_render(
-                    tier, full_positive, clip, negative, seed, steps,
+                    tier, full_positive, clip, seed, steps,
                     lora_paths=lora_paths,
                     lora_scales=lora_scales,
                     variant=visual_style.get("preferred_model", ""),

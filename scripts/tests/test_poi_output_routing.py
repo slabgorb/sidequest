@@ -35,9 +35,9 @@ SERVER_COVER_POI_REL_TEMPLATE = (
 )
 
 
-def _stub_compose(item: dict, visual_style: dict) -> tuple[str, str, str, int]:
+def _stub_compose(item: dict, visual_style: dict) -> tuple[str, str, int]:
     """Minimal compose_fn — render_batch only needs it to not raise in dry_run."""
-    return ("subject", "clip", "negative", 42)
+    return ("subject", "clip", 42)
 
 
 def _poi_item(*, genre: str, world: str, name: str = "Hakone Gate") -> dict:
@@ -52,7 +52,6 @@ def _poi_item(*, genre: str, world: str, name: str = "Hakone Gate") -> dict:
         "catalog_ref": f"where:{world}/{slugify(name)}",
         "_visual_style": {
             "positive_suffix": "",
-            "negative_prompt": "",
             "base_seed": 42,
         },
     }
@@ -70,7 +69,6 @@ def _portrait_item(*, genre: str, world: str, name: str = "Old Mayor") -> dict:
         "catalog_ref": "",
         "_visual_style": {
             "positive_suffix": "",
-            "negative_prompt": "",
             "base_seed": 42,
         },
     }

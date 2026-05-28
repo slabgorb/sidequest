@@ -79,14 +79,13 @@ def collect_pois(genre_dir: Path) -> list[dict]:
     return pois
 
 
-def compose_prompt(poi: dict, visual_style: dict) -> tuple[str, str, str, int]:
-    """Compose subject description, CLIP prompt, negative prompt, and seed for a POI.
+def compose_prompt(poi: dict, visual_style: dict) -> tuple[str, str, int]:
+    """Compose subject description, CLIP prompt, and seed for a POI.
 
     Returns the subject (not a pre-composed prompt). The daemon's PromptComposer
     handles style injection via art_style, visual_tag_overrides, and LoRA — those
     are passed through render_common.send_render from the visual_style dict.
     """
-    negative = visual_style.get("negative_prompt", "")
     base_seed = visual_style.get("base_seed", 42)
 
     # visual_prompt is Flux-native (single trigger + renderable subject).
@@ -104,7 +103,7 @@ def compose_prompt(poi: dict, visual_style: dict) -> tuple[str, str, str, int]:
     seed_key = f"{poi['genre']}:{poi['world']}:{poi['name']}:landscape"
     seed = deterministic_seed(seed_key, base_seed)
 
-    return subject, clip, negative, seed
+    return subject, clip, seed
 
 
 async def main() -> None:
