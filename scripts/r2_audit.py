@@ -12,7 +12,8 @@ Key conventions are derived from the generators (``scripts/render_common.py``
 the 1:1 local-relative paths the uploader mirrors:
 
   - POI:      genre_packs/<g>/worlds/<world>/assets/poi/<slug>.png
-  - Portrait: genre_packs/<g>/images/portraits/<slug>.png   (genre-flat)
+  - Portrait: genre_packs/<g>/worlds/<world>/assets/portraits/<slug>.png
+               (world-scoped, parity with POIs — Story 65-6)
   - Music:    genre_packs/<g>/audio/music/<track>.ogg
 
 Per CLAUDE.md (no silent fallbacks) malformed YAML fails loudly. Exits non-zero
@@ -113,6 +114,13 @@ def _poi_keys(genre: str, genre_dir: Path) -> set[str]:
 def _portrait_keys(genre: str, genre_dir: Path) -> set[str]:
     keys: set[str] = set()
     for manifest_path in sorted(genre_dir.rglob("portrait_manifest.yaml")):
+        # Story 65-6: portraits are world-level FLAVOR. They live under
+        # worlds/<world>/assets/portraits/<slug>.png (parity with POIs), so the
+        # world is the parent dir of the manifest. A genre-level
+        # portrait_manifest.yaml is underivable for the world-scoped resolver —
+        # fail loudly (no silent fallback).
+        rel_parts = manifest_path.relative_to(genre_dir).parts
+        world = rel_parts[1] if len(rel_parts) >= 2 and rel_parts[0] == "worlds" else None
         data = _load_yaml(manifest_path)
         for char in data.get("characters", []) or []:
             name = char.get("name")
@@ -121,7 +129,12 @@ def _portrait_keys(genre: str, genre_dir: Path) -> set[str]:
                     f"portrait entry missing both 'name' and 'id' in {manifest_path}: {char!r}"
                 )
             slug = char.get("id") or _slugify_name(name)
-            keys.add(f"genre_packs/{genre}/images/portraits/{slug}.png")
+            if world is None:
+                raise ValueError(
+                    f"portrait {slug!r} in genre-level {manifest_path} has no world; "
+                    f"portraits must live under worlds/<world>/portrait_manifest.yaml"
+                )
+            keys.add(f"genre_packs/{genre}/worlds/{world}/assets/portraits/{slug}.png")
     return keys
 
 
@@ -168,7 +181,7 @@ def _local_media_keys(content_root: Path) -> set[str]:
 def _asset_type(key: str) -> str:
     if "/assets/poi/" in key:
         return "POI"
-    if "/images/portraits/" in key:
+    if "/assets/portraits/" in key or "/images/portraits/" in key:
         return "portrait"
     if "/audio/music/" in key:
         return "music"

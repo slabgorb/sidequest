@@ -4,7 +4,7 @@ Targets the not-yet-existing `scripts.r2_audit` module. Pure pyyaml — no R2
 network. The load-bearing tests pin the CORRECT key conventions (derived from
 the generators), which differ from the original story prose:
   - POI:      genre_packs/<g>/worlds/<w>/assets/poi/<slug>.png   (NOT images/pois/)
-  - Portrait: genre_packs/<g>/images/portraits/<slug>.png        (genre-flat, NOT world-scoped)
+  - Portrait: genre_packs/<g>/worlds/<w>/assets/portraits/<slug>.png  (world-scoped — Story 65-6)
   - Music:    genre_packs/<g>/audio/music/<track>.ogg
 See sprint/context/context-story-65-1.md and scripts/render_common.render_batch.
 """
@@ -81,13 +81,15 @@ def test_expected_keys_poi_uses_world_assets_poi(tmp_path: Path) -> None:
     assert "genre_packs/demo/images/pois/the_inn.png" not in keys
 
 
-def test_expected_keys_portrait_is_genre_flat(tmp_path: Path) -> None:
+def test_expected_keys_portrait_is_world_scoped(tmp_path: Path) -> None:
+    # Story 65-6: portraits moved from genre-flat images/portraits/ to
+    # world-scoped worlds/<w>/assets/portraits/ (parity with POIs).
     _build_pack(tmp_path)
     keys = expected_keys(tmp_path)
-    assert "genre_packs/demo/images/portraits/jane_doe.png" in keys
-    assert "genre_packs/demo/images/portraits/john_smith.png" in keys
-    # Portraits are genre-flat, not world-scoped.
-    assert "genre_packs/demo/worlds/village/images/portraits/jane_doe.png" not in keys
+    assert "genre_packs/demo/worlds/village/assets/portraits/jane_doe.png" in keys
+    assert "genre_packs/demo/worlds/village/assets/portraits/john_smith.png" in keys
+    # The legacy genre-flat convention must NOT appear.
+    assert "genre_packs/demo/images/portraits/jane_doe.png" not in keys
 
 
 def test_expected_keys_music(tmp_path: Path) -> None:
@@ -129,7 +131,10 @@ def test_audit_flags_authored_but_not_rendered(tmp_path: Path) -> None:
     # Only music uploaded; POIs + portraits are authored but absent from R2.
     result = audit(tmp_path, [{"key": "genre_packs/demo/audio/music/theme.ogg"}])
     assert "genre_packs/demo/worlds/village/assets/poi/the_inn.png" in result.authored_but_not_rendered
-    assert "genre_packs/demo/images/portraits/jane_doe.png" in result.authored_but_not_rendered
+    assert (
+        "genre_packs/demo/worlds/village/assets/portraits/jane_doe.png"
+        in result.authored_but_not_rendered
+    )
     # The uploaded music key must NOT be flagged.
     assert "genre_packs/demo/audio/music/theme.ogg" not in result.authored_but_not_rendered
 

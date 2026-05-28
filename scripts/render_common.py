@@ -448,16 +448,20 @@ async def render_batch(
         items: List of dicts, each with 'genre', 'world', 'name', '_visual_style'.
         compose_fn: Function(item, visual_style) -> (positive, clip, seed).
         tier: Renderer tier ('portrait', 'landscape', etc.).
-        image_subdir: Subdirectory under images/ ('portraits', 'poi', etc.).
-            When ``image_subdir == "poi"``, output is auto-bridged to the
-            world-scoped path ``<genre>/worlds/<world>/assets/poi/<slug>.png``
-            matching the server's cover_poi resolver
-            (sidequest-server/sidequest/server/rest.py:215-218). All other
-            subdirs route to the genre-flat ``<genre>/images/<subdir>/<slug>.png``
-            (the portrait_manifest / creature layout).
-            For POI items, raises ValueError if world is empty or "default":
-            the world-scoped resolver cannot reach genre-level entries, so a
-            silent fallback would orphan the file (No-Silent-Fallbacks).
+        image_subdir: Subdirectory under assets/ ('portraits', 'poi', etc.).
+            When ``image_subdir`` is ``"poi"`` or ``"portraits"``, output is
+            auto-bridged to the world-scoped path
+            ``<genre>/worlds/<world>/assets/<subdir>/<slug>.png``. POIs match
+            the server's cover_poi resolver
+            (sidequest-server/sidequest/server/rest.py:215-218); portraits
+            (Story 65-6) match emitters._resolve_npc_portrait_url, which
+            attaches the portrait to a scrapbook NPC ref when the invoked NPC
+            is in the world's portrait_manifest. All other subdirs route to the
+            genre-flat ``<genre>/images/<subdir>/<slug>.png`` (e.g. creatures).
+            For POI and portrait items, raises ValueError if world is empty or
+            "default": the world-scoped resolver cannot reach genre-level
+            entries, so a silent fallback would orphan the file
+            (No-Silent-Fallbacks).
         genre_filter: Only process items from this genre.
         dry_run: Preview prompts without rendering.
         steps: Inference steps.
@@ -507,15 +511,28 @@ async def render_batch(
 
         if output_dir:
             out_dir = output_dir / item["genre"]
-        elif image_subdir == "poi":
+        elif image_subdir in ("poi", "portraits"):
+            # Both POIs (ADR-086) and NPC portraits (Story 65-6) are
+            # world-scoped FLAVOR: they live under
+            # worlds/<world>/assets/<subdir>/ so the server's world-scoped
+            # resolvers reach them (cover_poi for POIs;
+            # emitters._resolve_npc_portrait_url for portraits). A
+            # genre-level entry would be orphaned — the resolver only walks
+            # worlds/<world>/assets/. Fail loudly (No-Silent-Fallbacks).
             world = item.get("world", "")
             if not world or world == "default":
+                kind = "POI" if image_subdir == "poi" else "portrait"
+                src = (
+                    "worlds/<world>/history.yaml"
+                    if image_subdir == "poi"
+                    else "worlds/<world>/portrait_manifest.yaml"
+                )
                 raise ValueError(
-                    f"render_batch: POI items must carry a real world (got "
-                    f"world={world!r}) — the server's cover_poi resolver only "
-                    f"reaches files under worlds/<world>/assets/poi/, so a "
-                    f"genre-level entry would be orphaned. Move the entry "
-                    f"under worlds/<world>/history.yaml. Offending item: "
+                    f"render_batch: {kind} items must carry a real world (got "
+                    f"world={world!r}) — the server's world-scoped resolver only "
+                    f"reaches files under worlds/<world>/assets/{image_subdir}/, "
+                    f"so a genre-level entry would be orphaned. Move the entry "
+                    f"under {src}. Offending item: "
                     f"{item.get('genre')}/{item.get('name')}."
                 )
             out_dir = (
