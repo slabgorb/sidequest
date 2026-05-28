@@ -128,10 +128,13 @@ stories:
     title: Per-genre peer-action contrast a11y sweep — axe/devtools across live theme_css, bump peer token if <4.5:1
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-ui
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+    review_verdict: approved
   - id: 71-12
     title: Comment-guard at peer-reveal capture site (App.tsx) — 'MUST use raw reveals, never merged' to prevent stale-draft regression
     points: 1
