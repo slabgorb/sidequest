@@ -116,9 +116,10 @@ stories:
       Multi-week. Full design under a new spec; this story is the placeholder.
     points: 13
     priority: p2
-    status: backlog
+    status: done
     repos: daemon,server
     workflow: bdd
+    completed: '2026-05-28'
     type: chore
   - id: 48-4
     title: 'A/B evaluation harness — Claude vs local Qwen on identical prompts'
@@ -138,7 +139,8 @@ stories:
       case) and as the canonical eval surface for 48-3 fine-tune iterations.
     points: 5
     priority: p2
-    status: backlog
+    status: done
     repos: daemon,server
     workflow: tdd
+    completed: '2026-05-28'
     type: chore

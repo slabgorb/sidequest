@@ -60,9 +60,10 @@ stories:
     title: ws.send_failed observability — emit broadcast.recipient_dropped watcher at _send_message send-exception seam (websocket.py:252)
     points: 2
     priority: p3
-    status: backlog
+    status: done
     repos: server
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
   - id: 67-6
     title: Authenticated player identity via Cloudflare Access email — separate player-identity from character-name key (ADR-037)
