@@ -127,3 +127,32 @@ stories:
     workflow: tdd
     completed: '2026-05-28'
     type: bug
+  - id: 64-11
+    title: Remove negative_prompt from VisualStyle — Z-Image ignores it at guidance_scale=0
+    description: |-
+      Z-Image ignores negative_prompt at guidance_scale=0, and for catalog-composed renders the daemon OVERWRITES any config-supplied negative with its own hardcoded _BASE_NEGATIVES (prompt_composer._build_negative). So the VisualStyle.negative_prompt CONFIG field is dead weight on the authoring surface and confuses authors. Remove the config field end to end. Do NOT touch the daemon's internal runtime-negative plumbing (_build_negative/_BASE_NEGATIVES, recipes.ComposedPrompt.negative_prompt, zimage worker negative param) — that is a separate, still-live concern.
+
+      Consumer map (verified 2026-05-28):
+      SERVER:
+      - sidequest-server/sidequest/genre/models/character.py:265 — VisualStyle.negative_prompt (REQUIRED str, no default). Remove field. This is the load-bearing change.
+      - Tests/fixtures: tests/genre/test_models/test_character.py, tests/genre/test_visual_style_lora_removal_wiring.py, ~9 tests/fixtures/packs/*/visual_style.yaml + intent_test_pack + test_genre.
+
+      DAEMON:
+      - sidequest-daemon/sidequest_daemon/genre/models.py:36 — VisualStyle.negative_prompt (default ''). Remove field.
+      - Tests/fixtures: tests/test_recipes_types.py (verify it tests ComposedPrompt, not VisualStyle — keep if so), tests/fixtures/visual_recipes/genre_packs/testgenre/visual_style.yaml.
+      - KEEP: prompt_composer.py:191/_build_negative, recipes.py:177, daemon.py:727, zimage_mlx_worker.py negative plumbing — these feed/consume the hardcoded runtime negative, not the config field.
+
+      ORCHESTRATOR (scripts/, base branch main):
+      - scripts/render_common.py:54 (docstring), :297 ('negative_prompt': negative in merged params). For catalog-composed renders daemon.py:727 overwrites this, so it is dead — remove the read+param.
+      - scripts/generate_portrait_images.py:79, generate_poi_images.py:89, generate_creature_images.py:67 — 'negative = visual_style.get("negative_prompt","")'. Remove.
+      - scripts/tests/test_poi_output_routing.py:55,73 — drop negative_prompt from fixtures.
+
+      CONTENT (base branch develop): strip negative_prompt from all 27 genre_packs/**/visual_style.yaml + genre_workshopping/**.
+
+      Verify legacy (non-catalog) render path does not require params['negative_prompt'] before removing the script param. Run server+daemon+scripts test suites. NOTE overlap: story 65-3 sets negative_prompt: '' in pulp_noir pack+world visual_style.yaml on its own branch — expect a trivial merge conflict on those 2 files (resolve by taking the deletion).
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content,server,daemon
+    workflow: tdd
+    type: refactor
