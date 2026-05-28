@@ -32,13 +32,15 @@ stories:
     review_verdict: approved
   - id: 67-3
     title: MP peer-visibility consolidation + slow-typist reassurance (one canonical surface, Composing/Sealed/Resolving)
+    description: "RESOLVED BY ec69c9b (no separate work). The full 67-3 scope — one canonical Composing/Sealed/Resolving verb chain across all MP turn surfaces, peer-visibility consolidation (killed the 3x-disagreeing-verb problem + duplicate amber CTA row), and the timer-free slow-typist reassurance line for Alex (GameBoard.tsx:565-582) — shipped in commit ec69c9b 'fix(mp): unify peer-barrier status to one Composing -> Sealed -> Resolving chain' (Keith Avery, 2026-05-27), already on develop. Verified 174/174 turn-status/peer-visibility tests passing 2026-05-28 (run 67-3-dev-green). No PR of its own; empty branch torn down. Follow-up noted: TurnStatusEntry type defined twice (payloads.ts + TurnStatusPanel.tsx)."
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     assigned_to: slabgorb
     started: '2026-05-28'
     repos: ui
     workflow: trivial
+    completed: '2026-05-28'
     type: bug
     branch: feat/67-3-mp-peer-visibility-consolidation
   - id: 67-4
