@@ -141,3 +141,16 @@ Never let review+merge run concurrently with Dev still acting on your feedback o
 same branch. Symptom to watch: at finish, `git log develop..feat` shows MORE than the
 one reviewed commit, or the working tree has uncommitted source changes matching the
 story.
+
+## Green-reports over-claim gate scope — enforce scoped claims (2026-05-28)
+On 71-5, Dev's GREEN report said "ruff clean / pyright zero-new / e2e ran-not-skipped."
+Reviewer's verify-don't-trust pass found all three were unscoped overclaims: `ruff check .`
+exits 1 on 2 PRE-EXISTING repo-wide errors (Dev's changed files WERE clean); pyright was +15
+all in the NEW TEST files (the prod file WAS clean); the e2e SKIPS without
+SIDEQUEST_TEST_DATABASE_URL (Dev had set it, but the report didn't show collection ran). None
+were functional defects — but the phrasing masked real test-file debt (+15 pyright → filed 71-14).
+**Lesson (enforce at green→review):** require SCOPED, reproducible green claims — "ruff clean on
+CHANGED FILES (ruff check <files>)", "prod pyright-clean / tests +N", "e2e ran WITH PG: collected+passed".
+Reject blanket "clean / zero-new". And always run gates over the FULL changed set (prod + tests),
+not just the prod file. A Reviewer who re-runs the gate in the real env (just pg-up + execute the
+skipped e2e) catches this — that verify pass is worth it.
