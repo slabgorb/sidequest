@@ -53,7 +53,8 @@ stories:
     description: "Builds on 64-4. Once file contents parse, add a content-lint layer that validates CROSS-references the per-file pydantic models can't see on their own: (1) trope IDs referenced in history.yaml chapters / adjacency exist in the resolved trope set; (2) archetype typical_classes/typical_races resolve against the pack's rules.yaml allowed_classes/allowed_races; (3) archetype_constraints valid_pairings jungian/role IDs are from the canonical 12 jungian x 7 roles, and genre_flavor covers all of them with no extras (these were hand-audited in epic 64 review); (4) theme palette adjacency closure (prefers/avoids refs exist) — already enforced in load_theme_palette, surface it here too. Report each as an ERROR with the offending id + file."
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -62,6 +63,7 @@ stories:
       - archetype_constraints non-canonical jungian/role id, missing/extra genre_flavor entry → ERROR
       - theme adjacency closure surfaced as a validator ERROR
       - All 10 live packs still PASS
+    completed: '2026-05-28'
   - id: 64-6
     title: Fix circular import — WebSocketSessionHandler back-compat re-export cycle
     description: "Pre-existing circular import surfaced during epic 64 review: tests/dungeon/test_region_projection_wiring.py::test_dungeon_map_frame_is_emitted_to_ui fails in isolation with 'cannot import name WebSocketSessionHandler from partially initialized module sidequest.server.websocket_session_handler'. The cycle: session_handler.py:640 re-exports WebSocketSessionHandler from websocket_session_handler.py (back-compat), while websocket_session_handler.py:144 imports _SessionData/_State/etc back from session_handler.py. Importing either module first in a fresh interpreter can hit the half-initialized partner. Break the cycle (move shared types to a leaf module, or drop the back-compat re-export if unused) so the dungeon suite passes in isolation. Blocks 64-4 if the validator imports the loader graph that transitively pulls these modules."
