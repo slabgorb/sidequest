@@ -51,7 +51,8 @@ stories:
     title: MP opening narration — POV-swap the driving player's own card (not raw-bypass)
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-27'
     repos: sidequest-server
     workflow: tdd
     type: bug
