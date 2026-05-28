@@ -3,17 +3,20 @@ type: epic
 title: Gameboard & dice UX polish
 description: 'Playtest-3 findings (UX Designer + Keith): pull the 3D dice (ADR-075) camera/scale in so a roll is a legible focal moment + audit dice-lib wiring to real server rolls (ADR-074); reposition the opening-gameboard action input to a full-width bar under the narrative (Alex/slow-typist) and co-locate a high-contrast HP pip scale. Source: sq-playtest-pingpong.md.'
 priority: p2
-status: backlog
+status: done
 repos: ui
 stories:
   - id: 69-1
     title: 3D dice camera/scale pull-in + dice-lib wiring audit to real server rolls (ADR-074/075)
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: ui
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
+    review_verdict: approved
   - id: 69-2
     title: Opening gameboard — full-width action input under narrative + co-located high-contrast HP pip scale
     points: 3
@@ -25,3 +28,4 @@ stories:
     completed: '2026-05-27'
     type: bug
     review_verdict: approved
+completed: '2026-05-28'

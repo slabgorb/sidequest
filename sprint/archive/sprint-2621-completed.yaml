@@ -20,6 +20,7 @@ completed_epics:
   - '22'
   - '51'
   - '63'
+  - '69'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -504,5 +505,15 @@ completed_stories:
   - id: 63-13
     epic: '63'
     title: Location validator reports malformed world YAML as a clean Issue, never a traceback (+ runtime degrade)
+    points: 3
+    completed: '2026-05-27'
+  - id: 69-1
+    epic: '69'
+    title: 3D dice camera/scale pull-in + dice-lib wiring audit to real server rolls (ADR-074/075)
+    points: 3
+    completed: '2026-05-28'
+  - id: 69-2
+    epic: '69'
+    title: Opening gameboard — full-width action input under narrative + co-located high-contrast HP pip scale
     points: 3
     completed: '2026-05-27'
