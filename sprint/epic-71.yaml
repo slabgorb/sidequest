@@ -142,3 +142,25 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: chore
+  - id: 71-15
+    title: ADR-055 — wire per-transition trope-tick + item resource depletion on room-graph movement
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+  - id: 71-16
+    title: ADR-113 — per-dispatch confidence scoring + threshold gating in the intent router
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+  - id: 71-17
+    title: ADR-092 — resolve scene-harness dev-gate doctrine (Cloudflare-only vs DEV_SCENES env gate)
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore
