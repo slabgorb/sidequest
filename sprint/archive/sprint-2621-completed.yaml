@@ -21,6 +21,8 @@ completed_epics:
   - '51'
   - '63'
   - '69'
+  - '70'
+  - '48'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -517,3 +519,33 @@ completed_stories:
     title: Opening gameboard — full-width action input under narrative + co-located high-contrast HP pip scale
     points: 3
     completed: '2026-05-27'
+  - id: 70-1
+    epic: '70'
+    title: Portrait composer drops DIRECTION_CAMERA recipe-default layer
+    points: 3
+    completed: '2026-05-28'
+  - id: 70-2
+    epic: '70'
+    title: Daemon socket does not answer ping in lifecycle tests — triage env vs regression
+    points: 2
+    completed: '2026-05-28'
+  - id: 48-1
+    epic: '48'
+    title: 'Local Qwen as code editor MVP — Ollama + qwen-code wired on M3 Ultra'
+    points: 3
+    completed: '2026-05-06'
+  - id: 48-2
+    epic: '48'
+    title: 'Validate SIDEQUEST_LLM_BACKEND=ollama end-to-end + audit OllamaClient num_ctx pattern'
+    points: 3
+    completed: '2026-05-12'
+  - id: 48-3
+    epic: '48'
+    title: 'Run sidequest-train on accumulated corpus + close MLX→Ollama serving gap (Group F)'
+    points: 13
+    completed: '2026-05-28'
+  - id: 48-4
+    epic: '48'
+    title: 'A/B evaluation harness — Claude vs local Qwen on identical prompts'
+    points: 5
+    completed: '2026-05-28'

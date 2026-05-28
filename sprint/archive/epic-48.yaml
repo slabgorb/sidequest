@@ -19,7 +19,7 @@ description: |
   with the 2026-05-06-local-qwen-* prefix. No sidequest-content,
   sidequest-ui, or orchestrator changes anticipated for this epic.
 priority: p2
-status: in_progress
+status: done
 repos: server,daemon,docs
 stories:
   - id: 48-1
@@ -144,3 +144,4 @@ stories:
     workflow: tdd
     completed: '2026-05-28'
     type: chore
+completed: '2026-05-28'

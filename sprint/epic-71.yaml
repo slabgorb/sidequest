@@ -103,10 +103,19 @@ stories:
     title: 'Peer-action transcript: anchor by exact round (add round to PlayerActionPayload) — replaces positional placement'
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-ui
     workflow: tdd
+    acceptance_criteria:
+      - PlayerActionPayload (server, messages.py) carries an integer round field; round-trips through serialize/deserialize; missing/negative round fails loud per No-Silent-Fallbacks (round=0 is valid)
+      - 'UI PlayerActionPayload (payloads.ts) mirrors round: number and the outbound player-action send is built with round: currentRound (behavioral assertion, not source grep)'
+      - buildSegments anchors peer entries by exact matching round, not position; covers gap, out-of-order arrival, late/out-of-round submission, empty round, and within-round seq ordering
+      - Wiring test exercises real usePersistedPeerActions -> NarrationScroll/buildSegments path; existing 71-4 persistence tests still pass; peer TEXT still sourced only from perception-filtered reveals map (ADR-104/105)
+    completed: '2026-05-28'
     type: chore
+    review_findings: 'LOW-only: (1) blocking format-gate failure — ruff format tests/protocol/test_messages.py:~828 (>100 chars after round=0 fixture add); (2) remove 2 redundant test casts in peer-action-round-anchor-71-10.test.tsx (as PeerAwareBuild, as unknown as NarrationCards — real signatures now match, TS-1). No logic defects; firewall + No-Silent-Fallbacks + stale-closure fix all verified clean. Route: green rework -> dev.'
+    review_verdict: approved
   - id: 71-11
     title: Per-genre peer-action contrast a11y sweep — axe/devtools across live theme_css, bump peer token if <4.5:1
     points: 2

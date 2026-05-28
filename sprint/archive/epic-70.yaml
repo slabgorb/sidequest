@@ -3,7 +3,7 @@ type: epic
 title: Daemon media pipeline reliability
 description: 'Daemon-side image composition and socket-liveness defects surfaced by the failing daemon test suite (tests/test_composer.py, test_daemon_smoke.py, test_daemon_socket_lifecycle.py). The portrait prompt composer is dropping the DIRECTION_CAMERA recipe layer, and the JSON-RPC socket is not answering ping in two lifecycle tests (triage: environmental no-GPU/no-warmup vs real regression). No existing epic owns the daemon media pipeline; this epic is its home.'
 priority: p2
-status: backlog
+status: done
 repos: daemon
 stories:
   - id: 70-1
@@ -32,3 +32,4 @@ stories:
       - 'If regression: daemon answers ping within timeout and both tests pass. If env-only: tests are gated/skipped with a documented condition rather than silently failing'
     completed: '2026-05-28'
     type: bug
+completed: '2026-05-28'
