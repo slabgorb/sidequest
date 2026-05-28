@@ -40,10 +40,13 @@ stories:
     title: Player-action transcript — contrast bump on own-echo + persist peer action post-resolution
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-27'
     repos: sidequest-ui
     workflow: tdd
+    completed: '2026-05-27'
     type: bug
+    review_verdict: approved
   - id: 71-5
     title: MP opening narration — POV-swap the driving player's own card (not raw-bypass)
     points: 3
@@ -79,6 +82,30 @@ stories:
     type: chore
   - id: 71-9
     title: Migrate dice-overlay-wiring-34-5 source-text wiring test to behavioral assertion
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-ui
+    workflow: trivial
+    type: chore
+  - id: 71-10
+    title: 'Peer-action transcript: anchor by exact round (add round to PlayerActionPayload) — replaces positional placement'
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    type: chore
+  - id: 71-11
+    title: Per-genre peer-action contrast a11y sweep — axe/devtools across live theme_css, bump peer token if <4.5:1
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-ui
+    workflow: trivial
+    type: chore
+  - id: 71-12
+    title: Comment-guard at peer-reveal capture site (App.tsx) — 'MUST use raw reveals, never merged' to prevent stale-draft regression
     points: 1
     priority: p3
     status: backlog
