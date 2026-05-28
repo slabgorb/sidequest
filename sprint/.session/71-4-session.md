@@ -130,3 +130,22 @@ Branch off current develop (c8e0546, includes 71-3). A previous lane's uncommitt
 **Pinned to Architect ruling A1:** `buildSegments(messages, peerActions: Map<round, ActionRevealEntry[]>)`; peer actions reuse `player-action` kind + `is_peer:true`; own=is_peer absent (high contrast), peer=is_peer true (lower); placement at round turn boundary; peer action not a turn-page starter; snapshot at resolved filtered to submitted + deduped.
 
 **Handoff:** To Dev for GREEN.
+
+---
+
+### Reconciliation to CORRECTED-FINAL contract (commit ca831d3)
+
+Tests re-pinned to the Architect corrected-final contract (supersedes earlier interface notes):
+- `is_peer?: boolean` (snake) + `character_name?: string` on `NarrativeSegment`; **no `selfPlayerId`** (own-vs-peer is by source — server never re-broadcasts PLAYER_ACTION to peers).
+- `buildSegments(messages, peerActionsByRound?: Map<number, ActionRevealEntry[]>)` — positional 2nd param.
+- Render markers: own → `data-peer="false"` + `text-foreground`; peer → `data-peer="true"` + `text-muted-foreground`. **`/70` opacity deleted** (the AC1 bug). Tests assert the marker + token, not exact Tailwind/WCAG ratio.
+- Two turn-grouping gates both exclude peers: `groupIntoTurns` (NarrationCards) + `isTurnStarter` (narrativeSegments).
+- New `hooks/usePersistedPeerActions.ts` seam: `{ byRound; capture(round, reveals) [submitted-only + dedup by player_id]; reset() }`; `capture` called at `TURN_STATUS{resolved}` **before** `usePeerReveals.clear()`.
+- `NarrationCardsProps` gains only `peerActionsByRound` (must be threaded to all three narration components).
+
+**Final RED tally:** 8 assertion-level failures (verified right reason) + 4 guards green; the `usePersistedPeerActions` hook file is RED via missing-module import (expected until Dev creates the hook — its 4 assertions become live then).
+
+**Test files:**
+- `src/__tests__/player-action-transcript-71-4.test.tsx` (AC1 + AC2 unit/firewall/grouping/regression)
+- `src/__tests__/peer-action-persistence-wiring-71-4.test.tsx` (e2e wiring)
+- `src/hooks/__tests__/usePersistedPeerActions.test.tsx` (snapshot-seam hook)
