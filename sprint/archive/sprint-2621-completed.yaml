@@ -19,6 +19,7 @@ completed_epics:
   - '60'
   - '22'
   - '51'
+  - '63'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -440,3 +441,68 @@ completed_stories:
     title: Remove DEV_SCENES gate + add fixture picker to connect screen
     points: 3
     completed: '2026-05-25'
+  - id: 63-1
+    epic: '63'
+    title: 'Anchor core: slug helper, namespaced ids, URL builders, JSON island, OTEL'
+    points: 5
+    completed: '2026-05-27'
+  - id: 63-2
+    epic: '63'
+    title: Protocol reference_url fields wired to UI panel hyperlinks
+    points: 8
+    completed: '2026-05-27'
+  - id: 63-3
+    epic: '63'
+    title: Fixture pack + theme.yaml display_font_family field
+    points: 2
+    completed: '2026-05-24'
+  - id: 63-4
+    epic: '63'
+    title: 'Chrome rendering: theme injection, CSS route, hero, contents rail'
+    points: 10
+    completed: '2026-05-24'
+  - id: 63-5
+    epic: '63'
+    title: 'Cleanup: live-pack validator, tropes exclusion, R2 screenshots, final gate'
+    points: 5
+    completed: '2026-05-25'
+  - id: 63-6
+    epic: '63'
+    title: Reference UI test parity for LocationPanel (rolled-in from 63-2)
+    points: 3
+    completed: '2026-05-26'
+  - id: 63-7
+    epic: '63'
+    title: Reference chrome markup contract alignment per v3 plan Tasks 20-22
+    points: 5
+    completed: '2026-05-24'
+  - id: 63-8
+    epic: '63'
+    title: Lore page POI images — render location landscape from R2 with cartography anchor
+    points: 2
+    completed: '2026-05-25'
+  - id: 63-9
+    epic: '63'
+    title: Reference renderer humanization guard — never emit raw key/dict/snake_case/bool/dev-note prose; humanize section-key headings; + output-scan test
+    points: 5
+    completed: '2026-05-27'
+  - id: 63-10
+    epic: '63'
+    title: Lore surface renders WORLD lore only — stop rendering genre-level lore (Keepers/Maw) + banner intro; resolve genre/world contradiction
+    points: 3
+    completed: '2026-05-27'
+  - id: 63-11
+    epic: '63'
+    title: Reference — suppress or author empty Beat-Vocabulary + Achievements sections (cross-pack)
+    points: 1
+    completed: '2026-05-27'
+  - id: 63-12
+    epic: '63'
+    title: Terminal em CSS renders --em-color instead of --accent (chrome archetype)
+    points: 2
+    completed: '2026-05-26'
+  - id: 63-13
+    epic: '63'
+    title: Location validator reports malformed world YAML as a clean Issue, never a traceback (+ runtime degrade)
+    points: 3
+    completed: '2026-05-27'

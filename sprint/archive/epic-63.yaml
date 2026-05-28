@@ -3,7 +3,7 @@ type: epic
 title: Reference pages v3 — chrome + wiki-like anchor links
 description: "Amend the bare-styled /reference/rules/<pack> + /reference/lore/<pack>/<world> pages with the design bundle's chrome (per-pack palettes/fonts from theme.yaml, lore section from lore.yaml, locked contents rail, world-name hero) AND wire CharacterSheet/KnowledgeJournal/LocationPanel/ConnectScreen panels to hyperlink IN via server-emitted reference_url fields. Plan: docs/superpowers/plans/2026-05-23-reference-pages-v3.md (27 tasks, 17 v2 anchor + 10 chrome). Bundle: docs/design-bundles/2026-05-23-lore-and-rules/. Scope discipline: JUST styling + wiki-like behavior, no tweak/treatment/density panels."
 priority: p2
-status: in_progress
+status: done
 repos: server,ui,content
 stories:
   - id: 63-1
@@ -189,7 +189,8 @@ stories:
     description: "Root cause surfaced by 63-6 Reviewer finding R1. The location validator (sidequest/cli/validate/locations.py) parses world YAML files with yaml.safe_load() UNGUARDED in several helpers — _history_poi_slugs (line ~420), _location_card_slugs (~398), plus cartography.yaml (~518) and room/*.yaml (~534) loads. A malformed history.yaml (a realistic content-author typo — Jade authors content per CLAUDE.md) makes 'pf validate locations' itself CRASH with a raw YAMLError traceback instead of reporting a clean validation Issue. The tool meant to catch authoring errors dies on the exact error it should report. Catching it in the validator (Keith's directive 2026-05-26) surfaces malformed YAML to the author at validation time with a clear message — the right primary fix. The runtime guard (R1: websocket_session_handler._maybe_emit_location_description calls load_poi_image_slugs unguarded in a graceful path) becomes defense-in-depth so a malformed file can't crash a live room-change emit either. Both layers, one root cause."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-27'
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -198,4 +199,7 @@ stories:
       - 'Runtime defense-in-depth (R1): websocket_session_handler._maybe_emit_location_description wraps the load_poi_image_slugs + reference_url_for_region resolution; on ValueError (malformed history.yaml) it emits reference_url_failed_span (ERROR — loud, GM-panel-visible, not silent) and degrades reference_url to None so the location description still emits. A live room-change is never crashed by a content typo.'
       - 'Runtime test: _maybe_emit_location_description with a malformed history.yaml fixture still emits LocationDescriptionMessage (reference_url=None) and fires reference_url_failed_span; does not raise.'
       - 'No silent fallback: the degrade path is LOUD — failed_span at ERROR severity in runtime, explicit Issue in the validator. Neither swallows the malformed YAML silently.'
+    completed: '2026-05-27'
+    branch: feat/63-13-location-validator-malformed-yaml-guard
     type: bug
+completed: '2026-05-27'
