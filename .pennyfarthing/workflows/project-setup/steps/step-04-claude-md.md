@@ -106,9 +106,9 @@ This file provides guidance to Claude Code when working on this project.
 {if has_pennyfarthing}
 ### Getting Started
 
-- Run `/pf-help` for context-aware help on any command or agent
-- Run `/pf-sprint status` to see current sprint progress
-- Run `/pf-sprint work` to pick up your next story
+- Run `/pf:help` for context-aware help on any command or agent
+- Run `/pf:sprint status` to see current sprint progress
+- Run `/pf:sprint work` to pick up your next story
 
 ### Daily Workflow
 
@@ -121,11 +121,11 @@ This file provides guidance to Claude Code when working on this project.
 
 | Command | Purpose |
 |---------|---------|
-| `/pf-help` | Context-aware help |
-| `/pf-sprint backlog` | See available work |
-| `/pf-sprint work STORY` | Start a specific story |
-| `/pf-theme show` | See your current persona theme |
-| `/pf-workflow` | Check active workflow status |
+| `/pf:help` | Context-aware help |
+| `/pf:sprint backlog` | See available work |
+| `/pf:sprint work STORY` | Start a specific story |
+| `/pf:theme show` | See your current persona theme |
+| `/pf:workflow` | Check active workflow status |
 {/if}
 
 ## Important Notes
@@ -157,9 +157,9 @@ If sprint/ exists:
 ```markdown
 ## Sprint Management
 
-- `/pf-sprint status` - View current sprint
-- `/pf-sprint backlog` - Available stories
-- `/pf-sprint work` - Start a story
+- `/pf:sprint status` - View current sprint
+- `/pf:sprint backlog` - Available stories
+- `/pf:sprint work` - Start a story
 ```
 
 ### 4. Include Developer Guidance
@@ -170,9 +170,9 @@ If `.pennyfarthing/` exists (Pennyfarthing is initialized):
 
 ### Getting Started
 
-- Run `/pf-help` for context-aware help on any command or agent
-- Run `/pf-sprint status` to see current sprint progress
-- Run `/pf-sprint work` to pick up your next story
+- Run `/pf:help` for context-aware help on any command or agent
+- Run `/pf:sprint status` to see current sprint progress
+- Run `/pf:sprint work` to pick up your next story
 
 ### Daily Workflow
 
@@ -185,11 +185,11 @@ If `.pennyfarthing/` exists (Pennyfarthing is initialized):
 
 | Command | Purpose |
 |---------|---------|
-| `/pf-help` | Context-aware help |
-| `/pf-sprint backlog` | See available work |
-| `/pf-sprint work STORY` | Start a specific story |
-| `/pf-theme show` | See your current persona theme |
-| `/pf-workflow` | Check active workflow status |
+| `/pf:help` | Context-aware help |
+| `/pf:sprint backlog` | See available work |
+| `/pf:sprint work STORY` | Start a specific story |
+| `/pf:theme show` | See your current persona theme |
+| `/pf:workflow` | Check active workflow status |
 ```
 
 ### 5. Add Project-Specific Sections

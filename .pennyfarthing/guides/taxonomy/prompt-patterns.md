@@ -141,7 +141,7 @@ Load this agent's persona before activation:
 
 Explains the primary "happy path" workflow for tactical agents.
 
-**Purpose:** Guides users to use `/pf-session new` rather than invoking agents directly.
+**Purpose:** Guides users to use `/pf:session new` rather than invoking agents directly.
 
 **Structure:**
 ```xml
@@ -152,9 +152,9 @@ Explains the primary "happy path" workflow for tactical agents.
 
 | Command | When to Use |
 |---------|-------------|
-| `/pf-session new` | Start a NEW story from the backlog |
+| `/pf:session new` | Start a NEW story from the backlog |
 
-**The TDD Flow:** `/pf-session new` -> SM -> TEA -> Dev -> Reviewer -> SM (finish)
+**The TDD Flow:** `/pf:session new` -> SM -> TEA -> Dev -> Reviewer -> SM (finish)
 
 **Other commands exist** but are not part of the main dev loop.
 </blessed-path-guidance>
@@ -171,13 +171,13 @@ Clarifies that an agent is outside the core TDD loop.
 
 This agent supports the development process but is **not part of the core TDD loop**.
 
-**The Core TDD Loop:** `/pf-session new` -> SM -> TEA -> Dev -> Reviewer -> SM
+**The Core TDD Loop:** `/pf:session new` -> SM -> TEA -> Dev -> Reviewer -> SM
 
 **When to use {Agent}:**
 - {Use case 1}
 - {Use case 2}
 
-**To start story-based development work,** use `/pf-session new` instead.
+**To start story-based development work,** use `/pf:session new` instead.
 </support-agent-guidance>
 ```
 

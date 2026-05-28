@@ -38,7 +38,7 @@ Auto-loaded by `pf agent start` from theme config. See output above.
 
 <role>
 **Primary:** {When this agent is invoked}
-**Blessed Path:** {Recommended workflow, e.g., "PM → /pf-architect for design work"}
+**Blessed Path:** {Recommended workflow, e.g., "PM → /pf:architect for design work"}
 </role>
 
 <helpers>
@@ -56,7 +56,7 @@ From theme config. Model: haiku. Tasks: {What helpers do for this agent}
 
 <skills>
 **Skills I Use:**
-- `/pf-sprint` - Sprint status and backlog
+- `/pf:sprint` - Sprint status and backlog
 - `/architecture` - Architecture documentation
 </skills>
 

@@ -117,23 +117,6 @@ checks #1-#12. Common patterns:
 - Adding type annotations with incorrect types
 - Adding validation but only on one code path
 
-**14. State cleanup ordering with fallible side effects**
-When a one-shot lifecycle queue/buffer is consumed by a side-effecting
-call (e.g. `registry.register_section(...)`, `db.commit()`, `http.send(...)`),
-the queue MUST be cleared BEFORE the side effect, not after. Search for:
-
-- `register_*(...)` / `commit(...)` / `send(...)` / `publish(...)` followed by
-  a `self.queue = []` or `self.buffer.clear()` — if the call raises, the
-  queue stays populated and the next caller re-delivers the same payload.
-- Comment patterns "one-shot" / "consume" / "clear after" near a register/save call
-
-The correct idiom is render-or-stage into a local, clear the source field,
-then invoke the side effect. If the side effect fails, the cost is one lost
-emission; the cost of the reverse order is silent double-delivery on the
-next turn (no exception surfaces — the bug only manifests as duplicate output).
-
-*Origin: 50-4 I3 (TIME-SKIP CONTEXT clear-after-register would have re-delivered queued trope beats on register-section failure)*
-
 If ALL checks pass across all changed `.py` files, return:
 
 ```yaml

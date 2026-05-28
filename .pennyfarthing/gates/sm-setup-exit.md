@@ -104,8 +104,8 @@ GATE_RESULT:
   recovery:
     - "Run sm-setup to create session file"
     - "Set Workflow and Phase fields in session"
-    - "Run `/pf-context create epic {N}` to create epic context"
-    - "Run `/pf-context create story {N-N}` to create story context"
+    - "Run `/pf:context create epic {N}` to create epic context"
+    - "Run `/pf:context create story {N-N}` to create story context"
     - "Create feature branch: git checkout -b feat/{story-slug}"
 ```
 </fail>

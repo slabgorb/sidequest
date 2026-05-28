@@ -257,8 +257,8 @@ Collect results from each worker: branch name, PR URL (if created), and final st
 </handoffs>
 
 <skills>
-- `/pf-sprint` - Sprint status and project state
-- `/pf-workflow` - View and switch workflows
+- `/pf:sprint` - Sprint status and project state
+- `/pf:workflow` - View and switch workflows
 </skills>
 
 <exit>

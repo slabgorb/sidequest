@@ -12,7 +12,7 @@ This document describes how Pennyfarthing agents are coordinated. The framework 
 
 SM → TEA → Dev → Reviewer → SM (setup → red → green → review → finish)
 
-**Entry points:** `/pf-sprint work` (smart resume/start) or `/pf-session new` (explicit new story)
+**Entry points:** `/pf:sprint work` (smart resume/start) or `/pf:session new` (explicit new story)
 **State detection:** Agents read session file on activation — `**Phase:**`, `**Workflow:**`, `**Repos:**`
 **Phase transitions:** Agents drive exit directly using `pf handoff` CLI (no handoff subagent)
 **Finish:** SM handles when status = `approved`
@@ -365,18 +365,18 @@ Dev Agent Example (API story):
 ## Architecture History
 
 ### Previous Architecture (Pre-December 2025)
-- Separate commands: `/pf-session new`, `/pickup-work`, `/handoff-work`, `/finish-work`
+- Separate commands: `/pf:session new`, `/pickup-work`, `/handoff-work`, `/finish-work`
 - Manual handoff documentation
 - No subagent extraction
 
 ### Intermediate Architecture (January 2026)
-- Smart entry point: `/pf-work` (resumes or starts new)
+- Smart entry point: `/pf:work` (resumes or starts new)
 - State detection via session file in `.session/`
 - Handoffs via dedicated Haiku subagents (`handoff.md`, `sm-handoff.md`)
 - 100 themed personas for agent personality
 
 ### Current Architecture
-- Entry: `/pf-sprint work` or `/pf-session new`
+- Entry: `/pf:sprint work` or `/pf:session new`
 - Session file drives state: `**Phase:**`, `**Workflow:**`, `**Repos:**`
 - Agents drive their own exit via `pf handoff` CLI — no handoff subagent
 - Exit sequence: write assessment → `resolve-gate` → `complete-phase` → `marker` → EXIT
@@ -448,25 +448,25 @@ Perplexity provides real-time web intelligence for broader knowledge needs. Four
 
 ```bash
 # Entry points
-/pf-sprint work     # Smart entry - resume or start new
-/pf-session new     # Explicitly start new story
+/pf:sprint work     # Smart entry - resume or start new
+/pf:session new     # Explicitly start new story
 
 # TDD Flow agents
-/pf-sm              # Scrum Master (setup + finish)
-/pf-tea             # Test Engineer (RED phase)
-/pf-dev             # Developer (GREEN phase)
-/pf-reviewer        # Code Reviewer
+/pf:sm              # Scrum Master (setup + finish)
+/pf:tea             # Test Engineer (RED phase)
+/pf:dev             # Developer (GREEN phase)
+/pf:reviewer        # Code Reviewer
 
 # Support agents
-/pf-architect       # Architecture design
-/pf-tech-writer     # Documentation
-/pf-ux-designer     # UI/UX design
-/pf-devops          # Infrastructure
+/pf:architect       # Architecture design
+/pf:tech-writer     # Documentation
+/pf:ux-designer     # UI/UX design
+/pf:devops          # Infrastructure
 
 # Utility
-/pf-check           # Run quality gates before handoff
-/pf-chore           # Quick commit for small changes
-/pf-git             # Git operations
+/pf:check           # Run quality gates before handoff
+/pf:chore           # Quick commit for small changes
+/pf:git             # Git operations
 ```
 
 ---

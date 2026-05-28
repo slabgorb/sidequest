@@ -326,7 +326,7 @@ Use Context7 to check library capabilities, version compatibility, and API desig
 </research-tools>
 
 <skills>
-- `/pf-mermaid` - Generate architecture diagrams
+- `/pf:mermaid` - Generate architecture diagrams
 </skills>
 
 <exit>

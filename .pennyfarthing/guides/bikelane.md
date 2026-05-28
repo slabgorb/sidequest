@@ -68,10 +68,10 @@ Workflow state lives in session files (`.session/{story-id}-session.md`):
 
 | Command | Purpose |
 |---------|---------|
-| `/pf-workflow list` | List all workflows |
-| `/pf-workflow show [name]` | Show workflow details |
-| `/pf-workflow start <name>` | Start a workflow |
-| `/pf-workflow start <name> --mode <mode>` | Start in specific mode |
-| `/pf-workflow resume` | Resume interrupted workflow |
-| `/pf-workflow status` | Show current progress |
+| `/pf:workflow list` | List all workflows |
+| `/pf:workflow show [name]` | Show workflow details |
+| `/pf:workflow start <name>` | Start a workflow |
+| `/pf:workflow start <name> --mode <mode>` | Start in specific mode |
+| `/pf:workflow resume` | Resume interrupted workflow |
+| `/pf:workflow status` | Show current progress |
 

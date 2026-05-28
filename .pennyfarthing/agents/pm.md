@@ -154,8 +154,8 @@ Stay within the token budget. Answer the specific question — focused consultat
 </tandem-consultation>
 
 <skills>
-- `/pf-sprint` - Sprint status, backlog, story management
-- `/pf-sprint story` - Story creation, sizing, and management
+- `/pf:sprint` - Sprint status, backlog, story management
+- `/pf:sprint story` - Story creation, sizing, and management
 </skills>
 
 <exit>

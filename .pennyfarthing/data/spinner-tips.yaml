@@ -1,0 +1,83 @@
+# Pennyfarthing Feature Discovery Tips
+#
+# These are shown in the Claude Code spinner alongside default tips.
+# Keep tips short (< 80 chars), actionable, and focused on feature discovery.
+
+tips:
+  # Getting started
+  - "Try /pf-sprint to check your backlog"
+  - "Use /pf-work to resume where you left off"
+  - "/pf-help gives context-aware help for any command"
+  - "Run /pf-settings to view and manage your config"
+  - "Type /pf-tour for a guided walkthrough of Pennyfarthing"
+
+  # Themes and personas
+  - "Run /pf-theme to browse and set persona themes"
+  - "Run pf theme list to see all available themes"
+  - "Each theme assigns unique characters to every agent role"
+  - "Try pf theme show to see your current theme details"
+
+  # Agents and workflows
+  - "Use /pf-workflow to see available workflow types"
+  - "/pf-dev activates the Developer agent for coding tasks"
+  - "Try /pf-architect for system design sessions"
+  - "/pf-reviewer runs adversarial code review"
+  - "/pf-tea writes failing tests (RED) or verifies quality (VERIFY)"
+  - "/pf-sm coordinates stories and sprint management"
+  - "/pf-ba discovers requirements and stakeholder needs"
+  - "/pf-tech-writer creates and maintains documentation"
+  - "Agents hand off to each other through workflow gates"
+
+  # Sprint and stories
+  - "Use /pf-epic to start or close epics"
+  - "Run pf sprint backlog to see available stories"
+  - "Try /pf-standalone to wrap changes into a quick PR"
+  - "/pf-chore commits quick changes without full ceremony"
+  - "Use pf sprint story add to create new stories"
+
+  # Tools and utilities
+  - "Use /pf-git for multi-repo status and cleanup"
+  - "Use /pf-check to run quality gates before handoff"
+  - "Run /pf-bc to manage TUI panel focus"
+  - "Use pf frame start for a panel dashboard alongside CLI"
+  - "/pf-ci detects and runs CI checks locally"
+  - "Try /pf-brainstorming for structured problem solving"
+  - "/pf-retro runs a sprint retrospective"
+
+  # Power features
+  - "Use /pf-party-mode for creative multi-agent discussions"
+  - "Run /pf-job-fair to find which characters excel at each role"
+  - "Try /pf-context for deep epic and story context docs"
+  - "/pf-patch fixes blocking bugs without leaving your story"
+  - "Sidecars in .pennyfarthing/sidecars/ track agent learning"
+  - "Use /pf-docs for domain documentation management"
+
+  # Project customization
+  - "Add SOUL.md to define project principles agents follow"
+  - "Add pr_title_format in repos.yaml to enforce PR naming"
+  - "Run /pf-setup for interactive project configuration"
+
+  # Gate extensions and workflows
+  - "Add custom gates via repos.yaml gates.extensions"
+  - "Put project workflows in .pennyfarthing/project/workflows/"
+  - "Use pf workflow start for stepped workflows"
+  - "Scale levels (0-4) auto-route work to the right workflow"
+
+  # Collaboration
+  - "Tandem mode pairs a background observer for decisions"
+  - "Team mode runs multiple agents in parallel phases"
+  - "Relay mode (Cmd+4) enables automatic agent handoffs"
+
+  # Code analysis
+  - "Run pf debug hotspots to find high-churn files"
+  - "Use pf debug deadcode to detect unused code"
+  - "Try pf debug healthscore for composite health metrics"
+
+  # Session and context
+  - "Use /pf-session to resume from checkpoints"
+  - "Worktree mode enables parallel story work"
+  - "TirePump clears context when approaching limits"
+
+  # Evaluation
+  - "Try /pf-solo for single-agent benchmarking"
+  - "/pf-benchmark compares agent performance to baselines"

@@ -298,7 +298,7 @@ Use Context7 to verify external library APIs before writing code (new/unfamiliar
 </research-tools>
 
 <skills>
-- `/pf-testing` - Test commands and patterns
-- `/pf-code-review` - Self-review checklist
+- `/pf:testing` - Test commands and patterns
+- `/pf:code-review` - Self-review checklist
 </skills>
 

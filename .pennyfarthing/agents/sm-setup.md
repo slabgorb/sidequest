@@ -24,13 +24,13 @@ model: haiku
 <gate>
 ## Research Steps
 
-- [ ] Use `/pf-sprint backlog` for initial backlog scan:
+- [ ] Use `/pf:sprint backlog` for initial backlog scan:
   ```bash
   pf sprint backlog
   ```
-- [ ] Use `/pf-jira` skill to enrich with Jira status/assignee:
-  - `/pf-jira search "project=PROJ AND sprint in openSprints()"` - Get all sprint stories
-  - `/pf-jira view {JIRA_KEY}` - Check individual story details
+- [ ] Use `/pf:jira` skill to enrich with Jira status/assignee:
+  - `/pf:jira search "project=PROJ AND sprint in openSprints()"` - Get all sprint stories
+  - `/pf:jira view {JIRA_KEY}` - Check individual story details
 - [ ] Check context availability
 - [ ] Check dependencies
 - [ ] Output report with recommendations
@@ -77,15 +77,45 @@ Other formats break Frame GUI detection.
 <gate>
 ## Setup Steps
 
-- [ ] Verify epic has Jira key (auto-create if missing)
+- [ ] Determine if Jira is in use for this project (see Step 0)
+- [ ] If Jira enabled AND story has a jira key: verify epic has Jira key (auto-create if missing)
 - [ ] Check workflow permissions (auto-prompt for missing)
-- [ ] Claim story in Jira
+- [ ] If Jira enabled AND story has a jira key: claim story in Jira
 - [ ] Write session file with Workflow Tracking section
 - [ ] Create feature branch
 - [ ] Update sprint YAML status
 </gate>
 
-## Step 1: Check Epic Jira
+## Step 0: Detect Jira Integration
+
+<critical>
+**Skip every Jira step (1 and 3) when either condition is false:**
+
+1. Jira is not configured for this project (`is_jira_enabled()` returns False).
+2. The story has no `jira:` key in sprint YAML — i.e. `JIRA_KEY` is empty/blank.
+
+A kanban-only or Jira-less project must NOT trigger Jira create/claim/move
+calls. Running them anyway will fail-closed at the CLI (`pf jira ...` refuses
+when jira integration is not configured) but the agent must not call them in
+the first place.
+</critical>
+
+```bash
+# Detect whether the project has Jira configured.
+JIRA_ENABLED=$(python3 -c "from pf.jira.client import is_jira_enabled; print('1' if is_jira_enabled() else '0')")
+
+# Treat empty/null JIRA_KEY as no-jira-story.
+case "{JIRA_KEY}" in
+  ""|null|None) JIRA_KEY_SET=0 ;;
+  *) JIRA_KEY_SET=1 ;;
+esac
+```
+
+If `JIRA_ENABLED=0` OR `JIRA_KEY_SET=0`: skip Step 1 (epic create) and Step 3
+(claim). Proceed directly to Step 2 (permissions), Step 4 (session file),
+Step 5 (branch), Step 6 (workflow type).
+
+## Step 1: Check Epic Jira (skip if Step 0 said to)
 
 ```bash
 # Extract epic number from story ID
@@ -95,7 +125,8 @@ EPIC_NUM=$(echo "{STORY_ID}" | cut -d'-' -f1)
 EPIC_JIRA=$(pf sprint epic field "$EPIC_NUM" jira)
 ```
 
-If missing or "null": auto-create via `pf jira create epic {EPIC_NUM}`
+If missing or "null": auto-create via `pf jira create epic {EPIC_NUM}`.
+**Only run this when Step 0 has set `JIRA_ENABLED=1` and `JIRA_KEY_SET=1`.**
 
 ## Step 2: Check Workflow Permissions
 
@@ -132,7 +163,9 @@ GRANTS=$(cat .claude/settings.local.json 2>/dev/null | jq '.permissions.grants /
 
 **Note:** Use `checkWorkflowPermissions()` from `@pennyfarthing/core` for permission matching logic.
 
-## Step 3: Claim in Jira
+## Step 3: Claim in Jira (skip if Step 0 said to)
+
+**Only run this when Step 0 has set `JIRA_ENABLED=1` and `JIRA_KEY_SET=1`.**
 
 Use pf for Jira commands:
 
@@ -147,10 +180,14 @@ pf jira claim {JIRA_KEY}
 **Exit codes:**
 - `0` - Available or successfully claimed
 - `1` - Assigned to someone else (BLOCKED)
-- `2` - Not found or not synced to Jira
+- `2` - Not found / not synced to Jira / Jira integration disabled
 - `3` - Error (CLI not installed, etc.)
 
 ## Step 4: Write Session File
+
+**Write the session file to the canonical absolute path: `{REPO_ROOT}/.session/{STORY_ID}-session.md`** — where `{REPO_ROOT}` is the project root (the directory containing `.pennyfarthing/`). The `Write` tool requires an absolute path; resolve `{REPO_ROOT}` from your activation context, then pass the joined path verbatim.
+
+Use the `Write` tool with that absolute path and the following content (the `Write` tool will create the `.session/` directory if it does not exist):
 
 ```markdown
 ---
@@ -251,7 +288,7 @@ WORKFLOW_TYPE=$(pf workflow type "{WORKFLOW}")
 | Workflow Type | Routing |
 |---------------|---------|
 | `phased` | Return `next_agent` = first agent in workflow (tea/dev/orchestrator) |
-| `stepped` | Return `next_agent` = null, `start_command` = `/pf-workflow start {WORKFLOW}` |
+| `stepped` | Return `next_agent` = null, `start_command` = `/pf:workflow start {WORKFLOW}` |
 </workflow-type-detection>
 
 <output>
@@ -288,11 +325,11 @@ SETUP_RESULT:
   workflow: "{WORKFLOW}"
   workflow_type: "stepped"
   next_agent: null
-  start_command: "/pf-workflow start {WORKFLOW}"
+  start_command: "/pf:workflow start {WORKFLOW}"
 
   next_steps:
     - "Setup complete. This is a STEPPED workflow."
-    - "DO NOT run exit protocol. Tell user to run: /pf-workflow start {WORKFLOW}"
+    - "DO NOT run exit protocol. Tell user to run: /pf:workflow start {WORKFLOW}"
     - "Session file ready at: {session_file}"
 ```
 

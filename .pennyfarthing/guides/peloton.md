@@ -27,13 +27,13 @@ Launches tmux with Claude Code + TUI + Frame server. You land in the Claude Code
 
 **2. Activate SM and pick a story:**
 ```
-/pf-sm
+/pf:sm
 ```
 SM checks the backlog, you pick a story, SM claims it in Jira, creates the session file, and sets up the workflow.
 
 **3. Start peloton:**
 ```
-/pf-peloton
+/pf:peloton
 ```
 SM calls `TeamCreate` to spawn teammates: Architect, TEA, Dev, Reviewer. With `teammateMode: "tmux"`, each teammate automatically gets its own tmux pane. Each teammate is a full, independent Claude Code instance loaded with its agent definition.
 
@@ -338,7 +338,7 @@ phase_prompts:
 pf benchmark replay run scenarios/dpgd-XXX.yaml --n 1 --skip-score --keep-worktree
 
 # Check the worktree to see what the pipeline produced
-ls /tmp/pf-replay/dpgd-XXX-control-run-1/
+ls /tmp/pf:replay/dpgd-XXX-control-run-1/
 ```
 
 ### Step 4: Run at Scale

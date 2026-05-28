@@ -67,7 +67,7 @@ You can always override the detected level:
 
 ```bash
 # Explicitly set scale level
-/pf-workflow start prd --scale 3
+/pf:workflow start prd --scale 3
 ```
 
 Or when asked during workflow initiation, specify your preferred level.
@@ -108,5 +108,5 @@ info = get_scale_level_info(level)
 
 ## Related
 
-- [Workflow Skill](/pf-workflow) - Workflow management commands
+- [Workflow Skill](/pf:workflow) - Workflow management commands
 - [PRD Workflow](../workflows/prd/) - Full PRD stepped workflow

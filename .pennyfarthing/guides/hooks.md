@@ -12,19 +12,60 @@ Hooks are commands that Claude Code runs at specific events:
 | `PreToolUse` | Before a tool call executes | Validate/block operations |
 | `PostToolUse` | After a tool call completes | Log, cleanup, notifications |
 | `Stop` | When agent turn ends | Enforce output requirements, validate markers |
+| `SessionEnd` | When the session ends | Clean up session state |
+| `PreCompact` | Before context compaction | Persist state ahead of compaction |
+
+## Registration: the plugin dispatcher model
+
+Pennyfarthing's lifecycle hooks are registered in the **plugin's own
+`hooks/hooks.json`** (at the plugin root), not in the user's
+`.claude/settings.json`. The plugin owns the hooks — enabling or disabling the
+Pennyfarthing plugin toggles them.
+
+`hooks.json` registers six events (`SessionStart`, `Stop`, `PreToolUse`,
+`PostToolUse`, `SessionEnd`, `PreCompact`). Each event invokes a thin wrapper
+under `scripts/hooks/`:
+
+- **`session-start.sh`** handles `SessionStart`. It launches the Frame server
+  detached (`nohup uv run … pf frame start --background & disown`, the only spawn
+  pattern that survives Claude Code's hook process-group kill), then `exec`s
+  `pf hooks dispatch SessionStart`.
+- **`dispatch.sh`** handles every other event: `exec uv run … pf hooks dispatch "$1"`,
+  where `$1` is the event name passed by `hooks.json`.
+
+The Python dispatcher (`pf hooks dispatch <Event>`) reads stdin once and runs
+**all** matching handlers for that event in a single process. Tool-name matcher
+routing (Edit, Write, Bash, …) is internal to the dispatcher, so `hooks.json`
+carries no matcher keys. The per-handler descriptions below document what each
+handler does once the dispatcher routes to it.
 
 ## Pennyfarthing Default Hooks
 
-### SessionStart Hooks
+### SessionStart handlers
 
-#### pf hooks session-start
+The `SessionStart` event runs the `session-start.sh` wrapper, which first launches
+the Frame server detached, then dispatches the Python `SessionStart` handler.
 
-**Location:** `pf hooks session-start`
+#### Frame launch (session-start.sh wrapper)
+
+Frame is started by the `session-start.sh` wrapper via `nohup uv run … pf frame
+start --background & disown` — **not** by the Python session-start handler. The
+detached launch is required so the server survives Claude Code's hook
+process-group kill. The Python handler only reads the resulting Frame port for
+OTEL wiring (below).
+
+#### SessionStart dispatcher (pf hooks dispatch SessionStart)
 
 Initializes the Pennyfarthing environment:
 - Creates `.session/` directory structure
 - Clears stale agent state from previous sessions
 - Sets `PROJECT_ROOT` and `SESSION_ID` environment variables
+- Configures OTEL telemetry: reads the running Frame server's port and writes
+  `OTEL_EXPORTER_OTLP_PROTOCOL` / `OTEL_EXPORTER_OTLP_ENDPOINT` to
+  `CLAUDE_ENV_FILE` (which Claude Code sources), routing Claude Code telemetry to
+  Frame.
+- Displays the welcome banner once per session (lock-file guard): ASCII art in
+  CLI mode, or a WebSocket logo message in Frame mode.
 
 #### setup-env.sh
 
@@ -34,18 +75,6 @@ Project-specific environment setup. Edit this file to:
 - Set custom environment variables
 - Configure project-specific paths
 - Initialize project dependencies
-
-#### otel-auto-config.sh
-
-**Location:** `.pennyfarthing/scripts/hooks/otel-auto-config.sh`
-
-Auto-configures OTEL telemetry for Frame server. Checks for a `.frame-port` file and sets `OTEL_EXPORTER_OTLP_PROTOCOL` and `OTEL_EXPORTER_OTLP_ENDPOINT` to route Claude Code telemetry to the running Frame server.
-
-#### pf hooks session-start (welcome)
-
-**Location:** `pf hooks session-start`
-
-Welcome display is now folded into `pf hooks session-start`. In CLI mode, shows ASCII art. In Frame mode, sends a WebSocket message to display the logo. Runs once per session (lock file guard).
 
 ### PreToolUse Hooks
 
@@ -74,7 +103,7 @@ Warns agents when context usage is high. Outputs a warning at 60% usage and a cr
 
 **Location:** `pf hooks context-breaker`
 
-Hard stop when context reaches 80% (configurable via `CRITICAL_THRESHOLD`). Unlike `pf hooks context-warning`, this **blocks tool execution** (exit 2). Auto-saves the active agent to a checkpoint so `/pf-session continue` can restore it with FULL tier context.
+Hard stop when context reaches 80% (configurable via `CRITICAL_THRESHOLD`). Unlike `pf hooks context-warning`, this **blocks tool execution** (exit 2). Auto-saves the active agent to a checkpoint so `/pf:session continue` can restore it with FULL tier context.
 
 #### pf hooks schema-validation
 
@@ -128,7 +157,9 @@ Standard git hooks installed into the dispatcher `.d/` directories. Handle linti
 
 ## Configuration Schema
 
-Hooks are configured in `.claude/settings.local.json`:
+Pennyfarthing's lifecycle hooks are registered in the plugin's own
+`hooks/hooks.json` (at the plugin root), not in `.claude/settings.json`. Each event
+points at one wrapper, which `exec`s `pf hooks dispatch <Event>`:
 
 ```json
 {
@@ -138,18 +169,17 @@ Hooks are configured in `.claude/settings.local.json`:
         "hooks": [
           {
             "type": "command",
-            "command": "pf hooks session-start"
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session-start.sh"
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "pf hooks pre-edit-check"
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/hooks/dispatch.sh PreToolUse"
           }
         ]
       }
@@ -157,6 +187,12 @@ Hooks are configured in `.claude/settings.local.json`:
   }
 }
 ```
+
+Note there are **no `matcher` keys**: a single dispatcher entry handles every tool
+for an event, and tool-name routing (Edit, Write, Bash, …) happens inside the
+Python dispatcher. The matcher regex described below applies only to the Claude
+Code `settings.json` schema generally — Pennyfarthing does not use it in
+`hooks.json`.
 
 ### Hook Entry Structure
 
@@ -310,8 +346,9 @@ If a hook fails or behaves unexpectedly:
 
 | Type | Location | Editable |
 |------|----------|----------|
-| Managed hooks | `.pennyfarthing/scripts/hooks/` | No (symlinked — edit in `pennyfarthing-dist/`) |
-| Project hooks | `.claude/project/hooks/` | Yes |
-| Settings | `.claude/settings.local.json` | Yes |
-| Git hook dispatchers | `.git/hooks/{name}` | No (installed by `pf setup`) |
+| Lifecycle hook registration | plugin `hooks/hooks.json` | No (plugin-owned) |
+| Lifecycle hook wrappers | plugin `scripts/hooks/session-start.sh`, `dispatch.sh` | No (plugin-owned) |
+| Project (custom) hooks | `.claude/project/hooks/` | Yes |
+| Project hook settings | `.claude/settings.local.json` | Yes (for user-added hooks only) |
+| Git hook dispatchers | `.git/hooks/{name}` | No (installed by `pf git install-hooks`) |
 | Git hook scripts | `.git/hooks/{name}.d/` | Yes (add scripts to `.d/` directories) |

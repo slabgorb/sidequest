@@ -63,7 +63,7 @@ getPrimeContextJson(agentName, projectDir, tier)  # JSON for Frame GUI
 
 ## Integration Points
 
-- **Agent commands** (`/pf-sm`, `/pf-dev`, `/pf-tea`) invoke prime on activation
+- **Agent commands** (`/pf:sm`, `/pf:dev`, `/pf:tea`) invoke prime on activation
 - **TirePump** calls prime to reload agent context after clearing
 - **Frame GUI** uses JSON output for context display and token tracking
 

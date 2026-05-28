@@ -1,32 +1,37 @@
 # Hooks
 
-Git hooks and Claude Code hooks.
+Wrapper scripts for Pennyfarthing's Claude Code lifecycle hooks and git hooks.
 
-## Scripts
+## Claude Code lifecycle hooks
+
+These are registered in the plugin's own `hooks/hooks.json` (at the plugin root),
+**not** in the user's `.claude/settings.json`. Enabling/disabling the Pennyfarthing
+plugin toggles them. `hooks.json` registers six events — `SessionStart`, `Stop`,
+`PreToolUse`, `PostToolUse`, `SessionEnd`, `PreCompact` — each invoking one of the
+wrappers below.
 
 | Script | Purpose |
 |--------|---------|
-| `pf hooks context-breaker` | Claude hook: halt at context limit |
-| `pf hooks context-warning` | Claude hook: warn on high context |
-| `otel-auto-config.sh` | Claude hook: configure OTEL |
-| `post-merge.sh` | Git hook: post-merge actions |
-| `pre-commit.sh` | Git hook: branch protection, agent validation, sprint YAML validation |
-| `pf hooks pre-edit-check` | Claude hook: validate before edit |
-| `pre-push.sh` | Git hook: pre-push validation |
-| `pf hooks session-start` | Claude hook: session start |
-| `pf hooks session-stop` | Claude hook: session stop |
+| `session-start.sh` | `SessionStart` wrapper. Launches the Frame server detached (`nohup … & disown` so it survives the hook process-group kill), then `exec`s `pf hooks dispatch SessionStart`. |
+| `dispatch.sh` | Wrapper for every other event. `exec`s `pf hooks dispatch "$1"`, where `$1` is the event name passed by `hooks.json`. |
 
-## Installation
+The Python dispatcher (`pf hooks dispatch <Event>`) reads stdin once and runs all
+matching handlers in a single process. Tool-name matcher routing (Edit, Write,
+Bash, …) is internal to the dispatcher, so `hooks.json` carries no matcher keys.
 
-Git hooks are installed via:
+## Git hooks
 
-```bash
-pf git install-hooks
-```
+Installed into `.git/hooks/` via `pf git install-hooks`. Unrelated to the Claude
+Code lifecycle hooks above.
 
-Claude hooks are configured in `.claude/settings.json`.
+| Script | Purpose |
+|--------|---------|
+| `pre-commit.sh` | Branch protection, agent validation, sprint YAML validation. |
+| `pre-push.sh` | Pre-push validation. |
+| `post-merge.sh` | Post-merge actions. |
+| `dispatcher-template.sh` | Template for the `.git/hooks/{name}` dispatcher that runs all scripts in `.git/hooks/{name}.d/` in sorted order. |
 
 ## Ownership
 
-- **Primary users:** Git, Claude Code
+- **Primary users:** Claude Code (plugin hooks), Git (git hooks)
 - **Maintained by:** Core Pennyfarthing team

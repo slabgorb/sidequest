@@ -33,7 +33,7 @@ ls -la .pennyfarthing/personas/themes/
 |----------|----------|----------|
 | **Sci-Fi** | dune, star-trek, firefly | Tech-heavy projects |
 | **Fantasy** | tolkien, discworld | Creative projects |
-| **Historical** | tea_and_murdern, renaissance | Enterprise/formal |
+| **Historical** | victorian, renaissance | Enterprise/formal |
 | **Pop Culture** | office, parks-rec | Team-oriented |
 | **Literature** | sherlock, austen | Analysis-heavy |
 | **Mythology** | norse, greek | Framework/infra |
@@ -62,7 +62,7 @@ Based on your project type ({project_type}), here are recommended themes:
 
 {if enterprise}
   🏛️ Professional themes for enterprise:
-    - tea_and_murdern (formal, structured)
+    - victorian (formal, structured)
     - mad-men (business, strategy)
     - west-wing (politics, stakeholders)
 {/if}

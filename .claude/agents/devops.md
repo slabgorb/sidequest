@@ -89,9 +89,9 @@ FILE_LIST: "{comma-separated config file paths}"
 </critical>
 
 <skills>
-- `/pf-just` - Just commands for dev operations
-- `/pf-ci run` - Detect and run CI locally
-- `/pf-git release` - Release management workflow
+- `/pf:just` - Just commands for dev operations
+- `/pf:ci run` - Detect and run CI locally
+- `/pf:git release` - Release management workflow
 </skills>
 
 <reasoning-mode>
@@ -212,7 +212,7 @@ Stay within the token budget. Answer the specific question — focused consultat
 </tandem-consultation>
 
 <skills>
-- `/pf-just` - Just commands for dev operations
+- `/pf:just` - Just commands for dev operations
 - `/run-ci` - Detect and run CI locally
 - `/release` - Release management workflow
 </skills>

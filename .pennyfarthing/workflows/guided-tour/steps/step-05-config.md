@@ -70,7 +70,7 @@ workflow:
 | `accept` | Auto-accept all tool calls (fastest, least oversight) |
 
 ### Relay Mode
-When `relay_mode: true`, agents automatically hand off to the next agent in the workflow without requiring the user to manually invoke `/pf-{agent}`. The handoff marker triggers an inline activation of the next agent.
+When `relay_mode: true`, agents automatically hand off to the next agent in the workflow without requiring the user to manually invoke `/pf:{agent}`. The handoff marker triggers an inline activation of the next agent.
 
 ### Bell Mode
 When `bell_mode: true`, the PostToolUse hook checks a message queue and injects messages into the conversation. This powers tandem observations (background agent insights) and inter-agent notifications.
@@ -78,8 +78,8 @@ When `bell_mode: true`, the PostToolUse hook checks a message queue and injects 
 ## Tour Complete!
 
 You've explored Pennyfarthing's five key areas. Next steps:
-- Run `/pf-sprint work` to pick up a story
-- Run `/pf-help` for command reference anytime
+- Run `/pf:sprint work` to pick up a story
+- Run `/pf:help` for command reference anytime
 - Check the getting-started guide for deeper documentation
 ```
 </output>

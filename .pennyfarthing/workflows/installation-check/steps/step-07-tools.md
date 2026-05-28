@@ -20,7 +20,7 @@ Check the pf Python CLI (required — all hooks depend on it).
 <instructions>
 1. Run the doctor command for the tools category
 2. For each result, explain what the tool provides and when it's needed:
-   - **tools/pf-cli**: **REQUIRED.** The Python `pf` command provides agent activation (`pf agent start`), hook dispatch (`pf hooks`), and sprint management. All Claude Code hooks call `pf` directly — without it, every session is broken. Install via `pipx install -e pennyfarthing-dist/` (editable) or `pipx install pennyfarthing-scripts` (released).
+   - **tools/pf:cli**: **REQUIRED.** The Python `pf` command provides agent activation (`pf agent start`), hook dispatch (`pf hooks`), and sprint management. All Claude Code hooks call `pf` directly — without it, every session is broken. Install via `pipx install -e pennyfarthing-dist/` (editable) or `pipx install pennyfarthing-scripts` (released).
 3. For missing tools: pf CLI is **required** (hooks depend on it)
 4. Present the collaboration menu
 </instructions>

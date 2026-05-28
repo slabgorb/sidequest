@@ -1,7 +1,7 @@
 # Step 10: Install Superpowers Companion Plugin
 
 <purpose>
-Pennyfarthing declares `superpowers@claude-plugins-official` as a required companion Claude Code plugin. It ships generic software-craft skills — brainstorming, writing-plans, verification-before-completion, systematic-debugging, test-driven-development — that pennyfarthing forwarder commands and enforcement gates reference. Without it, `/pf-brainstorming` cannot forward and several Track 2 gates cannot verify their artifacts.
+Pennyfarthing declares `superpowers@claude-plugins-official` as a required companion Claude Code plugin. It ships generic software-craft skills — brainstorming, writing-plans, verification-before-completion, systematic-debugging, test-driven-development — that pennyfarthing forwarder commands and enforcement gates reference. Without it, `/pf:brainstorming` cannot forward and several Track 2 gates cannot verify their artifacts.
 </purpose>
 
 <instructions>

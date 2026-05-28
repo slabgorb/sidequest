@@ -103,14 +103,14 @@ The justfile automatically uses `.venv/bin/python3` when `.venv/` exists.
 ### Launch
 
 ```bash
-# Default — connects to Frame on localhost:1898
+# Default — connects to Frame on localhost:2898
 just tui
 
 # Point at a specific project directory
 just tui dir=/path/to/project
 
 # Custom Frame port
-just tui port=2898
+just tui port=3898
 ```
 
 ### Navigation

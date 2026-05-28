@@ -10,7 +10,7 @@ next: step-02-themes
 </step-meta>
 
 <purpose>
-Welcome the user to Pennyfarthing and orient them with the getting-started guide and /pf-help command. This step establishes the foundation for the rest of the tour.
+Welcome the user to Pennyfarthing and orient them with the getting-started guide and /pf:help command. This step establishes the foundation for the rest of the tour.
 </purpose>
 
 <prerequisites>
@@ -21,7 +21,7 @@ Welcome the user to Pennyfarthing and orient them with the getting-started guide
 <instructions>
 1. Welcome the user to the Pennyfarthing guided tour
 2. Explain that this tour covers the five key areas: themes, agents, workflows, sprint management, and configuration
-3. Show the user the `/pf-help` command for quick reference at any time
+3. Show the user the `/pf:help` command for quick reference at any time
 4. Mention the getting-started guide as a companion reference
 5. Verify the installation is healthy by running `pf validate`
 </instructions>
@@ -29,7 +29,7 @@ Welcome the user to Pennyfarthing and orient them with the getting-started guide
 <actions>
 - Run: `pf --version` to confirm installation
 - Run: `pf validate` to check project health
-- Show: `/pf-help` command for reference
+- Show: `/pf:help` command for reference
 </actions>
 
 <output>
@@ -46,7 +46,7 @@ You're about to explore the key features of the framework:
 4. **Sprint** — Story tracking and backlog management
 5. **Config** — Hooks, settings, and customization
 
-Use `/pf-help` anytime for quick reference.
+Use `/pf:help` anytime for quick reference.
 ```
 </output>
 
@@ -54,7 +54,7 @@ Use `/pf-help` anytime for quick reference.
 ## Completion Criteria
 - [ ] User has seen the tour overview
 - [ ] `pf validate` ran successfully (or issues noted)
-- [ ] User understands they can use `/pf-help` for reference
+- [ ] User understands they can use `/pf:help` for reference
 </gate>
 
 <deep-dive>
@@ -79,7 +79,7 @@ Use AskUserQuestion to let the user pick which sub-topic to explore. Continue th
     Dig In — Explore Pennyfarthing architecture and components
   </case>
   <case value="try-it" next="LOOP">
-    Try It — Run `/pf-help` to see the help system
+    Try It — Run `/pf:help` to see the help system
   </case>
   <case value="skip" next="step-02-themes">
     Skip — Jump ahead to themes

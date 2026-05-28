@@ -51,7 +51,7 @@ All files in a group get committed together in their respective repos.
 | `docs:` | Documentation | `docs/description` | `docs/*.md`, `README.md` |
 | `chore:` | Maintenance | `chore/description` | configs, dependencies |
 | `chore(sprint):` | Sprint tracking | `chore/sprint-update` | `sprint/*.yaml` |
-| `chore(pennyfarthing):` | PF config | `chore/pf-description` | `.claude/**`, `.pennyfarthing/**` |
+| `chore(pennyfarthing):` | PF config | `chore/pf:description` | `.claude/**`, `.pennyfarthing/**` |
 | `feat:` | New feature | `feat/story-id-desc` | `src/**`, `internal/**` |
 | `fix:` | Bug fix | `fix/issue-desc` | various |
 | `refactor:` | Code improvement | `refactor/description` | `src/**` |

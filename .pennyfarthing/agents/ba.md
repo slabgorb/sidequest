@@ -161,7 +161,7 @@ REFLECT: Need unified user taxonomy before requirements make sense. Recommend st
 </handoffs>
 
 <skills>
-- `/pf-sprint` - Sprint status, backlog, story management
+- `/pf:sprint` - Sprint status, backlog, story management
 </skills>
 
 <exit>

@@ -86,7 +86,7 @@ pf handoff marker --error "Tests failing"
 
 The marker generator checks relay mode and context usage to produce the appropriate output:
 
-- **Relay ON:** `AGENT_COMMAND` block with `relay: true` and an `invoke` field (e.g., `/pf-dev`). The agent uses the Skill tool to invoke the next agent automatically.
+- **Relay ON:** `AGENT_COMMAND` block with `relay: true` and an `invoke` field (e.g., `/pf:dev`). The agent uses the Skill tool to invoke the next agent automatically.
 - **Relay OFF:** `AGENT_COMMAND` block with `relay: false` and a `fallback` message for the user to invoke manually.
 
 **Output example (relay on):**
@@ -95,8 +95,8 @@ The marker generator checks relay mode and context usage to produce the appropri
 ---
 AGENT_COMMAND:
   relay: true
-  invoke: "/pf-dev"
-  fallback: "Run `/pf-dev` to continue"
+  invoke: "/pf:dev"
+  fallback: "Run `/pf:dev` to continue"
   context_percent: 6
 ---
 ```

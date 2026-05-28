@@ -56,10 +56,10 @@ Each agent does its job, writes an assessment, passes the gate, and hands off to
 
 | Want to... | Command |
 |------------|---------|
-| Start or resume work | `/pf-work` |
-| See sprint backlog | `/pf-sprint backlog` |
-| Check installation health | `/pf-health-check` |
-| See all commands | `/pf-help` |
+| Start or resume work | `/pf:work` |
+| See sprint backlog | `/pf:sprint backlog` |
+| Check installation health | `/pf:health-check` |
+| See all commands | `/pf:help` |
 
 ## Display Modes
 
@@ -74,7 +74,7 @@ Each agent does its job, writes an assessment, passes the gate, and hands off to
 - **Not a code generator.** Agents coordinate work; they use Claude Code for the actual coding.
 - **Not an IDE replacement.** It wraps Claude Code's CLI with structured workflows. Use your editor as usual.
 - **Not mandatory ceremony.** The `trivial` workflow skips TEA entirely for quick fixes. Scale to fit.
-- **Not locked to one theme.** Personas are swappable. Run `/pf-theme set shakespeare` and your SM becomes a different character.
+- **Not locked to one theme.** Personas are swappable. Run `/pf:theme set shakespeare` and your SM becomes a different character.
 
 ## File Layout
 
