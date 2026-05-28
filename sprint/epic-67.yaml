@@ -47,10 +47,15 @@ stories:
     title: MP identity mapping (player-vs-character) — stop rendering doubled 'X— X' header
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: slabgorb
+    started: '2026-05-28'
     repos: server,ui
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
+    branch: feat/67-4-mp-identity-mapping-doubled-header
+    review_verdict: approved
   - id: 67-5
     title: ws.send_failed observability — emit broadcast.recipient_dropped watcher at _send_message send-exception seam (websocket.py:252)
     points: 2
@@ -59,3 +64,20 @@ stories:
     repos: server
     workflow: trivial
     type: chore
+  - id: 67-6
+    title: Authenticated player identity via Cloudflare Access email — separate player-identity from character-name key (ADR-037)
+    description: |-
+      Root-cause follow-up to 67-4 (which shipped the UI guard for the doubled 'X — X' header). Make player identity real and distinct from character identity, per ADR-037.
+
+      WHY: Today connect.py derives player display identity from a user-typed payload.player_name (falling back to player_id), which routinely equals the character name → conflation. The app already sits behind Cloudflare Zero Trust (app.py:299), so the authenticated identity is available but unread.
+
+      CONTRACT (designed in 67-4, preserve): sidequest/server/player_identity.py::resolve_player_identity(headers)->str + MissingPlayerIdentityError; resolution order Cf-Access-Authenticated-User-Email (non-blank, case-insensitive) → Host header (local dev: localhost/player1.local) → raise (No Silent Fallbacks). 8 pinning tests existed in tests/server/test_player_identity.py (reset out of 67-4 — recreate under TDD).
+
+      BLOCKER / the hard part (verified in 67-4): sd.player_name is OVERLOADED as a character-name key — websocket_session_handler.py:2561 calls party_location(perspective=sd.player_name) and session.py:956 does character_locations.get(perspective). connect.py display_name also feeds with_lobby_name() (character name) and seat-matching (connect.py:553). Wiring the email into sd.player_name blind BREAKS perception/location POV. Must separate player-identity from the character-name key across connect.py/session.py/views.py, and store each player's resolved identity cross-socket (room/snapshot keyed by player_id) so PARTY_STATUS can stop fabricating peer name = char.core.name (views.build_session_start_party_status).
+
+      DELIVERABLES: (1) ADR 'Authenticated player identity via Cloudflare Access + player-vs-character identity split' under the ADR-037 umbrella (trust boundary + local-dev Host derivation). (2) Architect design pass FIRST (phase: spec/design). (3) Then resolver + wiring + peer-identity storage + UI suffix sourced from the real identity field.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,ui
+    workflow: tdd
