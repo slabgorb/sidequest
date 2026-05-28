@@ -200,9 +200,11 @@ stories:
       (3) BLOCKER for AC1: the binding primitive already exists — GameSnapshot.seed_pc_regions() (game/session.py:1085) + auto-seed of seated PCs on any current_region patch (_apply_world_patch_inner, session.py:1268-1270), and run_movement_dispatch already handles no_pc_region fail-loud (test_missing_pc_region_fail_loud passes). NEEDS a concrete production repro: which beneath_sunden surface→deep entry path bypasses seed_pc_regions so run_movement_dispatch fails to resolve? Origin: follow-up bug to PR #456 (movement subsystem). Full evidence: .session/59-12-session.md Delivery Findings (TEA). Movement Phase 1/2/3 just landed (fbe28ce, 407294a) so the bug may already be fixed — confirm repro or downscope to regression.
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: server
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
   - id: 59-13
     title: Chase confrontation write-back — apply beat metric delta, transition Setup->active, seat opponent (INERT-chase dual-dial frozen 0/7)
