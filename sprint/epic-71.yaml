@@ -87,10 +87,14 @@ stories:
     title: Fix pre-existing pyright error in reference_presenters.py present_magic rows reassignment
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+    branch: feat/71-8-fix-pyright-reference-presenters-present-magic
+    review_verdict: approved
   - id: 71-9
     title: Migrate dice-overlay-wiring-34-5 source-text wiring test to behavioral assertion
     points: 1
