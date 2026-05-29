@@ -23,6 +23,7 @@ completed_epics:
   - '69'
   - '70'
   - '48'
+  - '61'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -548,4 +549,114 @@ completed_stories:
     epic: '48'
     title: 'A/B evaluation harness — Claude vs local Qwen on identical prompts'
     points: 5
+    completed: '2026-05-28'
+  - id: 61-1
+    epic: '61'
+    title: Wire LoreStore into production ToolContext (ADR-048 Phase E)
+    points: 3
+    completed: '2026-05-21'
+  - id: 61-2
+    epic: '61'
+    title: 'Extend snapshot drop-list to cover the seven growing fields (per-field: drop / bounded-projection / RAG)'
+    points: 5
+    completed: '2026-05-23'
+  - id: 61-3
+    epic: '61'
+    title: Convert oversized-prompt canary from soft warn to hard refuse-or-truncate + loud OTEL emit
+    points: 2
+    completed: '2026-05-23'
+  - id: 61-4
+    epic: '61'
+    title: Output-token-floor + input-bloat alarm in anthropic_sdk_client.py (60K-in/12-out fingerprint detector)
+    points: 3
+    completed: '2026-05-23'
+  - id: 61-5
+    epic: '61'
+    title: 'Architecture gate: new snapshot field must land a bounding decision (test fails otherwise)'
+    points: 3
+    completed: '2026-05-24'
+  - id: 61-6
+    epic: '61'
+    title: 'Playtest validation: 50-turn solo session, input_tokens@turn50 <= 1.2x input_tokens@turn5, per-turn cost flat'
+    points: 2
+    completed: '2026-05-26'
+  - id: 61-7
+    epic: '61'
+    title: 'Unify _npc_in_scene predicate with list_npcs_in_scene scene resolution'
+    points: 2
+    completed: '2026-05-23'
+  - id: 61-followup-A
+    epic: '61'
+    title: 'Session-id-keyed baselines on AnthropicSdkClient (cross-session pollution on slug-reuse rejoin)'
+    points: 2
+    completed: '2026-05-23'
+  - id: 61-followup-B
+    epic: '61'
+    title: 'Promote narrator.sdk.usage log line to a watcher INFO event for continuous cost-trend on GM panel'
+    points: 2
+    completed: '2026-05-27'
+  - id: 61-followup-C
+    epic: '61'
+    title: 'Wire SessionRoom.close_store() into a real teardown path so reset_baselines() stops being dormant infrastructure'
+    points: 2
+    completed: '2026-05-24'
+  - id: 61-followup-D
+    epic: '61'
+    title: 'Trained-into-silence mitigation: rolling-baseline ceiling + absolute alarm floor + session-cumulative HARD KILL at $10.00'
+    points: 3
+    completed: '2026-05-23'
+  - id: 61-8
+    epic: '61'
+    title: 'Epic 61 cleanup: scope-deferred items from 61-1/61-2/61-3/61-7'
+    points: 5
+    completed: '2026-05-23'
+  - id: 61-9
+    epic: '61'
+    title: 'Commit to SDK narrator: remove legacy output_only prose and claude -p/Ollama narrator paths'
+    points: 3
+    completed: '2026-05-24'
+  - id: 61-10
+    epic: '61'
+    title: Promote six byte-static narrator prose sections into the System-bucket cache
+    points: 2
+    completed: '2026-05-25'
+  - id: 61-11
+    epic: '61'
+    title: Scene-gate genre_chargen / genre_extraction / genre_keeper_monologue (drop from STABLE_SECTION_NAMES)
+    points: 2
+    completed: '2026-05-24'
+  - id: 61-12
+    epic: '61'
+    title: Compact narrator output_format prose (~50% reduction) and fix npcs_present/npcs_met field drift
+    points: 3
+    completed: '2026-05-24'
+  - id: 61-13
+    epic: '61'
+    title: 'ADR-112 amendment: record genre_chargen demotion + extraction/keeper deferral rationale'
+    points: 1
+    completed: '2026-05-25'
+  - id: 61-14
+    epic: '61'
+    title: Reconcile required scene-mechanic rule tokens dropped by 61-12 output compaction
+    points: 3
+    completed: '2026-05-27'
+  - id: 61-15
+    epic: '61'
+    title: Prompt-cache attribution — narrator_constraints guardrail rides cached system block
+    points: 2
+    completed: '2026-05-28'
+  - id: 61-16
+    epic: '61'
+    title: Narrator output-format compaction drops required rule tokens for 8 scene types — tests/agents/test_61_12_output_format_compaction.py (scandal/trial/auction/dogfight/social_duel/negotiation/chase/ship_combat)
+    points: 3
+    completed: '2026-05-28'
+  - id: 61-17
+    epic: '61'
+    title: Fix stale test_zones_carry_cache_boundary_flag — 61-10 promoted narrator_constraints to System/cached bucket (#434) but test still asserts User-bucket cached=False
+    points: 3
+    completed: '2026-05-28'
+  - id: 61-18
+    epic: '61'
+    title: Audit CONFRONTATION_TRIGGER_CONSTRAINT dead-prose on SDK narrator path — only injects on retired legacy backend (_maybe_register_legacy_guardrail SDK-gate); migrate to tool/cached-prose per ADR-111 or confirm Intent Router owns it
+    points: 3
     completed: '2026-05-28'
