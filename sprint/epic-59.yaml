@@ -340,7 +340,10 @@ stories:
     description: "Sibling follow-up to 59-9 (which closed the PRIMARY perception-firewall gap in redact_dispatch_package). The SECONDARY safety net — audit_canonical_prose in sidequest-server/sidequest/telemetry/leak_audit.py (~line 77) — collects redacted_entities by iterating ONLY package.per_player. It never iterates package.cross_player[*].dispatch, so the OTEL leak-audit (the GM-panel lie-detector for structural-hiding regressions) is blind to cross_player secrets: if a cross_player redacted dispatch's token leaks into narrator prose, the span reports leaks_detected=0 — a false negative. NOT a live leak today (59-9 closed the actual hole in redact_dispatch_package); this is defense-in-depth so a FUTURE regression in cross_player redaction is caught. FIX: extend the redacted-entity collection loop in audit_canonical_prose to also iterate package.cross_player[*].dispatch, checking d.visibility.redact_from_narrator_canonical exactly as redact_dispatch_package now does (mirror the 59-9 loop). Call sites in orchestrator.py (~3070, ~3407) need NO change — they already pass the canonical pre-redaction package, which is correct (the audit needs to know what was supposed to be hidden). Test bar: one test in tests proving a cross_player redacted token in prose is now counted in leaks_detected (would fail against current main). Found by Reviewer (security subagent) during 59-9 review; full context in sprint/archive/59-9-session.md."
     points: 1
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-29'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-05-29'
     type: bug
+    review_verdict: approved
