@@ -379,7 +379,8 @@ stories:
     title: Audit CONFRONTATION_TRIGGER_CONSTRAINT dead-prose on SDK narrator path — only injects on retired legacy backend (_maybe_register_legacy_guardrail SDK-gate); migrate to tool/cached-prose per ADR-111 or confirm Intent Router owns it
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
+    completed: '2026-05-29'
     type: refactor
