@@ -347,3 +347,12 @@ stories:
     completed: '2026-05-29'
     type: bug
     review_verdict: approved
+  - id: 59-25
+    title: Multi-key entity extraction in leak_audit — cover npc_name/actor, not just target
+    description: "Follow-up to 59-9/59-24 (both closed cross_player coverage gaps in the perception firewall + leak-audit). DEEPER pre-existing gap surfaced by the 59-24 security review, affecting BOTH branches of audit_canonical_prose in sidequest-server/sidequest/telemetry/leak_audit.py: it extracts the redacted entity ONLY from params['target']. But subsystems key their secret entity differently — npc_agency uses params['npc_name'], magic_working uses params['actor'] (see intent_router.py params construction + dispatch_engagement_watcher.py). So a SubsystemDispatch tagged redact_from_narrator_canonical=True from those subsystems increments redact_tag_count but its entity NAME is never added to redacted_entities, so a leak of that name into canonical narrator prose returns a false leaks_detected=0 — a silent lie-detector false negative. FIX: replace the single params['target'] lookup with a multi-key extraction over the documented entity-identifier keys, e.g. next((d.params.get(k) for k in ('target','npc_name','actor') if isinstance(d.params.get(k), str)), None), applied to BOTH the per_player loop (~line 82) AND the cross_player loop (added in 59-24) together to avoid a new asymmetry. Test bar: a redacted npc_agency dispatch (params['npc_name']) whose name leaks into prose now yields leaks_detected>=1 (fails against current main) — cover both per_player and cross_player. MATURITY CAVEAT (why p3): gated on the Group G perception rewriter (ADR-104/105 partial) actually emitting redacted npc_agency/magic_working dispatches; current production redaction is mostly distinctive_detail_hint where 'target' is correct. Medium-confidence security finding; full context in sprint/archive/59-24-session.md."
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug
