@@ -202,9 +202,9 @@ returning 0). Only `cwn` emits the span.
 
 | Beat (verb) | `kind` | Engine effect |
 |---|---|---|
-| **Run Program** | `strike` | Offensive Verb — advance objective progress (`player_metric`); failure spikes alert (`opponent_metric`) via crit_fail deltas. |
+| **Run Program** | `strike` | Offensive Verb — advance objective progress (`player_metric`); failure spikes alert (`opponent_metric`) via a `fail` delta. (NOT `crit_fail`: a 2d6 Program check never yields `RollOutcome.CritFail` — that tier is d20-nat-1 only — so the spike must ride `fail`.) |
 | **Spoof / Unlock Barrier** | `brace` | Reduce alert / open a path — drops the opponent (alert) metric. |
-| **Move Nodes** | `push` | Push objective progress toward extraction. |
+| **Move Nodes** | `strike` | Advance objective progress toward extraction (incremental data advance — NOT a `push`, which would resolve the run on success; `jack_out` is the exit beat). |
 | **Jack Out** | `push` | Exit the run; keep extracted data, end the confrontation. |
 
 `Jack In` is the **confrontation open** (the act of starting the `net_run`), not a
