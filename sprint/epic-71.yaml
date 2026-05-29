@@ -224,7 +224,8 @@ stories:
     description: "Playtest 2026-05-28 finding #G4 (the design follow-up; the immediate asset_ledger outage was already resolved by the driver applying the migration). INCIDENT: the dev DB was stamped at alembic 0001 while head was 0002 (0002_asset_ledger.py / Story 65-2 had never been applied). The server BOOTED FINE and ran for many turns; the only symptom was 'relation \"asset_ledger\" does not exist' ERROR on every scene render's ledger write — a failure surfacing deep in a turn, far from the root cause (a behind-head schema). VIOLATION: this is a textbook No Silent Fallbacks breach — a misconfigured/behind-head DB should fail LOUD at boot, not limp along and explode mid-turn at the first write to the missing table. ADR-115 already fails loud when Postgres is UNREACHABLE (MissingDatabaseUrlError, 10s pool-wait timeout); this extends that contract to 'reachable but schema behind head'. THE DECISION (record it in the story): (A) assert at startup that the connected DB's alembic current revision == alembic heads, and fail loud at boot if not (preferred — explicit, No-Silent-Fallbacks-aligned; migration stays an explicit operator step), OR (B) have boot / 'just up' run 'alembic upgrade head' automatically (convenient, but silently mutating the schema at boot is itself a silent action and can surprise on a shared DB). Recommendation leans (A) fail-loud-assert, optionally pairing 'just up' with an EXPLICIT, visible 'alembic upgrade head' step the operator sees — not a hidden auto-migrate. Implementation lives in the server startup path (app lifespan / db_config / db_pool); compare alembic current vs heads via the alembic API against SIDEQUEST_DATABASE_URL. Repos: server. See .pennyfarthing/guides/save-management.md for migration procedures. Possible cross-check from the same incident: confirm a behind-head schema was NOT contributing to other mid-turn write failures."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-29'
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -234,4 +235,8 @@ stories:
       - Reuses/extends the existing ADR-115 fail-loud startup contract (MissingDatabaseUrlError / pool-wait timeout) rather than adding a parallel mechanism.
       - 'Test: booting against a behind-head DB raises the loud startup error (asserted), and a head-current DB boots clean — the failure is at startup, not at render-write time.'
       - Startup logs the schema-version check result (current rev, head rev, pass/fail) so the operator/GM panel can see the DB is at head.
+    completed: '2026-05-29'
+    branch: feat/71-20-fail-loud-schema-behind-head
     type: bug
+    review_findings: 'Mechanical only: 2x SIM117 nested-with + 1 ruff format failure in new test files (test_schema_at_head_check.py, test_startup_schema_guard_wiring.py). Substantively clean/approved. Green rework.'
+    review_verdict: approved
