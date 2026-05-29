@@ -82,3 +82,19 @@ stories:
     status: backlog
     repos: server,ui
     workflow: tdd
+  - id: 67-7
+    title: Duplicate-socket reconnect loop strands solo session in AwaitingConnect — dice/action frames hard-rejected mid-confrontation
+    description: "Playtest 2026-05-28 (coyote_star solo) finding #C5. Committing a dogfight beat fired DICE_THROW frames the server rejected with 'session.message_rejected_unbound type=DICE_THROW state=AwaitingConnect' (x4+); one ORBITAL_INTENT rejected the same way. A single beat took ~5 rejected attempts + a full page reload before one roll landed — chronic socket churn keeps the session unbound during the confrontation. Server log shows DUPLICATE sockets ('connection open' x2, two ws.connection_accepted/chargen_gate cycles per reconnect) and the AwaitingConnect->Playing handshake NOT completing before the dice frame is sent. After a deliberate page reload the handshake completed (slug_resumed turn=3, slug_resume_confrontation_emitted ship_combat) and the very next Broadside resolved (dice.throw_resolved total=22 CritSuccess). So the ENGINE is fine; the TRANSPORT/session-binding is the block. The rejection itself is CORRECT — every handler (dice_throw, check_throw, player_action, orbital_intent, yield, journal_request) guards on Playing state; the real bug is WHY the solo session keeps reconnecting and opening a second socket (the page appears to remount repeatedly). NEEDS LIVE REPRO to pin: UI reconnect-loop (remount) vs server session-binding race. Secondary angle: buffer/retry a beat's action frame across a reconnect instead of hard-rejecting (a cross-handler behavior change — same 'heavy-hammer WS teardown' class explicitly scoped OUT of #G3, so it wants a deliberate decision here, not a one-off). Observed SOLO so far; unknown if also MP. Adjacent: 59-20 (per-recipient delivery firewall — distinct), #G3/#G1 (WS teardown hardening), the window.WebSocket patch wiped mid-session. Repos: server + ui (the producer of the duplicate connect is likely UI mount/reconnect logic; the bind FSM is server)."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - Root cause of the duplicate-socket / repeated ws.connection_accepted reconnect cycle is identified (UI remount loop vs server session-binding race) with log/OTEL evidence, captured in the story.
+      - A solo confrontation session no longer opens a spurious second socket / re-runs the connect handshake; the AwaitingConnect->Playing transition completes before action frames are submitted.
+      - Committing a dogfight beat lands its DICE_THROW on the first attempt — no message_rejected_unbound loop and no required page reload to get a roll through.
+      - 'DECISION recorded with rationale: either the reconnect loop is eliminated (preferred root fix) and/or pre-handshake action frames are buffered/retried-until-Playing rather than hard-rejected; if the latter, it is applied consistently across the affected handlers, never one-off.'
+      - "OTEL: a span/log distinguishes 'rejected because genuinely unbound' from 'churn from a spurious reconnect' so the GM panel can tell a real guard from transport noise."
+      - Regression coverage for the reconnect/bind path; if reproducible in MP as well as solo, the fix covers both.
+    type: bug
