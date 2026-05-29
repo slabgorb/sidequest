@@ -10,7 +10,7 @@ How the four repositories coordinate to run the SideQuest AI Narrator.
 ```mermaid
 graph TB
     subgraph "Orchestrator (oq-1 / oq-2)"
-        ORC[orc-quest<br/>Sprint tracking, scripts,<br/>cross-repo justfile, ADRs]
+        ORC[sidequest (orchestrator)<br/>Sprint tracking, scripts,<br/>cross-repo justfile, ADRs]
     end
 
     subgraph "Game Engine (sidequest-server, Python)"
@@ -34,7 +34,7 @@ graph TB
     end
 
     subgraph "Asset Library (sidequest-content)"
-        PACKS[Genre Packs<br/>genre_packs/ — 5 live<br/>genre_workshopping/ — staging<br/>YAML, audio params, images, worlds]
+        PACKS[Genre Packs<br/>genre_packs/ — 10 live<br/>genre_workshopping/ — staging<br/>YAML, audio params, images, worlds]
     end
 
     subgraph "External (Anthropic)"
@@ -245,7 +245,7 @@ sequenceDiagram
 
 ## Repository Responsibilities
 
-### orc-quest (Orchestrator — oq-1 / oq-2)
+### sidequest (Orchestrator repo — slabgorb/sidequest; local clones oq-1 / oq-2 / oq-4)
 - Cross-repo coordination via `justfile`
 - Sprint tracking and story management (Pennyfarthing)
 - Architecture docs, Architecture Decision Records, design artifacts (`docs/`)
@@ -299,12 +299,15 @@ sequenceDiagram
 
 ### sidequest-content
 - Genre pack YAML configs — `genre_packs/` (production) + `genre_workshopping/`
-  (staging). **5 live production packs** as of 2026-05-18: `caverns_and_claudes`
-  (now backed by ADR-106 `beneath_sunden`), `elemental_harmony`,
-  `mutant_wasteland`, `space_opera`, `tea_and_murder` (renamed from victoria).
-  See `docs/genre-pack-status.md` for the lobby-selectable world matrix
-  (the M2 reshuffle parked four worlds; current lobby surfaces
-  `beneath_sunden`, `flickering_reach`, `coyote_star`, `glenross`).
+  (staging). **10 live production packs** as of 2026-05-29 (all load, each with at
+  least one world carrying an authored `openings.yaml`): `caverns_and_claudes`
+  (ADR-106 `beneath_sunden`), `elemental_harmony`, `heavy_metal`,
+  `mutant_wasteland`, `neon_dystopia`, `pulp_noir`, `road_warrior`, `space_opera`,
+  `spaghetti_western`, `tea_and_murder` (renamed from victoria). Only
+  `low_fantasy` remains in `genre_workshopping/`. See `docs/genre-pack-status.md`
+  for the lobby-selectable world matrix and which worlds have cleared the asset +
+  playtest gate (flagship: `beneath_sunden`, `flickering_reach`, `coyote_star`,
+  `glenross`, plus `space_opera`'s now-live `aureate_span` and `perseus_cloud`).
 - Audio assets — ACE-Step `*_input_params.json` per track in repo; OGG
   playback files live in R2 (`cdn.slabgorb.com`), not Git LFS (ADR-095)
 - Image assets — portraits, POI landscapes; new generations upload to R2,
