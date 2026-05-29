@@ -110,3 +110,19 @@ stories:
     workflow: tdd
     completed: '2026-05-29'
     type: bug
+  - id: 67-9
+    title: Hoist WebSocket connection + slug-connect handshake above <Routes> to kill remount re-handshake (67-8 Layer 2)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: tdd
+    type: refactor
+  - id: 67-10
+    title: 'Live-OTEL acceptance: confirm session_unbound=0 + no presence.multi_socket_attach across a multi-beat confrontation (67-8 verification)'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: sidequest-ui
+    workflow: trivial
+    type: chore
