@@ -87,34 +87,54 @@ stories:
     title: Fix pre-existing pyright error in reference_presenters.py present_magic rows reassignment
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+    branch: feat/71-8-fix-pyright-reference-presenters-present-magic
+    review_verdict: approved
   - id: 71-9
     title: Migrate dice-overlay-wiring-34-5 source-text wiring test to behavioral assertion
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28T19:50:02Z'
     repos: sidequest-ui
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+    branch: feat/71-9-migrate-dice-overlay-wiring-34-5-behavioral-assertion
+    review_verdict: approved
   - id: 71-10
     title: 'Peer-action transcript: anchor by exact round (add round to PlayerActionPayload) — replaces positional placement'
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-ui
     workflow: tdd
+    acceptance_criteria:
+      - PlayerActionPayload (server, messages.py) carries an integer round field; round-trips through serialize/deserialize; missing/negative round fails loud per No-Silent-Fallbacks (round=0 is valid)
+      - 'UI PlayerActionPayload (payloads.ts) mirrors round: number and the outbound player-action send is built with round: currentRound (behavioral assertion, not source grep)'
+      - buildSegments anchors peer entries by exact matching round, not position; covers gap, out-of-order arrival, late/out-of-round submission, empty round, and within-round seq ordering
+      - Wiring test exercises real usePersistedPeerActions -> NarrationScroll/buildSegments path; existing 71-4 persistence tests still pass; peer TEXT still sourced only from perception-filtered reveals map (ADR-104/105)
+    completed: '2026-05-28'
     type: chore
+    review_findings: 'LOW-only: (1) blocking format-gate failure — ruff format tests/protocol/test_messages.py:~828 (>100 chars after round=0 fixture add); (2) remove 2 redundant test casts in peer-action-round-anchor-71-10.test.tsx (as PeerAwareBuild, as unknown as NarrationCards — real signatures now match, TS-1). No logic defects; firewall + No-Silent-Fallbacks + stale-closure fix all verified clean. Route: green rework -> dev.'
+    review_verdict: approved
   - id: 71-11
     title: Per-genre peer-action contrast a11y sweep — axe/devtools across live theme_css, bump peer token if <4.5:1
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-ui
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+    review_verdict: approved
   - id: 71-12
     title: Comment-guard at peer-reveal capture site (App.tsx) — 'MUST use raw reveals, never merged' to prevent stale-draft regression
     points: 1
@@ -146,16 +166,22 @@ stories:
     title: ADR-055 — wire per-transition trope-tick + item resource depletion on room-graph movement
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-28'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-28'
   - id: 71-16
     title: ADR-113 — per-dispatch confidence scoring + threshold gating in the intent router
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-28T15:51:38Z'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-28'
+    branch: feat/71-16-intent-router-confidence-gate
+    assignee: keith
   - id: 71-17
     title: ADR-092 — resolve scene-harness dev-gate doctrine (Cloudflare-only vs DEV_SCENES env gate)
     points: 2
@@ -164,3 +190,53 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: chore
+  - id: 71-18
+    title: GM-panel NPC Registry widget reads only npc_pool — merge snapshot.npcs so roster NPCs are not a false-negative
+    description: "Playtest 2026-05-28 finding #C1 (display follow-up; the engine half is fixed separately). The OTEL GM-panel '2 State -> NPC Registry' widget (sidequest-server/sidequest/server/static/dashboard.html) reads ONLY snapshot.npc_pool, so it shows 'No NPCs in registry yet' for an entire session despite a populated authored roster (snapshot.npcs — e.g. 12 NPCs on coyote_star) and roster NPCs present in the scene. This is a COSMETIC false-negative, not an engine bug: roster NPCs live in snapshot.npcs (presence tracked via Npc.last_seen_location) and are deliberately NOT mirrored into npc_pool (npc_pool holds narrator-invented walk-ons only — see the #C1 engine fix to run_npc_agency). The widget masks whether NPC mechanics ever engaged. Fix: the widget should read/merge snapshot.npcs (roster) WITH npc_pool (walk-ons) so the GM panel reflects who is actually in the world. Dashboard display only — no engine/OTEL change (CLAUDE.md: cosmetic dashboard change). Gotcha already documented in the sq-playtest skill so the panel isn't mis-read in the meantime."
+    points: 1
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    acceptance_criteria:
+      - The NPC Registry widget displays authored-roster NPCs (snapshot.npcs) in addition to npc_pool walk-ons.
+      - "A session with a populated roster and an empty npc_pool (the exact #C1 coyote_star shape) shows the roster NPCs, not 'No NPCs in registry yet'."
+      - The widget distinguishes (or at least does not conflate) roster NPCs vs narrator-invented walk-ons in its display.
+    type: bug
+  - id: 71-19
+    title: Author Glenross ADR-053 scenario — give the tea_and_murder flagship a solvable mystery (clue graph, suspects, belief state, gossip)
+    description: "Playtest 2026-05-28 finding #G6 (the headline 59-8 Glenross finding). tea_and_murder IS a mystery engine, and ADR-053 (Scenario System: clue graph, belief state, gossip propagation) is the mechanical spine that makes a mystery SOLVABLE rather than improvised. Glenross — the flagship tea_and_murder world — ships archetypes/calendar/cartography/cultures/demographics/history/legends/lore/npcs/openings/tropes/world.yaml (a rich SETTING) but ZERO scenario/clue/belief content (find worlds/glenross -iname '*scenario*' -o -iname '*clue*' -o -iname '*belief*' => no files). So the router classifies investigation as scenario_clue, the handler runs, but snapshot.scenario_state is None => consume_clue_footnotes returns silently: no clue discovered, no belief update, no SPAN_SCENARIO_ADVANCE. For mechanics-first players (Jade/Sebastien) the murder is unsolvable-by-system — the narrator confabulates forensics each turn (turn-4 body exam invented a temple wound, a Perth rail ticket, 'he was not lying so when I left him' — all clue-shaped reveals with ZERO mechanical provenance, non-canonical, non-reproducible). This is the mystery equivalent of a combat pack with no confrontation engine, and exactly the Illusionism the OTEL lie-detector exists to catch. ENGINE IS FINE — the scenario_clue handler + Footnote coercion work (the coyote_star Footnote-enum fix is live: 'category_coerced raw=forensic -> Lore'); what is MISSING is the authored mystery. This also blocks #G6-adjacent social-confrontation validation: Glenross has no adversarial suspects to seat an Other, so cross-examine/social_duel/scandal can't be exercised either. CONTENT authoring job — a natural fit for the 'Jade authors content' path in CLAUDE.md (she will author worlds + lore). NOTE: coyote_star also lacks an ADR-053 scenario — this is a PATTERN; if more investigation-worlds need scenarios, promote to a dedicated 'ADR-053 scenario authoring' epic (this story currently parks in epic 71 playtest-findings). Reference an existing authored scenario (if any pack has one) as the schema template; otherwise see ADR-053 + the scenario_state / BeliefState / discovered_clues models in sidequest-server (game/ scenario). Repos: content (the scenario YAML lives under genre_packs/tea_and_murder/worlds/glenross/); engine is already wired."
+    points: 8
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: tdd
+    acceptance_criteria:
+      - 'Glenross ships an authored ADR-053 scenario: a victim, a canonical solution, and a suspect set each with explicit means / motive / opportunity.'
+      - A clue graph of discoverable nodes wired so investigation actions (examine body, interrogate, search) resolve real scenario_clue discoveries — discovered_clues populates and SPAN_SCENARIO_ADVANCE / scenario_clue.resolved fires (no more silent no-op when scenario_state is None).
+      - NPC belief_state is seeded for the suspects/witnesses (initial_beliefs), so disposition/interrogation reads have canonical knowledge behind them rather than narrator improv.
+      - Gossip edges between NPCs are defined so information can propagate between scenes (ADR-053 gossip propagation), per the world's social graph.
+      - 'At least one suspect is authorable as adversarial (means to seat an Other) so a social confrontation (cross-examine / social_duel / scandal) can actually instantiate against them — unblocking the 59-8 confrontation-lane validation #G6 also blocks.'
+      - The scenario loads through the live loader and validates against the ADR-053 scenario schema (pf validate, no ERROR-level gaps); a playtest investigation turn produces a real clue discovery with mechanical provenance visible in the GM panel.
+      - 'OTEL: a scenario_clue.resolved / SPAN_SCENARIO_ADVANCE span fires on a clue discovery so the GM panel can confirm the mystery engine is engaged (not narrator confabulation).'
+  - id: 71-20
+    title: Fail loud at startup when Postgres schema is behind alembic head — a behind-head DB is a silent landmine
+    description: "Playtest 2026-05-28 finding #G4 (the design follow-up; the immediate asset_ledger outage was already resolved by the driver applying the migration). INCIDENT: the dev DB was stamped at alembic 0001 while head was 0002 (0002_asset_ledger.py / Story 65-2 had never been applied). The server BOOTED FINE and ran for many turns; the only symptom was 'relation \"asset_ledger\" does not exist' ERROR on every scene render's ledger write — a failure surfacing deep in a turn, far from the root cause (a behind-head schema). VIOLATION: this is a textbook No Silent Fallbacks breach — a misconfigured/behind-head DB should fail LOUD at boot, not limp along and explode mid-turn at the first write to the missing table. ADR-115 already fails loud when Postgres is UNREACHABLE (MissingDatabaseUrlError, 10s pool-wait timeout); this extends that contract to 'reachable but schema behind head'. THE DECISION (record it in the story): (A) assert at startup that the connected DB's alembic current revision == alembic heads, and fail loud at boot if not (preferred — explicit, No-Silent-Fallbacks-aligned; migration stays an explicit operator step), OR (B) have boot / 'just up' run 'alembic upgrade head' automatically (convenient, but silently mutating the schema at boot is itself a silent action and can surprise on a shared DB). Recommendation leans (A) fail-loud-assert, optionally pairing 'just up' with an EXPLICIT, visible 'alembic upgrade head' step the operator sees — not a hidden auto-migrate. Implementation lives in the server startup path (app lifespan / db_config / db_pool); compare alembic current vs heads via the alembic API against SIDEQUEST_DATABASE_URL. Repos: server. See .pennyfarthing/guides/save-management.md for migration procedures. Possible cross-check from the same incident: confirm a behind-head schema was NOT contributing to other mid-turn write failures."
+    points: 3
+    priority: p2
+    status: done
+    started: '2026-05-29'
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - Server startup asserts the connected Postgres DB's alembic revision equals alembic heads; if the DB is behind (or divergent), the server fails loud AT BOOT with a clear error naming the current vs head revision — never deferring the failure to a mid-turn write.
+      - The startup failure message tells the operator exactly how to fix it (e.g. run 'alembic upgrade head' / 'just <recipe>').
+      - "DECISION recorded in the story with rationale: fail-loud-assert (A) vs auto-upgrade-on-boot (B). If (A): boot/'just up' does NOT silently mutate the schema — migration stays an explicit, visible operator step. If (B): the auto-upgrade is logged loudly and is opt-outable."
+      - Reuses/extends the existing ADR-115 fail-loud startup contract (MissingDatabaseUrlError / pool-wait timeout) rather than adding a parallel mechanism.
+      - 'Test: booting against a behind-head DB raises the loud startup error (asserted), and a head-current DB boots clean — the failure is at startup, not at render-write time.'
+      - Startup logs the schema-version check result (current rev, head rev, pass/fail) so the operator/GM panel can see the DB is at head.
+    completed: '2026-05-29'
+    branch: feat/71-20-fail-loud-schema-behind-head
+    type: bug
+    review_findings: 'Mechanical only: 2x SIM117 nested-with + 1 ruff format failure in new test files (test_schema_at_head_check.py, test_startup_schema_guard_wiring.py). Substantively clean/approved. Green rework.'
+    review_verdict: approved

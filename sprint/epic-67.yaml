@@ -32,25 +32,69 @@ stories:
     review_verdict: approved
   - id: 67-3
     title: MP peer-visibility consolidation + slow-typist reassurance (one canonical surface, Composing/Sealed/Resolving)
+    description: "RESOLVED BY ec69c9b (no separate work). The full 67-3 scope — one canonical Composing/Sealed/Resolving verb chain across all MP turn surfaces, peer-visibility consolidation (killed the 3x-disagreeing-verb problem + duplicate amber CTA row), and the timer-free slow-typist reassurance line for Alex (GameBoard.tsx:565-582) — shipped in commit ec69c9b 'fix(mp): unify peer-barrier status to one Composing -> Sealed -> Resolving chain' (Keith Avery, 2026-05-27), already on develop. Verified 174/174 turn-status/peer-visibility tests passing 2026-05-28 (run 67-3-dev-green). No PR of its own; empty branch torn down. Follow-up noted: TurnStatusEntry type defined twice (payloads.ts + TurnStatusPanel.tsx)."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: slabgorb
+    started: '2026-05-28'
     repos: ui
     workflow: trivial
+    completed: '2026-05-28'
     type: bug
+    branch: feat/67-3-mp-peer-visibility-consolidation
   - id: 67-4
     title: MP identity mapping (player-vs-character) — stop rendering doubled 'X— X' header
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    assigned_to: slabgorb
+    started: '2026-05-28'
     repos: server,ui
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
+    branch: feat/67-4-mp-identity-mapping-doubled-header
+    review_verdict: approved
   - id: 67-5
     title: ws.send_failed observability — emit broadcast.recipient_dropped watcher at _send_message send-exception seam (websocket.py:252)
     points: 2
     priority: p3
-    status: backlog
+    status: done
     repos: server
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+  - id: 67-6
+    title: Authenticated player identity via Cloudflare Access email — separate player-identity from character-name key (ADR-037)
+    description: |-
+      Root-cause follow-up to 67-4 (which shipped the UI guard for the doubled 'X — X' header). Make player identity real and distinct from character identity, per ADR-037.
+
+      WHY: Today connect.py derives player display identity from a user-typed payload.player_name (falling back to player_id), which routinely equals the character name → conflation. The app already sits behind Cloudflare Zero Trust (app.py:299), so the authenticated identity is available but unread.
+
+      CONTRACT (designed in 67-4, preserve): sidequest/server/player_identity.py::resolve_player_identity(headers)->str + MissingPlayerIdentityError; resolution order Cf-Access-Authenticated-User-Email (non-blank, case-insensitive) → Host header (local dev: localhost/player1.local) → raise (No Silent Fallbacks). 8 pinning tests existed in tests/server/test_player_identity.py (reset out of 67-4 — recreate under TDD).
+
+      BLOCKER / the hard part (verified in 67-4): sd.player_name is OVERLOADED as a character-name key — websocket_session_handler.py:2561 calls party_location(perspective=sd.player_name) and session.py:956 does character_locations.get(perspective). connect.py display_name also feeds with_lobby_name() (character name) and seat-matching (connect.py:553). Wiring the email into sd.player_name blind BREAKS perception/location POV. Must separate player-identity from the character-name key across connect.py/session.py/views.py, and store each player's resolved identity cross-socket (room/snapshot keyed by player_id) so PARTY_STATUS can stop fabricating peer name = char.core.name (views.build_session_start_party_status).
+
+      DELIVERABLES: (1) ADR 'Authenticated player identity via Cloudflare Access + player-vs-character identity split' under the ADR-037 umbrella (trust boundary + local-dev Host derivation). (2) Architect design pass FIRST (phase: spec/design). (3) Then resolver + wiring + peer-identity storage + UI suffix sourced from the real identity field.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+  - id: 67-7
+    title: Duplicate-socket reconnect loop strands solo session in AwaitingConnect — dice/action frames hard-rejected mid-confrontation
+    description: "Playtest 2026-05-28 (coyote_star solo) finding #C5. Committing a dogfight beat fired DICE_THROW frames the server rejected with 'session.message_rejected_unbound type=DICE_THROW state=AwaitingConnect' (x4+); one ORBITAL_INTENT rejected the same way. A single beat took ~5 rejected attempts + a full page reload before one roll landed — chronic socket churn keeps the session unbound during the confrontation. Server log shows DUPLICATE sockets ('connection open' x2, two ws.connection_accepted/chargen_gate cycles per reconnect) and the AwaitingConnect->Playing handshake NOT completing before the dice frame is sent. After a deliberate page reload the handshake completed (slug_resumed turn=3, slug_resume_confrontation_emitted ship_combat) and the very next Broadside resolved (dice.throw_resolved total=22 CritSuccess). So the ENGINE is fine; the TRANSPORT/session-binding is the block. The rejection itself is CORRECT — every handler (dice_throw, check_throw, player_action, orbital_intent, yield, journal_request) guards on Playing state; the real bug is WHY the solo session keeps reconnecting and opening a second socket (the page appears to remount repeatedly). NEEDS LIVE REPRO to pin: UI reconnect-loop (remount) vs server session-binding race. Secondary angle: buffer/retry a beat's action frame across a reconnect instead of hard-rejecting (a cross-handler behavior change — same 'heavy-hammer WS teardown' class explicitly scoped OUT of #G3, so it wants a deliberate decision here, not a one-off). Observed SOLO so far; unknown if also MP. Adjacent: 59-20 (per-recipient delivery firewall — distinct), #G3/#G1 (WS teardown hardening), the window.WebSocket patch wiped mid-session. Repos: server + ui (the producer of the duplicate connect is likely UI mount/reconnect logic; the bind FSM is server)."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - Root cause of the duplicate-socket / repeated ws.connection_accepted reconnect cycle is identified (UI remount loop vs server session-binding race) with log/OTEL evidence, captured in the story.
+      - A solo confrontation session no longer opens a spurious second socket / re-runs the connect handshake; the AwaitingConnect->Playing transition completes before action frames are submitted.
+      - Committing a dogfight beat lands its DICE_THROW on the first attempt — no message_rejected_unbound loop and no required page reload to get a roll through.
+      - 'DECISION recorded with rationale: either the reconnect loop is eliminated (preferred root fix) and/or pre-handshake action frames are buffered/retried-until-Playing rather than hard-rejected; if the latter, it is applied consistently across the affected handlers, never one-off.'
+      - "OTEL: a span/log distinguishes 'rejected because genuinely unbound' from 'churn from a spurious reconnect' so the GM panel can tell a real guard from transport noise."
+      - Regression coverage for the reconnect/bind path; if reproducible in MP as well as solo, the fix covers both.
+    type: bug

@@ -124,10 +124,13 @@ stories:
       into every portrait" (added 2026-05-25).
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: content
     workflow: trivial
+    completed: '2026-05-28'
     type: chore
+    branch: feat/65-3-pulp-noir-visual-style-cleanup
+    session_file: .session/65-3-session.md
   - id: 65-4
     title: Mount useAssetPreload in App + ImageBus preload feed (AC5 follow-up from 65-2)
     points: 3
@@ -153,3 +156,28 @@ stories:
     completed: '2026-05-28'
     branch: feat/65-5-runtime-artifact-r2-audit
     session_file: .session/65-5-session.md
+  - id: 65-6
+    title: Relocate NPC portraits to world level + wire a server portrait resolver
+    description: |-
+      Portraits are WORLD flavor (named NPCs defined in worlds/<world>/portrait_manifest.yaml) but are written genre-flat and are not wired to any runtime read path. Bring portraits to parity with POIs (which are correctly world-scoped and fully wired).
+
+      Current state (verified 2026-05-28):
+      - POIs: script writes genre_packs/<g>/worlds/<w>/assets/poi/<slug>.png (render_common.py:517-524); server reads same (reference_presenters.py:207, rest.py:213, app.py:323); R2 1:1. Correct, world-level.
+      - Portraits: script writes genre_packs/<g>/images/portraits/<slug>.png (render_common.py:526, genre-flat). NO server/daemon code resolves an NPC portrait_url to that path (PortraitManifestEntry has no image field; views.py:515 emits portrait_url=None; only PCs get portrait_url via PARTY_STATUS). The pre-generated PNGs are synced to R2 but appear orphaned at runtime.
+      - Dead scaffolding: empty dirs genre assets/images/{portraits,poi} and world worlds/<w>/assets/images/{portraits,poi} — nobody writes them.
+
+      Scope:
+      1. render_common.py render_batch: route portraits to genre_packs/<g>/worlds/<w>/assets/portraits/<slug>.png (mirror the POI branch). Requires real world per item (portraits already carry world from collect_characters).
+      2. Server: add a portrait resolver mirroring _poi_image_html / reference_presenters POI path — resolve_asset_url(f'genre_packs/{g}/worlds/{w}/assets/portraits/{slug}.png'), keyed by slugified manifest name. FIRST confirm how/whether NPC portraits are meant to reach the UI today (confrontation overlay, NPC cards, reference page) and wire them — this is the load-bearing gap, not just the path. Add a wiring test.
+      3. Remove the 5 empty scaffold dirs; pick ONE convention (assets/portraits to match assets/poi — note POI uses assets/poi, NOT assets/images/poi).
+      4. Migrate existing portraits: move genre-flat PNGs to the world path locally + re-sync R2; delete stale genre-flat R2 keys.
+      5. Audit other packs/worlds for the same genre-flat portrait layout and relocate (or file follow-ups).
+
+      Open question to resolve in design: exact runtime surface(s) that should display NPC portraits. Coordinate with reference-page slug-anchor convention (slugify name).
+    points: 8
+    priority: p2
+    status: done
+    repos: content,server
+    workflow: tdd
+    completed: '2026-05-28'
+    type: refactor

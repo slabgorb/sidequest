@@ -26,7 +26,8 @@ stories:
     title: Aside happy-path fix — _SYSTEM_PROMPT must emit outcome:answered so a good GM answer isn't rejected (ADR-107)
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
+    completed: '2026-05-28'
     type: bug
