@@ -61,14 +61,30 @@ uv run --project . python scripts/r2_sync_packs.py \
     --genre space_opera --world aureate_span
 ```
 
-> **Sequential render→sync runner (`render_queue.py`).** A helper that chains
-> many render and sync jobs strictly in sequence (stopping on first failure,
-> printing an explicit upload payload per sync) was developed this session and is
-> **currently uncommitted** — it lives in the orchestrator working tree pending a
-> commit decision. Once committed it will be the recommended entry point for
-> multi-world gap-closing runs; see its module docstring for the `kind:genre:world`
-> job syntax. Until then, compose the `generate_*` + `r2_sync_packs.py` scripts as
-> shown above.
+### Multi-job runs: `render_queue.py`
+
+For gap-closing runs spanning several worlds, `render_queue.py` chains render and
+sync jobs **strictly in sequence** (one daemon, one socket), stops on the first
+failure, and prints an explicit upload payload before each sync. Jobs are
+`kind:genre:world` where `kind` ∈ {`portraits`, `pois`, `sync`}; run it under the
+`sidequest-server` project (it shells out to the root venv itself for sync steps).
+
+```bash
+# render @40 then publish, across worlds, sequentially:
+uv run --project sidequest-server python scripts/render_queue.py --steps 40 \
+    portraits:tea_and_murder:blackthorn_moor \
+    pois:tea_and_murder:blackthorn_moor \
+    sync:tea_and_murder:blackthorn_moor \
+    pois:space_opera:coyote_star \
+    sync:space_opera:coyote_star
+```
+
+`render_queue.py` defaults `--steps` to **40** (production asset quality) — note
+this differs from the underlying `generate_*.py` default of 20; pass `--steps N`
+to override. The runner forces re-render by default; pass `--no-force` to respect
+the R2-existence short-circuit.
+See the module docstring for the full job grammar and the branch-safety warning
+(it reads the `sidequest-content` working tree — see the gotchas above).
 
 ## Playtest & observability
 
