@@ -17,7 +17,7 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  orc-quest (this repo) — Orchestrator                        │
+│  sidequest (this repo) — Orchestrator                        │
 │  Sprint tracking, cross-repo justfile, architecture docs     │
 └──────┬──────────────┬──────────────┬──────────────┬──────────┘
        │              │              │              │
@@ -30,7 +30,7 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 │ uvicorn      │ │ client    │ │ (MLX)        │ │ YAML + audio   │
 │ WebSocket    │ │ Audio     │ │ renderer     │ │ params + LFS   │
 │ Narrator     │ │ engine    │ │ ACE-Step     │ │ images         │
-│ Anthropic SDK│ │ 3D dice   │ │ music tier   │ │ 5 live packs   │
+│ Anthropic SDK│ │ 3D dice   │ │ music tier   │ │ 10 live packs  │
 │ (ADR-101)    │ │ overlay   │ │ + SFX mixer  │ │ + workshopping │
 └──────────────┘ └───────────┘ └──────────────┘ └────────────────┘
        ▲              │              ▲
@@ -40,7 +40,7 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 
 | Repo | Language | Purpose | GitHub |
 |------|----------|---------|--------|
-| **orc-quest** | — | Orchestrator, docs, sprint tracking | slabgorb/orc-quest |
+| **sidequest** | — | Orchestrator, docs, sprint tracking | slabgorb/sidequest |
 | **sidequest-server** | Python | Game engine, FastAPI WebSocket API, narrator orchestration | slabgorb/sidequest-server |
 | **sidequest-ui** | TypeScript | React 19 client, audio engine, 3D dice overlay | slabgorb/sidequest-ui |
 | **sidequest-daemon** | Python | Media services (Z-Image / Flux image gen, ACE-Step music, SFX mixer) | slabgorb/sidequest-daemon |

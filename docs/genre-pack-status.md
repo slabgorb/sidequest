@@ -1,6 +1,6 @@
 # Genre Pack Status Guide
 
-> **Last updated:** 2026-05-28 (pack-count reconciliation + space_opera SWN)
+> **Last updated:** 2026-05-29 (space_opera 3-world promotion + asset renders; see 2026-05-29 note)
 > **Source:** `sidequest-content` — `genre_packs/` (production) + `genre_workshopping/` (staging)
 >
 > Two trees. `SIDEQUEST_GENRE_PACKS` always points at `genre_packs/`. The
@@ -26,6 +26,45 @@
 > dated history; treat the per-row counts as superseded by this note where they
 > conflict.
 
+> **2026-05-29 update (supersedes the 2026-05-28 note and all rows below where
+> they conflict).** Verified against a fresh `origin/develop` (commit `c64f5ba`):
+>
+> - **space_opera now has three live (`draft: false`) worlds**, not one. The
+>   per-pack notes and "Parked worlds" table below that still call `aureate_span`
+>   "parked in workshopping" are **stale**:
+>   - `coyote_star` — live (cover_poi `mendes_post`); SWN ruleset flagship.
+>   - `aureate_span` — **promoted out of draft** (`draft: false`, cover_poi
+>     `the_calcifiers_chamber`; PRs #290/#291/#292). Camp-cosmic painterly visual
+>     redirect; **7 portraits + 21 POI landscapes rendered @40 steps and synced to
+>     R2.** No longer parked.
+>   - `perseus_cloud` — **new live world** (`draft: false`, cover_poi `new_kowloon`;
+>     PRs #286/#288). Authored POI visual prompts, vault NPC import,
+>     `aristocratic_reaction` trope. **Absent from every table below** — add it
+>     mentally to the space_opera row.
+> - **spaghetti_western is fully live with three worlds** (`dust_and_lead`,
+>   `the_real_mccoy`, `five_points`). The "Server load blocked by 10 schema-drift
+>   fields" line in the *Reshuffles* section below is **superseded** — the pack
+>   loads. `five_points` now has **12 distinct POI visual prompts authored and
+>   rendered @40** (PR #296) and hero cover_poi `where_rynders_was_stoned` (#297).
+> - **`blackthorn_moor` (tea_and_murder) remains `draft: true`** — but its asset
+>   gate is now being met: **5 portraits + 8 POIs rendered 2026-05-29**. "Draft"
+>   here means *not yet promoted*, not *no assets*. Do not flip `draft: false`
+>   without Keith's go — it may be deliberately in-progress.
+> - **neon_dystopia gained CWN content** — Cities-Without-Number-derived combat
+>   lethality (weapons, armor, HP/AC; PRs #283/#284) and a `net_run` hacking
+>   confrontation with a `cwn.hacking` ladder (#287). Its Humanity/Net-Combat
+>   mechanics are no longer a pure LLM-interpreted shell; the "workshop only /
+>   LLM-interpreted" labels in the mechanics tables below understate this.
+> - **Table confrontations collapsed (#294):** spaghetti_western poker and
+>   tea_and_murder auction now resolve through a unified free-for-all
+>   `table_resolution` path.
+>
+> The **flagship asset+playtest gate** still distinguishes the fullest worlds;
+> with this session's renders, `aureate_span` and `five_points` have closed their
+> POI/portrait gaps, and the gap-closing render run also covered
+> `tea_and_murder/blackthorn_moor`, `space_opera/coyote_star` (full POI
+> re-render), and `heavy_metal/long_foundry` (portraits).
+
 ### Reshuffles since 2026-04-30
 
 Four changes since the prior snapshot are load-bearing for reading the tables below:
@@ -34,7 +73,7 @@ Four changes since the prior snapshot are load-bearing for reading the tables be
 - **caverns_and_claudes → procedural megadungeon (ADR-106, closed 2026-05-17).** The prior `caverns_sunden` hamlet world is **deprecated** (content PR #228, commit `67dee9c`). The new live world is `beneath_sunden` — a single shaft into Sünden Deep — and authors only the static surface anchor (Ropefoot waiting-camp + Dropmouth shaft head). The dungeon below is generated unbounded at runtime by the ADR-106 contiguous-edge-expansion engine plus Complication Ledger. The prior five hamlet-nested dungeons (grimvault, mawdeep, primetime, dungeon_survivor, horden) are off the active world list. Four genre-level set-piece tropes (Plan 7 §14.A, content PR #227) anchor the procedural deep.
 - **victoria → tea_and_murder rename** (chore commits across all repos, completed 2026-05). The pack and all references rename from `victoria` to `tea_and_murder`.
 - **Audio assets moved to R2** (story 45-49, ADR-095). Per-track ACE-Step `*_input_params.json` files remain in the repo as the canonical regeneration spec; OGG playback files now live in R2 (`cdn.slabgorb.com`). The "Audio" column below counts in-repo audio files (mostly params); track counts are higher because each params file generates multiple takes.
-- **spaghetti_western promoted to production 2026-05-19.** Full pack (worlds `dust_and_lead` + `the_real_mccoy`) moved from `genre_workshopping/` to `genre_packs/`. Music generation, portraits, and POIs in flight. Server load is blocked by 10 schema-drift fields (`docs/content-drift-triage.md`) — 9 require Python model wiring (`StandoffRules`, `ReputationConfig`, `LuckConfig`, per-tier `ProgressionUnlock`) before the lobby can serve this pack.
+- **spaghetti_western promoted to production 2026-05-19.** Full pack (worlds `dust_and_lead` + `the_real_mccoy`) moved from `genre_workshopping/` to `genre_packs/`. Music generation, portraits, and POIs in flight. ~~Server load is blocked by 10 schema-drift fields~~ — **superseded (2026-05-29):** the pack loads, now with a third world `five_points` (12 POI prompts authored + rendered, #296/#297). Any remaining `StandoffRules`/`ReputationConfig`/`LuckConfig`/`ProgressionUnlock` work is engine-enforcement debt, **not** a load blocker (see `docs/content-drift-triage.md`).
 
 ## Pack Overview
 
@@ -152,6 +191,8 @@ Required: `world.yaml`, `lore.yaml`. Optional: `history`, `cartography`,
 | caverns_and_claudes/**beneath_sunden** | + | + (surface only — Ropefoot + Dropmouth) | + | + | + (4 set-piece, anchor the procedural deep) | + | + |
 | mutant_wasteland/flickering_reach | — | + | + | — | — | + | + |
 | space_opera/coyote_star | + | + | + | — | — | — | + |
+| space_opera/**aureate_span** (now live, `draft: false` — #290/#291/#292) | + | + | + | — | + (5, #290) | + (#290) | + |
+| space_opera/**perseus_cloud** (now live, `draft: false` — #286/#288) | + | + | + | — | — | + | — |
 | tea_and_murder/**glenross** | + | + | + | — | — | + | + |
 
 `beneath_sunden` deliberately authors **only** the surface anchor; the deep
@@ -167,7 +208,7 @@ but are not registered as worlds.
 |-------|---------|-------|----------|-----------|--------|-------------|---------|
 | elemental_harmony/burning_peace | + | + | + | + | + | + | + |
 | elemental_harmony/shattered_accord | + | + | + | — | + | — | + |
-| space_opera/aureate_span | + | + | + | — | — | — | + |
+| ~~space_opera/aureate_span~~ | | | | | | | **Promoted 2026-05-29 — now live (`draft: false`); see Production worlds table above** |
 | tea_and_murder/blackthorn_moor | + | + | + | + | + | + | + |
 
 **Promotion candidates:** `burning_peace` and `blackthorn_moor` have full
@@ -189,16 +230,22 @@ rules are LLM-interpreted at narration time unless noted.
 | space_opera | Physique, Reflex, Intellect, Cunning, Resolve, Influence (SWN-mapped: Physique→STR, Resolve→CON, Reflex→DEX, Intellect→INT, Cunning→WIS, Influence→CHA; SWN modifier curve) | **SWN ruleset** (`ruleset: swn`): ablative HP (HpPool current/max/base_max), Firefight + Ship Combat both resolve d20 + attack_bonus + combat_skill + attr_mod vs Armor Class → damage ablates HP, 0 HP = `hp_depletion` victory. Crew Bonds (advantage on bond-protect actions), Found Family | **SWN engine for combat** (personal + ship; hull = HP, ship AC 14, flat armor soak). Caveats: SWN skill checks (2d6), saves, initiative (1d8) coded in the `swn` module but **not yet routed from the orchestrator**; chargen has no per-class HP tables yet (defaults to 10 HP); non-combat confrontations (negotiation, pursuit, dogfight) still use native dial rules |
 | tea_and_murder | **Angst, Pride, Humour, Nerve, Cunning, Passion** | Emotional ability scores, class-stratified society | LLM-interpreted |
 
-### Workshop genres (mechanics designed but pack not in production)
+### Non-flagship genres (in production, asset/engine gaps)
+
+> **2026-05-29:** this table was titled "Workshop genres (... not in production)."
+> That is stale — only `low_fantasy` is still workshop-only. `heavy_metal`,
+> `neon_dystopia`, `pulp_noir`, `road_warrior`, and `spaghetti_western` all load
+> from `genre_packs/`; they just haven't cleared the full asset + playtest (and
+> in some cases engine-enforcement) gate.
 
 | Genre | Custom Stats | Unique Mechanics | Engine Support |
 |-------|-------------|-----------------|----------------|
-| heavy_metal | per pack.yaml in workshop | per workshop rules.yaml | Pack not loaded |
-| low_fantasy | Standard D&D 6 | Banned spells, gritty realism, lingering injuries | LLM-interpreted (workshop only) |
-| neon_dystopia | Body, Reflex, Tech, Net, Cool, Edge | Humanity Tracker, Street Cred, Net Combat | LLM-interpreted (workshop only) |
-| pulp_noir | Brawn, Finesse, Grit, Savvy, Nerve, Charm | Contacts, Heat Tracker (0-5), Occult Exposure | LLM-interpreted (workshop only) |
+| heavy_metal | per pack.yaml | per `rules.yaml` | In production (loads); asset gate pending |
+| low_fantasy | Standard D&D 6 | Banned spells, gritty realism, lingering injuries | LLM-interpreted (**still workshop-only**) |
+| neon_dystopia | Body, Reflex, Tech, Net, Cool, Edge | Humanity Tracker, Street Cred, Net Combat | **CWN content live** — combat lethality (weapons/armor/HP/AC, #283/#284) + `net_run` hacking confrontation with `cwn.hacking` ladder (#287); Humanity/Street Cred still LLM-interpreted |
+| pulp_noir | Brawn, Finesse, Grit, Savvy, Nerve, Charm | Contacts, Heat Tracker (0-5), Occult Exposure | In production (loads); LLM-interpreted; asset gate pending |
 | road_warrior | Grip, Iron, Nerve, Scrap, Road Sense, Swagger | Rig HP/damage tiers, Fuel, Chase beats, Dismounted | **Engine GAP** — `chase_depth` was Rust-only and did not port. ADR-087 verdict: **RESTORE P2** (ADR-017). Currently zero engine implementation. |
-| spaghetti_western | GRIT, DRAW, NERVE, CUNNING, PRESENCE, LUCK | Standoff system, Luck resource, Bounty board, 5-faction rep | LLM-interpreted (production shell empty) |
+| spaghetti_western | GRIT, DRAW, NERVE, CUNNING, PRESENCE, LUCK | Standoff system, Luck resource, Bounty board, 5-faction rep | In production (3 worlds load); standoff/luck engine enforcement still owed |
 
 ## Confrontation & Resource Coverage
 
@@ -304,7 +351,7 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 - Room graph wired in Python (`game/room_movement.py`, ADR-055) — paired with the ADR-106 expansion engine on the runtime path.
 
 ### elemental_harmony (production runtime, worlds parked)
-- **Zero lobby-selectable worlds post-M2.** Pack-level YAML and audio remain in production; both worlds (burning_peace, shattered_accord) are parked in workshopping pending completeness review.
+- **Two worlds back in `genre_packs/` with openings.yaml** (`burning_peace`, `shattered_accord`) as of the 2026-05-28 reconciliation — the earlier "zero worlds / parked in workshopping post-M2" status is **stale**. Pack-level YAML and audio were always in production. Asset + playtest gate status still varies per world.
 - Musically richest pack — 121 in-repo ACE-Step params (gold standard for variation coverage). OGGs in R2.
 - Missing genre-level inventory, voice_presets.
 - 9 corpus files covering Asian linguistic traditions.
@@ -314,7 +361,10 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 - 96 in-repo ACE-Step params (strong); OGGs in R2.
 
 ### space_opera (production)
-- **One lobby-selectable world** post-M2: `coyote_star` (renamed from coyote_reach 2026-05-01; flagship for Epic 47 magic + rig MVP). `aureate_span` is parked in workshopping.
+- **Three live (`draft: false`) worlds** as of 2026-05-29 (the earlier "one world / aureate_span parked" status is **stale**):
+  - `coyote_star` (renamed from coyote_reach 2026-05-01; flagship for Epic 47 magic + rig MVP; binds SWN — see below).
+  - `aureate_span` — promoted out of draft 2026-05-29 (#290/#291/#292), camp-cosmic painterly redirect, 7 portraits + 21 POIs rendered and synced to R2; cover_poi `the_calcifiers_chamber`.
+  - `perseus_cloud` — live (#286/#288); authored POI prompts, vault NPC import, `aristocratic_reaction` trope; cover_poi `new_kowloon`.
 - Chapter→trope wiring engaged for coyote_star (content PR #209).
 - **Now binds the SWN (Stars Without Number) ruleset** (`ruleset: swn` in `rules.yaml`; e2e tests green 2026-05-27). The six native attributes survive but are SWN-mapped (Physique→STR, Resolve→CON, Reflex→DEX, Intellect→INT, Cunning→WIS, Influence→CHA) and use the SWN modifier curve. Combat — **both personal (Firefight) and Ship Combat** — resolves d20 + attack_bonus + combat_skill + attr_mod vs Armor Class; damage ablates first-class HP (HpPool current/max/base_max), 0 HP = `hp_depletion` victory. Ship hull is the HP pool (ship AC 14, flat `armor` soak). `stat_display_fields` exposes hp/max_hp/armor to players.
   - **Honest caveats:** (a) SWN skill checks (2d6+skill+attr), the 3-category saves, and 1d8+DEX initiative are coded in the `swn` module but **not yet routed from the narrator orchestrator** (deferred). (b) Chargen does not yet author per-class HP tables (`base_max_by_class`), so characters currently default to **10 HP**. (c) Non-combat confrontations (negotiation, pursuit, dogfight) still use the **native dial rules**, not SWN resolution.
@@ -323,7 +373,7 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 
 ### tea_and_murder (production — `glenross` live; `blackthorn_moor` parked)
 - **One lobby-selectable world:** `glenross` — a fictional Highland village in Edwardian Scotland c. 1908, post-Victorian, pre-Great-War, "the long warm afternoon of empire." No swords, no séances by default, no fist-fights in the kirk yard. Currency is standing, gossip, observation, and a steady noticing eye. River Allt Ross threads through the glen; the kirk on its mound, Castle Ross on the rise above the burn, the distillery smoking faintly. Cover POI: `the_glenross_arms`. Full world file set (history, cartography, cultures, lore, NPCs, openings, portrait manifest, visual style).
-- `blackthorn_moor` parked in workshopping pending M2 review — one of the strongest completeness profiles among parked worlds, promotion candidate if you want a second tea_and_murder world.
+- `blackthorn_moor` remains `draft: true` (in `genre_packs/`, not lobby-promoted) — one of the strongest completeness profiles, a promotion candidate for a second tea_and_murder world. **Asset gate now being met (2026-05-29): 5 portraits + 8 POIs rendered.** Do not flip `draft: false` without Keith's go — may be deliberately in-progress.
 - **Unique architecture:** emotional ability scores (Angst, Pride, Passion), class-stratified society (Gentry, Trade, Servant, Clergy, Bohemian, Colonial).
 - **Public-domain classical music** — Chopin and Strauss recordings mapped to game moods; served from R2. No ACE-Step generation needed (hence near-zero in-repo audio).
 - Playfair Display font. 10 class-stratified naming corpus files.

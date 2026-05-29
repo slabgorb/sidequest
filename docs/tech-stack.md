@@ -42,7 +42,7 @@ sidequest-server/
 ├── pyproject.toml                     # [project], deps, entry points, ruff config
 ├── sidequest/
 │   ├── protocol/                      # GameMessage discriminated union, 44 message types, sanitization
-│   ├── genre/                         # YAML genre pack loader, pydantic models, 5 live packs
+│   ├── genre/                         # YAML genre pack loader, pydantic models, 10 live packs
 │   ├── game/                          # ~30+ modules — state, combat, NPCs, lore, audio direction
 │   ├── agents/                        # Anthropic SDK narrator (default) + claude -p/Ollama opt-in, auxiliary agents
 │   ├── server/                        # FastAPI app, session management, dispatch, watcher

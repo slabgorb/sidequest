@@ -68,7 +68,7 @@
 │  Genre Layer         │ │           Persistence Layer                 │
 │  (sidequest.genre)   │ │  PostgreSQL (saves, psycopg3 + pool),      │
 │  YAML pack loader    │ │  PyYAML (genre packs). Narrative log,       │
-│  5 live genre packs  │ │  KnownFact accum. sidequest.game.pg/        │
+│  10 live genre packs │ │  KnownFact accum. sidequest.game.pg/        │
 └──────────────────────┘ └────────────────────────────────────────────┘
 
          ┌────────────────────────────────────────────────────────────┐
@@ -132,7 +132,7 @@ Each WebSocket connection runs as an asyncio task owning a `Session`. Single-pla
 
 ### ADR-004: Genre Packs as YAML
 
-5 live genre packs loaded via PyYAML into pydantic models. Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
+10 genre packs load via PyYAML into pydantic models (all have at least one world with an authored `openings.yaml` as of 2026-05; a subset have cleared the full asset + playtest gate — see `docs/genre-pack-status.md`). Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
 
 ### ADR-005: Background-First Pipeline
 
