@@ -82,16 +82,17 @@ stories:
     review_verdict: approved
   - id: 64-7
     title: Expand 61 missing namegen corpus files flagged by audit
-    description: '4 failures in tests/scripts/test_audit_namegen_corpora.py (audit exits rc=1): 61 corpus files MISSING from disk (0 words) across elemental_harmony, mutant_wasteland, neon_dystopia, space_opera and others — culture-corpus word lists per ADR-091. Author/expand the missing corpus files. Content authoring — coordinate with the conlang agent.'
+    description: 'RE-SCOPED 2026-05-29 (SM triage; was ''Expand 61 missing namegen corpus files''). The original premise is FALSE: all 61 referenced corpus files DO exist in sidequest-content/corpus/shared/ with healthy word counts (none are 0-word/empty; find -empty returns 0). The real defect is an audit-path mismatch: scripts/audit_namegen_corpora.py:108 resolves corpus refs ONLY as pack_dir/corpus/<ref>, but packs elemental_harmony/mutant_wasteland/neon_dystopia/space_opera have no per-pack corpus/ dir. The runtime resolver sidequest/genre/names/generator.py:251 (_resolve_corpus_file) searches fallback_dirs incl. sidequest-content/corpus/shared/, so files that resolve fine at runtime are reported MISSING by the audit (rc=1, 4 failing tests in tests/scripts/test_audit_namegen_corpora.py). FIX: teach the audit script the shared-corpus fallback (or wire per-pack corpus dirs to match). DO NOT author duplicate corpus files. Absorbs canceled story 64-9.'
     points: 5
     priority: p2
     status: backlog
     repos: content
     workflow: tdd
     acceptance_criteria:
-      - All 61 missing corpus files authored with sufficient word counts
-      - Live-tree audit (test_audit_live_tree_exits_zero_after_corpus_expansion) exits 0
-      - Named-thin corpora resolve (e.g. 'Span Aristocracy') and all corpora clear the warn threshold
+      - audit_namegen_corpora.py replicates the runtime shared-corpus fallback (sidequest-content/corpus/shared/) when resolving corpus refs, matching generator.py _resolve_corpus_file behavior
+      - All 4 tests in tests/scripts/test_audit_namegen_corpora.py pass; audit exits rc=0 on the live tree
+      - No duplicate corpus files are authored under per-pack corpus/ dirs (the shared/ files remain the single source)
+      - 'Wiring/parity test: the audit script and the runtime generator resolve the same set of corpus files for the affected packs'
     type: bug
   - id: 64-8
     title: Repoint daemon preview-style test off the dead mawdeep world
@@ -111,9 +112,10 @@ stories:
     review_verdict: approved
   - id: 64-9
     title: Namegen corpus audit fails on live tree post-expansion — tests/scripts/test_audit_namegen_corpora.py (4 tests)
+    description: 'CANCELED (2026-05-29, SM triage): Duplicate of 64-7 — points at the identical test file (tests/scripts/test_audit_namegen_corpora.py, same 4 failing tests) with the same root cause (audit script lacks the runtime shared-corpus fallback). No separable work item. Collapsed into 64-7.'
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: content,server
     workflow: tdd
     type: bug
