@@ -190,3 +190,16 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: chore
+  - id: 71-18
+    title: GM-panel NPC Registry widget reads only npc_pool — merge snapshot.npcs so roster NPCs are not a false-negative
+    description: "Playtest 2026-05-28 finding #C1 (display follow-up; the engine half is fixed separately). The OTEL GM-panel '2 State -> NPC Registry' widget (sidequest-server/sidequest/server/static/dashboard.html) reads ONLY snapshot.npc_pool, so it shows 'No NPCs in registry yet' for an entire session despite a populated authored roster (snapshot.npcs — e.g. 12 NPCs on coyote_star) and roster NPCs present in the scene. This is a COSMETIC false-negative, not an engine bug: roster NPCs live in snapshot.npcs (presence tracked via Npc.last_seen_location) and are deliberately NOT mirrored into npc_pool (npc_pool holds narrator-invented walk-ons only — see the #C1 engine fix to run_npc_agency). The widget masks whether NPC mechanics ever engaged. Fix: the widget should read/merge snapshot.npcs (roster) WITH npc_pool (walk-ons) so the GM panel reflects who is actually in the world. Dashboard display only — no engine/OTEL change (CLAUDE.md: cosmetic dashboard change). Gotcha already documented in the sq-playtest skill so the panel isn't mis-read in the meantime."
+    points: 1
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: trivial
+    acceptance_criteria:
+      - The NPC Registry widget displays authored-roster NPCs (snapshot.npcs) in addition to npc_pool walk-ons.
+      - "A session with a populated roster and an empty npc_pool (the exact #C1 coyote_star shape) shows the roster NPCs, not 'No NPCs in registry yet'."
+      - The widget distinguishes (or at least does not conflate) roster NPCs vs narrator-invented walk-ons in its display.
+    type: bug
