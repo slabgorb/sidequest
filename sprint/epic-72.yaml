@@ -84,9 +84,11 @@ stories:
     title: Wire OCEAN/disposition + scenario belief_state for narrator-invented NPCs
     points: 5
     priority: p3
-    status: backlog
+    status: in_progress
     repos: sidequest-server
     workflow: tdd
+    started: '2026-05-30'
+    branch: feat/72-9-wire-ocean-disposition-belief-state-invented-npcs
   - id: 72-10
     title: observation_pending gate-ordering assert (gate must precede mint)
     points: 1
