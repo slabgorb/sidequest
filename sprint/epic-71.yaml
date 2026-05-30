@@ -246,3 +246,58 @@ stories:
     type: bug
     review_findings: 'Mechanical only: 2x SIM117 nested-with + 1 ruff format failure in new test files (test_schema_at_head_check.py, test_startup_schema_guard_wiring.py). Substantively clean/approved. Green rework.'
     review_verdict: approved
+  - id: 71-21
+    title: perseus_cloud one-sided combat — beat_selection has no server-driven enemy-attack path (resolve_opponent_attack)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 71-22
+    title: Glenross router latency AC5 — measure + diagnose 4-12s vs <1.2s budget (env vs code)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 71-23
+    title: Solo narration streaming — wire messages.stream into existing UI delta path
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server,sidequest-ui
+    workflow: tdd
+  - id: 71-24
+    title: perseus_cloud personal-melee combat beat bank — distinct from ship/dogfight beats
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-content
+    workflow: tdd
+    type: bug
+  - id: 71-25
+    title: perseus_cloud location grounding — declare world POIs (New Kowloon) as snapshot entities from content
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-content,sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 71-26
+    title: Solo turn-latency p95 — diagnose/cap tool-loop iterations
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 71-27
+    title: Router emits combat dispatch with no registered handler — register or stop emitting
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug

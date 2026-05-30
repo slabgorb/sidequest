@@ -1,0 +1,86 @@
+id: '72'
+type: epic
+title: NPC Identity Hardening
+description: 'DEEP-DIVE (perseus_cloud session 894, 2026-05-29): an NPC has no stable id — identity is a case-folded NAME STRING split across two unreconciled stores (snapshot.npcs = mechanical state; snapshot.npc_pool = identity scaffold) with no consistency invariant. The development pipeline (weight escalation + disposition evolution + interest counting) is DORMANT — promotion fires only on mechanical necessity (combat stat block), never on player interest, backwards from ADR-014/020. Source: sq-playtest-pingpong DEEP-DIVE #1. Every leg needs OTEL.'
+priority: p2
+status: backlog
+repos: sidequest-server
+stories:
+  - id: 72-1
+    title: Revive dormant NPC development pipeline — interest-signal increment, resolution_tier escalation, disposition drift, OTEL
+    points: 8
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 72-2
+    title: Preserve disposition on pool to Npc promotion + reconcile npcs vs npc_pool on load
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 72-3
+    title: MM NPC provenance through the injection seam — NpcPatch manual_origin, preserved through merge
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 72-4
+    title: Route narrator-invented NPC names through culture-bound ADR-091 namegen
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+  - id: 72-5
+    title: Fix narrator-invented born-hostile disposition default (-20 to neutral spawn)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug
+  - id: 72-6
+    title: Cap npc_pool growth (LRU/last-seen) + prune stale observation_pending scaffolds
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 72-7
+    title: Apply NPC identity drift — overwrite canonical pronoun/role on re-mention, not warn-only
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 72-8
+    title: Stamp last_seen_turn/location on encounter presence, not just prose mention
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug
+  - id: 72-9
+    title: Wire OCEAN/disposition + scenario belief_state for narrator-invented NPCs
+    points: 5
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+  - id: 72-10
+    title: observation_pending gate-ordering assert (gate must precede mint)
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore
