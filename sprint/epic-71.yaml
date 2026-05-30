@@ -358,10 +358,13 @@ stories:
     title: Migrate pulp_noir scenarios to world tier (worlds/annees_folles/scenarios/) — restore scenario binding after 71-32 made bind world-aware
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-30'
     repos: server,content
-    workflow: tdd
+    workflow: trivial
+    completed: '2026-05-30'
     type: bug
+    review_verdict: approved
   - id: 71-34
     title: Extract shared OTEL watcher-test harness (_setup/_Sock/_wait_for) into tests/integration/conftest — dedupe across combat + beat-advance wiring tests
     points: 2
