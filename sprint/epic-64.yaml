@@ -161,10 +161,10 @@ stories:
     type: refactor
   - id: 64-12
     title: Make pack-level visual_style.yaml optional in loader when worlds are self-contained
-    description: 'Directive (Keith, 2026-05-29): ALL genre imagery is world-level color/flavor; NO genre/pack-level images and NO visual prompts at genre level. Each world already ships a self-contained visual_style.yaml. BLOCKER: loader.py:~1131 hard-requires a pack-level visual_style.yaml via _load_yaml (not optional) — deleting the pack-level file makes the pack unloadable, so it is currently restored to HEAD as a workaround. This story makes the pack-level visual_style.yaml OPTIONAL so the genre-level file can be removed, honoring the directive. Constraint: obey No Silent Fallbacks — if a pack omits pack-level visual_style AND a world also lacks its own, FAIL LOUD (do not silently substitute a default). Surfaced during the elemental_harmony image reorg + WWN Plan 3 work.'
+    description: 'DONE (3 repos + schema). Made pack-level visual_style optional end-to-end per the 2026-05-29 directive: server GenrePack.visual_style optional + _load_yaml_optional (PR #526); daemon StyleCatalog genre-style optional, fail-loud on present-but-empty, world required as backstop (PR #95); content deleted elemental_harmony/visual_style.yaml (PR #301) + dropped visual_style from genre-level pack_schema required_files, world-level kept (PR #302). Verified end-to-end: EH loads with visual_style None; daemon resolves both worlds'' style with genre file gone. NOTE: actual GPU image-render spot-check left for a human. Repos: server+daemon+content (filed as server-only; expanded — daemon hard-required genre positive_suffix).'
     points: 2
     priority: p3
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -172,6 +172,7 @@ stories:
       - 'Fail-loud preserved: a pack with neither a pack-level visual_style nor a world-level one raises a clear loader error (no silent default), per No Silent Fallbacks'
       - elemental_harmony loads clean with its pack-level visual_style.yaml deleted (worlds burning_peace + shattered_accord carry their own)
       - A loader test covers both the optional-present and the absent-but-worlds-covered paths
+    completed: '2026-05-30'
   - id: 64-13
     title: Migrate spaghetti_western poker + tea_and_murder auction confrontations to table_resolution schema (#522 follow-up)
     description: "PR #522 (feat/table: free-for-all N-seat table model, server commit aab25c69) landed server-side table_resolution support PLUS content tests (tests/genre/test_poker_table_content.py, tests/genre/test_auction_table_content.py) that assert the real spaghetti_western poker and tea_and_murder auction confrontations use the NEW schema — but the matching CONTENT migration never shipped. Result: develop's server suite is RED by 12 (6 poker + 6 auction) on top of the 6-failure asset/corpus baseline. The content still carries the old dial-based player_metric/opponent_metric schema. Surfaced 2026-05-29 during WWN Plan 3 merge verification; the 12 are pre-existing develop debt independent of WWN, NOT WWN regressions."
@@ -188,8 +189,10 @@ stories:
     type: refactor
   - id: 64-14
     title: EH narrative-chargen reach (Guardian/Wanderer class_hints) + POI cover slug wiring
+    description: "DONE (content PR #300). class_hint: repointed two over-concentrated Channeler origins -> Guardian (Jade Kingdoms, tank) + Wanderer (Tide Reaches, explorer); all six WWN classes now reachable in narrative chargen, each hint matches a class display_name. POI slug wiring: NO-OP by design — every POI already carries a slug; the 16 'orphan' renders are superseded duplicates with no distinct prose home (writer refused to fabricate lore). Follow-up surfaced: delete 16 superseded orphan POI renders (local + R2); openings per-PC-beat coverage gap for Guardian/Wanderer in burning_peace."
     points: 3
     priority: p3
-    status: backlog
+    status: done
     repos: content
     workflow: trivial
+    completed: '2026-05-30'
