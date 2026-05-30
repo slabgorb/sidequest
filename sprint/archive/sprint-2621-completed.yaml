@@ -25,6 +25,7 @@ completed_epics:
   - '48'
   - '61'
   - '68'
+  - '64'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -685,4 +686,74 @@ completed_stories:
     epic: '61'
     title: "Reduce per-turn volatile-tail write volume (option b): amortize session-static Valley content into the cached 1h prefix, leaving only the ~1k delta in the 5m tail — closes 61-19 AC1 (<2k/turn), AC2 (<=$0.05/turn), AC3 (flat at 50 turns). Architect-confirmed feasible via ADR-112/61-10 zone-promotion of the 'persistent across turns' AVAILABLE CULTURES block, magic hard_limits, and monster_manual out of the volatile Valley zone. Includes a live-validation probe + fixing residual stale comment at anthropic_sdk_client.py:339-342."
     points: 5
+    completed: '2026-05-30'
+  - id: 64-1
+    epic: '64'
+    title: Fill missing world-level required files (tropes, archetypes, portrait_manifest)
+    points: 3
+    completed: '2026-05-25'
+  - id: 64-2
+    epic: '64'
+    title: Remove or fulfill undeclared pack extensions (5 packs)
+    points: 2
+    completed: '2026-05-25'
+  - id: 64-3
+    epic: '64'
+    title: Decouple test_themes_wiring from live content — replace with fixtures
+    points: 2
+    completed: '2026-05-25'
+  - id: 64-4
+    epic: '64'
+    title: Schema-validate pack file contents — model_validate pass in the validator
+    points: 3
+    completed: '2026-05-25'
+  - id: 64-5
+    epic: '64'
+    title: Cross-reference content lint — ID membership + adjacency closure
+    points: 2
+    completed: '2026-05-28'
+  - id: 64-6
+    epic: '64'
+    title: Fix circular import — WebSocketSessionHandler back-compat re-export cycle
+    points: 2
+    completed: '2026-05-25'
+  - id: 64-7
+    epic: '64'
+    title: Expand 61 missing namegen corpus files flagged by audit
+    points: 2
+    completed: '2026-05-30'
+  - id: 64-8
+    epic: '64'
+    title: Repoint daemon preview-style test off the dead mawdeep world
+    points: 1
+    completed: '2026-05-26'
+  - id: 64-9
+    epic: '64'
+    title: Namegen corpus audit fails on live tree post-expansion — tests/scripts/test_audit_namegen_corpora.py (4 tests)
+    points: 3
+    completed: '2026-05-30'
+  - id: 64-10
+    epic: '64'
+    title: Live pack content validation failing — tests/cli/validate/test_pack_validator.py::TestContentValidation::test_all_live_packs_pass_content_validation
+    points: 2
+    completed: '2026-05-28'
+  - id: 64-11
+    epic: '64'
+    title: Remove negative_prompt from VisualStyle — Z-Image ignores it at guidance_scale=0
+    points: 3
+    completed: '2026-05-28'
+  - id: 64-12
+    epic: '64'
+    title: Make pack-level visual_style.yaml optional in loader when worlds are self-contained
+    points: 2
+    completed: '2026-05-30'
+  - id: 64-13
+    epic: '64'
+    title: Migrate spaghetti_western poker + tea_and_murder auction confrontations to table_resolution schema (#522 follow-up)
+    points: 3
+    completed: '2026-05-30'
+  - id: 64-14
+    epic: '64'
+    title: EH narrative-chargen reach (Guardian/Wanderer class_hints) + POI cover slug wiring
+    points: 3
     completed: '2026-05-30'

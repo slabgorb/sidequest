@@ -3,7 +3,7 @@ type: epic
 title: Content Schema Compliance — Close Pack Validator Gaps
 description: 'Close all ERROR-level gaps surfaced by `pf validate pack` after the genre pack filesystem schema landed. Two categories: (1) packs declaring extensions without backing files (5 packs), (2) worlds missing required files like tropes.yaml/archetypes.yaml/portrait_manifest.yaml (5 worlds). Goal: every live pack passes `just content-validate-all` with zero errors.'
 priority: p2
-status: backlog
+status: done
 repos: content,server
 stories:
   - id: 64-1
@@ -83,9 +83,10 @@ stories:
   - id: 64-7
     title: Expand 61 missing namegen corpus files flagged by audit
     description: 'RE-SCOPED 2026-05-29 (SM triage; was ''Expand 61 missing namegen corpus files''). The original premise is FALSE: all 61 referenced corpus files DO exist in sidequest-content/corpus/shared/ with healthy word counts (none are 0-word/empty; find -empty returns 0). The real defect is an audit-path mismatch: scripts/audit_namegen_corpora.py:108 resolves corpus refs ONLY as pack_dir/corpus/<ref>, but packs elemental_harmony/mutant_wasteland/neon_dystopia/space_opera have no per-pack corpus/ dir. The runtime resolver sidequest/genre/names/generator.py:251 (_resolve_corpus_file) searches fallback_dirs incl. sidequest-content/corpus/shared/, so files that resolve fine at runtime are reported MISSING by the audit (rc=1, 4 failing tests in tests/scripts/test_audit_namegen_corpora.py). FIX: teach the audit script the shared-corpus fallback (or wire per-pack corpus dirs to match). DO NOT author duplicate corpus files. Absorbs canceled story 64-9.'
-    points: 5
+    points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-30'
     repos: content
     workflow: tdd
     acceptance_criteria:
@@ -93,7 +94,14 @@ stories:
       - All 4 tests in tests/scripts/test_audit_namegen_corpora.py pass; audit exits rc=0 on the live tree
       - No duplicate corpus files are authored under per-pack corpus/ dirs (the shared/ files remain the single source)
       - 'Wiring/parity test: the audit script and the runtime generator resolve the same set of corpus files for the affected packs'
+      - audit_namegen_corpora.py resolves corpus refs through the corpus/shared fallback, matching the runtime resolver generator.py:251 (_resolve_corpus_file)
+      - Audit reports 0 MISSING (rc=0) across all current packs; the 61 prior MISSING rows resolve to real files
+      - The 4 failing tests in tests/scripts/test_audit_namegen_corpora.py pass
+      - NO new corpus files authored — all 22 distinct referenced files already exist in corpus/shared/ with healthy word counts
+    completed: '2026-05-30'
     type: bug
+    review_findings: '[HIGH] vacuous assert "OK" + overclaiming comment at test_audit_namegen_corpora.py:428 (rule #6, 3-specialist convergence) → use ## OK; [MEDIUM] non-co-located culture/corpus substring checks :147-154; [LOW] stale module docstrings. Production fix is correct; rework is test/doc-only.'
+    review_verdict: approved
   - id: 64-8
     title: Repoint daemon preview-style test off the dead mawdeep world
     description: 'tests/test_preview_style.py::test_style_wires_into_real_caverns_and_claudes_pack (daemon suite) fails because it hardcodes --world mawdeep (lines 127, 134), but mawdeep no longer exists — caverns_and_claudes has only beneath_sunden on disk. Do NOT author a mawdeep visual_style.yaml; that resurrects a dead world. Instead repoint the test onto a live world (beneath_sunden) or a test-only fixture pack per the no-content-coupled-tests rule, and fix the stale "mawdeep is a real C&C world" comment at line 127. Broader server-test mawdeep coupling is tracked separately at epic-61:218.'
@@ -196,3 +204,4 @@ stories:
     repos: content
     workflow: trivial
     completed: '2026-05-30'
+completed: '2026-05-30'
