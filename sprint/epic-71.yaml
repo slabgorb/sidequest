@@ -214,11 +214,10 @@ stories:
     description: "Playtest 2026-05-28 finding #G6 (the headline 59-8 Glenross finding). tea_and_murder IS a mystery engine, and ADR-053 (Scenario System: clue graph, belief state, gossip propagation) is the mechanical spine that makes a mystery SOLVABLE rather than improvised. Glenross — the flagship tea_and_murder world — ships archetypes/calendar/cartography/cultures/demographics/history/legends/lore/npcs/openings/tropes/world.yaml (a rich SETTING) but ZERO scenario/clue/belief content (find worlds/glenross -iname '*scenario*' -o -iname '*clue*' -o -iname '*belief*' => no files). So the router classifies investigation as scenario_clue, the handler runs, but snapshot.scenario_state is None => consume_clue_footnotes returns silently: no clue discovered, no belief update, no SPAN_SCENARIO_ADVANCE. For mechanics-first players (Jade/Sebastien) the murder is unsolvable-by-system — the narrator confabulates forensics each turn (turn-4 body exam invented a temple wound, a Perth rail ticket, 'he was not lying so when I left him' — all clue-shaped reveals with ZERO mechanical provenance, non-canonical, non-reproducible). This is the mystery equivalent of a combat pack with no confrontation engine, and exactly the Illusionism the OTEL lie-detector exists to catch. ENGINE IS FINE — the scenario_clue handler + Footnote coercion work (the coyote_star Footnote-enum fix is live: 'category_coerced raw=forensic -> Lore'); what is MISSING is the authored mystery. This also blocks #G6-adjacent social-confrontation validation: Glenross has no adversarial suspects to seat an Other, so cross-examine/social_duel/scandal can't be exercised either. CONTENT authoring job — a natural fit for the 'Jade authors content' path in CLAUDE.md (she will author worlds + lore). NOTE: coyote_star also lacks an ADR-053 scenario — this is a PATTERN; if more investigation-worlds need scenarios, promote to a dedicated 'ADR-053 scenario authoring' epic (this story currently parks in epic 71 playtest-findings). Reference an existing authored scenario (if any pack has one) as the schema template; otherwise see ADR-053 + the scenario_state / BeliefState / discovered_clues models in sidequest-server (game/ scenario). Repos: content (the scenario YAML lives under genre_packs/tea_and_murder/worlds/glenross/); engine is already wired."
     points: 8
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-05-30'
     repos: content
     workflow: tdd
-    branch: feat/71-19-glenross-adr053-scenario
     acceptance_criteria:
       - 'Glenross ships an authored ADR-053 scenario: a victim, a canonical solution, and a suspect set each with explicit means / motive / opportunity.'
       - A clue graph of discoverable nodes wired so investigation actions (examine body, interrogate, search) resolve real scenario_clue discoveries — discovered_clues populates and SPAN_SCENARIO_ADVANCE / scenario_clue.resolved fires (no more silent no-op when scenario_state is None).
@@ -227,6 +226,8 @@ stories:
       - 'At least one suspect is authorable as adversarial (means to seat an Other) so a social confrontation (cross-examine / social_duel / scandal) can actually instantiate against them — unblocking the 59-8 confrontation-lane validation #G6 also blocks.'
       - The scenario loads through the live loader and validates against the ADR-053 scenario schema (pf validate, no ERROR-level gaps); a playtest investigation turn produces a real clue discovery with mechanical provenance visible in the GM panel.
       - 'OTEL: a scenario_clue.resolved / SPAN_SCENARIO_ADVANCE span fires on a clue discovery so the GM panel can confirm the mystery engine is engaged (not narrator confabulation).'
+    completed: '2026-05-30'
+    branch: feat/71-19-glenross-adr053-scenario
   - id: 71-20
     title: Fail loud at startup when Postgres schema is behind alembic head — a behind-head DB is a silent landmine
     description: "Playtest 2026-05-28 finding #G4 (the design follow-up; the immediate asset_ledger outage was already resolved by the driver applying the migration). INCIDENT: the dev DB was stamped at alembic 0001 while head was 0002 (0002_asset_ledger.py / Story 65-2 had never been applied). The server BOOTED FINE and ran for many turns; the only symptom was 'relation \"asset_ledger\" does not exist' ERROR on every scene render's ledger write — a failure surfacing deep in a turn, far from the root cause (a behind-head schema). VIOLATION: this is a textbook No Silent Fallbacks breach — a misconfigured/behind-head DB should fail LOUD at boot, not limp along and explode mid-turn at the first write to the missing table. ADR-115 already fails loud when Postgres is UNREACHABLE (MissingDatabaseUrlError, 10s pool-wait timeout); this extends that contract to 'reachable but schema behind head'. THE DECISION (record it in the story): (A) assert at startup that the connected DB's alembic current revision == alembic heads, and fail loud at boot if not (preferred — explicit, No-Silent-Fallbacks-aligned; migration stays an explicit operator step), OR (B) have boot / 'just up' run 'alembic upgrade head' automatically (convenient, but silently mutating the schema at boot is itself a silent action and can surprise on a shared DB). Recommendation leans (A) fail-loud-assert, optionally pairing 'just up' with an EXPLICIT, visible 'alembic upgrade head' step the operator sees — not a hidden auto-migrate. Implementation lives in the server startup path (app lifespan / db_config / db_pool); compare alembic current vs heads via the alembic API against SIDEQUEST_DATABASE_URL. Repos: server. See .pennyfarthing/guides/save-management.md for migration procedures. Possible cross-check from the same incident: confirm a behind-head schema was NOT contributing to other mid-turn write failures."
@@ -335,3 +336,10 @@ stories:
     repos: sidequest-content
     workflow: tdd
     type: refactor
+  - id: 71-32
+    title: World-level scenario discovery + world-aware binding — load scenarios from worlds/<world>/scenarios/ and bind only the active world's scenario; relocate tea_and_murder/the_morning_train under worlds/glenross/ (follow-up to 71-19)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
