@@ -319,9 +319,11 @@ stories:
     description: 'Follow-up to 59-16 (simplify-reuse medium finding, verify phase). The new per_recipient_payload delivery loop in emitters.emit_event (~lines 369-384: iterate connected_player_ids → socket_for_player → queue_for_socket → put_nowait, with _emit_recipient_dropped on socket/queue loss) duplicates the socket/queue dispatch pattern in _deliver_fanout (~lines 89-119). Extract a shared helper, e.g. _deliver_to_connected_recipients(room, recipients, *, message_builder, kind) that both call. The two differ in message construction (the supplier path returns a full message; _deliver_fanout rebuilds from a filtered dict under the C3 model_validate rule with its own try/except) and emitter tracking — so the helper needs a builder-callable abstraction. NOT auto-applied in 59-16 (medium confidence; ~6 lines of guard duplication). Refactor-only; behavior unchanged; covered by existing emit_event + confrontation delivery tests. Affects sidequest/server/emitters.py.'
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-30'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-30'
     type: refactor
   - id: 59-23
     title: 'Chassis-vs-chassis ship_combat: materialize the named threat as the Other + ablative ship-hull HP resolution'
