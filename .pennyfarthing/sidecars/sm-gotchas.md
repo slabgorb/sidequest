@@ -175,3 +175,8 @@ SKIPPED → masked the stale baseline → RED merged to develop.
    re-render byte-identical) and element-diff to confirm the ONLY change is the intended one.
 4. **Peloton control:** instruct Dev to hand review back to team-lead rather than auto-driving to merge, so the
    merge gate stays under SM control (told Dev this explicitly for 71-6).
+
+## The GM panel / OTEL dashboard is KEITH's debug tool — never a Sebastien/Jade feature (corrected 3×, 2026-05-29)
+Keith corrected this three times in one session. The OTEL dashboard, Subsystems activity grid, watcher feed, router-trace — ALL of it is dev-side observability that **Keith** uses to debug the engine. It is NOT for players (Sebastien) and NOT for content authors (Jade). CLAUDE.md says this explicitly ("if you're tempted to write 'Sebastien's lie-detector' about a GM-panel chart, you've made the wrong association").
+- **Sebastien/Jade mechanical-visibility lane = PLAYER-FACING UI ONLY**: confrontation beat buttons (push/brace/strike·stat·+N), dual dials, dice overlay, character/ability panel, advancement deltas. That is where "expose the math" belongs.
+- The 59-8 AC text says "Sebastien-style … is GM-panel router-trace usable for a mechanics-first player" — that phrasing is itself the wrong association. Evaluate GM-panel usability as **Keith's** debugging tool; evaluate Sebastien/Jade visibility against the **player UI** (where the a11y/“+N absent from accessible name” findings actually live).
