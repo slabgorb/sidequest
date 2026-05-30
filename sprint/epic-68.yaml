@@ -10,10 +10,11 @@ stories:
     title: Per-genre survivability-pool label reskin — social packs show Composure/Standing/Poise (paired content+server field, extra=forbid)
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
     repos: content,server,ui
     workflow: tdd
     type: bug
+    branch: feat/68-1-survivability-pool-label-reskin
   - id: 68-2
     title: Sweep stale mechanical tokens from player-facing ability prose ('per Edge math', raw player_metric)
     description: "RESOLUTION (2026-05-29, SM triage): Verified already-satisfied by prior unrelated work — zero 'per Edge math' occurrences and zero raw player_metric leaks in player-facing prose across all genre_packs (all player_metric hits are confrontation-schema YAML keys). Remaining 'edge' strings are legitimate player-facing prose (e.g. road_warrior DRIVER EDGE damage-model explainer per ADR-078). Sweep target already clean. Closed done without PR."
