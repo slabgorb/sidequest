@@ -343,6 +343,9 @@ stories:
     title: World-level scenario discovery + world-aware binding — load scenarios from worlds/<world>/scenarios/ and bind only the active world's scenario; relocate tea_and_murder/the_morning_train under worlds/glenross/ (follow-up to 71-19)
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-30'
     repos: server,content
     workflow: tdd
+    branch: feat/71-32-world-scenario-discovery
+    assignee: keith
