@@ -3,7 +3,7 @@ type: epic
 title: 'Bounded Narrator Prompt: Slim Snapshot + Wire RAG'
 description: "Close the architecture-level invariant that ADRs 048/098/109/110 each touched but none owned: every growing field on snapshot must either be dropped from the prompt, RAG-retrieved on demand, or size-capped before serialization. The 2026-05-23 runaway burned ~$313 in 48h because seven snapshot fields (room_states, journal, npcs, known_facts, footnotes, belief_state, location_descriptions) flow into the Valley/Recency system_blocks unslimmed, with cache=False, multiplied by up to 8 tool-loop iterations per turn. Compounded by ADR-048's LoreStore being built but never wired into ToolContext — query_lore tool returns empty with lore_store_wired=False in production (agents/tools/query_lore.py:96-109), so the narrator gets the entire lore dumped wholesale every turn instead of retrieving on demand. Evidence: memory/project_runaway_valley_block_2026_05_23.md, sprint/archive/60-3-session.md. Closes the gap that epic 60 explicitly punted (Valley acquitted on cache-write churn but not on uncached growth). Epic acceptance: at session length 50 turns, per-turn cost stays flat (within 20% of warmup steady-state); a deliberate runaway attempt (revert 61-2) trips the 61-4 alarm within 3 turns instead of running silently."
 priority: p0
-status: in_progress
+status: done
 repos: server
 stories:
   - id: 61-1
@@ -415,7 +415,11 @@ stories:
     title: "Reduce per-turn volatile-tail write volume (option b): amortize session-static Valley content into the cached 1h prefix, leaving only the ~1k delta in the 5m tail — closes 61-19 AC1 (<2k/turn), AC2 (<=$0.05/turn), AC3 (flat at 50 turns). Architect-confirmed feasible via ADR-112/61-10 zone-promotion of the 'persistent across turns' AVAILABLE CULTURES block, magic hard_limits, and monster_manual out of the volatile Valley zone. Includes a live-validation probe + fixing residual stale comment at anthropic_sdk_client.py:339-342."
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-05-30'
     repos: server
     workflow: tdd
     depends_on: 61-19
+    completed: '2026-05-30'
+    review_verdict: approved
+completed: '2026-05-30'

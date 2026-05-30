@@ -676,3 +676,13 @@ completed_stories:
     title: Aside happy-path fix — _SYSTEM_PROMPT must emit outcome:answered so a good GM answer isn't rejected (ADR-107)
     points: 2
     completed: '2026-05-28'
+  - id: 61-19
+    epic: '61'
+    title: Stop 1h-cache-writing the per-turn volatile snapshot block — pays 2x write premium without amortizing
+    points: 5
+    completed: '2026-05-30'
+  - id: 61-20
+    epic: '61'
+    title: "Reduce per-turn volatile-tail write volume (option b): amortize session-static Valley content into the cached 1h prefix, leaving only the ~1k delta in the 5m tail — closes 61-19 AC1 (<2k/turn), AC2 (<=$0.05/turn), AC3 (flat at 50 turns). Architect-confirmed feasible via ADR-112/61-10 zone-promotion of the 'persistent across turns' AVAILABLE CULTURES block, magic hard_limits, and monster_manual out of the volatile Valley zone. Includes a live-validation probe + fixing residual stale comment at anthropic_sdk_client.py:339-342."
+    points: 5
+    completed: '2026-05-30'
