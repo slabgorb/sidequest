@@ -24,6 +24,7 @@ completed_epics:
   - '70'
   - '48'
   - '61'
+  - '68'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -660,3 +661,18 @@ completed_stories:
     title: Audit CONFRONTATION_TRIGGER_CONSTRAINT dead-prose on SDK narrator path — only injects on retired legacy backend (_maybe_register_legacy_guardrail SDK-gate); migrate to tool/cached-prose per ADR-111 or confirm Intent Router owns it
     points: 3
     completed: '2026-05-29'
+  - id: 68-1
+    epic: '68'
+    title: Per-genre survivability-pool label reskin — social packs show Composure/Standing/Poise (paired content+server field, extra=forbid)
+    points: 3
+    completed: '2026-05-30'
+  - id: 68-2
+    epic: '68'
+    title: Sweep stale mechanical tokens from player-facing ability prose ('per Edge math', raw player_metric)
+    points: 2
+    completed: '2026-05-29'
+  - id: 68-3
+    epic: '68'
+    title: Aside happy-path fix — _SYSTEM_PROMPT must emit outcome:answered so a good GM answer isn't rejected (ADR-107)
+    points: 2
+    completed: '2026-05-28'

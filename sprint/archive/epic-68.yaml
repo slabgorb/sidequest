@@ -3,17 +3,20 @@ type: epic
 title: Genre tone, terminology & narrator reliability
 description: "Playtest-3 findings: keep mechanics legible without breaking genre tone, and make the aside (ADR-107) actually answer. Per-genre reskin of the survivability pool label (social packs => Composure/Standing/Poise, not 'HP/Vitality'); paired content+server field (genre models are extra=forbid). Sweep stale mechanical tokens out of player-facing ability prose ('per Edge math', raw 'player_metric'). Fix the aside happy-path so a good GM answer isn't rejected by the outcome-allowlist (_SYSTEM_PROMPT must emit outcome:answered). Source: sq-playtest-pingpong.md."
 priority: p2
-status: backlog
+status: done
 repos: content,server,ui
 stories:
   - id: 68-1
     title: Per-genre survivability-pool label reskin — social packs show Composure/Standing/Poise (paired content+server field, extra=forbid)
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: content,server,ui
     workflow: tdd
+    completed: '2026-05-30'
     type: bug
+    branch: feat/68-1-survivability-pool-label-reskin
+    review_verdict: approved
   - id: 68-2
     title: Sweep stale mechanical tokens from player-facing ability prose ('per Edge math', raw player_metric)
     description: "RESOLUTION (2026-05-29, SM triage): Verified already-satisfied by prior unrelated work — zero 'per Edge math' occurrences and zero raw player_metric leaks in player-facing prose across all genre_packs (all player_metric hits are confrontation-schema YAML keys). Remaining 'edge' strings are legitimate player-facing prose (e.g. road_warrior DRIVER EDGE damage-model explainer per ADR-078). Sweep target already clean. Closed done without PR."
@@ -33,3 +36,4 @@ stories:
     workflow: tdd
     completed: '2026-05-28'
     type: bug
+completed: '2026-05-30'
