@@ -6,7 +6,7 @@ date: 2026-05-26
 deciders: ["Keith Avery", "Leonard of Quirm (Architect)"]
 supersedes: []
 superseded-by: null
-related: [24, 33, 77, 113, 114]
+related: [24, 31, 33, 77, 113, 114]
 tags: [game-systems]
 implementation-status: partial
 implementation-pointer: sprint/context/context-story-59-13.md
@@ -224,3 +224,113 @@ Net: §1, §2 (room-only seating + spans), and §4 are live; §3's social/pre_co
 stage and §2's bestiary pull remain deferred exactly as the ADR scoped them. The
 `partial` status is accurate, but the deferred surface is narrower than a reader
 might assume.
+
+## Amendment (2026-05-31): Confrontation Lifecycle Lie-Detector
+
+The §Context reuse-first audit cited
+`confrontation_lifecycle_detector.opponent_alive_count` as a *present data point*
+— one of the membership primitives the ADR leaned on (the live-opponent count
+that §4 End-on-no-Other compares against 0). That citation only named the field.
+This amendment **governs the detector itself as a design surface**: the kill-keyword
+corpus, the `narrator_kill_unbacked` classification logic, the multi-opponent
+disambiguation, and the per-turn wiring. It is the confrontation-specific complement
+to the dispatch-engagement watcher (`sidequest/agents/dispatch_engagement_watcher.py`)
+— together they form the GM-panel lie detector that the CLAUDE.md OTEL Observability
+Principle demands, and they are an instance of the semantic-telemetry pattern of
+**ADR-031** (Game Watcher — Semantic Telemetry for AI Agent Observability).
+
+### Why it exists
+
+The module
+(`sidequest-server/sidequest/server/confrontation_lifecycle_detector.py`) traces its
+origin to a concrete playtest bug, recorded in its docstring
+(`confrontation_lifecycle_detector.py:3-11`): a **2026-05-12 sq-playtest** Chalk Moth
+fight where the narrator declared the moth dead, the confrontation panel never cleared,
+and the *next* turn the narrator un-killed the moth. The root cause is broader (the
+narrator hallucinates kills not backed by metric saturation; rolls fail so the engine
+never resolves the encounter mechanically), and fixing the prompt is explicitly out of
+this module's scope. What the module does is make the **disconnect visible** in the GM
+panel: it classifies each post-narration confrontation state and emits a watcher event
+carrying the disagreement surface, so the panel can flag the lie even when the prose is
+convincing. This is the OTEL principle applied to a confrontation: prose alone proves
+nothing; the span is the lie detector.
+
+### What it observes — post-narration, not a gate
+
+The detector is a pure **observer**, not a guardrail — it never blocks or rewrites
+narration, it only records the mismatch. `build_lifecycle_snapshot`
+(`confrontation_lifecycle_detector.py:119`) is called *after* narration apply with the
+post-apply `encounter`, and produces a frozen, JSON-safe
+`ConfrontationLifecycleSnapshot` (`:45`) whose attributes feed a watcher payload 1:1 via
+`to_watcher_attrs` (`:84`). The snapshot pairs the narrator's prose claim against the
+engine's mechanical truth: `narration_claims_kill` /
+`narration_kill_keywords` on the prose side, and
+`encounter_active_post_apply`, `encounter_resolved_this_turn`, both dial readings
+(`player_metric_*`, `opponent_metric_*`), and `opponent_alive_count` on the engine side.
+
+### The kill-keyword corpus
+
+The prose-side signal is a small, deliberately **high-confidence** corpus of English
+kill/death lemmas, `_KILL_PATTERNS` (`confrontation_lifecycle_detector.py:29-42`), each a
+word-boundary-anchored case-insensitive regex matched on the lemma rather than
+narrator-specific phrasing: `kill(ed|s)`, `slain`, `dead`, `dies`, `lifeless`,
+`corpse[ds]`, plus three phrase patterns drawn verbatim from the 2026-05-12 narration —
+`go(es) slack` (the physiological-collapse phrasing the narrator used for the Chalk Moth
+kill, `:36-38`), `fell still` (the "Silence." continuation, `:39-40`), and
+`breath(s|ed) their/its/his/her last` (`:41`). `detect_kill_keywords`
+(`:102`) returns at most one matched literal per pattern, lowercased;
+`narration_claims_kill` is simply "the list is non-empty" (`:135`). The corpus is
+intentionally conservative — word boundaries defend common false-positives like "the
+dead end of the tunnel," and the comment at `:23-28` is explicit that further calibration
+should land via playtest data, **not** by widening the matcher speculatively (No
+Stubbing / fail-loud discipline: keep it small and honest rather than fuzzy).
+
+### The `narrator_kill_unbacked` classification and the multi-opponent disambiguation
+
+The lie-detector core is the `narrator_kill_unbacked` property
+(`confrontation_lifecycle_detector.py:68-82`). It returns true only when **all three**
+hold:
+
+1. `narration_claims_kill` — the prose used a corpus keyword;
+2. `encounter_active_post_apply` — the engine still considers the encounter unresolved
+   (`not encounter.resolved`, set at `:147`); and
+3. `opponent_alive_count > 0` — at least one opponent-side actor is still in the fight.
+
+That third clause is the **multi-opponent disambiguation** and it is the load-bearing
+refinement over a naive "kill word + still active = lie" check. In a genuine
+multi-opponent fight, the narrator can legitimately kill *one* opponent while the
+confrontation correctly stays active because *others* remain — that is not a lie, and
+firing on it would train the GM to ignore the signal. `opponent_alive_count`
+(`:159-163`) counts opponent-side `EncounterActor`s whose `withdrawn` flag is not set
+(the same flag `apply_beat` honors when skipping withdrawn actors), so the detector only
+flags a kill claim when the encounter is active *and there is still an Other the
+narrator did not kill*. This is the precise mirror of §4's End-on-no-Other: §4 resolves
+when `opponent_alive_count` drops to 0; the lie-detector fires when a kill is claimed yet
+that count is still positive. Post-fix, the dashboard expectation
+(`:71-76`) is that `narrator_kill_unbacked` reads 0 except in these legitimate
+multi-opponent cases — a high-signal regression indicator for the underlying
+prose-outruns-the-engine bug.
+
+### Per-turn wiring
+
+The detector is wired into the production narration path, fired **once per CONFRONTATION
+emit**, parallel to the existing `confrontation_peer_projection_broadcast` watcher event.
+In `websocket_session_handler.py`, after the peer-projection broadcast, the handler
+imports `build_lifecycle_snapshot` (`websocket_session_handler.py:1735-1737`), builds the
+snapshot from `narration_text`, the pre-apply live flag, the post-apply
+`snapshot.encounter`, and `encounter_resolved_this_turn`
+(`:1739-1744`), then publishes it through `_watcher_publish("confrontation_lifecycle",
+{... **lifecycle_snapshot.to_watcher_attrs()}, component="confrontation")`
+(`:1745-1753`). Because `to_watcher_attrs` emits `narrator_kill_unbacked` alongside the
+raw narration/engine fields (`:98`), the GM panel receives both the verdict and every
+input that produced it on the same per-turn event — it can show *why* a turn was flagged,
+not just that it was. The module docstring's wiring note
+(`confrontation_lifecycle_detector.py:13-15`) matches this call site.
+
+### Scope and audience note
+
+This is a **Keith/dev observability** surface — a watcher event consumed by the GM panel
+to verify the confrontation engine is honest, per CLAUDE.md. It is *not* a player-facing
+mechanical-legibility feature and is not framed as one. It changes no resolution
+semantics (it is a read-only observer), adds no gate, and leaves the underlying
+narrator-hallucination fix to the prompt/engine work it merely makes visible.

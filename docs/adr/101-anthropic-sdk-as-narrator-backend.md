@@ -8,7 +8,7 @@ supersedes: [1]
 superseded-by: null
 amends: [73]
 depends_on: [67, 98, 73]
-related: [1, 39, 58, 28, 67, 73, 98]
+related: [1, 39, 58, 28, 67, 73, 98, 112]
 tags: [core-architecture, agent-system]
 implementation-status: partial
 implementation-pointer: "Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103."
@@ -154,3 +154,133 @@ narration turn, so drift inside the "stable" region surfaces in the GM
 panel rather than as a cache-write growth on the Anthropic console.
 
 See [spec](../superpowers/specs/2026-05-20-narrator-cache-cost-reduction-design.md) and [plan](../superpowers/plans/2026-05-20-narrator-cache-cost-reduction.md) for the change set.
+
+## Amendment (2026-05-31): Model-Routing Ladder + Cache-Zone Partition Protocol
+
+The original Decision (§Decision items 1 and 4) named "per-call model routing"
+and "`cache_control` markers on three system zones" as live capabilities, citing
+`model_routing.py`, `anthropic_sdk_client.py`, and the prompt framework, but gave
+only one worked example of each. This amendment makes both mechanisms governing
+specifications: it does not change the Decision, it pins down the contracts the
+Decision relied on. (ADR-112 governs *which* sections are promoted to the Stable
+prefix; this amendment governs the partition *mechanism* beneath that decision —
+how a section's name and zone deterministically place its bytes in a cached or
+uncached block.)
+
+### A. The Model-Routing Ladder
+
+`sidequest/agents/model_routing.py` is the single model-selection point. Every
+call site that talks to the Anthropic SDK declares a `CallType`; nothing else
+chooses a model.
+
+- **`CallType` taxonomy** (`model_routing.py:18-22`) — a four-member `StrEnum`:
+  `NARRATION`, `NARRATION_IMPORTANT`, `CLASSIFICATION`, `SCRATCH`.
+- **The default ladder** (`model_routing.py:25-30`, `_DEFAULT`) maps each call
+  type to a model id:
+  - `NARRATION` → `claude-sonnet-4-6` (the per-turn narrator)
+  - `NARRATION_IMPORTANT` → `claude-opus-4-7` (the Opus tier, reserved for
+    caller-declared important moments)
+  - `CLASSIFICATION` → `claude-haiku-4-5-20251001`
+  - `SCRATCH` → `claude-haiku-4-5-20251001`
+- **`resolve_model(call_type, *, pack_overrides=None)`** (`model_routing.py:33-42`)
+  is the *only* selection function. It fails loud on a non-`CallType` argument
+  (`UnknownCallType`, `model_routing.py:38-39`) — No Silent Fallbacks. There is
+  no default model: an unrecognized member would `KeyError` on `_DEFAULT`.
+- **Pack-override extension point** — when `pack_overrides` contains the call
+  type, its mapping wins over `_DEFAULT` (`model_routing.py:40-41`). This is the
+  seam through which a genre pack may, e.g., route its narration to Opus or its
+  classification to a cheaper model, *without touching engine code* — the
+  authoring-surface requirement. The override dict is per-call-type and is the
+  governed extension contract: packs supply `dict[CallType, str]`; the resolver
+  layers it over the default.
+
+**Live wiring.** `NARRATION` is resolved on the narrator path at
+`orchestrator.py:3812` (`resolve_model(CallType.NARRATION)`); `SCRATCH` is
+resolved for dungeon materialization at `materializer.py:1213`. `resolve_model`
+and `CallType` are re-exported from `sidequest/agents/__init__.py:41,140`.
+**Honesty note:** `NARRATION_IMPORTANT` (the Opus tier) and `CLASSIFICATION`
+are defined in the ladder but have **no live call site** today — the
+"declared-important moment" caller and the SDK-routed classification pass are not
+yet wired to `resolve_model`. Pack-override plumbing into `resolve_model` is
+likewise not yet threaded from pack config (the parameter exists and is
+honored; the call sites pass `pack_overrides=None`). This amendment governs the
+contract so those call sites have a fixed target to wire against.
+
+### B. The Zone × Bucket Cache-Partition Protocol
+
+The cacheable surface (the §"Four-Region Cache Layout" amendment) is produced by
+two orthogonal partitions applied in sequence. The protocol is: **bucket first,
+then zone.**
+
+1. **Bucket partition** (`prompt_framework/bucket.py`). Every registered section
+   has a name. `default_bucket_for_section(name)` (`bucket.py:99-108`) routes the
+   section to `SectionBucket.System` iff its name is in `STABLE_SECTION_NAMES`
+   (`bucket.py:28-96`), else to `SectionBucket.User`. The allowlist default is
+   **User** — anything per-turn (state, encounter, magic ledger, player action,
+   recency guardrails) must be left off the list. Adding a name here is the
+   load-bearing decision ADR-112 governs; the *routing* it triggers is governed
+   here.
+2. **Zone partition within the System bucket** (`prompt_framework/core.py`).
+   `compose_split_by_zone(agent_name)` (`core.py:194-246`) returns
+   `(system_by_zone, user_text)`: it walks zone-sorted sections, sends
+   System-bucket sections into a `{AttentionZone: text}` dict
+   (`core.py:233-235`) and all User-bucket sections into `user_text`
+   (`core.py:236-237`). Section content for any zone is byte-stable across calls
+   given identical registered sections — the gate referenced in the docstring
+   (`tests/agents/test_cache_ttl_prefix_and_otel.py`).
+
+The orchestrator then maps zones to cacheable blocks
+(`orchestrator.py:3726-3766`):
+
+- `Primacy + Early` → `stable_text` → `system_blocks[0]` with **`cache=True`**
+  (`orchestrator.py:3745-3762`)
+- `Valley` → `system_blocks[1]`, **`cache=False`** (`orchestrator.py:3753,3763-3764`)
+- `Late + Recency` → `system_blocks[2]`, **`cache=False`**
+  (`orchestrator.py:3754-3766`)
+
+A section therefore rides the cached prefix iff **both** its bucket is System
+**and** its zone is Primacy/Early. The GM-panel attribution helper
+`_section_rides_cache(name, zone_value)` (`orchestrator.py:125-139`) computes
+exactly this conjunction from the same inputs, so the panel cannot drift from the
+SDK assembly. Zone alone is insufficient: Primacy/Early also hold User-bucket
+guardrails that land in the uncached user message (`orchestrator.py:108-110`).
+
+### C. Dual-TTL Split and the Correctness Stake
+
+`anthropic_sdk_client.py` marks the cacheable surface at two TTLs, not one:
+
+- **`self.cache_ttl`** — default `"1h"`, from `SIDEQUEST_ANTHROPIC_CACHE_TTL`
+  (`anthropic_sdk_client.py:198-207`). Applied to `system_blocks[0]` (the stable
+  prefix) in `_build_system_array` (`anthropic_sdk_client.py:1122`) and to the
+  last tools entry in `_build_tools_array` (`anthropic_sdk_client.py:1150`).
+  These are session-static and amortize across turns; the 1h tier's 2× write
+  premium pays off because the content persists and is re-read every turn. The
+  `1h` value additionally requires the extended-cache beta header, sent only on
+  the 1h path — without it the request 400s (No Silent Fallback;
+  `anthropic_sdk_client.py:150-152,319-325`).
+- **`_VOLATILE_CACHE_TTL`** — `"5m"` (`anthropic_sdk_client.py:147`). Applied to
+  the moving breakpoint on the per-turn user/recency tail in the tool-use
+  continuation loop (`anthropic_sdk_client.py:1091-1097`). The tail changes every
+  turn, so a 1h (2×) write on it would be invalidated within the hour — pure
+  waste (the documented 60-3 incident). The 5m breakpoint's *presence* every iter
+  is the 60-7 fix; its 5m *value* is the 61-19 fix.
+
+**The correctness stake.** Because `system_blocks[0]` is marked at 1h and re-read
+every turn, any *per-turn* content that leaks into it re-mints the expensive 1h
+prefix every single turn — paying the 2× write premium continuously instead of
+once. That is why the bucket/zone partition above is load-bearing for *cost*, not
+just attention: a section misclassified as System (or mis-zoned into
+Primacy/Early) silently destroys the cache rebate. The byte-stability test on
+`system_blocks[0]` and the `narration.turn.system_block_sizes_json` OTEL attribute
+(`orchestrator.py:3804-3809`) exist precisely so this drift surfaces in the GM
+panel rather than as cache-write growth on the Anthropic console.
+
+### Governance summary
+
+ADR-101 cited `model_routing.py`, `prompt_framework/core.py`,
+`prompt_framework/bucket.py`, and `anthropic_sdk_client.py` as live. This
+amendment promotes them to governed contracts: (1) the `CallType` taxonomy and
+`resolve_model` + `pack_overrides` routing seam, and (2) the bucket→zone
+cache-partition protocol with its dual-TTL (1h stable prefix / 5m volatile tail).
+ADR-112 decides *which* sections are promoted to Stable; this amendment governs
+the partition mechanism that turns that decision into cached or uncached bytes.

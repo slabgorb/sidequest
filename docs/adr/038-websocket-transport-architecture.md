@@ -6,7 +6,7 @@ date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: [76]
+related: [76, 82, 62]
 tags: [transport-infrastructure]
 implementation-status: live
 implementation-pointer: null
@@ -128,3 +128,97 @@ state is never patched by two concurrent dispatches for the same player.
 - Binary audio channel carries no metadata (player target, sequence number); ordering
   and routing are implicit from connection context. Multi-player TTS interleaving
   requires careful daemon scheduling to avoid frame mixing.
+
+## Amendment (2026-05-31): Python Fan-Out — Per-Socket asyncio.Queue + Writer Task
+
+Everything above documents the **retired Rust mechanism** (Tokio reader/writer split,
+three `broadcast::Sender` channels, the `ProcessingGuard` RAII type). Per the port-era
+reading guide (`docs/adr/README.md`), that text is preserved as a historical design
+record. The backend was ported from Rust to Python under **ADR-082**; the transport
+layer was reimplemented, not transliterated. This amendment records the
+**structurally-different Python fan-out that is the live transport** and the rationale
+for its central choice.
+
+### What's actually live
+
+The live mechanism is **queue-per-socket**, not a single shared broadcast channel. The
+Rust design subscribed every writer task to one `tokio::broadcast::Sender` and let the
+writers filter; the Python design gives each connection its own
+`asyncio.Queue` and a dedicated writer `asyncio.Task` that drains only that queue.
+
+**Per-connection writer task** (`sidequest-server/sidequest/server/websocket.py`):
+
+- On accept, each connection mints a `socket_id` and an
+  `out_queue: asyncio.Queue` (`websocket.py:54-56`), then hands both to the
+  handler via `attach_room_context(...)` (`websocket.py:57`).
+- A dedicated writer is spawned per connection:
+  `writer_task = asyncio.create_task(_writer())` (`websocket.py:66`), where `_writer`
+  is an infinite `await out_queue.get()` → `_send_message(...)` loop
+  (`websocket.py:60-65`). This is the structural analogue of the old Tokio writer
+  task, but it drains **one socket's** queue rather than `tokio::select!`-merging
+  shared channels.
+- The reader loop never sends directly: handler output is enqueued with
+  `out_queue.put_nowait(outbound_msg)` (`websocket.py:100-102`), so a broadcast
+  reaching *other* sockets' queues and this socket's own turn-output both flow through
+  the same single-drainer queue — no interleaving of `send_text` calls on one socket.
+- On teardown the writer is cancelled and the queue is deregistered:
+  `writer_task.cancel()` then `room.detach_outbound(socket_id)` (`websocket.py:129-133`).
+- **Closing-state guard:** `_send_message` short-circuits when
+  `websocket.application_state != WebSocketState.CONNECTED`, logging
+  `ws.send_skipped_closing` at DEBUG and returning without sending
+  (`websocket.py:241-247`). This absorbs the normal tab-refresh / mid-fan-out close
+  race (a broadcast queued before the peer dropped) as a lifecycle event rather than a
+  `ws.send_failed` WARNING — while genuine send faults still surface at WARNING
+  (`websocket.py:251-252`). This replaces the Rust `RecvError::Lagged` →
+  reconnect contract; a slow Python socket simply backs up its own queue.
+
+**Room-level fan-out** (`sidequest-server/sidequest/server/session_room.py`):
+
+- The room owns `_outbound_queues: dict[str, asyncio.Queue]`
+  (`session_room.py:167`), populated via `attach_outbound(socket_id, queue)`
+  (`session_room.py:880-883`, called from `handlers/connect.py:371`) and torn down via
+  `detach_outbound(socket_id)` (`session_room.py:885-888`).
+- `broadcast(msg, *, exclude_socket_id=None)` (`session_room.py:900-964`) snapshots the
+  target queues under `_lock`, then `put_nowait`s the message onto each one outside the
+  lock (`session_room.py:938-939`). Because `put_nowait` never blocks and the queues are
+  unbounded, **any coroutine** (turn dispatch, presence broadcast, image emit) can fan a
+  message out to every socket without awaiting and without holding the lock during
+  delivery. This is the unicast/broadcast unification that `TargetedMessage` provided in
+  Rust — here it falls out of "which queues do I put into."
+- **`broadcast.recipient_dropped` detection** (`session_room.py:933-963`): `broadcast`
+  also computes the set of players who are in `_connected` but whose socket has **no**
+  entry in `_outbound_queues` — the mid-broadcast churn state where `_connected` and
+  `_outbound_queues` diverge. Each such drop is logged
+  (`broadcast.recipient_dropped ... reason=queue_missing`) and emitted as a
+  `state_transition` watcher event at `severity="warning"` so the GM panel sees a
+  stranded recipient instead of a silent loss. The method **returns the actual queued
+  `(socket_id, player_id)` pairs** so callers use real delivery as ground truth rather
+  than `len(_connected)`, which over-reports during the divergence (the 2026-04-30
+  "Scrapbook only on first-connected player" bug).
+
+### Rationale — why queue-per-socket instead of one shared channel
+
+A single shared channel (the Rust `tokio::broadcast` topology, or a Python equivalent
+where all writers consume one queue/stream) couples every consumer to the slowest one:
+the fan-out cannot retire a message until laggards have taken it, so **one slow socket
+exerts head-of-line blocking on the whole broadcast.** Giving each socket its own
+`asyncio.Queue` with a dedicated drainer decouples them — `broadcast` `put_nowait`s into
+N independent queues and returns immediately; a socket that is slow to flush (a
+backgrounded tab, a stalled client) only backs up *its own* queue and *its own* writer
+task. The other sockets' writers keep draining at full speed. The cost is N queues and N
+tasks instead of one channel, which at playgroup scale (a handful of connections per
+slug) is negligible and well worth never letting Alex's slower client stall narration
+delivery to the rest of the table.
+
+### Relationship to other ADRs
+
+- **ADR-082** (port back to Python) is the umbrella decision under which this
+  reimplementation happened; the transport was rebuilt on `asyncio` primitives rather
+  than ported line-for-line.
+- **ADR-062** (Rust `lib.rs` extraction — route groups, state, watcher events) is the
+  pre-port ADR that carved the Rust `handle_ws_connection` / writer-task structure out
+  of `lib.rs`; its post-port note maps that layout onto today's
+  `sidequest/server/websocket.py` + `session_room.py`. Read it for the Rust-side
+  lineage of the code this amendment describes.
+- **ADR-076** already retired the binary PCM channel (post-TTS); combined with this
+  amendment, the live transport is JSON-only, fanned out per-socket.

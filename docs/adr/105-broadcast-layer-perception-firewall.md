@@ -6,7 +6,7 @@ date: 2026-05-16
 deciders: ["Keith Avery", "Major Margaret Houlihan (Architect)", "oq-1/SM (scope)"]
 supersedes: []
 superseded-by: null
-related: [28, 36, 67, 101, 102, 104]
+related: [28, 36, 67, 101, 102, 104, 113]
 depends_on: [101, 104]
 tags: [multiplayer, agent-system]
 implementation-status: partial
@@ -369,3 +369,143 @@ CoreInvariant, NARRATION_SEGMENT routing, OTEL) — is **now implemented.**
 The `partial` framing reflected an earlier code state; the firewall the ADR
 specifies is built. (Residual `partial` scope, if any, would be playtest
 re-verification of the leak check, not missing implementation.)
+
+## Amendment (2026-05-31): Source-Side Redaction + POV-Swap Algorithm
+
+ADR-104 and the original ADR-105 govern the **destination** of perception
+control — the broadcast/emitter fan-out: which recipient receives which row,
+the `ComposedFilter` → `VisibilityTagRule` exclusion, the visibility-gated
+`CoreInvariant`, and `NARRATION_SEGMENT` routing by `visible_to`. This
+amendment documents the **source-side** mechanisms those destination
+decisions consume but never specified as a unit: the decision to strip private
+content at *prompt-assembly* time (before the narrator ever sees it), the
+`secret_routes` handoff that carries the stripped entries forward, the
+visibility-classifier's anchor/POV/private-segment derivation, and the
+name-driven POV-swap rewriter with its retired pronoun passes. These are the
+upstream half — what produces the `_visibility` sidecar and the public-safe
+prose that the broadcast firewall then enforces.
+
+### Source-side decision 1 — Structural redaction is the PRIMARY defense, BEFORE prompt assembly
+
+`redact_dispatch_package` (`sidequest-server/sidequest/agents/prompt_redaction.py:27`)
+runs over the `DispatchPackage` *before narrator prompt assembly* and strips
+every entry whose `visibility.redact_from_narrator_canonical` is `True`
+(`prompt_redaction.py:41`, `:47`, `:73`). This is the load-bearing doctrine of
+the source side: **the narrator cannot leak what it was never told**
+(`prompt_redaction.py:4-6`). Redaction is structural and pre-emptive — it is
+*not* deferred to tool-invocation time, and it is *not* post-hoc prose scrubbing
+(which B3 already established is unsound — "you cannot un-bake a sentence").
+The function walks all three carriers — `per_player[*].dispatch`,
+`per_player[*].narrator_instructions`, and `cross_player[*].dispatch` (the
+shared-target MP interaction sealed from the narrator, story 59-9,
+`prompt_redaction.py:69-77`) — and returns
+`(redacted_pkg, removed)` (`prompt_redaction.py:92-93`). `LethalityVerdict`
+carries no `VisibilityTag` in the current protocol shape and is documented as
+flowing via its sibling `SubsystemDispatch` (`prompt_redaction.py:51-53`). Every
+non-empty redaction emits a `prompt.redaction.structural` OTEL span carrying
+`turn_id`, `redacted_count`, `redacted_kinds`, and
+`redacted_idempotency_keys` (`prompt_redaction.py:79-90`) — the GM-panel
+lie-detector for the source side. Live on the narrator prompt path since the
+ADR-113 router revival (story 59-4, `prompt_redaction.py:8`).
+
+### Source-side decision 2 — The `secret_routes` handoff
+
+The `removed` list returned by `redact_dispatch_package` is the
+**`secret_routes` handoff**: the stripped-but-not-discarded entries flow
+downstream to be re-emitted as per-PC private channels rather than silently
+dropped. `classify_narration_visibility`
+(`sidequest-server/sidequest/server/visibility_classifier.py:85`) consumes
+`result.secret_routes` (`visibility_classifier.py:164`) — exactly the
+`redact_dispatch_package` `removed` list — and, mirroring
+`build_secret_note_events`' skip rule, considers only `SubsystemDispatch`
+entries (the ones carrying a routable recipient set,
+`visibility_classifier.py:167-168`). Each becomes a `private_segments` entry
+carrying its own `visible_to` (normalized through the shared
+`union_visible_to` stop-word rule so this path and `aggregate_visibility`
+cannot drift, `visibility_classifier.py:170-177`), `fidelity`, `subsystem`,
+and `idempotency_key`. This is the source-side bridge: structural redaction
+removes private content from the narrator's view, and `secret_routes` carries
+that same content into the per-recipient routing the broadcast firewall
+enforces. Without the handoff, redaction alone would *lose* the private
+perception entirely — a No-Silent-Fallbacks violation in the other direction.
+
+### Source-side decision 3 — Visibility-classifier anchor resolution (3-step)
+
+The classifier resolves the `anchor_pc` / `pov_strategy` / `private_segments`
+sidecar that downstream emitters consume. Anchor resolution is a 3-step
+cascade (`visibility_classifier.py:35-42`, `:123-142`):
+
+1. **`result.action_rewrite.named`** — the structured field the narrator emits
+   per ADR-039, validated against the snapshot's PC roster; NPC names are NOT
+   accepted as anchors (`visibility_classifier.py:127-133`).
+2. **First-sentence scan** of `result.narration` for a PC name from the roster
+   (`visibility_classifier.py:138-140`).
+3. **No match → atmospheric** (`anchor_pc=None`,
+   `pov_strategy="atmospheric"`; otherwise `"pc_anchored"`,
+   `visibility_classifier.py:142`).
+
+The D1 fix lives here: the hardcoded `"all"` and its never-done ADR-028
+deferral comment (the "welded-open valve") are removed in favor of the
+derived `private_segments` map (`visibility_classifier.py:145-159`). The
+SHARED narration `text` stays `visible_to: "all"` **by contract, not by
+hardcode** (`visibility_classifier.py:179-188`): B3 makes the shared blob
+public-safe, so gating it would drop the public scene for someone — the
+partition is the per-PC segment, never the public blob.
+`narration.visibility_classified` (`visibility_classifier.py:198`) emits the
+derived `anchor_pc`, `pov_strategy`, `visible_to`, `private_segment_count`,
+`private_visible_to`, and — per the oq-1 2026-05-16 VERIFY-FAIL — a distinct
+`private_prose_segment_count` so the GM panel sees prose-partition segments
+the secret_routes count alone would miss (`visibility_classifier.py:216-233`).
+
+### Source-side decision 4 — Name-driven POV-swap algorithm; pronoun passes RETIRED
+
+`swap_to_second_person` (`sidequest-server/sidequest/agents/pov_swap.py:581`)
+is the per-recipient 3rd→2nd-person rewriter, fired by
+`emitters.emit_event` once per recipient when the recipient's PC name matches
+the sidecar `anchor_pc` (`pov_swap.py:10-12`). It is a pure string transform —
+no network, no LLM. Dialogue inside double quotes is preserved unchanged
+(`pov_swap.py:30-32`, `:189`, `:619-621`) because in-quote name references
+belong to the in-world scene, not the narrator voice. The NAME-driven passes
+that survive (`pov_swap.py:245-542`):
+
+- **Pass 1** — possessive name `Carl's` → `Your`/`your` (attributive) or
+  `Yours`/`yours` (predicate), `pov_swap.py:283-298`.
+- **Pass 2** — subject name + immediate verb, `Carl plants` → `You plant`
+  (swap + conjugate in one pass), `pov_swap.py:305-329`.
+- **Pass 3** — bare name (no following verb) → `you`/`You`,
+  `pov_swap.py:335-347`.
+- **Pass 2b** — adverb-/appositive-/parenthetical-stranded verb after a
+  subject swap, `pov_swap.py:359-381`.
+- **Pass 4** — reflexive (`himself`/`herself`/`themself`) → `yourself`, gated
+  on a prior name-driven subject swap so a reflexive about another character
+  does not mis-attach, `pov_swap.py:395-409`.
+- **Passes 8 / 9** — `and <verb>` and `, <verb>` coordination continuations
+  (with single-leading-adverb skip, story 71-6), `pov_swap.py:442-540`.
+
+**Pronoun-pass retire (2026-05-23, pulp_noir/annees_folles repro).** The
+legacy antecedent-blind PRONOUN passes — **Pass 5** (subject `He`/`She`/`They`
+→ `You`), **Pass 6** (possessive `his`/`her`/`their` → `your`), **Pass 7**
+(object `him`/`her`/`them` → `you`) — were RETIRED (`pov_swap.py:411-427`,
+`:14-24`). They fired on every matching pronoun in the anchored prose
+regardless of antecedent; in a scene with an NPC sharing the PC's pronouns
+("the man with Le Figaro folds *his* paper… *He* doesn't hurry") they
+converted NPC actions into PC actions ("You doesn't hurry"). Regex has no
+antecedent resolution, so **only NAME-driven swaps are safe**. The
+2nd-person-voice contract for non-name pronouns moved to the narrator side
+(`narrator_prompts/pov_rules.md`: write the PC's actions using the PC's NAME,
+never a pronoun) so this rewriter receives unambiguous input. The
+`narration.second_person_swap` OTEL span (`pov_swap.py:637-640`) emits
+`swap_target_name` (== the recipient, per segment) and `swap_count` — the
+GM-panel verification that the swap fired on the right PC.
+
+### Net
+
+ADR-104/105 govern the DESTINATION (broadcast/emitter routing — which
+recipient gets which row, the exclusion invariant, segment fan-out). This
+amendment governs the SOURCE side: structural redaction at prompt-assembly
+time as the primary defense (`prompt_redaction.py`), the `secret_routes`
+handoff that carries stripped entries into per-PC routing, the
+visibility-classifier 3-step anchor resolution and derived private-segment
+map (`visibility_classifier.py`), and the name-driven POV-swap algorithm with
+its retired antecedent-blind pronoun passes (`pov_swap.py`). The source side
+produces what the destination side enforces.

@@ -6,7 +6,7 @@ date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: []
+related: [14]
 tags: [media-audio]
 implementation-status: live
 implementation-pointer: null
@@ -73,3 +73,83 @@ impl ImagePacingThrottle {
 - Two suppression layers (BeatFilter + PacingThrottle) interact. A high-drama beat that passes BeatFilter can still be suppressed by the throttle, potentially missing a cinematically important moment.
 - The cooldown slider adds another mid-session configuration surface. Players who set it to 0 effectively disable the throttle.
 - `force_render` not resetting the timer is a subtle behavior that could surprise a GM who uses it frequently and then wonders why organic renders are still delayed.
+
+## Amendment (2026-05-31): Render-Trigger Classification Policy
+
+This ADR governs the **cooldown layer** — the time-based delivery throttle that
+suppresses renders within a window (`should_render` / `force_render` /
+`record_render`). It deliberately does not say *which turns are worth rendering in
+the first place*. This amendment records a separate, deterministic
+**trigger-classification layer** that now sits **above** the cooldown, and relates the
+two layers rather than duplicating either.
+
+### What the original ADR left implicit
+
+The §Decision throttle answers "may we render *now*, given timing?" It assumed an
+upstream signal had already decided "this turn merits an image." In the live system
+that upstream signal was a naked `visual is None` short-circuit: the dispatch fired
+whenever the narrator happened to emit a `visual_scene`. Playtest 3 (Felix,
+2026-04-19) exposed this as policy-free — roughly 6–8 renders across 71 turns with no
+auditable rationale for *why those turns* (banter turns rendered while named-NPC
+introductions did not). See
+`sidequest-server/sidequest/server/render_trigger.py:9-14`.
+
+### The trigger layer (Story 45-30)
+
+`classify_trigger(...)` in
+`sidequest-server/sidequest/server/render_trigger.py:44-92` is a **pure,
+deterministic** gate that decides *whether the renderer should fire this turn at all*,
+returning a priority-ordered `RenderTriggerReason`
+(`render_trigger.py:29-41`):
+
+```
+BEAT_FIRE > SCENE_CHANGE > NPC_INTRO > ENCOUNTER_RESOLVED > NONE_POLICY
+```
+
+Inputs are already-extracted **structured** signals on `NarrationTurnResult` plus an
+out-of-band `encounter_resolved_this_turn` boolean threaded from the
+`narration_apply` seam — no regex, no prose inference
+(`render_trigger.py:5-7`, `:87-90`). Critically, `visual_scene` presence is **not** a
+signal; the docstring calls this out as the deliberate reversal of the old
+`visual is None` behaviour (`render_trigger.py:51-53`).
+
+**Priority rationale.** First match wins. `BEAT_FIRE` (any trope/momentum beat
+resolved this turn, `render_trigger.py:67-69`) ranks above `NPC_INTRO`: when a beat
+and an NPC introduction coincide, the beat is the render-worthy moment. The story's
+own framing — "the introduction is the diamond, not the cigarette-sharing scene that
+follows" — is captured in the `NPC_INTRO` comment (`render_trigger.py:80-85`):
+only NPCs with `is_new=True` trigger; recurring NPCs (`is_new=False`) do not, because
+the *first* appearance is the Diamond and subsequent reappearances are not.
+`SCENE_CHANGE` compares the narrator's `result.location` against the
+**pre-turn** snapshot location (`snapshot_location_before`); a brand-new game passes
+`None`, so entering the world counts as a scene change
+(`render_trigger.py:56-78`). `ENCOUNTER_RESOLVED` is the lone signal sourced from the
+`narration_apply` seam rather than orchestrator output (`render_trigger.py:87-90`).
+`NONE_POLICY` is the explicit "no trigger this turn" terminal — an observable
+*decision not to render*, not an absence (`render_trigger.py:92`).
+
+### How the two layers compose
+
+The trigger layer answers **"is this turn render-worthy?"**; ADR-050's cooldown then
+answers **"and may we render now, given pacing?"** A turn must clear the trigger gate
+(non-`NONE_POLICY`) *and* the cooldown window to actually dispatch. The GM
+`force_render` bypass documented in §Decision operates on the **cooldown** layer — it
+overrides timing, not the trigger classification — so the two controls remain
+orthogonal: trigger says *what* is worth showing, cooldown says *how often*.
+
+### Why this is an explicit, observable contract
+
+The module docstring grounds the design in **ADR-014 (Diamonds and Coal)** and the
+**OTEL Observability Principle**: both "require an explicit, observable contract:
+every render decision lands a watcher event the GM panel can audit"
+(`render_trigger.py:9-14`). The `RenderTriggerReason` values are **wire literals** —
+they ship in the `render.trigger` watcher event `reason` field, the GM panel filters
+on them, and renaming one is a wire-breaking change (`render_trigger.py:32-35`). This
+makes the render-selection decision a first-class lie-detectable subsystem rather than
+an implicit side effect, exactly as ADR-014 frames the Diamond/Coal distinction this
+trigger encodes.
+
+**Relationship summary:** ADR-050 owns the cooldown (time-based suppression);
+this amendment records the trigger-classification layer above it, motivated by
+ADR-014 (Diamonds and Coal) and made observable per the OTEL principle. The two
+relate — gate then throttle — and do not duplicate.

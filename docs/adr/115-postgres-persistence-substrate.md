@@ -319,3 +319,104 @@ Full design and task-group detail:
   deployment (local daemon, closet/LAN server, or — if ever wanted — cloud)
   is a separate, deferred decision. Self-hosted is expected to be the
   default, not a fallback.
+
+## Amendment (2026-05-31): SQLite→Postgres Importer Design Contract
+
+ADR-115 tracked the SQLite→Postgres importer only as a **TG-E work item** in the
+Migration Plan ("Importer (ahead of cutover, dry-run on a save copy)") and
+referenced `forensic_query._ro_connect` in passing as the read-only discipline
+the migration retires. This amendment records the importer's **design
+decisions** as a standing contract, so a future maintainer who runs it against a
+richer save than the one it was built for understands exactly what it guarantees
+— and what it deliberately does not. The importer is live at
+`sidequest-server/sidequest/game/importer.py`.
+
+### What the importer is
+
+`import_sqlite_save(sqlite_path, pool)` (`importer.py:59`) is a **one-shot,
+single-save** importer, not the whole-corpus tool the original plan sketched. It
+returns a per-table `ImportSummary` (`importer.py:34-45`) for a round-trip check.
+
+### Design decision 1 — source opened READ-ONLY + IMMUTABLE
+
+The legacy save is opened via the SQLite URI
+`file:{sqlite_path}?mode=ro&immutable=1` (`importer.py:68-69`). It is never
+written, checkpointed, or copy-then-mutated — the original save is treated as
+precious and immutable (`importer.py:13-14`, `66-67`). `immutable=1` additionally
+asserts the file will not change underneath us, letting SQLite skip locking
+entirely. This is the import-time analogue of the read-only forensic discipline
+(`forensic_query._ro_connect`) the migration otherwise retires on the Postgres
+side.
+
+### Design decision 2 — FK-ordered bulk INSERT in ONE transaction
+
+The whole import runs inside a single `pool.connection()` / `conn.transaction()`
+block (`importer.py:141`), so a partial failure rolls the **entire** import back
+— no half-imported session. Rows are inserted in foreign-key order
+(`importer.py:142-258`):
+
+1. `sessions` first (`importer.py:143-162`), `RETURNING session_id` — the FK
+   every per-session row needs.
+2. Per-session tables next — `game_state`, `narrative_log`, `scrapbook_entries`,
+   `events`, `turn_telemetry` (`importer.py:165-243`).
+3. `projection_cache` **last** (`importer.py:245-258`) because its
+   `(session_id, event_seq)` FK references `events`, which must already be
+   present.
+
+The INSERTs are **raw**, intentionally **not** routed through the `Pg*Store`
+write methods: those stamp a fresh `created_at = now`, which would destroy the
+historical timeline. Raw INSERTs preserve source `seq` / `round` / `payload` /
+`content` verbatim (`importer.py:16-19`, `212-213`). Note `events.seq` is
+preserved exactly (PK `(session_id, seq)`), while IDENTITY columns
+(`narrative_log.id`, `scrapbook_entries.id`, `turn_telemetry.seq`) are **not**
+re-inserted (`importer.py:174`, `190`, `227`).
+
+### Design decision 3 — NO silent drop of unhandled tables (safety invariant)
+
+The importer hard-codes the set of tables a `coyote_star-mp` save populates
+(`_handled`, `importer.py:119-122`). It then enumerates every real table in the
+source via `sqlite_master` (`importer.py:123-129`) and, for any unhandled table
+carrying a **non-zero** row count, **raises** rather than silently skipping it
+(`importer.py:130-137`). An empty/missing source table simply contributes 0 to
+its count; only genuinely-populated unhandled tables raise. This is the No Silent
+Fallbacks rule applied to data loss: a reuse against a richer save is caught, not
+quietly lossy. The module explicitly calls out that **`beneath_sunden-mp` has
+dungeon data the guard currently rejects** (`importer.py:113-118`,
+`131-137`) — `world_save`, `location_promotions`, `scenario_archive`,
+`lore_fragments`, and `dungeon_*` are all unhandled. A maintainer importing such
+a save must extend `_handled` and add the corresponding FK-ordered INSERT blocks;
+the guard ensures they cannot forget.
+
+### Design decision 4 — timestamp normalization (`_norm_ts`)
+
+`_norm_ts` (`importer.py:47-56`) routes every text timestamp
+(`created_at` / `last_played` / `saved_at` / `ts`) through
+`datetime.fromisoformat(...).isoformat()`. SQLite writes the space-separated form
+(`YYYY-MM-DD HH:MM:SS`); `fromisoformat` accepts it and re-emits the `T`
+separator, and is idempotent on already-`T` values (preserving tz offset and
+microseconds). This is **load-bearing** because `PgForensicReader.build_timeline`
+lexically sorts `created_at` and dropped its prior `_NORM_EV_TS` normalization —
+a mixed space/`T` separator would mis-bound rounds in the forensic timeline
+(`importer.py:8-12`, `47-56`). `_norm_ts` never touches
+`seq` / `round` / `payload` / `content`.
+
+### Explicitly rejected scope (descoped 2026-05-26)
+
+The importer deliberately omits the machinery the original migration plan
+sketched (`importer.py:2-5`, `271-279`):
+
+- **No argparse / whole-corpus CLI** (no `python -m sidequest.cli.import_saves`,
+  no `--save-dir`). The entry point is the `python -m sidequest.game.importer`
+  one-shot whose `__main__` block hard-targets the single
+  `coyote_star-mp` save path (`importer.py:271-279`).
+- **No `--dry-run` flag** — the single-transaction rollback-on-failure is the
+  safety net instead.
+- **No intermediate versioned JSON bundle** — the import goes SQLite → Postgres
+  directly.
+- **No corpus loop** over `~/.sidequest/saves/games/*` — exactly one save at a
+  time.
+
+These were descoped on 2026-05-26 because the migration only had to carry the
+handful of live saves across the cutover, not service an open-ended fleet. A
+maintainer who needs the broader corpus path should treat that as new work, not a
+regression of this contract.

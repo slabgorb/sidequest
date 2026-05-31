@@ -6,7 +6,7 @@ date: 2026-04-09
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: [74]
+related: [74, 79]
 tags: [frontend-protocol]
 implementation-status: partial
 implementation-pointer: 87
@@ -342,3 +342,84 @@ the divergence note so the two original sections read as dead design.
 `DiceScene.tsx`, and `components/ConfrontationOverlay.tsx`, per the
 §Implementation status section above. The technology stack (Three.js + Rapier
 via R3F) and the ADR-074 seed-based replay contract are unchanged and live.
+
+## Amendment (2026-05-31): Dice Theming Is a Hardcoded Client Map, Not Pack YAML
+
+The 2026-05-02 status and 2026-05-28 amendment both recorded that the
+§Genre-pack theming `dice.yaml` config **never shipped** (`find sidequest-content
+-name dice.yaml` returns zero hits). What neither prior note captured: **per-genre
+dice theming did ship — as a hardcoded client-side TypeScript map, not as
+content.** The capability exists; it just lives in the frontend bundle instead of
+in pack YAML, which is a direct inversion of this ADR's "content authors can theme
+dice per genre" §Consequences bullet.
+
+### What is actually live
+
+The production theme source is a `GENRE_DICE_THEMES` record literal in
+`sidequest-ui/src/dice/InlineDiceTray.tsx:31–134`, keyed by genre slug. It carries
+**11 genre entries** — `caverns_and_claudes`, `elemental_harmony`, `low_fantasy`,
+`tea_and_murder` (parchment archetype); `neon_dystopia`, `space_opera` (terminal
+archetype); `mutant_wasteland`, `road_warrior`, `spaghetti_western`, `pulp_noir`,
+`heavy_metal` (rugged archetype). Each entry is a `DiceTheme` literal of:
+
+- `dieColor` / `labelColor` — die body and number-face hex colors
+- `roughness` / `metalness` — PBR surface params (the same physical knobs the
+  ADR's `material: bone | chrome | brass | …` taxonomy was meant to abstract)
+- `normalMap` — a hardcoded path under `/textures/dice/*.jpg` (e.g.
+  `scratched-plastic-normal.jpg`, `brushed-metal-normal.jpg`), `normalScale`
+- `labelFont` — a hardcoded `/fonts/*.ttf` path (EBGaramond, Orbitron, Oswald,
+  AmericanTypewriter, Bastarda-K), chosen to match the UI chrome archetype
+
+Theme resolution is `InlineDiceTray.tsx:221` —
+`(genreSlug && GENRE_DICE_THEMES[genreSlug]) || DEFAULT_DICE_THEME` — a synchronous
+lookup against the inlined record, with `DEFAULT_DICE_THEME` (from `@local/dice-lib`)
+as the fallback for any genre not in the map. The `genreSlug` prop
+(`InlineDiceTray.tsx:142`) is the only input; nothing reads pack config.
+
+So the table in §Genre-pack theming is half-right and half-wrong: the **per-genre
+visual differentiation it promised is real and shipping**, but the **delivery
+mechanism it specified (`dice.yaml` → PBR textures from the pack asset dir) is
+not** — the same data is instead literal-encoded in client TypeScript.
+
+### Authoring-model consequence (the real cost)
+
+This is **drift from ADR-075's pack-YAML design.** The original §Genre-pack theming
+section and §Consequences bullet ("Genre pack schema gains `dice.yaml` — content
+authors can theme dice per genre") promised that dice appearance would be **content,
+editable by a pack author without touching engine or client code.** The shipped
+shape breaks that promise:
+
+- **Dice theming is not authorable as content.** To add a theme for a new genre, or
+  retune an existing one (color, roughness, normal map, font), an author must edit
+  `GENRE_DICE_THEMES` in `InlineDiceTray.tsx`, i.e. write **frontend TypeScript** and
+  ship a **UI build + deploy.** There is no YAML, no override, no "Yes, And" path.
+- **This is exactly the failure CLAUDE.md names for the Jade authoring requirement:**
+  "If authoring what a table wants requires a server change, that's a failure of the
+  content surface." Here it's a *client* change, but the failure mode is identical —
+  a non-Keith author (Jade, extending `space_opera/perseus_cloud`) cannot give her
+  world its own dice look through the paste-new-stuff-in / PR-on-content path; she'd
+  need a frontend code change in a different repo.
+- **It is also genre-tier-locked, not world-tier.** The map keys on **genre slug**
+  only, so the per-world flavor split (MEMORY: "ALL flavor lives in worlds, not
+  genre") cannot express a world-specific dice skin even in principle — there is no
+  world axis in the lookup at all.
+
+The prior amendments treated `dice.yaml` as a clean "not shipping" polish gap. It
+isn't clean: a **client-hardcoded alternative is live in its place**, which means the
+*feature* is done but the *authoring surface* the ADR called for is absent and was
+quietly routed around. Whether this was a deliberate "ship the look now, wire the
+content surface later" call or accreted during the inline-tray pivot, the standing
+cost is that dice theming sits on the wrong side of the engine/content line.
+
+### Restoration owed
+
+Re-pointing dice theming at pack/world config — a `dice` block in pack (and
+world-override) YAML, loaded and threaded to `InlineDiceTray` as the `DiceTheme`
+prop, with `GENRE_DICE_THEMES` demoted to a built-in default table — remains owed if
+the content-authoring surface is to match this ADR's intent. Tracked alongside the
+other dark items in [ADR-087](087-post-port-subsystem-restoration-plan.md).
+
+**Source of truth for current dice theming:** `GENRE_DICE_THEMES` at
+`sidequest-ui/src/dice/InlineDiceTray.tsx:31–134` and the resolution at
+`InlineDiceTray.tsx:221`. The technology stack and ADR-074 replay contract remain
+unchanged and live.
