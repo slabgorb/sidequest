@@ -3,7 +3,7 @@ type: epic
 title: Multiplayer resilience & presence
 description: "Playtest-3 findings: MP turn/socket robustness and shared-turn presence. A client-side GameBoard render crash must not tear down the WebSocket and orphan the whole table's in-flight turn (apply+persist server-side, reconnect replays). ACTION_REVEAL delivery must be resilient so a sealed peer never stalls at 'Composing'. Peer-visibility/shared-turn status (Keith-requested) consolidated to one canonical surface + slow-typist reassurance. MP identity mapping (player-vs-character) so headers stop rendering doubled 'X— X'. Source: sq-playtest-pingpong.md."
 priority: p1
-status: backlog
+status: done
 repos: server,ui
 stories:
   - id: 67-1
@@ -129,7 +129,11 @@ stories:
     title: 'Live-OTEL acceptance: confirm session_unbound=0 + no presence.multi_socket_attach across a multi-beat confrontation (67-8 verification)'
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-31'
     repos: sidequest-ui
     workflow: trivial
+    completed: '2026-05-31'
     type: chore
+    review_verdict: approved
+completed: '2026-05-31'

@@ -26,6 +26,7 @@ completed_epics:
   - '61'
   - '68'
   - '64'
+  - '67'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -757,3 +758,53 @@ completed_stories:
     title: EH narrative-chargen reach (Guardian/Wanderer class_hints) + POI cover slug wiring
     points: 3
     completed: '2026-05-30'
+  - id: 67-1
+    epic: '67'
+    title: GameBoard render crash must not orphan the table's turn — survive client subtree errors server-side
+    points: 5
+    completed: '2026-05-26'
+  - id: 67-2
+    epic: '67'
+    title: ACTION_REVEAL delivery resilience — retry/backfill on reconnect so a sealed peer never stalls at Composing
+    points: 3
+    completed: '2026-05-27'
+  - id: 67-3
+    epic: '67'
+    title: MP peer-visibility consolidation + slow-typist reassurance (one canonical surface, Composing/Sealed/Resolving)
+    points: 3
+    completed: '2026-05-28'
+  - id: 67-4
+    epic: '67'
+    title: MP identity mapping (player-vs-character) — stop rendering doubled 'X— X' header
+    points: 3
+    completed: '2026-05-28'
+  - id: 67-5
+    epic: '67'
+    title: ws.send_failed observability — emit broadcast.recipient_dropped watcher at _send_message send-exception seam (websocket.py:252)
+    points: 2
+    completed: '2026-05-28'
+  - id: 67-6
+    epic: '67'
+    title: Authenticated player identity via Cloudflare Access email — separate player-identity from character-name key (ADR-037)
+    points: 5
+    completed: '2026-05-31'
+  - id: 67-7
+    epic: '67'
+    title: Duplicate-socket reconnect loop strands solo session in AwaitingConnect — dice/action frames hard-rejected mid-confrontation
+    points: 5
+    completed: '2026-05-29'
+  - id: 67-8
+    epic: '67'
+    title: Eliminate duplicate-socket reconnect loop stranding confrontations in AwaitingConnect (diagnosis-led; AC1/AC2/AC3/AC6 deferred from 67-7)
+    points: 5
+    completed: '2026-05-29'
+  - id: 67-9
+    epic: '67'
+    title: Hoist WebSocket connection + slug-connect handshake above <Routes> to kill remount re-handshake (67-8 Layer 2)
+    points: 5
+    completed: '2026-05-30'
+  - id: 67-10
+    epic: '67'
+    title: 'Live-OTEL acceptance: confirm session_unbound=0 + no presence.multi_socket_attach across a multi-beat confrontation (67-8 verification)'
+    points: 2
+    completed: '2026-05-31'
