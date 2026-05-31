@@ -35,6 +35,7 @@
 | [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | ✓ accepted | docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 | [ADR-116: A Confrontation Requires an Other — Participant Membership Invariant, Single Opponent-Seater, End-on-No-Other](116-confrontation-requires-an-other.md) | ✓ accepted | sprint/context/context-story-59-13.md |
 | [ADR-117: Pluggable Ruleset Module System — Per-Genre Resolution Behind a RulesetModule Seam](117-pluggable-ruleset-module-system.md) | ✓ accepted | docs/superpowers/specs/2026-05-26-pluggable-srd-ruleset-modules-design.md |
+| [ADR-119: Authenticated Player Identity — Player-vs-Character Identity Split via Cloudflare Access](119-authenticated-player-identity.md) | ✓ accepted | docs/superpowers/specs/2026-05-31-67-6-player-identity-design.md |
 
 ## Deferred — accepted/proposed, not yet implemented
 

@@ -154,6 +154,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | *partial* → ADR-105 |
 | [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | *partial* → ADR-101 |
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | ✓ accepted | live |
+| [ADR-119: Authenticated Player Identity — Player-vs-Character Identity Split via Cloudflare Access](119-authenticated-player-identity.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-31-67-6-player-identity-design.md |
 | [ADR-122: SessionRoom Lifecycle — RoomRegistry Never-Evict Policy, LobbyState FSM, Multi-Socket Presence Ref-Counting](122-session-room-lifecycle.md) | ✓ accepted | live |
 
 ## Transport / Infrastructure
@@ -326,5 +327,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | *partial* | docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 | [ADR-116: A Confrontation Requires an Other — Participant Membership Invariant, Single Opponent-Seater, End-on-No-Other](116-confrontation-requires-an-other.md) | *partial* | sprint/context/context-story-59-13.md |
 | [ADR-117: Pluggable Ruleset Module System — Per-Genre Resolution Behind a RulesetModule Seam](117-pluggable-ruleset-module-system.md) | *partial* | docs/superpowers/specs/2026-05-26-pluggable-srd-ruleset-modules-design.md |
+| [ADR-119: Authenticated Player Identity — Player-vs-Character Identity Split via Cloudflare Access](119-authenticated-player-identity.md) | *partial* | docs/superpowers/specs/2026-05-31-67-6-player-identity-design.md |
 
 <!-- ADR-INDEX:GENERATED:END -->
