@@ -108,3 +108,11 @@ stories:
     type: chore
     review_findings: 'APPROVED. Format reflow applied (commit b8677ea4); tree now ruff-format clean. Code correct, 40/40 green, rule-compliant, no logic findings.'
     review_verdict: approved
+  - id: 72-11
+    title: "Pregen MAX_CULTURES=4 cap silently drops world cultures from the seeded NPC roster — scale to the world's culture count (coyote_star: voidborn excluded; surfaced by 71-31)"
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: refactor
