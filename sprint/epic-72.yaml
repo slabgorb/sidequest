@@ -62,9 +62,10 @@ stories:
     type: bug
   - id: 72-6
     title: Cap npc_pool growth (LRU/last-seen) + prune stale observation_pending scaffolds
+    description: SUPERSEDED by 75-2. The LRU/last-seen CAP framing violates Diamonds-and-Coal and Living World (recency-eviction can delete coal that would become a diamond, or a promoted NPC who wandered off-screen). The real fix is budgeted prompt-SELECTION over the full retained pool — proven Rust code in npc_context.rs (build_npc_registry_context_budgeted) — tracked as 75-2. NPC pool growth is bounded by relevance, not deletion.
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-server
     workflow: tdd
     type: bug

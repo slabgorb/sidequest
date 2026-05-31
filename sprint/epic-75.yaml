@@ -1,0 +1,48 @@
+id: '75'
+type: epic
+title: RAG Retrieval Layer — Restore Accretion, Budgeted Selection, Universal Retrieval Design
+description: "Verified against the Rust origin (github.com/slabgorb/sidequest-api) before any code (scout, 2026-05-30). FINDING: the lore RAG is NOT dead — it fires every turn in Python (websocket_session_handler.py:2449 -> lore_embedding.py:276 -> orchestrator.py:2096, real MiniLM 384-dim embeddings via daemon) and injects retrieved lore into the live narrator prompt. BUT it is lore-only and STARVING. Two real port regressions: (A) Rust re-fed the RAG every turn with discovered facts (accumulate_and_persist_lore, lore_sync.rs:26); Python routes runtime facts through a SEPARATE KnownFact system that is never embedded, so the index holds only static seed lore. (B) Rust had budgeted NPC working-set selection (npc_context.rs:11 — scene-present NPCs get full profiles, others name+role, none-referenced -> compact names); Python loads npc_pool verbatim, which is what made 'cap the pool' (72-6) look necessary. Plus (C) net-new: NPCs/locations were NEVER RAG-indexed in either tree — the universal-retrieval-layer vision (lore+locations+NPCs+factions all retrieved per turn instead of snapshot-blob-dumped) is genuinely new design and needs an ADR. Reuse: live embedding pipeline + LoreStore.query_by_similarity already do real vector retrieval."
+priority: p2
+status: backlog
+repos: sidequest-server
+stories:
+  - id: 75-1
+    title: Restore runtime lore accretion into the RAG — port lore_sync per-turn fact embedding
+    description: 'RESTORATION. Rust fed discovered facts back into the lore RAG every turn (accumulate_and_persist_lore — /tmp/sidequest-rust-ref/crates/sidequest-server/src/dispatch/lore_sync.rs:26-120), persisting embedded fragments to lore_fragments. Python dropped this: runtime facts flow through a SEPARATE KnownFact system (commit_known_fact.py / query_known_facts.py) that is NEVER embedded into the RAG. Python only seeds the store at chargen/connect/arc-promotion (lore_seeding.py). Net effect: the Python RAG index is largely static authored lore, per-turn retrieval returns thin, and the snapshot does the heavy lifting. Reuse the live embedding pipeline (lore_embedding.py embed_pending_fragments + daemon MiniLM) and LoreStore — this is wiring the accretion loop back in, not new infra.'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - Runtime narrator-discovered facts (currently KnownFact) are written as embedded, retrievable lore fragments each turn (port lore_sync.rs accretion).
+      - Newly accreted fragments are persisted and round-trip embeddings on save/load (no re-embed cost on replay).
+      - OTEL span fires per accretion (fragment minted + embed dispatched) so the GM panel can confirm the RAG is being fed during play.
+      - 'Integration/wiring test: play a turn, assert a new embedded fragment is retrievable via query_by_similarity on the next turn.'
+  - id: 75-2
+    title: Port budgeted NPC working-set selection (npc_context.rs) — replace load-everything npc_pool prompt assembly
+    description: "RESTORATION + supersedes 72-6 (the 'cap the pool' framing was wrong — eviction violates Diamonds-and-Coal / Living World). Rust bounded NPC prompt cost by SELECTION, not eviction: build_npc_registry_context_budgeted (/tmp/sidequest-rust-ref/crates/sidequest-server/src/npc_context.rs:11-86) gave scene-present NPCs (last_seen <= 2 turns) full profiles, others name+role, and when the player referenced no NPC, only compact names. Python dropped this — orchestrator/session_helpers load snapshot.npc_pool VERBATIM into context (session_helpers.py:1179, orchestrator.py:682). Port the budgeted selection so nothing is forgotten (full roster stays in the snapshot) but only the relevant working-set enters the prompt — bounded by relevance, exactly as doctrine wants."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - Turn-context NPC assembly selects a budgeted working-set (scene-present full, others name+role, none-referenced compact) instead of loading npc_pool verbatim — port npc_context.rs:11-86.
+      - No NPC is ever deleted/evicted; full pool persists in the snapshot. Bounding is by prompt-selection only.
+      - OTEL span records how many NPCs were considered vs. selected into the prompt, with tier (full/brief/compact), so the GM panel can verify selection fired.
+      - 'Wiring test: a pool with N NPCs where only k are scene-present yields a prompt section with k full profiles and the rest abbreviated.'
+  - id: 75-3
+    title: '[DESIGN] Universal RAG retrieval layer — index + retrieve NPCs/locations per turn (ADR)'
+    description: "NET-NEW DESIGN (ADR). NPCs and locations were NEVER RAG-indexed in either Rust or Python — they have always been snapshot-carried. The operator's goal is a UNIVERSAL retrieval layer: lore + locations/POIs + NPCs + factions + events all RETRIEVED per turn by relevance rather than dumped from a monolithic snapshot blob. Neo (Architect) to produce an ADR reconciling this with ADR-048 (lore RAG, live), ADR-059 (Monster Manual game-state injection, dark), ADR-087 (post-port restoration). Decide: DB as system-of-record (queryable rows vs snapshot blob), what gets indexed/embedded, the per-turn retrieval+budget seam, and how it composes with 75-1 (accretion) and 75-2 (budgeted NPC selection). Reuse: LoreStore.query_by_similarity + the live embedding pipeline already do real vector retrieval."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: architecture
+    acceptance_criteria:
+      - 'ADR drafted: defines the universal retrieval layer — context types indexed (lore/locations/NPCs/factions/events), embedding strategy, per-turn retrieval+budget seam, and persistence-of-record decision.'
+      - ADR reconciles with 048/059/087 and explicitly states what 75-1 and 75-2 deliver vs. what this design adds on top.
+      - 'ADR specifies the OTEL spans the new retrieval seam must emit (per doctrine: every subsystem decision observable in the GM panel).'
+      - Design names the implementation stories to spawn (no code in this story).
+    type: chore
