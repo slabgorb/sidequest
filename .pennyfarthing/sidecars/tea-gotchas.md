@@ -75,3 +75,8 @@
 - **2026-04-08 TurnRecord field-add incident.** Added struct fields, declared fixed — nobody was constructing TurnRecords. Re-read feedback_wire_not_define.
 - **2026-04-09 Map OTEL self-correction.** Ran sq-wire-it on my own Map fix, found no OTEL spans, labeled it "non-blocking" and declared wiring PASS. Keith corrected: "this means it is not wired." Re-read feedback_wiring_means_dashboard.
 - **2026-04-09 baseline-as-insight.** Wrote a retrospective bullet saying "every fix was a wiring bug" as if it were a synthesis. It's the project's central thesis. Re-read feedback_no_baseline_as_insight.
+
+### testing-runner can clobber the session file (2026-05-30)
+- **What happened:** During 72-3 verify, a `testing-runner` subagent invoked for a full-suite regression run wrote a "Test Result Cache" markdown over `.session/72-3-session.md`, destroying the entire session (all assessments, deviations, findings, ACs). `.session/` is gitignored → no git recovery; reconstructed from the in-session conversation record.
+- **Why it bit:** The RUN_ID was `72-3-tea-verify` and the runner apparently derives a cache path from story id under `.session/`, colliding with `.session/{story}-session.md`.
+- **How to apply:** When spawning `testing-runner`, (1) explicitly instruct it to ONLY run tests and report — "do not write any files, do not cache results to disk, do not touch `.session/`"; and (2) after it returns, `ls -la .session/{story}-session.md` to confirm size/mtime are sane before continuing. If clobbered, reconstruct from context immediately (the conversation holds every read+edit) and add a transparency recovery-note header. Consider snapshotting the session file to `/tmp` before a full-suite run as a cheap backup.

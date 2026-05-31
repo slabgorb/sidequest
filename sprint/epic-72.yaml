@@ -32,10 +32,14 @@ stories:
     title: MM NPC provenance through the injection seam — NpcPatch manual_origin, preserved through merge
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-30'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-31'
     type: bug
+    branch: feat/72-3-mm-npc-provenance
+    review_verdict: approved
   - id: 72-4
     title: Route narrator-invented NPC names through culture-bound ADR-091 namegen
     points: 5
