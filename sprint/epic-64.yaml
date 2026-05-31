@@ -200,11 +200,13 @@ stories:
     title: Audit walks per-culture-directory worlds — extend _audit_pack to read worlds/<world>/cultures/*.yaml (audit currently blind to aureate_span + perseus_cloud world cultures, incl. the yulan corpus); mirror the loader's culture discovery so the namegen audit covers per-culture-dir worlds, not just single cultures.yaml. Found by TEA/Reviewer during 64-7.
     points: 3
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-05-31'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-05-31'
     type: bug
-    started: '2026-05-31'
+    review_verdict: approved
   - id: 64-16
     title: Expand polynesian.txt + georgian.txt shared corpora for WARN headroom — both sit ~5 words above WARN_BELOW_WORDS=1000 (polynesian=1005, georgian=1004 via count_words); a small trim flips them THIN and breaks test_audit_live_tree_no_named_corpora_left_thin_post_expansion. Add modest headroom. Found during 64-7.
     points: 1
