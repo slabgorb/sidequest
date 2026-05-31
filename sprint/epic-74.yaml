@@ -10,7 +10,34 @@ stories:
     title: Loader refactor — genre-tier flavor becomes world-tier/optional (no genre flavor)
     points: 5
     priority: p2
-    status: backlog
+    status: done
     repos: sidequest-server,sidequest-content
+    workflow: tdd
+    completed: '2026-05-31'
+    type: refactor
+    review_findings: 'HIGH: introduced banned source-text wiring test (inspect.getsource) in test_lore_seeding.py:315 — behavior already covered by test_ac3, remove it. MEDIUM: World.theme/audio/effective_theme typed Any but carry dict-XOR-GenreTheme — annotate explicitly. LOW: vacuous all() over empty list (test_lore_seeding_dispatch.py:210); stale RED/lore docstrings; ruff-format 2 test files. No correctness bugs; suite at baseline.'
+    review_verdict: approved
+  - id: 74-2
+    title: Repoint flavor consumers to the World tier (reference-chrome, render pipeline, audio backend); fixes reference_renderer 500 risk before genre flavor deletion
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server,sidequest-daemon
+    workflow: tdd
+    type: refactor
+  - id: 74-3
+    title: Author world-tier lore for every live world; unblock genre-lore deletion and avoid empty LoreStore on un-migrated worlds
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-content,sidequest-server
+    workflow: tdd
+    type: chore
+  - id: 74-4
+    title: 'World-flavor hardening: isinstance shape-guard on raw world theme/audio, weather-absence OTEL span, remove dead seed_lore_from_genre_pack'
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
     workflow: tdd
     type: refactor
