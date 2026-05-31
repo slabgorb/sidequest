@@ -19,6 +19,12 @@ stories:
     review_verdict: approved
   - id: 73-2
     title: 'trial: author withdraw/concede resolution beat + opposed_check — currently no mid-trial exit (soft-lock risk)'
+    description: |-
+      trial: author withdraw/concede resolution beat + opposed_check — currently no mid-trial exit (soft-lock risk).
+
+      SCOPE WIDENED — the concede/withdraw resolution gap is NOT trial-only. REPRODUCED LIVE 2026-05-31 in social_duel (the confrontation the epic-73 description assumes 'was converted to opposed_check + made resolvable'). Glenross / Tea&Murder 'Duel of Wits', solo Inspector Pryce, during 67-10 playtest: committed the UI-labelled '✦ resolution beat' Concede Gracefully. The confrontation DID NOT RESOLVE — zero encounter.resolved span in the /ws/watcher capture across the whole run; the confrontation panel persisted (dials You 4/7, Them 3/7); the action input stayed locked ('plain Enter is locked during confrontation'). Only remaining exit is the 'Yield' button (untested in this run). So social_duel's concede resolution_beat does not flip encounter.resolved — the epic's 'social_duel made resolvable' claim appears to be VICTORY-PATH ONLY (resolves on dial→7 dial_threshold, not on concede/early-exit).
+
+      COMPOUND WITH 73-4: the concede beat is push-kind, and push CritSuccess scores 0 (73-4). On this turn the concede crit produced no dial delta at all, so any terminal/threshold check tied to dial movement never fired — 73-4 and this soft-lock reinforce each other. Fix should make a committed resolution/concede beat deterministically flip encounter.resolved (emit encounter.resolved + tear down the panel + unlock input) regardless of roll outcome, for social_duel AND trial (and audit negotiation/scandal). Evidence: .sq-playtest-screenshots/67-10-watcher.jsonl + 67-10-003-after-resolution.png. repos: sidequest-server, sidequest-content.
     points: 3
     priority: p2
     status: backlog
@@ -38,6 +44,10 @@ stories:
     review_verdict: approved
   - id: 73-4
     title: push/angle CritSuccess scores 0 — make beat-kind impact legible so a no-dial-move crit reads as intended, not broken (Sebastien/Jade)
+    description: |-
+      push/angle CritSuccess scores 0 — make beat-kind impact legible so a no-dial-move crit reads as intended, not broken (Sebastien/Jade).
+
+      REPRODUCED LIVE 2026-05-31 (Glenross / Tea&Murder social_duel 'Duel of Wits', solo Inspector Pryce, during 67-10 playtest). Committed the 'Concede Gracefully' beat (beat-kind=push, stat=Humour, DC 10). Watcher evidence: opposed_check_pending{player_beat_id=concede, player_d20=14, source=dice_throw} then [BEAT_RESOLVED] 'Concede Gracefully (Humour, side=player): player_momentum=4 | opponent_momentum=1 | Roll: 15 (CritSuccess)'. Net effect: a CritSuccess moved the player barbs dial by ZERO (stayed 4/7) while the opponent dial advanced +2 the same turn (Hamish riposte). From the player seat this reads as 'I critically succeeded and my dial didn't move but theirs did' = broken. Root: push/angle beat-kinds yield no barbs delta on CritSuccess; the crit outcome needs a legible non-zero (or explicitly-flagged) impact. repos: sidequest-server (scoring), sidequest-ui (beat-result legibility — show beat-kind impact + crit).
     points: 2
     priority: p3
     status: backlog

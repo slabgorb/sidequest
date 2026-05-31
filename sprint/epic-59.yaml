@@ -369,9 +369,20 @@ stories:
     review_verdict: approved
   - id: 59-26
     title: ship_combat confrontation edge bars render 0/1000000 hp — fix ablative-HP/edge-pool init for ship_combat (ADR-114); found during 67-8 live repro
+    description: |-
+      ship_combat confrontation edge bars render 0/1000000 hp — fix ablative-HP/edge-pool init (ADR-114).
+
+      ROOT CAUSE + SCOPE-WIDENING (reproduced live 2026-05-31, Aureate Span / space_opera, solo pilot, during 67-10 playtest). The bug is NOT ship_combat-specific — it hits plain personal combat too. Provoked a personal 'Firefight' (encounter_type=combat, NOT ship_combat): Vance Okonkwo vs a handler. The confrontation 'started' watcher span shows: {op:started, encounter_type:combat, player_metric_threshold:1000000, opponent_metric_threshold:1000000, genre_slug:space_opera}. So the combat encounter initializes BOTH metric thresholds to a 1000000 SENTINEL and runs an upward momentum dial — instead of win_condition=hp_depletion against the real HpPool (max 10). Result: edge bars render 'You 0/1000000 hp' and 'Them 0/1000000 hp' while the character panel correctly shows HP 10/10 (the real HpPool). The two HP representations diverge — the confrontation edge bar reads a mis-initialized source, not creature_core.HpPool.
+
+      After a Shoot beat (strike·Physique·DC14, rolled Fail): encounter.momentum_broadcast{player_metric_after:0, opponent_metric_after:0, source:dice_throw, beat_id:shoot} and advance_confrontation delta=0/value_after=0 on both axes — damage never maps to HP, so hp_depletion can never trigger. ADR-114 is 'partial (Part 1 only)'; this is Part-2 wiring missing for combat-family encounters.
+
+      FIX SCOPE: initialize combat (and ship_combat/dogfight) encounters with win_condition=hp_depletion and metric_threshold = max HP from the HpPool (per side / per combatant), not the 1000000 sentinel; route strike-channel damage through the HpPool so the edge bar shows current/max HP and 0 HP fires the hp_depletion win condition. Audit ALL encounter_type values (combat, ship_combat, dogfight) — title says ship_combat but combat is affected too. Evidence: .sq-playtest-screenshots/aureate-001-firefight-0-1000000-hp.png, 67-10-watcher.jsonl (search op:started + encounter_type:combat). repos: sidequest-server (+sidequest-ui edge-bar binding).
     points: 3
     priority: p2
     status: backlog
     repos: sidequest-server
     workflow: tdd
+    acceptance_criteria:
+      - 'Combat metric must model HP DEPLETION (start at max HP, deplete to 0), not upward momentum accumulation toward a 1000000 sentinel. Live evidence 2026-05-31: opponent metric climbed 0->15->28 toward threshold 1000000 (unreachable); 0 encounter.resolved/hp_depletion spans; combat unwinnable.'
+      - Combat (Firefight) confrontation panel must expose a withdraw/disengage exit beat — currently it has NO Yield/concede/resolution beat (only Take Cover/Fall Back/Shoot/Overload), so with the broken win-condition the encounter is both unwinnable AND unexitable (hard soft-lock; compounds 73-2 for the combat family).
     type: bug
