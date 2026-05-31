@@ -4,7 +4,7 @@
 **Story:** 67-6 (epic 67 — Multiplayer resilience & presence)
 **Repo:** sidequest-server
 **Workflow:** tdd
-**Umbrella ADR:** ADR-037 (shared-world / per-player state split). New ADR to be authored: **ADR-118** — "Authenticated player identity via Cloudflare Access + player-vs-character identity split".
+**Umbrella ADR:** ADR-037 (shared-world / per-player state split). New ADR to be authored: **ADR-119** — "Authenticated player identity via Cloudflare Access + player-vs-character identity split".
 
 ## Problem
 
@@ -99,7 +99,7 @@ All wiring assertions use OTEL spans or fixture-driven behavior, never source-te
 
 ## Deliverables
 
-1. **ADR-118** under the ADR-037 umbrella: trust boundary, the three concepts, local-dev Host derivation.
+1. **ADR-119** under the ADR-037 umbrella: trust boundary, the three concepts, local-dev Host derivation.
 2. `player_identity.py` resolver + `MissingPlayerIdentityError`.
 3. WS-boundary header capture + threading into connect; `SessionRoom.player_identities` store.
 4. `perspective_character_name` accessor + repoint of `sd.player_name` perspective call-sites.
