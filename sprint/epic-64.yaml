@@ -196,3 +196,29 @@ stories:
     repos: content
     workflow: trivial
     completed: '2026-05-30'
+  - id: 64-15
+    title: Audit walks per-culture-directory worlds — extend _audit_pack to read worlds/<world>/cultures/*.yaml (audit currently blind to aureate_span + perseus_cloud world cultures, incl. the yulan corpus); mirror the loader's culture discovery so the namegen audit covers per-culture-dir worlds, not just single cultures.yaml. Found by TEA/Reviewer during 64-7.
+    points: 3
+    priority: p2
+    status: in_progress
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+    started: '2026-05-31'
+  - id: 64-16
+    title: Expand polynesian.txt + georgian.txt shared corpora for WARN headroom — both sit ~5 words above WARN_BELOW_WORDS=1000 (polynesian=1005, georgian=1004 via count_words); a small trim flips them THIN and breaks test_audit_live_tree_no_named_corpora_left_thin_post_expansion. Add modest headroom. Found during 64-7.
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-content
+    workflow: trivial
+    type: chore
+  - id: 64-17
+    title: Tidy two pre-existing weak/stale tests in test_audit_namegen_corpora.py — (a) test_audit_synthetic_ample_corpus_exits_zero asserts rc=0 + name-present but not OK-classification (add co-located OK-row check); (b) test_audit_live_tree_exits_zero_after_corpus_expansion docstring claims the pre-fix failure is THIN when the real mode is MISSING/rc=1 (refresh the note). Found by Reviewer round-2 during 64-7 (out-of-diff, deferred).
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore
+completed: '2026-05-30'
