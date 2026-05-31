@@ -72,7 +72,9 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-006: Graceful Degradation](006-graceful-degradation.md) | ✓ accepted | live |
 | [ADR-007: Unified Character Model](007-unified-character-model.md) | ✓ accepted | live |
 | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ✓ accepted | *partial* → Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103. |
-| [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ✓ accepted | complete → docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md |
+| [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ✓ accepted | live → docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md |
+| [ADR-120: Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World](120-genre-world-flavor-boundary.md) | ✓ accepted | live |
+| [ADR-121: Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance](121-layered-content-resolution.md) | ✓ accepted | live |
 
 ## Prompt Engineering
 
@@ -96,6 +98,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | deferred → sprint/current-sprint.yaml#57-4 |
 | [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | ✓ accepted | *partial* → sprint/current-sprint.yaml#57-3 |
 | [ADR-113: Intent Router — Mechanical-Engagement Spine](113-intent-router-mechanical-engagement-spine.md) | ✓ accepted | *partial* → sprint/epic-59.yaml#59-4 |
+| [ADR-118: Universal Retrieval Layer — Index + Per-Turn Floor-and-Fill Retrieval for NPCs, Locations, and Factions](118-universal-retrieval-layer.md) | ✓ accepted | deferred |
+| [ADR-123: Mechanical-Engagement Pipeline — Confidence-Gated Topological Dispatch Bank, Precondition/Unregistered Gates, and the LethalityArbiter](123-mechanical-engagement-pipeline.md) | ✓ accepted | live |
 
 ## Game Systems
 
@@ -104,7 +108,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-014: Diamonds and Coal](014-diamonds-and-coal.md) | ✓ accepted | — |
 | [ADR-015: Character Builder State Machine](015-character-builder-state-machine.md) | ✓ accepted | live |
 | [ADR-016: Three-Mode Character Creation](016-three-mode-chargen.md) | ✓ accepted | live |
-| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | accepted → ADR-087 |
+| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | **drift** → ADR-087 |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | live |
 | [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | live |
 | [ADR-022: WorldBuilder Maturity](022-world-builder-maturity.md) | ✓ accepted | live |
@@ -122,6 +126,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | ✓ accepted | *partial* → docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 | [ADR-116: A Confrontation Requires an Other — Participant Membership Invariant, Single Opponent-Seater, End-on-No-Other](116-confrontation-requires-an-other.md) | ✓ accepted | *partial* → sprint/context/context-story-59-13.md |
 | [ADR-117: Pluggable Ruleset Module System — Per-Genre Resolution Behind a RulesetModule Seam](117-pluggable-ruleset-module-system.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-26-pluggable-srd-ruleset-modules-design.md |
+| [ADR-125: Chassis/Rig as a First-Class Entity — Bidirectional Bond Ledger, Seven-Tier Threshold Ladder, and Interior Render](125-chassis-rig-entity.md) | ✓ accepted | live |
+| [ADR-126: Pluggable Magic System — MagicPlugin Protocol, Import-Time Registry, and Validator Severity Model](126-pluggable-magic-system.md) | ✓ accepted | live |
 
 ## Frontend / Protocol
 
@@ -143,6 +149,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | *partial* → ADR-105 |
 | [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | *partial* → ADR-101 |
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | ✓ accepted | live |
+| [ADR-122: SessionRoom Lifecycle — RoomRegistry Never-Evict Policy, LobbyState FSM, Multi-Socket Presence Ref-Counting](122-session-room-lifecycle.md) | ✓ accepted | live |
 
 ## Transport / Infrastructure
 
@@ -207,6 +214,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 |-----|--------|------|
 | [ADR-090: OTEL Dashboard Restoration after Python Port](090-otel-dashboard-restoration.md) | ✓ accepted | live |
 | [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | ✓ accepted | *partial* → ADR-101 |
+| [ADR-124: Save-Forensics Architecture — Read-Only Tiered Save Inspection, Loud-Skip Folds, and Per-Round Mechanical Census](124-save-forensics-architecture.md) | ✓ accepted | live |
 
 ## Codebase Decomposition
 
@@ -285,7 +293,9 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | deferred | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | deferred | — |
 | [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | deferred | sprint/current-sprint.yaml#57-4 |
+| [ADR-118: Universal Retrieval Layer — Index + Per-Turn Floor-and-Fill Retrieval for NPCs, Locations, and Factions](118-universal-retrieval-layer.md) | deferred | — |
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | **drift** | [ADR-102](102-tool-use-protocol-for-structured-output.md) |
+| [ADR-018: Trope Engine](018-trope-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |

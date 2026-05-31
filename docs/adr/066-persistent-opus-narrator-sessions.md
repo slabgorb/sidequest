@@ -9,7 +9,7 @@ supersedes: []
 superseded-by: 98
 related: []
 tags: [agent-system, narrator]
-implementation-status: live
+implementation-status: retired
 implementation-pointer: null
 ---
 

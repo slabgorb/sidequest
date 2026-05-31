@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [game-systems]
-implementation-status: accepted
+implementation-status: drift
 implementation-pointer: 87
 ---
 

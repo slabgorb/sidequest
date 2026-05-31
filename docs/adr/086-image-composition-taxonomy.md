@@ -4,7 +4,7 @@ title: "Image-Composition Taxonomy — Portraits, POIs, Illustrations"
 status: accepted
 date: 2026-04-24
 deciders: [Keith Avery]
-supersedes: [34, 71, 89]
+supersedes: [34, 71]
 superseded-by: null
 related: [70]
 tags: [media-audio]

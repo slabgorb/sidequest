@@ -8,7 +8,7 @@ supersedes: []
 superseded-by: null
 related: [23, 36, 37, 82, 103]
 tags: [core-architecture, transport-infrastructure, project-lifecycle]
-implementation-status: complete
+implementation-status: live
 implementation-pointer: "docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md"
 ---
 
