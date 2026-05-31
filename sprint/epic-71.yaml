@@ -340,12 +340,14 @@ stories:
     title: space_opera doctrine — move named/backstoried cultures from genre to world layer, genre ships generic culture slots (Crunch in Genre, Flavor in World)
     points: 3
     priority: p3
-    status: in_progress
+    status: done
+    started: '2026-05-31T06:08:54Z'
     repos: sidequest-content
     workflow: tdd
+    completed: '2026-05-31'
     type: refactor
-    started: '2026-05-31T06:08:54Z'
     branch: feat/71-31-space-opera-culture-flavor-to-world
+    review_verdict: approved
   - id: 71-32
     title: World-level scenario discovery + world-aware binding — load scenarios from worlds/<world>/scenarios/ and bind only the active world's scenario; relocate tea_and_murder/the_morning_train under worlds/glenross/ (follow-up to 71-19)
     points: 5
