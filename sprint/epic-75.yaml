@@ -11,9 +11,10 @@ stories:
     description: 'RESTORATION. Rust fed discovered facts back into the lore RAG every turn (accumulate_and_persist_lore — /tmp/sidequest-rust-ref/crates/sidequest-server/src/dispatch/lore_sync.rs:26-120), persisting embedded fragments to lore_fragments. Python dropped this: runtime facts flow through a SEPARATE KnownFact system (commit_known_fact.py / query_known_facts.py) that is NEVER embedded into the RAG. Python only seeds the store at chargen/connect/arc-promotion (lore_seeding.py). Net effect: the Python RAG index is largely static authored lore, per-turn retrieval returns thin, and the snapshot does the heavy lifting. Reuse the live embedding pipeline (lore_embedding.py embed_pending_fragments + daemon MiniLM) and LoreStore — this is wiring the accretion loop back in, not new infra.'
     points: 5
     priority: p2
-    status: backlog
+    status: started
     repos: sidequest-server
     workflow: tdd
+    branch: feat/75-1-restore-runtime-lore-accretion-rag
     acceptance_criteria:
       - Runtime narrator-discovered facts (currently KnownFact) are written as embedded, retrievable lore fragments each turn (port lore_sync.rs accretion).
       - Newly accreted fragments are persisted and round-trip embeddings on save/load (no re-embed cost on replay).
