@@ -279,10 +279,14 @@ stories:
     title: perseus_cloud personal-melee combat beat bank — distinct from ship/dogfight beats
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-05-31'
     repos: sidequest-content
     workflow: tdd
+    completed: '2026-06-01'
     type: bug
+    branch: feat/71-24-perseus-cloud-melee-beats
+    review_verdict: approved
   - id: 71-25
     title: perseus_cloud location grounding — declare world POIs (New Kowloon) as snapshot entities from content
     points: 3
