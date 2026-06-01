@@ -19,9 +19,10 @@ stories:
     review_verdict: approved
   - id: 74-2
     title: Repoint flavor consumers to the World tier (reference-chrome, render pipeline, audio backend); fixes reference_renderer 500 risk before genre flavor deletion
+    description: "CANCELED 2026-06-01 — category error. The story framed reference-chrome theme.yaml as a 'flavor consumer' to repoint to the world, but theme.yaml is CSS STYLING (neither Rules/mechanics nor Lore/flavor) and correctly stays at the genre/app tier (Keith ruling). Its other two surfaces were already-done (render pipeline = visual_style, moved per-world by 64-12) or split out (audio; world.audio is consumed nowhere). No valid work remained. KEY GUARD for epic-74 deletion: theme.yaml must NOT be deleted as 'genre flavor' or every /reference page 500s. See memory project_theme_yaml_is_styling_not_flavor."
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-server,sidequest-daemon
     workflow: tdd
     type: refactor
