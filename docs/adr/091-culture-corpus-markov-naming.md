@@ -68,6 +68,26 @@ A corpus below `FAIL_BELOW_WORDS` raises and emits `namegen.fail_loud`; a corpus
 - Session-stable when seeded: the same `random.Random` seed produces the same names. (`SlotGenerator.rng` and `MarkovChain.rng` accept injection.)
 - Genre-distinctive: each genre's corpora produce a recognizable phonemic palette without LLM cost.
 
+## Amendment (2026-06-01): Direct name-list sampling for real-Earth worlds + named-individual archetype exclusion
+
+Two clarifications driven by the `the_real_mccoy` (1878 Pittsburgh) playtest, where Markov-blended real-ethnicity corpora produced non-names ("Gawainwen Boyer", "Arthonovan Bolan") and a specific historical person was spawned as a random combat enemy ("charles taze russell, Jewish").
+
+### Real-Earth / historical cultures sample names directly — they do NOT Markov-generate
+
+**Markov chains are for *invented* cultures** (fantasy/sci-fi/secondary-world packs: `caverns_and_claudes`, `elemental_harmony`, `space_opera`, `mutant_wasteland`, `road_warrior`, `heavy_metal`). Character-level blending of a real human language's letter statistics yields plausible-but-fake words — exactly what you want for an invented people, and exactly what you do **not** want for a real ethnicity, where "Wilhelm Schmidt" is correct and "Gawainwen Boyer" is a defect.
+
+**Real-Earth / historical worlds** (`spaghetti_western`, `tea_and_murder`, `pulp_noir/annees_folles`, `neon_dystopia/franchise_nations`, and any future historical world) **sample curated real period-name lists directly.** The mechanism already exists and required no engine change:
+
+- `CultureSlot.names_file: str` — a corpus filename whose lines are read as a direct word list (`generator.py` `build_from_culture`, ~line 302). The same `corpus/shared/*.txt` files that previously fed the Markov chain are clean one-name-per-line real-name lists, so the conversion is mechanical: replace a person-name slot's `corpora:`/`lookback:` block with `names_file: <same file>`.
+- A slot with `names_file:` (or `word_list:`) and **no** `corpora:` has no `MarkovChain`, so `SlotGenerator.generate()` returns `rng.choice(word_list)` — the curated name verbatim, no blending. **Do not leave `corpora:` on a slot you want sampled directly:** with both a chain and a list present the slot still uses Markov 67 % of the time (see "Slot generation" above).
+- `person_patterns` for these cultures should avoid registry-style comma inversion (`"{family_name}, {given_name}"`), which reads as an artifact ("Gilligan, Denis") in NPC names. Prefer natural order.
+
+This is **content authoring** (the `conlang` agent's lane), not an engine capability gap: given + family pools sampled independently and combined by `person_patterns` give combinatorial variety from modest curated lists.
+
+### `named_individual` archetypes are excluded from random spawning
+
+`NpcArchetype.named_individual: bool = False` (opt-in). When `True`, the archetype represents a **specific named real/historical person** (e.g. Charles Taze Russell) or a unique authored figure — present for flavor/authoring reference, but never to be drawn into a **random** spawn. `spawnable_archetypes()` (`sidequest/genre/models/character.py`) drops flagged archetypes, and every random `rng.choice` site (encountergen, namegen) selects from that filtered pool and **fails loud** when it empties, rather than silently spawning a named person. Explicit `--archetype "<name>"` requests still resolve named individuals, so they can be summoned deliberately.
+
 ## Alternatives Considered
 
 - **Restore the morpheme glossary** — proposed by ADR-087's P3 RESTORE verdict for ADR-043, written before the Markov+corpus approach was audited. With ~604 LOC of working Python, content authors trained on corpus curation, three OTEL guards, and a per-culture pattern grammar already shipping in every genre pack, restoring morphemes would mean **demoting a working system** to bring back a parallel one with no clear advantage. Rejected.
