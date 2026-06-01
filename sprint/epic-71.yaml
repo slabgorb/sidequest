@@ -380,3 +380,30 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: refactor
+  - id: 71-35
+    title: Delete the dead is_gm / GM-seat axis from the projection firewall (behaviour-preserving)
+    description: |-
+      Playtest 2026-05-31 (burning_peace MP) + Keith: the 'GM seat' is a category error. SideQuest's thesis is *the narrator is the GM; every human is a player* — no human occupies a GM seat. The is_gm() predicate + the CoreInvariantStage gm-sees-all short-circuit were ported from tabletop-VTT convention and don't fit.
+
+      KEY FACT — it's already always-false dead code: gm_player_id is initialized None in views.py and NEVER reassigned (the MP branch only logs a warning; it never names a GM). view.py is_gm() = 'gm_player_id is not None and …' → always False in every mode. So the gm_sees_all short-circuit at invariants.py is already dead, never taken. 'Wire it false' is a no-op; the real defect is the dead axis still existing (a dormant footgun inviting a future 'seat a GM' PR, and dead code which CLAUDE.md forbids). grep of every genre pack for 'unless: is_gm()' = 0 matches.
+
+      DELETE the axis (behaviour-preserving), don't wire it false:
+      - remove the gm_sees_all branch (game/projection/invariants.py — the 'if view.is_gm(player_id)' block + its source='invariant:gm_sees_all')
+      - remove _is_gm + its 'is_gm' registry entry (game/projection/predicates.py)
+      - remove is_gm from the GameStateView Protocol + SessionGameStateView impl + the gm_player_id field (game/projection/view.py)
+      - remove the gm_identity_unwired warning + GM-player TODO + the _gm_wiring_warned flag + the gm_player_id local (server/views.py:~115-169,262-263)
+      The narrator gets canonical state because it is server-side and NOT a projection recipient at all — not because it is 'the GM' in the filter. The firewall then stands on player-identity predicates alone (is_self/is_owner_of/in_same_zone/visible_to/in_same_party).
+
+      TEST CHURN (the reason this is a story, not a fix-fast item): ~15 firewall test files construct SessionGameStateView(gm_player_id=…) and several are non-mechanical:
+      - DELETE is_gm-specific tests: test_predicates.py::test_is_gm_no_args; the 'invariant:gm_sees_all' assertion in test_core_invariants.py; test_core_invariants.py::test_thinking_is_gm_only_never_routed_to_players (audit — confirm it's about is_gm routing vs thinking routing).
+      - REWRITE fixtures using 'unless: is_gm()' as their representative predicate to a surviving predicate (is_self): test_validator.py, test_rules_schema.py (asserts redact_fields[0].unless.predicate=='is_gm'), test_projection_end_to_end_wiring.py.
+      - DROP the now-required-field gm_player_id kwarg from the remaining ~10 constructions (test_group_g_e2e, test_adr105_b3_private_segments, test_mid_session_join_lazy_fill, test_reconnect_from_cache, test_adr105_b1_secret_invariant_wiring, test_projection_filter, test_secret_routed_rides_turn_tx, test_predicates).
+      TEA writes the test changes. Run the full projection/firewall suite (ADR-104/105) after. Confirm no future human-GM mode is intended (CLAUDE.md: PvP sealed-visibility is reserved/unimplemented; playgroup 'doesn't slip notes to the DM'). KEEP MP-02 PLAYER_SEAT/presence/pause — those are player seats, unrelated.
+
+      Source: ping-pong sq-playtest-pingpong.md SESSION 2 '[BUG] GM seat is a category error'.
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: refactor
