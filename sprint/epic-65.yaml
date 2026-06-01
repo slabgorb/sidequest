@@ -181,3 +181,46 @@ stories:
     workflow: tdd
     completed: '2026-05-28'
     type: refactor
+  - id: 65-7
+    title: Populate + commit r2_manifest.json as reference-page existence oracle
+    points: 2
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: chore
+  - id: 65-8
+    title: Lore POI gallery — feed geography renderer from history.yaml, manifest-gated images
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 65-9
+    title: Lore Cast section — public NPC projection + manifest-gated portraits
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 65-10
+    title: Reference TOC/section-mapping repair + register POI and Cast sections
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 65-11
+    title: Lore POI map view — server-rendered SVG from cartography.yaml with portrait pins
+    points: 5
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 65-12
+    title: Lore world timeline — merge legends, history chapters, POI founding into one spine
+    points: 3
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: tdd

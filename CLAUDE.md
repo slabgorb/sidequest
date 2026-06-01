@@ -265,8 +265,8 @@ Rust code samples in pre-ADR-082 ADRs are historical; translation table in
 - **ADR-014** Diamonds and Coal — accepted
 - **ADR-088** ADR Frontmatter Schema and Auto-Generated Indexes — accepted
 
-**Core Architecture (002, 003, 004, 005, 006, 007, 101, 115, 120, 121)**
-- 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model · 101 Anthropic SDK as Narrator Backend *(partial)* · 115 Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL · 120 Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World · 121 Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance
+**Core Architecture (002, 003, 004, 005, 006, 007, 101, 115, 120, 121, 135)**
+- 002 SOUL Principles · 003 Genre Pack Architecture · 004 Lazy Genre Binding · 005 Background-First Pipeline · 006 Graceful Degradation · 007 Unified Character Model · 101 Anthropic SDK as Narrator Backend *(partial)* · 115 Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL · 120 Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World · 121 Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance · 135 Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience *(deferred)*
 
 **Prompt Engineering (008, 009)**
 - 008 Three-Tier Rule Taxonomy · 009 Attention-Aware Prompt Zones

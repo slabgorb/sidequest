@@ -75,6 +75,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ✓ accepted | live → docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md |
 | [ADR-120: Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World](120-genre-world-flavor-boundary.md) | ✓ accepted | live |
 | [ADR-121: Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance](121-layered-content-resolution.md) | ✓ accepted | live |
+| [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | ✓ accepted | deferred → docs/superpowers/specs/2026-06-01-lore-reference-images-and-audience-split-design.md (epic 65, stories 65-7…65-12) |
 
 ## Prompt Engineering
 
@@ -303,6 +304,7 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | deferred | — |
 | [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | deferred | sprint/current-sprint.yaml#57-4 |
 | [ADR-118: Universal Retrieval Layer — Index + Per-Turn Floor-and-Fill Retrieval for NPCs, Locations, and Factions](118-universal-retrieval-layer.md) | deferred | — |
+| [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | deferred | docs/superpowers/specs/2026-06-01-lore-reference-images-and-audience-split-design.md (epic 65, stories 65-7…65-12) |
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | **drift** | [ADR-102](102-tool-use-protocol-for-structured-output.md) |
 | [ADR-018: Trope Engine](018-trope-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
