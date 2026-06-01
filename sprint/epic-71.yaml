@@ -407,7 +407,11 @@ stories:
       Source: ping-pong sq-playtest-pingpong.md SESSION 2 '[BUG] GM seat is a category error'.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-01'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-01'
     type: refactor
+    review_findings: "HIGH: dormant 6th gm_sees_all assertion (test_adr105_b1::test_gm_sees_redacted_dispatch_through_production_path, skipped) leaves AC 'all is_gm tests deleted' unmet — delete/rewrite like b3. MED: renamed OTEL label invariant:player_excluded_kind never positively asserted; tautological include_if:is_self() in test_genre_stage. LOW: stale non-GM fossils in test_core_invariants. Source deletion itself verified correct + behaviour-preserving."
+    review_verdict: approved
