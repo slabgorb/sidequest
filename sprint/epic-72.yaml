@@ -84,10 +84,13 @@ stories:
     title: Stamp last_seen_turn/location on encounter presence, not just prose mention
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-05-31'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-06-01'
     type: bug
+    review_verdict: approved
   - id: 72-9
     title: Wire OCEAN/disposition + scenario belief_state for narrator-invented NPCs
     points: 5
