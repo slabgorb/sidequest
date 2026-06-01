@@ -73,7 +73,8 @@ stories:
     title: 'Universal retrieval: retrieve_turn_context floor+fill orchestration + per-turn token-budget seam (ADR-118)'
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-06-01'
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-4
