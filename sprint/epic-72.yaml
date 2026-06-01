@@ -122,3 +122,27 @@ stories:
     repos: sidequest-server
     workflow: tdd
     type: refactor
+  - id: 72-12
+    title: Presence-stamp opponent/participant last_seen beyond combat seams (opposed_check social + participant_joined) — 'presence means presence'
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 72-13
+    title: 'hp_depletion presence-stamp: production-path wiring test through instantiate_encounter_from_trigger + created-branch coverage; tighten 72-8 AC2 docstring'
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore
+  - id: 72-14
+    title: Replace source-text wiring test (_publish_combat_edge_to_npcs occurrence count) in test_npc_registry_combat_stats.py with OTEL-span/behavior assertion
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore
