@@ -185,10 +185,12 @@ stories:
     title: Populate + commit r2_manifest.json as reference-page existence oracle
     points: 2
     priority: p1
-    status: backlog
+    status: in_progress
     repos: content
     workflow: trivial
     type: chore
+    branch: feat/65-7-r2-manifest-existence-oracle
+    session_file: .session/65-7-session.md
   - id: 65-8
     title: Lore POI gallery — feed geography renderer from history.yaml, manifest-gated images
     points: 3
