@@ -73,11 +73,12 @@ stories:
     title: 'Universal retrieval: retrieve_turn_context floor+fill orchestration + per-turn token-budget seam (ADR-118)'
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-06-01'
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-4
+    completed: '2026-06-01'
   - id: 75-6
     title: 'Universal retrieval: card sync/reproject hook wired to 75-1 accretion trigger (ADR-118)'
     points: 3
