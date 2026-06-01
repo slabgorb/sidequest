@@ -29,9 +29,11 @@ stories:
     description: "RESTORATION + supersedes 72-6 (the 'cap the pool' framing was wrong — eviction violates Diamonds-and-Coal / Living World). Rust bounded NPC prompt cost by SELECTION, not eviction: build_npc_registry_context_budgeted (/tmp/sidequest-rust-ref/crates/sidequest-server/src/npc_context.rs:11-86) gave scene-present NPCs (last_seen <= 2 turns) full profiles, others name+role, and when the player referenced no NPC, only compact names. Python dropped this — orchestrator/session_helpers load snapshot.npc_pool VERBATIM into context (session_helpers.py:1179, orchestrator.py:682). Port the budgeted selection so nothing is forgotten (full roster stays in the snapshot) but only the relevant working-set enters the prompt — bounded by relevance, exactly as doctrine wants."
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-05-31'
     repos: sidequest-server
     workflow: tdd
+    branch: feat/75-2-budgeted-npc-working-set
     acceptance_criteria:
       - Turn-context NPC assembly selects a budgeted working-set (scene-present full, others name+role, none-referenced compact) instead of loading npc_pool verbatim — port npc_context.rs:11-86.
       - No NPC is ever deleted/evicted; full pool persists in the snapshot. Bounding is by prompt-selection only.
