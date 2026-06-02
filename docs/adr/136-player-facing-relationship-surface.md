@@ -8,17 +8,18 @@ supersedes: []
 superseded-by: null
 related: [14, 20, 26, 27, 40, 42, 53, 79, 104, 105]
 tags: [game-systems, frontend-protocol, npc-character, multiplayer]
-implementation-status: deferred
-implementation-pointer: "docs/superpowers/specs/2026-06-01-npc-relationship-panel-design.md"
+implementation-status: live
+implementation-pointer: "docs/superpowers/plans/2026-06-01-npc-relationship-panel.md"
 ---
 
 # ADR-136: Player-Facing Relationship Surface — Reactive RELATIONSHIPS Projection, Disposition Beat-Log, and the Claims-Only Belief Firewall
 
-> **Documents a decision governing upcoming work, not live code.** No
-> relationship panel, `RELATIONSHIPS` message, disposition beat-log, OCEAN
-> materialization, or claims filter exists yet. This ADR records the
-> architecture agreed during brainstorming (2026-06-01); the implementation
-> plan derives from the design spec at the implementation pointer above.
+> **Implemented (2026-06-01).** The relationship panel, reactive `RELATIONSHIPS`
+> message, disposition beat-log (seam at all four mutation sites), OCEAN
+> authored→runtime normalization + personality read, and the claims-only belief
+> firewall are all live across `sidequest-server` and `sidequest-ui`. The
+> implementation followed the plan at the pointer above; see PRs
+> sidequest-server#574 and sidequest-ui#311.
 
 ## Context
 
@@ -161,5 +162,5 @@ projection** and does not alter the engine's 3-level `Attitude` enum.
 `docs/superpowers/specs/2026-06-01-npc-relationship-panel-design.md` — full design
 with the data shapes, the three engine seams, the projection stage, the dockview
 panel registration, and A/B/C implementation phasing (Phase A: visibility +
-beat-log; Phase B: OCEAN; Phase C: claims). Implementation-status is **deferred**
-until the plan is executed.
+beat-log; Phase B: OCEAN; Phase C: claims). All three phases are **live** —
+the executable plan is at `docs/superpowers/plans/2026-06-01-npc-relationship-panel.md`.
