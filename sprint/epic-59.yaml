@@ -414,3 +414,28 @@ stories:
       - 'Regression test: a wry_whimsy/oz session with a committed Persuasion/Audience-Trial demand engages a confrontation (encounter present in snapshot), not prose-only with confrontation=None'
       - Server suite green; ruff + pyright clean
     type: bug
+  - id: 59-28
+    title: apply_witnessed_act collapse/tip threshold needs a touched-this-turn guard (wry_whimsy political engine)
+    description: "Latent bug in apply_witnessed_act (sidequest-server/sidequest/game/political_engine.py, merged Plan 2): the final threshold pass fires collapse for any premise at/under its collapse threshold and tip for any bloc at/over its tipping threshold EVERY call, with no guard that the dial actually moved THIS turn. A world authoring a bloc at/above its tipping_threshold (or a premise at/under collapse) would tip/collapse on the FIRST unrelated witnessed act, even one that didn't touch that bloc/premise. Add a touched-this-turn guard so collapse/tip only fires for dials mutated by the current act (or that crossed the threshold as a result of this act's drain/couple/awaken), not for dials already past threshold at rest. Include a regression test: an unrelated act with a bloc pre-seeded at/above threshold must NOT tip it. Discovered during Plan 2; deferred out of Plan 2b (router-only)."
+    points: 2
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - Collapse/tip fires only for premises/blocs whose dial moved this turn (or crossed threshold due to this act), not for dials already past threshold at rest
+      - 'Regression test: an unrelated witnessed act with a bloc pre-seeded at/above tipping_threshold does NOT tip it'
+      - Existing apply_witnessed_act tests still pass; OTEL collapse/tip spans unchanged
+    type: bug
+  - id: 59-29
+    title: Co-locate witnessed_act precondition coverage into test_dispatch_precondition_gate.py
+    description: "Test-hygiene follow-up from Plan 2. The witnessed_act dispatch precondition (snapshot.political_state is None -> inert) is registered in sidequest-server/sidequest/agents/dispatch_precondition_gate.py (_INERT_PRECONDITIONS['witnessed_act']) and currently covered indirectly via tests/agents/test_witnessed_act_subsystem.py. Co-locate dedicated precondition coverage into tests/agents/test_dispatch_precondition_gate.py alongside the other subsystems' precondition tests (e.g. scenario_clue), so the gate's coverage lives in one place. Assert: inert (non-None reason) when political_state is None; not-inert (None) when hydrated. No production change."
+    points: 1
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - 'test_dispatch_precondition_gate.py covers witnessed_act: inert when snapshot.political_state is None, not-inert when hydrated'
+      - No production code change; existing test_witnessed_act_subsystem.py precondition assertion may remain or be removed once co-located
+    type: chore
