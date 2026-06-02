@@ -30,9 +30,10 @@ stories:
       ADRs in scope: 102 (tool-use protocol), 024/025 (tension/pacing), 128 (seed deck). One-mechanism-per-problem applies (don't leave the dead legacy lane + escape hatch + new tool all live).
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
     repos: server,ui
     workflow: trivial
+    branch: feat/77-1-quest-stakes-substrate-design
     acceptance_criteria:
       - 'ADR drafted: defines the CREATE/anchor lane for quest_log + quest_anchors and the first-class source for active_stakes, with a decision among options A (seed-at-creation) / B (typed narrator tool) / C (both) / D (full-stack + UI panel) and the rationale'
       - 'ADR decides the fate of quest_anchors: promote to a first-class WorldStatePatch field with a write path, OR retire the dead read-only field (no structurally-dead fields left)'
