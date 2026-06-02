@@ -20,10 +20,12 @@ import re
 from render_common import (
     GENRE_PACKS_DIR,
     TOKEN_LIMIT,
+    apply_shard,
     deterministic_seed,
     estimate_tokens,
     load_visual_style,
     load_yaml,
+    parse_shard,
     render_batch,
     truncate_to_tokens,
 )
@@ -105,9 +107,16 @@ async def main() -> None:
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
     parser.add_argument("--force", action="store_true", help="Regenerate even if image exists")
     parser.add_argument("--output-dir", type=Path, help="Override output directory")
+    parser.add_argument(
+        "--shard",
+        help="Render only shard i/n of the work-list (e.g. 0/2 on one Mac, 1/2 on "
+        "another) to split a batch across renderers. Partition is stable-sorted, "
+        "so shards are disjoint and cover the whole set.",
+    )
     args = parser.parse_args()
     if args.world and not args.genre:
         parser.error("--world requires --genre")
+    shard = parse_shard(args.shard)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 
@@ -128,6 +137,12 @@ async def main() -> None:
                     worlds_seen[w] = load_visual_style(genre_dir, w, tier="portrait")
                 char["_visual_style"] = worlds_seen[w]
             all_chars.extend(chars)
+
+    all_chars = apply_shard(
+        all_chars, shard, key=lambda c: f"{c['genre']}:{c['world']}:{c['slug']}"
+    )
+    if shard is not None:
+        log.info("Shard %d/%d: rendering %d of the work-list", shard[0], shard[1], len(all_chars))
 
     await render_batch(
         all_chars,

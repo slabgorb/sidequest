@@ -37,6 +37,45 @@ def truncate_to_tokens(text: str, max_tokens: int) -> str:
     return " ".join(words[:max_words]) if max_words > 0 else ""
 
 
+def parse_shard(spec: str | None) -> tuple[int, int] | None:
+    """Parse a ``--shard i/n`` spec into ``(index, total)``; ``None`` when unset.
+
+    Splits a deterministic work-list across N renderers: shard ``i/n`` keeps every
+    item whose stable-sorted position is congruent to ``i`` modulo ``n``. Run
+    ``--shard 0/2`` on one machine and ``--shard 1/2`` on another for a disjoint,
+    complete partition.
+
+    Raises ``SystemExit`` on malformed input — a typo'd shard must fail loud, not
+    silently render the whole set on every machine (No Silent Fallbacks).
+    """
+    if spec is None:
+        return None
+    try:
+        i_str, n_str = spec.split("/", 1)
+        index, total = int(i_str), int(n_str)
+    except (ValueError, AttributeError):
+        raise SystemExit(f"--shard must look like 'i/n' (e.g. 0/2), got {spec!r}")
+    if total < 1 or not (0 <= index < total):
+        raise SystemExit(
+            f"--shard i/n requires 1<=n and 0<=i<n, got {spec!r}",
+        )
+    return index, total
+
+
+def apply_shard(items, shard, key):
+    """Keep only the items in ``shard`` of a stable-sorted partition of ``items``.
+
+    Sorting by ``key`` before partitioning makes the split identical on every
+    machine regardless of filesystem or collection order, so ``0/n`` … ``(n-1)/n``
+    are disjoint and together cover the whole list. ``shard=None`` is a pass-through.
+    """
+    if shard is None:
+        return items
+    index, total = shard
+    ordered = sorted(items, key=key)
+    return [item for pos, item in enumerate(ordered) if pos % total == index]
+
+
 def load_yaml(path: Path) -> dict:
     import yaml
     with open(path) as f:

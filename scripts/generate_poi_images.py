@@ -18,9 +18,11 @@ from pathlib import Path
 from render_common import (
     GENRE_PACKS_DIR,
     TOKEN_LIMIT,
+    apply_shard,
     deterministic_seed,
     load_visual_style,
     load_yaml,
+    parse_shard,
     render_batch,
     truncate_to_tokens,
 )
@@ -118,11 +120,18 @@ async def main() -> None:
         "--poi",
         help="Only process this POI slug (requires --world)",
     )
+    parser.add_argument(
+        "--shard",
+        help="Render only shard i/n of the work-list (e.g. 0/2 on one Mac, 1/2 on "
+        "another) to split a batch across renderers. Partition is stable-sorted, "
+        "so shards are disjoint and cover the whole set.",
+    )
     args = parser.parse_args()
     if args.world and not args.genre:
         parser.error("--world requires --genre")
     if args.poi and not args.world:
         parser.error("--poi requires --world")
+    shard = parse_shard(args.shard)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
 
@@ -156,6 +165,14 @@ async def main() -> None:
             unique_pois.append(poi)
 
     log.info("After deduplication: %d unique POIs", len(unique_pois))
+
+    unique_pois = apply_shard(
+        unique_pois,
+        shard,
+        key=lambda p: f"{p['genre']}:{p['world']}:{p.get('slug') or p['name']}",
+    )
+    if shard is not None:
+        log.info("Shard %d/%d: rendering %d of the work-list", shard[0], shard[1], len(unique_pois))
 
     await render_batch(
         unique_pois,
