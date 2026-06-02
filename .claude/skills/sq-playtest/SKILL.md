@@ -27,7 +27,7 @@ Read `sq-playtest/pingpong.md` in this skill directory for the full coordination
 
 ## Phase 1: Stack Launch (Full-Stack)
 
-Poll for services- if services are not up, ask the user to start them. (There is no separate save-forensics service to start — save forensics is a set of REST endpoints on the server itself; see Phase 3c.)
+Poll for services- if services are not up, ask the user to start them. (There is no separate save-forensics service to start — both the OTEL dashboard and the Save Forensics page are served by the game server itself on `:8765`; see Phase 3c.)
 
 Launch Playwright browser
 
@@ -45,7 +45,10 @@ mcp__playwright__browser_navigate(url="player1.local:5173")
 Take an initial screenshot to confirm the UI loaded. **Always pass `filename` with an absolute path to the shared screenshots dir — never let Playwright drop into cwd:**
 
 Open a tab to the OTEL dashboard: http://localhost:8765/dashboard
-(Save forensics is not a webpage — it's REST endpoints under `localhost:8765/api/debug/save/*`. See Phase 3c.)
+Open a tab to the Save Forensics page: http://localhost:8765/forensics
+(Both are real pages served by the game server. The OTEL dashboard is live per-turn telemetry; Save Forensics is the read-only post-mortem save inspector — ADR-124. See Phase 3c for how to read each.)
+
+Use `mcp__playwright__browser_tabs(action="new", url=...)` to open each surface in its own tab so the game tab (tab 0) stays put — don't `browser_navigate` away from the game.
 
 ```
 mcp__playwright__browser_take_screenshot(filename="~Projects/sq-playtest-screenshots/000-initial-load.png")
@@ -128,8 +131,21 @@ Use these every few turns, not just when something looks broken. The narrator wr
   - **Gotcha:** the "NPC Registry" widget reads the runtime `npc_pool` (who is present in the *current scene*), NOT the authored `npcs` roster. It frequently shows "No NPCs in registry yet" even when the roster is full. Do not trust the widget — check `npcs` in Raw JSON or via the forensics endpoint below.
   - **Gotcha:** the snapshot character block may show `HP: undefined/undefined` even when the in-game panel shows real HP (ADR-114 ablative-HP field mismatch in the dashboard reader). Cross-check the game UI.
 - **③ Subsystems**, **⑥ Prompt**, **⑦ Lore** tabs show what fired each turn.
+- Header strip shows live `Turns / Errors / p95`. **① Timeline** per-turn detail shows tokens in/out, **cache hit %** (want ~100% read), **System block sizes** (`stable / valley / recency / tools` — `valley` should be ~0; a fat valley is uncached-bloat, ADR-110/112), `Patches:`, `Beats:` (a confrontation that fired shows beats here; `none` = no beat rolled), and `Knowledge:` new entries.
 
-**Save forensics — post-hoc REST endpoints on the server (there is NO separate `:8799` service; that reference is stale):**
+**Save Forensics page (`http://localhost:8765/forensics`) — read-only post-mortem save inspector (ADR-124):**
+
+This is the explicit feature — prefer it over hand-rolled curls. It is the *stored ground truth* viewer, the sibling of the live OTEL dashboard. Key reading discipline is the **provenance legend** at the top:
+
+- **derived (narrator believed)** — value the narrator asserted/inferred, not necessarily persisted.
+- **stored (ground truth)** — value actually written to the Postgres save. This is what the engine truly knows.
+- **absent** — field never populated.
+
+When narration claimed something but the field shows **derived** or **absent** rather than **stored**, that is the lie detector firing — the narrator improvised and nothing backed it. Use it for exactly the questions that come up in play: did this item/NPC/quest/region actually get written, or did the narrator just say so?
+
+Workflow: left sidebar lists every save (newest first, `slug` + `genre / world`) — click the current session's slug, then read the tiered panels (location/region, character, inventory, NPCs, timeline, per-round census). It resolves the same data the REST endpoints expose, but rendered with provenance coloring.
+
+**Underlying REST endpoints** (for scripted extraction / when you want to grep a field; the `/forensics` page is the human surface over these — there is NO separate `:8799` service, that reference is stale):
 
 ```bash
 curl -s localhost:8765/api/debug/saves                       # list saves
@@ -139,7 +155,7 @@ curl -s localhost:8765/api/debug/save/{slug}/turn/{round}    # one round's event
 curl -s localhost:8765/api/debug/state                       # live in-memory state
 ```
 
-Pipe through `python3 -m json.tool` (or a small extractor) to inspect `npcs`, `npc_pool`, room/region state, footnotes, etc.
+Pipe through `python3 -m json.tool` (or a small extractor) to inspect `npcs`, `npc_pool`, room/region state, footnotes, `political_state` (premise/bloc), inventory items (`characters[0].core.inventory.items` — each has `category`/`equipped`/`state`/`tags`), etc.
 
 **NPC roster signal:** to confirm authored crew / origin-screen NPCs seeded, check the `npcs` array in the snapshot — not the dashboard widget. In `coyote_star` solo, **Kanga Moana-Teru** (original Kestrel crew) is the clear signal: if she is in `npcs`, the roster seeded correctly. If the dashboard says "no NPCs" but Kanga is in `npcs`, that's the widget reading `npc_pool`, not a roster bug.
 
