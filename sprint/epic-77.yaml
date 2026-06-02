@@ -1,0 +1,56 @@
+id: '77'
+type: epic
+title: Quest & Stakes Substrate
+description: 'Implementation of ADR-137 (quest & stakes substrate). Design story 77-1 is DONE — ADR-137 decides Option C (seed-at-creation + typed record_quest/set_stakes tools) as engine core with the UI panel as a committed fast-follow, promotes quest_anchors to first-class (live consumer in orbital/course.py:157), and consolidates to one mechanism (retire the legacy quest_updates lane + the apply_world_patch quest/stakes escape-hatch paths). Root cause: a lane exists to UPDATE a quest but none to CREATE/anchor one; stakes only flow from a trope handshake that never fires in prose packs. See docs/adr/137-quest-stakes-substrate.md §Implementation Stories. Reviewer (The Merovingian) carried 5 non-blocking findings into these stories.'
+priority: p2
+status: in_progress
+repos: server,ui
+stories:
+  - id: 77-1
+    title: Seed-at-creation — quest_anchor + quest_log + active_stakes from PC drive/calling
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - "Verify behavior against a no-drive-scene prose pack (e.g. wry_whimsy): Character.drive defaults to '' when the genre has no drive-shaped scene (builder.py:423), so seed-at-creation must NOT be assumed to close the gap there — Option B (77-2) is the load-bearing fix for prose packs"
+      - 'Empty-drive path degrades LOUDLY: emit quest.seeded_at_creation span carrying a WARNING-severity attribute on empty seed (No Silent Fallbacks), never a silent no-op'
+  - id: 77-2
+    title: Typed quest/stakes narrator tools — record_quest + set_stakes (ADR-102)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - 'Bound narrator-controlled state: reuse the existing _ACTIVE_STAKES_GUARDRAIL=1024 (narration_apply.py:5762) for set_stakes, and add a cardinality cap for quest_log / quest_anchors at the ADR-102 / Pydantic schema layer (unbounded narrator strings persist to Postgres → state-bloat vector)'
+  - id: 77-3
+    title: Promote quest_anchors to first-class WorldStatePatch field + wire to orbital course
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+  - id: 77-4
+    title: One-mechanism cleanup — retire quest_updates lane + strip apply_world_patch quest/stakes paths
+    points: 3
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 77-5
+    title: Quest/objective panel — render quest_log + quest_anchors + active_stakes (quests payload)
+    points: 5
+    priority: p3
+    status: backlog
+    repos: ui
+    workflow: tdd
+  - id: 77-6
+    title: Author wry_whimsy seed_tropes deck (ADR-128) — active_seeds carve-out
+    points: 2
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: trivial
