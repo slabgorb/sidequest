@@ -212,7 +212,7 @@ stories:
       CARRYOVER FROM 65-8 REVIEW (PR #573, all non-blocking on 65-8; fold in here because 65-9 touches the same gate code). See sprint/archive/65-8-session.md → Delivery Findings → Reviewer (review) and Design Deviations → Architect (reconcile) for full context.
     points: 3
     priority: p1
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -224,6 +224,10 @@ stories:
       - 'CARRYOVER 65-8 (type annotations): annotate the two test helpers — _entry -> dict[str, object] and the gated_client fixture -> Iterator[TestClient] — in test_reference_poi_manifest_gate.py (and mirror in the new Cast test module).'
       - 'CARRYOVER 65-8 (cache staleness): add a runbook note that load_r2_manifest_keys is lru_cached with no TTL/mtime — a manifest regenerated after an asset upload is not picked up until server restart (safe-failing: text-only, never broken). Optionally key the cache on the manifest file mtime so a regenerated manifest is picked up live.'
       - "CARRYOVER 65-8 (optional observability): if a GM authoring-completeness view is wanted, add a distinct reference_poi_image_not_in_manifest span so 'authored but not on R2' is distinguishable from 'not authored' (today both collapse into poi_image_not_found). Defer unless the dashboard needs it."
+    completed: '2026-06-02'
+    branch: feat/65-9-lore-cast-public-npc-projection
+    session_file: .session/65-9-session.md
+    review_verdict: approved
   - id: 65-10
     title: Reference TOC/section-mapping repair + register POI and Cast sections
     points: 2
