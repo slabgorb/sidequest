@@ -27,6 +27,7 @@ completed_epics:
   - '68'
   - '64'
   - '67'
+  - '77'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -808,3 +809,8 @@ completed_stories:
     title: 'Live-OTEL acceptance: confirm session_unbound=0 + no presence.multi_socket_attach across a multi-beat confrontation (67-8 verification)'
     points: 2
     completed: '2026-05-31'
+  - id: 77-1
+    epic: '77'
+    title: '[DESIGN] Quest & stakes substrate — ADR for create/anchor lane + active_stakes source'
+    points: 3
+    completed: '2026-06-02'

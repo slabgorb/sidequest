@@ -3,7 +3,7 @@ type: epic
 title: Quest & Stakes Substrate
 description: "Playtest GAP (wry_whimsy/oz, 2026-06-02; Operator-deferred from the ping-pong pass to dedicated work). After 13 turns with an explicit campaign spine ('go home'), the snapshot showed quest_log: {}, quest_anchors: [], active_stakes: '', active_seeds: []. Dev root-cause (Agent Smith): this is a PARTIALLY-WIRED feature, four fields with distinct causes. (1) quest_anchors — ZERO write paths anywhere in the engine; read into narrator context (orchestrator.py:2413) + shipped to client (session_helpers.py:1230) but never assigned, not even a WorldStatePatch field → structurally dead read-only field. (2) quest_log — two write lanes both dormant: narrator quest_updates (narration_apply.py:2862) only UPDATES a quest by id, nothing CREATES one; trope-resolution handshake (narration_apply.py:5765) needs a resolved trope (total_beats_fired:0 → never fired). (3) active_stakes — written only by the trope handshake (didn't fire) or the DEPRECATED apply_world_patch escape hatch (narrator told NOT to use). (4) active_seeds — content gap (no seed_tropes authored for wry_whimsy; only tea_and_murder has them) — ADR-128, separate content task. UI: no client component renders quests/quest_log/quest_anchors/active_stakes today. Core engine gap: there is a lane to UPDATE a quest but no mechanism to CREATE/anchor one, and stakes only flow from tropes that never fire in a prose-only pack. Design options (per Dev): (A) seed-at-creation from the PC drive/calling; (B) typed narrator tool (ADR-102) set_stakes/record_quest; (C) both; (D) full-stack with a client quest panel. Design story first (ADR), then implementation per the chosen option."
 priority: p2
-status: backlog
+status: done
 repos: server,ui
 stories:
   - id: 77-1
@@ -30,7 +30,7 @@ stories:
       ADRs in scope: 102 (tool-use protocol), 024/025 (tension/pacing), 128 (seed deck). One-mechanism-per-problem applies (don't leave the dead legacy lane + escape hatch + new tool all live).
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: server,ui
     workflow: trivial
     acceptance_criteria:
@@ -40,3 +40,7 @@ stories:
       - ADR specifies the OTEL span(s) for quest-create + stakes-set (GM-panel lie-detector), per the OTEL Observability Principle
       - ADR enumerates the implementation stories to spawn under epic 77 (engine, and optional UI quest/objective panel) with point estimates
       - active_seeds is explicitly carved out as a SEPARATE content task (author a wry_whimsy seed_tropes deck, ADR-128; delegate to a gm agent) — referenced in the ADR, not solved here
+    completed: '2026-06-02'
+    branch: feat/77-1-quest-stakes-substrate-design
+    review_verdict: approved
+completed: '2026-06-02'
