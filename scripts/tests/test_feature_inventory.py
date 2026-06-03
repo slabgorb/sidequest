@@ -31,3 +31,30 @@ def test_load_span_constants_against_real_registry():
     assert "turn" in names
     assert "turn.barrier" in names
     assert len(names) > 20  # registry is substantial
+
+
+from scripts.feature_inventory_verify import wiring_test_exists, resolve_module
+
+
+def test_wiring_test_exists(tmp_path):
+    (tmp_path / "a.test.tsx").write_text("// test")
+    assert wiring_test_exists("a.test.tsx", tmp_path) is True
+    assert wiring_test_exists("missing.test.tsx", tmp_path) is False
+
+
+def test_resolve_module_server_dotted(tmp_path):
+    server = tmp_path / "sidequest-server" / "sidequest"
+    (server / "game").mkdir(parents=True)
+    (server / "game" / "encounter.py").write_text("# mod")
+    # dotted and path forms both resolve under sidequest-server/sidequest/
+    assert resolve_module("game.encounter", tmp_path) is not None
+    assert resolve_module("game/encounter.py", tmp_path) is not None
+    assert resolve_module("game.missing", tmp_path) is None
+
+
+def test_resolve_module_ui_component(tmp_path):
+    ui = tmp_path / "sidequest-ui" / "src" / "components"
+    ui.mkdir(parents=True)
+    (ui / "ConfrontationOverlay.tsx").write_text("// component")
+    assert resolve_module("ConfrontationOverlay", tmp_path) is not None
+    assert resolve_module("NopeOverlay", tmp_path) is None
