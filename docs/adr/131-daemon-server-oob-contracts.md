@@ -87,9 +87,9 @@ server maintains a per-queue mirror keyed on its *own* receive clock.
   (`daemon.py`, `:1029`). The `queue_depth` field is fed from
   `_IN_FLIGHT_COUNTS` (`daemon.py`), a per-queue (`image`/`embed`)
   backpressure counter the daemon owns, so the server sees concurrent load even
-  on a connection that has no work of its own in flight. `start_periodic_heartbeat`
-  (`daemon.py`) is *defined and unit-tested* but **NOT YET WIRED** into
-  `_run_daemon` (documented at `daemon.py`); fresh heartbeats currently come
+  on a connection that has no work of its own in flight. A daemon-driven *periodic*
+  idle emitter was deferred and the unwired `start_periodic_heartbeat` scaffold was
+  **cut in story 78-3 (2026-06-03)** — see Consequences; fresh heartbeats come
   only from per-request connections and the server's reconnecting listener.
 - **Server side** (`sidequest-server/sidequest/daemon_client/state_mirror.py`):
   `DaemonStateMirror` holds per-queue `DaemonState` and `queue_depth`. The mirror
@@ -223,9 +223,13 @@ their own spans:
   exposes both the server receive timestamp (`last_received_at`) and the daemon's
   self-reported `ts_monotonic` (`last_heartbeat_ts`) for GM-panel display
   (`state_mirror.py`).
-- **Gap:** the periodic idle-heartbeat emitter is not yet wired (see Consequences),
-  so during a fully idle stretch liveness rides solely on the listener's reconnect
-  cadence rather than a daemon-driven push.
+- **Deferred (not a gap):** the daemon-driven periodic idle-heartbeat emitter was
+  **cut in story 78-3 (2026-06-03)** rather than left as an unwired scaffold (see
+  Consequences). During a fully idle stretch liveness rides on the server listener's
+  reconnect cadence (~15s, 4× margin under the 60s unresponsive threshold), which is
+  sufficient — wiring a daemon-driven push would have required a net-new active-writer
+  broadcast registry. Revive with that registry + a live-path span test if the
+  reconnect dependency ever proves insufficient.
 
 ## Consequences
 
@@ -250,10 +254,13 @@ their own spans:
   convention). Each is a contract a contributor must know about; none is
   discoverable from the JSON-RPC method signatures alone — which is precisely why
   this ADR exists.
-- **`start_periodic_heartbeat` is defined but not wired** (`daemon.py`).
-  Until a broadcast emit fans out to active client writers, idle liveness depends
-  on the server listener's reconnect loop. This is a known, documented follow-up,
-  not a silent gap.
+- **The periodic idle-heartbeat emitter is deferred (cut, not wired).** The unwired
+  `start_periodic_heartbeat` scaffold + its `DEFAULT_HEARTBEAT_INTERVAL_SECONDS`
+  constant and isolation test were **removed in story 78-3 (2026-06-03)** rather than
+  shipped as a `NOT YET WIRED` stub (a self-documented stub is a trap that makes the
+  daemon look more observable than it is). Idle liveness depends on the server
+  listener's reconnect loop (~15s); a daemon-driven push would need an active-writer
+  broadcast registry that does not exist. Deferred with rationale, not a silent gap.
 - The handshake file is a single well-known path (`~/.sidequest/daemon-output-dir`);
   it assumes daemon and server share a home directory (true for the current
   single-host deployment). A multi-host split would need a different discovery

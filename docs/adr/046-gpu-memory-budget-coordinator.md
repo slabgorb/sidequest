@@ -30,6 +30,13 @@ implementation-pointer: null
 > with cold-swap on alternation. If a fourth backend is ever added, the
 > coordinator may need to come back — but the implementation in this ADR
 > is not what should be revived.
+>
+> **Follow-on cleanup (story 78-3, 2026-06-03):** the standalone `detect_gpu` /
+> `GpuInfo` diagnostic (`sidequest_daemon/media/gpu_detect.py`) and its `gpu.detect`
+> OTEL span — the only surviving fragment that was meant to feed this coordinator's
+> observability — was cut too. With the coordinator gone (`5118d6c`) it had no live
+> consumer; the orphaned diagnostic followed the coordinator out rather than firing a
+> span nothing reads. Revive alongside the coordinator if it ever returns.
 
 > Retrospective — documents a decision already implemented in the codebase.
 
