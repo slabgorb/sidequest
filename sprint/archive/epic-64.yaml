@@ -3,7 +3,7 @@ type: epic
 title: Content Schema Compliance — Close Pack Validator Gaps
 description: 'Close all ERROR-level gaps surfaced by `pf validate pack` after the genre pack filesystem schema landed. Two categories: (1) packs declaring extensions without backing files (5 packs), (2) worlds missing required files like tropes.yaml/archetypes.yaml/portrait_manifest.yaml (5 worlds). Goal: every live pack passes `just content-validate-all` with zero errors.'
 priority: p2
-status: in_progress
+status: done
 repos: content,server
 stories:
   - id: 64-1

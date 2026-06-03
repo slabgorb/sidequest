@@ -280,12 +280,10 @@ stories:
     description: 'Non-blocking follow-ups from the 65-9 review (Reviewer APPROVED). All 10 findings + the full audit trail are archived in sprint/archive/65-9-session.md (Delivery Findings + Design Deviations → Architect reconcile). Server-only; reference-page Cast section. Pattern: epic 76 ← 75-6.'
     points: 3
     priority: p3
-    status: in-progress
+    status: done
+    started: '2026-06-03'
     repos: server
     workflow: tdd
-    started: '2026-06-03'
-    branch: feat/65-13-cast-docstring-span-chrome-guard
-    session_file: .session/65-13-session.md
     acceptance_criteria:
       - "DOC: Fix misleading OTEL span semantics — _cast_portrait_img_html reuses scrapbook.npc_portrait_{resolved,not_found} on the reference page, but those spans' docstrings (scrapbook.py:133,152) describe scene-time scrapbook-ref attachment. Either note the dual-use, or implement AC8 (below) which supersedes it."
       - "AC8 (deferred from 65-9): Add dedicated reference_portrait_resolved/reference_portrait_not_found spans for the reference Cast gate (distinguish 'authored but not on R2' from 'not authored'); migrate test_cast_portrait_decisions_emit_spans to them. Resolves the DOC span-semantics finding."
@@ -296,7 +294,11 @@ stories:
       - "EDGE: Guard load_cast_entries against a non-list 'characters:' value (e.g. characters: 42) with isinstance(chars, list) — currently raises an uncaught TypeError → unclean (but still loud) 500."
       - 'CHROME: Resolve the ref-card__portrait undefined CSS class (allowlist with justification or add a CSS rule) AND extend the chrome-wiring fixture (test_reference_chrome_wiring.py:_seed_space_opera_world) to render a cast+POI-bearing world so the lore-page image classes (ref-card__poi, ref-card__portrait) are actually validated — closes a pre-existing blind spot.'
       - 'REFACTOR (optional): unify the POI + Cast manifest gates so a both-features world emits one reference_manifest_loaded span per render (load once, pass keys to both gates) instead of one-per-gate.'
+    completed: '2026-06-03'
+    branch: feat/65-13-cast-docstring-span-chrome-guard
+    session_file: .session/65-13-session.md
     type: refactor
+    review_verdict: approved
   - id: 65-14
     title: wry_whimsy classical_pd audio set 404s — source/upload PD tracks to R2 + reconcile audio.yaml against manifest
     description: |-
