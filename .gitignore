@@ -27,8 +27,16 @@ Thumbs.db
 
 # Playtest artifacts
 playtest-*.png
+# Legacy screenshot-output dirs — pure artifacts, no tracked files:
 sq-playtest-screenshots/
-.playtest-screenshots
+.playtest-screenshots/
+# .sq-playtest-screenshots/ mixes committed tooling (check_turn.sh, turn_spans.py,
+# watcher_capture.py) with generated run artifacts (watcher *.jsonl captures,
+# *_baseline markers, screenshots). Ignore everything generated; re-include the
+# tooling so it stays tracked. New artifact types are ignored automatically.
+.sq-playtest-screenshots/*
+!.sq-playtest-screenshots/*.sh
+!.sq-playtest-screenshots/*.py
 .playwright-mcp/
 .sample-renders/
 
