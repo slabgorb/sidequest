@@ -46,7 +46,8 @@ stories:
     description: "VERIFICATION HALF DONE (Architect audit 2026-06-03): /sq-audit shows 0 portrait/POI gaps for wry_whimsy; music resolves (0 404s after 79-3); fonts load via Google @import (no woff2 gap — see 79-4 canceled); r2_manifest.json now carries 116 wry_whimsy refs (was 0). Asset gate = MET. REMAINING (docs only, trivial): (1) CLAUDE.md omits wry_whimsy from its pack list entirely (still says '10 packs') — add it; (2) update pack README asset-gap notes to drop wry_whimsy/oz from pending. NOTE: r2_audit orphan-flags wry_whimsy classical_pd — that's the separate defect 65-15, not a real gap here."
     points: 1
     priority: p3
-    status: backlog
+    status: done
     repos: sidequest-content
     workflow: trivial
+    completed: '2026-06-03'
     type: chore
