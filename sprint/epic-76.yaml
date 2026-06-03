@@ -100,3 +100,11 @@ stories:
       - While touching the dispatch file, the pre-existing pyright reportOptionalMemberAccess on span.attributes.get(...) in test_universal_retrieval_dispatch.py is cleared (narrowed attributes helper); pyright clean on touched files.
       - No production code change. Full server suite (uv run pytest tests/) green, plus tests/agents and tests/telemetry; ruff check + format clean. Verify no test lost coverage — the migration is behavior-preserving (existing assertions unchanged).
     type: refactor
+  - id: 76-10
+    title: Clear pre-existing sidequest-server ruff check debt — develop carries 10 auto-fixable 'ruff check .' errors (mostly I001 import-sort, plus SIM/B/UP), so just server-lint is repo-wide-RED and 'ruff check clean' is unmeetable for every server story (the lint gate is effectively defeated). Apply ruff check --fix for the mechanical I001s; REVIEW any SIM/B/UP/semantic fixes individually before applying (auto-fixable != always-safe). Separately, ~125 files are unformatted (ruff format ungated) — a format sweep is a distinct follow-up. Surfaced during the 76-2/76-4 trivial batch.
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: chore

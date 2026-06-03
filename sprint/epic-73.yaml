@@ -68,3 +68,11 @@ stories:
     workflow: trivial
     completed: '2026-06-03'
     type: chore
+  - id: 73-6
+    title: "Rescope shared e2e fixtures so tests/e2e/test_encounter_wiring_e2e.py actually runs — session_handler_factory + span_exporter live in tests/server/conftest.py (invisible to tests/e2e/), so both e2e tests (test_combat_walkthrough_initiate_tick_resolve, test_xp_award_higher_in_combat_than_out) ERROR at setup with 'fixture not found'. Combat-lifecycle e2e is currently INERT — nothing validates resolution-turn behaviour end-to-end (would catch 73-5-class regressions). Fix: move the shared fixtures to a conftest visible to tests/e2e/ (e.g. tests/conftest.py) or give the e2e file its own. Found by Dev during 73-5."
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: bug
