@@ -29,6 +29,7 @@ completed_epics:
   - '67'
   - '77'
   - '79'
+  - '80'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -839,4 +840,9 @@ completed_stories:
     epic: '79'
     title: Verify wry_whimsy/oz asset gate MET — re-run /sq-audit --genre wry_whimsy, confirm 0 portrait/POI/music/font gaps and that r2_manifest.json now carries wry_whimsy refs (was 0). Update CLAUDE.md pack-status line + pack README asset-gap notes.
     points: 1
+    completed: '2026-06-03'
+  - id: 80-1
+    epic: '80'
+    title: Genre-grouped world picker + scoped lobby theming (house chrome)
+    points: 5
     completed: '2026-06-03'

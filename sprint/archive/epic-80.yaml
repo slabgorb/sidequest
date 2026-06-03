@@ -3,7 +3,7 @@ type: epic
 title: Lobby Experience — World Picker & Chrome Scoping
 description: "Lobby/ConnectScreen UX. The lobby has no identity of its own and leaks scope three ways (one root cause): a flat alphabetical 20-world list buries genre and scrolls badly; Rules/Lore reference links mix pack-scope and world-scope and sit orphaned with no scope cue; and the chrome archetype (useChromeArchetype on <html>) inherits the LAST-ENTERED world's genre theme, so the menu cosplays whatever world it last visited. Design spec: docs/superpowers/specs/2026-06-03-lobby-identity-grouped-picker-design.md. Decisions: genre-grouped picker with sticky headers; Rules->genre header, Lore->world-preview card; a neutral 'house' chrome for the lobby shell with genre flavor scoped to the preview card. UX brainstorm by Adora Belle 2026-06-03."
 priority: p2
-status: backlog
+status: done
 repos: sidequest-ui
 stories:
   - id: 80-1
@@ -11,7 +11,8 @@ stories:
     description: "Lobby/ConnectScreen redesign (sidequest-ui only). One root cause — scope leakage — fixed three ways. SPEC: docs/superpowers/specs/2026-06-03-lobby-identity-grouped-picker-design.md. PLAN (bite-sized TDD, 2 phases, ~9 tasks): docs/superpowers/plans/2026-06-03-lobby-identity-grouped-picker.md. Phase 1 (theming): add neutral 'house' chrome archetype; refactor useChromeArchetype to be archetype-driven + add applyArchetypeToElement + useScopedChromeArchetype; App renders house on <html> during connect phase (fixes the last-entered-genre leak, resolveRootArchetype); WorldPreview card scopes the selected world's genre archetype to its own subtree. Phase 2 (picker): OptionList gains a genre-grouped mode (sticky headers, single radiogroup, header Rules link, auto-scroll-to-selected); ConnectScreen builds OptionGroup[] instead of a flat list; Lore moves into the WorldPreview card header; standalone ReferenceLinks removed FROM THE LOBBY. NOTE: ReferenceLinks component is RETAINED — still used in-game by GameBoard/widgets/NarrativeWidget.tsx; only its lobby usage is removed. Verified against current develop during planning."
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-ui
     workflow: tdd
     acceptance_criteria:
@@ -19,3 +20,6 @@ stories:
       - Rules link sits on each genre header (pack-scoped /reference/rules/{genre}) with aria-label; Lore link sits in the world-preview card (world-scoped /reference/lore/{genre}/{world}) with aria-label; the standalone lobby ReferenceLinks block is gone (component retained for in-game NarrativeWidget)
       - A neutral 'house' ChromeArchetype exists (distinct from parchment/terminal/rugged); during the connect/lobby phase document.documentElement carries data-archetype=house, NOT the last-entered genre; selecting a world applies the genre archetype to the preview-card element ONLY (not <html>)
       - Full UI suite green (npx vitest run) and npm run build passes; manual verify in the running app confirms grouping, relocated Rules/Lore, and no genre-theme leak onto the lobby shell after entering and leaving a world
+    completed: '2026-06-03'
+    review_verdict: approved
+completed: '2026-06-03'
