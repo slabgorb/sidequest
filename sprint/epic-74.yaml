@@ -30,9 +30,11 @@ stories:
     title: Author world-tier lore for every live world; unblock genre-lore deletion and avoid empty LoreStore on un-migrated worlds
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-content,sidequest-server
     workflow: tdd
+    completed: '2026-06-03'
     type: chore
   - id: 74-4
     title: 'World-flavor hardening: isinstance shape-guard on raw world theme/audio, weather-absence OTEL span, remove dead seed_lore_from_genre_pack'
@@ -42,3 +44,11 @@ stories:
     repos: sidequest-server
     workflow: tdd
     type: refactor
+  - id: 74-5
+    title: Convert content-pointing lore-seeding tests to synthetic fixtures (no real-pack coupling)
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: chore
