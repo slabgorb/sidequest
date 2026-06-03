@@ -8,8 +8,8 @@ supersedes: [89]
 superseded-by: null
 related: [55, 71, 86, 89, 106]
 tags: [game-systems, frontend-protocol, media-audio]
-implementation-status: partial
-implementation-pointer: 106
+implementation-status: live
+implementation-pointer: "sidequest-server/sidequest/dungeon/materializer.py (runtime gen, mask_sha OTEL) + sidequest-ui TacticalGridRenderer.tsx (image-mode)"
 ---
 
 # ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps

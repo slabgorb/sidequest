@@ -41,7 +41,7 @@ omniscient narration plus N rewrite passes.
 `sidequest/agents/perception_rewriter.py` module that exists today is
 a *different* thing: a deterministic, post-projection span-strip pass
 that runs in the MP fan-out emitter
-(`sidequest/server/emitters.py:283`) on top of the visibility
+(`sidequest/server/emitters.py`) on top of the visibility
 classifier. Its job is **status-effect-based fidelity override**: a
 PC who is `blinded` gets `visual_only` spans stripped on top of their
 base fidelity, a PC who is `deafened` gets `audio_only` spans
@@ -96,7 +96,7 @@ action happened off-camera.
 ### Coexistence with the MP fan-out filter
 
 `sidequest/agents/perception_rewriter.py` and its call site in
-`sidequest/server/emitters.py:283` are **retained**. The fan-out
+`sidequest/server/emitters.py` are **retained**. The fan-out
 filter does work the tool-layer filter cannot:
 
 - Tool-layer filtering operates on the *narrator's perspective_pc*.

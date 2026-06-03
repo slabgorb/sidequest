@@ -102,7 +102,7 @@ emit `agent_call_span` parents; their subprocess OTEL is still useful.
 
 The Phase D plan called for deleting "narrator-specific subprocess
 stderr scraping" — no such scraping exists. The mechanism was always
-the env-var passthrough at `claude_client.py:429-442`. That code stays
+the env-var passthrough at `claude_client.py`. That code stays
 because:
 
 - It's gated on `self._otel_endpoint` being set (already optional).

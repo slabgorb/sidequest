@@ -92,7 +92,7 @@ updating to describe its current semantics.
 
 ### UI Narration Buffer Cleanup
 
-In `sidequest-ui/src/App.tsx:180-264`:
+In `sidequest-ui/src/App.tsx`:
 
 1. Remove `chunks: GameMessage[]` from `narrationBufferRef`.
 2. Remove `watchdogTimer` from `narrationBufferRef`.
@@ -302,8 +302,8 @@ still describe their classes as "TTS":
 - Line 147: `VoicePresets` — "TTS voice preset configuration."
 
 These models are **not dead** — they are loaded by the genre pack
-loader at `genre/loader.py:820–821` (reads `voice_presets.yaml`) and
-declared on `genre/models/pack.py:168`. Whether the *content* (genre-
+loader at `genre/loader.py–821` (reads `voice_presets.yaml`) and
+declared on `genre/models/pack.py`. Whether the *content* (genre-
 declared narrator voice config) is meaningful post-TTS is a separate
 audit owed; not in scope for this ADR. The docstrings should be
 updated when that audit happens.

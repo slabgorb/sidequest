@@ -74,8 +74,8 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ✓ accepted | *partial* → Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103. |
 | [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ✓ accepted | live → docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md |
 | [ADR-120: Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World](120-genre-world-flavor-boundary.md) | ✓ accepted | live |
-| [ADR-121: Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance](121-layered-content-resolution.md) | ✓ accepted | live |
-| [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | ✓ accepted | deferred → docs/superpowers/specs/2026-06-01-lore-reference-images-and-audience-split-design.md (epic 65, stories 65-7…65-12) |
+| [ADR-121: Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance](121-layered-content-resolution.md) | ✓ accepted | *partial* → Resolver.resolve_merged four-tier walk is dead code; production uses two-tier shim (archetype/shim.py) — sprint story 82-4 (wire or narrow) |
+| [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | ✓ accepted | *partial* → sidequest-server reference_renderer.py — audience doctrine + stories 65-7..65-9 live; 65-10..65-12 pending |
 
 ## Prompt Engineering
 
@@ -93,13 +93,13 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | ✓ accepted | **drift** → ADR-102 |
 | [ADR-067: Unified Narrator Agent — Collapse Multi-Agent into Single Narrator](067-unified-narrator-agent.md) | ✓ accepted | live |
 | [ADR-098: Stateless Narrator Turns — Drop --resume, Bounded Per-Turn Prompts](098-stateless-narrator-turns.md) | ✓ accepted | live |
-| [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | ✓ accepted | *partial* → ADR-087 |
+| [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | ✓ accepted | live → sidequest-server/sidequest/server/websocket_session_handler.py (consume_clue_footnotes) + handlers/journal_request.py (JOURNAL_REQUEST) + ui useStateMirror.ts |
 | [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | ✓ accepted | *partial* → ADR-101 |
 | [ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred](110-game-state-snapshot-slimming.md) | ✓ accepted | *partial* → sidequest-server/sidequest/server/session_helpers.py#_PHASE_B_DROP_FIELDS |
-| [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | deferred → sprint/current-sprint.yaml#57-4 |
+| [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | ✓ accepted | live → sidequest-server/sidequest/agents/narrator_guardrails.py + orchestrator.py guardrail registration + intent_router.py CONFRONTATION_TRIGGER_CORE |
 | [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | ✓ accepted | *partial* → sprint/current-sprint.yaml#57-3 |
-| [ADR-113: Intent Router — Mechanical-Engagement Spine](113-intent-router-mechanical-engagement-spine.md) | ✓ accepted | *partial* → sprint/epic-59.yaml#59-4 |
-| [ADR-118: Universal Retrieval Layer — Index + Per-Turn Floor-and-Fill Retrieval for NPCs, Locations, and Factions](118-universal-retrieval-layer.md) | ✓ accepted | deferred |
+| [ADR-113: Intent Router — Mechanical-Engagement Spine](113-intent-router-mechanical-engagement-spine.md) | ✓ accepted | live → sidequest-server intent_router.py + run_dispatch_bank confidence gate (story 71-16, default 0.6, RulesConfig.dispatch_confidence_thresholds) |
+| [ADR-118: Universal Retrieval Layer — Index + Per-Turn Floor-and-Fill Retrieval for NPCs, Locations, and Factions](118-universal-retrieval-layer.md) | ✓ accepted | live → sidequest-server/sidequest/game/retrieval_orchestration.py + entity_card.py + dispatch/universal_retrieval.py — retrieve_turn_context called every narrator turn |
 | [ADR-123: Mechanical-Engagement Pipeline — Confidence-Gated Topological Dispatch Bank, Precondition/Unregistered Gates, and the LethalityArbiter](123-mechanical-engagement-pipeline.md) | ✓ accepted | live |
 | [ADR-134: Per-Session API Cost Runaway Detector and Hard-Kill Ceiling — Rolling-Baseline Triggers and Terminal Refusal](134-cost-runaway-ceiling.md) | ✓ accepted | live |
 
@@ -110,9 +110,9 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-014: Diamonds and Coal](014-diamonds-and-coal.md) | ✓ accepted | — |
 | [ADR-015: Character Builder State Machine](015-character-builder-state-machine.md) | ✓ accepted | live |
 | [ADR-016: Three-Mode Character Creation](016-three-mode-chargen.md) | ✓ accepted | live |
-| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | **drift** → ADR-087 |
+| [ADR-018: Trope Engine](018-trope-engine.md) | ✓ accepted | live → sidequest-server/sidequest/game/trope_tick.py + trope_time_skip.py — all four pillars wired at _execute_narration_turn (per ADR body 'Remaining gaps: None') |
 | [ADR-020: NPC Disposition System](020-npc-disposition-system.md) | ✓ accepted | live |
-| [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | live |
+| [ADR-021: Progression System](021-progression-system.md) | ✓ accepted | *partial* → Track 4 (journey recap) live; tracks 1-3 data-model only, no engine — sprint story 82-3 (milestone level-up TODO progression.py, AffinityState P6-deferred, item narrative_weight P2-deferred) |
 | [ADR-022: WorldBuilder Maturity](022-world-builder-maturity.md) | ✓ accepted | live |
 | [ADR-023: Session Persistence](023-session-persistence.md) | ✓ accepted | live |
 | [ADR-024: Dual-Track Tension Model](024-dual-track-tension-model.md) | ✓ accepted | live |
@@ -121,20 +121,20 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-077: Dogfight Subsystem via StructuredEncounter Extension](077-dogfight-subsystem.md) | ✓ accepted | live |
 | [ADR-080: Unified Narrative Weight Trait](080-unified-narrative-weight-trait.md) | ✓ accepted | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | ✓ accepted | deferred → ADR-087 |
-| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | ✓ accepted | *partial* → ADR-106 |
+| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | ✓ accepted | live → sidequest-server/sidequest/dungeon/materializer.py (runtime gen, mask_sha OTEL) + sidequest-ui TacticalGridRenderer.tsx (image-mode) |
 | [ADR-097: Class Mechanical Surface — One Signature Ability Per Non-Magical Class](097-class-mechanical-surface.md) | ✓ accepted | live |
 | [ADR-106: Runtime Procedural Jaquaysed Megadungeon — Contiguous Edge-Expansion, maze-maker Family Port + Complication Ledger](106-runtime-procedural-jaquaysed-megadungeon.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-16-sunden-deep-procedural-megadungeon-design.md |
-| [ADR-109: Persistent Location Descriptions + Mechanical Manifest](109-persistent-location-descriptions-mechanical-manifest.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md |
+| [ADR-109: Persistent Location Descriptions + Mechanical Manifest](109-persistent-location-descriptions-mechanical-manifest.md) | ✓ accepted | live → sidequest-server location two-mode resolver + PgPromotionStore + LOCATION_DESCRIPTION msg + sidequest-ui LocationPanel.tsx (54-1..54-9, 55-1) |
 | [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | ✓ accepted | *partial* → docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 | [ADR-116: A Confrontation Requires an Other — Participant Membership Invariant, Single Opponent-Seater, End-on-No-Other](116-confrontation-requires-an-other.md) | ✓ accepted | *partial* → sprint/context/context-story-59-13.md |
-| [ADR-117: Pluggable Ruleset Module System — Per-Genre Resolution Behind a RulesetModule Seam](117-pluggable-ruleset-module-system.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-26-pluggable-srd-ruleset-modules-design.md |
+| [ADR-117: Pluggable Ruleset Module System — Per-Genre Resolution Behind a RulesetModule Seam](117-pluggable-ruleset-module-system.md) | ✓ accepted | live → sidequest-server/sidequest/game/ruleset/registry.py — native, swn, cwn, wwn modules live and pack-bound |
 | [ADR-125: Chassis/Rig as a First-Class Entity — Bidirectional Bond Ledger, Seven-Tier Threshold Ladder, and Interior Render](125-chassis-rig-entity.md) | ✓ accepted | live |
 | [ADR-126: Pluggable Magic System — MagicPlugin Protocol, Import-Time Registry, and Validator Severity Model](126-pluggable-magic-system.md) | ✓ accepted | live |
 | [ADR-128: Trope Temporal Governor, Seed-Trope Deck, and NPC Development Ladder — Pile-Up Prevention and Resume-Safe Randomness](128-trope-governor-seed-deck.md) | ✓ accepted | live |
 | [ADR-129: N-Seat Table Engine — Generalized Sealed-Commit Loop for Poker/Auction with Cheat/Accuse Mechanics](129-table-game-engine.md) | ✓ accepted | live |
 | [ADR-130: Orbital Story-Time Clock and Course Model — Beat-Driven Time Advance and Approximate Hohmann Transit](130-orbital-clock-course.md) | ✓ accepted | live |
 | [ADR-136: Player-Facing Relationship Surface — Reactive RELATIONSHIPS Projection, Disposition Beat-Log, and the Claims-Only Belief Firewall](136-player-facing-relationship-surface.md) | ✓ accepted | live → docs/superpowers/plans/2026-06-01-npc-relationship-panel.md |
-| [ADR-137: Quest & Stakes Substrate — Create/Anchor Lane, First-Class active_stakes Source, and One-Mechanism Consolidation](137-quest-stakes-substrate.md) | ◇ proposed | deferred |
+| [ADR-137: Quest & Stakes Substrate — Create/Anchor Lane, First-Class active_stakes Source, and One-Mechanism Consolidation](137-quest-stakes-substrate.md) | ◇ proposed | *partial* → sidequest-server/sidequest/game/quest_seed.py (story 77-1 seed-at-creation live, quest.seeded_at_creation OTEL); 77-2..77-7 deferred |
 
 ## Frontend / Protocol
 
@@ -155,7 +155,7 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-036: Multiplayer Turn Coordination](036-multiplayer-turn-coordination.md) | ✓ accepted | live |
 | [ADR-037: Shared-World / Per-Player State Split](037-shared-world-per-player-state.md) | ✓ accepted | live |
 | [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | ✓ accepted | *partial* → ADR-105 |
-| [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | *partial* → ADR-101 |
+| [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | ✓ accepted | live → sidequest-server/sidequest/server/websocket_session_handler.py (NARRATION_SEGMENT fan-out) + visibility_classifier.py — both tracks landed (2026-05-28 amendment) |
 | [ADR-108: MP Item Attribution — Per-Recipient Tagging in the Narration Tool Contract](108-mp-item-attribution-recipient-tagging.md) | ✓ accepted | live |
 | [ADR-119: Authenticated Player Identity — Player-vs-Character Identity Split via Cloudflare Access](119-authenticated-player-identity.md) | ✓ accepted | *partial* → docs/superpowers/specs/2026-05-31-67-6-player-identity-design.md |
 | [ADR-122: SessionRoom Lifecycle — RoomRegistry Never-Evict Policy, LobbyState FSM, Multi-Socket Presence Ref-Counting](122-session-room-lifecycle.md) | ✓ accepted | live |
@@ -174,9 +174,9 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 
 | ADR | Status | Impl |
 |-----|--------|------|
-| [ADR-040: Narrative Character Sheet (No Raw Stats)](040-narrative-character-sheet.md) | ✓ accepted | live |
-| [ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)](049-narrator-verbosity-vocabulary.md) | ✓ accepted | live |
-| [ADR-052: Narrative Axis System (/tone Command)](052-narrative-axis-system.md) | ✓ accepted | live |
+| [ADR-040: Narrative Character Sheet (No Raw Stats)](040-narrative-character-sheet.md) | ✗ deprecated | — |
+| [ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)](049-narrator-verbosity-vocabulary.md) | ✓ accepted | *partial* → Prompt sections fire (orchestrator) but no UI sliders + TurnContext hardcodes defaults — sprint story 82-2 (no production consumer of player verbosity/vocabulary choice) |
+| [ADR-052: Narrative Axis System (/tone Command)](052-narrative-axis-system.md) | ✗ deprecated | — |
 | [ADR-057: Narrator Crunch Separation — LLM Narrates, Scripts Crunch](057-narrator-crunch-separation.md) | ✗ deprecated | — |
 
 ## NPC / Character Systems
@@ -304,34 +304,28 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-065: Protocol Message Decomposition — Split message.rs by Domain](065-protocol-message-decomposition.md) | deferred | — |
 | [ADR-081: Advancement Effect Variant Expansion (v1)](081-advancement-effect-variant-expansion.md) | deferred | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-099: Coyote Object Salvage Hooks — Two-Phase Auto-Fire for the_salvage](099-coyote-object-salvage-hooks.md) | deferred | — |
-| [ADR-111: Recency-Zone Narrator Guardrails Migrate to Tool Descriptions and Primacy-Cached Output Prose](111-narrator-guardrails-into-tool-descriptions.md) | deferred | sprint/current-sprint.yaml#57-4 |
-| [ADR-118: Universal Retrieval Layer — Index + Per-Turn Floor-and-Fill Retrieval for NPCs, Locations, and Factions](118-universal-retrieval-layer.md) | deferred | — |
-| [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | deferred | docs/superpowers/specs/2026-06-01-lore-reference-images-and-audience-split-design.md (epic 65, stories 65-7…65-12) |
-| [ADR-137: Quest & Stakes Substrate — Create/Anchor Lane, First-Class active_stakes Source, and One-Mechanism Consolidation](137-quest-stakes-substrate.md) | deferred | — |
 | [ADR-013: Lazy JSON Extraction](013-lazy-json-extraction.md) | **drift** | [ADR-102](102-tool-use-protocol-for-structured-output.md) |
-| [ADR-018: Trope Engine](018-trope-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-041: Genie Wish / Consequence Engine](041-genie-wish-consequence-engine.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-042: OCEAN Personality Live Evolution](042-ocean-personality-live-evolution.md) | **drift** | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-021: Progression System](021-progression-system.md) | *partial* | Track 4 (journey recap) live; tracks 1-3 data-model only, no engine — sprint story 82-3 (milestone level-up TODO progression.py, AffinityState P6-deferred, item narrative_weight P2-deferred) |
 | [ADR-033: Genre Mechanics Engine — Confrontations & Resource Pools](033-confrontation-engine-resource-pools.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
+| [ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)](049-narrator-verbosity-vocabulary.md) | *partial* | Prompt sections fire (orchestrator) but no UI sliders + TurnContext hardcodes defaults — sprint story 82-2 (no production consumer of player verbosity/vocabulary choice) |
 | [ADR-053: Scenario System (Clue Graph, Belief State, Gossip Propagation)](053-scenario-system.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-055: Room Graph Navigation](055-room-graph-navigation.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-075: 3D Dice Rendering — Three.js + Rapier Physics Overlay](075-3d-dice-rendering.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-092: Scene Harness — Dev-Gated HTTP Endpoint for Scenario Fixtures](092-scene-harness-http-endpoint.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
-| [ADR-096: Cavern Renderer Revival — Pre-Rendered Cellular Caverns for Tactical Maps](096-cavern-renderer-revival.md) | *partial* | [ADR-106](106-runtime-procedural-jaquaysed-megadungeon.md) |
-| [ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook](100-journal-pipeline-coherence.md) | *partial* | [ADR-087](087-post-port-subsystem-restoration-plan.md) |
 | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | *partial* | Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103. |
 | [ADR-102: Tool-Use Protocol for Structured Output](102-tool-use-protocol-for-structured-output.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-103: Native OTEL via Tool Registry](103-native-otel-via-tool-registry.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-104: Perception Filtering at the Tool Layer](104-perception-filtering-at-the-tool-layer.md) | *partial* | [ADR-105](105-broadcast-layer-perception-firewall.md) |
-| [ADR-105: Broadcast-Layer Perception Firewall — Completing ADR-104 in the MP Fan-Out](105-broadcast-layer-perception-firewall.md) | *partial* | [ADR-101](101-anthropic-sdk-as-narrator-backend.md) |
 | [ADR-106: Runtime Procedural Jaquaysed Megadungeon — Contiguous Edge-Expansion, maze-maker Family Port + Complication Ledger](106-runtime-procedural-jaquaysed-megadungeon.md) | *partial* | docs/superpowers/specs/2026-05-16-sunden-deep-procedural-megadungeon-design.md |
-| [ADR-109: Persistent Location Descriptions + Mechanical Manifest](109-persistent-location-descriptions-mechanical-manifest.md) | *partial* | docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md |
 | [ADR-110: Game-State Snapshot Slimming — Compact Encoding + Allowlist Pruning, Diff-with-Anchor Deferred](110-game-state-snapshot-slimming.md) | *partial* | sidequest-server/sidequest/server/session_helpers.py#_PHASE_B_DROP_FIELDS |
 | [ADR-112: Genre Prose Cache Promotion — Four Always-Fire Session-Static Sections Move to Stable, Conditional Sections Defer](112-genre-prose-stable-cache-promotion.md) | *partial* | sprint/current-sprint.yaml#57-3 |
-| [ADR-113: Intent Router — Mechanical-Engagement Spine](113-intent-router-mechanical-engagement-spine.md) | *partial* | sprint/epic-59.yaml#59-4 |
 | [ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials](114-ablative-hp-substrate.md) | *partial* | docs/superpowers/plans/2026-05-25-swn-hp-substrate.md |
 | [ADR-116: A Confrontation Requires an Other — Participant Membership Invariant, Single Opponent-Seater, End-on-No-Other](116-confrontation-requires-an-other.md) | *partial* | sprint/context/context-story-59-13.md |
-| [ADR-117: Pluggable Ruleset Module System — Per-Genre Resolution Behind a RulesetModule Seam](117-pluggable-ruleset-module-system.md) | *partial* | docs/superpowers/specs/2026-05-26-pluggable-srd-ruleset-modules-design.md |
 | [ADR-119: Authenticated Player Identity — Player-vs-Character Identity Split via Cloudflare Access](119-authenticated-player-identity.md) | *partial* | docs/superpowers/specs/2026-05-31-67-6-player-identity-design.md |
+| [ADR-121: Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance](121-layered-content-resolution.md) | *partial* | Resolver.resolve_merged four-tier walk is dead code; production uses two-tier shim (archetype/shim.py) — sprint story 82-4 (wire or narrow) |
+| [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | *partial* | sidequest-server reference_renderer.py — audience doctrine + stories 65-7..65-9 live; 65-10..65-12 pending |
+| [ADR-137: Quest & Stakes Substrate — Create/Anchor Lane, First-Class active_stakes Source, and One-Mechanism Consolidation](137-quest-stakes-substrate.md) | *partial* | sidequest-server/sidequest/game/quest_seed.py (story 77-1 seed-at-creation live, quest.seeded_at_creation OTEL); 77-2..77-7 deferred |
 
 <!-- ADR-INDEX:GENERATED:END -->

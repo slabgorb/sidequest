@@ -52,7 +52,7 @@ truth model for tactical battle maps. It is implemented:
 - `rooms.yaml` carries per-room `grid: |` ASCII fields with a glyph
   vocabulary and `legend:` block
 - The server emits a `tactical_grid` protocol payload
-  (`sidequest-server/sidequest/protocol/models.py:380`)
+  (`sidequest-server/sidequest/protocol/models.py`)
 - The client renders the grid as SVG via
   `sidequest-ui/src/components/TacticalGridRenderer.tsx`, with the
   `Automapper.tsx` topology view wrapping it
@@ -357,5 +357,5 @@ No ripple into existing systems until the pictures are good.
   — pilot target
 - `sidequest-ui/src/components/TacticalGridRenderer.tsx` — client to
   replace in Phase 3
-- `sidequest-server/sidequest/protocol/models.py:380` — `tactical_grid`
+- `sidequest-server/sidequest/protocol/models.py` — `tactical_grid`
   payload to simplify

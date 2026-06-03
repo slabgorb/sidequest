@@ -92,15 +92,15 @@ whenever the narrator happened to emit a `visual_scene`. Playtest 3 (Felix,
 2026-04-19) exposed this as policy-free — roughly 6–8 renders across 71 turns with no
 auditable rationale for *why those turns* (banter turns rendered while named-NPC
 introductions did not). See
-`sidequest-server/sidequest/server/render_trigger.py:9-14`.
+`sidequest-server/sidequest/server/render_trigger.py`.
 
 ### The trigger layer (Story 45-30)
 
 `classify_trigger(...)` in
-`sidequest-server/sidequest/server/render_trigger.py:44-92` is a **pure,
+`sidequest-server/sidequest/server/render_trigger.py` is a **pure,
 deterministic** gate that decides *whether the renderer should fire this turn at all*,
 returning a priority-ordered `RenderTriggerReason`
-(`render_trigger.py:29-41`):
+(`render_trigger.py`):
 
 ```
 BEAT_FIRE > SCENE_CHANGE > NPC_INTRO > ENCOUNTER_RESOLVED > NONE_POLICY
@@ -109,24 +109,24 @@ BEAT_FIRE > SCENE_CHANGE > NPC_INTRO > ENCOUNTER_RESOLVED > NONE_POLICY
 Inputs are already-extracted **structured** signals on `NarrationTurnResult` plus an
 out-of-band `encounter_resolved_this_turn` boolean threaded from the
 `narration_apply` seam — no regex, no prose inference
-(`render_trigger.py:5-7`, `:87-90`). Critically, `visual_scene` presence is **not** a
+(`render_trigger.py`, `:87-90`). Critically, `visual_scene` presence is **not** a
 signal; the docstring calls this out as the deliberate reversal of the old
-`visual is None` behaviour (`render_trigger.py:51-53`).
+`visual is None` behaviour (`render_trigger.py`).
 
 **Priority rationale.** First match wins. `BEAT_FIRE` (any trope/momentum beat
-resolved this turn, `render_trigger.py:67-69`) ranks above `NPC_INTRO`: when a beat
+resolved this turn, `render_trigger.py`) ranks above `NPC_INTRO`: when a beat
 and an NPC introduction coincide, the beat is the render-worthy moment. The story's
 own framing — "the introduction is the diamond, not the cigarette-sharing scene that
-follows" — is captured in the `NPC_INTRO` comment (`render_trigger.py:80-85`):
+follows" — is captured in the `NPC_INTRO` comment (`render_trigger.py`):
 only NPCs with `is_new=True` trigger; recurring NPCs (`is_new=False`) do not, because
 the *first* appearance is the Diamond and subsequent reappearances are not.
 `SCENE_CHANGE` compares the narrator's `result.location` against the
 **pre-turn** snapshot location (`snapshot_location_before`); a brand-new game passes
 `None`, so entering the world counts as a scene change
-(`render_trigger.py:56-78`). `ENCOUNTER_RESOLVED` is the lone signal sourced from the
-`narration_apply` seam rather than orchestrator output (`render_trigger.py:87-90`).
+(`render_trigger.py`). `ENCOUNTER_RESOLVED` is the lone signal sourced from the
+`narration_apply` seam rather than orchestrator output (`render_trigger.py`).
 `NONE_POLICY` is the explicit "no trigger this turn" terminal — an observable
-*decision not to render*, not an absence (`render_trigger.py:92`).
+*decision not to render*, not an absence (`render_trigger.py`).
 
 ### How the two layers compose
 
@@ -142,9 +142,9 @@ orthogonal: trigger says *what* is worth showing, cooldown says *how often*.
 The module docstring grounds the design in **ADR-014 (Diamonds and Coal)** and the
 **OTEL Observability Principle**: both "require an explicit, observable contract:
 every render decision lands a watcher event the GM panel can audit"
-(`render_trigger.py:9-14`). The `RenderTriggerReason` values are **wire literals** —
+(`render_trigger.py`). The `RenderTriggerReason` values are **wire literals** —
 they ship in the `render.trigger` watcher event `reason` field, the GM panel filters
-on them, and renaming one is a wire-breaking change (`render_trigger.py:32-35`). This
+on them, and renaming one is a wire-breaking change (`render_trigger.py`). This
 makes the render-selection decision a first-class lie-detectable subsystem rather than
 an implicit side effect, exactly as ADR-014 frames the Diamond/Coal distinction this
 trigger encodes.

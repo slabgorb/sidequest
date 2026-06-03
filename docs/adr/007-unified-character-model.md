@@ -16,7 +16,7 @@ implementation-pointer: null
 
 ## Implementation status (2026-05-02)
 
-**Live model: `sidequest-server/sidequest/game/character.py:66` (`class Character(BaseModel)`).** The full field list lives there and continues to evolve; this ADR captures only the unification decision and ordering principle, not the per-field schema.
+**Live model: `sidequest-server/sidequest/game/character.py` (`class Character(BaseModel)`).** The full field list lives there and continues to evolve; this ADR captures only the unification decision and ordering principle, not the per-field schema.
 
 Major shifts since the 2026-03-25 sketch:
 
@@ -26,7 +26,7 @@ Major shifts since the 2026-03-25 sketch:
 - **New top-level fields** (not in original sketch):
   - `abilities: list[AbilityDefinition]` — per-character powers (ADR-078, ADR-081)
   - `affinities: list[AffinityState]` — replaces the original `relationships: Vec<Relationship>` axis
-  - `known_facts: list[KnownFact]` — P1-required narrator continuity (see comment at `character.py:99`)
+  - `known_facts: list[KnownFact]` — P1-required narrator continuity (see comment at `character.py`)
   - `pronouns`, `is_friendly`, `resolved_archetype`, `archetype_provenance`, `background`, `drive`
 - **Personality** as a top-level field is gone; the equivalent narrative shape is folded into `narrative_state` and the genre-pack archetype.
 
@@ -42,7 +42,7 @@ Drift watch — if any of the following happens, this ADR is wrong:
 Characters need both narrative identity (name, backstory, narrative state, hooks, affinities) and mechanical stats (class, abilities, composure, archetype). Splitting these creates synchronization problems.
 
 ## Decision
-A single `Character` struct combines both concerns, with narrative fields first. The canonical schema lives in `sidequest-server/sidequest/game/character.py:66`.
+A single `Character` struct combines both concerns, with narrative fields first. The canonical schema lives in `sidequest-server/sidequest/game/character.py`.
 
 ### Why Unified
 1. Agents need both simultaneously — narrator reads narrative state and abilities together.

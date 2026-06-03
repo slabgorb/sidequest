@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [narrator]
-implementation-status: live
-implementation-pointer: null
+implementation-status: partial
+implementation-pointer: "Prompt sections fire (orchestrator) but no UI sliders + TurnContext hardcodes defaults — sprint story 82-2 (no production consumer of player verbosity/vocabulary choice)"
 ---
 
 # ADR-049: Narrator Verbosity and Vocabulary (Two-Axis Text Tuning)

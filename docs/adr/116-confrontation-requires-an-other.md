@@ -188,34 +188,34 @@ staged/deferred by the ADR itself, not gaps).
 
 **Live:**
 - **§1 invariant + §2 single opponent-seater.** `NoOpponentAvailableError` is
-  defined at `sidequest-server/sidequest/server/dispatch/encounter_lifecycle.py:38`
+  defined at `sidequest-server/sidequest/server/dispatch/encounter_lifecycle.py`
   and raised at `:591` when an adversarial encounter would instantiate with no
   opponent after the room-scan fallback. The dispatch handler catches it and
-  renders prose — `sidequest-server/sidequest/agents/subsystems/confrontation.py:40,134`
+  renders prose — `sidequest-server/sidequest/agents/subsystems/confrontation.py,134`
   (imports it; `except NoOpponentAvailableError` at `:134`) around the single
-  `instantiate_encounter_from_trigger` chokepoint (`confrontation.py:125`). The
+  `instantiate_encounter_from_trigger` chokepoint (`confrontation.py`). The
   room-sourced fallback seats opponents as `side="opponent"` for adversarial
-  confrontations (`encounter_lifecycle.py:431`, `default_side = "opponent" if
+  confrontations (`encounter_lifecycle.py`, `default_side = "opponent" if
   adversarial else "neutral"`), resolving the `EncounterActor.side` contract
   concern from §Context.
 - **§2 OTEL membership spans.** `participant.joined` fires from the seater
-  (`encounter_lifecycle.py:686-692`, span at `telemetry/spans/encounter.py:82`,
+  (`encounter_lifecycle.py`, span at `telemetry/spans/encounter.py`,
   `SPAN_PARTICIPANT_JOINED`).
 - **§4 End-on-no-Other.** Implemented and **wired into the production narration
   path**: `_resolve_if_no_opponent_remains` at
-  `sidequest-server/sidequest/server/narration_apply.py:3155`, called from
-  `_apply_narration_result_to_snapshot` at `narration_apply.py:3150`. It sets
+  `sidequest-server/sidequest/server/narration_apply.py`, called from
+  `_apply_narration_result_to_snapshot` at `narration_apply.py`. It sets
   `resolved=True`, `outcome="opponent_withdrew"`, phase→Resolution, and emits a
-  `participant.left` span per departed opponent (`narration_apply.py:3174`;
+  `participant.left` span per departed opponent (`narration_apply.py`;
   span at `telemetry/spans/encounter.py`). So §4 is live, not staged.
 
 **Deferred (per the ADR's own staging):**
 - **§3 guard generalization is partial by design.** The empty-opponent guard
   fires only on `combat` + `movement`:
   `_ADVERSARIAL_CATEGORIES = frozenset({"combat", "movement"})` at
-  `encounter_lifecycle.py:330`, gated through `_is_adversarial` (`:344`). The
+  `encounter_lifecycle.py`, gated through `_is_adversarial` (`:344`). The
   `social` / `pre_combat` extension the ADR flagged for "Follow-up" is **not yet
-  enforced** — confirmed by the inline note at `encounter_lifecycle.py:577`
+  enforced** — confirmed by the inline note at `encounter_lifecycle.py`
   ("`social` / `pre_combat` remain exempt for now (staged rollout)").
 - **§2 bestiary / encounter-table opponent sourcing** — Fork A; explicitly
   deferred in the ADR, room-scan only. No new pursuer-arrival sourcing in code.
@@ -244,7 +244,7 @@ Principle demands, and they are an instance of the semantic-telemetry pattern of
 The module
 (`sidequest-server/sidequest/server/confrontation_lifecycle_detector.py`) traces its
 origin to a concrete playtest bug, recorded in its docstring
-(`confrontation_lifecycle_detector.py:3-11`): a **2026-05-12 sq-playtest** Chalk Moth
+(`confrontation_lifecycle_detector.py`): a **2026-05-12 sq-playtest** Chalk Moth
 fight where the narrator declared the moth dead, the confrontation panel never cleared,
 and the *next* turn the narrator un-killed the moth. The root cause is broader (the
 narrator hallucinates kills not backed by metric saturation; rolls fail so the engine
@@ -259,7 +259,7 @@ nothing; the span is the lie detector.
 
 The detector is a pure **observer**, not a guardrail — it never blocks or rewrites
 narration, it only records the mismatch. `build_lifecycle_snapshot`
-(`confrontation_lifecycle_detector.py:119`) is called *after* narration apply with the
+(`confrontation_lifecycle_detector.py`) is called *after* narration apply with the
 post-apply `encounter`, and produces a frozen, JSON-safe
 `ConfrontationLifecycleSnapshot` (`:45`) whose attributes feed a watcher payload 1:1 via
 `to_watcher_attrs` (`:84`). The snapshot pairs the narrator's prose claim against the
@@ -271,7 +271,7 @@ engine's mechanical truth: `narration_claims_kill` /
 ### The kill-keyword corpus
 
 The prose-side signal is a small, deliberately **high-confidence** corpus of English
-kill/death lemmas, `_KILL_PATTERNS` (`confrontation_lifecycle_detector.py:29-42`), each a
+kill/death lemmas, `_KILL_PATTERNS` (`confrontation_lifecycle_detector.py`), each a
 word-boundary-anchored case-insensitive regex matched on the lemma rather than
 narrator-specific phrasing: `kill(ed|s)`, `slain`, `dead`, `dies`, `lifeless`,
 `corpse[ds]`, plus three phrase patterns drawn verbatim from the 2026-05-12 narration —
@@ -288,7 +288,7 @@ Stubbing / fail-loud discipline: keep it small and honest rather than fuzzy).
 ### The `narrator_kill_unbacked` classification and the multi-opponent disambiguation
 
 The lie-detector core is the `narrator_kill_unbacked` property
-(`confrontation_lifecycle_detector.py:68-82`). It returns true only when **all three**
+(`confrontation_lifecycle_detector.py`). It returns true only when **all three**
 hold:
 
 1. `narration_claims_kill` — the prose used a corpus keyword;
@@ -316,7 +316,7 @@ prose-outruns-the-engine bug.
 The detector is wired into the production narration path, fired **once per CONFRONTATION
 emit**, parallel to the existing `confrontation_peer_projection_broadcast` watcher event.
 In `websocket_session_handler.py`, after the peer-projection broadcast, the handler
-imports `build_lifecycle_snapshot` (`websocket_session_handler.py:1735-1737`), builds the
+imports `build_lifecycle_snapshot` (`websocket_session_handler.py`), builds the
 snapshot from `narration_text`, the pre-apply live flag, the post-apply
 `snapshot.encounter`, and `encounter_resolved_this_turn`
 (`:1739-1744`), then publishes it through `_watcher_publish("confrontation_lifecycle",
@@ -325,7 +325,7 @@ snapshot from `narration_text`, the pre-apply live flag, the post-apply
 raw narration/engine fields (`:98`), the GM panel receives both the verdict and every
 input that produced it on the same per-turn event — it can show *why* a turn was flagged,
 not just that it was. The module docstring's wiring note
-(`confrontation_lifecycle_detector.py:13-15`) matches this call site.
+(`confrontation_lifecycle_detector.py`) matches this call site.
 
 ### Scope and audience note
 

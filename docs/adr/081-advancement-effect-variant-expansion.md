@@ -162,7 +162,7 @@ with Epic 39 owed for per-class edge config wiring.
 The base 5 `AdvancementEffect` variants this ADR extends are alive in
 Python:
 
-- `AdvancementEffectEdgeMaxBonus` — `genre/models/advancement.py:69`
+- `AdvancementEffectEdgeMaxBonus` — `genre/models/advancement.py`
 - `AdvancementEffectEdgeRecovery` — line 78
 - `AdvancementEffectBeatDiscount` — line 88
 - `AdvancementEffectLeverageBonus` — line 99

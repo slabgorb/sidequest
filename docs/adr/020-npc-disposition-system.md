@@ -59,7 +59,7 @@ The Rust era (`sidequest-api/crates/sidequest-game/src/disposition.rs`) implemen
 The 2026-04 port carried the **numeric layer** but not the qualitative split:
 
 - `NPC.disposition: int = 0` with ±100 clamp lives in `sidequest/game/session.py`.
-- Deltas are applied in `session.py:860-861` and an OTEL span is emitted on every change.
+- Deltas are applied in `session.py` and an OTEL span is emitted on every change.
 - A `_disposition_attitude(int) -> str` helper exists in `sidequest/server/dispatch/opening.py` — but only as local rendering-time derivation for the opening NPC list. Two call sites; no other agent goes through it.
 
 Missing:

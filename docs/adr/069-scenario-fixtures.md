@@ -255,7 +255,7 @@ The Rust era implemented this ADR — the `sidequest-fixture` crate exists at `s
 What is live:
 
 - 4 fixture YAMLs in `scenarios/fixtures/` (`combat_test.yaml`, `dogfight.yaml`, `negotiation.yaml`, `poker.yaml`), schema-conformant to this ADR, all dated 2026-04-21.
-- UI scene-harness in `sidequest-ui/src/App.tsx:1183–1213`: when the URL contains `?scene=NAME`, the client `POST /dev/scene/:name`, expects a `{slug}` response, and navigates to `/solo/:slug`. Fixture YAML headers document the expected URL form: `http://localhost:5173/?scene=combat_test (requires DEV_SCENES=1)`.
+- UI scene-harness in `sidequest-ui/src/App.tsx–1213`: when the URL contains `?scene=NAME`, the client `POST /dev/scene/:name`, expects a `{slug}` response, and navigates to `/solo/:slug`. Fixture YAML headers document the expected URL form: `http://localhost:5173/?scene=combat_test (requires DEV_SCENES=1)`.
 
 What is dark:
 

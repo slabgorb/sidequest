@@ -37,7 +37,7 @@ instead it gives parity.
 
 ### 2. Tie band width
 
-`sidequest-server/sidequest/game/opposed_check.py:52–55` defines:
+`sidequest-server/sidequest/game/opposed_check.py–55` defines:
 
 ```
 shift ≥ +10 → CritSuccess

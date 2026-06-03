@@ -99,7 +99,7 @@ The `resolution_lock` mutex serializes the claim check itself.
 
 ADR-082 port from Rust to Python (~2026-04-19) carried over the
 `TurnManager.submit_input()` barrier API at
-`sidequest-server/sidequest/game/turn.py:93–101` but did **not** re-implement
+`sidequest-server/sidequest/game/turn.py–101` but did **not** re-implement
 the dispatch-side wiring. `_handle_player_action` continued to call
 `_execute_narration_turn` immediately on every WebSocket submission,
 which is FreePlay semantics regardless of player count. The barrier

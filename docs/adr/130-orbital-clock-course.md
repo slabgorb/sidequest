@@ -55,73 +55,73 @@ orbital mechanics.**
 
 ### Beat-only time advance
 
-`Clock` (`orbital/clock.py:15`) stores absolute story-hours from a world-defined
+`Clock` (`orbital/clock.py`) stores absolute story-hours from a world-defined
 epoch (`epoch_days: 0`). It is a dataclass with a single mutator: `advance(hours)`
-(`clock.py:30`), which is monotonic non-decreasing and **raises `ValueError` on
-negative input** (`clock.py:36`). Zero is a legal no-op (`clock.py:34`) — the
+(`clock.py`), which is monotonic non-decreasing and **raises `ValueError` on
+negative input** (`clock.py`). Zero is a legal no-op (`clock.py`) — the
 engine still records the *attempt* so the OTEL trail is complete. `t_days` is a
-derived 24h-per-day view (`clock.py:27`).
+derived 24h-per-day view (`clock.py`).
 
 The clock is **never** advanced by wall-clock and **never** by turn count. The
 only sanctioned mutation path is a beat — `advance_clock_via_beat`
-(`orbital/beats.py:53`). The module docstring states the invariant directly:
-"story-time advances *only* via beats" (`clock.py:5`).
+(`orbital/beats.py`). The module docstring states the invariant directly:
+"story-time advances *only* via beats" (`clock.py`).
 
 ### Beat taxonomy + durations
 
-`StoryBeatKind` (`beats.py:20`) is a four-value enum: `ENCOUNTER`, `REST`,
-`TRAVEL`, `DOWNTIME`. Each beat (`StoryBeat`, `beats.py:38`) carries a free-form
+`StoryBeatKind` (`beats.py`) is a four-value enum: `ENCOUNTER`, `REST`,
+`TRAVEL`, `DOWNTIME`. Each beat (`StoryBeat`, `beats.py`) carries a free-form
 `trigger` string (scene id / route id / action id, captured in OTEL) and an
 optional `duration_hours`. Duration resolution (`_resolve_duration`,
-`beats.py:73`) is per-kind:
+`beats.py`) is per-kind:
 
-- **ENCOUNTER** — default **1h** (`DEFAULT_DURATIONS_HOURS`, `beats.py:32`),
+- **ENCOUNTER** — default **1h** (`DEFAULT_DURATIONS_HOURS`, `beats.py`),
   narrator-overridable per scene.
 - **REST** — **fixed at 8h**; supplying any non-8.0 duration **raises
-  `ValueError`** (`beats.py:74`). The override is rejected, not silently
+  `ValueError`** (`beats.py`). The override is rejected, not silently
   clamped.
 - **TRAVEL** and **DOWNTIME** — no default; duration is **always supplied** (by
   the course model for TRAVEL, player-declared for DOWNTIME). Omitting it
-  **raises `ValueError`** (`beats.py:84`).
+  **raises `ValueError`** (`beats.py`).
 
 Every advance emits a `clock.advance` OTEL span (`emit_clock_advance`,
-`beats.py:63`, from `telemetry/spans/clock.py`) carrying beat kind, duration,
+`beats.py`, from `telemetry/spans/clock.py`) carrying beat kind, duration,
 before/after hours, and trigger — the GM-panel lie-detector for time advance.
 
 ### Approximate course + conjunction model
 
-`compute_eta_and_dv` (`orbital/course.py:28`) returns `(eta_hours,
+`compute_eta_and_dv` (`orbital/course.py`) returns `(eta_hours,
 delta_v_km_per_s)` for a party-body → destination-body pair. Its docstring is
 explicit: **"Hohmann-flavored cost. NOT real orbital mechanics."**
-(`course.py:33`). The model:
+(`course.py`). The model:
 
 - Treats each body's `semi_major_au` as a flat distance proxy — even for moons,
-  whose parent is not the system root (`course.py:46`).
+  whose parent is not the system root (`course.py`).
 - Builds a "chord" distance from a radial term (semi-major-axis difference) plus
   a small angular term derived from `chord_angular_distance_deg` over the epoch
-  phases (`course.py:48-52`).
+  phases (`course.py`).
 - Scales chord → hours and chord/radial → Δv via three **calibration
-  constants** (`course.py:22-25`): `TRAVEL_HOURS_PER_AU = 30.0`,
+  constants** (`course.py`): `TRAVEL_HOURS_PER_AU = 30.0`,
   `DELTA_V_BASE = 0.7`, `DELTA_V_RADIAL_FACTOR = 0.4`. These are tuned so that
   Far Landing → Tethys Watch ≈ 12h and Far Landing → The Gate ≈ 90h — *feel*,
-  not physics (`course.py:22`).
-- Identical bodies cost `(0.0, 0.0)` (`course.py:44`).
+  not physics (`course.py`).
+- Identical bodies cost `(0.0, 0.0)` (`course.py`).
 
-`compute_courses` (`course.py:119`) selects which bodies appear in the narrator's
+`compute_courses` (`course.py`) selects which bodies appear in the narrator's
 `<courses>` block by union of in-scope / recently-mentioned / quest-anchor body
 ids, with a priority-ordered hard cap of **12** (`COURSES_HARD_CAP`,
-`course.py:113`) to bound prompt-token cost. `PlottedCourse` (`course.py:95`) is
+`course.py`) to bound prompt-token cost. `PlottedCourse` (`course.py`) is
 the committed-course snapshot field, cleared on replace/cancel/arrival and
 durable across save/load.
 
 Conjunction timing (`orbital/conjunction.py`) finds the next angular-separation
 minimum for the chart HUD countdown via a **two-stage** method: a coarse 1-day
-grid scan (`_GRID_STEP_HOURS = 24.0`, `conjunction.py:32`) to bracket the first
+grid scan (`_GRID_STEP_HOURS = 24.0`, `conjunction.py`) to bracket the first
 significant local minimum, then **golden-section refinement** to ±0.1h
-(`_golden_section_min`, `conjunction.py:144`). A `_MIN_SIGNIFICANCE_DEG = 0.5`
-gate (`conjunction.py:40`) rejects floating-point-noise false minima from the
+(`_golden_section_min`, `conjunction.py`). A `_MIN_SIGNIFICANCE_DEG = 0.5`
+gate (`conjunction.py`) rejects floating-point-noise false minima from the
 Kepler solver. The soonest event across all configured pairs wins
-(`next_conjunction`, `conjunction.py:55`); `None` signals the HUD to hide the
+(`next_conjunction`, `conjunction.py`); `None` signals the HUD to hide the
 countdown. This is, again, a coarse approximation — good enough to surface a
 ticking number, not an ephemeris.
 
@@ -131,7 +131,7 @@ ticking number, not an ephemeris.
   the only sanctioned caller is `advance_clock_via_beat`. No wall-clock and no
   turn-count path mutates the clock.
 - **Monotonic, never negative.** `advance(hours)` raises on negative input
-  (`clock.py:36`); the clock is monotonic non-decreasing. Zero is a legal,
+  (`clock.py`); the clock is monotonic non-decreasing. Zero is a legal,
   OTEL-recorded no-op.
 - **Per-kind duration rules are enforced loudly.** REST is fixed at 8h
   (non-8.0 override → `ValueError`); ENCOUNTER defaults to 1h but is
@@ -160,7 +160,7 @@ ticking number, not an ephemeris.
   player-facing surfaces without the engine pretending to a physical fidelity it
   doesn't have.
 - The approximate model is cheap, deterministic, and pure (no I/O, no global
-  state — `course.py:3`), so it's trivially testable and stable across save/load.
+  state — `course.py`), so it's trivially testable and stable across save/load.
 - The calibration constants are a single, named, tunable surface.
 
 **Negative / cost**

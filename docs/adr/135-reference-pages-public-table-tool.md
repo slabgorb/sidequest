@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [53, 86, 104, 119, 120]
 tags: [core-architecture, frontend-protocol]
-implementation-status: deferred
-implementation-pointer: "docs/superpowers/specs/2026-06-01-lore-reference-images-and-audience-split-design.md (epic 65, stories 65-7…65-12)"
+implementation-status: partial
+implementation-pointer: "sidequest-server reference_renderer.py — audience doctrine + stories 65-7..65-9 live; 65-10..65-12 pending"
 ---
 
 # ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience

@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [39, 53, 57, 76, 87]
 tags: [agent-system, frontend-protocol, npc-character]
-implementation-status: partial
-implementation-pointer: 87
+implementation-status: live
+implementation-pointer: "sidequest-server/sidequest/server/websocket_session_handler.py (consume_clue_footnotes) + handlers/journal_request.py (JOURNAL_REQUEST) + ui useStateMirror.ts"
 ---
 
 # ADR-100: Journal Pipeline Coherence — Footnotes, KnownFacts, JOURNAL_RESPONSE, and the Scenario Clue Hook
@@ -31,10 +31,10 @@ These three concerns share the journal as their surface, but the pipeline that c
 While scoping story **50-5** (*"Scenario: wire `discover_clue` to narration consumption"*), the architect found that:
 
 - `ScenarioState.discover_clue()` exists with OTEL span emission (`SPAN_SCENARIO_ADVANCE`) but has **zero production callers** in either the Python tree or the historical Rust reference.
-- The `Footnote` model (ADR-039) carries a `fact_id` field that the UI's `KnowledgeJournal` already uses as a dedupe key — but **`useStateMirror.ts:186` manufactures its own synthetic id and ignores any narrator-supplied `fact_id`**.
-- `KnownFact.source` and `KnownFact.learned_turn` are marked `P5-deferred: used by scenario system` (`game/character.py:29`) — **these fields were designed for scenario clue discoveries that have never been wired**.
-- The `JOURNAL_REQUEST` / `JOURNAL_RESPONSE` protocol message types exist in `protocol/enums.py:51-52`, and the UI is fully prepared to consume `JOURNAL_RESPONSE` with the canonical knowledge model (`useStateMirror.ts:130-155`) — but **no server handler emits `JOURNAL_RESPONSE`**.
-- Every footnote that reaches the UI is rendered with `confidence: 'Suspected'` because **`useStateMirror.ts:194` hardcodes the value** regardless of category, source, or whether a scenario is bound. The "Suspected" label players see in production is a UI default, not a mechanic — a load-bearing lie.
+- The `Footnote` model (ADR-039) carries a `fact_id` field that the UI's `KnowledgeJournal` already uses as a dedupe key — but **`useStateMirror.ts` manufactures its own synthetic id and ignores any narrator-supplied `fact_id`**.
+- `KnownFact.source` and `KnownFact.learned_turn` are marked `P5-deferred: used by scenario system` (`game/character.py`) — **these fields were designed for scenario clue discoveries that have never been wired**.
+- The `JOURNAL_REQUEST` / `JOURNAL_RESPONSE` protocol message types exist in `protocol/enums.py`, and the UI is fully prepared to consume `JOURNAL_RESPONSE` with the canonical knowledge model (`useStateMirror.ts`) — but **no server handler emits `JOURNAL_RESPONSE`**.
+- Every footnote that reaches the UI is rendered with `confidence: 'Suspected'` because **`useStateMirror.ts` hardcodes the value** regardless of category, source, or whether a scenario is bound. The "Suspected" label players see in production is a UI default, not a mechanic — a load-bearing lie.
 
 What was scoped as a one-story wiring job is in fact a keystone in a partially-built arch. This ADR names the arch.
 
@@ -46,11 +46,11 @@ Treat the journal pipeline as **one coherent subsystem with five named component
 
 | # | Component | Location | Status |
 |---|-----------|----------|--------|
-| 1 | **Narrator footnote emission** — fenced `game_patch` JSON with `footnotes[]` (`marker, summary, category, is_new, fact_id`). | `sidequest-server/sidequest/agents/orchestrator.py:683+`, prompt at `agents/prompt_framework/core.py:350-374` | **Live.** Governed by ADR-039. The footnote field set is current; the `lore_established` → `footnotes` rename happened with ADR-039's 2026-05-02 revival. |
-| 2 | **Footnote forwarding to UI** — extracted footnotes coerced into typed `Footnote` models, packaged into `NarrationPayload.footnotes`, broadcast through `EventLog` + `ProjectionFilter`. | `sidequest-server/sidequest/server/websocket_session_handler.py:2900-2937` | **Live.** This is the per-turn ephemeral channel. |
-| 3 | **Server-side `Character.known_facts`** — the canonical, persistent journal stored per character. `KnownFact(content, confidence, source, learned_turn)`. | `sidequest-server/sidequest/game/character.py:19-31`, mutated via `WorldStatePatch.discovered_facts` at `sidequest-server/sidequest/game/session.py:1150-1157` | **Live for narrator-emitted facts.** `source` and `learned_turn` are explicitly marked P5-deferred for the scenario system — they have valid defaults but no scenario writer has ever populated them. |
-| 4 | **UI ephemeral knowledge build** — `useStateMirror` accumulates a `knowledge[]` array from each turn's `NarrationPayload.footnotes`. | `sidequest-ui/src/hooks/useStateMirror.ts:182-198` | **Live but lying.** Manufactures synthetic `fact_id` from `${turnCounter}-${marker ?? index}` and ignores narrator-supplied `fact_id`. Hardcodes `source: 'Observation'` and `confidence: 'Suspected'` regardless of input. |
-| 5 | **Scenario clue graph + state** — `ClueGraph` model loaded from genre pack scenarios, bound at session-init into `snapshot.scenario_state`. `ScenarioState.discover_clue(clue_id)` exists and emits `SPAN_SCENARIO_ADVANCE`. | `sidequest-server/sidequest/game/scenario_state.py:146-160`, `sidequest-server/sidequest/genre/models/scenario.py:118-123`, bind at `sidequest-server/sidequest/server/dispatch/scenario_bind.py:74-122` | **Data layer live, callers dark.** No production code calls `discover_clue()`. Closed by story 50-5. |
+| 1 | **Narrator footnote emission** — fenced `game_patch` JSON with `footnotes[]` (`marker, summary, category, is_new, fact_id`). | `sidequest-server/sidequest/agents/orchestrator.py+`, prompt at `agents/prompt_framework/core.py` | **Live.** Governed by ADR-039. The footnote field set is current; the `lore_established` → `footnotes` rename happened with ADR-039's 2026-05-02 revival. |
+| 2 | **Footnote forwarding to UI** — extracted footnotes coerced into typed `Footnote` models, packaged into `NarrationPayload.footnotes`, broadcast through `EventLog` + `ProjectionFilter`. | `sidequest-server/sidequest/server/websocket_session_handler.py` | **Live.** This is the per-turn ephemeral channel. |
+| 3 | **Server-side `Character.known_facts`** — the canonical, persistent journal stored per character. `KnownFact(content, confidence, source, learned_turn)`. | `sidequest-server/sidequest/game/character.py`, mutated via `WorldStatePatch.discovered_facts` at `sidequest-server/sidequest/game/session.py` | **Live for narrator-emitted facts.** `source` and `learned_turn` are explicitly marked P5-deferred for the scenario system — they have valid defaults but no scenario writer has ever populated them. |
+| 4 | **UI ephemeral knowledge build** — `useStateMirror` accumulates a `knowledge[]` array from each turn's `NarrationPayload.footnotes`. | `sidequest-ui/src/hooks/useStateMirror.ts` | **Live but lying.** Manufactures synthetic `fact_id` from `${turnCounter}-${marker ?? index}` and ignores narrator-supplied `fact_id`. Hardcodes `source: 'Observation'` and `confidence: 'Suspected'` regardless of input. |
+| 5 | **Scenario clue graph + state** — `ClueGraph` model loaded from genre pack scenarios, bound at session-init into `snapshot.scenario_state`. `ScenarioState.discover_clue(clue_id)` exists and emits `SPAN_SCENARIO_ADVANCE`. | `sidequest-server/sidequest/game/scenario_state.py`, `sidequest-server/sidequest/genre/models/scenario.py`, bind at `sidequest-server/sidequest/server/dispatch/scenario_bind.py` | **Data layer live, callers dark.** No production code calls `discover_clue()`. Closed by story 50-5. |
 
 ### The three seams
 
@@ -64,7 +64,7 @@ Treat the journal pipeline as **one coherent subsystem with five named component
 
 Two falsehoods are visible to the player today. This ADR names them and obligates the feeder manifest to retire them:
 
-1. **The "Suspected" label is constant.** Every journal entry players see is rendered as `Suspected` because of `useStateMirror.ts:194`. The label has no mechanical meaning today. Until the C-seam lands, the label *is the truth* — there is no other source. After C, "Suspected" must come from the server's `KnownFact.confidence` or be removed entirely.
+1. **The "Suspected" label is constant.** Every journal entry players see is rendered as `Suspected` because of `useStateMirror.ts`. The label has no mechanical meaning today. Until the C-seam lands, the label *is the truth* — there is no other source. After C, "Suspected" must come from the server's `KnownFact.confidence` or be removed entirely.
 2. **Footnote dedupe is per-turn, not per-fact.** The UI's `seenFactIds` set uses synthetic ids, so two narrations referencing the same fact on different turns produce two journal entries. The narrator's `fact_id` field — designed to prevent exactly this — is ignored.
 
 Both are documented here as **load-bearing UI debt**, not bugs to chase casually. They are part of the contract the C-seam closes.
@@ -95,9 +95,9 @@ The feeder stories live under **epic 50** (port cleanup) alongside 50-5 and 50-6
 | **50-5** | Seams A + B | 3 | Specced in `docs/superpowers/specs/2026-05-13-50-5-scenario-clue-discovery-via-journal-design.md`. |
 | **50-6** (backlog) | DAG enforcement | 2 | Pre-existing, depends on 50-5. |
 | **50-14** — `JOURNAL_REQUEST` handler | Seam C (server side) | 3 | Server replies to `JOURNAL_REQUEST` from `character.known_facts`. Validates `to:` field per ADR-036 multiplayer doctrine. Adds `SPAN_JOURNAL_REPLAY` (zero-duration span; entry count, character id). Depends on 50-5. |
-| **50-15** — UI fact_id respect | Seam C (UI side, part 1) | 2 | Drop synthetic `${turn}-${marker}` id manufacture in `useStateMirror.ts:186`. Consume narrator-supplied `Footnote.fact_id` when present. Per-fact dedupe instead of per-turn. Depends on 50-14. |
-| **50-16** — UI confidence propagation | Retire the "Suspected" hardcode | 2 | Drop the `confidence: 'Suspected'` hardcode in `useStateMirror.ts:194`. The canonical confidence value originates in `KnownFact.confidence` (server-side) and reaches the UI through `JOURNAL_RESPONSE` entries served by 50-14. Per-turn footnote-derived entries either render without a confidence pill until refreshed from canonical, or default to `Suspected` only when no canonical entry exists yet — the exact UX is Klinger's call within this story. Belief-state-derived `Rumored` entries land later with the ADR-053 gossip restoration. Depends on 50-14. |
-| **50-17** — `KnownFact.confidence` enum promotion | Type safety | 1 | Promote `KnownFact.confidence: str = "confirmed"` to `Literal["Certain", "Suspected", "Rumored", "Discovered"]`. Migrate existing call sites. Mirrors UI `Confidence` enum already in `GameStateProvider.tsx:32`. |
+| **50-15** — UI fact_id respect | Seam C (UI side, part 1) | 2 | Drop synthetic `${turn}-${marker}` id manufacture in `useStateMirror.ts`. Consume narrator-supplied `Footnote.fact_id` when present. Per-fact dedupe instead of per-turn. Depends on 50-14. |
+| **50-16** — UI confidence propagation | Retire the "Suspected" hardcode | 2 | Drop the `confidence: 'Suspected'` hardcode in `useStateMirror.ts`. The canonical confidence value originates in `KnownFact.confidence` (server-side) and reaches the UI through `JOURNAL_RESPONSE` entries served by 50-14. Per-turn footnote-derived entries either render without a confidence pill until refreshed from canonical, or default to `Suspected` only when no canonical entry exists yet — the exact UX is Klinger's call within this story. Belief-state-derived `Rumored` entries land later with the ADR-053 gossip restoration. Depends on 50-14. |
+| **50-17** — `KnownFact.confidence` enum promotion | Type safety | 1 | Promote `KnownFact.confidence: str = "confirmed"` to `Literal["Certain", "Suspected", "Rumored", "Discovered"]`. Migrate existing call sites. Mirrors UI `Confidence` enum already in `GameStateProvider.tsx`. |
 | ADR-087 P2 (already scheduled) — Gossip engine | Belief propagation | 8 | Lights up the parallel belief-state surface; future stories plumb belief into journal entries with `confidence: 'Rumored'`. |
 | ADR-087 P2 (already scheduled) — Accusation evaluator | Verdict computation | 5 | Consumes the full journal; produces `EvidenceSummary`. |
 
@@ -157,4 +157,4 @@ When all feeder stories land, this ADR's frontmatter flips to `implementation-st
 - **Does not commit to a feeder-story epic number.** PM/SM owns story-id assignment; this ADR specifies the *work*, not the *epic*.
 - **Does not specify UI visual treatment of clue discoveries.** Whether the journal renders a "Clue Discovered!" badge, a special icon, or just a confidence pill is a UX-Designer (Klinger) decision tracked separately from this architectural map.
 - **Does not address belief state surfacing in the journal.** Belief-derived entries (NPC X *suspects* Y) belong with ADR-053's gossip restoration; a future J-5 / J-6 would feed `BeliefState` into the journal with `confidence: 'Rumored'` and a `source: 'Gossip'`. Out of scope here.
-- **Does not resolve multiplayer-visibility of the journal.** Per-player journal filtering rides on ADR-036 / ADR-037 projection filtering, which is already governed by the `JOURNAL_RESPONSE.to` invariant at `sidequest-server/sidequest/game/projection/invariants.py:30`. This ADR inherits that doctrine without restating it.
+- **Does not resolve multiplayer-visibility of the journal.** Per-player journal filtering rides on ADR-036 / ADR-037 projection filtering, which is already governed by the `JOURNAL_RESPONSE.to` invariant at `sidequest-server/sidequest/game/projection/invariants.py`. This ADR inherits that doctrine without restating it.

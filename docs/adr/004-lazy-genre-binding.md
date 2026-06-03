@@ -18,10 +18,10 @@ implementation-pointer: null
 
 The decision is honored end-to-end in the live Python tree. Wire-protocol shape lives under ADR-038; this ADR captures only the binding-time behavior.
 
-- **Wire payload:** `sidequest-server/sidequest/protocol/messages.py:180` — `SessionEventPayload` carries `event`, `genre`, `world` (plus other event-specific fields documented inline).
-- **Connect handler / lazy load:** `sidequest-server/sidequest/handlers/connect.py:283` — `genre_pack = loader.load(row.genre_slug)`. Pack is loaded the first time a session binds; the server starts with no pack in memory.
-- **Session field:** `sidequest-server/sidequest/server/session_handler.py:422` — sessions carry a `genre_pack: GenrePack` attribute populated on connect.
-- **Handler docstring:** `session_handler.py:7-8` — "SESSION_EVENT{connect}: bind genre/world, load or create GameSnapshot, emit SESSION_EVENT{connected}". Behavior matches the ADR.
+- **Wire payload:** `sidequest-server/sidequest/protocol/messages.py` — `SessionEventPayload` carries `event`, `genre`, `world` (plus other event-specific fields documented inline).
+- **Connect handler / lazy load:** `sidequest-server/sidequest/handlers/connect.py` — `genre_pack = loader.load(row.genre_slug)`. Pack is loaded the first time a session binds; the server starts with no pack in memory.
+- **Session field:** `sidequest-server/sidequest/server/session_handler.py` — sessions carry a `genre_pack: GenrePack` attribute populated on connect.
+- **Handler docstring:** `session_handler.py` — "SESSION_EVENT{connect}: bind genre/world, load or create GameSnapshot, emit SESSION_EVENT{connected}". Behavior matches the ADR.
 
 Drift watch — if any of the following happens, this ADR is wrong:
 - Server-side process boots a fixed genre pack from environment or CLI flag and refuses connect-time selection.

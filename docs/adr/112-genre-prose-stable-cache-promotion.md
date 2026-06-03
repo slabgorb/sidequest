@@ -32,7 +32,7 @@ The narrator prompt framework owns a binary classifier:
 `system=` array on the Anthropic SDK path (ADR-101 Phase D Task 6); the
 User bucket flows into the uncached per-turn user message.
 
-The current allowlist at `bucket.py:28–41` covers ten section names:
+The current allowlist at `bucket.py–41` covers ten section names:
 
 ```
 narrator_identity
@@ -48,7 +48,7 @@ genre_transition_hints
 ```
 
 Six genre-prose sections are registered on every narrator turn at
-`orchestrator.py:1265–1385` but are **not** on the allowlist:
+`orchestrator.py–1385` but are **not** on the allowlist:
 
 | Section name | Site | Zone | Registration condition | Source |
 |---|---|---|---|---|
@@ -85,7 +85,7 @@ content is correctly cached on the first (non-continuation) call; any
 section meeting the same byte-identity-across-turns invariant pays only
 on the first turn after the pack loads — once 60-4 lands.
 
-`STABLE_SECTION_NAMES` is described at `bucket.py:25–27` as
+`STABLE_SECTION_NAMES` is described at `bucket.py–27` as
 *"Section names whose content is byte-identical across every turn of the
 same game given fixed operator settings."* That is the load-bearing
 invariant. Violating it — registering a section into `STABLE_SECTION_NAMES`
@@ -132,13 +132,13 @@ Add to `bucket.STABLE_SECTION_NAMES`:
 > promoted. The four-section list above is the *as-decided* state; read
 > the 2026-05-25 amendment for the *as-shipped* state.
 
-Each section's registration site at `orchestrator.py:1368–1411` keeps
+Each section's registration site at `orchestrator.py–1411` keeps
 the same name, content, and `SectionCategory.Genre`. The attention zone
 is changed from `Valley → Early` so the System-bucket content actually
 lands in the cache-marked `system_blocks[0]` block; the bucket
 classifier alone is insufficient under the ADR-101 Phase D Task 6
 zone-aligned cache split (only Primacy + Early compose the cached
-`stable_text`). The bucket classifier change at `bucket.py:28` AND the
+`stable_text`). The bucket classifier change at `bucket.py` AND the
 four `AttentionZone.Early` updates at the registration sites are the
 two edits needed to route the content into the cached System block.
 
@@ -317,7 +317,7 @@ replay exercising the SDK backend:
 
 ### Neutral
 
-- The four registration sites at `orchestrator.py:1368–1411` have
+- The four registration sites at `orchestrator.py–1411` have
   `AttentionZone.Early` (re-zoned from Valley by Story 57-3 — see the
   2026-05-20 amendment in §Decision:Promote above). Same name, same
   category (Genre). The bucket-classifier change AND the zone change
@@ -387,7 +387,7 @@ no further action is needed.
 - The new OTEL span belongs at the System/User partition point — wherever
   the SDK path consumes the `default_bucket_for_section` classifier to
   build the `system=` array vs the user `messages[0]` content. Today
-  that is `orchestrator.py:3158–3193` per the audit; the implementation
+  that is `orchestrator.py–3193` per the audit; the implementation
   pass verifies the exact line.
 - Tests (per the server-side wiring-test rule): a unit test asserts the
   four section names resolve to `SectionBucket.System` under
@@ -457,4 +457,4 @@ partially reversed the four-section promotion from Story 57-3:
 - `sidequest-server/sidequest/agents/prompt_framework/bucket.py` — the
   allowlist this ADR edits
 - `docs/superpowers/specs/2026-05-10-stateless-narrator-design.md` —
-  the spec § cited by `bucket.py:23` for the mutability invariant
+  the spec § cited by `bucket.py` for the mutability invariant

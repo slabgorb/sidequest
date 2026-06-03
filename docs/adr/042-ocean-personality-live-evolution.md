@@ -70,13 +70,13 @@ Implemented in: `sidequest-game/src/ocean_shift_proposals.rs`, `sidequest-game/s
 
 The Rust era (`sidequest-api/crates/sidequest-game/src/ocean.rs` + `ocean_shift_proposals.rs`) implemented this ADR in full: the `PersonalityEvent` enum, the `OceanShiftProposal` type, the narrator-emit pipeline, the engine that mapped events to dimension deltas, and the regeneration of `ocean_summary` from the updated profile.
 
-The 2026-04 port carried the **data shape** only. From `sidequest/genre/models/ocean.py:3` (porter's own note): _"Port of sidequest-genre/src/models/ocean.rs (data shape only — no random/jitter/shift methods)."_
+The 2026-04 port carried the **data shape** only. From `sidequest/genre/models/ocean.py` (porter's own note): _"Port of sidequest-genre/src/models/ocean.rs (data shape only — no random/jitter/shift methods)."_
 
 What landed:
 
 - `OceanProfile`, `OceanDimension`, `OceanShift`, `OceanShiftLog` models in `sidequest/genre/models/ocean.py`.
-- `summarize_ocean(profile)` in `sidequest/cli/namegen/namegen.py:649`, called **once at character-generation time**.
-- `ocean_summary` field exists on the API surface but is hardcoded `None` in `sidequest/server/rest.py:333`.
+- `summarize_ocean(profile)` in `sidequest/cli/namegen/namegen.py`, called **once at character-generation time**.
+- `ocean_summary` field exists on the API surface but is hardcoded `None` in `sidequest/server/rest.py`.
 
 What is dark — the entire live-evolution loop:
 

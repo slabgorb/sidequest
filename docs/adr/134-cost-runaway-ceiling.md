@@ -36,7 +36,7 @@ modules but no safety machinery, and the 2026-05-20 cache amendment is about
 cache layout, not billing protection.
 
 That left a billing-catastrophe gap that production hit. The
-`anthropic_sdk_client.py:29-83` comments record the forcing incidents:
+`anthropic_sdk_client.py` comments record the forcing incidents:
 
 - **2026-05-23** — a 60K-input / 12-output-token call fingerprint: a snapshot
   misroute or prompt-bloat regression that bills a fat input with almost no
@@ -45,14 +45,14 @@ That left a billing-catastrophe gap that production hit. The
   each with no per-call spike sharp enough to trip a naive 5× alarm.
 
 A second structural pressure comes from ADR-122 (SessionRoom never-evict):
-`RoomRegistry` (`session_room.py:817`) **never evicts a slug**, so the
+`RoomRegistry` (`session_room.py`) **never evicts a slug**, so the
 `AnthropicSdkClient` instance backing a slug's orchestrator lives for the
-**server process lifetime**, not per-session (`session_room.py:366-375`). A
+**server process lifetime**, not per-session (`session_room.py`). A
 long-lived client means (a) any per-session state must be keyed on session_id,
 not instance-wide, and (b) a rolling baseline that adapts to observed traffic
 can **self-train onto a sustained runaway** — if 10 turns all bill $0.12, the
 mean is $0.12 and turn 11 at $0.18 is only 1.5× baseline, under any 5× alarm
-(`anthropic_sdk_client.py:53-61`). The May-23 incident, run continuously, would
+(`anthropic_sdk_client.py`). The May-23 incident, run continuously, would
 have calibrated its own alarm into silence within 10 calls.
 
 So the engine needs two things ADR-101 never specified: (1) a *detector* that
@@ -76,12 +76,12 @@ one-shot curate) bypass both mechanisms entirely.
 After each billable SDK iteration, the just-observed call is checked against
 **two parallel rolling baselines** — one for `cost_usd`, one for `input_tokens`
 — each a per-session `deque(maxlen=K)` with **K=10** (`_BASELINE_WINDOW_K`,
-`anthropic_sdk_client.py:47`, `231-232`). Pre-warmup (fewer than K observations)
+`anthropic_sdk_client.py`, `231-232`). Pre-warmup (fewer than K observations)
 the comparator uses fixed warmup floors (`_WARMUP_COST_USD_FLOOR=$0.03`,
 `_WARMUP_INPUT_TOKENS_FLOOR=12_000`, lines 48-49); post-warmup it uses the
 rolling mean, **clamped at a ceiling** (`_BASELINE_COST_CEILING=3×$0.03=$0.09`,
 `_BASELINE_INPUT_CEILING=3×12_000=36_000`, lines 74-75) so a drifted baseline
-cannot raise the trip threshold without bound (`anthropic_sdk_client.py:746-758`).
+cannot raise the trip threshold without bound (`anthropic_sdk_client.py`).
 
 Four triggers, two relative and two absolute (lines 765-782):
 
@@ -94,7 +94,7 @@ Four triggers, two relative and two absolute (lines 765-782):
 
 The **absolute floors are the safety net the rolling baselines cannot provide**:
 they fire regardless of how high the rolling mean has self-trained, catching the
-trained-into-silence case (`anthropic_sdk_client.py:53-61`, `775-779`). The
+trained-into-silence case (`anthropic_sdk_client.py`, `775-779`). The
 `input_absolute` floor specifically catches the high-output sibling of the
 60K-in/12-out fingerprint — a 50K-in/800-out call that slips past
 `io_fingerprint`'s `output<50` clause but is still a snapshot-bloat canary
@@ -102,12 +102,12 @@ trained-into-silence case (`anthropic_sdk_client.py:53-61`, `775-779`). The
 
 The baseline windows are appended to **after** the check, so the comparator
 always sees prior observations; a healthy call still seeds the window so the
-next call has priors (`anthropic_sdk_client.py:834-846`).
+next call has priors (`anthropic_sdk_client.py`).
 
 ### 2. Per-session cumulative hard-kill ceiling (`_check_cost_ceiling` / `_update_session_cumulative`)
 
 A per-session_id cumulative-cost dict (`_session_cumulative_cost_usd`,
-`anthropic_sdk_client.py:267`) accumulates every billable iter's cost. The
+`anthropic_sdk_client.py`) accumulates every billable iter's cost. The
 ceiling is `_SESSION_COST_CEILING_USD=$10.00` (l.92) — sized at ~333 healthy
 $0.03 turns of headroom, tight enough that a 60-7-class regression at $0.165/turn
 caps at ~60 turns / one playtest evening, not a weekend (lines 85-92). It is
@@ -141,12 +141,12 @@ Two enforcement points in `complete_with_tools`:
   cumulative tracker (`dict[str, float]`) are keyed on `session_id`, never
   instance-wide — required because one long-lived client (ADR-122 never-evict)
   backs many sessions over its lifetime, and deterministic-URL MP rejoins inherit
-  the prior session's window correctly (`anthropic_sdk_client.py:37-45`,
+  the prior session's window correctly (`anthropic_sdk_client.py`,
   `215-232`). The canonical `session_id` is the room slug, flowing in as
-  `session_id=sd.game_slug` (`session_room.py:396-399`).
+  `session_id=sd.game_slug` (`session_room.py`).
 - **Announced-once dedup.** The `session.cost_ceiling_exceeded` watcher event
   fires **exactly once per session** via the `_session_ceiling_announced` set
-  (`anthropic_sdk_client.py:271`, `912-939`); subsequent refusals re-raise the
+  (`anthropic_sdk_client.py`, `912-939`); subsequent refusals re-raise the
   exception but stay silent on the watcher. The announce-set `.add` happens
   **after** the side-effecting emit, so a failed emit cannot poison the set and
   permanently lose the GM-panel event on retry (lines 934-939).
@@ -159,7 +159,7 @@ Two enforcement points in `complete_with_tools`:
   `io_fingerprint` matches the 2026-05-23 shape exactly), with all four
   trigger conditions surfaced through the `cost_usd`/`baseline_cost_usd`/
   `input_tokens`/`baseline_input_tokens` field pairs regardless of which named
-  the event (`anthropic_sdk_client.py:711-725`, `784-832`).
+  the event (`anthropic_sdk_client.py`, `784-832`).
 - **Typed exception carries actionable fields.** `AnthropicSdkCostCeilingExceeded`
   carries `session_id`, `cumulative_cost_usd`, and `ceiling_usd` so the WS
   handler / broadcast layer can build a typed `session.cost_ceiling_exceeded`
@@ -180,7 +180,7 @@ billing decision emits a watcher event via `_watcher_publish_event`
 - **`cost_runaway_suspected`** (severity `warn`) — the detector's alarm, with
   `trigger` discriminator, observed vs baseline cost and input, `warmup` flag,
   `model`, and `session_id` for interleaved multi-session attribution
-  (`anthropic_sdk_client.py:798-832`).
+  (`anthropic_sdk_client.py`).
 - **`session.cost_ceiling_exceeded`** (severity `error`) — the hard-kill event,
   once per session, with `session_id`, `cumulative_cost_usd`, `ceiling_usd`,
   `model` (lines 915-933).
@@ -219,7 +219,7 @@ ramps*, not only after the bill lands.
   two baseline deques) accumulates one entry per distinct session_id for the
   process lifetime under ADR-122 never-evict. `reset_baselines(session_id)` from
   `SessionRoom.close_store()` evicts the baseline deques but **not** the
-  cumulative/announce state — a flagged follow-up (`anthropic_sdk_client.py:643-655`):
+  cumulative/announce state — a flagged follow-up (`anthropic_sdk_client.py`):
   on a slug-recycle rejoin a stale announce-set entry would silently suppress the
   new session's first ceiling alarm, deferred so the decision and its OTEL
   plumbing land together.
@@ -233,7 +233,7 @@ ramps*, not only after the bill lands.
   outlives any one session (ADR-122 never-evict), and deterministic MP rejoins
   share a slug — a single global counter would conflate independent sessions,
   killing an innocent neighbor when one session ran hot, and could never reset.
-  Per-session_id keying is the only correct grain (`anthropic_sdk_client.py:37-45`).
+  Per-session_id keying is the only correct grain (`anthropic_sdk_client.py`).
 - **Soft warn only, no hard kill.** Rejected: the detector's `cost_runaway_suspected`
   warn already exists, but a warn does not stop billing. A sustained runaway on a
   never-evicted room with no human watching the GM panel is exactly the
@@ -262,7 +262,7 @@ ramps*, not only after the bill lands.
   evicts, the `AnthropicSdkClient` lives for the process lifetime, so (a) all
   state is keyed on `session_id`, and (b) `SessionRoom.close_store()` calls
   `reset_baselines(session_id)` as the per-session eviction handle on the
-  baseline windows (`session_room.py:366-413`). ADR-134 depends on 122's
+  baseline windows (`session_room.py`). ADR-134 depends on 122's
   lifecycle but does not change it.
 - **ADR-031 (Game Watcher — semantic telemetry):** the watcher transport and the
   "GM panel as lie detector" doctrine ADR-134's events ride on. The

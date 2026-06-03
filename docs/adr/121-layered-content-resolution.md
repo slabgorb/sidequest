@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [3, 60, 82]
 tags: [core-architecture]
-implementation-status: live
-implementation-pointer: null
+implementation-status: partial
+implementation-pointer: "Resolver.resolve_merged four-tier walk is dead code; production uses two-tier shim (archetype/shim.py) — sprint story 82-4 (wire or narrow)"
 ---
 
 # ADR-121: Layered Content Resolution
@@ -63,28 +63,28 @@ on wire payloads to the GM panel.
 ### The four-tier walk
 
 `Resolver[T].resolve_merged(axis, field_path, ctx)`
-(`genre/resolver.py:255-390`) walks exactly four tiers, in a fixed order, each
+(`genre/resolver.py`) walks exactly four tiers, in a fixed order, each
 optional, each merging *into* the accumulated value when its file exists:
 
-1. **Global** — `{root}/{field_path}.yaml` (`resolver.py:283`)
-2. **Genre** — `{root}/{genre}/{field_path}.yaml` (`resolver.py:300`)
+1. **Global** — `{root}/{field_path}.yaml` (`resolver.py`)
+2. **Genre** — `{root}/{genre}/{field_path}.yaml` (`resolver.py`)
 3. **World** — `{root}/{genre}/worlds/{world}/{field_path}.yaml`
-   (`resolver.py:325`), only when `ctx.world` is set
+   (`resolver.py`), only when `ctx.world` is set
 4. **Culture** — `{root}/{genre}/worlds/{world}/cultures/{culture}/{field_path}.yaml`
-   (`resolver.py:350`), only when both `ctx.world` and `ctx.culture` are set
+   (`resolver.py`), only when both `ctx.world` and `ctx.culture` are set
 
 The tier order is not configurable; it is fixed both in the `Tier` enum docstring
 ("Always walked in this order: Global, Genre, World, Culture",
-`provenance.py:19`) and in the straight-line structure of `resolve_merged`. A
+`provenance.py`) and in the straight-line structure of `resolve_merged`. A
 deeper tier always merges into the value produced by all shallower tiers. The
 first tier to supply a file produces the value with `ContributionKind.initial`;
-each subsequent tier merges with `ContributionKind.merged` (`resolver.py:303-305`,
+each subsequent tier merges with `ContributionKind.merged` (`resolver.py`,
 `328-330`, `361-363`). If no tier supplies the field, the walk raises
-`GenreValidationError` (`resolver.py:381-382`) — no silent empty default, honoring
-*No Silent Fallbacks*. (`Resolver.resolve`, `resolver.py:214`, is the
+`GenreValidationError` (`resolver.py`) — no silent empty default, honoring
+*No Silent Fallbacks*. (`Resolver.resolve`, `resolver.py`, is the
 single-file World-tier convenience load; `resolve_merged` is the full walk.)
 
-`ResolutionContext` (`resolver.py:153`) carries the three keys that locate the
+`ResolutionContext` (`resolver.py`) carries the three keys that locate the
 deeper-tier files: `genre` (required), `world` (required for World/Culture), and
 `culture` (required for Culture only).
 
@@ -93,22 +93,22 @@ deeper-tier files: `genre` (required), `world` (required for World/Culture), and
 Each field on a `LayeredMerge` subclass declares how a deeper tier's value
 combines with the shallower one, via
 `Field(json_schema_extra={"merge": ...})`. `MergeStrategy`
-(`resolver.py:23-57`) defines four strategies, mapping 1:1 onto the Rust
+(`resolver.py`) defines four strategies, mapping 1:1 onto the Rust
 `MergeStrategy` enum:
 
-- **`replace`** — the deeper tier's value wins outright (`resolver.py:75-76`,
+- **`replace`** — the deeper tier's value wins outright (`resolver.py`,
   returns `other_val`). Mirrors the Rust proc-macro emitting `other.#ident`.
 - **`append`** — the deeper tier's list concatenates onto the shallower one,
-  shallower items first: `list(self_val) + list(other_val)` (`resolver.py:77-78`).
+  shallower items first: `list(self_val) + list(other_val)` (`resolver.py`).
 - **`deep_merge`** — recurse into nested `LayeredMerge` instances via
   `self_val.merge(other_val)`; raises `TypeError` if either side is not a
-  `LayeredMerge` (`resolver.py:79-85`).
+  `LayeredMerge` (`resolver.py`).
 - **`culture_final`** — a *documentation-only* semantic signal (see Invariants).
 
-`LayeredMerge.merge` (`resolver.py:105-128`) walks every field, reads its strategy
+`LayeredMerge.merge` (`resolver.py`) walks every field, reads its strategy
 from `json_schema_extra`, and dispatches through `_apply_strategy`
-(`resolver.py:60-86`), returning a new instance of the same type. An unknown
-strategy string raises `ValueError` (`resolver.py:86`).
+(`resolver.py`), returning a new instance of the same type. An unknown
+strategy string raises `ValueError` (`resolver.py`).
 
 ### Runtime base class, not code-gen
 
@@ -125,12 +125,12 @@ generated `merge` impls. See *Alternatives considered*.
 
 - **`culture_final` has NO runtime enforcement.** Its merge behavior is
   *identical to `replace`* — `_apply_strategy` returns `other_val` for both
-  (`resolver.py:75-76`). Nothing in the resolver checks that only the Culture
+  (`resolver.py`). Nothing in the resolver checks that only the Culture
   tier sets a `culture_final` field; a World or Genre tier can set it and the
   merge will happily accept it. This is a **deliberate parity-with-Rust choice**:
   the Rust proc-macro emitted `other.#ident` for both `Replace` and
   `CultureFinal` variants, so the distinction was documentation-only there too
-  (`resolver.py:50-57`). **This is a trap for future engineers** — the strategy
+  (`resolver.py`). **This is a trap for future engineers** — the strategy
   name *reads* like a guard ("this field is final at the Culture tier") but
   enforces nothing. Treat `culture_final` strictly as authorial intent
   annotation. If true enforcement is ever wanted, it is a *new* decision, not a
@@ -141,21 +141,21 @@ generated `merge` impls. See *Alternatives considered*.
   shallower one; the merge accumulator only ever flows downhill.
 
 - **Every field is expected to declare a strategy.** `LayeredMerge.merge` reads
-  `extra.get("merge", "replace")` (`resolver.py:123`) — so an *undeclared* field
+  `extra.get("merge", "replace")` (`resolver.py`) — so an *undeclared* field
   falls back to `replace`. The base-class docstring states every field MUST carry
   a `"merge"` key and that **per-type wiring tests** enforce this on concrete
-  subclasses (`resolver.py:100-103`, `109-113`). The `"replace"` default in
+  subclasses (`resolver.py`, `109-113`). The `"replace"` default in
   `merge` is a structural safety net, not a license to omit the declaration —
   omission is caught by the subclass wiring test, not silently tolerated.
 
 - **`deep_merge` is type-guarded.** It requires both sides to be `LayeredMerge`
-  instances and raises `TypeError` otherwise (`resolver.py:82-85`) — a misdeclared
+  instances and raises `TypeError` otherwise (`resolver.py`) — a misdeclared
   `deep_merge` on a scalar field fails loud, not silently.
 
 - **Provenance is mandatory output.** Every `Resolved[T]` carries a `Provenance`
   with a non-optional ordered `merge_trail: list[MergeStep]`
-  (`provenance.py:75-76`). The final `source_tier`/`source_file` record the
-  deepest tier that contributed (`resolver.py:384-389`). Resolution that produces
+  (`provenance.py`). The final `source_tier`/`source_file` record the
+  deepest tier that contributed (`resolver.py`). Resolution that produces
   a value also always produces the audit trail of how.
 
 ## Observability
@@ -166,20 +166,20 @@ rather than the narrator improvising content origins.
 
 - `Provenance` and `MergeStep` (`provenance.py`) are `ProtocolBase` types,
   living in `sidequest/protocol/` precisely so they **travel on the wire as part
-  of `GameMessage` payloads** (`provenance.py:1-9`, `resolver.py:138-143`). The
+  of `GameMessage` payloads** (`provenance.py`, `resolver.py`). The
   GM panel can therefore show, for any resolved value, which tier produced it and
   the full chain of contributions.
 - `MergeStep` records `tier`, `file`, an optional source `span`
-  (line/column range, `Span`, `provenance.py:27-37`), and a `ContributionKind`
-  (`initial` / `replaced` / `appended` / `merged`, `provenance.py:40-50`). The
+  (line/column range, `Span`, `provenance.py`), and a `ContributionKind`
+  (`initial` / `replaced` / `appended` / `merged`, `provenance.py`). The
   trail is the human-auditable answer to "where did this archetype's `name` come
   from, and which tier last touched its `tags`."
 - The `Resolver` constructs a `MergeStep` at each contributing tier with the file
-  path and contribution kind (`resolver.py:241-252`, `290-297`, `314-321`,
+  path and contribution kind (`resolver.py`, `290-297`, `314-321`,
   `339-346`, `372-379`), and assembles them into the final `merge_trail`.
 
 **Honesty caveat (current state):** `span` is always emitted as `None` by the
-resolver today (`resolver.py:244`, `292`, etc.) — the line/column range is wired
+resolver today (`resolver.py`, `292`, etc.) — the line/column range is wired
 through the *type* and the wire payload but the resolver does not yet populate it
 from the YAML parse. The `ContributionKind` set the resolver emits is `initial`
 and `merged`; the finer `replaced` / `appended` distinctions exist in the enum but
@@ -211,7 +211,7 @@ trail is accurate about *which tiers and files contributed in what order*.
   set by a shallower tier with no error, and a future engineer reading the
   strategy name may *assume* a guard that does not exist. This is the single most
   likely source of a "the merge isn't doing what the field name says" bug. The
-  mitigation is this ADR and the explicit docstring (`resolver.py:50-57`);
+  mitigation is this ADR and the explicit docstring (`resolver.py`);
   promoting it to real enforcement is a separate decision that would diverge from
   Rust parity.
 - **Undeclared-field fallback.** The `replace` default in `merge` means a field
@@ -263,7 +263,7 @@ trail is accurate about *which tiers and files contributed in what order*.
 - **ADR-082 (Port `sidequest-api` from Rust back to Python)** — the origin event.
   This system is the direct port of the Rust `#[derive(Layered)]` proc-macro +
   `Resolver<T>` (`resolver/merge.rs`, `resolver/load.rs`, `resolver/resolved.rs`,
-  cited in `resolver.py:6-9`). The proc-macro's compile-time behavior was
+  cited in `resolver.py`). The proc-macro's compile-time behavior was
   re-expressed as the runtime `LayeredMerge` base class; the merge *semantics*
   (tier order, four strategies, provenance trail) were preserved verbatim — most
   consequentially the documentation-only `culture_final`, kept for exact parity.

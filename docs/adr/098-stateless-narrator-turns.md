@@ -89,7 +89,7 @@ Three properties follow by construction:
   when `len(system_prompt) + len(user_message)` exceeds the threshold. **Amended
   2026-05-23 by story 61-3** — was originally a soft canary that logged
   `logger.warning` and let the turn execute. Post-61-3 the same threshold becomes a
-  hard refuse: `_check_oversized_prompt()` at `sidequest-server/sidequest/agents/orchestrator.py:2966`.
+  hard refuse: `_check_oversized_prompt()` at `sidequest-server/sidequest/agents/orchestrator.py`.
   Constant was named `SOFT_PROMPT_BUDGET_BYTES` until renamed by 61-8 §C1 (the soft
   framing was misleading after the 61-3 promotion).
   returns `True` to make the caller short-circuit the SDK call, emits watcher event

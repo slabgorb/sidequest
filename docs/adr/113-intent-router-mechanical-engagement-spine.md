@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [2, 13, 31, 33, 53, 67, 73, 93, 98, 101, 102, 111]
 tags: [agent-system, narrator, narrator-migration, observability]
-implementation-status: partial
-implementation-pointer: sprint/epic-59.yaml#59-4
+implementation-status: live
+implementation-pointer: "sidequest-server intent_router.py + run_dispatch_bank confidence gate (story 71-16, default 0.6, RulesConfig.dispatch_confidence_thresholds)"
 ---
 
 # ADR-113: Intent Router — Mechanical-Engagement Spine
@@ -55,7 +55,7 @@ The 2026-05-21 Glenross trace was the cleanest reproduction: an explicit
 social escalation ("I block his way and call the bluff") produced six
 turns of confrontation prose with `confrontation=None` every turn. The
 Confrontation Engine (`instantiate_encounter_from_trigger` at
-`dispatch/encounter_lifecycle.py:217`) is wired and alive. It simply
+`dispatch/encounter_lifecycle.py`) is wired and alive. It simply
 never fires, because nothing reliably tells it to.
 
 ### The engines exist (not the broken part)
@@ -64,9 +64,9 @@ Verified inventory (2026-05-23):
 
 | Engine | Entry point | Mutates |
 |--------|-------------|---------|
-| Confrontation (all 6 types) | `instantiate_encounter_from_trigger` (`server/dispatch/encounter_lifecycle.py:217`) | `snapshot.encounter`, per-actor edge pools |
-| Magic / spell working | `apply_magic_working` (`server/narration_apply.py:638`); `resolve_magic_confrontation` (`dispatch/confrontation.py:200`) | `snapshot.magic_state.ledger`, `.confrontations` |
-| Scenario clue advancement | `consume_clue_footnotes` (`dispatch/scenario_clue_intake.py:34`) | `snapshot.scenario_state.clue_graph`, `KnownFact`s |
+| Confrontation (all 6 types) | `instantiate_encounter_from_trigger` (`server/dispatch/encounter_lifecycle.py`) | `snapshot.encounter`, per-actor edge pools |
+| Magic / spell working | `apply_magic_working` (`server/narration_apply.py`); `resolve_magic_confrontation` (`dispatch/confrontation.py`) | `snapshot.magic_state.ledger`, `.confrontations` |
+| Scenario clue advancement | `consume_clue_footnotes` (`dispatch/scenario_clue_intake.py`) | `snapshot.scenario_state.clue_graph`, `KnownFact`s |
 | Three LocalDM-era subsystems (npc_agency, distinctive_detail, reflect_absence) | `sidequest/agents/subsystems/*.py` | various |
 
 ### The routing is the broken part
@@ -76,7 +76,7 @@ field — `confrontation=<type>`, `magic_working={...}`, footnotes with a
 `fact_id`. On the default `anthropic_sdk` backend (ADR-101), the narrator
 emits those unreliably or not at all:
 
-- `confrontation` is in `_SDK_TOOL_OWNED_FIELDS` (`orchestrator.py:1088`)
+- `confrontation` is in `_SDK_TOOL_OWNED_FIELDS` (`orchestrator.py`)
   mapped to the *advance* tools. The SDK assembler **zeros** any narrator
   emission and a fail-loud assertion enforces it. No tool ever *starts* a
   confrontation. Story 59-1's `begin_confrontation` tool fills the
@@ -94,7 +94,7 @@ The 2026-04-28 shelving was justified at the time. It is no longer:
 - A Haiku intent pre-pass is now a cheap API call on the same transport,
   not a second subprocess spawn. Per-call model routing already declares
   `CallType.CLASSIFICATION → claude-haiku-4-5-20251001`
-  (`agents/model_routing.py:28`).
+  (`agents/model_routing.py`).
 - The `LlmClient` abstraction LocalDM was built with means the eventual
   ADR-073 local fine-tuned router is a later dependency injection, not a
   rewrite.
@@ -107,8 +107,8 @@ infrastructure that has been dormant since 2026-04-28:
 | Component | Location | State |
 |-----------|----------|-------|
 | `DispatchPackage` protocol (per_player, cross_player, dispatch, narrator_directives, lethality_verdicts) | `protocol/dispatch.py` | **Merged, alive, unused on live path** |
-| `run_dispatch_bank` topo-sort executor | `agents/subsystems/__init__.py:160` | **Merged, alive, never called** |
-| `_topo_sort` for `depends_on` ordering | `agents/subsystems/__init__.py:134` | **Merged** |
+| `run_dispatch_bank` topo-sort executor | `agents/subsystems/__init__.py` | **Merged, alive, never called** |
+| `_topo_sort` for `depends_on` ordering | `agents/subsystems/__init__.py` | **Merged** |
 | `lethality_arbiter.py` | `agents/lethality_arbiter.py` | **Merged** |
 | `prompt_redaction.redact_dispatch_package` (visibility-tag filtering) | `agents/prompt_redaction.py` | **Merged** |
 | Five orchestrator consumer sites (`context.dispatch_package` guards) | `agents/orchestrator.py` lines 1420, 2281, 2296, 2772, 3074 | **All guarded `if … is not None`; permanently `None` on SDK path** |
@@ -193,7 +193,7 @@ player submit
    per-turn progression, never player-dispatched.
 
 3. **Dispatch-bank executor** — `run_dispatch_bank` at
-   `agents/subsystems/__init__.py:160`. Topo-sorts by `depends_on`,
+   `agents/subsystems/__init__.py`. Topo-sorts by `depends_on`,
    executes each dispatch through its handler, engaging engines as a
    side effect that mutates `snapshot`. Per-dispatch OTEL.
 
@@ -225,7 +225,7 @@ and it is logged with its threshold and score.
 In the same change that inserts the router on the live pipeline (story
 59-4 for confrontation, 59-5 for magic_working):
 
-- `_SDK_TOOL_OWNED_FIELDS` (`orchestrator.py:1088`) loses the entries
+- `_SDK_TOOL_OWNED_FIELDS` (`orchestrator.py`) loses the entries
   for retired engagement fields. Sibling fields (`location`,
   `scene_mood`, `npcs_present`, `action_rewrite`, etc.) remain
   narrator-emitted.
@@ -484,8 +484,8 @@ narrator:
 
 - `IntentRouter` — `sidequest/agents/intent_router.py`.
 - `execute_intent_router_pre_narrator_pass` —
-  `sidequest/server/intent_router_pass.py:125`, invoked from
-  `sidequest/server/websocket_session_handler.py:746` (import at
+  `sidequest/server/intent_router_pass.py`, invoked from
+  `sidequest/server/websocket_session_handler.py` (import at
   `:87`) *before* the narrator turn.
 - `run_dispatch_bank` — `sidequest/agents/subsystems/__init__.py`
   (topo-sorts and fires the matching handlers, per-dispatch OTEL).
@@ -503,17 +503,17 @@ genre pack `rules.yaml`)." The shipped code does no such thing:
 
 - `run_dispatch_bank` executes **every** emitted dispatch
   unconditionally. The execution loop at
-  `sidequest/agents/subsystems/__init__.py:231` iterates the topo-sorted
+  `sidequest/agents/subsystems/__init__.py` iterates the topo-sorted
   dispatches and calls each handler; there is **no confidence read and no
   threshold comparison** anywhere in the bank. A dispatch is skipped only
   if its subsystem is unregistered or its handler raises.
 - There is **no per-dispatch confidence field to gate on.**
-  `SubsystemDispatch` (`sidequest/protocol/dispatch.py:88`) carries
+  `SubsystemDispatch` (`sidequest/protocol/dispatch.py`) carries
   `subsystem`, `params`, `depends_on`, `idempotency_key`, and
   `visibility` — **no `confidence`.** The only `confidence` floats in the
-  protocol are `Referent.confidence` (`dispatch.py:78`, referent-resolution
+  protocol are `Referent.confidence` (`dispatch.py`, referent-resolution
   scoring — unrelated to engine gating) and the package-level
-  `DispatchPackage.confidence_global` (`dispatch.py:207`), which nothing
+  `DispatchPackage.confidence_global` (`dispatch.py`), which nothing
   in the bank consults as a gate. No `rules.yaml` per-subsystem threshold
   key is read.
 

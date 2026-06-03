@@ -1,0 +1,65 @@
+id: '82'
+type: epic
+title: Surface the Dark Subsystems — Wire Consumers + OTEL for Overstated ADRs
+description: "Audit-2026-06-03 'overstated' ADRs where infrastructure exists but NO PRODUCTION CONSUMER reaches it — so by the project's wiring doctrine ('Verify Wiring, Not Just Existence'; 'no consumer fails the wire-it test') they are not actually live. Each surviving story must add a real production consumer AND emit an OTEL/watcher event (GM panel = lie-detector) before it can be called wired; frontmatter downgraded live->partial until then. ACTIVE: ADR-049 (no verbosity/vocab UI controls; TurnContext hardcodes defaults; CONNECT ignored), ADR-021 (1 of 4 progression tracks wired — mechanics-first Sebastien/Jade want it legible), ADR-121 (Resolver.resolve_merged four-tier walk is dead code; prod uses a two-tier shim — wire or narrow). DEPRECATED (not built): ADR-052 /tone axis system — tone is the CONTENT AUTHOR's domain (pack prose/config/world flavor), not an engine command (story dropped); ADR-040 No-Raw-Stats — reversed by mechanics-first visibility doctrine, players consistently ask for MORE visibility (story 82-5, done). See docs/adr/AUDIT-2026-06-03.md."
+priority: p2
+status: backlog
+repos: sidequest-server,sidequest-ui
+stories:
+  - id: 82-2
+    title: 'Verbosity/Vocabulary player controls: UI sliders + CONNECT plumb + TurnContext read (ADR-049)'
+    description: "ADR-049 overstated. The prompt plumbing (_build_verbosity_section/_build_vocabulary_section in orchestrator.py) fires every turn, but the player-control layer is absent: no VerbositySlider.tsx/VocabularySlider.tsx in the UI; TurnContext hardcodes narrator_verbosity='standard'/narrator_vocabulary='literary' (server/session_helpers.py ~:1167-1168) ignoring the CONNECT payload; slug-resume passes None (handlers/connect.py ~:1402-1403); and NarratorVocabulary lacks the default_for_player_count method NarratorVerbosity has (protocol/enums.py). FIX: add UI sliders -> CONNECT payload -> read into TurnContext; add default_for_player_count to NarratorVocabulary; OTEL the active settings per turn. Navigate by symbol."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server,sidequest-ui
+    workflow: tdd
+    acceptance_criteria:
+      - UI exposes verbosity + vocabulary controls (sliders/selects); the player's selection rides the CONNECT payload to the server.
+      - TurnContext reads narrator_verbosity/narrator_vocabulary from the session/CONNECT payload instead of hardcoded literals; slug-resume populates them (not None).
+      - NarratorVocabulary implements default_for_player_count (parity with NarratorVerbosity) and it is used for the default.
+      - 'OTEL/watcher records the active verbosity+vocabulary per turn. WIRING TEST: slider -> CONNECT -> TurnContext -> prompt section, failing on current code (hardcoded). Full server-test + client-test green.'
+    type: bug
+  - id: 82-3
+    title: 'Wire progression tracks 1-3: milestone level-up, affinity tiers, item narrative_weight (ADR-021)'
+    description: 'ADR-021 overstated. Only track 4 (journey recap, persistence.py/pg/snapshot.py) is live. Tracks 1-3 exist as data models only: milestone accumulation/level-up is a TODO (genre/models/progression.py ~:62); AffinityState tier promotion is P6-deferred (game/character.py ~:55-57,102-103); item narrative_weight has no runtime consumer, P2-deferred (game/item_catalog_resolution.py ~:31); WealthTier/milestone_categories are data-only with no consumer (progression.py ~:187-221). FIX: wire the engines — milestone->level-up, AffinityState tier promotion, and an item narrative_weight (or WealthTier gold->label) consumer — each with OTEL. MECHANICS-FIRST: per CLAUDE.md, expose the resulting advancement deltas in player-facing surfaces (Sebastien/Jade). LARGE (8pts) — split into 82-3a/b/c per track if needed; log the split. Navigate by symbol.'
+    points: 8
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - Milestone accumulation drives level-up (progression.py:62 TODO resolved); an OTEL span fires on level-up; the advancement delta is legible in a player-facing surface (mechanics-first).
+      - AffinityState tier promotion fires at runtime (P6 un-deferred); an OTEL/watcher event records the tier crossing.
+      - Item narrative_weight has a real runtime consumer (P2 un-deferred) OR WealthTier maps gold->wealth label in a production consumer; the chosen track emits OTEL.
+      - WIRING TEST per wired track proving the engine runs in a real turn (not just data-model existence); fails on current code. Full server-test green. If split, each sub-story carries its own wiring test.
+    type: bug
+  - id: 82-4
+    title: Make four-tier Resolver the production resolution path or narrow ADR-121 (consumer + provenance OTEL)
+    description: "ADR-121 overstated. Resolver[T].resolve_merged (genre/resolver.py ~:200-390) — the Global->Genre->World->Culture four-tier merge walk the ADR calls 'live' — is never instantiated or called in production; the only archetype resolution path is the two-tier shim (genre/archetype/shim.py ~:64-158: world-funnel-or-genre-fallback) via chargen_mixin.py ~:391. Supporting types (LayeredMerge, MergeStrategy, Provenance/MergeStep) are live and archetype_provenance rides the wire. DECISION + FIX: either route production resolution through Resolver.resolve_merged (full four-tier + provenance) with OTEL, OR formally narrow ADR-121 to the two-tier shim and remove/mark resolve_merged so no dead code remains. Navigate by symbol."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - 'A decision is recorded (with code evidence): adopt the four-tier Resolver as the production path, or narrow ADR-121 to the two-tier shim.'
+      - 'If wired: production archetype resolution calls Resolver.resolve_merged; the four-tier merge + provenance actually runs; OTEL emits the merge steps/provenance (GM/dev observable).'
+      - 'If narrowed: ADR-121 is rewritten to describe the two-tier shim as the production reality and resolve_merged is removed or explicitly marked non-production (no unmarked dead code).'
+      - 'WIRING TEST: the production resolution path exercises the chosen mechanism end-to-end; fails on current code if the four-tier path is chosen. Full server-test green.'
+    type: bug
+  - id: 82-5
+    title: Reconcile ADR-040 No-Raw-Stats with mechanics-first doctrine — supersede or re-scope (decision)
+    description: "RESOLVED 2026-06-03 (decision + execution complete). DECISION: supersede ADR-040 (No Raw Stats). Keith confirmed — players have consistently asked for MORE mechanical visibility in real games, and mechanics-first players (Sebastien, Jade) want the math legible (CLAUDE.md); ADR-114 already surfaces raw HP. EXECUTED by architect: ADR-040 frontmatter set status=deprecated, implementation-status=retired, superseded-by=null (deprecated not superseded — doctrine shift, no 1:1 successor; related=[114,136]); a DEPRECATED banner added to the body preserving the original (now-reversed) rationale; scripts/regenerate_adr_indexes.py rerun (README/DRIFT/SUPERSEDED/CLAUDE.md updated); frontmatter validates 0 errors. No raw-stat hiding implemented. Original audit finding: docs/adr/AUDIT-2026-06-03.md (ADR-040)."
+    points: 2
+    priority: p2
+    status: done
+    repos: sidequest-server
+    workflow: trivial
+    acceptance_criteria:
+      - 'A decision is recorded (rationale tied to CLAUDE.md mechanics-first doctrine + ADR-114): supersede/deprecate ADR-040, or re-scope to additive narrative banding.'
+      - 'If supersede: ADR-040 frontmatter status set to superseded/deprecated with a successor pointer; scripts/regenerate_adr_indexes.py rerun.'
+      - 'If re-scope: ADR-040 rewritten so narrative banding (e.g. describe_health) is additive flavor, NOT a no-raw-stats invariant; any implementation is split to a follow-up story.'
+      - No raw-stat hiding is implemented in this story; it is a decision/doc artifact only (chore).
+    completed: '2026-06-03'
+    type: chore

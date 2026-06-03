@@ -18,9 +18,9 @@ implementation-pointer: null
 
 The decision is honored — only narrator text is on the critical path; everything else is spawned. The spawn primitive is `asyncio.create_task` (Python equivalent of `tokio::spawn`); confirmed live at:
 
-- `sidequest-server/sidequest/server/dispatch/lore_embed.py:154` — embedding worker
-- `sidequest-server/sidequest/server/websocket.py:65` — writer task
-- `sidequest-server/sidequest/server/websocket_session_handler.py:3274` — per-session async work
+- `sidequest-server/sidequest/server/dispatch/lore_embed.py` — embedding worker
+- `sidequest-server/sidequest/server/websocket.py` — writer task
+- `sidequest-server/sidequest/server/websocket_session_handler.py` — per-session async work
 
 Three items from the original 2026-03-25 lists are dead and have been removed below:
 

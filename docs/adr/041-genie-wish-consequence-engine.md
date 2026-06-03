@@ -62,7 +62,7 @@ The Rust era (`sidequest-api/crates/sidequest-game/src/consequence.rs`) implemen
 
 The 2026-04 port to Python carried over only a placeholder skeleton:
 
-- `GenieWish` (Pydantic, `sidequest/game/session.py:300`) with three string fields: `wish_text`, `consequence`, `status`.
+- `GenieWish` (Pydantic, `sidequest/game/session.py`) with three string fields: `wish_text`, `consequence`, `status`.
 - A `genie_wishes: list[GenieWish]` field on the snapshot.
 - An inline `# genie_wishes: P5-deferred (consequence engine)` marker in the snapshot model.
 

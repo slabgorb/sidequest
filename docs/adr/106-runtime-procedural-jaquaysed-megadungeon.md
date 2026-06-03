@@ -318,17 +318,17 @@ now carries `lookahead_worker.py`, `session_integration.py`,
 `frontier_hook.py`, and `materializer.py`. The session integration is
 called from production handlers:
 
-- `sidequest-server/sidequest/handlers/connect.py:875` imports
-  `attach_dungeon_to_session`, and `connect.py:879` calls it on session
+- `sidequest-server/sidequest/handlers/connect.py` imports
+  `attach_dungeon_to_session`, and `connect.py` calls it on session
   connect — `session._session_data.lookahead_handle =
   await attach_dungeon_to_session(...)` (null-safe; returns `None` off
   `beneath_sunden`, a no-op for every other pack). `attach_dungeon_to_session`
-  invokes `register_lookahead_worker` (`session_integration.py:22-24,216`).
-- `sidequest-server/sidequest/server/websocket_session_handler.py:433`
+  invokes `register_lookahead_worker` (`session_integration.py,216`).
+- `sidequest-server/sidequest/server/websocket_session_handler.py`
   imports `detach_dungeon_from_session` and `:437` drains the worker handle
   before the final save.
 - The movement subsystem consumes the same handle:
-  `sidequest/agents/subsystems/movement.py:40,84,211` thread
+  `sidequest/agents/subsystems/movement.py,84,211` thread
   `lookahead_handle` through dispatch.
 
 This satisfies clause 12's "the materializer is invoked from the real
@@ -345,7 +345,7 @@ defines context-manager spans for every stage clause 12 mandates:
 plus `frontier_expand_span` (`:527`), `frontier_lookahead_span` (`:548`),
 `frontier_region_transition_span` (`:571`), and the Amendment A spans
 `dungeon_curate_parse_failed_span` (`:435`) /
-`dungeon_curate_degraded_span` (`:460`). `materializer.py:172-181` imports
+`dungeon_curate_degraded_span` (`:460`). `materializer.py` imports
 and uses them.
 
 **Net status update to §Implementation Status:** the keystone bullet

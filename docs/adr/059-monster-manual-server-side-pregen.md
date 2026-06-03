@@ -192,7 +192,7 @@ The Rust era implemented this ADR end-to-end (Manual store + namegen/encounterge
 
 What is live:
 
-- The `<game_state>` injection mechanism. `sidequest/agents/orchestrator.py:1272` wraps `state_summary` in `<game_state>` tags and places it in the validated Valley zone.
+- The `<game_state>` injection mechanism. `sidequest/agents/orchestrator.py` wraps `state_summary` in `<game_state>` tags and places it in the validated Valley zone.
 - OTEL span definitions for `monster_manual` and `pregen` (`sidequest/telemetry/spans/monster_manual.py`, `…/pregen.py`).
 
 What is dark — the Manual + the pipeline that fills `<game_state>` with pre-generated content:
@@ -203,6 +203,6 @@ What is dark — the Manual + the pipeline that fills `<game_state>` with pre-ge
 - Compound-key `(name, faction, world)` lookup — absent.
 - Post-narration NPC gate that matches used names against the Manual and enriches the registry from stat blocks — absent.
 
-What `<game_state>` carries today is the running session snapshot only (`orchestrator.py:1850`: `state_summary = session.model_dump_json(...)`). There is no pre-generated NPC pool, no encounter pool, no enemy stat-block pool being merged in. The narrator therefore continues to invent NPC names and stats — exactly the failure mode this ADR was written to prevent.
+What `<game_state>` carries today is the running session snapshot only (`orchestrator.py`: `state_summary = session.model_dump_json(...)`). There is no pre-generated NPC pool, no encounter pool, no enemy stat-block pool being merged in. The narrator therefore continues to invent NPC names and stats — exactly the failure mode this ADR was written to prevent.
 
 Restoration is **P0 RESTORE** in [ADR-087](087-post-port-subsystem-restoration-plan.md) — the highest-priority single item across the entire restoration plan: _"Single biggest hot item. Accepted ADR is currently dark. Without this, NPC names/encounters/loadouts drift into Claude's improvisation."_ ADR-087 also schedules the encountergen/loadoutgen binary RESTORE and the namegen REWIRE as P0 prerequisites in §E. The decision in this ADR stands.

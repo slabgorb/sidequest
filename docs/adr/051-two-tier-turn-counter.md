@@ -71,7 +71,7 @@ pipeline**. `advance_round()` existed but had zero production callers; only
 - `turn_manager.round` lagged behind `interaction` for entire sessions because no live
   caller advanced it on the per-interaction path.
 - `narrative_log` entries were keyed by `interaction` (write site
-  `websocket_session_handler.py:1525`), so `MAX(narrative_log.round_number)` tracked
+  `websocket_session_handler.py`), so `MAX(narrative_log.round_number)` tracked
   `interaction` while `turn_manager.round` did not.
 - Felix's Playtest 3 ended with `turn_manager.round = 65` and
   `MAX(narrative_log.round_number) = 72` — a 7-round gap. Round-keyed gating (e.g., trope

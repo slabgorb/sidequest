@@ -22,7 +22,7 @@ implementation-pointer: null
 >
 > The only code fingerprint of this design is a dead type-alias literal:
 > `AllScope = Literal["protagonists", "party_plus_guest_npcs"]` at
-> `sidequest-server/sidequest/genre/models/visibility.py:23`. The literal
+> `sidequest-server/sidequest/genre/models/visibility.py`. The literal
 > `"party_plus_guest_npcs"` has no consumer in the codebase and should be
 > removed in a future cleanup pass — leaving it in is the same anticipatory-
 > typing-as-drift pattern flagged on `mood_aliases` during the ADR-033 audit.

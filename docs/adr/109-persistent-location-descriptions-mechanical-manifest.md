@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [3, 14, 26, 31, 55, 88, 96, 100, 101, 103, 104, 106, 107]
 tags: [game-systems, frontend-protocol, observability, room-graph]
-implementation-status: partial
-implementation-pointer: docs/superpowers/specs/2026-05-19-persistent-location-descriptions-design.md
+implementation-status: live
+implementation-pointer: "sidequest-server location two-mode resolver + PgPromotionStore + LOCATION_DESCRIPTION msg + sidequest-ui LocationPanel.tsx (54-1..54-9, 55-1)"
 ---
 
 # ADR-109: Persistent Location Descriptions + Mechanical Manifest

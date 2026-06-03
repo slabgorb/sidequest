@@ -58,20 +58,20 @@ chassis-voice prompt section, never the NPC roster.**
 
 ### Chassis entity model
 
-`ChassisInstance` (`sidequest-server/sidequest/game/chassis.py:74-93`) is a
+`ChassisInstance` (`sidequest-server/sidequest/game/chassis.py`) is a
 pydantic `BaseModel` (`extra="forbid"`) with: `id`, `name`, `class_id`,
 `OCEAN: OceanScores`, an optional `voice: ChassisVoiceSpec`, `interior_rooms:
 list[str]`, a `bond_ledger`, and a `lineage`. It lives in its own snapshot
 container — `GameSnapshot.chassis_registry: dict[str, ChassisInstance]`
-(`sidequest-server/sidequest/game/session.py:732`), keyed by chassis id —
+(`sidequest-server/sidequest/game/session.py`), keyed by chassis id —
 separate from inventory and from the (now-dropped) `npc_registry`. The module
 docstring states the sibling-framework intent and the removal of the NPC
-projection (`chassis.py:1-13`).
+projection (`chassis.py`).
 
 ### Bidirectional bond scalars
 
 A bond is **two independent scalars**, not one. `BondLedgerEntry`
-(`chassis.py:56-63`) holds, per `character_id`:
+(`chassis.py`) holds, per `character_id`:
 
 - `bond_strength_character_to_chassis: float` (how the character feels about the
   ship), and
@@ -80,20 +80,20 @@ A bond is **two independent scalars**, not one. `BondLedgerEntry`
 
 each `Field(default=0.0, ge=-1.0, le=1.0)` — clamped to the closed interval
 `[-1.0, 1.0]` at the model boundary. The two directions move independently:
-`apply_bond_event` (`chassis.py:106-161`) takes separate `delta_character` and
+`apply_bond_event` (`chassis.py`) takes separate `delta_character` and
 `delta_chassis` and clamps each independently with `max(-1.0, min(1.0, …))`
-(`chassis.py:132-139`). Each entry also caches a derived tier per side
+(`chassis.py`). Each entry also caches a derived tier per side
 (`bond_tier_character`, `bond_tier_chassis`) and a `history: list[BondHistoryEvent]`,
 where each event records `turn_id`, both deltas, a `reason`, and the optional
-`confrontation_id` (`chassis.py:47-53`). `lineage` is a parallel append-only log
-of intimate moments (`ChassisLineageEntry`, `chassis.py:66-71`; appended by
-`apply_chassis_lineage_intimate`, `chassis.py:164-178`).
+`confrontation_id` (`chassis.py`). `lineage` is a parallel append-only log
+of intimate moments (`ChassisLineageEntry`, `chassis.py`; appended by
+`apply_chassis_lineage_intimate`, `chassis.py`).
 
 ### Seven-tier threshold ladder
 
 A bond scalar maps to a discrete tier via a fixed ascending ladder,
-`_TIER_THRESHOLDS` (`chassis.py:28-36`), consumed by `derive_bond_tier`
-(`chassis.py:39-44`):
+`_TIER_THRESHOLDS` (`chassis.py`), consumed by `derive_bond_tier`
+(`chassis.py`):
 
 | Scalar range            | Tier        |
 |-------------------------|-------------|
@@ -108,9 +108,9 @@ A bond scalar maps to a discrete tier via a fixed ascending ladder,
 `derive_bond_tier` walks the ladder and returns the first tier whose ceiling the
 scalar is below; the final sentinel ceiling (`1.01`) guarantees that anything at
 or above `0.80` falls through to `fused`. The seven tier names are a closed
-`Literal` (`BondTier`, `sidequest-server/sidequest/genre/models/chassis.py:19-27`).
+`Literal` (`BondTier`, `sidequest-server/sidequest/genre/models/chassis.py`).
 Both directions are tiered independently from their own scalar
-(`chassis.py:141-142`).
+(`chassis.py`).
 
 ### Placeholder rebind (`"player_character"`)
 
@@ -118,55 +118,55 @@ World-load and chargen are decoupled flows: `init_chassis_registry` runs at
 session bind, before the real player character exists, so it cannot key bond
 seeds to a real id. It instead seeds each ledger entry against the placeholder
 `character_id="player_character"` taken from the YAML `bond_seeds[].character_role`
-(`chassis.py:265-278`). `rebind_chassis_bonds_to_character`
-(`chassis.py:186-204`) closes the loop: at chargen-complete it rewrites every
+(`chassis.py`). `rebind_chassis_bonds_to_character`
+(`chassis.py`) closes the loop: at chargen-complete it rewrites every
 ledger entry still keyed to `"player_character"` to the real chargen character
 id. It is **idempotent** — a second call no-ops entries already keyed to a real
 id, and multi-PC scenarios (deferred) will *add* entries rather than overwrite an
 existing real-id entry. The rebind is invoked from the chargen mixin alongside
-`init_chassis_registry` (`sidequest-server/sidequest/server/websocket_handlers/chargen_mixin.py:39,840`).
+`init_chassis_registry` (`sidequest-server/sidequest/server/websocket_handlers/chargen_mixin.py,840`).
 
 ### Chassis-voice prompt section (not the NPC roster)
 
 The chassis reaches the narrator through `register_chassis_voice_section`
-(`sidequest-server/sidequest/agents/prompt_framework/core.py:679-744`), wired
-from the orchestrator's prompt assembly (`orchestrator.py:2018-2028`). The
+(`sidequest-server/sidequest/agents/prompt_framework/core.py`), wired
+from the orchestrator's prompt assembly (`orchestrator.py`). The
 section renders, per voiced chassis, its `default_register`, vocal tics, silence
 register, and — critically — the **current bond-tier address form**: the chassis
 addresses the active character using `name_forms_by_bond_tier`
-(`genre/models/chassis.py:30-35`), resolved via `resolve_chassis_name_form`. It
+(`genre/models/chassis.py`), resolved via `resolve_chassis_name_form`. It
 is placed in the Early/State zone alongside (but distinct from) the NPC roster,
 because chassis voice is acute identity data, not background lore
-(`core.py:698-699`). Empty registry or a no-`voice` chassis registers **no
-section** (zero-byte-leak discipline, `core.py:705-706,733-734`).
+(`core.py`). Empty registry or a no-`voice` chassis registers **no
+section** (zero-byte-leak discipline, `core.py,733-734`).
 
 ## Invariants / Contracts
 
 - **Bond range.** Both `bond_strength_character_to_chassis` and
   `bond_strength_chassis_to_character` are constrained to `[-1.0, 1.0]` at the
-  pydantic boundary (`ge=-1.0, le=1.0`, `chassis.py:59-60`) and re-clamped on
-  every mutation (`chassis.py:132-139`). The two directions are independent
+  pydantic boundary (`ge=-1.0, le=1.0`, `chassis.py`) and re-clamped on
+  every mutation (`chassis.py`). The two directions are independent
   scalars.
 - **Tier thresholds.** Tier derivation is the single ladder in
   `_TIER_THRESHOLDS`; `derive_bond_tier` is the only mapping function, and the
   same ladder is mirrored for `bond_tier_min` comparison in confrontation fire
-  conditions (`sidequest-server/sidequest/magic/confrontations.py:193`). The
+  conditions (`sidequest-server/sidequest/magic/confrontations.py`). The
   seven tier strings are a closed `Literal`.
 - **Registry load from `rigs.yaml`.** `init_chassis_registry`
-  (`chassis.py:207-288`) loads `worlds/<world_slug>/rigs.yaml`, validates it as
+  (`chassis.py`) loads `worlds/<world_slug>/rigs.yaml`, validates it as
   `RigsWorldConfig`, and writes each chassis into
   `snapshot.chassis_registry[chassis.id]`. It is **fail-loud / no-silent-fallback
   on misconfiguration**: when `confrontations.yaml` exists but `magic_state` is
-  uninitialized it raises `RuntimeError` (`chassis.py:248-255`) — a bind-path
+  uninitialized it raises `RuntimeError` (`chassis.py`) — a bind-path
   ordering invariant. It is, however, a deliberate graceful **no-op** (not a
   fallback) when the genre has no `chassis_classes`, the pack has no on-disk
-  `source_dir`, or the world authored no `rigs.yaml` (`chassis.py:227-234`):
+  `source_dir`, or the world authored no `rigs.yaml` (`chassis.py`):
   packs that don't use rigs are simply not rig packs.
 - **Bond-mutation precondition.** `apply_bond_event` raises `ValueError` if the
   chassis has no ledger entry for the character — explicitly prompting "was
-  world-load bond_seed run?" (`chassis.py:122-127`). No silent insert.
+  world-load bond_seed run?" (`chassis.py`). No silent insert.
 - **Interior station integrity.** `validate_chassis_stations`
-  (`sidequest-server/sidequest/interior/loader.py:15-24`) raises
+  (`sidequest-server/sidequest/interior/loader.py`) raises
   `InteriorLoaderError` if any station references a room not in the chassis
   class's `interior_rooms`, listing the valid rooms — fail-loud per No Silent
   Fallbacks.
@@ -175,18 +175,18 @@ section** (zero-byte-leak discipline, `core.py:705-706,733-734`).
 
 Per the project OTEL Observability Principle (the GM panel is the lie detector),
 bond mutations emit telemetry. `apply_bond_event` is intentionally span-free
-itself — it returns a `BondEventResult` (`chassis.py:96-103`) carrying both
+itself — it returns a `BondEventResult` (`chassis.py`) carrying both
 before/after tiers and the two `tier_*_crossed` booleans, and leaves emission to
-the caller so unit tests don't pull in the OTEL exporter (`chassis.py:116-121`).
+the caller so unit tests don't pull in the OTEL exporter (`chassis.py`).
 The live caller, `_h_bond_strength_growth_via_intimacy`
-(`sidequest-server/sidequest/magic/outputs.py:206-254`), calls
-`emit_rig_bond_event` (`sidequest-server/sidequest/telemetry/spans/rig.py:119-149`,
+(`sidequest-server/sidequest/magic/outputs.py`), calls
+`emit_rig_bond_event` (`sidequest-server/sidequest/telemetry/spans/rig.py`,
 span `rig.bond_event`) with both deltas, both before/after tiers, side,
 `confrontation_id`, and register; and when the chassis-side tier *crosses* it
 additionally fires `emit_rig_voice_register_change` (`rig.voice_register_change`,
-`rig.py:152-170`) so a tier-driven change in how the ship speaks is visible in
+`rig.py`) so a tier-driven change in how the ship speaks is visible in
 the panel rather than improvised. Interior renders emit `interior.render`
-(`emit_interior_render`, called from `interior/dispatch.py:121-127`).
+(`emit_interior_render`, called from `interior/dispatch.py`).
 
 ## Consequences
 
@@ -214,12 +214,12 @@ the panel rather than improvised. Interior renders emit `interior.render`
   (`sidequest-server/sidequest/interior/render.py`) hardcodes the
   voidborn_freighter 2×2 layout and Kestrel crew defaults; generalizing across
   chassis classes is deferred until a second class ships, and the REST endpoint
-  currently renders against an empty/stub snapshot (`interior/dispatch.py:67-117`)
+  currently renders against an empty/stub snapshot (`interior/dispatch.py`)
   rather than the live session — live PC/NPC placement is a follow-on.
 - **Slice fields deferred.** Hardpoints, subsystems, damage history, and chassis
-  registration/death are named-but-unauthored (`chassis.py:10-12`), and returning
+  registration/death are named-but-unauthored (`chassis.py`), and returning
   save rehydration of the registry is deferred to a follow-on
-  (`chassis.py:209-211`).
+  (`chassis.py`).
 
 ## Alternatives considered
 
@@ -239,7 +239,7 @@ the panel rather than improvised. Interior renders emit `interior.render`
 
 - **ADR-007 (Unified Character Model).** A chassis is **not** a character. It does
   not run through chargen, has no class/level/HP-as-PC sheet, and is not a turn
-  actor. It *borrows* OCEAN (the same `OceanScores` shape, `chassis.py:83`) and
+  actor. It *borrows* OCEAN (the same `OceanScores` shape, `chassis.py`) and
   the relationship vocabulary, but as a distinct `ChassisInstance` type in its own
   registry — ADR-007 governs the player/NPC character model and does not reach the
   chassis data model. The placeholder rebind exists precisely *because* the
@@ -255,7 +255,7 @@ the panel rather than improvised. Interior renders emit `interior.render`
   (ADR-099 §"Room-entry trigger"). Those conditions are *consumers* of this
   ADR's model: `interior_room_present` reads the chassis interior, and
   `bond_tier_min` is compared against the **chassis-side** bond tier using this
-  ADR's ladder (`sidequest-server/sidequest/magic/confrontations.py:60,193,247-249`).
+  ADR's ladder (`sidequest-server/sidequest/magic/confrontations.py,193,247-249`).
   ADR-099 governs the salvage auto-fire hooks; it depends on, but does not define,
   the chassis entity, its bond ledger, or the tier ladder.
 - **ADR-114 (Ablative HP Substrate).** ADR-114 mentions `rig_composure_pool.py`

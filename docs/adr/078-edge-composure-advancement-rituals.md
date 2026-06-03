@@ -42,8 +42,8 @@ Combat in SideQuest today is two parallel systems running past each other.
 
 Tracing the actual code:
 
-- `sidequest-server/src/dispatch/beat.rs:362` logs `"HP delta via encounter metric"` as a comment string and **never calls `apply_hp_delta()`** on any creature.
-- The only write path that reaches `CreatureCore.hp` during play is the level-up healing block at `sidequest-server/src/dispatch/state_mutations.rs:56-59`, which scales `max_hp` and tops up `hp` to the new ceiling. There is no damage path.
+- `sidequest-server/src/dispatch/beat.rs` logs `"HP delta via encounter metric"` as a comment string and **never calls `apply_hp_delta()`** on any creature.
+- The only write path that reaches `CreatureCore.hp` during play is the level-up healing block at `sidequest-server/src/dispatch/state_mutations.rs`, which scales `max_hp` and tops up `hp` to the new ceiling. There is no damage path.
 - The integration test `sidequest-api/tests/beat_dispatch_wiring_story_28_5_tests.rs` was supposed to verify this wiring. It instead regex-matches source strings ("references resolve_attack or apply_hp_delta") and gives a false-positive green even though neither function is invoked at runtime.
 
 What the player experiences as "combat damage" is the narrator inferring damage from the `metric.current` value of the encounter clock and writing prose that *implies* HP loss while the actual HP field stays static. Combat is a story the narrator tells about a number that does not exist.
@@ -113,7 +113,7 @@ pub target_edge_delta: Option<i32>,                // debits primary opponent
 pub resource_deltas: Option<HashMap<String, f64>>, // debits genre ResourcePools
 ```
 
-These parallel the existing `gold_delta: Option<i32>` field at `sidequest-genre/src/models/rules.rs:188`. Engine handler clauses are added to `dispatch/beat.rs::handle_applied_side_effects`, in the same shape as the existing gold_delta block at `beat.rs:319-337`.
+These parallel the existing `gold_delta: Option<i32>` field at `sidequest-genre/src/models/rules.rs`. Engine handler clauses are added to `dispatch/beat.rs::handle_applied_side_effects`, in the same shape as the existing gold_delta block at `beat.rs`.
 
 **Rejected alternative:** A structured `pushes: Vec<PushOption>` enum carrying both Edge and ResourcePool costs in one variant tree. Rejected because Edge is typed (lives on `CreatureCore`) and ResourcePools are stringly-keyed — collapsing them into one enum forces every consumer to handle both cases. Three optional fields are simpler and surface the type distinction at the schema level.
 
@@ -123,7 +123,7 @@ When `handle_applied_side_effects` applies an `edge_delta` (self or target), it 
 
 - Set `encounter.resolved = true`
 - Emit OTEL `encounter.composure_break` with fields `{ char_name, beat_id, side: self|target }`
-- The existing resolution branch at `beat.rs:396` carries the encounter to closure
+- The existing resolution branch at `beat.rs` carries the encounter to closure
 
 The narrator still **describes** the break — the real hit that finally lands, the stagger, the yield. The engine owns the **state mutation**. This preserves ADR-057's narrator-crunch separation: narration → LLM, crunch → scripts.
 
@@ -235,7 +235,7 @@ Existing pact_working beats gain debits:
 - `steady_the_rite { resource_deltas: { voice: -1 } }`
 - `force_completion { resource_deltas: { ledger: -3, flesh: -1 } }`
 
-Engine plumbing reuses the existing narrator `resource_deltas` path at `dispatch/state_mutations.rs:328-407`. The narrator's prose is unchanged — it already describes "an hour of life, a memory, a name, a year." We are making those costs typed and engine-tracked.
+Engine plumbing reuses the existing narrator `resource_deltas` path at `dispatch/state_mutations.rs`. The narrator's prose is unchanged — it already describes "an hour of life, a memory, a name, a year." We are making those costs typed and engine-tracked.
 
 **No `resolve_ritual()` tool.** ADR-059 established that `claude -p` ignores tool-calling instructions empirically. Game-state injection is the validated pattern. The existing beat-selection path, plus the new `resource_deltas` debit handler, covers ritual entirely.
 
@@ -330,10 +330,10 @@ GM authored a heavy_metal content draft at `sidequest-content/genre_packs/heavy_
 
 - Implementation plan: `~/.claude/plans/ticklish-spinning-reef.md`
 - Heavy_metal current rules: `sidequest-content/genre_packs/heavy_metal/rules.yaml`
-- Phantom HP evidence: `sidequest-server/src/dispatch/beat.rs:362`
+- Phantom HP evidence: `sidequest-server/src/dispatch/beat.rs`
 - False-positive wiring test: `sidequest-api/tests/beat_dispatch_wiring_story_28_5_tests.rs`
-- `gold_delta` template pattern: `sidequest-server/src/dispatch/beat.rs:319-337`
-- ResourcePool delta pipeline: `sidequest-server/src/dispatch/state_mutations.rs:328-407`
+- `gold_delta` template pattern: `sidequest-server/src/dispatch/beat.rs`
+- ResourcePool delta pipeline: `sidequest-server/src/dispatch/state_mutations.rs`
 
 ## Implementation status (2026-05-02)
 
@@ -348,23 +348,23 @@ the body above.
 ### Live (§1, §2, §3, §5 data shapes)
 
 - **Edge as first-class CreatureCore field** (§1): `EdgePool` and
-  `EdgeThreshold` exported from `sidequest-server/sidequest/game/__init__.py:44, 127`.
+  `EdgeThreshold` exported from `sidequest-server/sidequest/game/__init__.py, 127`.
   Apply call: `core.apply_edge_delta(delta)`.
-  - Production call sites: `sidequest-server/sidequest/server/dispatch/yield_action.py:43`
-    (yield refund), `sidequest-server/sidequest/game/session.py:884, 888`
+  - Production call sites: `sidequest-server/sidequest/server/dispatch/yield_action.py`
+    (yield refund), `sidequest-server/sidequest/game/session.py, 888`
     (per-character + per-NPC application).
 - **Shared threshold helper** (§2): `mint_threshold_lore` and crossing-
   detection logic extracted into `sidequest-server/sidequest/game/thresholds.py`.
   Both `ResourcePool.apply_and_clamp` (float-valued) and `EdgePool.apply_delta`
   (int-valued) call it. The §Reuse-first refactor landed.
-- **BeatDef edge_delta field** (§3): `genre/models/rules.py:105` —
+- **BeatDef edge_delta field** (§3): `genre/models/rules.py` —
   `edge_delta: int | None = None` parallels the existing `gold_delta`.
-- **Advancement effect data shapes** (§5): `genre/models/advancement.py:89–106`
+- **Advancement effect data shapes** (§5): `genre/models/advancement.py–106`
   carries `edge_delta_mod`, `target_edge_delta_mod`, beat-discount-style
   effects as Pydantic models. The data layer is loaded by the genre pack
   loader; the wiring of effects to per-character beat costs is
   Epic 39 (see Pending below).
-- **HP→Edge transition acknowledged**: `sidequest-server/sidequest/server/websocket_session_handler.py:1510`:
+- **HP→Edge transition acknowledged**: `sidequest-server/sidequest/server/websocket_session_handler.py`:
   *"ADR-014 / ADR-078: HP was removed in favor of EdgePool (composure)."*
 
 ### Dark / pending
@@ -373,7 +373,7 @@ the body above.
   The §4 "engine-derived resolution on composure break" — `if char.core.edge.current <= 0:` followed by
   `encounter.resolved = true` and OTEL emit — is not wired. Players
   can drain to zero, but the mechanical resolution at zero is owed.
-- **Per-class edge config wiring (Epic 39)**: `world_materialization.py:325`
+- **Per-class edge config wiring (Epic 39)**: `world_materialization.py`
   is explicit: *"placeholder EdgePool stays as-is (Epic 39 wires
   per-class edge config)."* Today every character gets the same
   default EdgePool; the §5 advancement effects that should mutate
@@ -381,14 +381,14 @@ the body above.
   but not applied.
 - **Push-currency rituals are in workshopping, not production**:
   `pact_working` confrontation type and `commit_cost` beat live in
-  `sidequest-content/genre_workshopping/heavy_metal/rules.yaml:276, 298` —
+  `sidequest-content/genre_workshopping/heavy_metal/rules.yaml, 298` —
   that's the staging tree, not production `genre_packs/`. Same for
   the `commit_cost` resource-cost authoring in
   `worlds/evropi/_drafts/character-progression/th_rook.yaml`. The
   rituals are designed but not shipped to a playable pack.
-- **Vestigial HP fields linger in unrelated paths**: `tension_tracker.py:340–350`
+- **Vestigial HP fields linger in unrelated paths**: `tension_tracker.py–350`
   (`update_stakes(current_hp, max_hp)` raises on `max_hp <= 0`),
-  `history_chapter.py:64` (`max_hp: int | None = None`), `session.py:151`
+  `history_chapter.py` (`max_hp: int | None = None`), `session.py`
   (Story 45-21 still writes hp/max_hp under some path). Per the project
   memory `[HP removed per ADR-014]`, these are stale-schema bugs awaiting
   cleanup — not strictly an ADR-078 gap, but they live alongside.
@@ -396,11 +396,11 @@ the body above.
 ### Source of truth
 
 - **Edge primitive:** `sidequest-server/sidequest/game/creature_core.py`
-- **Apply path:** `sidequest-server/sidequest/game/session.py:884–888`,
-  `sidequest-server/sidequest/server/dispatch/yield_action.py:43`
+- **Apply path:** `sidequest-server/sidequest/game/session.py–888`,
+  `sidequest-server/sidequest/server/dispatch/yield_action.py`
 - **Threshold helper:** `sidequest-server/sidequest/game/thresholds.py`
-- **BeatDef field:** `sidequest-server/sidequest/genre/models/rules.py:105`
-- **Advancement effects (data, not yet wired):** `sidequest-server/sidequest/genre/models/advancement.py:89–106`
+- **BeatDef field:** `sidequest-server/sidequest/genre/models/rules.py`
+- **Advancement effects (data, not yet wired):** `sidequest-server/sidequest/genre/models/advancement.py–106`
 
 The Rust code samples above and the `### References` Rust paths are
 historical illustration — the implementation crossed into Python
@@ -421,10 +421,10 @@ the chargen seed. The current path is:
 
 - `sidequest-content/genre_packs/<pack>/rules.yaml`
   `edge_config.base_max_by_class` — class lookup, e.g. Fighter 4.
-- `sidequest-server/sidequest/game/creature_core.py:105`
+- `sidequest-server/sidequest/game/creature_core.py`
   `edge_pool_from_config(edge_config, class_name)` — class-only lookup;
   CON is not read.
-- `sidequest-server/sidequest/game/builder.py:2066-2078` — hardcoded
+- `sidequest-server/sidequest/game/builder.py` — hardcoded
   Fighter +2 stub authored in Story 39-4 (smoke-gate "to be replaced
   in 39-5"); never replaced.
 
@@ -454,7 +454,7 @@ apply (CON 6 = `-2`), with a floor: `edge.base_max` cannot drop below
 `1` even if class base + CON mod would push it lower. This preserves
 the "everyone has some composure" invariant from §1.
 
-The hardcoded `Fighter += 2` stub in `builder.py:2066-2078` is
+The hardcoded `Fighter += 2` stub in `builder.py` is
 **retired** by this change. It was always a temporary smoke gate
 ("Replacing it is a future-story concern"); the CON-mod seed replaces
 it. Fighter-specific composure depth instead comes from a higher
@@ -474,7 +474,7 @@ level-up per §3.
 - **Reuses existing infrastructure.** No new fields. No new types.
   The `_ability_modifier` formula is already inlined three places;
   this is one more call. The chargen flow already has the rolled
-  stats in hand at `builder.py:2066` (they were rolled and arranged
+  stats in hand at `builder.py` (they were rolled and arranged
   upstairs in the same builder).
 - **Retires a known stub.** Story 39-4 explicitly labeled the
   Fighter +2 as smoke-gate code awaiting replacement. The replacement
@@ -500,7 +500,7 @@ level-up per §3.
   (including the hardcoded Fighter +2) until the character is rerolled.
   No save migration is required; legacy sessions are throwaway per
   project memory `feedback_legacy_saves.md`.
-- The OTEL event `chargen.edge_seeded` in `builder.py:2042` and
+- The OTEL event `chargen.edge_seeded` in `builder.py` and
   `:2052` adds a `con_modifier` field and a `seed_formula` discriminant
   (`"class_base+con_mod"`). The previously-emitted
   `chargen.advancement_stub_applied` event is removed.
@@ -511,10 +511,10 @@ level-up per §3.
 
 ### Implementation pointers
 
-- `sidequest-server/sidequest/game/creature_core.py:105`
+- `sidequest-server/sidequest/game/creature_core.py`
   (`edge_pool_from_config`) — extend signature to accept
   `con_score: int` and apply the modifier; floor at 1.
-- `sidequest-server/sidequest/game/builder.py:2036-2078` — pass the
+- `sidequest-server/sidequest/game/builder.py` — pass the
   rolled CON score (already in scope as `acc.stats` or equivalent)
   to `edge_pool_from_config`; delete the Fighter +2 stub block.
 - `chargen.edge_seeded` OTEL event — add `con_modifier`,

@@ -316,14 +316,14 @@ live, but the `mood_aliases` lookup table is dead data.
   `encounter_type`, `metric`, `actors`, `secondary_stats`, `mood_override`,
   and `narrator_hints` fields the ADR specified.
 - `apply_beat` lives in `sidequest/game/beat_kinds.py`; called from
-  `sidequest/server/narration_apply.py:1367` and `:1573`.
-- ConfrontationDef matching: `sidequest/server/session_helpers.py:412`
+  `sidequest/server/narration_apply.py` and `:1573`.
+- ConfrontationDef matching: `sidequest/server/session_helpers.py`
   (`find_confrontation_def`) routes the narrator's confrontation hint to the
   pack's declared encounter types.
 - Encounter render → narrator: `sidequest/agents/encounter_render.py`.
 - Lifecycle dispatch: `sidequest/server/dispatch/encounter_lifecycle.py`,
   `sidequest/server/dispatch/confrontation.py`,
-  `sidequest/server/websocket_session_handler.py:1733–2233`.
+  `sidequest/server/websocket_session_handler.py–2233`.
 
 **Pillar 2 — ResourcePool, threshold → KnownFact: live.**
 
@@ -331,32 +331,32 @@ live, but the `mood_aliases` lookup table is dead data.
   `ResourcePatch`, `ResourcePatchOp`, `ResourcePatchResult`, plus typed errors
   (`UnknownResource`, `NotVoluntary`).
 - `resources: dict[str, ResourcePool]` is on the snapshot at
-  `sidequest/game/session.py:529`.
+  `sidequest/game/session.py`.
 - Legacy `resource_state` saves migrate via the Pydantic validator at
-  `sidequest/game/session.py:564–614` — old saves with the flat
+  `sidequest/game/session.py–614` — old saves with the flat
   `dict[str, float]` shape get hydrated into `ResourcePool` entries.
 - The threshold → LoreStore/KnownFact pipeline this ADR specified is wired:
   `mint_threshold_lore(result.crossed_thresholds, lore_store, turn)` in
-  `sidequest/server/dispatch/encounter_lifecycle.py:435`. Helper raises
+  `sidequest/server/dispatch/encounter_lifecycle.py`. Helper raises
   `UnknownResource` strictly; the session-handler caller wraps in try/except
   to keep narration turns resilient to LLM typos (strict helper, lenient
-  caller — explicit comment at `encounter_lifecycle.py:420`).
-- `init_resource_pools` (`session.py:990ff`) refreshes pack metadata onto
+  caller — explicit comment at `encounter_lifecycle.py`).
+- `init_resource_pools` (`session.pyff`) refreshes pack metadata onto
   saved pools without clobbering player progress, re-clamping `current` if
   bounds change.
 
 **Pillar 3 — Mood Extension: partial.**
 
 - ✓ `StructuredEncounter.mood_override` → MusicDirector flow is live.
-  Consumed at `sidequest/agents/encounter_render.py:40`,
-  `sidequest/server/dispatch/confrontation.py:39–42`, populated at
-  `sidequest/server/dispatch/encounter_lifecycle.py:301` from `cdef.mood`.
+  Consumed at `sidequest/agents/encounter_render.py`,
+  `sidequest/server/dispatch/confrontation.py–42`, populated at
+  `sidequest/server/dispatch/encounter_lifecycle.py` from `cdef.mood`.
   When a standoff is active, the mood string flows through to track
   selection regardless of narration keywords — exactly as the ADR §Pillar 3
   Step 4 prescribed.
-- ✗ `mood_aliases` is dead data. `sidequest/genre/models/audio.py:120`
+- ✗ `mood_aliases` is dead data. `sidequest/genre/models/audio.py`
   declares `mood_aliases: dict[str, str]`. One content pack declares
-  aliases (`sidequest-content/genre_workshopping/heavy_metal/audio.yaml:94`).
+  aliases (`sidequest-content/genre_workshopping/heavy_metal/audio.yaml`).
   No consumer fires the alias chain. The track-selection fallback the ADR
   §Pillar 3 Step 3 described — "look up the classified mood string in
   mood_tracks; if not found, follow the alias chain" — was never written
@@ -396,10 +396,10 @@ module*, the default (ADR-117 §lines 27-28, 53, 57-58).
 
 In code, the ADR-033 engine is now the `native` ruleset module:
 `sidequest-server/sidequest/game/ruleset/native.py` defines
-`NativeRulesetModule` (`slug = "native"`, `native.py:40`) whose docstring states
-"This is ADR-033's confrontation engine, relocated" (`native.py:3`). Its
-`apply_beat` (`native.py:56`) delegates to the same engine entry point
-(`sidequest.game.beat_kinds.apply_beat`, `native.py:10,57`) the §Implementation
+`NativeRulesetModule` (`slug = "native"`, `native.py`) whose docstring states
+"This is ADR-033's confrontation engine, relocated" (`native.py`). Its
+`apply_beat` (`native.py`) delegates to the same engine entry point
+(`sidequest.game.beat_kinds.apply_beat`, `native.py,57`) the §Implementation
 status section above documents. The other shipped module is `swn.py` (Stars
 Without Number); modules resolve through `ruleset/registry.py`, and an unknown
 `ruleset:` name fails loud (`UnknownRulesetError`). Readers reconciling 033

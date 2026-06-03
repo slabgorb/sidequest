@@ -252,9 +252,9 @@ implementing the §Turn flow pipeline:
 
 ### UI protocol surface
 
-`sidequest-ui/src/types/protocol.ts:41–43` declares `DICE_REQUEST`,
+`sidequest-ui/src/types/protocol.ts–43` declares `DICE_REQUEST`,
 `DICE_THROW`, `DICE_RESULT`. Payload types and type guards at
-`types/payloads.ts:464–474, 581–589`.
+`types/payloads.ts–474, 581–589`.
 
 ### Sibling ADR
 

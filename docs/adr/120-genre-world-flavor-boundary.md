@@ -56,7 +56,7 @@ Two facts broke that arrangement (Keith, 2026-05-30, recorded in
 But the loader stood in the way. Per the checklist's "Loader blocker" note,
 genre-root `lore.yaml` (and its siblings) loaded through the **required**
 `_load_yaml` path — *"Required; raises GenreLoadError on any failure (file
-missing…). No silent fallbacks."* (`loader.py:89`). **Deleting any genre-root
+missing…). No silent fallbacks."* (`loader.py`). **Deleting any genre-root
 flavor file made the pack fail to load.** So the boundary could not be enforced
 content-side until the *consumer* (the loader) was repointed. That is the work
 Epic 74 governs, and story 74-1 is the loader half of it.
@@ -77,7 +77,7 @@ source for all flavor.** Concretely, in the pack loader
 ### D1 — Genre-tier flavor is now OPTIONAL (was required)
 
 The genre-root flavor files load through the `*_optional` helpers instead of the
-required `_load_yaml`. `load_genre_pack` (`loader.py:1188–1221`) now reads:
+required `_load_yaml`. `load_genre_pack` (`loader.py–1221`) now reads:
 
 - `lore = _load_yaml_optional(path / "lore.yaml", Lore)` (`:1194`)
 - `theme = _load_yaml_optional(path / "theme.yaml", GenreTheme)` (`:1195`)
@@ -90,14 +90,14 @@ A genre pack that ships none of these is a valid **mechanics-only pack**.
 Absence yields `None`/empty — but this is *not* a silent fallback: the
 `*_optional` helpers return `None` **only when the file is absent**; an existing
 file that is malformed or schema-invalid still raises `GenreLoadError`
-(`_load_yaml_optional`, `loader.py:110–120` — "If present, failure is still
+(`_load_yaml_optional`, `loader.py–120` — "If present, failure is still
 loud."). Mechanics files stay required: `rules.yaml`, `tropes.yaml`,
 `progression.yaml`, `axes.yaml`, `prompts.yaml`, `char_creation.yaml` still load
 through `_load_yaml`/`_load_yaml_raw` and fail loud on absence.
 
 ### D2 — The world tier loads its own flavor and is authoritative
 
-`_load_single_world` (`loader.py:853`) reads the world's own flavor surfaces
+`_load_single_world` (`loader.py`) reads the world's own flavor surfaces
 **raw** (free-form hard-overrides, not the strict genre schemas — e.g.
 `five_points/audio.yaml`):
 
@@ -110,20 +110,20 @@ World `lore.yaml` is *required* at the world tier
 cultures, archetypes, and history load optionally and override/inherit the genre
 templates (trope inheritance via `resolve_trope_inheritance`, `:936`). The
 assembled `World` carries `theme=effective_theme`, `audio=world_audio`,
-`visual_style=visual_style` (`loader.py:1086–1096`).
+`visual_style=visual_style` (`loader.py–1096`).
 
 ### D3 — Theme is world-required, with a loud fail
 
 Theme resolution is the one flavor surface elevated to a hard invariant, because
 a themeless client (connect-time chrome + reference pages) is *broken*, not
 merely plain. The effective theme is the world's own theme if present, else the
-genre theme as a transitional fallback (`effective_theme`, `loader.py:976–978`):
+genre theme as a transitional fallback (`effective_theme`, `loader.py–978`):
 
 ```
 effective_theme = world_theme if world_theme is not None else genre_theme
 ```
 
-After all worlds load, a **pack-level invariant** (`loader.py:1352–1367`) walks
+After all worlds load, a **pack-level invariant** (`loader.py–1367`) walks
 every non-draft world and raises `GenreLoadError` — naming the world and the
 missing `worlds/<slug>/theme.yaml` — if it resolved no theme from *either* tier.
 The check lives at the pack level (not inside `_load_single_world`) deliberately
@@ -133,12 +133,12 @@ real pack enforces "every world must supply or inherit a theme."
 ### D4 — Genre flavor is a *transitional* fallback, not a parallel tier
 
 The genre theme is passed down only as a fallback during the migration
-(`_load_single_world(..., genre_theme=theme)`, `loader.py:1348`). Two runtime
+(`_load_single_world(..., genre_theme=theme)`, `loader.py`). Two runtime
 shapes coexist behind the boundary — a raw `dict` from the world tier or a typed
 `GenreTheme` from the genre fallback — and `World.theme` is deliberately typed
-`GenreTheme | dict[str, Any] | None` (`genre/models/pack.py:136`) so consumers
+`GenreTheme | dict[str, Any] | None` (`genre/models/pack.py`) so consumers
 **branch on the type** (`isinstance(world.theme, GenreTheme)`) rather than
-assume one shape. `World.audio` is `dict[str, Any] | None` (`pack.py:145`): a raw
+assume one shape. `World.audio` is `dict[str, Any] | None` (`pack.py`): a raw
 dict when the world authors one, `None` when genre audio still serves. This dual
 shape is a known transitional cost (74-4 hardens it), not a permanent design.
 
@@ -147,7 +147,7 @@ shape is a known transitional cost (74-4 hardens it), not a permanent design.
 Per the project OTEL Observability Principle (Keith's lie detector; ADR-031 /
 ADR-090 / ADR-103), the GM panel must be able to prove the world-tier read
 *fired* rather than the engine improvising from a genre default.
-`_emit_world_flavor_loaded` (`loader.py:831–850`) publishes a `state_transition`
+`_emit_world_flavor_loaded` (`loader.py–850`) publishes a `state_transition`
 watcher event (component `genre`) for each flavor surface the world actually
 authors — mirroring the existing `world_items` and `genre_pack` spans:
 
@@ -175,7 +175,7 @@ prove — and absence is never fabricated into a fake load.
   at genre root is always wrong."*
 - **Theme is world-required, loud-fail.** Every non-draft world must resolve a
   theme from its own tier or (transitionally) the genre fallback; a world that
-  resolves neither raises `GenreLoadError`, named (`loader.py:1352–1367`). No
+  resolves neither raises `GenreLoadError`, named (`loader.py–1367`). No
   silent themeless world.
 - **Genre flavor = transitional fallback.** Genre-tier theme/audio/lore/etc. are
   optional and serve only until the world tier owns them; they are not a
@@ -304,6 +304,6 @@ it.
   from `worlds/<slug>/theme.yaml` (authoritative) or the genre `theme.yaml`
   (transitional fallback). The world tier may carry its own
   `worlds/<slug>/client_theme.css` (`World.world_client_theme_css`,
-  `pack.py:171`), consumed by ADR-079's `:root[data-genre]` mechanism unchanged.
+  `pack.py`), consumed by ADR-079's `:root[data-genre]` mechanism unchanged.
   As the migration completes, the CSS ADR-079 ships is increasingly world-sourced;
   the unification contract on the client is untouched.

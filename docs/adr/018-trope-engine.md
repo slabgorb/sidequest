@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [game-systems]
-implementation-status: drift
-implementation-pointer: 87
+implementation-status: live
+implementation-pointer: "sidequest-server/sidequest/game/trope_tick.py + trope_time_skip.py — all four pillars wired at _execute_narration_turn (per ADR body 'Remaining gaps: None')"
 ---
 
 # ADR-018: Trope Engine

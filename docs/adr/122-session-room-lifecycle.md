@@ -39,7 +39,7 @@ Three architectural facts forced a per-slug in-memory aggregate to exist:
    slug. Without a slug-level singleton, each player constructs their own
    Orchestrator at connect and the system collapses into parallel solo games —
    the failure observed in playtest 2026-04-26 ("MP — players run as parallel
-   solo games"), cited at `session_room.py:179-182`.
+   solo games"), cited at `session_room.py`.
 3. **ADR-036 (multiplayer turn coordination)** requires a per-slug submit-and-wait
    barrier whose denominator is *the count of players who must submit before
    narration fires*. That denominator is room state, not connection state.
@@ -53,18 +53,18 @@ lifecycle is what this ADR records.
 Three concrete bugs drove the lifecycle design and are preserved as inline
 comments in the source — they are the "why":
 
-- **Story 45-2 — phantom-chargen-peer turn-barrier bug** (`session_room.py:85-113`,
+- **Story 45-2 — phantom-chargen-peer turn-barrier bug** (`session_room.py`,
   `:664-674`). A peer who had connected and claimed a seat but was still in
   character creation was counted by the structured-mode barrier, so a solo player
   could not advance until a phantom never-played peer "submitted." Modeling lobby
   presence as implicit booleans had rotted; the fix is an explicit FSM.
 - **2026-05-07 — host presence cleared on transient disconnect**
-  (`session_room.py:156-163`, `:415-426`, `:466-480`). HMR, tab backgrounding, and
+  (`session_room.py`, `:415-426`, `:466-480`). HMR, tab backgrounding, and
   Playwright tab-switch wakeups open a *second* concurrent WS for the same
   `player_id`; the legacy code dropped presence the instant *one* socket closed,
   evicting a still-present host from the roster. The fix ref-counts presence by
   `player_id`.
-- **2026-05-24 — `close_store` ordering violation** (`session_room.py:340-364`).
+- **2026-05-24 — `close_store` ordering violation** (`session_room.py`).
   Tearing the store down before the final on-disconnect save silently no-op'd the
   save (`save()` early-returns on a `None` store); and the previous shape nulled
   `_store` but left `_snapshot` set, so the next `bind_world` early-returned on its
@@ -81,7 +81,7 @@ ref-counted across all of a player's live sockets.**
 
 ### Room aggregate ownership (`SessionRoom`)
 
-One `SessionRoom` exists per slug (`session_room.py:147-212`). It owns:
+One `SessionRoom` exists per slug (`session_room.py`). It owns:
 
 - **The canonical world.** `_snapshot: GameSnapshot` and `_store: SaveRepository`,
   bound once via `bind_world()` (idempotent — first connect binds, later connects
@@ -94,7 +94,7 @@ One `SessionRoom` exists per slug (`session_room.py:147-212`). It owns:
   Orchestrator (`:303-333`). (ADR-067.)
 - **Per-socket outbound queues.** `_outbound_queues: dict[socket_id, asyncio.Queue]`
   — one queue per WS, drained by that WS's dedicated writer task
-  (`websocket.py:60-66`). `attach_outbound` / `detach_outbound` register and
+  (`websocket.py`). `attach_outbound` / `detach_outbound` register and
   deregister them (`:880-888`); `broadcast()` fans a message into every queue
   except an optional excluded socket (`:900-964`).
 - **The barrier denominator.** `_pending_actions`, `_crash_released` (per-interaction),
@@ -108,11 +108,11 @@ One `SessionRoom` exists per slug (`session_room.py:147-212`). It owns:
 
 A SessionRoom holds **no truth that the save does not** — its content is derivable
 from the canonical snapshot, so loss on process restart is acceptable (players
-reconnect and re-seat; `session_room.py:3-5`).
+reconnect and re-seat; `session_room.py`).
 
 ### Never-evict policy (`RoomRegistry`)
 
-`RoomRegistry` (`session_room.py:967-983`) is a process-global `dict[slug,
+`RoomRegistry` (`session_room.py`) is a process-global `dict[slug,
 SessionRoom]` with `get_or_create` and `get` — and **no `remove`, no `evict`, no
 TTL, no LRU.** Once a slug has a room, that room lives for the life of the process.
 
@@ -120,13 +120,13 @@ This is deliberate. The `AnthropicSdkClient` backing the room's orchestrator
 (ADR-101) carries prompt-cache and rolling-baseline state keyed by the slug
 (`session_id`); evicting and rebuilding it would discard that warm state on every
 last-disconnect. The cost is explicit and accepted: **per-slug Claude-client state
-lives for the entire process lifetime** (`session_room.py:367-375`). The
+lives for the entire process lifetime** (`session_room.py`). The
 cost-runaway exposure this creates is mitigated by `reset_baselines` at teardown
 (see Invariants and Consequences below) — *not* by eviction.
 
 ### LobbyState FSM (Story 45-2)
 
-A peer's lobby slot is an explicit state machine (`session_room.py:85-113`),
+A peer's lobby slot is an explicit state machine (`session_room.py`),
 replacing the implicit booleans that produced the phantom-peer bug. States:
 
 | State | Stored? | Meaning |
@@ -166,7 +166,7 @@ the same record without rotting:
 ### Multi-socket presence ref-counting (2026-05-07)
 
 Presence is ref-counted by `player_id` over `_player_sockets`
-(`session_room.py:156-163`): **a player is "present" as long as that set is
+(`session_room.py`): **a player is "present" as long as that set is
 non-empty.** `connect()` adds the new socket to the set without untracking any
 prior socket (`:434-437`) — each socket owns its own `WebSocketDisconnect`
 lifecycle and calls `disconnect(socket_id=…)` exactly once. `disconnect()`
@@ -187,9 +187,9 @@ These are the load-bearing guarantees a contributor must not break.
 `room.save()` must complete **before** `room.close_store()`. The WS endpoint's
 `finally` block enforces this: `handler.cleanup()` persists the final snapshot via
 `room.save()` first; only then, and only if cleanup did not raise and the save was
-not swallowed, does it call `room.close_store()` (`websocket.py:179-209`).
+not swallowed, does it call `room.close_store()` (`websocket.py`).
 `close_store()` nulls `_store`, `_snapshot`, and `_session` **together**
-(`session_room.py:377-386`) so the next `bind_world` re-binds fully instead of
+(`session_room.py`) so the next `bind_world` re-binds fully instead of
 early-returning on a stale snapshot with a null store. Nulling `_store` first
 would make the cleanup `save()` silently no-op (`save()` early-returns on a `None`
 store, `:294-297`) — the exact persist-before-close violation that lost the final
@@ -199,7 +199,7 @@ snapshot.
 
 Because `RoomRegistry` never evicts (and thus the `AnthropicSdkClient` lives for
 the process lifetime per slug), `close_store()` calls `reset_baselines(self.slug)`
-on the orchestrator's SDK client as slug-recycle prep (`session_room.py:388-413`).
+on the orchestrator's SDK client as slug-recycle prep (`session_room.py`).
 Without it, the rolling cost baseline can self-train onto a sustained runaway and
 silence its own alarm; resetting at teardown ensures the next session on the same
 slug starts cold. The reset is best-effort across backends (claude -p / Ollama
@@ -210,7 +210,7 @@ prevent (`:403-413`, No Silent Fallbacks).
 ### I3 — Barrier denominator under crash and fold
 
 `effective_barrier_count()` is the **single** source of truth for "how many
-submissions the barrier needs" (`session_room.py:754-786`), read by both the
+submissions the barrier needs" (`session_room.py`), read by both the
 normal submission path and the crash-release path:
 
 - `denominator = PLAYING peers − (crash_released ∪ table_folded)`.
@@ -233,7 +233,7 @@ Presence side effects fire **iff** the last socket for a `player_id` closes. Whi
 points at a live socket for a present player. `broadcast()` treats
 `_outbound_queues` as delivery ground truth and loudly logs/emits any `_connected`
 player whose socket has no queue (`broadcast.recipient_dropped`,
-`session_room.py:933-963`) — counting `len(_connected)` over-reports and silently
+`session_room.py`) — counting `len(_connected)` over-reports and silently
 strands peers (the 2026-04-30 "scrapbook only on first-connected player" bug).
 
 ## Consequences
@@ -283,7 +283,7 @@ strands peers (the 2026-04-30 "scrapbook only on first-connected player" bug).
   channel cannot honor `exclude_socket_id` (ADR-036 action visibility needs to omit
   the sender), cannot detect a connected player whose socket lost its queue
   (`broadcast.recipient_dropped`), and couples one slow consumer to all peers. One
-  `asyncio.Queue` per socket drained by a dedicated writer task (`websocket.py:60-66`)
+  `asyncio.Queue` per socket drained by a dedicated writer task (`websocket.py`)
   isolates back-pressure per connection and makes `_outbound_queues` the auditable
   delivery ground truth (I4).
 - **Implicit presence/lobby booleans (status quo ante).** Rejected — it produced

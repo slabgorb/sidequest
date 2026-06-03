@@ -160,9 +160,9 @@ above.
 - **`RoomExit*` tagged union** — discriminated by `type: Literal["door" | …]`.
   Different shape from this ADR's flat `RoomExit { exit_type: String }` spec
   but architecturally equivalent.
-- **`init_room_graph_location()`** — `sidequest-server/sidequest/game/room_movement.py:24`.
+- **`init_room_graph_location()`** — `sidequest-server/sidequest/game/room_movement.py`.
   Places the player at the entrance room and seeds `discovered_rooms`.
-- **Production switch** — `sidequest-server/sidequest/server/websocket_session_handler.py:1207–1230`
+- **Production switch** — `sidequest-server/sidequest/server/websocket_session_handler.py–1230`
   branches on `world.cartography.navigation_mode == NavigationMode.room_graph`
   and invokes the room-graph init path. Logs `room_graph.init genre=… world=…
   entrance=… discovered_rooms=…`.
@@ -197,15 +197,15 @@ above.
 - **Per-transition resource depletion.** §Resource Depletion specified
   `uses_remaining` decrement on room transition for active light sources
   (and optionally rations). The `uses_remaining` field is populated on
-  items at loadout time (`server/dispatch/chargen_loadout.py:65`,
-  `game/builder.py:1364, 1405`) but never decremented on transition.
+  items at loadout time (`server/dispatch/chargen_loadout.py`,
+  `game/builder.py, 1405`) but never decremented on transition.
   The torch-burn / extraction-pressure loop is not wired.
 - **Map-update wire message.** §Navigation Behavior specified that
   `MAP_UPDATE` messages carry the discovered room graph to the
   automapper UI. **The MAP_UPDATE pipeline was deleted server-side
   on 2026-04-28** when ADR-019 cartography was retired. The UI still
-  carries dead consumer code (`sidequest-ui/src/App.tsx:781`,
-  `types/payloads.ts:409`, `types/protocol.ts:17`); the server never
+  carries dead consumer code (`sidequest-ui/src/App.tsx`,
+  `types/payloads.ts`, `types/protocol.ts`); the server never
   emits MAP_UPDATE. A *new* wire message — distinct from MAP_UPDATE —
   is owed for room-graph delivery; the dead UI code should be cleaned
   up in the same pass.
@@ -217,7 +217,7 @@ For the current room-graph contract, defer to:
 - **Models:** `sidequest-server/sidequest/genre/models/world.py`
 - **Runtime:** `sidequest-server/sidequest/game/room_movement.py`
 - **Content:** `sidequest-content/genre_packs/caverns_and_claudes/worlds/*/rooms.yaml`
-- **Dispatch wiring:** `sidequest-server/sidequest/server/websocket_session_handler.py:1207`
+- **Dispatch wiring:** `sidequest-server/sidequest/server/websocket_session_handler.py`
 
 Not the prose body above. ADR text is the original 2026-04-01 intent;
 the running design has evolved.
@@ -241,10 +241,10 @@ it, no tick logic reads it). **Still owed.**
 ### Confirmed: per-transition resource depletion is NOT wired
 
 `uses_remaining` is populated at loadout/build time only —
-`sidequest-server/sidequest/server/dispatch/chargen_loadout.py:66`
+`sidequest-server/sidequest/server/dispatch/chargen_loadout.py`
 (`"uses_remaining": catalog_item.resource_ticks`),
-`chargen_loadout.py:122`, `narration_apply.py:2038`,
-`game/builder.py:1906,1979` — every one a *write* of the field. A
+`chargen_loadout.py`, `narration_apply.py`,
+`game/builder.py,1979` — every one a *write* of the field. A
 search for any decrement (`-= 1`, depletion logic) returns nothing, and
 `game/room_movement.py` (the room-transition module) contains no
 reference to `uses_remaining` at all. The torch-burn / extraction-
@@ -262,25 +262,25 @@ cartography* MAP_UPDATE pipeline. The **wire-type name `MAP_UPDATE` was
 reused** for the new ADR-055-era region-mode message, not retired:
 
 - `_emit_shared_world_frame(_cart_map, "MAP_UPDATE")` is live at
-  `sidequest-server/sidequest/server/websocket_session_handler.py:1988`,
+  `sidequest-server/sidequest/server/websocket_session_handler.py`,
   fired on region change for region-mode worlds
-  (`websocket_session_handler.py:1979`, guarded `if _is_region_mode_world
+  (`websocket_session_handler.py`, guarded `if _is_region_mode_world
   and _region_changed`).
 - The payload is built by `_build_cartography_map_message`
-  (`server/session_helpers.py:1297`), which returns a
+  (`server/session_helpers.py`), which returns a
   `CartographyMapMessage` and explicitly returns `None` for room_graph
-  worlds (`session_helpers.py:1320-1321`).
-- `protocol/messages.py:1376-1382` documents `type:
+  worlds (`session_helpers.py`).
+- `protocol/messages.py` documents `type:
   Literal["MAP_UPDATE"]` as **the NEW message** ("ADR-019 MAP_UPDATE
   pipeline; this is the minimal region-mode replacement"), and
-  `protocol/enums.py:124-126` + `server/session_handler.py:83` +
-  `server/websocket_handlers/map_emit.py:860` all carry the same "this
+  `protocol/enums.py` + `server/session_handler.py` +
+  `server/websocket_handlers/map_emit.py` all carry the same "this
   is the NEW ADR-055 message; do NOT revive ADR-019 MAP_UPDATE"
   convention.
 
 So no separate-named wire message is owed for region-mode cartography —
 the replacement ships under the reused `MAP_UPDATE` type. **Room_graph**
-worlds use a distinct `DUNGEON_MAP` message (`protocol/messages.py:1267`,
+worlds use a distinct `DUNGEON_MAP` message (`protocol/messages.py`,
 the "Beneath Sünden" seam) rather than MAP_UPDATE. The §Dark note's
 claim that "the server never emits MAP_UPDATE" is false; remove that
 owe. (Whether stale UI ADR-019 consumer code still warrants cleanup is a

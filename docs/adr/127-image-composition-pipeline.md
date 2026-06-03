@@ -88,31 +88,31 @@ Source of truth: `sidequest-daemon/recipes.yaml`,
 `camera_specs.py`.
 
 - **Three render kinds** — `portrait` / `poi` / `illustration`, the `kind`
-  literal on both `Recipe` and `RenderTarget` (`recipes.py:66`, `:158`). One
+  literal on both `Recipe` and `RenderTarget` (`recipes.py`, `:158`). One
   composable `RenderTarget` type serves all three; a `@model_validator`
-  (`recipes.py:94-152`) enforces per-kind shape (portrait requires `character`
+  (`recipes.py`) enforces per-kind shape (portrait requires `character`
   and forbids place/participants/action; poi requires a `where:` `place` whose
   scope matches `world`; illustration requires `action` + `camera` but treats
   `participants` and `location` as optional).
-- **Five named slots** — `Slot` enum (`recipes.py:11-18`): `CASTING`,
+- **Five named slots** — `Slot` enum (`recipes.py`): `CASTING`,
   `LOCATION`, `DIRECTION_ACTION`, `DIRECTION_CAMERA`, `ART_SENSIBILITY`. Each of
   the three recipes in `recipes.yaml` names a source binding per slot (e.g.
   portrait: `casting: character`, `location: background`,
   `direction_action: pose`, `direction_camera: portrait_3q`,
   `art_sensibility: [GENRE, WORLD, CULTURE]`).
-- **Camera presets** — `CameraPreset` (`recipes.py:37-59`) enumerates 17
+- **Camera presets** — `CameraPreset` (`recipes.py`) enumerates 17
   stills-only framings across portrait / POI / illustration / signature
   categories. A recipe binds a fixed preset by name *or* the dynamic marker
-  `"{camera}"` (`recipe_loader.py:13`), which pulls the preset from
-  `RenderTarget.camera` at compose time (`prompt_composer.py:481-485`). Presets
+  `"{camera}"` (`recipe_loader.py`), which pulls the preset from
+  `RenderTarget.camera` at compose time (`prompt_composer.py`). Presets
   carry their prompt tokens (and optional `post` crop/rotate directive) in
   `cameras.yaml`, loaded by `CameraLoader`.
 - **Character / place LOD** — `LOD` (solo/long/short/background) and `PlaceLOD`
-  (solo/backdrop) (`recipes.py:21-35`) select which authored detail tier a
+  (solo/backdrop) (`recipes.py`) select which authored detail tier a
   catalog entry contributes; this is the substrate the eviction ladder operates
   on.
 
-### 2. The eviction ladder (`PromptComposer.compose`, `prompt_composer.py:102-202`)
+### 2. The eviction ladder (`PromptComposer.compose`, `prompt_composer.py`)
 
 A 512-token ceiling (`_TOKEN_LIMIT`, `:44`; `_estimate_tokens` ≈ 1.3 tokens/word,
 `:53`) is enforced in **two phases**, in this order:
@@ -133,7 +133,7 @@ A 512-token ceiling (`_TOKEN_LIMIT`, `:44`; `_estimate_tokens` ≈ 1.3 tokens/wo
   entirely. Each truncation/drop is recorded in `dropped_layers`.
 
 If still over budget after both phases, the composer **raises `BudgetError`**
-(`:123-127`, `recipes.py:194-200`) with a per-slot breakdown — it never silently
+(`:123-127`, `recipes.py`) with a per-slot breakdown — it never silently
 ships a truncated identity. See Invariants.
 
 ### 3. The SceneInterpreter rule cascade (`scene_interpreter.py`)
@@ -170,15 +170,15 @@ into up to `_MAX_CUES = 2` (`:25`) `StageCue` objects:
 ## Invariants / Contracts
 
 - **Startup fail-loud recipe/camera validation.** `RecipeLoader.from_dict`
-  (`recipe_loader.py:24-46`) rejects an unknown camera preset (unless the dynamic
+  (`recipe_loader.py`) rejects an unknown camera preset (unless the dynamic
   `"{camera}"` marker) and any `art_sensibility` cascade layer outside
   `_ALLOWED_CASCADE_LAYERS = {GENRE, WORLD, CULTURE}` (`:12`), raising
-  `ValueError`. `CameraLoader.from_dict` (`camera_specs.py:39-57`) raises if
+  `ValueError`. `CameraLoader.from_dict` (`camera_specs.py`) raises if
   `cameras.yaml` is **missing any** known preset or contains an **unknown** one.
   Misconfiguration surfaces at daemon load, never at render time — honoring *No
   Silent Fallbacks*.
 - **Identity floor → `BudgetError`, never silent degradation.** `_IDENTITY_FLOOR`
-  (`prompt_composer.py:77-82`) = `{CASTING, DIRECTION_CAMERA,
+  (`prompt_composer.py`) = `{CASTING, DIRECTION_CAMERA,
   ART_SENSIBILITY.GENRE, ART_SENSIBILITY.WORLD}`. None of these appear in
   `_EVICTION_ORDER`; if eviction cannot bring the prompt under 512 tokens without
   touching them, the composer raises `BudgetError` (`:123-127`). Notably

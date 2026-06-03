@@ -149,43 +149,43 @@ writers filter; the Python design gives each connection its own
 **Per-connection writer task** (`sidequest-server/sidequest/server/websocket.py`):
 
 - On accept, each connection mints a `socket_id` and an
-  `out_queue: asyncio.Queue` (`websocket.py:54-56`), then hands both to the
-  handler via `attach_room_context(...)` (`websocket.py:57`).
+  `out_queue: asyncio.Queue` (`websocket.py`), then hands both to the
+  handler via `attach_room_context(...)` (`websocket.py`).
 - A dedicated writer is spawned per connection:
-  `writer_task = asyncio.create_task(_writer())` (`websocket.py:66`), where `_writer`
+  `writer_task = asyncio.create_task(_writer())` (`websocket.py`), where `_writer`
   is an infinite `await out_queue.get()` → `_send_message(...)` loop
-  (`websocket.py:60-65`). This is the structural analogue of the old Tokio writer
+  (`websocket.py`). This is the structural analogue of the old Tokio writer
   task, but it drains **one socket's** queue rather than `tokio::select!`-merging
   shared channels.
 - The reader loop never sends directly: handler output is enqueued with
-  `out_queue.put_nowait(outbound_msg)` (`websocket.py:100-102`), so a broadcast
+  `out_queue.put_nowait(outbound_msg)` (`websocket.py`), so a broadcast
   reaching *other* sockets' queues and this socket's own turn-output both flow through
   the same single-drainer queue — no interleaving of `send_text` calls on one socket.
 - On teardown the writer is cancelled and the queue is deregistered:
-  `writer_task.cancel()` then `room.detach_outbound(socket_id)` (`websocket.py:129-133`).
+  `writer_task.cancel()` then `room.detach_outbound(socket_id)` (`websocket.py`).
 - **Closing-state guard:** `_send_message` short-circuits when
   `websocket.application_state != WebSocketState.CONNECTED`, logging
   `ws.send_skipped_closing` at DEBUG and returning without sending
-  (`websocket.py:241-247`). This absorbs the normal tab-refresh / mid-fan-out close
+  (`websocket.py`). This absorbs the normal tab-refresh / mid-fan-out close
   race (a broadcast queued before the peer dropped) as a lifecycle event rather than a
   `ws.send_failed` WARNING — while genuine send faults still surface at WARNING
-  (`websocket.py:251-252`). This replaces the Rust `RecvError::Lagged` →
+  (`websocket.py`). This replaces the Rust `RecvError::Lagged` →
   reconnect contract; a slow Python socket simply backs up its own queue.
 
 **Room-level fan-out** (`sidequest-server/sidequest/server/session_room.py`):
 
 - The room owns `_outbound_queues: dict[str, asyncio.Queue]`
-  (`session_room.py:167`), populated via `attach_outbound(socket_id, queue)`
-  (`session_room.py:880-883`, called from `handlers/connect.py:371`) and torn down via
-  `detach_outbound(socket_id)` (`session_room.py:885-888`).
-- `broadcast(msg, *, exclude_socket_id=None)` (`session_room.py:900-964`) snapshots the
+  (`session_room.py`), populated via `attach_outbound(socket_id, queue)`
+  (`session_room.py`, called from `handlers/connect.py`) and torn down via
+  `detach_outbound(socket_id)` (`session_room.py`).
+- `broadcast(msg, *, exclude_socket_id=None)` (`session_room.py`) snapshots the
   target queues under `_lock`, then `put_nowait`s the message onto each one outside the
-  lock (`session_room.py:938-939`). Because `put_nowait` never blocks and the queues are
+  lock (`session_room.py`). Because `put_nowait` never blocks and the queues are
   unbounded, **any coroutine** (turn dispatch, presence broadcast, image emit) can fan a
   message out to every socket without awaiting and without holding the lock during
   delivery. This is the unicast/broadcast unification that `TargetedMessage` provided in
   Rust — here it falls out of "which queues do I put into."
-- **`broadcast.recipient_dropped` detection** (`session_room.py:933-963`): `broadcast`
+- **`broadcast.recipient_dropped` detection** (`session_room.py`): `broadcast`
   also computes the set of players who are in `_connected` but whose socket has **no**
   entry in `_outbound_queues` — the mid-broadcast churn state where `_connected` and
   `_outbound_queues` diverge. Each such drop is logged

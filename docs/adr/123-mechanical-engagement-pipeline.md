@@ -72,7 +72,7 @@ router and the narrator. It shipped piecemeal; this ADR is its design of record.
 The dispatch bank executor (`run_dispatch_bank`), the `LethalityArbiter`, and
 the `DispatchPackage` protocol were all merged dormant during the 2026-04-23
 LocalDM Group A/B/C work (`docs/superpowers/specs/completed/2026-04-23-local-dm-decomposer-design.md`,
-cited at `sidequest/agents/lethality_arbiter.py:5`). ADR-113 woke the spine.
+cited at `sidequest/agents/lethality_arbiter.py`). ADR-113 woke the spine.
 The work this ADR documents is the *gating and adjudication discipline* layered
 onto that woken spine — wiring and behavior, not reinvention (CLAUDE.md
 "Don't Reinvent").
@@ -104,11 +104,11 @@ Stages 1 and 2 run in the pre-narrator pass
 *before* the gated package is handed to the caller for
 `turn_context.dispatch_package` (which the post-turn watcher reads). Stage 3 is
 the single per-turn `run_dispatch_bank` call. Stages 4 and 5 run in the
-orchestrator's narrator-prompt build (`orchestrator.py:2628-2672`).
+orchestrator's narrator-prompt build (`orchestrator.py`).
 
 ### Stage 1 — Unregistered-subsystem gate (Story 71-27)
 
-`run_unregistered_subsystem_gate` (`dispatch_precondition_gate.py:229`) drops
+`run_unregistered_subsystem_gate` (`dispatch_precondition_gate.py`) drops
 every dispatch whose `subsystem` is absent from the live bank registry
 (`get_registered()`, injected by the caller so the gate stays registry-free and
 testable — `intent_router_pass.py` passes `registered=set(get_registered())`).
@@ -118,22 +118,22 @@ dispatch can never engage; registering a `combat` handler would be a stub for a
 non-subsystem (CLAUDE.md "No Stubbing"). It runs **first** — before the
 precondition gate, the bank, and the watcher — so the unhandlable dispatch never
 pollutes the redaction path or the lie-detector. Each drop emits a loud
-`intent_router.dispatch.unregistered` span (`dispatch_precondition_gate.py:243`).
+`intent_router.dispatch.unregistered` span (`dispatch_precondition_gate.py`).
 
 ### Stage 2 — Precondition gate (Story 59-8)
 
-`run_dispatch_precondition_gate` (`dispatch_precondition_gate.py:132`) drops
+`run_dispatch_precondition_gate` (`dispatch_precondition_gate.py`) drops
 dispatches that are *structurally inert* on the snapshot — they can never engage
 no matter what the narrator does because a world-level precondition is unmet.
 The map of predicates is `_INERT_PRECONDITIONS`
-(`dispatch_precondition_gate.py:78`); the only entry today is `scenario_clue`,
+(`dispatch_precondition_gate.py`); the only entry today is `scenario_clue`,
 inert when `snapshot.scenario_state is None`
-(`_scenario_clue_precondition_unmet`, `dispatch_precondition_gate.py:72`) — the
+(`_scenario_clue_precondition_unmet`, `dispatch_precondition_gate.py`) — the
 Glenross case where no ADR-053 clue graph exists. Rather than silence the
 post-turn watcher (which would blind it to *genuine* mismatches in real scenario
 worlds), the gate removes the inert dispatch from the package before the bank
 **and** before the watcher reads it, emitting a loud
-`intent_router.dispatch.gated` span per drop (`dispatch_precondition_gate.py:145`).
+`intent_router.dispatch.gated` span per drop (`dispatch_precondition_gate.py`).
 In a real scenario world (`scenario_state` present) the dispatch passes through
 untouched. A subsystem absent from `_INERT_PRECONDITIONS` is never gated.
 
@@ -143,38 +143,38 @@ package unchanged (no copy) when nothing is dropped.
 
 ### Stage 3 — Topo-sorted, confidence-gated dispatch bank (Story 71-16)
 
-`run_dispatch_bank` (`sidequest/agents/subsystems/__init__.py:214`) is the single
+`run_dispatch_bank` (`sidequest/agents/subsystems/__init__.py`) is the single
 per-turn engine-engagement run.
 
 - **Topological ordering by `depends_on`.** `_topo_sort`
-  (`subsystems/__init__.py:188`) orders dispatches so each fires after its
+  (`subsystems/__init__.py`) orders dispatches so each fires after its
   `depends_on` keys (DFS over `SubsystemDispatch.depends_on`, keyed by
   `idempotency_key`). A `depends_on` cycle raises `ValueError`
-  (`subsystems/__init__.py:198`); the bank catches it, records a `__bank__`
+  (`subsystems/__init__.py`); the bank catches it, records a `__bank__`
   error, sets `error="topo_sort_failure"` on the bank span, runs zero subsystem
   dispatches, and still flows decomposer-authored `narrator_instructions`
-  (`subsystems/__init__.py:248-256`).
+  (`subsystems/__init__.py`).
 
 - **Per-dispatch confidence gate.** For each dispatch the bank resolves a
-  threshold via `_threshold_for` (`subsystems/__init__.py:63`): the per-subsystem
+  threshold via `_threshold_for` (`subsystems/__init__.py`): the per-subsystem
   override from the pack's `RulesConfig.dispatch_confidence_thresholds`, falling
   back to `DEFAULT_DISPATCH_CONFIDENCE_THRESHOLD = 0.6`
-  (`subsystems/__init__.py:60`). If `d.confidence < threshold` the dispatch
+  (`subsystems/__init__.py`). If `d.confidence < threshold` the dispatch
   **degrades to a narrator hint** — a `must_narrate` `NarratorDirective`
   instructing the narrator to narrate the attempt naturally and *not* treat the
   engine as having fired — and the engine is never invoked
-  (`subsystems/__init__.py:277-293`). At or above threshold the engine fires
+  (`subsystems/__init__.py`). At or above threshold the engine fires
   (`decision="engaged"`). This is ADR-113's "untaken bait" guard, now real.
 
 - **Engine engagement.** The bank looks up the handler in `_REGISTRY`
-  (populated by `_register_defaults`, `subsystems/__init__.py:162`: seven live
+  (populated by `_register_defaults`, `subsystems/__init__.py`: seven live
   handlers — `confrontation`, `magic_working`, `scenario_clue`, `reflect_absence`,
   `distinctive_detail_hint`, `npc_agency`, `movement`), filters `context` to the
   kwargs the handler actually declares (`_filter_context_for_callable`,
-  `subsystems/__init__.py:85` — handlers have heterogeneous signatures, e.g.
+  `subsystems/__init__.py` — handlers have heterogeneous signatures, e.g.
   `run_npc_agency` requires `npc_pool` while `run_distinctive_detail` takes only
   `dispatch`), and awaits it. Per-handler exceptions are caught and recorded as
-  bank errors; the bank never re-raises (`subsystems/__init__.py:312-324`), so one
+  bank errors; the bank never re-raises (`subsystems/__init__.py`), so one
   engine failing does not abort the others — the post-turn watcher catches the
   resulting dispatch-without-engagement mismatch.
 
@@ -186,27 +186,27 @@ second time").
 
 ### Stage 4 — LethalityArbiter (2026-04-23 decomposer Group C; ADR-114)
 
-`LethalityArbiter.arbitrate` (`sidequest/agents/lethality_arbiter.py:57`) runs
+`LethalityArbiter.arbitrate` (`sidequest/agents/lethality_arbiter.py`) runs
 **after the bank and before the narrator directives are registered**
-(`orchestrator.py:2628-2646`). It is deterministic and synchronous — no LLM call.
+(`orchestrator.py`). It is deterministic and synchronous — no LLM call.
 
 - It reads the genre pack's `LethalityPolicy` (`genre/models/lethality.py`).
 - Phase A trigger is HP-based per ADR-114: any PC core (`pc_cores_by_player`) or
   NPC core (`npc_cores_by_name`) with `hp.current == 0` fires the policy's
   `verdicts_on_zero_hp` entry (`.pc` / `.npc`)
-  (`lethality_arbiter.py:70-85`). (`verdicts_on_zero_hp` was renamed from
-  `verdicts_on_zero_edge` for ADR-114 — `genre/models/lethality.py:14`.)
+  (`lethality_arbiter.py`). (`verdicts_on_zero_hp` was renamed from
+  `verdicts_on_zero_edge` for ADR-114 — `genre/models/lethality.py`.)
 - For each zero-HP entity it emits an authoritative `LethalityVerdict` plus a
   **paired** `must_narrate` / `must_not_narrate` `NarratorDirective` envelope
-  (`_emit`, `lethality_arbiter.py:96-133`) — the narrator decides *how* to
+  (`_emit`, `lethality_arbiter.py`) — the narrator decides *how* to
   describe the verdict, never *whether* it fires.
 - **Arbiter wins on entity conflict.** Decomposer-authored verdicts in
   `DispatchPackage.per_player[*].lethality` are merged only for entities the
   arbiter did not itself rule on; on any entity conflict the arbiter's verdict is
-  authoritative and the decomposer's is dropped (`lethality_arbiter.py:86-92`).
+  authoritative and the decomposer's is dropped (`lethality_arbiter.py`).
 
 The arbiter's directives join the bank's directives in the same high-attention
-`narrator_directives` prompt section (`orchestrator.py:2656-2672`).
+`narrator_directives` prompt section (`orchestrator.py`).
 
 ### Stage 5 — Narrator directives registration
 
@@ -215,23 +215,23 @@ The orchestrator strips directives whose visibility is
 covering subsystem-output directives, confidence-gate degraded hints, and
 decomposer `narrator_instructions`), combines the visible bank directives with
 the arbiter directives, and registers them as the `narrator_directives` section
-in `AttentionZone.Recency` (`orchestrator.py:2648-2672`). A present
+in `AttentionZone.Recency` (`orchestrator.py`). A present
 `dispatch_package` with a `None` `bank_result` is a wiring break and raises —
-fail loud, No Silent Fallbacks (`orchestrator.py:2620-2626`).
+fail loud, No Silent Fallbacks (`orchestrator.py`).
 
 ## Invariants / Contracts
 
 - **Topological `depends_on` ordering.** Every dispatch executes after all of its
   `depends_on` keys. Cycles fail loud (`ValueError` → recorded bank error, zero
   dispatches run, span `error="topo_sort_failure"`). Duplicate idempotency keys
-  in the sorted order are de-duplicated (`seen` set, `subsystems/__init__.py:258-262`).
+  in the sorted order are de-duplicated (`seen` set, `subsystems/__init__.py`).
 - **Confidence threshold + degrade-to-hint.** A dispatch engages its engine iff
   `confidence >= threshold` (per-subsystem override → `0.6` default). Below
   threshold it produces exactly one `must_narrate` hint and engages no engine.
   Both the confidence and the threshold are recorded on the subsystem span. A
   malformed threshold is not silently guessed — `dispatch_confidence_thresholds`
   must be a real mapping, and malformed values fail loud at pack load in
-  `RulesConfig` validation (`subsystems/__init__.py:63-82`).
+  `RulesConfig` validation (`subsystems/__init__.py`).
 - **Gates before bank and before watcher.** Both Stage 1 and Stage 2 run in the
   pre-narrator pass before `run_dispatch_bank` *and* before the (gated) package
   is assigned to `turn_context.dispatch_package` — so the post-turn lie-detector
@@ -342,7 +342,7 @@ Fallbacks.
   the spine (the 59-8 Glenross playtest gate) is also still **backlog**."
   **This ADR records what subsequently shipped against those exact items:**
   (1) Story 71-16 added the per-dispatch confidence read and threshold gate to
-  `run_dispatch_bank` (`subsystems/__init__.py:60-82`, `:268-293`) with the
+  `run_dispatch_bank` (`subsystems/__init__.py`, `:268-293`) with the
   per-subsystem `rules.yaml` override (`_threshold_for`) and the
   `confidence`/`threshold`/`decision` span attributes — `SubsystemDispatch` now
   carries the `confidence` the gate reads. (2) Story 59-8 delivered the

@@ -1,0 +1,51 @@
+id: '81'
+type: epic
+title: Built-Not-Wired Remediation — Magic Validator, Tension & Pacing
+description: "Three runtime bugs surfaced by the 2026-06-03 ADR-vs-code audit (docs/adr/AUDIT-2026-06-03.md, workflow run wf_0f9ed063-1a3). Each is the same anti-pattern: a subsystem fully built, tested in isolation, and documented as live in its ADR — but never wired into a production code path, so it silently no-ops or hits a failure branch at runtime. (1) ADR-126 Pluggable Magic: sidequest.magic.plugins is never imported in production, so MAGIC_PLUGINS is empty and every magic_validate() call hits the plugin_known_but_not_registered DEEP_RED branch — plugin validation is dead in prod. (2) ADR-024 Dual-Track Tension: TensionTracker is never instantiated in production (only in tests), so the action/stakes tracks never accumulate. (3) ADR-025 Pacing Detection: TurnContext.pacing_hint is never set (the sole construction site at session_helpers.py omits it), so the [PACING] narrator-prompt injection — guarded by 'if context.pacing_hint is not None' — never fires. Fixes directly serve the project wiring doctrine (Verify Wiring Not Just Existence; Every Test Suite Needs a Wiring Test) and the OTEL lie-detector principle. Scope is bug-fix wiring only; the audit's frontmatter/successor-pointer cleanups are tracked separately."
+priority: p1
+status: backlog
+repos: sidequest-server
+stories:
+  - id: 81-1
+    title: Register magic plugins in production so MAGIC_PLUGINS is non-empty at runtime (ADR-126)
+    description: "ADR-126 runtime bug. ROOT CAUSE: sidequest/magic/__init__.py:24 imports MAGIC_PLUGINS from sidequest.magic.plugin (the bare/empty registry) but NOTHING in production imports the sidequest.magic.plugins PACKAGE, whose star-imports (plugins/__init__.py:8-10 → innate_v1, item_legacy_v1, learned_v1) are what mutate MAGIC_PLUGINS at import. Only tests import it (tests/magic/conftest.py:24, tests/magic/test_wiring.py:29). So in production MAGIC_PLUGINS is {} and every magic_validate() call (sidequest/server/narration_apply.py:813) for a descriptor-declared plugin hits the 'plugin_known_but_not_registered' DEEP_RED branch (sidequest/magic/validator.py:107-123) instead of running plugin-side validation. FIX: trigger the registration side-effect from a production path — preferred: have sidequest/magic/__init__.py import the plugins package (mirrors the sidequest/telemetry/spans/__init__.py star-import-of-domain-modules pattern the plugins docstring cites), guarding against import cycles. The existing tests/magic/test_wiring.py is INSUFFICIENT because it imports the plugins package itself, so it stays green while prod stays empty — the new wiring test must assert registration via a PRODUCTION entrypoint (import sidequest.magic) WITHOUT importing sidequest.magic.plugins directly. Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-126)."
+    points: 2
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - "Importing the production entrypoint 'import sidequest.magic' (NOT sidequest.magic.plugins directly) populates MAGIC_PLUGINS with all three plugin ids: innate_v1, item_legacy_v1, learned_v1."
+      - magic_validate() for a descriptor-registered plugin_id no longer returns the plugin_known_but_not_registered flag (validator.py:107-123); plugin-side validation runs. A test asserts the DEEP_RED branch is NOT taken for a registered plugin.
+      - "No import cycle is introduced: the server app imports and boots cleanly (importing sidequest.server app / 'just server' start succeeds)."
+      - 'WIRING TEST: a test that imports only a production module (sidequest.magic or the narration_apply path) and asserts MAGIC_PLUGINS is non-empty — this test FAILS on the current code and PASSES after the fix. Full sidequest-server suite green (just server-test).'
+    type: bug
+  - id: 81-2
+    title: Instantiate and drive TensionTracker in the turn pipeline (ADR-024)
+    description: "ADR-024 runtime bug. ROOT CAUSE: TensionTracker (sidequest/game/tension_tracker.py:266; record_event at :322, pacing_hint at :359) is fully implemented and OTEL-instrumented but is NEVER instantiated in production — the only 'TensionTracker(' occurrences are a docstring (tension_tracker.py:16) and tests (tests/game/test_tension_tracker.py, tests/game/test_tension_tracker_otel_wiring.py). So the action/stakes tracks never accumulate during real play and the dual-track tension signal does not exist at runtime. THIS STORY is the PRODUCER side: give each session a live TensionTracker and feed turn events into it. Place the tracker on _SessionData (sidequest/server/session_state.py — alongside entity_store at :245), and call tracker.record_event(...) from the turn-processing path as combat/scene events resolve. Consumption of the resulting hint into the narrator prompt is story 81-3. Keep persistence minimal (per-session in-memory; resume-time rehydration may be deferred — note it as an assumption/deviation if it matters). Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-024)."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    acceptance_criteria:
+      - A TensionTracker instance is created per session and stored on _SessionData (sidequest/server/session_state.py), surviving across turns within a session (not re-created per turn).
+      - Turn processing feeds resolved combat/scene events into tracker.record_event so the action and stakes tracks accumulate; a test drives at least one turn with a tension-bearing event and asserts the tracks hold non-zero values.
+      - The TensionTracker OTEL span (already covered by test_tension_tracker_otel_wiring) fires during a REAL production turn — a watcher event is emitted so the GM panel can confirm the subsystem is engaged (OTEL lie-detector principle).
+      - 'WIRING TEST: an integration test proves the production turn path constructs a TensionTracker and calls record_event (behavioral, not test-only instantiation); it fails on current code. Full sidequest-server suite green (just server-test).'
+    type: bug
+  - id: 81-3
+    title: Feed PacingHint into TurnContext so the [PACING] injection fires (ADR-025)
+    description: "ADR-025 runtime bug. DEPENDS ON 81-2 (needs a live, accumulating TensionTracker to derive a hint from). ROOT CAUSE: TurnContext.pacing_hint (declared sidequest/agents/orchestrator.py:728 as 'PacingHint | None = None') is never set — the sole TurnContext construction site (sidequest/server/session_helpers.py:1158) omits it — so it is None every turn, and the orchestrator's [PACING] injection (orchestrator.py:2648-2653, 'if context.pacing_hint is not None: register_pacing_section(...)') never fires. The narrator therefore never receives a pacing hint. FIX (consumer/bridge side): at TurnContext construction in session_helpers.py:1158, derive the hint from the session TensionTracker (81-2) via tracker.pacing_hint(thresholds) using the genre's DramaThresholds, and pass it into TurnContext. EXPLICITLY OUT OF SCOPE (deferred per code): the original quiet-turn pre/post game-state diff, and the accelerator/decelerator keyword scan stubbed at sidequest/game/trope_tick.py:226-230. Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-025)."
+    points: 3
+    priority: p1
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 81-2
+    acceptance_criteria:
+      - TurnContext construction (session_helpers.py:1158) derives pacing_hint from the session TensionTracker (81-2) + the genre's DramaThresholds; pacing_hint is non-None on turns where accumulated tension warrants a hint.
+      - 'The orchestrator [PACING] injection actually fires (orchestrator.py:2648-2653 register_pacing_section): a prompt-assembly test asserts the assembled narrator prompt contains the pacing-hint section when pacing_hint is set.'
+      - A watcher/OTEL event records the computed pacing hint per turn, GM-panel observable (so we can tell the hint is real, not improvised).
+      - 'WIRING TEST: an end-to-end test ties TensionTracker -> TurnContext.pacing_hint -> [PACING] section in the narrator prompt; it fails on current code (hint always None). Full sidequest-server suite green (just server-test).'
+    type: bug

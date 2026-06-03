@@ -77,7 +77,7 @@ recipient: <exact name of a seated PC, as it appears in player_seats.values()>
 ```
 
 The narrator already does exactly this for `BeatSelection.actor`
-(orchestrator.py:123) — it names which PC each beat belongs to and that
+(orchestrator.py) — it names which PC each beat belongs to and that
 name is validated against the seated-PC set. Item recipients reuse the
 same convention and the same vocabulary the narrator already produces.
 
@@ -199,10 +199,10 @@ existing structured-output extraction + a `recipient` key on the entries
 
 No new component is introduced. The decision reuses, in order:
 
-1. `BeatSelection.actor` (orchestrator.py:123) — the established
+1. `BeatSelection.actor` (orchestrator.py) — the established
    "narrator names the PC" structured-output convention; `recipient` is
    the same idea on item entries.
-2. The `seated_pc_names` validation contract (narration_apply.py:529-585)
+2. The `seated_pc_names` validation contract (narration_apply.py)
    — narrator-supplied actor name validated against
    `snapshot.player_seats.values()`. Reused verbatim for recipients.
 3. The `player_seats` seated-PC idiom and the loud-watcher-on-mismatch
@@ -210,7 +210,7 @@ No new component is introduced. The decision reuses, in order:
 4. The already-threaded `acting_character_name` in `_apply_*` (used for
    location binding) — the deterministic absent-recipient fallback.
 5. `dict[str, Any]` item entries + the existing extraction seam
-   (orchestrator.py:2651/2949) — no schema-class change required.
+   (orchestrator.py/2949) — no schema-class change required.
 
 ## Implementation Guidance for Dev
 

@@ -56,7 +56,7 @@ labelling the body itself rather than its orbit). At system scale that
 ring's circumference is shorter than "broken drift" text-width × 1×; the
 textPath wraps past its own start, letters mirror, and the label renders
 upside-down or backwards (`Brokendrig` → `pirdnekorB`). The renderer has
-flip-detection comments at `render.py:467` ("so textPath letters stay
+flip-detection comments at `render.py` ("so textPath letters stay
 upright in the player's reading direction") but no path-shorter-than-text
 guard.
 
@@ -104,7 +104,7 @@ with explicit selection rules and OTEL attribution. The third strategy —
 | `callout` | a small **anchor mark** at the body position | a **label block** placed in a margin gutter zone, joined by an orthogonal **leader line** | fallback when 1 and 2 don't apply, OR forced when body is rendered inside a moon band with a `label:` (companion-children OR habitat-moons) |
 
 The taxonomy is orthogonal to the existing **register** axis (`engraved`
-/ `chalk` / `prose` per ADR-026's port-era predecessor and `models.py:44`).
+/ `chalk` / `prose` per ADR-026's port-era predecessor and `models.py`).
 A label uses one *strategy* and one *register*; the register supplies font
 / color / weight / opacity, the strategy supplies geometry.
 
@@ -407,7 +407,7 @@ constant.
 - Existing renderer source: `sidequest-server/sidequest/orbital/render.py`
   (lines 840–927 for current label de-collision; lines 1053–1078 for
   moon-band rendering — the carve-out point for forced-callout).
-- Existing chart annotations: `sidequest-server/sidequest/orbital/models.py:44`
-  (Register Literal); models.py:187 (annotation kind dispatch).
+- Existing chart annotations: `sidequest-server/sidequest/orbital/models.py`
+  (Register Literal); models.py (annotation kind dispatch).
 - Campaign world: `sidequest-content/genre_packs/space_opera/worlds/coyote_star/orbits.yaml`
   (the failure-case fixture).

@@ -60,20 +60,20 @@ streaming) is complete with no dead code remaining.
 
 **Live elements (file/line pointers):**
 
-- Singleton AudioEngine — `sidequest-ui/src/audio/AudioEngine.ts:44`
+- Singleton AudioEngine — `sidequest-ui/src/audio/AudioEngine.ts`
   (`getInstance()` autoplay-gate pattern at lines 46–66).
 - Two-channel Web Audio graph (music + sfx) — `channels: Record<ChannelName,
   GainNode>` at line 68; `masterGain` at line 69; volumes shape
   `{music, sfx, master}` at line 71.
-- Crossfader — `sidequest-ui/src/audio/Crossfader.ts:3`, invoked from
-  `playMusic` at `AudioEngine.ts:129`.
+- Crossfader — `sidequest-ui/src/audio/Crossfader.ts`, invoked from
+  `playMusic` at `AudioEngine.ts`.
 - AudioContext autoplay handling — `resume()` at line 97, `ensureResumed()`
   at line 108.
 - Visibility-change resume — `registerVisibilityHandler()` at line 117 calls
   `ctx.resume()` when the tab returns to visible state from suspended.
 - Volume persistence — `STORAGE_KEY` / `loadVolumes()` / `saveVolumes()` at
   lines 1–43, with silent-catch on private-browsing localStorage failure.
-- App wiring — `sidequest-ui/src/hooks/useAudio.ts:9` consumes the
+- App wiring — `sidequest-ui/src/hooks/useAudio.ts` consumes the
   singleton; per `sidequest-ui/CLAUDE.md`, audio is wired through `useAudio`
   at the App level rather than via a context provider.
 
@@ -84,7 +84,7 @@ state.
 **Additive surface (not specified by this ADR, intentional):**
 
 - `sidequest-ui/src/audio/AudioCache.ts` — caches decoded `AudioBuffer`
-  instances to avoid redundant fetch + decode. Held at `AudioEngine.ts:74`,
+  instances to avoid redundant fetch + decode. Held at `AudioEngine.ts`,
   consulted at `playMusic` line 130. Optimization that landed after the ADR.
 - `sidequest-ui/src/hooks/useAudioCue.ts` — convenience hook for SFX cues.
   Routes through the unified mixer channels per its own header comment;

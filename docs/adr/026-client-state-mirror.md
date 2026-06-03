@@ -58,14 +58,14 @@ change carries `state_delta=None`, and that is a first-class valid wire shape.
 
 - The field is declared optional on all three payloads:
   `state_delta: StateDelta | None = None` at
-  `sidequest-server/sidequest/protocol/messages.py:80`, `:318`, `:497`.
+  `sidequest-server/sidequest/protocol/messages.py`, `:318`, `:497`.
 - Wire parity: `NarrationEndPayload(state_delta=None)` is **omitted from the
   serialized wire** (Rust `Option::is_none` parity) — see
-  `sidequest-server/tests/protocol/test_wire_parity.py:54`
+  `sidequest-server/tests/protocol/test_wire_parity.py`
   (`test_narration_payload_omits_none_state_delta`) and the populated-case
   counterpart at `:69`.
 - A populated `state_delta=None` payload is constructed and exercised in
-  tests (`sidequest-server/tests/protocol/test_messages.py:208`).
+  tests (`sidequest-server/tests/protocol/test_messages.py`).
 
 Client implication: consumers must treat `state_delta` as possibly-absent and
 simply skip the mirror merge when it is null — they must not assume every

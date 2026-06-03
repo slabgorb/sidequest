@@ -108,7 +108,7 @@ all three hold:
   finds **zero** `ThemeProvider`/`ThemeContext` references in `src/`. The
   §Changes Required "Delete `providers/ThemeProvider.tsx`" action shipped.
 - **`useGenreTheme` is the sole consumer and sets the `data-genre` attribute.**
-  `sidequest-ui/src/hooks/useGenreTheme.ts:187` runs
+  `sidequest-ui/src/hooks/useGenreTheme.ts` runs
   `root.setAttribute("data-genre", "active")` (the comment at `:185` notes
   "`:root[data-genre]` beats `.dark`"), and removes it on teardown at `:235`.
   The JS-bridge middleman the §Decision set out to kill is gone.
@@ -144,32 +144,32 @@ When the session is `connected` but no `theme_css` SESSION_EVENT has been applie
 the hook arms a grace timer; if the timer fires with still no theme, it
 `console.error`s and shows a hardcoded warning banner.
 
-- Grace window is `THEME_CSS_GRACE_MS` — `useGenreTheme.ts:21`. **It was bumped
-  from 4000ms to 8000ms** (`useGenreTheme.ts:13-19`) after a playtest regression:
+- Grace window is `THEME_CSS_GRACE_MS` — `useGenreTheme.ts`. **It was bumped
+  from 4000ms to 8000ms** (`useGenreTheme.ts`) after a playtest regression:
   on a cold start the chargen-scene serialization + WS frame ordering raced past
   the 4s window, so the banner flashed and then auto-dismissed when the theme
   arrived ~5s in — confusing the player. 8s sits comfortably past the cold-start
   tail while still catching a real transport break.
-- The guard is armed/cleared in the effect at `useGenreTheme.ts:135-157`: it clears
+- The guard is armed/cleared in the effect at `useGenreTheme.ts`: it clears
   any prior timer, skips arming if a theme is applied (or about to be), and only
   arms the `setTimeout` when `connected` is true and nothing has applied yet. The
   callback double-checks `everAppliedRef.current` before firing
-  (`useGenreTheme.ts:147`).
+  (`useGenreTheme.ts`).
 - The banner is **styled with literal colors, not CSS vars** —
-  `showThemeFailureBanner` at `useGenreTheme.ts:69-93` writes a hardcoded
+  `showThemeFailureBanner` at `useGenreTheme.ts` writes a hardcoded
   `background:#7f1d1d` / `color:#fff` / `border-bottom:2px solid #fca5a5`
-  `cssText`. This is deliberate (`useGenreTheme.ts:64-68`): the banner has to stay
+  `cssText`. This is deliberate (`useGenreTheme.ts`): the banner has to stay
   legible precisely when theming failed, so it cannot lean on any `--*` custom
   property (in the failure state `--accent` collapses to an invisible
   `oklch(0.269)`, ~1.39:1 — see `THEME_CSS_FAILURE_BANNER_ID` doc at
-  `useGenreTheme.ts:23-29`). The banner is `role="alert"`, `position:fixed`, max
+  `useGenreTheme.ts`). The banner is `role="alert"`, `position:fixed`, max
   z-index, and is removed once any theme applies (`removeThemeFailureBanner`,
-  `useGenreTheme.ts:95-97`; cleared at `:143` and `:181`).
+  `useGenreTheme.ts`; cleared at `:143` and `:181`).
 
 ### 2. `data-genre` re-assertion on every render (attribute-loss fix)
 
 The recurring "genre text unreadable" bug: the effect re-runs on every `messages`
-change and its cleanup strips `data-genre` (`useGenreTheme.ts:246`), but the
+change and its cleanup strips `data-genre` (`useGenreTheme.ts`), but the
 same-CSS early-return used to skip re-adding it — so the attribute was removed
 milliseconds after the first theme load and never restored. With `data-genre`
 gone, `:root[data-genre]` (the whole point of ADR-079's specificity solution)
@@ -177,9 +177,9 @@ stopped matching and every genre token silently collapsed to its `.dark` value
 (`--accent` → `oklch(0.269)` ≈ near-black).
 
 The fix re-asserts the attribute on **every** run, *before* the same-CSS
-early-return: `root.setAttribute("data-genre", "active")` at `useGenreTheme.ts:175`,
-with the root-cause explanation in the comment block `useGenreTheme.ts:162-173`.
-The same-CSS early-return now sits *after* that line (`useGenreTheme.ts:178`), so
+early-return: `root.setAttribute("data-genre", "active")` at `useGenreTheme.ts`,
+with the root-cause explanation in the comment block `useGenreTheme.ts`.
+The same-CSS early-return now sits *after* that line (`useGenreTheme.ts`), so
 re-renders that carry no new CSS still keep the attribute alive for the life of the
 theme.
 
@@ -188,11 +188,11 @@ theme.
 The hook parses `--background` out of the injected CSS string (regex, not
 `getComputedStyle`, because the style tag was only just injected) and toggles the
 `.dark` class by computed luminance: `--background` extraction at
-`useGenreTheme.ts:222-223`, `getLuminance` (WCAG-2.0 sRGB relative luminance, hex
-or `rgb()`) at `useGenreTheme.ts:35-62`, and the `lum > 0.5` → remove/add `.dark`
-decision at `useGenreTheme.ts:224-236`. If `--background` is absent the hook
+`useGenreTheme.ts`, `getLuminance` (WCAG-2.0 sRGB relative luminance, hex
+or `rgb()`) at `useGenreTheme.ts`, and the `lum > 0.5` → remove/add `.dark`
+decision at `useGenreTheme.ts`. If `--background` is absent the hook
 `console.warn`s and leaves the mode unchanged rather than guessing
-(`useGenreTheme.ts:237-242`) — again, no silent fallback.
+(`useGenreTheme.ts`) — again, no silent fallback.
 
 ### Net effect
 

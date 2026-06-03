@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [14, 48, 59, 87, 104, 115]
 tags: [agent-system, npc-character, observability]
-implementation-status: deferred
-implementation-pointer: null
+implementation-status: live
+implementation-pointer: "sidequest-server/sidequest/game/retrieval_orchestration.py + entity_card.py + dispatch/universal_retrieval.py — retrieve_turn_context called every narrator turn"
 ---
 
 # ADR-118: Universal Retrieval Layer
@@ -28,9 +28,9 @@ A scout audit (2026-05-30, verified against the Rust origin
 the ground truth the prior status badges obscured:
 
 - **The lore RAG is real and fires every turn.** Entry at
-  `websocket_session_handler.py:2456` → `_retrieve_lore_for_turn()` →
-  `lore_embedding.py:276` `retrieve_lore_context()` (real MiniLM-L6-v2 384-dim
-  embeddings via the daemon) → injection at `orchestrator.py:2096`
+  `websocket_session_handler.py` → `_retrieve_lore_for_turn()` →
+  `lore_embedding.py` `retrieve_lore_context()` (real MiniLM-L6-v2 384-dim
+  embeddings via the daemon) → injection at `orchestrator.py`
   (`AttentionZone.Valley`). `LoreStore.query_by_similarity()` does live cosine
   ranking. The seam is OTEL-instrumented and fail-quiet.
 - **But it is lore-only.** NPCs, locations/POIs, and factions were **never**
@@ -83,7 +83,7 @@ relative to its sync cost; namable later).
 ### D3 — The `EntityCard` abstraction + reuse the `LoreStore` machinery
 
 Define a uniform, embeddable projection — a structural sibling of
-`LoreFragment` (`lore_store.py:70`):
+`LoreFragment` (`lore_store.py`):
 
 ```
 EntityCard:
@@ -184,11 +184,11 @@ The three Epic 75 threads sequence as a **waterfall**, each landing on stable
 ground beneath it:
 
 1. **75-1 (accretion restoration)** — restores the per-turn fact-feed
-   (Rust `lore_sync.rs:26-120` `accumulate_and_persist_lore`) so the index has
+   (Rust `lore_sync.rs` `accumulate_and_persist_lore`) so the index has
    live discovered lore to ingest, **and** becomes the trigger that marks
    `EntityCard`s dirty for reprojection (D3).
 2. **75-2 (budgeted working-set selection)** — ports the Rust
-   `npc_context.rs:11-86` selection (scene-present full, others abbreviated,
+   `npc_context.rs` selection (scene-present full, others abbreviated,
    **no eviction**) and becomes **the deterministic floor** (D4).
 3. **75-3 (this design) → implementation** — layers the universal index and
    semantic fill on top of a working floor.

@@ -40,12 +40,12 @@ A token-cost audit of the narrator prompt assembly (see `sidequest/agents/orches
 and `sidequest/server/session_helpers.py`) identified the per-turn `<game_state>`
 block as the single largest uncached blob in the per-turn user message:
 
-- **Construction site:** `session_helpers.py:485` — `state_summary_payload = json.loads(snapshot.model_dump_json())`, followed by mutations (drop `narrative_log` per ADR ratifying story 49-1, redact non-self characters per the notorious-party gate, merge `party_formation` and `shared_world_delta`), then `json.dumps(state_summary_payload, indent=2)` at `session_helpers.py:558`.
-- **Injection site:** `orchestrator.py:1581–1590` — wrapped in `<game_state>…</game_state>` and registered in the **Valley** zone of the three-zone caching split (ADR-101 Phase D). Valley is **uncached** by design — state changes every turn, so no `cache_control` breakpoint applies.
+- **Construction site:** `session_helpers.py` — `state_summary_payload = json.loads(snapshot.model_dump_json())`, followed by mutations (drop `narrative_log` per ADR ratifying story 49-1, redact non-self characters per the notorious-party gate, merge `party_formation` and `shared_world_delta`), then `json.dumps(state_summary_payload, indent=2)` at `session_helpers.py`.
+- **Injection site:** `orchestrator.py–1590` — wrapped in `<game_state>…</game_state>` and registered in the **Valley** zone of the three-zone caching split (ADR-101 Phase D). Valley is **uncached** by design — state changes every turn, so no `cache_control` breakpoint applies.
 - **Observed size:** 5–10 KB / turn, ~1–2 k tokens. Sent every narrator turn.
 - **Observed bloat sources:**
   1. `indent=2` pretty-printing — every nesting level pays 1 newline plus 2N spaces. Pure encoding waste; the LLM does not need pretty whitespace.
-  2. Pydantic default fields serialized regardless of relevance — empty lists, default strings, `None` values for deferred subsystems (`active_tropes`, `axis_values`, `genie_wishes`, `achievement_tracker`, etc. per the `GameSnapshot` docstring at `session.py:518–530`).
+  2. Pydantic default fields serialized regardless of relevance — empty lists, default strings, `None` values for deferred subsystems (`active_tropes`, `axis_values`, `genie_wishes`, `achievement_tracker`, etc. per the `GameSnapshot` docstring at `session.py–530`).
   3. Fields whose presence in `<game_state>` is **not load-bearing** because the narrator reads them via dedicated prompt sections (e.g., `active_tropes` re-rendered in the Recency-zone `pending_trope_context` block).
 
 The narrator must see ground-truth state — that is the explicit anti-confabulation
@@ -75,7 +75,7 @@ bytes per turn** with zero narrator-quality regression. This is a single story
 
 ### Phase A — Compact JSON encoding *(zero-risk baseline)*
 
-At `session_helpers.py:558` and the equivalent encode in `local_dm.py:308`:
+At `session_helpers.py` and the equivalent encode in `local_dm.py`:
 
 1. Replace `json.dumps(state_summary_payload, indent=2)` with the compact form
    (`separators=(",", ":")`).
@@ -106,7 +106,7 @@ names that have been audited as not narrator-load-bearing. The audit method:
    NPCs via `npc_roster`) is dropped from `<game_state>` to eliminate
    double-rendering.
 3. **Deferred-subsystem trim:** P2/P3/P5/P6 deferred fields per the
-   `GameSnapshot` docstring (`session.py:518–530`) are dropped unless a live
+   `GameSnapshot` docstring (`session.py–530`) are dropped unless a live
    consumer is found. Their presence as empty defaults is already cheap after
    Phase A; their presence with content is the live-consumer signal.
 
@@ -138,7 +138,7 @@ This is the GM-panel lie detector: it lets Sebastien (and the architect
 auditing the next cost regression) see the per-turn dump size and the DROP-list
 contents on every turn, not just at PR-review time. Pair the span with a
 log line at the same site (matching the existing
-`state.room_state_injected` pattern at `session_helpers.py:552`).
+`state.room_state_injected` pattern at `session_helpers.py`).
 
 ### Acceptance gate
 
@@ -157,7 +157,7 @@ Story 57-5 is complete when, on a representative recorded playtest replay:
    field that cannot stay dropped without regression is documented inline
    in the DROP list as `# KEEP — confabulation regression on $turn_id`.
 4. The notorious-party gate (story 45-8) still redacts non-self characters
-   from the emitted JSON. The gate logic at `session_helpers.py:498` is
+   from the emitted JSON. The gate logic at `session_helpers.py` is
    preserved verbatim — the encoding/pruning changes operate on the dict
    it produces.
 
@@ -266,7 +266,7 @@ state, not the encoding-layer slimming this ADR addresses.
   (`narrative_log` pop, character-list redaction, `party_formation` /
   `shared_world_delta` merge) remain in place and operate on the dict the
   new function returns.
-- The `local_dm.py:308` `<game_state>` injection site receives the same
+- The `local_dm.py` `<game_state>` injection site receives the same
   compact-encoded value. Per the dormancy note in the project context
   (CLAUDE.md: "LocalDM preprocessor dormant per 2026-04-28 spec"), this is
   defensive consistency only — the code path is not currently active —
@@ -304,7 +304,7 @@ anchor) — instead, four bespoke projections fire on every turn:
 |---|---|---|
 | `room_states` (top-level) | Keep only the acting PC's `current_room_id` entry; empty dict when room is absent (structural anchor preserved). | `session_helpers.py:_apply_phase_c_projections` |
 | `npcs` (top-level) | Keep only NPCs whose `last_seen_location == current_room_id` OR who appear in an unresolved encounter's `actors[*].name`. Off-stage NPCs retain identity via `npc_pool` (gaslighting-doctrine anchor). Surviving entries drop nested `belief_state`. | `session_helpers.py:_npc_in_scene` + `_apply_phase_c_projections` |
-| `characters[*].known_facts` (nested) | Tail-K=8 per PC (mirrors `persistence.py:889` journal-render tail). | `session_helpers.py:_apply_phase_c_projections` |
+| `characters[*].known_facts` (nested) | Tail-K=8 per PC (mirrors `persistence.py` journal-render tail). | `session_helpers.py:_apply_phase_c_projections` |
 | `scenario_state.discovered_clues` (nested) | Cap at 12, sorted by clue id for determinism (the source is a `set[str]`). | `session_helpers.py:_apply_phase_c_projections` |
 
 Test contract: `sidequest-server/tests/server/test_61_2_snapshot_seven_field_projection.py` (17 tests).
@@ -320,7 +320,7 @@ all**:
 - `journal` — derived from `Character.known_facts` + the event log via
   `JournalRequestHandler` (ADR-100). Not persisted to `GameSnapshot`.
 - `footnotes` — per-turn `NarrationResult.footnotes`
-  (`orchestrator.py:452`); event-log-bound, never persisted to snapshot.
+  (`orchestrator.py`); event-log-bound, never persisted to snapshot.
 - `location_descriptions` — ADR-109 manifests ride out-of-band via
   `LOCATION_DESCRIPTION` WebSocket messages, loaded from
   `cookbook/assemble.py` at room change. No `snapshot.location_descriptions`

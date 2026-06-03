@@ -48,7 +48,7 @@ port to Python ([ADR-082](082-port-sidequest-api-back-to-python.md)) did not
 carry the crate forward, and a partial restoration with **a meaningfully
 different design** was begun and left half-wired:
 
-- `sidequest-ui/src/App.tsx:1183–1217` reads `?scene=NAME` from the URL,
+- `sidequest-ui/src/App.tsx–1217` reads `?scene=NAME` from the URL,
   POSTs `/dev/scene/:name`, expects `{ slug }` in the response, and navigates
   to `/solo/:slug` so `AppInner` owns the WebSocket session via the existing
   slug-based flow. Fail-loud on error.
@@ -82,7 +82,7 @@ Concretely:
    YAML schema is reused unchanged), persists via the existing `SqliteStore`,
    mints a `game_slug`, and returns it. The fixture YAML schema is a fresh-
    game shape — multi-player and reconnect concerns are out of scope.
-3. **UI side stays as-is.** `App.tsx:1183–1217` is the canonical client. The
+3. **UI side stays as-is.** `App.tsx–1217` is the canonical client. The
    `?scene=NAME` URL parameter triggers the POST; the response slug drives a
    `navigate('/solo/:slug')`; `AppInner` mounts and connects via the normal
    slug-based WebSocket flow. No new UI is introduced.
@@ -170,7 +170,7 @@ seam where prompt engineers most need it.
 
 - **Fixture YAML schema** — unchanged from ADR-069.
 - **Existing fixture YAMLs** in `scenarios/fixtures/` — unchanged.
-- **UI scene-harness code** in `App.tsx:1183–1217` — unchanged. Already
+- **UI scene-harness code** in `App.tsx–1217` — unchanged. Already
   correct for this design.
 - **`SqliteStore` and `dispatch_connect`** — unchanged. The endpoint persists
   via the existing store, and the slug-based reconnect flow does the rest.
@@ -252,7 +252,7 @@ to end.
 
 ## Implementation status (2026-05-02)
 
-**partial.** UI side fully wired (`App.tsx:1183–1217`); fixture YAMLs in place
+**partial.** UI side fully wired (`App.tsx–1217`); fixture YAMLs in place
 (`scenarios/fixtures/*.yaml`, four fixtures); server endpoint and hydrator
 absent. Restoration tracked in [ADR-087](087-post-port-subsystem-restoration-plan.md)
 P0; ADR-069's row in 087's table is owed an update to point here instead of
@@ -272,15 +272,15 @@ and the router **is mounted into the FastAPI app.** Re-verified against
   (`:64`) and `GET /dev/scenes` (`:178`, an added fixture-list endpoint for
   a UI picker, beyond the ADR's single-route scope).
 - **Mounted (the audit's "not mounted → 404 live" claim is FALSE):**
-  `sidequest-server/sidequest/server/app.py:301` imports
-  `create_scene_harness_router` and `app.py:305` calls
+  `sidequest-server/sidequest/server/app.py` imports
+  `create_scene_harness_router` and `app.py` calls
   `app.include_router(create_scene_harness_router())`, logging
-  `scene_harness.route_registered` (`app.py:306-309`). The endpoint is
+  `scene_harness.route_registered` (`app.py`). The endpoint is
   reachable in a running server.
 - **OTEL spans present** (§OTEL mandate): `scene_harness.intent.load`,
   `scene_harness.hydrate.ok`, `scene_harness.hydrate.error`,
   `scene_harness.persist.ok` all fire from the router
-  (`scene_harness_router.py:73,125,82/101,167`).
+  (`scene_harness_router.py,125,82/101,167`).
 - **Tests:** `tests/server/test_scene_harness.py`,
   `tests/game/test_scene_harness_hydrator.py`.
 
@@ -288,7 +288,7 @@ and the router **is mounted into the FastAPI app.** Re-verified against
 
 ADR-092 §Decision item 1 specifies the route is gated by `DEV_SCENES=1`
 and "not registered when the flag is unset." The running design **removed
-that gate** — `app.py:298-300` registers the route unconditionally with
+that gate** — `app.py` registers the route unconditionally with
 the comment: *"Always registered — Cloudflare Zero Trust gates access at
 the tunnel layer; the former DEV_SCENES env var added zero security
 value."* Access control moved from an env-var-gated route registration to

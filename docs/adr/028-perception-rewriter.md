@@ -9,7 +9,7 @@ superseded-by: 104
 related: [36, 101, 104]
 tags: [multiplayer]
 implementation-status: retired
-implementation-pointer: "Original post-narration N+1 rewriter retired — replaced by ADR-104 tool-layer filtering (sidequest-server/sidequest/agents/narrator_perception_filter.py) on the default anthropic_sdk path. The perception_rewriter.py module survives only as the non-LLM ADR-105 broadcast-layer status-effect prose filter (rewrite_for_recipient, server/emitters.py:17,334,370)."
+implementation-pointer: "Original post-narration N+1 rewriter retired — replaced by ADR-104 tool-layer filtering (sidequest-server/sidequest/agents/narrator_perception_filter.py) on the default anthropic_sdk path. The perception_rewriter.py module survives only as the non-LLM ADR-105 broadcast-layer status-effect prose filter (rewrite_for_recipient, server/emitters.py,334,370)."
 ---
 
 # ADR-028: Perception Rewriter
@@ -24,7 +24,7 @@ implementation-pointer: "Original post-narration N+1 rewriter retired — replac
 > (`rewrite_for_recipient`), survives **only** as the non-LLM
 > broadcast-layer status-effect prose filter
 > ([ADR-105](105-broadcast-layer-perception-firewall.md)),
-> called from `sidequest-server/sidequest/server/emitters.py:17,334,370`.
+> called from `sidequest-server/sidequest/server/emitters.py,334,370`.
 > The N+1-call design below is preserved as a historical record only.
 
 > Ported from sq-2. Language-agnostic multiplayer mechanic.

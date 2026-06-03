@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: []
 tags: [game-systems]
-implementation-status: live
-implementation-pointer: null
+implementation-status: partial
+implementation-pointer: "Track 4 (journey recap) live; tracks 1-3 data-model only, no engine — sprint story 82-3 (milestone level-up TODO progression.py, AffinityState P6-deferred, item narrative_weight P2-deferred)"
 ---
 
 # ADR-021: Progression System

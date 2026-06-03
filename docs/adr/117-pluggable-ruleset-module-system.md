@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [33, 78, 93, 97, 114]
 tags: [game-systems]
-implementation-status: partial
-implementation-pointer: "docs/superpowers/specs/2026-05-26-pluggable-srd-ruleset-modules-design.md"
+implementation-status: live
+implementation-pointer: "sidequest-server/sidequest/game/ruleset/registry.py — native, swn, cwn, wwn modules live and pack-bound"
 ---
 
 # ADR-117: Pluggable Ruleset Module System

@@ -58,7 +58,7 @@ The diagnosis was correct. The fix overshot. In practice:
   composure abstraction is the mismatch.
 - **The damage channel never wired anyway.** Per ADR-078's own implementation
   status (2026-05-02): the `composure_break` OTEL span has *zero hits*, per-class
-  edge config is an unwired placeholder (`world_materialization.py:325`), and the
+  edge config is an unwired placeholder (`world_materialization.py`), and the
   advancement effects that mutate Edge are loaded-but-dark (Epic 39). The thing
   ADR-078 promised — engine-validated combat the GM panel can audit — is owed,
   not delivered.
@@ -196,7 +196,7 @@ recovery beats or items (Lane A pharmacopeia), not an engine requirement.
 
 ### 3. `CatalogItem.damage` and `CatalogItem.mitigation` schema (Fork 3)
 
-`CatalogItem` is `extra="forbid"` (`genre/models/inventory.py:31-47`), so this is
+`CatalogItem` is `extra="forbid"` (`genre/models/inventory.py`), so this is
 a model change. Two optional fields are added:
 
 ```python
@@ -454,11 +454,11 @@ Reconciling §1 and §7 against the shipped code, to prevent the reading
 "all composure is gone." **Personal-creature** Edge/Composure is fully
 removed: there is no `EdgePool` class anywhere in the server
 (`grep "class EdgePool"` → none; the name survives only as a history
-reference in the `HpPool` docstring at `creature_core.py:23`).
-`CreatureCore` now carries `hp: HpPool` (`creature_core.py:117`; `HpPool`
-defined at `creature_core.py:19`) as the sole personal vitality track —
+reference in the `HpPool` docstring at `creature_core.py`).
+`CreatureCore` now carries `hp: HpPool` (`creature_core.py`; `HpPool`
+defined at `creature_core.py`) as the sole personal vitality track —
 the §1 reversal, as shipped. **But the vessel `RigComposurePool` survives
-separately** (`creature_core.py:123`, `rig_pool: RigComposurePool | None`;
+separately** (`creature_core.py`, `rig_pool: RigComposurePool | None`;
 class in `sidequest/game/rig_composure_pool.py`) — it is the ship/dogfight
 condition-track machinery of §7 (ADR-077), **not** part of the HP reversal.
 The HP↔Edge swap is a *personal-scale* change only; the rig composure pool
@@ -485,7 +485,7 @@ wholesale.
 - Superseded predecessor: [ADR-078](078-edge-composure-advancement-rituals.md)
 - Materializer seam (translation removed): `sidequest-server/sidequest/game/world_materialization.py` `_apply_npc()`
 - Vitality pool home: `sidequest-server/sidequest/game/creature_core.py`
-- CatalogItem model: `sidequest-server/sidequest/genre/models/inventory.py:31-47`
+- CatalogItem model: `sidequest-server/sidequest/genre/models/inventory.py`
 - Lethality policy model + arbiter: `sidequest-server/sidequest/genre/models/lethality.py`, `sidequest-server/sidequest/agents/lethality_arbiter.py`
 - Dice protocol / dispatch (damage rolls reuse this): `sidequest-server/sidequest/protocol/dice.py`, `sidequest-server/sidequest/server/dispatch/dice.py`
 - `state_patch` span: `sidequest-server/sidequest/telemetry/spans/state_patch.py`

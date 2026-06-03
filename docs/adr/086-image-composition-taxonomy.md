@@ -111,15 +111,15 @@ versus what needs to be added.
 - **`RenderTier` enum** (`daemon/renderer/models.py`): PORTRAIT,
   PORTRAIT_SQUARE, LANDSCAPE, SCENE_ILLUSTRATION, TACTICAL_SKETCH. Closest
   existing analog to "category."
-- **`_TIER_PROMPT_PREFIX`** (`daemon/media/prompt_composer.py:19`): flat
+- **`_TIER_PROMPT_PREFIX`** (`daemon/media/prompt_composer.py`): flat
   `dict[Tier, str]`. Closest existing analog to "prefix layer," but
   unstructured.
-- **`VisualStyle.positive_suffix`** (`daemon/genre/models.py:32-39`):
+- **`VisualStyle.positive_suffix`** (`daemon/genre/models.py`):
   genre-level art direction. Implements the GENRE step of the sketch's
   cascade.
 - **`VisualStyle.visual_tag_overrides`**: per-location atmosphere tags.
   Implements something close to the SCENE step of the cascade.
-- **`StageCue.characters: list[str]`** (`daemon/renderer/models.py:37`):
+- **`StageCue.characters: list[str]`** (`daemon/renderer/models.py`):
   participant list. Passed through but not used as a distinct prompt
   layer — collapsed into the narrative subject string.
 - **`portrait_manifest.yaml` `type: npc_major | npc_supporting`**:
@@ -450,11 +450,11 @@ sketch in this ADR's prose.
 
 - `sidequest-daemon/sidequest_daemon/media/recipe_loader.py` — `RecipeLoader`
   with `from_file()` / `from_dict()` constructors.
-- `sidequest-daemon/sidequest_daemon/media/recipes.py:154` — `Recipe`
+- `sidequest-daemon/sidequest_daemon/media/recipes.py` — `Recipe`
   Pydantic model (`direction_camera`, plus per-recipe slot defaults).
 - Loaded at daemon startup from `recipes.yaml` — call sites at
-  `media/preview.py:35`, `media/workers/zimage_mlx_worker.py:79`,
-  `media/daemon.py:1066–1069`.
+  `media/preview.py`, `media/workers/zimage_mlx_worker.py`,
+  `media/daemon.py–1069`.
 
 ### Catalog system (LOD-keyed tokens)
 

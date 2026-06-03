@@ -98,7 +98,7 @@ Applied the above procedure to Epic 37 (48 stories, 23 backend-slice stories in 
 
 | Story | Delivering work | Evidence |
 |-------|----------------|----------|
-| 37-29 | 37-23 chargen dispatch port | `sidequest/server/dispatch/chargen_loadout.py:89-144` |
+| 37-29 | 37-23 chargen dispatch port | `sidequest/server/dispatch/chargen_loadout.py` |
 | 37-44 | multiplayer foundation commit | `afc2142`; `sprint/archive/37-44-session.md` |
 
 **Port-drift (done → re-open recommended):**

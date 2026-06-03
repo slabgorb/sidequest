@@ -25,7 +25,7 @@ implementation-pointer: null
 ### The gap
 
 Space opera already ships a capital-ship encounter (`ship_combat` in
-`sidequest-content/genre_packs/space_opera/rules.yaml:163`) that models
+`sidequest-content/genre_packs/space_opera/rules.yaml`) that models
 multi-station crew combat via a single shared `engagement_range` metric and
 narrator-selected beats (broadside, evasive maneuver, close range, target
 systems, disengage). That subsystem works for Star Destroyer vs. frigate
@@ -518,14 +518,14 @@ single dispatch branch.
 
 ### Rules-side wiring
 
-`sidequest-content/genre_packs/space_opera/rules.yaml:324` declares
+`sidequest-content/genre_packs/space_opera/rules.yaml` declares
 `confrontations: - type: dogfight` and at line 374 includes the
 cross-product table via `_from: dogfight/interactions_mvp.yaml` —
 the `_from:` sub-file pattern from §Genre YAML loading is alive.
 
 ### Server dispatch
 
-`sidequest-server/sidequest/server/narration_apply.py:1176` is the
+`sidequest-server/sidequest/server/narration_apply.py` is the
 production sealed-letter resolution path. The branch fires when
 `cdef.resolution_mode == ResolutionMode.sealed_letter_lookup`, builds
 `commits: dict[str, str]` from gated selections (re-using
@@ -542,7 +542,7 @@ Edge-case handling:
   maneuver IDs collide with beat IDs by content design, falling through
   to apply_beat would double-apply mechanics." Branch returns early.
 - **SOUL gate exclusion.** `_gate_applies_to_encounter` at
-  `narration_apply.py:55–73` skips sealed-letter encounters. Comment:
+  `narration_apply.py–73` skips sealed-letter encounters. Comment:
   "Sealed-letter dispatch (dogfight) is itself an explicit secret-
   commit UI — both pilots' commits arrive via that flow, not via prose
   extraction." Avoids breaking the dogfight production path while still
@@ -550,7 +550,7 @@ Edge-case handling:
 
 ### Confrontation type routing
 
-`sidequest-server/sidequest/agents/orchestrator.py:445–447, 1111–1121` —
+`sidequest-server/sidequest/agents/orchestrator.py–447, 1111–1121` —
 narrator routing knows to pick `dogfight` vs `combat` (Firefight) for
 starship encounters based on scale (capital vs fighter).
 
@@ -558,12 +558,12 @@ starship encounters based on scale (capital vs fighter).
 
 `tests/genre/test_dogfight_content_loading.py::test_dogfight_beats_cover_every_consumed_maneuver`
 asserts the content invariant that dogfight beats cover every
-`maneuvers_consumed` entry. Referenced inline at `narration_apply.py:1183`.
+`maneuvers_consumed` entry. Referenced inline at `narration_apply.py`.
 
 ### Story trail
 
-`rules.yaml:328` references story 38-4 ("Sealed-letter simultaneous-
-commit dogfight"). The `narration_apply.py:1176` "T5, dogfight port"
+`rules.yaml` references story 38-4 ("Sealed-letter simultaneous-
+commit dogfight"). The `narration_apply.py` "T5, dogfight port"
 comment indicates this was the final-task port of the dogfight subsystem
 during the 2026-04 port sweep ([ADR-082](082-port-sidequest-api-back-to-python.md)).
 

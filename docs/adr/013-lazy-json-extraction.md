@@ -94,15 +94,15 @@ code sample above is preserved as the original design illustration; the
 current implementation is below.
 
 - **Tier 2 fence strip** — `_strip_json_fence()` at
-  `sidequest-server/sidequest/agents/orchestrator.py:552`. Comment notes it
+  `sidequest-server/sidequest/agents/orchestrator.py`. Comment notes it
   is "Port of `strip_json_fence()` in `orchestrator.rs`". Discards
   post-patch content with a logged warning (no silent fallback).
 - **Tier 1 + 2 + 3 combined entry point** —
   `extract_structured_from_response()` at
-  `sidequest-server/sidequest/agents/orchestrator.py:576`. Public API
-  re-exported from `sidequest/agents/__init__.py:46, 75`.
+  `sidequest-server/sidequest/agents/orchestrator.py`. Public API
+  re-exported from `sidequest/agents/__init__.py, 75`.
 - **LocalDM-side equivalent** — `_extract_json_object()` at
-  `sidequest-server/sidequest/agents/local_dm.py:229` handles the same
+  `sidequest-server/sidequest/agents/local_dm.py` handles the same
   fence-strip pattern for Haiku responses (the LocalDM preprocessor is
   dormant per the 2026-04-28 spec but the helper remains).
 
@@ -124,17 +124,17 @@ ADR-102 (native tool-use) replaces this extractor **only on the default
 
 - The legacy `claude -p` (`claude` backend) path still drives the three-tier
   extractor: `extract_structured_from_response` is defined at
-  `sidequest-server/sidequest/agents/orchestrator.py:1139` and invoked from
-  the Claude-CLI streaming narration path at `orchestrator.py:3034` (the
+  `sidequest-server/sidequest/agents/orchestrator.py` and invoked from
+  the Claude-CLI streaming narration path at `orchestrator.py` (the
   enclosing block logs "Claude CLI returned streaming narration",
-  `orchestrator.py:3024`), plus `:3289` and `:3508`.
+  `orchestrator.py`), plus `:3289` and `:3508`.
 - Backend selection (`SIDEQUEST_LLM_BACKEND`, default `anthropic_sdk`) lives
-  in `sidequest-server/sidequest/agents/llm_factory.py:12,53`; valid backends
-  are `{"claude", "ollama", "anthropic_sdk"}` (`llm_factory.py:15`). The SDK
+  in `sidequest-server/sidequest/agents/llm_factory.py,53`; valid backends
+  are `{"claude", "ollama", "anthropic_sdk"}` (`llm_factory.py`). The SDK
   path uses native tool-use for structured fields and bypasses this extractor.
 
 Net: the lazy/three-tier extractor remains live, but **only** on the
 non-default `claude -p` backend. On the default SDK path it is dead code per
-ADR-102. (Note: `llm_factory.py:44-66` warns that `anthropic_sdk` is now the
+ADR-102. (Note: `llm_factory.py` warns that `anthropic_sdk` is now the
 sole *viable* narrator backend, so the legacy path's extractor is reachable
 in code but not exercised by the default narrator configuration.)

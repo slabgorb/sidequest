@@ -9,7 +9,7 @@ superseded-by: 102
 related: [13, 101, 102]
 tags: [narrator]
 implementation-status: retired
-implementation-pointer: "Superseded by ADR-102 native SDK tool-use on the default anthropic_sdk backend. The fenced-JSON sidecar survives ONLY on the opt-in (default-off) is_streaming_enabled() legacy claude -p path: sidequest-server/sidequest/agents/orchestrator.py:2300-2303 routing, stream_fence.py."
+implementation-pointer: "Superseded by ADR-102 native SDK tool-use on the default anthropic_sdk backend. The fenced-JSON sidecar survives ONLY on the opt-in (default-off) is_streaming_enabled() legacy claude -p path: sidequest-server/sidequest/agents/orchestrator.py routing, stream_fence.py."
 ---
 
 > **Un-superseded 2026-05-02.** This ADR was previously marked superseded by
@@ -31,9 +31,9 @@ implementation-pointer: "Superseded by ADR-102 native SDK tool-use on the defaul
 > *not* the fenced-JSON sidecar described below. The fenced-JSON sidecar
 > (`StreamFenceParser`) is still wired, but **only on the opt-in,
 > default-OFF `is_streaming_enabled()` legacy `claude -p` path** — see
-> `sidequest-server/sidequest/agents/orchestrator.py:2300-2303` (routing
+> `sidequest-server/sidequest/agents/orchestrator.py` (routing
 > guard) and `agents/stream_fence.py`. `SIDEQUEST_NARRATOR_STREAMING`
-> defaults to `0` (`agents/narrator.py:83`), so the default game never
+> defaults to `0` (`agents/narrator.py`), so the default game never
 > exercises this protocol. **The 2026-05-02 banner's claim that "the
 > fenced-JSON-sidecar architecture described below is what's actually
 > running" is true only for the legacy streaming path now.**
@@ -100,17 +100,17 @@ ADR for *why* the design is shaped this way; read `narrator.py` for *which
 fields* are current.
 
 **Block rename.** The generic "fenced `json` block" of the original ADR is
-now a fenced **`game_patch`** block. See `narrator.py:88`:
+now a fenced **`game_patch`** block. See `narrator.py`:
 > "After your prose, emit a fenced JSON block labeled game_patch …"
 The fence label disambiguates the patch block from any incidental JSON
 the narrator might cite in prose. The block remains terminal (after all
 prose) and exactly one per turn.
 
-**Current field set** (per `narrator.py:90`, valid as of 2026-05-02):
+**Current field set** (per `narrator.py`, valid as of 2026-05-02):
 `confrontation, items_gained, items_lost, items_discarded, items_consumed,
 location, npcs_met, mood, state_snapshot, beat_selections, visual_scene,
 footnotes, gold_change, action_rewrite, status_changes`. Plus
-`magic_working` per the magic system at `magic/models.py:73`. The original
+`magic_working` per the magic system at `magic/models.py`. The original
 field list in §Decision is partial and out of date — defer to the prompt.
 
 **Field renames since the original ADR:**
@@ -137,12 +137,12 @@ field list in §Decision is partial and out of date — defer to the prompt.
 
 **Python ports of the extraction surface** (extends ADR-013):
 
-- `sidequest-server/sidequest/agents/orchestrator.py:576` —
+- `sidequest-server/sidequest/agents/orchestrator.py` —
   `extract_structured_from_response()`, port of the original Rust function
   in `sidequest-agents/src/orchestrator.rs`.
-- `sidequest-server/sidequest/agents/orchestrator.py:552` —
+- `sidequest-server/sidequest/agents/orchestrator.py` —
   `_strip_json_fence()`, the tier-2 fence-strip helper.
-- `sidequest-server/sidequest/agents/__init__.py:46, 75` — public exports.
+- `sidequest-server/sidequest/agents/__init__.py, 75` — public exports.
 
 **Original "Implemented in" line:** the Rust path
 `sidequest-agents/src/orchestrator.rs` no longer exists; the implementation

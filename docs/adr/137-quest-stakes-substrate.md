@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [11, 24, 25, 102, 128, 130]
 tags: [game-systems, agent-system]
-implementation-status: deferred
-implementation-pointer: null
+implementation-status: partial
+implementation-pointer: "sidequest-server/sidequest/game/quest_seed.py (story 77-1 seed-at-creation live, quest.seeded_at_creation OTEL); 77-2..77-7 deferred"
 ---
 
 # ADR-137: Quest & Stakes Substrate — Create/Anchor Lane, First-Class active_stakes Source, and One-Mechanism Consolidation
@@ -50,9 +50,9 @@ Four fields, four distinct causes. All claims below were verified against
 
 | Field | State | Evidence |
 |-------|-------|----------|
-| `quest_anchors` | **Structurally dead read-only field.** Defined on the snapshot (`game/session.py:735`), read into narrator context (`agents/orchestrator.py:2413`), shipped to client (`server/session_helpers.py:1230`), and **consumed by the orbital course planner** (`orbital/course.py:125,157` — ADR-130). But it is **not a `WorldStatePatch` field** (absent from `game/session.py:420`) and has **zero write paths** (grep for assignment/append/`setattr` returns nothing). A live reader, a live *consumer*, no writer. | `grep "quest_anchors"` — all reads, no writes |
-| `quest_log` | **Writable, but no create *affordance*.** `WorldStatePatch.quest_log` replaces the whole dict (`session.py:1275`) and `quest_updates` merges (`session.py:1278`). The live narrator lane (`narration_apply.py:2872`) does `snapshot.quest_log[quest_id] = status` — a status-string keyed by id. The narrator's `quest_updates` schema is framed as **status updates to existing quests**; nothing in the prompt/tool tells it to **mint** a structured quest (id + title + objective). Mechanical write capability ≠ a first-class create lane. The trope handshake (`narration_apply.py:5805`) writes `quest_log["trope_{id}"]` but needs a *resolved* trope (`total_beats_fired:0` → never fired in a prose-only pack). | `narration_apply.py:2860-2877`, `:5805` |
-| `active_stakes` | **Two writers, both off the normal-play path.** (1) The **deprecated** `apply_world_patch` escape hatch (`agents/tools/apply_world_patch.py:195` → `WorldStatePatch(active_stakes=...)`) — the narrator is explicitly told NOT to use it; its deprecation criterion is *zero uses*. (2) The trope-resolution handshake (`narration_apply.py:5812-5824`), which didn't fire. **No first-class "set the current stakes" affordance in ordinary play.** | `apply_world_patch.py:195`, `narration_apply.py:5812` |
+| `quest_anchors` | **Structurally dead read-only field.** Defined on the snapshot (`game/session.py`), read into narrator context (`agents/orchestrator.py`), shipped to client (`server/session_helpers.py`), and **consumed by the orbital course planner** (`orbital/course.py,157` — ADR-130). But it is **not a `WorldStatePatch` field** (absent from `game/session.py`) and has **zero write paths** (grep for assignment/append/`setattr` returns nothing). A live reader, a live *consumer*, no writer. | `grep "quest_anchors"` — all reads, no writes |
+| `quest_log` | **Writable, but no create *affordance*.** `WorldStatePatch.quest_log` replaces the whole dict (`session.py`) and `quest_updates` merges (`session.py`). The live narrator lane (`narration_apply.py`) does `snapshot.quest_log[quest_id] = status` — a status-string keyed by id. The narrator's `quest_updates` schema is framed as **status updates to existing quests**; nothing in the prompt/tool tells it to **mint** a structured quest (id + title + objective). Mechanical write capability ≠ a first-class create lane. The trope handshake (`narration_apply.py`) writes `quest_log["trope_{id}"]` but needs a *resolved* trope (`total_beats_fired:0` → never fired in a prose-only pack). | `narration_apply.py`, `:5805` |
+| `active_stakes` | **Two writers, both off the normal-play path.** (1) The **deprecated** `apply_world_patch` escape hatch (`agents/tools/apply_world_patch.py` → `WorldStatePatch(active_stakes=...)`) — the narrator is explicitly told NOT to use it; its deprecation criterion is *zero uses*. (2) The trope-resolution handshake (`narration_apply.py`), which didn't fire. **No first-class "set the current stakes" affordance in ordinary play.** | `apply_world_patch.py`, `narration_apply.py` |
 | `active_seeds` | **Content gap, not engine.** wry_whimsy authors no `seed_tropes`; only tea_and_murder does across live packs. The ADR-128 seed deck is simply unauthored. **Carved out — see §active_seeds carve-out.** | pack content audit |
 
 ### The core gap, stated once
@@ -115,11 +115,11 @@ deprecated escape hatch, and the new tool all live. In the same epic:
 
 - **Retire the `quest_updates` extraction lane.** `record_quest` supersedes it;
   status-only updates become an update-mode of `record_quest`. Remove
-  `quest_updates` from the orchestrator extraction (`orchestrator.py:472,1258,3219,3549`)
-  and the apply path (`narration_apply.py:2861`, `session.py:1278`) once migrated.
+  `quest_updates` from the orchestrator extraction (`orchestrator.py,1258,3219,3549`)
+  and the apply path (`narration_apply.py`, `session.py`) once migrated.
 - **Strip quest/stakes paths from `apply_world_patch`.** Remove `/quest_log`,
   `/quest_updates`, and `/active_stakes` from the escape-hatch tool
-  (`apply_world_patch.py:116,195`). Other paths (location, current_region) are out
+  (`apply_world_patch.py,195`). Other paths (location, current_region) are out
   of scope and remain. The escape hatch keeps its non-quest paths; quest/stakes go
   exclusively through the typed tools.
 

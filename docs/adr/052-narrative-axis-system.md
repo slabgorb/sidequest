@@ -1,18 +1,26 @@
 ---
 id: 52
 title: "Narrative Axis System (/tone Command)"
-status: accepted
+status: deprecated
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
 related: []
 tags: [narrator]
-implementation-status: live
+implementation-status: retired
 implementation-pointer: null
 ---
 
 # ADR-052: Narrative Axis System (/tone Command)
+
+> **DEPRECATED 2026-06-03** — not an engine feature. Tone is the **content author's**
+> domain: a genre pack expresses its tonal range through its own prose, genre config, and
+> world flavor, not through an engine-level `/tone` command or runtime axis-modifier
+> injection. The `/tone` command + `pack.axes` consumer described below will not be built;
+> the never-wired plumbing identified by the 2026-06-03 audit (`docs/adr/AUDIT-2026-06-03.md`)
+> is retired rather than completed. Marked `deprecated` (doctrine shift, no 1:1 successor).
+> The retrospective text below is preserved as the original (now-abandoned) design.
 
 > Retrospective — documents a decision already implemented in the codebase.
 

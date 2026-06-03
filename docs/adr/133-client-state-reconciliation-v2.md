@@ -60,7 +60,7 @@ a different shape:
 3. **`state_delta` is nullable, not always-present** (ADR-026's 2026-05-28
    amendment). A pure-narration turn carries `state_delta=None` and is omitted
    from the wire entirely. The replay simply skips the merge when the delta is
-   absent (`useStateMirror.ts:304-305`), which is natural in a fold and awkward
+   absent (`useStateMirror.ts`), which is natural in a fold and awkward
    in a mutate-in-place accumulator that assumes a delta per narration.
 
 The companion read-models grew the same way. Streaming narration accumulates
@@ -80,10 +80,10 @@ wholesale.
 
 ### 1. Full-replay game-state mirror
 
-`useStateMirror(messages)` (`sidequest-ui/src/hooks/useStateMirror.ts:47`) runs
+`useStateMirror(messages)` (`sidequest-ui/src/hooks/useStateMirror.ts`) runs
 in a `useEffect` over `messages[]`. On every fire it starts from
 `EMPTY_GAME_STATE` and a fresh set of local accumulators
-(`useStateMirror.ts:62-81`) and folds the entire log forward:
+(`useStateMirror.ts`) and folds the entire log forward:
 
 - **`SESSION_EVENT`** — captures the local `player_id` on `connected`/`ready`,
   and on `initial_state` resets the whole mirror to the snapshot
@@ -115,21 +115,21 @@ The mirror only calls `setState` when `messages.length` actually changed
 
 ### 2. Streaming-narration accumulator (rebuilt idempotently on replay)
 
-`reduceStreamingNarration` (`sidequest-ui/src/providers/streamingNarration.ts:58`)
+`reduceStreamingNarration` (`sidequest-ui/src/providers/streamingNarration.ts`)
 is a pure reducer over a `Map<turn_id, TurnStreamState>` plus an `activeTurnId`.
 `useStateMirror` rebuilds the streaming state **from scratch on every replay**
-(`useStateMirror.ts:71-73, 95, 290-296`) — the same full-replace contract as the
+(`useStateMirror.ts, 95, 290-296`) — the same full-replace contract as the
 game-state mirror — and pushes it via `setStreamingNarration`, which replaces the
-whole slice (`GameStateProvider.tsx:89-91, 197-200`).
+whole slice (`GameStateProvider.tsx, 197-200`).
 
 - A `narration.delta` action appends its `chunk` to the turn keyed by its
-  explicit `turn_id` and marks that turn active (`streamingNarration.ts:63-95`).
+  explicit `turn_id` and marks that turn active (`streamingNarration.ts`).
 - The canonical `NARRATION` carries **no `turn_id`**; the reducer attaches its
   text to `state.activeTurnId` and then **closes the turn** by clearing
   `activeTurnId` and the stall timer (`:98-122`). `useStateMirror` only routes a
   canonical `NARRATION` through the reducer when a streaming turn is active
-  (`useStateMirror.ts:290-296`).
-- Display rule: `canonical ?? chunks.join("")` (`streamingNarration.ts:131-138`).
+  (`useStateMirror.ts`).
+- Display rule: `canonical ?? chunks.join("")` (`streamingNarration.ts`).
 
 ### 3. HMR-survival persistence split
 
@@ -148,7 +148,7 @@ authoritative source is always the replayed message log.
 
 ### 4. ImageBus two-pass merge
 
-`ImageBusProvider` (`sidequest-ui/src/providers/ImageBusProvider.tsx:210`) derives
+`ImageBusProvider` (`sidequest-ui/src/providers/ImageBusProvider.tsx`) derives
 the gallery via a `useMemo` over `messages[]` — pure-derive, same family:
 
 - **Pass 1** collects `SCRAPBOOK_ENTRY` payloads into a
@@ -169,34 +169,34 @@ the gallery via a `useMemo` over `messages[]` — pure-derive, same family:
 - **Delta-before-baseline buffer (ADR-109).** A `LOCATION_OVERLAY_CHANGED` that
   arrives before its `LOCATION_DESCRIPTION` baseline is buffered in
   `pendingOverlays` and merged into the next baseline whose `region_id` matches
-  (`useStateMirror.ts:204-242`). A buffered or live delta whose `region_id` no
+  (`useStateMirror.ts`). A buffered or live delta whose `region_id` no
   longer matches the current baseline is **dropped** — a room change is the truth
   source.
 - **Canonical NARRATION carries no `turn_id`; match via `activeTurnId`.** The
   streaming reducer routes canonical text to the most-recently-active streaming
-  turn and closes it (`streamingNarration.ts:98-122`). A canonical `NARRATION`
+  turn and closes it (`streamingNarration.ts`). A canonical `NARRATION`
   with no active turn is a non-streaming narration and does not touch the
   streaming slice.
 - **Late-delta discard.** Once a turn's `canonical` is set, any further
   `narration.delta` for that `turn_id` is silently discarded
-  (`streamingNarration.ts:67-70`).
+  (`streamingNarration.ts`).
 - **`kind` vs `type` divergence (intentional).** `narration.delta` is **not a
   `GameMessage` variant** — it is discriminated by `kind: "narration.delta"`, not
   by `type`. It falls through `handleMessage`'s `type`-based guards and lands in
   `messages[]` unmodified; `isNarrationDelta` checks the `kind` field explicitly
-  (`payloads.ts:538-540, 656-664`; consumed at `useStateMirror.ts:84-97`). This
+  (`payloads.ts, 656-664`; consumed at `useStateMirror.ts`). This
   divergence is deliberate: the streaming delta is a sub-message protocol layered
   beneath the canonical `GameMessage` envelope, not a peer of it.
 - **Malformed-drop, not silent-fallback.** A `SCRAPBOOK_ENTRY` missing required
   fields (`turn_id`, `location`, `narrative_excerpt`) is **hard-dropped** with a
-  `console.error` (`ImageBusProvider.tsx:139-153`), and a `narration.delta`
-  without `turn_id` is dropped with `console.error` (`useStateMirror.ts:88-94`).
+  `console.error` (`ImageBusProvider.tsx`), and a `narration.delta`
+  without `turn_id` is dropped with `console.error` (`useStateMirror.ts`).
   Per the No Silent Fallbacks rule these are schema-drift bugs surfaced loudly,
   not papered over with synthesized defaults.
 - **Dedup keys.** Knowledge by `fact_id`, handout journal entries and gallery
   images by `render_id`, scrapbook by `turn_id`.
 - **`state_delta` is nullable** (ADR-026 amendment 2026-05-28). The replay skips
-  the merge when the delta is absent or empty (`useStateMirror.ts:304-305`).
+  the merge when the delta is absent or empty (`useStateMirror.ts`).
 
 ## Consequences
 
@@ -222,7 +222,7 @@ the gallery via a `useMemo` over `messages[]` — pure-derive, same family:
   session ran 140+ turns) this is well within budget — the work is in-memory map
   building over a few hundred messages — but it is not free, and a multi-thousand-
   turn session would eventually want windowing or a memoized prefix-fold. The
-  `messages.length` guard (`useStateMirror.ts:343`) and the ImageBus `useMemo`
+  `messages.length` guard (`useStateMirror.ts`) and the ImageBus `useMemo`
   keep React from recomputing when the log has not actually grown, which caps the
   practical cost to once per inbound message.
 - **The whole-log array is the source of truth.** Anything not derivable from the

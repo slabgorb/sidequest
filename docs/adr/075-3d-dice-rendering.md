@@ -243,7 +243,7 @@ architecture diagram or §Interaction: drag-and-throw section above.
   `@react-three/drei@10.7.7`, `@react-spring/three@10.0.3` (all in
   `sidequest-ui/package.json`).
 - **R3F Canvas + Rapier RigidBody wiring** —
-  `sidequest-ui/src/dice/DiceScene.tsx:14, 18–22, 84` mounts a Canvas,
+  `sidequest-ui/src/dice/DiceScene.tsx, 18–22, 84` mounts a Canvas,
   imports `RigidBody` and `RapierRigidBody`, sets fixed-type ground
   with `friction={10}` and `restitution={0.3}`. Drei `Text` for face
   numbers at line 24.
@@ -257,13 +257,13 @@ architecture diagram or §Interaction: drag-and-throw section above.
 
 §Overlay architecture specified a fixed-position full-screen Canvas at
 `z-index: 1000` with toggled `pointer-events`. **That design was
-implemented and then removed.** Per `sidequest-ui/src/App.tsx:44–45`:
+implemented and then removed.** Per `sidequest-ui/src/App.tsx–45`:
 
 > "DiceOverlay overlay removed — dice now render inline in the
 > Confrontation panel via InlineDiceTray. The DiceOverlay component
 > and DiceSpikePage are retained..."
 
-Current rendering: `ConfrontationOverlay.tsx:325` mounts `InlineDiceTray`
+Current rendering: `ConfrontationOverlay.tsx` mounts `InlineDiceTray`
 directly inside the confrontation panel. The Canvas stays mounted as
 long as the confrontation is active (avoiding WebGL context churn) and
 becomes visible only when a `DiceRequest` is in flight. The
@@ -275,7 +275,7 @@ as a component but is not the production rendering path.
 §Interaction: drag-and-throw specified a `pointerdown`/`pointermove`/
 `pointerup` flick-gesture pipeline with `ThrowParams` computed from
 the player's gesture. **That design was abandoned.** Per the
-`InlineDiceTray.tsx:1–11` header docstring:
+`InlineDiceTray.tsx–11` header docstring:
 
 > "No gestures, no drag-to-throw. The die sits idle in the tray.
 > When a beat button is clicked (which creates a DiceRequest), the
@@ -310,7 +310,7 @@ For the current dice-rendering contract, defer to:
 
 - **Active rendering:** `sidequest-ui/src/dice/InlineDiceTray.tsx`
 - **Scene:** `sidequest-ui/src/dice/DiceScene.tsx`
-- **Mount point:** `sidequest-ui/src/components/ConfrontationOverlay.tsx:325`
+- **Mount point:** `sidequest-ui/src/components/ConfrontationOverlay.tsx`
 - **Deterministic replay:** `sidequest-ui/src/dice/replayThrowParams.ts`
 
 Not the §Overlay architecture diagram or §Interaction prose above.
@@ -327,12 +327,12 @@ them for the running shape:
 - **§Overlay architecture** (the fixed-position full-screen `<Canvas>` at
   `z-index: 1000` with toggled `pointer-events`) is **superseded.** Dice now
   render **inline inside the Confrontation panel** via `InlineDiceTray`. The
-  `App.tsx` header (`sidequest-ui/src/App.tsx:44-45`) records the overlay's
-  removal; `ConfrontationOverlay.tsx:325` is the live mount point.
+  `App.tsx` header (`sidequest-ui/src/App.tsx`) records the overlay's
+  removal; `ConfrontationOverlay.tsx` is the live mount point.
 - **§Interaction: drag-and-throw** (the `pointerdown`/`pointermove`/`pointerup`
   flick-gesture pipeline) is **superseded.** The current shape is a beat-button
   click that triggers an **auto-roll** with random physics params — see the
-  `InlineDiceTray.tsx:1-11` docstring ("No gestures, no drag-to-throw ... the
+  `InlineDiceTray.tsx` docstring ("No gestures, no drag-to-throw ... the
   die auto-rolls"). `useDiceThrowGesture.ts` exists but is not wired through
   `InlineDiceTray`.
 
@@ -356,7 +356,7 @@ dice per genre" §Consequences bullet.
 ### What is actually live
 
 The production theme source is a `GENRE_DICE_THEMES` record literal in
-`sidequest-ui/src/dice/InlineDiceTray.tsx:31–134`, keyed by genre slug. It carries
+`sidequest-ui/src/dice/InlineDiceTray.tsx–134`, keyed by genre slug. It carries
 **11 genre entries** — `caverns_and_claudes`, `elemental_harmony`, `low_fantasy`,
 `tea_and_murder` (parchment archetype); `neon_dystopia`, `space_opera` (terminal
 archetype); `mutant_wasteland`, `road_warrior`, `spaghetti_western`, `pulp_noir`,
@@ -370,11 +370,11 @@ archetype); `mutant_wasteland`, `road_warrior`, `spaghetti_western`, `pulp_noir`
 - `labelFont` — a hardcoded `/fonts/*.ttf` path (EBGaramond, Orbitron, Oswald,
   AmericanTypewriter, Bastarda-K), chosen to match the UI chrome archetype
 
-Theme resolution is `InlineDiceTray.tsx:221` —
+Theme resolution is `InlineDiceTray.tsx` —
 `(genreSlug && GENRE_DICE_THEMES[genreSlug]) || DEFAULT_DICE_THEME` — a synchronous
 lookup against the inlined record, with `DEFAULT_DICE_THEME` (from `@local/dice-lib`)
 as the fallback for any genre not in the map. The `genreSlug` prop
-(`InlineDiceTray.tsx:142`) is the only input; nothing reads pack config.
+(`InlineDiceTray.tsx`) is the only input; nothing reads pack config.
 
 So the table in §Genre-pack theming is half-right and half-wrong: the **per-genre
 visual differentiation it promised is real and shipping**, but the **delivery
@@ -420,6 +420,6 @@ the content-authoring surface is to match this ADR's intent. Tracked alongside t
 other dark items in [ADR-087](087-post-port-subsystem-restoration-plan.md).
 
 **Source of truth for current dice theming:** `GENRE_DICE_THEMES` at
-`sidequest-ui/src/dice/InlineDiceTray.tsx:31–134` and the resolution at
-`InlineDiceTray.tsx:221`. The technology stack and ADR-074 replay contract remain
+`sidequest-ui/src/dice/InlineDiceTray.tsx–134` and the resolution at
+`InlineDiceTray.tsx`. The technology stack and ADR-074 replay contract remain
 unchanged and live.

@@ -39,7 +39,7 @@ direct report)** surfaced mid-session pile-up of trope progressions — too many
 threads advancing at once, beats firing on top of each other, blurring the
 narrative threads a career-GM player expects to be able to follow. The diagnosis
 was twofold: too many tropes *active* simultaneously, and the ones that were
-active progressing *too fast* (`trope_tuning.py:9-12`).
+active progressing *too fast* (`trope_tuning.py`).
 
 Three distinct mechanisms address three distinct problems, and all three were
 built without a governing ADR:
@@ -74,12 +74,12 @@ apart in time; `FOREGROUND_K` ensures that even at the cap of 3, the narrator's
 attention is never diluted across every active thread. The values are
 deliberately **conservative starting points** — playtest can pull them down if
 pile-up returns or push them up if the world feels too quiet
-(`trope_tuning.py:9-12`).
+(`trope_tuning.py`).
 
-**Application.** `tick_tropes` (`trope_tick.py:81`) runs the governor every
+**Application.** `tick_tropes` (`trope_tick.py`) runs the governor every
 turn in ordered passes:
 
-- **Pass A** (`_advance_progress`, `trope_tick.py:196`) multiplies each
+- **Pass A** (`_advance_progress`, `trope_tick.py`) multiplies each
   progressing trope's `rate_per_turn` by `PROGRESSION_RATE_MULTIPLIER`
   (`:215`) and emits a per-trope `trope.tick` span.
 - **Pass B** (`_fire_one_staggered_beat`, `:236`) fires **at most one beat per
@@ -103,7 +103,7 @@ prompt-zone wiring.
 
 **Time skips obey the same governor with a different stagger.** When the
 narrator emits `days_advanced > 0`, `_pass_a2_time_skip`
-(`trope_time_skip.py:72`) runs between Pass A and Pass B. It advances every
+(`trope_time_skip.py`) runs between Pass A and Pass B. It advances every
 progressing trope by `rate_per_day * clamp(days_advanced, 0, DAY_TICK_CAP)`
 where `DAY_TICK_CAP = 14` (`:29`) — a hard bound so a narrator over-emission
 ("a year passes") cannot resolve every trope in one turn. Unlike Pass B's
@@ -113,18 +113,18 @@ between sessions. The clamp is visible in OTEL via `TropeTimeSkipFields.clamped`
 
 **Per-genre overrides are deliberately deferred.** A future story may let
 `genre_packs/<g>/pack.yaml` override these constants; until then the values are
-global (`trope_tuning.py:14-16`). `DAY_TICK_CAP` carries the same YAGNI deferral
-(`trope_time_skip.py:28`).
+global (`trope_tuning.py`). `DAY_TICK_CAP` carries the same YAGNI deferral
+(`trope_time_skip.py`).
 
 ### 2. Deterministic, resume-safe seed-trope deck (`seed_deck.py`, `seed_tick.py`)
 
 Seeds are short-arc, deliberately-vague narrative events (Epic 22) — a sibling
-of the long-lived macro tropes. `SeedDeck` (`seed_deck.py:33`) deals them
+of the long-lived macro tropes. `SeedDeck` (`seed_deck.py`) deals them
 **without replacement** from a deck keyed by `(genre_id, world_id, session_id)`.
 
 The reproducibility contract is the load-bearing part. The deck shuffle is
 seeded by deriving a stable integer from the `session_id` via **SHA-256**
-(`_seed_int`, `seed_deck.py:22-30`): the digest is hashed to a big-endian int.
+(`_seed_int`, `seed_deck.py`): the digest is hashed to a big-endian int.
 This is justified in-code: a raw string seed fed to `random.seed()` is
 **version-sensitive and PYTHONHASHSEED-dependent** via the builtin `hash()`;
 SHA-256 is stable across processes and Python versions. The full seed list is
@@ -134,27 +134,27 @@ shuffled deterministically once (`random.Random(_seed_int(session_id))`,
 `draw()` (`:56`) walks the shuffled order and **skips IDs already in
 `drawn_ids`**. On reload, `drawn_ids` is reconstructed from the persisted
 snapshot — the union of active seeds and ghosts
-(`seed_tick.py:162`) — so the deck re-instantiated after a load deals the same
+(`seed_tick.py`) — so the deck re-instantiated after a load deals the same
 remaining order it would have dealt mid-session. **No new persistence column**:
 the resume contract rides the existing snapshot.
 
 The engine has two draw paths and an expiry tick:
 
-- `ensure_initial_draw` (`seed_tick.py:74`) deals the opening hand of 3
+- `ensure_initial_draw` (`seed_tick.py`) deals the opening hand of 3
   (`_DEFAULT_INITIAL_HAND`, `:71`). It is **idempotent on a fresh session** —
   a no-op once any seed lives on `active_seeds` *or* `seed_ghosts`, so reload
   never re-bootstraps (`:96-97`).
-- `draw_engaged_seed` (`seed_tick.py:139`) draws one mid-session seed on player
+- `draw_engaged_seed` (`seed_tick.py`) draws one mid-session seed on player
   engagement, reconstructing `drawn_ids` from the snapshot and emitting
   `SPAN_SEED_DRAWN` with `trigger="engagement"` to distinguish it from bootstrap
   draws.
-- `tick_seeds` (`seed_tick.py:27`) migrates any seed past its `lifespan_turns`
+- `tick_seeds` (`seed_tick.py`) migrates any seed past its `lifespan_turns`
   out of `active_seeds` and into `seed_ghosts` (record-only callbacks), firing
   `SPAN_SEED_EXPIRED`. The migration is idempotent on the same `now_turn`.
 
 ### 3. Interest-driven NPC development ladder (`npc_development.py`)
 
-`develop_npc_on_engagement` (`npc_development.py:77`) revives the dormant
+`develop_npc_on_engagement` (`npc_development.py`) revives the dormant
 ADR-014 coal→diamond promotion path. On each **non-transactional** engagement —
 a narrator cite that resolves to an existing stateful `Npc` (the `npcs_hit`
 branch of `narration_apply._apply_npc_mentions`) — the NPC earns depth along a
@@ -188,10 +188,10 @@ constants, never as magic literals scattered through the apply branch (`:18-19`)
 - **Deterministic resume-safe shuffle.** Deck order is a pure function of
   `session_id` via SHA-256→int; identical across processes, Python versions, and
   reloads. Builtin `hash()` / raw string `random.seed()` is forbidden here for
-  this reason (`seed_deck.py:22-30`).
+  this reason (`seed_deck.py`).
 - **Draw without replacement.** `draw()` never deals a seed whose id is in
   `drawn_ids`; on reload `drawn_ids` is reconstructed from active seeds + ghosts,
-  guaranteeing no redeal (`seed_deck.py:56-62`, `seed_tick.py:162`).
+  guaranteeing no redeal (`seed_deck.py`, `seed_tick.py`).
 - **Idempotent bootstrap / expiry.** `ensure_initial_draw` is a no-op once any
   seed exists; `tick_seeds` produces no duplicate ghost on a repeated `now_turn`.
 - **One beat per tick (live play).** Pass B fires at most one beat per
@@ -244,7 +244,7 @@ constants, never as magic literals scattered through the apply branch (`:18-19`)
   string seed: `random.seed()` on a string routes through hashing that is
   PYTHONHASHSEED- and version-sensitive, breaking the cross-process / cross-load
   reproducibility the resume contract requires. SHA-256→big-endian-int is
-  stable and explicit (`seed_deck.py:22-30`).
+  stable and explicit (`seed_deck.py`).
 - **Eviction vs governor for concurrency.** Rejected evicting an in-flight trope
   to make room for a new one. The governor *refuses the new candidate* (it stays
   dormant, emits `trope.cap_blocked`) rather than tearing down a thread already

@@ -30,13 +30,13 @@ ADR-035 established a single channel between `sidequest-server` and
 `/tmp/sidequest-renderer.sock`, one connection per request, daemon as an
 *optional* sidecar. That channel is purely request/response: the server asks for
 a render or an embed, the daemon answers or the call fails with a structured
-`DaemonUnavailableError` (`sidequest-server/sidequest/daemon_client/client.py:78`).
+`DaemonUnavailableError` (`sidequest-server/sidequest/daemon_client/client.py`).
 
 That single channel turned out to be insufficient for four distinct problems,
 each solved out-of-band — *on top of*, not *through*, the JSON-RPC request path:
 
 1. **Liveness.** The original liveness signal was the binary "does the socket
-   file exist on disk?" check (`client.py:108` `is_available`). That check passed
+   file exist on disk?" check (`client.py` `is_available`). That check passed
    the entire time the daemon hung mid-render during the **2026-04-19 playtest:
    the daemon went silent for ~13 minutes**, the server kept dispatching into a
    dead socket, and players saw neither images nor an error. A socket that exists
@@ -52,7 +52,7 @@ each solved out-of-band — *on top of*, not *through*, the JSON-RPC request pat
    server's hub without coupling the two processes' memory.
 3. **Output-dir discovery.** When run with no `SIDEQUEST_OUTPUT_DIR`, the daemon
    picks a random `tempfile.mkdtemp(prefix="sq-daemon-")` directory
-   (`daemon.py:1083`). The server has no way to know that path, so its
+   (`daemon.py`). The server has no way to know that path, so its
    `/renders/*` static mount never gets created and every image 404s even though
    the PNG was written correctly. This was the **2026-04-25 P1 regression**.
 4. **Durable artifact storage.** Renders and music land in R2, and the key layout
@@ -78,94 +78,94 @@ The daemon emits a heartbeat event on every connection-state transition; the
 server maintains a per-queue mirror keyed on its *own* receive clock.
 
 - **Daemon side** (`sidequest-daemon/sidequest_daemon/media/daemon.py`): a
-  `WorkerState` enum (`daemon.py:107` — `READY`/`BUSY`/`PAUSED`/`COLD`) and a
+  `WorkerState` enum (`daemon.py` — `READY`/`BUSY`/`PAUSED`/`COLD`) and a
   heartbeat payload `{"event":"heartbeat","queue","state","queue_depth",
-  "ts_monotonic"}` built by `_make_heartbeat` (`daemon.py:127`) and written
-  inline by `_write_heartbeat` (`daemon.py:142`). Heartbeats fire at six
-  per-connection sites: accept (×2 queues, `daemon.py:443-444`), render-lock
-  acquire/release (`daemon.py:846`, `:932`), and embed-lock acquire/release
-  (`daemon.py:976`, `:1029`). The `queue_depth` field is fed from
-  `_IN_FLIGHT_COUNTS` (`daemon.py:124`), a per-queue (`image`/`embed`)
+  "ts_monotonic"}` built by `_make_heartbeat` (`daemon.py`) and written
+  inline by `_write_heartbeat` (`daemon.py`). Heartbeats fire at six
+  per-connection sites: accept (×2 queues, `daemon.py`), render-lock
+  acquire/release (`daemon.py`, `:932`), and embed-lock acquire/release
+  (`daemon.py`, `:1029`). The `queue_depth` field is fed from
+  `_IN_FLIGHT_COUNTS` (`daemon.py`), a per-queue (`image`/`embed`)
   backpressure counter the daemon owns, so the server sees concurrent load even
   on a connection that has no work of its own in flight. `start_periodic_heartbeat`
-  (`daemon.py:155`) is *defined and unit-tested* but **NOT YET WIRED** into
-  `_run_daemon` (documented at `daemon.py:162`); fresh heartbeats currently come
+  (`daemon.py`) is *defined and unit-tested* but **NOT YET WIRED** into
+  `_run_daemon` (documented at `daemon.py`); fresh heartbeats currently come
   only from per-request connections and the server's reconnecting listener.
 - **Server side** (`sidequest-server/sidequest/daemon_client/state_mirror.py`):
   `DaemonStateMirror` holds per-queue `DaemonState` and `queue_depth`. The mirror
-  is consumed via the process-wide singleton `get_mirror()` (`state_mirror.py:215`),
-  pinned to a `builtins` attribute (`state_mirror.py:27`, `:221-225`) so it
+  is consumed via the process-wide singleton `get_mirror()` (`state_mirror.py`),
+  pinned to a `builtins` attribute (`state_mirror.py`, `:221-225`) so it
   survives `uvicorn --reload` re-imports — the same pattern `watcher_hub` uses.
-  `DaemonClient.heartbeat_listener` (`client.py:198`) is wired into the FastAPI
+  `DaemonClient.heartbeat_listener` (`client.py`) is wired into the FastAPI
   startup hook, opens a connection, sends a throwaway `status` request to keep it
   open, and drains heartbeat lines into the mirror; it reconnects on a ~15s idle
   window — 4× faster than the 60s unresponsive threshold. Per-request `_call`
-  also drains heartbeats off the wire (`client.py:386-396`).
+  also drains heartbeats off the wire (`client.py`).
 
 ### Contract 2 — OTEL HTTP bridge (daemon → server hub)
 
 `sidequest-daemon/sidequest_daemon/telemetry/watcher_bridge.py` —
 `emit_watcher_event(event_type, fields, *, component="daemon")` POSTs a JSON body
 to the server's `/internal/watcher/emit` endpoint
-(`watcher_bridge.py:50-64`). The endpoint (`sidequest-server/sidequest/server/
-app.py:273`) forwards the payload to `publish_event` on the in-process hub. The
-transport is stdlib `urllib.request` (`watcher_bridge.py:37-47`), **not**
+(`watcher_bridge.py`). The endpoint (`sidequest-server/sidequest/server/
+app.py`) forwards the payload to `publish_event` on the in-process hub. The
+transport is stdlib `urllib.request` (`watcher_bridge.py`), **not**
 `requests` — neither process carries `requests` as a runtime dep, and a
 fire-and-forget telemetry POST does not justify adding one. The call has a **2s
-timeout** (`_TIMEOUT_SECONDS = 2.0`, `watcher_bridge.py:30`) and is **fire-and-
+timeout** (`_TIMEOUT_SECONDS = 2.0`, `watcher_bridge.py`) and is **fire-and-
 forget**: any `URLError`/`ConnectionError`/`OSError`/`TimeoutError` is logged at
-`WARNING` and swallowed (`watcher_bridge.py:63-64`) — telemetry must never break a
+`WARNING` and swallowed (`watcher_bridge.py`) — telemetry must never break a
 render. The server base URL is `http://127.0.0.1:8765`, overridable via
-`SIDEQUEST_SERVER_URL` (`watcher_bridge.py:29`, `:33-34`). Live consumers:
-`prompt_composer.py:164`, `pipeline_factory.py:42`, `daemon.py:805`.
+`SIDEQUEST_SERVER_URL` (`watcher_bridge.py`, `:33-34`). Live consumers:
+`prompt_composer.py`, `pipeline_factory.py`, `daemon.py`.
 
 ### Contract 3 — Output-dir handshake file
 
 `_run_daemon` resolves its output directory (env `SIDEQUEST_OUTPUT_DIR` or a
 random tmpdir) and **publishes the resolved absolute path** to a known location:
-`~/.sidequest/daemon-output-dir` (`daemon.py:1095-1099`). The write is **one-way
+`~/.sidequest/daemon-output-dir` (`daemon.py`). The write is **one-way
 publish** and **non-fatal** — an `OSError` is logged and the daemon continues
-(`daemon.py:1100-1108`). The server reads this file when constructing its
+(`daemon.py`). The server reads this file when constructing its
 `/renders/*` static mount, with explicit precedence: (1) `SIDEQUEST_OUTPUT_DIR`
 env, (2) the handshake file, (3) no mount + loud log
-(`app.py:345-377`). On a successful handshake read the server propagates the value
+(`app.py`). On a successful handshake read the server propagates the value
 back into its own env so the per-render `_render_url_from_path` sees the same
 root. This is the fix for the 2026-04-25 P1 404 regression.
 
 ### Contract 4 — R2 artifact-key layout
 
 `sidequest-daemon/sidequest_daemon/media/r2_writer.py` defines two distinct,
-non-overlapping namespaces in the `sidequest` bucket (`BUCKET`, `r2_writer.py:52`):
+non-overlapping namespaces in the `sidequest` bucket (`BUCKET`, `r2_writer.py`):
 
-- **`upload_artifact`** (`r2_writer.py:68`) — **session-scoped, content-addressed**
+- **`upload_artifact`** (`r2_writer.py`) — **session-scoped, content-addressed**
   ephemeral output. Key shape:
-  `artifacts/<world_slug>/<session_id>/<kind>/<sha256>.<ext>` (`r2_writer.py:94`),
-  where the SHA-256 is over the content bytes (`r2_writer.py:93`) — identical
+  `artifacts/<world_slug>/<session_id>/<kind>/<sha256>.<ext>` (`r2_writer.py`),
+  where the SHA-256 is over the content bytes (`r2_writer.py`) — identical
   content dedupes to the same key. `kind` is constrained to the `ArtifactKind`
-  taxonomy `{portraits, poi, scenes, music, sfx}` (`r2_writer.py:36-39`); an
-  unknown kind or unknown content-type **raises `ValueError`** (`r2_writer.py:82-90`).
-  Live consumer: `zimage_mlx_worker.py:224`.
-- **`upload_pack_asset`** (`r2_writer.py:164`) — **durable, caller-keyed** pack
+  taxonomy `{portraits, poi, scenes, music, sfx}` (`r2_writer.py`); an
+  unknown kind or unknown content-type **raises `ValueError`** (`r2_writer.py`).
+  Live consumer: `zimage_mlx_worker.py`.
+- **`upload_pack_asset`** (`r2_writer.py`) — **durable, caller-keyed** pack
   assets. Uses the raw key the caller provides; the JSON-params file's location
   *is* the identity (cf. `music_pipeline.derive_r2_key`). Both `upload_pack_asset`
-  and its mirror `download_pack_asset` (`r2_writer.py:130`) enforce a
+  and its mirror `download_pack_asset` (`r2_writer.py`) enforce a
   **namespace-prefix guard**: the key must start with `genre_packs/`, else
-  `ValueError` (`r2_writer.py:143-144`, `:180-181`). Live consumer:
-  `pipeline_factory.py:32`.
+  `ValueError` (`r2_writer.py`, `:180-181`). Live consumer:
+  `pipeline_factory.py`.
 
-Both paths set `CacheControl = "public, max-age=86400"` (`r2_writer.py:51`) and
+Both paths set `CacheControl = "public, max-age=86400"` (`r2_writer.py`) and
 propagate any boto3 error verbatim — **no fake URL is ever returned** (no silent
 fallback; the caller surfaces failure and emits `image_unavailable`).
 
 ### Related decision — independent render/embed locks + MPS-vs-CPU device split
 
 `_run_daemon` constructs **two independent `asyncio.Lock`s** — `render_lock` and
-`embed_lock` (`daemon.py:1120-1124`). Z-Image runs on **MPS** under `render_lock`;
+`embed_lock` (`daemon.py`). Z-Image runs on **MPS** under `render_lock`;
 the embed model (`SentenceTransformer` all-MiniLM-L6-v2) is pinned to **CPU**
-(`daemon.py:276`) under `embed_lock`. Independent devices → independent locks, so
+(`daemon.py`) under `embed_lock`. Independent devices → independent locks, so
 a long render no longer blocks a ~30ms embed. This is the fix for the **2026-04-10
 concurrent-MPS-session deadlock**: a per-request `SentenceTransformer`
-construction was racing Flux on the same MPS device (`daemon.py:298-302`). The
+construction was racing Flux on the same MPS device (`daemon.py`). The
 embed worker is now a pool-owned singleton constructed eagerly at warmup, never
 per-request.
 
@@ -174,22 +174,22 @@ per-request.
 - **Server-clock liveness.** Staleness is computed against the server's own
   `time.monotonic()` at heartbeat *receipt*, **never** the daemon's
   `ts_monotonic`. The two processes have independent monotonic clock references;
-  subtracting one from the other is garbage (state_mirror.py:65-73, `is_unresponsive`
+  subtracting one from the other is garbage (state_mirror.py, `is_unresponsive`
   at `:169-191`, review H3). The daemon's `ts_monotonic` is retained for
-  diagnostic logging only (`last_heartbeat_ts`, `state_mirror.py:144`).
+  diagnostic logging only (`last_heartbeat_ts`, `state_mirror.py`).
 - **Failure-closed cold start.** A fresh mirror, or any queue that has never
-  published a heartbeat, reports `UNRESPONSIVE` (`state_mirror.py:131-136`,
+  published a heartbeat, reports `UNRESPONSIVE` (`state_mirror.py`,
   `:187-188`). The safe default is "fail closed" until a heartbeat lands — the
   dispatcher skips the daemon round-trip and emits the `render.unavailable`
   fallback rather than dispatching into the unknown.
 - **2× interval threshold.** `is_unresponsive` fires when the gap since the last
   *received* heartbeat exceeds `2 × heartbeat_interval` (default 30s → 60s window,
-  `state_mirror.py:169-191`).
+  `state_mirror.py`).
 - **Unknown state raises.** `record_heartbeat` rejects any state outside
-  `{ready, busy, paused, cold}` with `ValueError` (`state_mirror.py:107-111`) — a
+  `{ready, busy, paused, cold}` with `ValueError` (`state_mirror.py`) — a
   typo'd daemon state must not masquerade as health (No Silent Fallbacks). `cold`
   maps to mirror `READY` (a cold-but-alive daemon is still reachable;
-  `state_mirror.py:117`).
+  `state_mirror.py`).
 - **Fire-and-forget, non-blocking telemetry.** The OTEL bridge never raises into
   the calling path and never blocks it longer than 2s; failures are visible at
   `WARNING` but do not propagate (Contract 2).
@@ -210,7 +210,7 @@ their own spans:
 - **R2 uploads/downloads** emit `daemon.r2.upload.{start,success,failure}` and
   `daemon.r2.download.pack_asset` spans with `kind`/`world`/`session`/`bytes`/
   `ms`/`key` and, on failure, `error_class`/`error_message`/`retry_attempt`
-  (`r2_writer.py:98-126`, `:148-159`, `:192-208`).
+  (`r2_writer.py`, `:148-159`, `:192-208`).
 - **The OTEL bridge** is the daemon's *only* path into the GM-panel watcher hub;
   daemon subsystems (prompt composition, music pipeline, render dispatch) emit
   through it (Contract 2 consumers). A bridge POST failure is itself logged at
@@ -218,11 +218,11 @@ their own spans:
 - **Socket-client outcomes** are spanned as `daemon_client.request` with
   `daemon.outcome` values (`socket_missing`, `connection_failed`,
   `reply_timeout`, `eof_before_reply`, `invalid_json`, `error`, `ok`) at
-  `client.py:326-405`.
+  `client.py`.
 - **Liveness** surfaces on the `render.unavailable` watcher event: the mirror
   exposes both the server receive timestamp (`last_received_at`) and the daemon's
   self-reported `ts_monotonic` (`last_heartbeat_ts`) for GM-panel display
-  (`state_mirror.py:144-167`).
+  (`state_mirror.py`).
 - **Gap:** the periodic idle-heartbeat emitter is not yet wired (see Consequences),
   so during a fully idle stretch liveness rides solely on the listener's reconnect
   cadence rather than a daemon-driven push.
@@ -250,7 +250,7 @@ their own spans:
   convention). Each is a contract a contributor must know about; none is
   discoverable from the JSON-RPC method signatures alone — which is precisely why
   this ADR exists.
-- **`start_periodic_heartbeat` is defined but not wired** (`daemon.py:162`).
+- **`start_periodic_heartbeat` is defined but not wired** (`daemon.py`).
   Until a broadcast emit fans out to active client writers, idle liveness depends
   on the server listener's reconnect loop. This is a known, documented follow-up,
   not a silent gap.
@@ -274,7 +274,7 @@ their own spans:
   `requests` as a runtime dependency, and a fire-and-forget 2s telemetry POST
   from an error path does not justify adding one. Stdlib `urllib.request` is
   crude and synchronous, but adequate at this call volume and timeout
-  (`watcher_bridge.py:11-16`).
+  (`watcher_bridge.py`).
 - **Env-var output-dir instead of a handshake file.** Rejected as the *sole*
   mechanism: it requires the operator to set `SIDEQUEST_OUTPUT_DIR` in the
   server's environment too, which the dev-default flow does not do — and its

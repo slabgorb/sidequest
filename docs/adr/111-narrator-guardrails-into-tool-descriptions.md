@@ -8,8 +8,8 @@ supersedes: []
 superseded-by: null
 related: [9, 98, 101, 102, 110, 113]
 tags: [agent-system, prompt-engineering, observability]
-implementation-status: deferred
-implementation-pointer: sprint/current-sprint.yaml#57-4
+implementation-status: live
+implementation-pointer: "sidequest-server/sidequest/agents/narrator_guardrails.py + orchestrator.py guardrail registration + intent_router.py CONFRONTATION_TRIGGER_CORE"
 ---
 
 > **Amended 2026-05-23 by ADR-113.** The
@@ -49,10 +49,10 @@ prompt and re-state tool-use rules on every turn:
 
 | Section name | Site | Size | Governs |
 |---|---|---|---|
-| `npc_intro_visual_constraint` | `orchestrator.py:1764` | ~1 KB | Emitting `visual_scene` when an `npcs_met` entry has `is_new: true` |
-| `confrontation_trigger_constraint` | `orchestrator.py:1851` | ~3 KB | Populating `game_patch.confrontation` on stake-binding turns; specificity; "fire THIS turn" discipline |
-| `npc_extraction_constraint` | `orchestrator.py:1934` | ~1.5 KB | Including every named/role-named person in `npcs_present` |
-| `location_patch_constraint` | `orchestrator.py:1989` | ~1 KB | Setting `game_patch.location` when prose opens a new bold-titled room |
+| `npc_intro_visual_constraint` | `orchestrator.py` | ~1 KB | Emitting `visual_scene` when an `npcs_met` entry has `is_new: true` |
+| `confrontation_trigger_constraint` | `orchestrator.py` | ~3 KB | Populating `game_patch.confrontation` on stake-binding turns; specificity; "fire THIS turn" discipline |
+| `npc_extraction_constraint` | `orchestrator.py` | ~1.5 KB | Including every named/role-named person in `npcs_present` |
+| `location_patch_constraint` | `orchestrator.py` | ~1 KB | Setting `game_patch.location` when prose opens a new bold-titled room |
 
 **Combined: ~6.5 KB / ~1.5 k tokens, every turn, uncached.** They live in the
 Recency zone by deliberate choice (the comment trail at each call site says
@@ -86,7 +86,7 @@ across turns:
 3. **The slimmed sidecar prose** (`narrator_prompts/output_only_sdk.md`)
    already lives in the Primacy/Stable cached zone via
    `Narrator.build_output_format(..., tool_backend=True)` at
-   `narrator.py:235`.
+   `narrator.py`.
 
 The four Recency guardrails are *tool-use rules*. They tell the model when to
 populate a specific field or call a specific tool. The natural home for a
@@ -142,7 +142,7 @@ contract.
 ### Backend-gated dual path
 
 The Recency-zone `registry.register_section(...)` calls at
-`orchestrator.py:1764`, `:1851`, `:1934`, and `:1989` become conditional on
+`orchestrator.py`, `:1851`, `:1934`, and `:1989` become conditional on
 `context.tool_backend` (or equivalent — the field name is finalized in
 implementation; today the equivalent test is
 `isinstance(self._client, ToolingLlmClient)` per the `build_output_format`
@@ -162,7 +162,7 @@ if not context.tool_backend:
 ```
 
 On the SDK path, the four sections are *skipped entirely* (zero-byte-leak
-discipline matching the pattern at `orchestrator.py:1320` for the
+discipline matching the pattern at `orchestrator.py` for the
 `pending_trope_context` / `active_trope_summary` registrations). The content
 lives at its new migration target, paid once and cached.
 

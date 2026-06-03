@@ -9,7 +9,7 @@ superseded-by: 103
 related: [31, 90, 101, 103]
 tags: [observability]
 implementation-status: retired
-implementation-pointer: "Retired by ADR-103. The default anthropic_sdk backend emits OTEL natively: sidequest-server/sidequest/telemetry/spans/llm_request.py (llm_request_span), called from agents/anthropic_sdk_client.py:108. No production code scrapes claude subprocess stderr for telemetry; the legacy claude -p path captures stderr for error logging only."
+implementation-pointer: "Retired by ADR-103. The default anthropic_sdk backend emits OTEL natively: sidequest-server/sidequest/telemetry/spans/llm_request.py (llm_request_span), called from agents/anthropic_sdk_client.py. No production code scrapes claude subprocess stderr for telemetry; the legacy claude -p path captures stderr for error logging only."
 ---
 
 # ADR-058: Claude Subprocess OTEL Passthrough
@@ -18,7 +18,7 @@ implementation-pointer: "Retired by ADR-103. The default anthropic_sdk backend e
 > Replaced by [ADR-103](103-native-otel-via-tool-registry.md). The default
 > `anthropic_sdk` backend (ADR-101) emits OTEL **natively** via
 > `sidequest-server/sidequest/telemetry/spans/llm_request.py`
-> (`llm_request_span`, called from `agents/anthropic_sdk_client.py:108`).
+> (`llm_request_span`, called from `agents/anthropic_sdk_client.py`).
 > No production code scrapes `claude` subprocess stderr for telemetry. The
 > legacy `claude -p` path still captures stderr, but for error logging only —
 > not OTEL. The stderr-passthrough mechanism described below is dead in
@@ -175,7 +175,7 @@ registered at lines 154–156:
 - `POST /v1/metrics` → `parse_metric_records` (parses `claude_code.token.usage` metrics)
 - `POST /v1/traces` → `parse_trace_spans`
 
-Entry point: `run_otlp_receiver` (called from `playtest_dashboard.py:983`).
+Entry point: `run_otlp_receiver` (called from `playtest_dashboard.py`).
 
 ### §2 OTEL env injection — live
 
@@ -205,7 +205,7 @@ All four modules from the design table exist in `scripts/`:
 ### §4 Dashboard Claude tab — live
 
 The browser dashboard's Claude tab consumes `claude_otel`-source events
-(tool_result, token_usage, span) — see `scripts/tests/test_claude_tab.py:4, 295–301`
+(tool_result, token_usage, span) — see `scripts/tests/test_claude_tab.py, 295–301`
 which assert `dispatch()` routes events with `source === "claude_otel"`
 to the Claude tab and updates the `tab7-badge` element.
 

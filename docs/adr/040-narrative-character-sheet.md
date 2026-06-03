@@ -1,18 +1,31 @@
 ---
 id: 40
 title: "Narrative Character Sheet (No Raw Stats)"
-status: accepted
+status: deprecated
 date: 2026-04-01
 deciders: [Keith Avery]
 supersedes: []
 superseded-by: null
-related: [114]
+related: [114, 136]
 tags: [narrator]
-implementation-status: live
+implementation-status: retired
 implementation-pointer: null
 ---
 
 # ADR-040: Narrative Character Sheet (No Raw Stats)
+
+> **DEPRECATED 2026-06-03** — reversed by the project's mechanics-first visibility direction
+> (see related ADR-114 *Ablative HP Substrate*, which deliberately surfaces raw HP, and
+> ADR-136 *Player-Facing Relationship Surface*). Marked `deprecated` rather than `superseded`
+> because no single successor ADR replaced it — the reversal is a doctrine shift, not a 1:1
+> replacement. The no-raw-stats invariant below was never
+> ported to Python and is now an explicit non-goal: raw ability scores and HP **are** shown
+> in player-facing surfaces on purpose. Per CLAUDE.md, mechanics-first players (Sebastien,
+> Jade) want the math legible, and players have consistently asked for *more* mechanical
+> visibility in real games — not less. `describe_health()` banding may return as **additive**
+> narrative flavor alongside raw values, but it is no longer an invariant. Identified by the
+> 2026-06-03 ADR audit (`docs/adr/AUDIT-2026-06-03.md`); decision recorded under sprint story
+> 82-5. The retrospective text below is preserved as the original (now-reversed) rationale.
 
 > Retrospective — documents a decision already implemented in the codebase.
 
