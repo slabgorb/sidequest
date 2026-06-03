@@ -10,6 +10,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import yaml  # PyYAML — available in the orchestrator uv env (used by render_common)
+
 _SPAN_CONST_RE = re.compile(r'^SPAN_[A-Z0-9_]+\s*=\s*"([^"]+)"', re.MULTILINE)
 
 
@@ -53,3 +55,33 @@ def resolve_module(ref: str, repo_root: Path) -> Path | None:
             if matches:
                 return matches[0]
     return None
+
+
+_FM_RE = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
+
+
+def adr_status(adr_id: int, repo_root: Path) -> str | None:
+    """Return the `status` frontmatter value of ADR `adr_id`, or None."""
+    adr_dir = repo_root / "docs" / "adr"
+    matches = list(adr_dir.glob(f"{adr_id:03d}-*.md"))
+    if not matches:
+        return None
+    m = _FM_RE.match(matches[0].read_text())
+    if not m:
+        return None
+    fm = yaml.safe_load(m.group(1)) or {}
+    status = fm.get("status")
+    return str(status) if status is not None else None
+
+
+def draft_world_is_draft(world_ref: str, repo_root: Path) -> bool:
+    """True iff `<pack>/<world>` has `draft: true` in its world.yaml."""
+    pack, _, world = world_ref.partition("/")
+    wy = (
+        repo_root / "sidequest-content" / "genre_packs" / pack
+        / "worlds" / world / "world.yaml"
+    )
+    if not wy.is_file():
+        return False
+    data = yaml.safe_load(wy.read_text()) or {}
+    return data.get("draft") is True
