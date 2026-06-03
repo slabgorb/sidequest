@@ -1,0 +1,75 @@
+id: '83'
+type: epic
+title: "Lobby Redesign \u2014 The Standing Folio"
+description: "Holistic from-scratch redesign of the SideQuest lobby per the Claude\
+  \ Design handoff (Direction A \xB7 The Standing Folio). Kills the scrollbar in the\
+  \ world list, replaces it with a fold-fitting genre accordion, and reframes the\
+  \ lobby as a literary manuscript title page: masthead name ritual, two-pane folio\
+  \ card (genre accordion + cinematic per-genre preview), commit row (Solo/MP toggle\
+  \ + Start), and below-the-fold sections (live presence, past journeys, dev scene\
+  \ library). Dark Folio palette + Pirata One/EB Garamond, subtle per-genre accent\
+  \ shift. Wires to the existing real worlds/sessions data hooks; hero art stays atmospheric\
+  \ CSS placeholders standing in for runtime AI renders."
+priority: p2
+status: backlog
+repos: ui
+stories:
+- id: 83-1
+  title: "Rebuild ConnectScreen as the Standing Folio lobby \u2014 genre accordion\
+    \ + cinematic preview"
+  description: "Replace the current scrolling-list lobby (ConnectScreen.tsx + src/screens/lobby/*)\
+    \ with Direction A 'The Standing Folio' from the Claude Design handoff. Reference\
+    \ bundle committed at sidequest-ui/design-reference/lobby-standing-folio/ \u2014\
+    \ READ chats/chat1.md (intent: 'I hate the scrollbar\u2026 holistic redesign';\
+    \ user locked in Direction A) and project/SideQuest Lobby.html + tokens.css for\
+    \ the pixel-target. Recreate the visual output in React/TS; do NOT port the prototype's\
+    \ inline-Babel structure. The prototype invents 20 fake worlds \u2014 IGNORE its\
+    \ data; wire the real catalogue from the existing /api/genres feed (GenresResponse/GenreMeta/WorldMeta)\
+    \ and reuse the live data hooks already in place (useSessions, useStartGame, useDisplayName,\
+    \ historyStore, /dev/scenes). The /tmp design fonts (Pirata One via Google, EB\
+    \ Garamond/Oswald self-hosted) and the Dark Folio palette in tokens.css are the\
+    \ type/color spec. Hero art stays atmospheric CSS-gradient placeholders standing\
+    \ in for the runtime AI render (per the designer's own note). Net change is structural+visual:\
+    \ keep every existing data path and behavior (localStorage name/genre/world persistence,\
+    \ mode toggle, start/join, scene library dev-gate), change the layout and chrome."
+  points: 5
+  priority: p2
+  status: in_progress
+  repos: ui
+  workflow: tdd
+  acceptance_criteria:
+  - 'Masthead ''opening ritual'' renders: ornament dinkus, Pirata One ''SideQuest''
+    wordmark, italic tagline, and the centered name input (autofocus, placeholder);
+    name persists to/from localStorage exactly as today.'
+  - 'World index is a genre ACCORDION (no scrollbar anywhere): one collapsible row
+    per genre sourced from /api/genres; clicking a genre header expands its worlds
+    inline and collapses the previously open one; the eyebrow shows live ''{N} worlds
+    across {M} genres'' from real data.'
+  - 'Genre/world rows carry full keyboard + ARIA semantics: genre headers are aria-expanded
+    buttons with a rotating chevron; worlds are role=radio inside role=radiogroup
+    with aria-checked on the selected world; accent focus-ring visible on keyboard
+    focus across headers, rows, mode buttons, Start.'
+  - "Selecting a world updates the cinematic preview pane: hero art (per-world/per-genre\
+    \ CSS gradient placeholder) with genre label, world title, era line, tone chips\
+    \ (cosy/gritty axes from existing toneAxes), blurb, and 'Inspired by' list \u2014\
+    \ all from real WorldMeta, with graceful fallbacks for any field the server doesn't\
+    \ supply."
+  - 'Commit row works end-to-end: Solo / Multiplayer segmented toggle drives the Start
+    button label (''Start Adventure'' vs ''Start or Join'') and start/join flow via
+    the existing useStartGame; Start is disabled with no world selected; Rules/Lore
+    links present.'
+  - 'Below-the-fold sections retained and wired to real data: ''Currently in this
+    world'' (live presence via useSessions, empty-state copy when none), ''Past journeys''
+    (history from historyStore, clicking re-selects that world), and the dev-gated
+    ''Scene library'' (fixtures from /dev/scenes, only when dev endpoint available).'
+  - "Subtle per-genre accent shift only: selecting a world sets the [data-genre] accent\
+    \ (per tokens.css map); type and structure stay the manuscript house style \u2014\
+    \ no full genre re-skin."
+  - "Responsive per the design breakpoints (single-column folio + two-up index grid\
+    \ at <=880px; stacked commit row + full-width Start at <=560px); global scrollbars\
+    \ hidden per tokens.css; reduced-motion respected (transform-only entrance, visible\
+    \ end-state as base \u2014 no opacity:0-stuck cards)."
+  - Existing ConnectScreen tests updated/replaced (ConnectScreen.test.tsx, ConnectScreen.reference.test.tsx,
+    lobby-start-ws-open, lobby-house-archetype-wiring, slug-connect-readystate-effect)
+    so the suite proves the new structure; includes a wiring test that the redesigned
+    screen is mounted in the real app route and reachable, not just rendered in isolation.
