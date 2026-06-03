@@ -58,3 +58,29 @@ def test_resolve_module_ui_component(tmp_path):
     (ui / "ConfrontationOverlay.tsx").write_text("// component")
     assert resolve_module("ConfrontationOverlay", tmp_path) is not None
     assert resolve_module("NopeOverlay", tmp_path) is None
+
+
+# append to scripts/tests/test_feature_inventory.py
+from scripts.feature_inventory_verify import adr_status, draft_world_is_draft
+
+
+def test_adr_status_reads_frontmatter(tmp_path):
+    adr_dir = tmp_path / "docs" / "adr"
+    adr_dir.mkdir(parents=True)
+    (adr_dir / "033-confrontation.md").write_text(
+        "---\nid: 33\nstatus: accepted\n---\n# body\n"
+    )
+    assert adr_status(33, tmp_path) == "accepted"
+    assert adr_status(999, tmp_path) is None
+
+
+def test_draft_world_predicate(tmp_path):
+    world = tmp_path / "sidequest-content" / "genre_packs" / "tea_and_murder" / "worlds" / "blackthorn_moor"
+    world.mkdir(parents=True)
+    (world / "world.yaml").write_text("name: Blackthorn Moor\ndraft: true\n")
+    assert draft_world_is_draft("tea_and_murder/blackthorn_moor", tmp_path) is True
+
+    live = tmp_path / "sidequest-content" / "genre_packs" / "tea_and_murder" / "worlds" / "glenross"
+    live.mkdir(parents=True)
+    (live / "world.yaml").write_text("name: Glenross\n")  # no draft key
+    assert draft_world_is_draft("tea_and_murder/glenross", tmp_path) is False
