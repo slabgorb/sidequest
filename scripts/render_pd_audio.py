@@ -3,12 +3,13 @@
 This cross-repo media script:
 
 1. Collects the shared-bucket music *demand* by reading every pack
-   ``audio.yaml`` and pulling out the ``assets/audio/classical_pd/<file>``
-   references (the shared classical-PD library; pack-local tracks are ignored).
+   ``audio.yaml`` and pulling out the ``assets/audio/<bucket>/<file>``
+   references (the shared PD library for ``<bucket>``, which defaults to
+   ``classical_pd``; pack-local tracks are ignored).
 2. Joins that demand against the *supply* — the composer catalog at
-   ``genre_packs/assets/audio/classical_pd/catalog.yaml``. Any demanded track
-   absent from the catalog raises :class:`UncataloguedTrackError` (loud, per
-   CLAUDE.md "No Silent Fallbacks").
+   ``genre_packs/assets/audio/<bucket>/catalog.yaml`` (``<bucket>`` defaults to
+   ``classical_pd``). Any demanded track absent from the catalog raises
+   :class:`UncataloguedTrackError` (loud, per CLAUDE.md "No Silent Fallbacks").
 3. Drops anything already in R2 (per ``r2_manifest.json``).
 4. Renders the gap via the ``composer`` CLI (subprocess — composer is left
    unmodified; the catalog entries ARE valid composer manifest entries).
