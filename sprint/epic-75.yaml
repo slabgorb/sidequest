@@ -133,3 +133,35 @@ stories:
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-5
+  - id: 75-11
+    title: is_projectable() predicate — observation_pending gates projection eligibility (ADR-138 D1/D3)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+  - id: 75-12
+    title: Wire ratification gate into ADR-118 NPC projection — reuse 49-6 spans, dedup-by-id, floor-includes-pending test (ADR-138 D2/D5/D6)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 75-11
+  - id: 75-13
+    title: Wire ratification gate into ADR-135 reference NPC projection — withhold unratified phantoms (ADR-138 D4)
+    points: 2
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    depends_on: 75-11
+  - id: 75-14
+    title: Defensive entity_card eviction + entity_card.evicted span for unprojectable cards (ADR-138 D5/D6)
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    depends_on: 75-12
+    type: chore
