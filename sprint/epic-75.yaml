@@ -106,12 +106,14 @@ stories:
     title: 'Universal retrieval: end-to-end integration wiring test — action to floor+fill to Valley injection (ADR-118)'
     points: 2
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-7
-    started: '2026-06-03'
+    completed: '2026-06-03'
     branch: feat/75-8-universal-retrieval-e2e-wiring-test
+    review_verdict: approved
   - id: 75-9
     title: '[DESIGN] NPC-pool ratification gate + pool/Npc split (ADR-135) — governs ADR-118 projection source'
     points: 3
