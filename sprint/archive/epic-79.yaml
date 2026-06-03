@@ -3,7 +3,7 @@ type: epic
 title: wry_whimsy / oz Asset Generation Pass — Portraits, POIs, Music, Fonts to R2
 description: "First asset render pass for the new wry_whimsy pack + oz world. The pack ships rich, near-complete YAML authoring but ZERO assets on R2 (0 refs in r2_manifest.json). Generate + upload and register in the manifest: 14 character portraits (worlds/oz/portrait_manifest.yaml), 12 POI landscapes (worlds/oz/history.yaml the_country_of_oz chapter), classical_pd music placement (audio.yaml defines 20 moods pointing at audio/classical_pd/*.ogg — the public-domain library exists on R2 ONLY under tea_and_murder, so wry_whimsy's path 404s), and pack fonts (.woff2). Closes the wry_whimsy/oz asset gate (cf. neon_dystopia/pulp_noir gates MET). Surfaced in the 2026-06-02 oz solo playtest."
 priority: p2
-status: ready
+status: done
 repos: sidequest-content
 stories:
   - id: 79-1
@@ -51,3 +51,4 @@ stories:
     workflow: trivial
     completed: '2026-06-03'
     type: chore
+completed: '2026-06-03'

@@ -28,6 +28,7 @@ completed_epics:
   - '64'
   - '67'
   - '77'
+  - '79'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -814,3 +815,28 @@ completed_stories:
     title: '[DESIGN] Quest & stakes substrate — ADR for create/anchor lane + active_stakes source'
     points: 3
     completed: '2026-06-02'
+  - id: 79-1
+    epic: '79'
+    title: 'Render 14 oz character portraits to R2 + register in r2_manifest.json. Subjects from worlds/oz/portrait_manifest.yaml: the_scarecrow, the_tin_woodman, the_cowardly_lion, toto, the_wizard, glinda, witch_of_the_west, witch_of_the_north, mombi, jinjur, guardian_of_the_gates, winged_monkey_king, field_mouse_queen, hammer_heads. Use worlds/oz/visual_style.yaml for style consistency. /sq-poi or daemon zimage worker → upload genre_packs/wry_whimsy/worlds/oz/assets/images/portraits/.'
+    points: 3
+    completed: '2026-06-03'
+  - id: 79-2
+    epic: '79'
+    title: Render 12 oz POI landscapes to R2 + register in r2_manifest.json. POIs from worlds/oz/history.yaml (the_country_of_oz chapter). Use worlds/oz/visual_style.yaml. /sq-poi → upload genre_packs/wry_whimsy/worlds/oz/assets/images/poi/.
+    points: 3
+    completed: '2026-06-03'
+  - id: 79-3
+    epic: '79'
+    title: "Resolve wry_whimsy music 404s — place classical_pd tracks on R2 for wry_whimsy's path. audio.yaml references audio/classical_pd/*.ogg across 20 moods but the library exists on R2 only under tea_and_murder/. DECISION REQUIRED: share one canonical classical_pd R2 location vs copy/upload the ~20 referenced tracks to genre_packs/wry_whimsy/audio/classical_pd/. Then verify no 404/decode errors in a fresh oz session. Register in r2_manifest.json."
+    points: 2
+    completed: '2026-06-03'
+  - id: 79-4
+    epic: '79'
+    title: Add wry_whimsy pack fonts (.woff2) to assets/fonts/ and verify theme.yaml font family resolves. Currently 0 fonts present; theme references a family that must exist for client_theme.css to render correctly.
+    points: 1
+    completed: '2026-06-03'
+  - id: 79-5
+    epic: '79'
+    title: Verify wry_whimsy/oz asset gate MET — re-run /sq-audit --genre wry_whimsy, confirm 0 portrait/POI/music/font gaps and that r2_manifest.json now carries wry_whimsy refs (was 0). Update CLAUDE.md pack-status line + pack README asset-gap notes.
+    points: 1
+    completed: '2026-06-03'
