@@ -24,3 +24,32 @@ def load_span_constants(spans_dir: Path) -> set[str]:
     for path in sorted(spans_dir.glob("*.py")):
         names.update(_SPAN_CONST_RE.findall(path.read_text()))
     return names
+
+
+def wiring_test_exists(rel_path: str, base: Path) -> bool:
+    """True iff `rel_path` resolves to an existing file under `base`."""
+    return (base / rel_path).is_file()
+
+
+def resolve_module(ref: str, repo_root: Path) -> Path | None:
+    """Resolve a module reference to a real file, or None.
+
+    Server refs (dotted `game.encounter` or path `game/encounter.py`) resolve
+    under sidequest-server/sidequest/. A bare CamelCase name resolves as a UI
+    component basename glob under sidequest-ui/src/.
+    """
+    server_root = repo_root / "sidequest-server" / "sidequest"
+    if ref.endswith(".py") or "/" in ref:
+        candidate = server_root / ref
+        return candidate if candidate.is_file() else None
+    if "." in ref:  # dotted server module
+        candidate = server_root / (ref.replace(".", "/") + ".py")
+        return candidate if candidate.is_file() else None
+    # bare name → UI component basename glob
+    ui_root = repo_root / "sidequest-ui" / "src"
+    if ui_root.is_dir():
+        for ext in (".tsx", ".ts"):
+            matches = list(ui_root.rglob(ref + ext))
+            if matches:
+                return matches[0]
+    return None
