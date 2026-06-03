@@ -280,9 +280,12 @@ stories:
     description: 'Non-blocking follow-ups from the 65-9 review (Reviewer APPROVED). All 10 findings + the full audit trail are archived in sprint/archive/65-9-session.md (Delivery Findings + Design Deviations → Architect reconcile). Server-only; reference-page Cast section. Pattern: epic 76 ← 75-6.'
     points: 3
     priority: p3
-    status: backlog
+    status: in-progress
     repos: server
     workflow: tdd
+    started: '2026-06-03'
+    branch: feat/65-13-cast-docstring-span-chrome-guard
+    session_file: .session/65-13-session.md
     acceptance_criteria:
       - "DOC: Fix misleading OTEL span semantics — _cast_portrait_img_html reuses scrapbook.npc_portrait_{resolved,not_found} on the reference page, but those spans' docstrings (scrapbook.py:133,152) describe scene-time scrapbook-ref attachment. Either note the dual-use, or implement AC8 (below) which supersedes it."
       - "AC8 (deferred from 65-9): Add dedicated reference_portrait_resolved/reference_portrait_not_found spans for the reference Cast gate (distinguish 'authored but not on R2' from 'not authored'); migrate test_cast_portrait_decisions_emit_spans to them. Resolves the DOC span-semantics finding."
