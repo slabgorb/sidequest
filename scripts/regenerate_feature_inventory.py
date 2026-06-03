@@ -64,3 +64,33 @@ def replace_between_markers(filepath: Path, body: str) -> None:
         text[:begin] + MARKER_BEGIN + "\n\n" + body + "\n" + MARKER_END + text[end:]
     )
     filepath.write_text(new)
+
+
+def generate(repo_root: Path = ROOT, span_names: set[str] | None = None) -> int:
+    """Load → verify → render → write. Return process exit code."""
+    manifest_dir = repo_root / "docs" / "feature-inventory"
+    doc = repo_root / "docs" / "feature-inventory.md"
+    spans_dir = repo_root / "sidequest-server" / "sidequest" / "telemetry" / "spans"
+    if span_names is None:
+        span_names = load_span_constants(spans_dir)
+
+    categories = load_manifest(manifest_dir)
+    ctx = VerifyContext(repo_root=repo_root, span_names=span_names)
+    failures: list[str] = []
+    for cat in categories:
+        for f in cat.features:
+            ok, reason = verify_feature(f, ctx)
+            if not ok:
+                failures.append(f"  [{cat.category}] {f.id}: {reason}")
+    if failures:
+        print("Feature-inventory verification FAILED:", file=sys.stderr)
+        print("\n".join(failures), file=sys.stderr)
+        return 1
+
+    replace_between_markers(doc, render_body(categories, {}))
+    print(f"Wrote {doc}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(generate())
