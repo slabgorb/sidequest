@@ -538,7 +538,7 @@ First specs to draft:
 
 ## Audit Pass — All 11 Genres
 
-**Inventory:** 7 production packs in `genre_packs/` + 4 workshop-unique in `genre_workshopping/`. (`heavy_metal` and `spaghetti_western` exist in both — production is canonical, workshop versions are older drafts.)
+**Inventory:** all genre packs live in `genre_packs/` — there is no longer a separate `genre_workshopping/` tree (retired 2026-06-03, and `low_fantasy` deleted with it). The `prod`/`workshop` labels in the table below predate that change; read `workshop` as "loads, but the full asset/playtest gate is pending." The deleted `low_fantasy` row is struck through below.
 
 ### Audit Table
 
@@ -551,7 +551,7 @@ First specs to draft:
 | **space_opera** | prod | `none` | Conflates Firefly/Expanse with Star Wars | varies by world (`classified` → `mythic_lapsed` → `acknowledged`) | era-dial per world | **Genre-vs-world confusion.** Genre allows Innate-Psychic + McCoy; the "no psionics as toolkit" rule belongs to one *world* (Firefly), not the genre. |
 | **spaghetti_western** | prod | `none` | Folkloric-dismissed; item magic ubiquitous | `folkloric` | fixed-low | **Mislabeled.** Named guns, the impossible shot, the gunslinger reputation — all item-channeled Reflexive-Physical magic. The genre denies the word, not the structure. |
 | **tea_and_murder** | prod | `none` | Dialed via gothic axis | `gothic`-dialed (`denied` → `esoteric`) | dial: `gothic` | **Architecture correct, label wrong.** Already uses an axis to scale supernatural; just needs the label to match. |
-| **low_fantasy** | workshop | `low` | Accurate; multiple competing sources | `mythic_lapsed` | fixed-low | **Tests competing-source uncertainty.** Pale Fire vs. Drowned Mother vs. standing stones — schema must support "multiple Sources entertained, none confirmed." |
+| ~~**low_fantasy**~~ | ~~workshop~~ | — | — | — | — | **Deleted 2026-06-03** (pack retired). Kept here only as the worked example that motivated the `epistemic_status` / competing-source design below — Pale Fire vs. Drowned Mother vs. standing stones. |
 | **neon_dystopia** | workshop | `none` | Tech-substitution; `magic_design.md` is explicit | `denied` (low) → `acknowledged-as-tech` (high) | dial: `chrome` | **Structurally consistent.** The "no magic" claim is genuinely epistemological — the world has no concept. Tech IS the magic system; admit it via `mccoy` source. |
 | **pulp_noir** | workshop | `low` | Accurate; mirrors tea_and_murder's pattern | `esoteric` | dial: `occult` | **Same shape as tea_and_murder, different decade.** Schema collapses the two into one structure with different content. |
 | **road_warrior** | workshop | `none` | Folkloric named-vehicle magic | `folkloric` | fixed-low | **Mislabeled.** "The man with the V8 Interceptor" is item-magic where the item is a vehicle. Schema needs `item_subtypes: [weapon, scroll, relic, vessel]` to admit this cleanly. |

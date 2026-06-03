@@ -68,10 +68,9 @@ sidequest-content/            # Genre packs — single source of truth (subrepo)
 │   │                         #   assets/ prefix). Remaining asset gaps: long_foundry portraits,
 │   │                         #   coyote_star POIs, blackthorn_moor (all). See pack README.
 │   └── <genre>/worlds/<world>/   # World-specific overrides
-├── genre_workshopping/       # Pre-wired packs in design (caverns_sunden — deprecated;
-│                             #   low_fantasy).
-│                             #   Subdirs named like a live pack hold in-progress
-│                             #   alternate worlds for that pack.
+│                             #   (in-progress worlds set `draft: true` in world.yaml
+│                             #   to stay out of selection; the old genre_workshopping/
+│                             #   staging tree was retired 2026-06-03)
 ├── corpus/                   # Conlang word lists per culture (ADR-091)
 ├── tools/                    # Pack authoring tooling
 ├── PROMPTING_Z_IMAGE.md      # Z-Image prompting guide

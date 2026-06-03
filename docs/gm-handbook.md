@@ -249,7 +249,6 @@ A **Kicker** (from *Sorcerer*) is player-authored Situation built into character
 - **spaghetti_western**: "The man who killed your father is riding north. You have three bullets left."
 - **space_opera**: "Your ship's reactor will go critical in 72 hours unless you find a part that only exists on a quarantined world."
 - **mutant_wasteland**: "Your mutation is changing. The elder says you have one week before it takes you."
-- **low_fantasy**: "The oath you swore last winter comes due at the next full moon. You don't remember what you swore."
 - **tea_and_murder**: "The scandal broke this morning. By tomorrow every door in society is closed to you — unless."
 - **road_warrior**: "Your rig's engine is dying. There's one mechanic left who can fix it, and he hates you."
 - **elemental_harmony**: "Your master's final teaching was a question you refused to answer. He died before you could."

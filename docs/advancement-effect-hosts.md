@@ -39,13 +39,12 @@ stories.
 | heavy_metal           | progression.yaml    | **populated**       | Six-affinity structure (Iron/Pact/Craft/Lore/Court/Ruin) maps cleanly to `AffinityTier.mechanical_effects`. This story lifts ADR-081 draft §2 into live YAML; see `sidequest-content/genre_packs/heavy_metal/progression.yaml`. |
 | caverns_and_claudes   | progression.yaml    | empty (declared)    | Delver / Plunderer / Slayer / Spellweaver / Steel affinities already carry rich `unlocks` → `mechanical_effects` lands on the same tiers when content arrives. Meta-humor genre, so mechanical depth is low priority. |
 | elemental_harmony     | progression.yaml    | empty (declared)    | Element affinities already host tiered abilities; `mechanical_effects` lives there rather than in a parallel file. Future story will wire element-specific BeatDiscount / LeverageBonus. |
-| low_fantasy           | progression.yaml    | empty (declared)    | Closest sibling to heavy_metal in tone and structure — same progression scaffolding, effects host on affinity tiers. |
 | mutant_wasteland      | advancements.yaml   | empty (declared)    | Radiation mutations and scavenger perks do not map cleanly to the six-affinity structure used by other packs — a sidecar keeps the mutation catalogue independent from the core progression tree. |
 | neon_dystopia         | advancements.yaml   | empty (declared)    | Cybernetic augments are modular and cross-cutting (a neural jack is not a tier on a single affinity). Sidecar allows augment grants to reference multiple triggers and class gates without forcing them into a progression slot. |
-| pulp_noir             | progression.yaml    | empty (declared)    | Hunch / Heat / Leverage / Grit affinities carry mechanical effects on their tiers — same pattern as low_fantasy. |
+| pulp_noir             | progression.yaml    | empty (declared)    | Hunch / Heat / Leverage / Grit affinities carry mechanical effects on their tiers — same pattern as heavy_metal. |
 | road_warrior          | advancements.yaml   | empty (declared)    | Vehicle modifications are first-class content — a sidecar lets mod-grant tiers reference `vehicle_class` gates and beat ids from the dogfight subsystem (ADR-077) without cluttering driver progression. |
 | space_opera           | progression.yaml    | empty (declared)    | Ship officer archetypes use affinity tiers (Command / Science / Operations / Security) — mechanical effects host there. |
-| spaghetti_western     | progression.yaml    | empty (declared)    | Draw / Grit / Survival / Reputation affinities host mechanical effects on tiers, matching low_fantasy / pulp_noir. |
+| spaghetti_western     | progression.yaml    | empty (declared)    | Draw / Grit / Survival / Reputation affinities host mechanical effects on tiers, matching heavy_metal / pulp_noir. |
 | tea_and_murder              | progression.yaml    | empty (declared)    | Propriety / Reason / Sentiment / Constitution affinities — same host pattern as pulp_noir. |
 
 **Summary:** 7 progression-hosted, 3 sidecar-hosted. The sidecar choice is

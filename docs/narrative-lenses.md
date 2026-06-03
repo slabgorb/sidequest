@@ -156,7 +156,7 @@ Each genre pack should declare which lens dominates, which is secondary, and whi
 | Genre | Dominant | Secondary | Notes |
 |---|---|---|---|
 | `pulp_noir` | Metaphor (the city as moral condition) | Syncretism (1930s esoterica) | The city is the argument; the cults are the texture |
-| `low_fantasy` | Mechanism (how does medieval life actually work) | Myth (unreliable cultural memory) | Grit comes from mechanism; depth comes from myth |
+| ~~`low_fantasy`~~ | — | — | **Pack deleted 2026-06-03.** The `low_fantasy` examples elsewhere in this doc (the water clock, the Bogomil monastery, the Worm myth) are kept as genre-agnostic illustrations of the technique, not a live pack. |
 | `neon_dystopia` | Metaphor (late capitalism physicalized) | System (cyberware rules, costs, exploits) | Miéville + Sanderson |
 | `mutant_wasteland` | Myth (post-apocalyptic cultures lie about the Before) | Syncretism (post-collapse religious fusion) | The lies and the fusion are the same operation |
 | `road_warrior` | Mechanism (vehicles are load-bearing) | Myth (the Before is a lie) | Cars have to work; cultures lie about why |

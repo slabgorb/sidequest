@@ -1,11 +1,22 @@
 # Genre Pack Status Guide
 
-> **Last updated:** 2026-05-29 (space_opera 3-world promotion + asset renders; see 2026-05-29 note)
-> **Source:** `sidequest-content` — `genre_packs/` (production) + `genre_workshopping/` (staging)
+> **Last updated:** 2026-06-03 (genre_workshopping tree retired; low_fantasy removed; staging is now per-world `draft: true`)
+> **Source:** `sidequest-content` — `genre_packs/` (every pack lives here)
 >
-> Two trees. `SIDEQUEST_GENRE_PACKS` always points at `genre_packs/`. The
-> `genre_workshopping/` tree is a staging area; the server never loads from it.
-> See `sidequest-content/genre_workshopping/README.md` for the promotion gate.
+> One tree. `SIDEQUEST_GENRE_PACKS` points at `genre_packs/`. There is **no
+> separate staging tree** — the `genre_workshopping/` directory was deleted
+> 2026-06-03. In-progress worlds live in `genre_packs/` and set `draft: true` in
+> `world.yaml` to stay out of lobby selection until their asset gate is met. See
+> `sidequest-content/genre_packs/README.md` for the readiness gate.
+
+> **2026-06-03 update — read this first; it supersedes every "workshop" framing below.**
+> The `genre_workshopping/` staging tree has been **deleted**, and the
+> `low_fantasy` pack with it (retired — not coming back). Staging is now a
+> per-world `draft: true` flag inside `genre_packs/`. Treat every
+> "genre_workshopping" / "workshop" / "parked in workshopping" mention below as
+> historical: the world either lives in `genre_packs/` (sometimes `draft: true`)
+> or — in low_fantasy's case — no longer exists at all. The only current draft
+> world is `tea_and_murder/blackthorn_moor`.
 
 > **2026-05-28 reconciliation note.** This guide's earlier snapshots described a
 > 5-production-pack world. That is stale. As of 2026-05-28 there are **10 pack
@@ -109,22 +120,17 @@ matters** is no longer "directory exists vs empty shell" — it is **"loads with
 world openings" (all 10) vs "cleared the full asset + playtest promotion gate"
 (the 4 flagship worlds)**.
 
-### Workshopping — `genre_workshopping/` (NOT loaded at runtime)
+### Draft & retired worlds (historical — was "Workshopping / `genre_workshopping/`")
 
-> **2026-05-28 update.** Most rows in this table have moved. As of 2026-05-28
-> the filesystem shows `burning_peace`, `shattered_accord` (elemental_harmony),
-> `aureate_span` (space_opera), `franchise_nations` (neon_dystopia),
-> `annees_folles` (pulp_noir), `the_circuit` (road_warrior), and `evropi` +
-> `long_foundry` (heavy_metal) all living in **`genre_packs/`** with authored
-> `openings.yaml` — i.e. they are no longer workshop-parked. The genuinely
-> still-workshop entries are `low_fantasy/shattered_reach` and
-> `tea_and_murder/blackthorn_moor`. The rows below are retained as M2-era
-> history; trust the `find` result over them where they conflict.
+> **2026-06-03.** The `genre_workshopping/` tree is gone, and `low_fantasy` (its
+> last resident) was deleted. The only world still gated is
+> `tea_and_murder/blackthorn_moor` — now via `draft: true` inside `genre_packs/`,
+> not a separate tree. The rows below are retained as M2-era history.
 
 | Pack | Worlds | Status |
 |------|--------|--------|
-| low_fantasy | shattered_reach | **Still workshop** — gritty medieval; substantive YAML, audio, images. No `genre_packs/low_fantasy/` directory |
-| tea_and_murder | blackthorn_moor | **Still workshop** — parked 2026-05 (M2); pack runtime in production but this world not promoted. `glenross` is the live tea_and_murder world |
+| ~~low_fantasy~~ | ~~shattered_reach~~ | **Deleted 2026-06-03** — pack retired along with the `genre_workshopping/` tree; no longer exists |
+| tea_and_murder | blackthorn_moor | **Draft** (`draft: true` in `genre_packs/`) — pack runtime live; this world not yet lobby-promoted. `glenross` is the live tea_and_murder world |
 | ~~elemental_harmony~~ | ~~burning_peace, shattered_accord~~ | **Moved to `genre_packs/`** — both worlds now have openings.yaml (was: parked 2026-05 M2) |
 | ~~space_opera~~ | ~~aureate_span~~ | **Moved to `genre_packs/`** — aureate_span now has openings.yaml (was: parked 2026-05 M2) |
 | ~~neon_dystopia~~ | ~~franchise_nations~~ | **Promoted to `genre_packs/` 2026-05-23** (asset gate pending) |
@@ -143,12 +149,13 @@ world openings" (all 10) vs "cleared the full asset + playtest promotion gate"
 
 During the port era, four packs — `low_fantasy`, `neon_dystopia`, `pulp_noir`,
 `road_warrior` — were moved into `genre_workshopping/`, and `heavy_metal` was
-added there. **That has since reversed (2026-05-23):** `neon_dystopia`,
-`pulp_noir`, `road_warrior`, and `heavy_metal` are now back in `genre_packs/`
-with authored world `openings.yaml`. Only `low_fantasy` remains workshop-only.
-The four returned packs still owe the **asset gate** (generated portraits +
-POI landscapes + OGG) and an end-to-end playtest before they reach flagship
-tier, but they load.
+added there. **That has since fully unwound:** `neon_dystopia`, `pulp_noir`,
+`road_warrior`, and `heavy_metal` returned to `genre_packs/` (2026-05-23) with
+authored world `openings.yaml`, and `low_fantasy` was **deleted outright
+2026-06-03** (retired — not coming back). The `genre_workshopping/` tree is now
+empty and gone. The four returned packs still owe the **asset gate** (generated
+portraits + POI landscapes + OGG) and an end-to-end playtest before they reach
+flagship tier, but they load.
 
 The **2026-05 M2 reshuffle** had parked four formerly-production worlds into
 workshopping — `aureate_span`, `burning_peace`, `shattered_accord`, and
@@ -202,7 +209,7 @@ dungeon_survivor/horden dungeons) is deprecated and removed from the
 lobby. Old dungeon directories may persist on disk for fixture reference
 but are not registered as worlds.
 
-### Parked worlds (workshopping, formerly in production)
+### Draft / formerly-parked worlds (historical)
 
 | World | history | carto | cultures | archetypes | tropes | visual_style | legends |
 |-------|---------|-------|----------|-----------|--------|-------------|---------|
@@ -232,16 +239,14 @@ rules are LLM-interpreted at narration time unless noted.
 
 ### Non-flagship genres (in production, asset/engine gaps)
 
-> **2026-05-29:** this table was titled "Workshop genres (... not in production)."
-> That is stale — only `low_fantasy` is still workshop-only. `heavy_metal`,
-> `neon_dystopia`, `pulp_noir`, `road_warrior`, and `spaghetti_western` all load
-> from `genre_packs/`; they just haven't cleared the full asset + playtest (and
-> in some cases engine-enforcement) gate.
+> **2026-06-03:** this table was once titled "Workshop genres (... not in
+> production)." Every pack listed loads from `genre_packs/`; they just haven't
+> cleared the full asset + playtest (and in some cases engine-enforcement) gate.
+> (`low_fantasy`, formerly the lone workshop holdout, was deleted 2026-06-03.)
 
 | Genre | Custom Stats | Unique Mechanics | Engine Support |
 |-------|-------------|-----------------|----------------|
 | heavy_metal | per pack.yaml | per `rules.yaml` | In production (loads); asset gate pending |
-| low_fantasy | Standard D&D 6 | Banned spells, gritty realism, lingering injuries | LLM-interpreted (**still workshop-only**) |
 | neon_dystopia | Body, Reflex, Tech, Net, Cool, Edge | Humanity Tracker, Street Cred, Net Combat | **CWN content live** — combat lethality (weapons/armor/HP/AC, #283/#284) + `net_run` hacking confrontation with `cwn.hacking` ladder (#287); Humanity/Street Cred still LLM-interpreted |
 | pulp_noir | Brawn, Finesse, Grit, Savvy, Nerve, Charm | Contacts, Heat Tracker (0-5), Occult Exposure | In production (loads); LLM-interpreted; asset gate pending |
 | road_warrior | Grip, Iron, Nerve, Scrap, Road Sense, Swagger | Rig HP/damage tiers, Fuel, Chase beats, Dismounted | **Engine GAP** — `chase_depth` was Rust-only and did not port. ADR-087 verdict: **RESTORE P2** (ADR-017). Currently zero engine implementation. |
@@ -263,12 +268,11 @@ verify per-story landing. Restoration scheduling lives in ADR-087.
 | mutant_wasteland | negotiation | — |
 | space_opera | negotiation, ship_combat | — |
 | tea_and_murder | negotiation, trial, auction | standing |
-| *(workshop)* heavy_metal | per workshop YAML | per workshop YAML |
-| *(workshop)* low_fantasy | negotiation | — |
-| *(workshop)* neon_dystopia | negotiation, net_combat | humanity |
-| *(workshop)* pulp_noir | negotiation, interrogation, roulette, craps | heat |
-| *(workshop)* road_warrior | negotiation | fuel |
-| *(workshop)* spaghetti_western | standoff, negotiation, poker | luck |
+| heavy_metal | per `rules.yaml` | per `rules.yaml` |
+| neon_dystopia | negotiation, net_combat | humanity |
+| pulp_noir | negotiation, interrogation, roulette, craps | heat |
+| road_warrior | negotiation | fuel |
+| spaghetti_western | standoff, negotiation, poker | luck |
 
 **Validation:** `cd sidequest-server && uv run pytest tests/test_content_audit.py`
 verifies all loadable packs parse, confrontation structure, beat/ability score
@@ -323,21 +327,24 @@ as constants; any string is valid as a mood key.
 **Custom moods** resolve through `mood_aliases` chain or direct track lookup.
 Genre packs can declare any mood string and map it to tracks or core moods.
 
-## Music Strategy by Genre (Production + Workshop)
+## Music Strategy by Genre
 
-| Genre | Strategy | Track Count | Tree |
-|-------|---------|-------------|------|
-| elemental_harmony | ACE-Step generated, 2 sets, all 6 variations | 252 | production |
-| mutant_wasteland | ACE-Step generated, all 6 variations | 212 | production |
-| space_opera | ACE-Step generated | 85 | production |
-| caverns_and_claudes | ACE-Step generated (sparse set) | 26 | production |
-| **tea_and_murder** | **Curated public-domain classical (Chopin, Strauss)** | 42 | production |
-| road_warrior | ACE-Step generated + 10 faction themes | ~147 | workshop |
-| low_fantasy | ACE-Step generated, all 6 variations | ~137 | workshop |
-| neon_dystopia | ACE-Step generated (needs more) | ~48 | workshop |
-| pulp_noir | ACE-Step generated (needs more) | ~42 | workshop |
-| spaghetti_western | ACE-Step generating (target: 54) | varies | workshop |
-| heavy_metal | ACE-Step in progress | varies | workshop / shell |
+> "Tree" is now always `genre_packs/` — the workshop tree is gone. The column
+> below reads **asset gate met** (music coverage adequate for flagship play) vs
+> **gate pending** (generation still owed).
+
+| Genre | Strategy | Track Count | Asset gate |
+|-------|---------|-------------|------------|
+| elemental_harmony | ACE-Step generated, 2 sets, all 6 variations | 252 | met |
+| mutant_wasteland | ACE-Step generated, all 6 variations | 212 | met |
+| space_opera | ACE-Step generated | 85 | met |
+| caverns_and_claudes | ACE-Step generated (sparse set) | 26 | met |
+| **tea_and_murder** | **Curated public-domain classical (Chopin, Strauss)** | 42 | met |
+| road_warrior | ACE-Step generated + 10 faction themes | ~147 | pending |
+| neon_dystopia | ACE-Step generated (needs more) | ~48 | pending |
+| pulp_noir | ACE-Step generated (needs more) | ~42 | pending |
+| spaghetti_western | ACE-Step generating (target: 54) | varies | pending |
+| heavy_metal | ACE-Step in progress | varies | pending |
 
 ## Per-Pack Notes
 
@@ -399,17 +406,18 @@ Genre packs can declare any mood string and map it to tracks or core moods.
 - **Asset gate not yet met** (portraits, POI landscapes, generated OGG) — not yet flagship-playable.
 - Genre mechanics (Humanity/Net Combat; Heat/Occult) remain LLM-interpreted pending Confrontation Engine restoration.
 
-### low_fantasy (workshop only)
-- Full primary world (`shattered_reach`) but no `genre_packs/low_fantasy/` directory — awaits promotion (full YAML set + image/audio coverage + playtest).
-- Mechanics remain LLM-interpreted (workshop only).
+### low_fantasy (removed 2026-06-03)
+- **Retired and deleted** along with the `genre_workshopping/` tree. The
+  `shattered_reach` world and all pack YAML / audio params / image specs are
+  gone from the repo. Not returning.
 
-## Promotion Checklist
+## Readiness Checklist
 
-A pack is ready to move from `genre_workshopping/` to `genre_packs/` when:
+A draft world is ready to clear `draft: true` (become lobby-selectable) when:
 
-- All 15 standard genre-level YAML files validate against the loader
+- All standard genre-level YAML files validate against the loader
 - Each declared world has `world.yaml` + `lore.yaml` minimum
-- Portrait + POI landscape generation has run; images committed via Git LFS
+- Portrait + POI landscape generation has run and synced to R2
 - Audio set covers at least the 7 core moods (target: full 6-variation set)
 - A successful end-to-end playtest run exists in the session archive
 - `cd sidequest-server && uv run pytest tests/test_content_audit.py` passes with the pack on path

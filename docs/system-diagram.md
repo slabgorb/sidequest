@@ -34,7 +34,7 @@ graph TB
     end
 
     subgraph "Asset Library (sidequest-content)"
-        PACKS[Genre Packs<br/>genre_packs/ — 10 live<br/>genre_workshopping/ — staging<br/>YAML, audio params, images, worlds]
+        PACKS[Genre Packs<br/>genre_packs/ — 10 live<br/>draft: true = staged in place<br/>YAML, audio params, images, worlds]
     end
 
     subgraph "External (Anthropic)"
@@ -298,13 +298,15 @@ sequenceDiagram
 - GPU memory coordination: LRU model eviction across budget (ADR-046)
 
 ### sidequest-content
-- Genre pack YAML configs — `genre_packs/` (production) + `genre_workshopping/`
-  (staging). **10 live production packs** as of 2026-05-29 (all load, each with at
-  least one world carrying an authored `openings.yaml`): `caverns_and_claudes`
+- Genre pack YAML configs — `genre_packs/` (the single tree; the
+  `genre_workshopping/` staging tree was retired 2026-06-03). **10 live
+  production packs** as of 2026-05-29 (all load, each with at least one world
+  carrying an authored `openings.yaml`): `caverns_and_claudes`
   (ADR-106 `beneath_sunden`), `elemental_harmony`, `heavy_metal`,
   `mutant_wasteland`, `neon_dystopia`, `pulp_noir`, `road_warrior`, `space_opera`,
-  `spaghetti_western`, `tea_and_murder` (renamed from victoria). Only
-  `low_fantasy` remains in `genre_workshopping/`. See `docs/genre-pack-status.md`
+  `spaghetti_western`, `tea_and_murder` (renamed from victoria). In-progress
+  worlds stage in place via `draft: true` (`low_fantasy`, formerly the lone
+  workshop pack, was deleted 2026-06-03). See `docs/genre-pack-status.md`
   for the lobby-selectable world matrix and which worlds have cleared the asset +
   playtest gate (flagship: `beneath_sunden`, `flickering_reach`, `coyote_star`,
   `glenross`, plus `space_opera`'s now-live `aureate_span` and `perseus_cloud`).
