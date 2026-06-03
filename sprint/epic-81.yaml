@@ -28,7 +28,7 @@ stories:
     description: "ADR-024 runtime bug. ROOT CAUSE: TensionTracker (sidequest/game/tension_tracker.py:266; record_event at :322, pacing_hint at :359) is fully implemented and OTEL-instrumented but is NEVER instantiated in production — the only 'TensionTracker(' occurrences are a docstring (tension_tracker.py:16) and tests (tests/game/test_tension_tracker.py, tests/game/test_tension_tracker_otel_wiring.py). So the action/stakes tracks never accumulate during real play and the dual-track tension signal does not exist at runtime. THIS STORY is the PRODUCER side: give each session a live TensionTracker and feed turn events into it. Place the tracker on _SessionData (sidequest/server/session_state.py — alongside entity_store at :245), and call tracker.record_event(...) from the turn-processing path as combat/scene events resolve. Consumption of the resulting hint into the narrator prompt is story 81-3. Keep persistence minimal (per-session in-memory; resume-time rehydration may be deferred — note it as an assumption/deviation if it matters). Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-024)."
     points: 3
     priority: p1
-    status: in_review
+    status: done
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -36,6 +36,7 @@ stories:
       - Turn processing feeds resolved combat/scene events into tracker.record_event so the action and stakes tracks accumulate; a test drives at least one turn with a tension-bearing event and asserts the tracks hold non-zero values.
       - The TensionTracker OTEL span (already covered by test_tension_tracker_otel_wiring) fires during a REAL production turn — a watcher event is emitted so the GM panel can confirm the subsystem is engaged (OTEL lie-detector principle).
       - 'WIRING TEST: an integration test proves the production turn path constructs a TensionTracker and calls record_event (behavioral, not test-only instantiation); it fails on current code. Full sidequest-server suite green (just server-test).'
+    completed: '2026-06-03'
     branch: feat/81-2-tension-tracker-producer
     type: bug
     review_verdict: approved
