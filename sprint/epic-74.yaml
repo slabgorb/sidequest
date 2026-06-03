@@ -40,11 +40,13 @@ stories:
     title: 'World-flavor hardening: isinstance shape-guard on raw world theme/audio, weather-absence OTEL span, remove dead seed_lore_from_genre_pack'
     points: 3
     priority: p3
-    status: in_progress
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-03'
     type: refactor
-    started: '2026-06-03'
+    review_verdict: approved
   - id: 74-5
     title: Convert content-pointing lore-seeding tests to synthetic fixtures (no real-pack coupling)
     points: 3
