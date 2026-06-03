@@ -258,3 +258,15 @@ def test_real_repo_regenerates_clean():
         cwd=ROOT, capture_output=True, text=True,
     )
     assert diff.stdout.strip() == "", "committed feature-inventory.md is stale"
+
+
+def test_generate_fails_loud_when_manifest_dir_missing(tmp_path):
+    """A missing manifest dir must fail loudly, not silently erase the doc."""
+    doc = tmp_path / "docs" / "feature-inventory.md"
+    doc.parent.mkdir(parents=True)
+    doc.write_text(f"PRE\n{MARKER_BEGIN}\n### Old\n{MARKER_END}\nPOST\n")
+    # note: no docs/feature-inventory/ manifest dir created
+    with pytest.raises(SystemExit):
+        generate(repo_root=tmp_path, span_names=set())
+    # the doc must NOT have been overwritten/erased
+    assert "### Old" in doc.read_text()

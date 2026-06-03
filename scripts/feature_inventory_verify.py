@@ -88,7 +88,6 @@ def draft_world_is_draft(world_ref: str, repo_root: Path) -> bool:
     return data.get("draft") is True
 
 
-# append to scripts/feature_inventory_verify.py
 VALID_STATUSES = {
     "live_wired", "live_partial", "dark", "deferred", "draft", "engineering",
 }
@@ -148,8 +147,6 @@ def load_manifest(manifest_dir: Path) -> list[Category]:
         categories.append(Category(category=cat_name, features=feats))
     return categories
 
-
-# append to scripts/feature_inventory_verify.py
 
 
 @dataclass

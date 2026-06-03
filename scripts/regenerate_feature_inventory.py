@@ -16,9 +16,6 @@ from scripts.feature_inventory_verify import (
 )
 
 ROOT = Path(__file__).parent.parent
-DOC = ROOT / "docs" / "feature-inventory.md"
-MANIFEST_DIR = ROOT / "docs" / "feature-inventory"
-SPANS_DIR = ROOT / "sidequest-server" / "sidequest" / "telemetry" / "spans"
 
 MARKER_BEGIN = "<!-- FEATURE-INVENTORY:GENERATED:BEGIN -->"
 MARKER_END = "<!-- FEATURE-INVENTORY:GENERATED:END -->"
@@ -74,6 +71,8 @@ def generate(repo_root: Path = ROOT, span_names: set[str] | None = None) -> int:
     if span_names is None:
         span_names = load_span_constants(spans_dir)
 
+    if not manifest_dir.is_dir():
+        raise SystemExit(f"manifest dir not found: {manifest_dir}")
     categories = load_manifest(manifest_dir)
     ctx = VerifyContext(repo_root=repo_root, span_names=span_names)
     failures: list[str] = []
