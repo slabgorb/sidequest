@@ -66,34 +66,28 @@ reveal it. Under `reduce`, the lobby is fully legible and static.
 **Verify:** emulate `prefers-reduced-motion: reduce` (Playwright `emulateMedia` /
 DevTools rendering) — no spinner spin, no pulse, content fully visible.
 
-### 3. Empty "Currently in this world" — ratify the divergence
+### 3. Empty "Currently in this world" — ~~ratify~~ **RESOLVED (Keith, 2026-06-03)**
 
 `CurrentSessions.tsx:35` returns `null` when empty (comment: *"the lobby never shows a
-'0 players online' sadness signal"*). The design shows **"No lanterns lit here
-tonight."** when empty, and **83-1 AC6** explicitly said *"empty-state copy when none."*
-So the build silently contradicts its own AC.
+'0 players online' sadness signal"*). The design showed **"No lanterns lit here
+tonight."** when empty, and **83-1 AC6** said *"empty-state copy when none."*
 
-**Decision needed (Keith):**
-- **A — keep null-on-empty.** Then amend 83-1 AC6 to document it as intentional. (My
-  lean: defensible for a 4-person group usually offline; a permanent empty section is
-  noise.)
-- **B — restore the copy.** Re-add "No lanterns lit here tonight." per the design/AC6.
+**Decision: keep null-on-empty ("remove it for now").** No empty-state copy — the
+section simply doesn't render when there are no live sessions. This is now the
+*intended* behavior; the design's empty-state copy and 83-1 AC6's "empty-state copy when
+none" clause are **deliberately superseded**. **No code change.** (Rationale: defensible
+for a 4-person group usually offline — a permanent empty section is noise.)
 
-Pick one; don't leave the contradiction.
-
-### 4. Rules discoverability vs ADR-135 — ratify
+### 4. Rules discoverability vs ADR-135 — ~~ratify~~ **RESOLVED (Keith, 2026-06-03)**
 
 The Rules link sits in the **commit row** (`/reference/rules/<pack>`), so pack-Rules
-needs a world selected first — a minor tension with ADR-135 ("reference pages are a
-public table tool"). **Important context for the decision:** the *approved design also
-put Rules in the commit row* (`SideQuest Lobby.html:307–311`), so the current behavior
-is **faithful to the design**. Exposing pack-Rules with no world selected is a *new
-improvement beyond the design*, not a bug-fix.
+needs a world selected first. The *approved design also put Rules in the commit row*
+(`SideQuest Lobby.html:307–311`), so the current behavior is faithful to the design.
 
-**Decision needed (Keith):**
-- **A — accept** commit-row placement (ship-what-was-designed). No work.
-- **B — expose** pack-Rules from the genre accordion header (reachable with no world
-  selected). If chosen, the Lore pair likely follows for symmetry.
+**Decision: accept commit-row placement ("the rules are fine for now too, I was able to
+find them").** The ADR-135 tension is acknowledged and accepted for now; pack-Rules
+staying behind a world selection is fine. **No code change.** Revisit only if
+discoverability becomes a real complaint.
 
 ### 5. Parked items (from 83-1 archived session)
 
@@ -127,8 +121,9 @@ error copy appears only on real failure (not pre-fetch).
 ## Notes for Dev
 
 - This is `sidequest-ui` only; base branch is **`develop`** (gitflow).
-- AC8 items (1, 2) are the load-bearing fixes; 3 and 4 are decisions that may be
-  zero-code (accept) — confirm with Keith before building B-paths.
+- AC8 items (1, 2) are the load-bearing fixes. Findings 3 (empty-state) and 4
+  (Rules placement) are **resolved as accept-current-behavior — zero code** (Keith,
+  2026-06-03); they stay documented above for provenance but require no work.
 - Reduced-motion and breakpoint behavior are runtime-only (jsdom can't see media
   queries) — they need a Playwright/runtime verify, not just unit tests. Keep the unit
   tests for structure; add a runtime check for the media-query behavior.
