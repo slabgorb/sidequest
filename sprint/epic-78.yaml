@@ -11,14 +11,17 @@ stories:
     description: "Wiring-audit finding (sq-wire-it, 2026-06-02; daemon at origin/develop, current). apply_post and required_render_size (sidequest-daemon/sidequest_daemon/media/post_processor.py:12,46) have NO non-test callers — only tests/test_post_processor.py. CameraLoader loads CameraSpec.post (PostDirective) but ZImageMLXWorker.render never invokes post-processing, so any camera spec relying on crop/rotate is silently dropped at render (LLM-compensation pattern in image form: output looks plausible, directive never applied). DECISION: either (a) wire apply_post + required_render_size into the render path (worker requests required size, applies post after generate), or (b) delete apply_post/required_render_size AND the CameraSpec.post field + its CameraLoader parsing (per 'delete dead code in same PR'). Verify whether any live camera spec actually sets post: before choosing."
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: daemon
     workflow: tdd
     acceptance_criteria:
       - 'Determined whether any in-use CameraSpec sets a post directive (evidence: grep of content camera specs)'
       - 'If wired: ZImageMLXWorker.render calls required_render_size + apply_post; an integration test renders a spec with post and asserts the transform applied'
       - 'If deleted: apply_post, required_render_size, CameraSpec.post field, and CameraLoader post-parsing all removed in one PR; no dangling references'
+    completed: '2026-06-03'
     type: refactor
+    review_verdict: approved
   - id: 78-2
     title: Daemon dead-export sweep — NullRenderer/Renderer ABC, dead genre/models.py stubs, half-extracted dispatch_request image branch
     description: 'Wiring-audit finding (sq-wire-it, 2026-06-02). Pure dead exports in the daemon — zero non-test (often zero total) consumers: (1) NullRenderer + renderer.base.Renderer ABC (sidequest_daemon/renderer/null.py) — no importer anywhere, even tests; no factory, no daemon path. (2) Dead genre/models.py stubs — VisualStyle, AudioConfig, MixerSettings, AIGenerationConfig, ThemeFamily, MoodTrack, Variation, PackMeta have no non-definition references (daemon uses StyleCatalog/YAML directly; only GenrePack is referenced, and only under TYPE_CHECKING). (3) dispatch_request image-tier branch (daemon.py:246) raises NotImplementedError — half-extracted (music tier wired, image tier a trap for future callers). Default action: delete (1) and (2). For (3), either finish the image-tier extraction or collapse dispatch_request back so the NotImplementedError trap is removed. Confirm zero consumers immediately before deleting each.'
