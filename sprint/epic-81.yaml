@@ -28,7 +28,7 @@ stories:
     description: "ADR-024 runtime bug. ROOT CAUSE: TensionTracker (sidequest/game/tension_tracker.py:266; record_event at :322, pacing_hint at :359) is fully implemented and OTEL-instrumented but is NEVER instantiated in production — the only 'TensionTracker(' occurrences are a docstring (tension_tracker.py:16) and tests (tests/game/test_tension_tracker.py, tests/game/test_tension_tracker_otel_wiring.py). So the action/stakes tracks never accumulate during real play and the dual-track tension signal does not exist at runtime. THIS STORY is the PRODUCER side: give each session a live TensionTracker and feed turn events into it. Place the tracker on _SessionData (sidequest/server/session_state.py — alongside entity_store at :245), and call tracker.record_event(...) from the turn-processing path as combat/scene events resolve. Consumption of the resulting hint into the narrator prompt is story 81-3. Keep persistence minimal (per-session in-memory; resume-time rehydration may be deferred — note it as an assumption/deviation if it matters). Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-024)."
     points: 3
     priority: p1
-    status: backlog
+    status: in_review
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -36,7 +36,9 @@ stories:
       - Turn processing feeds resolved combat/scene events into tracker.record_event so the action and stakes tracks accumulate; a test drives at least one turn with a tension-bearing event and asserts the tracks hold non-zero values.
       - The TensionTracker OTEL span (already covered by test_tension_tracker_otel_wiring) fires during a REAL production turn — a watcher event is emitted so the GM panel can confirm the subsystem is engaged (OTEL lie-detector principle).
       - 'WIRING TEST: an integration test proves the production turn path constructs a TensionTracker and calls record_event (behavioral, not test-only instantiation); it fails on current code. Full sidequest-server suite green (just server-test).'
+    branch: feat/81-2-tension-tracker-producer
     type: bug
+    review_verdict: approved
   - id: 81-3
     title: Feed PacingHint into TurnContext so the [PACING] injection fires (ADR-025)
     description: "ADR-025 runtime bug. DEPENDS ON 81-2 (needs a live, accumulating TensionTracker to derive a hint from). ROOT CAUSE: TurnContext.pacing_hint (declared sidequest/agents/orchestrator.py:728 as 'PacingHint | None = None') is never set — the sole TurnContext construction site (sidequest/server/session_helpers.py:1158) omits it — so it is None every turn, and the orchestrator's [PACING] injection (orchestrator.py:2648-2653, 'if context.pacing_hint is not None: register_pacing_section(...)') never fires. The narrator therefore never receives a pacing hint. FIX (consumer/bridge side): at TurnContext construction in session_helpers.py:1158, derive the hint from the session TensionTracker (81-2) via tracker.pacing_hint(thresholds) using the genre's DramaThresholds, and pass it into TurnContext. EXPLICITLY OUT OF SCOPE (deferred per code): the original quiet-turn pre/post game-state diff, and the accelerator/decelerator keyword scan stubbed at sidequest/game/trope_tick.py:226-230. Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-025)."
