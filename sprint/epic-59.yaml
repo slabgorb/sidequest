@@ -238,9 +238,9 @@ stories:
     points: 2
     priority: p2
     status: done
-    completed: '2026-06-03'
     repos: server
     workflow: trivial
+    completed: '2026-06-03'
     type: chore
     review_verdict: approved
   - id: 59-16
