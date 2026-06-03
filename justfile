@@ -438,11 +438,30 @@ preview-style genre world:
         SIDEQUEST_GENRE_PACKS={{content}} \
         uv run sidequest-promptpreview style --genre {{genre}} --world {{world}}
 
+# Composer (notation → rights-free audio CLI)
+composer-test:
+    cd {{root}}/sidequest-composer && uv run pytest
+
+composer-lint:
+    cd {{root}}/sidequest-composer && uv run ruff check .
+
+composer-install:
+    cd {{root}}/sidequest-composer && uv sync
+
+# Render public-domain notation → tagged audio (manifest, score file, or URL)
+compose target *flags:
+    cd {{root}}/sidequest-composer && uv run composer render {{target}} {{flags}}
+
+# Render the public-domain music a world's audio.yaml demands → shared bucket → R2
+# (reconciler: demand ∩ catalog ∖ already-in-R2; --pack <name>, --dry-run, --force)
+render-pd-audio *flags:
+    cd {{root}} && uv run python scripts/render_pd_audio.py {{flags}}
+
 # ---------------------------------------------------------------------------
 # Cross-repo + utilities
 # ---------------------------------------------------------------------------
 
-check-all: server-check client-lint client-typecheck client-test daemon-lint daemon-test
+check-all: server-check client-lint client-typecheck client-test daemon-lint daemon-test composer-lint composer-test
 
 # Content validation — reference chrome + visibility across all live packs
 content-validate-references: reference-chrome-validate reference-validate-all
