@@ -242,3 +242,26 @@ def test_check_recipe_detects_drift(tmp_path):
     generate(repo_root=tmp_path, span_names=set())
     assert "TAMPERED" not in doc.read_text()
     assert "### X" in doc.read_text()
+
+
+def test_check_recipe_is_wired_in_justfile():
+    """The guard recipe exists and invokes the real generator + the doc path."""
+    justfile = (ROOT / "justfile").read_text()
+    assert "feature-inventory-check:" in justfile
+    assert "regenerate_feature_inventory.py" in justfile
+    assert "git diff --quiet docs/feature-inventory.md" in justfile
+
+
+def test_real_repo_regenerates_clean():
+    """End-to-end: the committed manifest verifies and the committed doc is
+    already in sync (no drift) against the live registry."""
+    from scripts.regenerate_feature_inventory import generate
+    rc = generate(repo_root=ROOT)
+    assert rc == 0, "committed manifest fails verification against the live repo"
+    # doc must be unchanged after regen (committed state is canonical)
+    import subprocess
+    diff = subprocess.run(
+        ["git", "diff", "--stat", "docs/feature-inventory.md"],
+        cwd=ROOT, capture_output=True, text=True,
+    )
+    assert diff.stdout.strip() == "", "committed feature-inventory.md is stale"
