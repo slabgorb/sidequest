@@ -52,9 +52,11 @@ stories:
     title: Entity-only-turn embed telemetry precision — surface entity_pending in the lore_embed dispatch 'completed' and 'dispatch_skipped' events so an entity-only turn no longer reports pending_at_dispatch=0 with no entity-queue signal.
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-06-03'
     type: refactor
   - id: 76-6
     title: 'Source coverage: sync stateful snapshot.npcs into the entity index — add an Npc projector path (project_npc_card currently takes only NpcPoolMember) and extend sync_entity_cards so scene-stateful NPCs, not just pool members, are retrievable.'
