@@ -54,11 +54,13 @@ stories:
       REPRODUCED LIVE 2026-05-31 (Glenross / Tea&Murder social_duel 'Duel of Wits', solo Inspector Pryce, during 67-10 playtest). Committed the 'Concede Gracefully' beat (beat-kind=push, stat=Humour, DC 10). Watcher evidence: opposed_check_pending{player_beat_id=concede, player_d20=14, source=dice_throw} then [BEAT_RESOLVED] 'Concede Gracefully (Humour, side=player): player_momentum=4 | opponent_momentum=1 | Roll: 15 (CritSuccess)'. Net effect: a CritSuccess moved the player barbs dial by ZERO (stayed 4/7) while the opponent dial advanced +2 the same turn (Hamish riposte). From the player seat this reads as 'I critically succeeded and my dial didn't move but theirs did' = broken. Root: push/angle beat-kinds yield no barbs delta on CritSuccess; the crit outcome needs a legible non-zero (or explicitly-flagged) impact. repos: sidequest-server (scoring), sidequest-ui (beat-result legibility — show beat-kind impact + crit).
     points: 2
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-06-03'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
+    completed: '2026-06-03'
     type: bug
+    review_verdict: approved
   - id: 73-5
     title: Suppress re-fired encounter.confrontation_initiated span on resolution turn (GM-panel noise)
     points: 1
