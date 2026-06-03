@@ -403,7 +403,7 @@ stories:
       NOTE: the INVISIBILITY half of the poppy-field finding (no beat/dice/dial UI) was a SEPARATE server bug already fixed (PR slabgorb/sidequest-server#575, classless-pack confrontation surfacing) and is awaiting verify — this story is ONLY the TRIGGER sensitivity. ADRs: 113 (Intent Router), 123 (Mechanical-Engagement Pipeline). Watcher: reuse the 59-3 router-vs-engine lie-detector (confrontation_unengaged_turn_span) so a verbal confrontation that reads-as-engaged-but-unrouted cannot silently miss. repos: sidequest-server (+ wry_whimsy rules.yaml verb-set tuning in sidequest-content if the fix is per-pack).
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
     acceptance_criteria:
@@ -413,6 +413,7 @@ stories:
       - The 59-3 router-vs-engine lie-detector watcher flags a turn whose narration reads as a verbal confrontation but no confrontation was routed (no silent miss)
       - 'Regression test: a wry_whimsy/oz session with a committed Persuasion/Audience-Trial demand engages a confrontation (encounter present in snapshot), not prose-only with confrontation=None'
       - Server suite green; ruff + pyright clean
+    completed: '2026-06-03'
     type: bug
   - id: 59-28
     title: apply_witnessed_act collapse/tip threshold needs a touched-this-turn guard (wry_whimsy political engine)
