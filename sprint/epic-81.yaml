@@ -11,7 +11,8 @@ stories:
     description: "ADR-126 runtime bug. ROOT CAUSE: sidequest/magic/__init__.py:24 imports MAGIC_PLUGINS from sidequest.magic.plugin (the bare/empty registry) but NOTHING in production imports the sidequest.magic.plugins PACKAGE, whose star-imports (plugins/__init__.py:8-10 → innate_v1, item_legacy_v1, learned_v1) are what mutate MAGIC_PLUGINS at import. Only tests import it (tests/magic/conftest.py:24, tests/magic/test_wiring.py:29). So in production MAGIC_PLUGINS is {} and every magic_validate() call (sidequest/server/narration_apply.py:813) for a descriptor-declared plugin hits the 'plugin_known_but_not_registered' DEEP_RED branch (sidequest/magic/validator.py:107-123) instead of running plugin-side validation. FIX: trigger the registration side-effect from a production path — preferred: have sidequest/magic/__init__.py import the plugins package (mirrors the sidequest/telemetry/spans/__init__.py star-import-of-domain-modules pattern the plugins docstring cites), guarding against import cycles. The existing tests/magic/test_wiring.py is INSUFFICIENT because it imports the plugins package itself, so it stays green while prod stays empty — the new wiring test must assert registration via a PRODUCTION entrypoint (import sidequest.magic) WITHOUT importing sidequest.magic.plugins directly. Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-126)."
     points: 2
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -19,7 +20,9 @@ stories:
       - magic_validate() for a descriptor-registered plugin_id no longer returns the plugin_known_but_not_registered flag (validator.py:107-123); plugin-side validation runs. A test asserts the DEEP_RED branch is NOT taken for a registered plugin.
       - "No import cycle is introduced: the server app imports and boots cleanly (importing sidequest.server app / 'just server' start succeeds)."
       - 'WIRING TEST: a test that imports only a production module (sidequest.magic or the narration_apply path) and asserts MAGIC_PLUGINS is non-empty — this test FAILS on the current code and PASSES after the fix. Full sidequest-server suite green (just server-test).'
+    completed: '2026-06-03'
     type: bug
+    review_verdict: approved
   - id: 81-2
     title: Instantiate and drive TensionTracker in the turn pipeline (ADR-024)
     description: "ADR-024 runtime bug. ROOT CAUSE: TensionTracker (sidequest/game/tension_tracker.py:266; record_event at :322, pacing_hint at :359) is fully implemented and OTEL-instrumented but is NEVER instantiated in production — the only 'TensionTracker(' occurrences are a docstring (tension_tracker.py:16) and tests (tests/game/test_tension_tracker.py, tests/game/test_tension_tracker_otel_wiring.py). So the action/stakes tracks never accumulate during real play and the dual-track tension signal does not exist at runtime. THIS STORY is the PRODUCER side: give each session a live TensionTracker and feed turn events into it. Place the tracker on _SessionData (sidequest/server/session_state.py — alongside entity_store at :245), and call tracker.record_event(...) from the turn-processing path as combat/scene events resolve. Consumption of the resulting hint into the narrator prompt is story 81-3. Keep persistence minimal (per-session in-memory; resume-time rehydration may be deferred — note it as an assumption/deviation if it matters). Evidence: docs/adr/AUDIT-2026-06-03.md (ADR-024)."
