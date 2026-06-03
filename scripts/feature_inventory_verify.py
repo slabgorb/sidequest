@@ -147,3 +147,58 @@ def load_manifest(manifest_dir: Path) -> list[Category]:
             ))
         categories.append(Category(category=cat_name, features=feats))
     return categories
+
+
+# append to scripts/feature_inventory_verify.py
+
+
+@dataclass
+class VerifyContext:
+    repo_root: Path
+    span_names: set[str]
+
+
+def verify_feature(f: Feature, ctx: VerifyContext) -> tuple[bool, str]:
+    """Verify a feature's claimed status against its evidence.
+
+    Returns (ok, reason). reason is '' on success, else the named failure.
+    """
+    # Module existence is mandatory for every status (catches silent renames).
+    for mod in f.modules:
+        if resolve_module(mod, ctx.repo_root) is None:
+            return False, f"module '{mod}' does not resolve to a file"
+
+    ev = f.evidence
+    spans = ev.get("spans", [])
+    routed = [s for s in spans if s in ctx.span_names]
+    unrouted = [s for s in spans if s not in ctx.span_names]
+    wiring_ok = any(
+        wiring_test_exists(w, ctx.repo_root) for w in ev.get("wiring_tests", [])
+    )
+
+    if f.status == "live_wired":
+        if not routed:
+            return False, f"live_wired but no declared span is registered: {unrouted}"
+        if not wiring_ok:
+            return False, "live_wired but no declared wiring test file exists"
+        return True, ""
+    if f.status == "live_partial":
+        if routed or wiring_ok or ev.get("adr"):
+            return True, ""
+        return False, "live_partial but no span, wiring test, or ADR evidence"
+    if f.status == "dark":
+        if ev.get("adr") and adr_status(ev["adr"], ctx.repo_root):
+            return True, ""
+        return False, "dark requires an `adr` anchor with a readable status"
+    if f.status == "deferred":
+        st = adr_status(ev["adr"], ctx.repo_root) if ev.get("adr") else None
+        if st in {"deferred", "proposed"}:
+            return True, ""
+        return False, f"deferred but ADR status is {st!r} (need deferred/proposed)"
+    if f.status == "draft":
+        if ev.get("draft_world") and draft_world_is_draft(ev["draft_world"], ctx.repo_root):
+            return True, ""
+        return False, "draft requires a `draft_world` that resolves draft: true"
+    if f.status == "engineering":
+        return True, ""  # modules already checked above
+    return False, f"unknown status {f.status!r}"

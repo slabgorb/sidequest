@@ -129,3 +129,45 @@ def test_load_manifest_rejects_duplicate_ids(tmp_path):
     (d / "b.yaml").write_text("category: B\nfeatures:\n  - id: dup\n    name: B1\n    status: engineering\n")
     with pytest.raises(ManifestError, match="duplicate id"):
         load_manifest(d)
+
+
+# append to scripts/tests/test_feature_inventory.py
+from scripts.feature_inventory_verify import verify_feature, VerifyContext, Feature
+
+
+def _ctx(tmp_path, span_names=("confrontation.resolved",)):
+    return VerifyContext(
+        repo_root=tmp_path,
+        span_names=set(span_names),
+    )
+
+
+def test_live_wired_passes_with_span_and_wiring(tmp_path):
+    wt = tmp_path / "wt.test.tsx"
+    wt.write_text("// test")
+    f = Feature(
+        id="x", name="X", status="live_wired",
+        evidence={"spans": ["confrontation.resolved"], "wiring_tests": ["wt.test.tsx"]},
+    )
+    ok, reason = verify_feature(f, _ctx(tmp_path))
+    assert ok is True, reason
+
+
+def test_live_wired_fails_when_span_unregistered(tmp_path):
+    f = Feature(
+        id="x", name="X", status="live_wired",
+        evidence={"spans": ["ghost.span"], "wiring_tests": ["wt.test.tsx"]},
+    )
+    ok, reason = verify_feature(f, _ctx(tmp_path))
+    assert ok is False
+    assert "ghost.span" in reason
+
+
+def test_module_existence_failure_blocks_any_status(tmp_path):
+    f = Feature(
+        id="x", name="X", status="engineering",
+        modules=["game/does_not_exist.py"],
+    )
+    ok, reason = verify_feature(f, _ctx(tmp_path))
+    assert ok is False
+    assert "does_not_exist" in reason
