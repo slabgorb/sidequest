@@ -168,15 +168,17 @@ stories:
     description: "TEST DEBT surfaced by 72-11. tests/server/dispatch/test_pregen.py is ENTIRELY skip-listed in tests/conftest.py (_CAVERNS_SUNDEN_DEPRECATED_TESTS) because its ONE e2e (test_e2e_seed_caverns_sunden_populates_manual) binds the deprecated caverns_sunden world. That over-broad file-level skip sweeps in ~16 world-AGNOSTIC seed_manual unit tests (same trap the conftest's own NOTE rescued test_pov_swap from). Worse: those unit tests' _stub_pack is STALE — it exposes .cultures but seed_manual now calls pack.effective_cultures(world), so they would ERROR if naively un-skipped. RESCUE: (1) fix _stub_pack to implement effective_cultures(world); (2) re-point the deprecated e2e to a DEDICATED TEST FIXTURE pack/world (operator decision 2026-06-03: target a FIXTURE, NOT a live genre-pack world like coyote_star/caverns_and_claudes — live content is mid-migration per 71-31 and would re-introduce the coupling fragility 72-11 deliberately avoided); (3) remove test_pregen.py from the conftest skip set so all ~16 unit tests + the re-pointed e2e run. This is the proper home for 72-11's AC5 'existing pregen tests stay green' (those named tests were skipped-and-stale). Honors CLAUDE.md 'no skipping tests for live subsystems' (pregen is live). Repos: sidequest-server (tests + conftest only; no production change)."
     points: 2
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-06-03'
     repos: sidequest-server
     workflow: trivial
-    branch: feat/72-15-rescue-test-pregen-skip
     acceptance_criteria:
       - 'FIXTURE target (load-bearing, operator decision): the re-pointed seed_manual e2e drives a dedicated, hermetic TEST FIXTURE pack/world — synthetic (GenrePack.model_construct or a checked-in tests/ fixture pack), NOT a live genre_packs world. The test must not load or depend on coyote_star/caverns_and_claudes/perseus or any in-flight content (71-31), so it is immune to content migration.'
       - "Stale stub fixed: _stub_pack (or its replacement) implements effective_cultures(world) returning the fixture's cultures, so the mocked seed_manual unit tests exercise the CURRENT production path (pack.effective_cultures(world)), not the removed pack.cultures read. The ~16 previously-skipped unit tests pass against current code."
       - 'Un-skipped: test_pregen.py is removed from _CAVERNS_SUNDEN_DEPRECATED_TESTS in tests/conftest.py; a run of the file shows the ~16 unit tests + the fixture e2e all EXECUTE (0 skipped from this file), not collected-and-skipped.'
       - 'Coverage parity with 72-11 AC5: the fixture exercises >=2 cultures (NPCS_PER_CULTURE each), the no-culture fallback (DEFAULT_NPC_FALLBACK_COUNT=9), pack-load-failure fallback, dedup-keeps-unique-names, and tier-1/tier-2 encounters — the named cases 72-11 AC5 referenced but could not verify while skipped.'
       - No new skips introduced anywhere; full server suite green; ruff + pyright clean.
+    completed: '2026-06-03'
+    branch: feat/72-15-rescue-test-pregen-skip
     type: chore
+    review_verdict: approved
