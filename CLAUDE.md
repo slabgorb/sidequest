@@ -1,10 +1,11 @@
 # CLAUDE.md — SideQuest
 
-This is the orchestrator repo for the SideQuest RPG Runner/Editor. It coordinates four subrepos:
+This is the orchestrator repo for the SideQuest RPG Runner/Editor. It coordinates five subrepos:
 - **sidequest-server** — Python/FastAPI game engine and WebSocket API (port 8765)
 - **sidequest-ui** — React/TypeScript game client (Vite, port 5173)
 - **sidequest-daemon** — Python media services (Flux/Z-Image generation, audio)
 - **sidequest-content** — Genre packs (YAML configs, audio, images, world data)
+- **sidequest-composer** — Standalone CLI: public-domain notation (MusicXML/MIDI) → tagged, rights-free audio via MuseScore 4 / FluidSynth. Deterministic synthesis, not AI generation
 
 ## Who This Is For
 
@@ -123,6 +124,17 @@ sidequest-daemon/             # Python media services (subrepo)
 │   ├── renderer/             # Data models (StageCue, RenderTier, RenderResult)
 │   └── scene_interpreter.py
 ├── tests/
+└── pyproject.toml
+
+sidequest-composer/           # Notation → rights-free audio CLI (subrepo, uv-managed)
+├── src/composer/             # Package root (Typer entrypoint `composer`)
+│   ├── cli.py                # `composer render <manifest|score|url>`
+│   ├── pipeline.py           # fetch → render → normalize → tag → encode
+│   ├── manifest.py           # Batch piece-list model (pydantic v2)
+│   ├── provenance.py         # PD-source + rendered-locally tags (product feature)
+│   ├── tools.py              # External CLI resolution (mscore, bundled ffmpeg)
+│   └── stages/               # fetch · render · normalize · tag · encode (swappable)
+├── tests/                    # incl. gated Gymnopedie smoke test (needs MuseScore 4)
 └── pyproject.toml
 ```
 

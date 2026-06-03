@@ -1,7 +1,7 @@
 # Repository Configuration for SideQuest (Python backend)
 # Orchestrator pattern: parent repo tracks sprint files and shared config,
-# subrepos (sidequest-server, sidequest-ui, sidequest-content, sidequest-daemon)
-# are separate git repos with their own remotes.
+# subrepos (sidequest-server, sidequest-ui, sidequest-content, sidequest-daemon,
+# sidequest-composer) are separate git repos with their own remotes.
 # PRs go to individual subrepos, not the parent.
 #
 # History: sidequest-api (Rust) was the backend from ~2026-03-30 to 2026-04-19.
@@ -95,3 +95,26 @@ repos:
       (https://github.com/slabgorb/sidequest-api) by path.
       See docs/adr/082-port-api-rust-to-python.md and
       docs/adr/085-rust-to-python-port-drift.md.
+
+  composer:
+    path: sidequest-composer
+    type: service
+    description: Public-domain notation → tagged, rights-free audio (deterministic synthesis, not AI)
+    language: python
+    test_command: pytest
+    build_command: "true"
+    lint_command: ruff check .
+    dev_command: composer
+    branch_strategy: gitflow
+    default_branch: develop
+    notes: |
+      Standalone uv-managed CLI (src/composer/, Typer entrypoint `composer`).
+      Renders public-domain MusicXML/MIDI scores to tagged OGG/MP3/WAV via
+      MuseScore 4 (`mscore`) or FluidSynth + SoundFont, normalized with the
+      bundled static ffmpeg. Provenance tags (PD source, rendered locally) are
+      a product feature, not metadata hygiene. Deterministic synthesis — NOT
+      AI generation; no DAW, no network beyond fetching PD scores.
+      Gitignored inline subrepo — not tracked by the orchestrator.
+      Feeds genre-pack music into sidequest-content (cf. ADR-095 ACE-Step tier);
+      a rights-free, offline alternative for classical/PD background tracks.
+      Gymnopedie smoke test is gated on MuseScore 4 being installed.
