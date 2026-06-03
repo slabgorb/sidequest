@@ -54,3 +54,11 @@ def test_plan_renders_fails_loud_on_uncatalogued_demand():
     with pytest.raises(UncataloguedTrackError) as exc:
         plan_renders(demand, CATALOG, already_keys=set())
     assert "Mystery - Unknown.ogg" in str(exc.value)
+
+
+def test_main_returns_1_on_uncatalogued_demand_without_traceback():
+    # tea_and_murder has demanded tracks absent from the catalog (KNOWN GAPS):
+    # main() must translate the loud UncataloguedTrackError into a clean exit 1,
+    # not let it propagate as an unhandled traceback.
+    from scripts.render_pd_audio import main
+    assert main(["--pack", "tea_and_murder", "--dry-run"]) == 1

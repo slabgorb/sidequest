@@ -173,7 +173,14 @@ def main(argv: list[str] | None = None) -> int:
     demand = collect_demand(_audio_configs(args.pack))
     already = set() if args.force else _already_keys()
 
-    todo = plan_renders(demand, catalog, already_keys=already)
+    try:
+        todo = plan_renders(demand, catalog, already_keys=already)
+    except UncataloguedTrackError as e:
+        # Fail loud but clean: operator sees the multi-line "no catalog entry"
+        # message and a non-zero exit, not a Python traceback. Still names every
+        # missing track (No Silent Fallbacks).
+        logger.error("%s", e)
+        return 1
 
     logger.info(
         "demand=%d catalogued=%d already=%d to-render=%d",
