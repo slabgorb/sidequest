@@ -129,10 +129,13 @@ stories:
     title: Wire player-NPC reference signal into the budgeted working-set brief tier (75-2 carryover, ADR-118)
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-5
+    completed: '2026-06-03'
+    review_verdict: approved
   - id: 75-11
     title: is_projectable() predicate — observation_pending gates projection eligibility (ADR-138 D1/D3)
     points: 2
