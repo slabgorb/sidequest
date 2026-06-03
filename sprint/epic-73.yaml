@@ -27,10 +27,14 @@ stories:
       COMPOUND WITH 73-4: the concede beat is push-kind, and push CritSuccess scores 0 (73-4). On this turn the concede crit produced no dial delta at all, so any terminal/threshold check tied to dial movement never fired — 73-4 and this soft-lock reinforce each other. Fix should make a committed resolution/concede beat deterministically flip encounter.resolved (emit encounter.resolved + tear down the panel + unlock input) regardless of roll outcome, for social_duel AND trial (and audit negotiation/scandal). Evidence: .sq-playtest-screenshots/67-10-watcher.jsonl + 67-10-003-after-resolution.png. repos: sidequest-server, sidequest-content.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-02T23:31:13Z'
     repos: sidequest-content,sidequest-server
     workflow: tdd
+    completed: '2026-06-02'
     type: bug
+    review_findings: 'Production YAML correct + secure; REJECT scoped to test hardening in test_trial_withdraw_resolves.py: AC-3 span test under-asserts (unreachable is-None arm + unpinned span), missing CritSuccess tier, vacuous AC-4 assertion, tautological cross-confrontation assertion, fixture threshold 8 vs shipped 7, span-test actors lack Nerve.'
+    review_verdict: approved
   - id: 73-3
     title: advance_confrontation lost-update — route through canonical snapshot, not a fresh load/save that the end-of-turn save clobbers
     points: 3
