@@ -82,6 +82,24 @@ def load_yaml(path: Path) -> dict:
         return yaml.safe_load(f) or {}
 
 
+def resolve_suffix(visual_style: dict, image_subdir: str) -> str:
+    """Pick the style suffix to append for this render's image tier.
+
+    Portrait renders (`image_subdir == "portraits"`) prefer a portrait-specific
+    ``portrait_positive_suffix`` when the world declares one — a close-subject
+    portrait wants a denser engraving suffix and none of the landscape's
+    open-sky / anti-moiré language. When no portrait-specific suffix is
+    authored, fall back to the shared ``positive_suffix`` so every existing
+    world keeps its current behavior. All non-portrait tiers (POIs,
+    illustrations) always use ``positive_suffix``.
+    """
+    if image_subdir == "portraits":
+        portrait_suffix = visual_style.get("portrait_positive_suffix")
+        if portrait_suffix:
+            return portrait_suffix
+    return visual_style.get("positive_suffix", "")
+
+
 def load_visual_style(
     genre_dir: Path,
     world: str = "",
@@ -552,7 +570,7 @@ async def render_batch(
         visual_style = item.pop("_visual_style")
         positive, clip, seed = compose_fn(item, visual_style)
 
-        suffix = visual_style.get("positive_suffix", "")
+        suffix = resolve_suffix(visual_style, image_subdir)
         full_positive = f"{positive}, {suffix}" if suffix else positive
 
         if output_dir:
