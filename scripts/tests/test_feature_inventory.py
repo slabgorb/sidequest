@@ -196,3 +196,32 @@ def test_replace_between_markers_preserves_surrounds(tmp_path):
     replace_between_markers(f, "NEW")
     out = f.read_text()
     assert "PRE" in out and "POST" in out and "NEW" in out and "old" not in out
+
+
+# append to scripts/tests/test_feature_inventory.py
+from scripts.regenerate_feature_inventory import generate
+
+
+def test_generate_fails_on_unverifiable_claim(tmp_path, capsys):
+    (tmp_path / "docs" / "feature-inventory").mkdir(parents=True)
+    (tmp_path / "docs" / "feature-inventory" / "x.yaml").write_text(
+        "category: X\nfeatures:\n  - id: a\n    name: A\n    status: live_wired\n"
+        "    evidence:\n      spans: [ghost.span]\n"
+    )
+    doc = tmp_path / "docs" / "feature-inventory.md"
+    doc.write_text(f"PRE\n{MARKER_BEGIN}\n{MARKER_END}\nPOST\n")
+    rc = generate(repo_root=tmp_path, span_names={"real.span"})
+    assert rc != 0
+    assert "ghost.span" in capsys.readouterr().err
+
+
+def test_generate_writes_doc_when_all_verify(tmp_path):
+    (tmp_path / "docs" / "feature-inventory").mkdir(parents=True)
+    (tmp_path / "docs" / "feature-inventory" / "x.yaml").write_text(
+        "category: X\nfeatures:\n  - id: a\n    name: A\n    status: engineering\n"
+    )
+    doc = tmp_path / "docs" / "feature-inventory.md"
+    doc.write_text(f"PRE\n{MARKER_BEGIN}\n{MARKER_END}\nPOST\n")
+    rc = generate(repo_root=tmp_path, span_names=set())
+    assert rc == 0
+    assert "### X" in doc.read_text()
