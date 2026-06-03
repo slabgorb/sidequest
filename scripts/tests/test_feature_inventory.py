@@ -84,3 +84,48 @@ def test_draft_world_predicate(tmp_path):
     live.mkdir(parents=True)
     (live / "world.yaml").write_text("name: Glenross\n")  # no draft key
     assert draft_world_is_draft("tea_and_murder/glenross", tmp_path) is False
+
+
+# append to scripts/tests/test_feature_inventory.py
+from scripts.feature_inventory_verify import load_manifest, ManifestError
+
+
+def test_load_manifest_parses_categories(tmp_path):
+    d = tmp_path / "docs" / "feature-inventory"
+    d.mkdir(parents=True)
+    (d / "confrontation-engine.yaml").write_text(
+        "category: Confrontation Engine\n"
+        "features:\n"
+        "  - id: confrontation_engine\n"
+        "    name: Confrontation engine\n"
+        "    modules: [game/encounter.py]\n"
+        "    ui: ConfrontationOverlay\n"
+        "    manual_test: Take a turn that triggers a confrontation\n"
+        "    status: live_wired\n"
+        "    evidence:\n"
+        "      spans: [confrontation.resolved]\n"
+        "      wiring_tests: [sidequest-ui/src/__tests__/confrontation-wiring.test.tsx]\n"
+    )
+    cats = load_manifest(tmp_path / "docs" / "feature-inventory")
+    assert cats[0].category == "Confrontation Engine"
+    assert cats[0].features[0].id == "confrontation_engine"
+    assert cats[0].features[0].status == "live_wired"
+
+
+def test_load_manifest_rejects_bad_status(tmp_path):
+    d = tmp_path / "docs" / "feature-inventory"
+    d.mkdir(parents=True)
+    (d / "x.yaml").write_text(
+        "category: X\nfeatures:\n  - id: a\n    name: A\n    status: bogus\n"
+    )
+    with pytest.raises(ManifestError, match="bogus"):
+        load_manifest(d)
+
+
+def test_load_manifest_rejects_duplicate_ids(tmp_path):
+    d = tmp_path / "docs" / "feature-inventory"
+    d.mkdir(parents=True)
+    (d / "a.yaml").write_text("category: A\nfeatures:\n  - id: dup\n    name: A1\n    status: engineering\n")
+    (d / "b.yaml").write_text("category: B\nfeatures:\n  - id: dup\n    name: B1\n    status: engineering\n")
+    with pytest.raises(ManifestError, match="duplicate id"):
+        load_manifest(d)

@@ -8,6 +8,7 @@ tested in isolation.
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml  # PyYAML — available in the orchestrator uv env (used by render_common)
@@ -85,3 +86,64 @@ def draft_world_is_draft(world_ref: str, repo_root: Path) -> bool:
         return False
     data = yaml.safe_load(wy.read_text()) or {}
     return data.get("draft") is True
+
+
+# append to scripts/feature_inventory_verify.py
+VALID_STATUSES = {
+    "live_wired", "live_partial", "dark", "deferred", "draft", "engineering",
+}
+
+
+class ManifestError(Exception):
+    """Raised when a manifest file violates the schema."""
+
+
+@dataclass
+class Feature:
+    id: str
+    name: str
+    status: str
+    modules: list[str] = field(default_factory=list)
+    ui: str = "—"
+    manual_test: str = ""
+    evidence: dict = field(default_factory=dict)
+
+
+@dataclass
+class Category:
+    category: str
+    features: list[Feature]
+
+
+def load_manifest(manifest_dir: Path) -> list[Category]:
+    """Load + validate every <category>.yaml. Raise ManifestError on violation."""
+    categories: list[Category] = []
+    seen_ids: dict[str, str] = {}
+    for path in sorted(manifest_dir.glob("*.yaml")):
+        data = yaml.safe_load(path.read_text()) or {}
+        cat_name = data.get("category")
+        if not cat_name:
+            raise ManifestError(f"{path.name}: missing 'category'")
+        feats: list[Feature] = []
+        for raw in data.get("features", []):
+            fid = raw.get("id")
+            if not fid:
+                raise ManifestError(f"{path.name}: feature missing 'id'")
+            if fid in seen_ids:
+                raise ManifestError(
+                    f"duplicate id '{fid}' in {path.name} and {seen_ids[fid]}"
+                )
+            seen_ids[fid] = path.name
+            status = raw.get("status")
+            if status not in VALID_STATUSES:
+                raise ManifestError(
+                    f"{path.name}: feature '{fid}' has invalid status '{status}'"
+                )
+            feats.append(Feature(
+                id=fid, name=raw.get("name", fid), status=status,
+                modules=raw.get("modules", []), ui=raw.get("ui", "—"),
+                manual_test=raw.get("manual_test", ""),
+                evidence=raw.get("evidence", {}) or {},
+            ))
+        categories.append(Category(category=cat_name, features=feats))
+    return categories
