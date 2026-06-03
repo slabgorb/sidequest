@@ -16,8 +16,12 @@ This cross-repo media script:
 6. Regenerates ``r2_manifest.json`` from the live bucket via
    ``scripts/r2_manifest_from_bucket.py``.
 
+The shared bucket is selected with ``--bucket`` (default ``classical_pd``);
+e.g. ``--bucket ragtime_pd`` reconciles ``assets/audio/ragtime_pd/`` against the
+catalog at ``genre_packs/assets/audio/ragtime_pd/catalog.yaml``.
+
 Usage:
-    uv run python scripts/render_pd_audio.py [--pack <name>] [--dry-run] [--force]
+    uv run python scripts/render_pd_audio.py [--bucket <name>] [--pack <name>] [--dry-run] [--force]
 """
 from __future__ import annotations
 
@@ -34,17 +38,35 @@ _ROOT = Path(__file__).resolve().parent.parent
 CONTENT_ROOT = _ROOT / "sidequest-content"
 COMPOSER_ROOT = _ROOT / "sidequest-composer"
 
-# How audio.yaml spells demand vs. the r2 key prefix the bucket uses.
+MANIFEST_PATH = CONTENT_ROOT / "r2_manifest.json"
+DEFAULT_BUCKET = "classical_pd"
+
+# How audio.yaml spells demand vs. the r2 key prefix a shared bucket uses.
 # These key forms MUST stay in lockstep with the server's shared-bucket rule in
 # sidequest-server/sidequest/genre/audio_paths.py (`resolve_audio_relpath`,
 # scope="shared"): an `assets/...` track resolves to `genre_packs/<rel>`. If
 # that convention changes, update both sides together.
-SHARED_AUDIO_PREFIX = "assets/audio/classical_pd/"
-SHARED_REL = "genre_packs/assets/audio/classical_pd"
 
-CATALOG_PATH = CONTENT_ROOT / "genre_packs" / "assets" / "audio" / "classical_pd" / "catalog.yaml"
-MANIFEST_PATH = CONTENT_ROOT / "r2_manifest.json"
-SHARED_DIR = CONTENT_ROOT / "genre_packs" / "assets" / "audio" / "classical_pd"
+
+def shared_audio_prefix(bucket: str) -> str:
+    """How audio.yaml spells a track in this shared bucket (demand side)."""
+    return f"assets/audio/{bucket}/"
+
+
+def shared_rel(bucket: str) -> str:
+    """The R2 key prefix for this shared bucket (supply / manifest side)."""
+    return f"genre_packs/assets/audio/{bucket}"
+
+
+def shared_dir(bucket: str) -> Path:
+    """The local directory the composer renders this bucket's OGGs into."""
+    return CONTENT_ROOT / "genre_packs" / "assets" / "audio" / bucket
+
+
+def catalog_path(bucket: str) -> Path:
+    """The composer catalog (supply spec) for this shared bucket."""
+    return shared_dir(bucket) / "catalog.yaml"
+
 
 logger = logging.getLogger("render_pd_audio")
 
@@ -53,10 +75,11 @@ class UncataloguedTrackError(RuntimeError):
     """A demanded shared-PD track has no catalog entry (loud, no fallback)."""
 
 
-def collect_demand(audio_configs: list[dict]) -> set[str]:
+def collect_demand(audio_configs: list[dict], *, shared_audio_prefix: str) -> set[str]:
     """Return the set of shared-PD filenames demanded across the audio configs.
 
-    A track is "shared" if its ``path`` starts with ``SHARED_AUDIO_PREFIX``;
+    A track is "shared" if its ``path`` starts with ``shared_audio_prefix``
+    (e.g. ``assets/audio/classical_pd/``); tracks for other buckets and
     pack-local paths (e.g. ``audio/music/foo.ogg``) are ignored.
     """
     demand: set[str] = set()
@@ -64,13 +87,15 @@ def collect_demand(audio_configs: list[dict]) -> set[str]:
         for tracks in (cfg.get("mood_tracks") or {}).values():
             for track in tracks:
                 path = track.get("path", "")
-                if path.startswith(SHARED_AUDIO_PREFIX):
-                    demand.add(path[len(SHARED_AUDIO_PREFIX):])
+                if path.startswith(shared_audio_prefix):
+                    demand.add(path[len(shared_audio_prefix):])
     return demand
 
 
-def load_catalog(path: Path = CATALOG_PATH) -> dict[str, dict]:
+def load_catalog(path: Path) -> dict[str, dict]:
     """Load the composer catalog, keyed by ``out_name``."""
+    if not path.is_file():
+        raise FileNotFoundError(f"catalog not found at {path}")
     data = yaml.safe_load(path.read_text())
     return {e["out_name"]: e for e in data.get("entries", [])}
 
@@ -80,24 +105,28 @@ def plan_renders(
     catalog: dict[str, dict],
     *,
     already_keys: set[str],
+    shared_rel: str,
+    catalog_path: Path | None = None,
 ) -> list[dict]:
     """Return catalog entries to render: demanded, catalogued, not yet in R2.
 
+    Keys are formed as ``{shared_rel}/{name}`` to match the R2 manifest.
     Raises :class:`UncataloguedTrackError` if any demanded track is missing
     from the catalog (No Silent Fallbacks).
     """
     missing = sorted(d for d in demand if d not in catalog)
     if missing:
         listing = "\n  ".join(missing)
+        where = f" in {catalog_path}" if catalog_path is not None else ""
         raise UncataloguedTrackError(
-            f"{len(missing)} demanded shared-PD track(s) have no catalog entry "
-            f"in {CATALOG_PATH}:\n  {listing}\n"
+            f"{len(missing)} demanded shared-PD track(s) have no catalog entry"
+            f"{where}:\n  {listing}\n"
             "Add a catalog entry (with a fetchable PD source_url) for each."
         )
     return [
         catalog[name]
         for name in sorted(demand)
-        if f"{SHARED_REL}/{name}" not in already_keys
+        if f"{shared_rel}/{name}" not in already_keys
     ]
 
 
@@ -158,6 +187,11 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s"
     )
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--bucket",
+        default=DEFAULT_BUCKET,
+        help=f"Shared PD-music bucket to reconcile (default: {DEFAULT_BUCKET}).",
+    )
     parser.add_argument("--pack", default=None, help="Restrict demand to one pack.")
     parser.add_argument(
         "--dry-run", action="store_true", help="Report the plan; render nothing."
@@ -169,12 +203,25 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    catalog = load_catalog()
-    demand = collect_demand(_audio_configs(args.pack))
+    bucket = args.bucket
+    bucket_dir = shared_dir(bucket)
+    bucket_rel = shared_rel(bucket)
+    bucket_catalog_path = catalog_path(bucket)
+
+    catalog = load_catalog(bucket_catalog_path)
+    demand = collect_demand(
+        _audio_configs(args.pack), shared_audio_prefix=shared_audio_prefix(bucket)
+    )
     already = set() if args.force else _already_keys()
 
     try:
-        todo = plan_renders(demand, catalog, already_keys=already)
+        todo = plan_renders(
+            demand,
+            catalog,
+            already_keys=already,
+            shared_rel=bucket_rel,
+            catalog_path=bucket_catalog_path,
+        )
     except UncataloguedTrackError as e:
         # Fail loud but clean: operator sees the multi-line "no catalog entry"
         # message and a non-zero exit, not a Python traceback. Still names every
@@ -201,10 +248,10 @@ def main(argv: list[str] | None = None) -> int:
 
     # --- Render via the composer CLI (subprocess; composer unmodified) -------
     manifest = _write_temp_manifest(todo)
-    SHARED_DIR.mkdir(parents=True, exist_ok=True)
-    logger.info("rendering %d track(s) into %s", len(todo), SHARED_DIR)
+    bucket_dir.mkdir(parents=True, exist_ok=True)
+    logger.info("rendering %d track(s) into %s", len(todo), bucket_dir)
     subprocess.run(
-        ["uv", "run", "composer", "render", str(manifest), "--out-dir", str(SHARED_DIR)],
+        ["uv", "run", "composer", "render", str(manifest), "--out-dir", str(bucket_dir)],
         cwd=COMPOSER_ROOT,
         check=True,
     )
@@ -213,7 +260,7 @@ def main(argv: list[str] | None = None) -> int:
     # Original out_name (with .ogg) == the composer's actual output filename:
     # composer wrote `<stem>.ogg` from the stem in _composer_entries, and
     # out_name == f"{stem}.ogg". So this points at the real file on disk.
-    new_oggs = [SHARED_DIR / e["out_name"] for e in todo]
+    new_oggs = [bucket_dir / e["out_name"] for e in todo]
     # Deferred import: keep boto3's import cost off the --dry-run path.
     from scripts import r2_sync_packs  # noqa: PLC0415
 
