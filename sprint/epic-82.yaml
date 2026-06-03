@@ -87,7 +87,10 @@ stories:
     title: Wire item narrative_weight / WealthTier gold->label consumer + OTEL + player-facing (ADR-021 track 3; item_catalog_resolution.py ~:31, progression.py ~:187-221)
     points: 2
     priority: p2
-    status: backlog
+    status: done
     repos: sidequest-server
     workflow: tdd
     depends_on: 82-3
+    completed: '2026-06-03'
+    branch: feat/82-8-wire-item-narrative-weight-wealthtier
+    review_verdict: approved
