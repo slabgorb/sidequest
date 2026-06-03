@@ -44,7 +44,8 @@ stories:
     description: "Wiring-audit finding (sq-wire-it, 2026-06-02). Two deferred-FEATURE exports (distinct from pure dead code — each has ADR lineage, so this is a finish-or-cut decision, not an automatic delete): (1) start_periodic_heartbeat (sidequest_daemon/media/daemon.py:155) — its own docstring says 'NOT YET WIRED INTO _run_daemon'; the 30s idle-heartbeat (ADR-131 liveness) never fires, only per-connection _write_heartbeat keeps liveness. (2) detect_gpu/GpuInfo (sidequest_daemon/media/gpu_detect.py:25) — no prod caller; the GPU-detection OTEL span (ADR-046 budget coordinator) never fires in production. For each: decide wire (schedule heartbeat as a background task in _run_daemon; call detect_gpu at warmup so its span fires) or cut (delete + note the ADR defers the feature). Prefer wiring if the ADR still wants the capability."
     points: 2
     priority: p3
-    status: backlog
+    status: in_progress
+    started: '2026-06-03'
     repos: daemon
     workflow: tdd
     acceptance_criteria:
