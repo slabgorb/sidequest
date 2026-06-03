@@ -19,7 +19,7 @@
 - **Live (partial)** — Wired but not fully exercised, or has a known gap flagged by ADR-087
 - **Dark** — Data model present, engine missing (ADR-087 RESTORE roster)
 - **Deferred** — Phased scope; marker or Proposed ADR
-- **Workshop only** — Content lives in `sidequest-content/genre_workshopping/`, not selectable in UI
+- **Draft** — Content lives in `genre_packs/` but its world carries `draft: true`, so it is not selectable in the UI until its asset gate is met (the old `genre_workshopping/` staging tree was retired 2026-06-03)
 
 **Companion docs:** [`wiring-diagrams.md`](wiring-diagrams.md) (Mermaid signal traces), [`api-contract.md`](api-contract.md) (WebSocket + REST), [`gm-handbook.md`](gm-handbook.md) (GM panel guide), [`genre-pack-status.md`](genre-pack-status.md) (pack-by-pack content).
 
@@ -171,18 +171,24 @@ A baseline smoke pass is:
 | Scrapbook coverage | `game.scrapbook_coverage` | `ScrapbookGallery` | Renders backfilled when missing on save resume (story 45-10) |
 | World history arcs | `game.history_chapter` | journal | Arc embeddings written back to narrative_log/lore (45-23); arcs run past turn 30 (45-19) |
 
+<!-- FEATURE-INVENTORY:GENERATED:BEGIN -->
+
+> **Generated.** Do not edit between the markers by hand. Update the per-category manifests in `docs/feature-inventory/` and run `just feature-inventory-regen`.
+
 ### Confrontation Engine (ADR-033)
 
-| Feature | Module(s) | UI | Manual test |
-|---------|-----------|----|-------------|
-| StructuredEncounter + ConfrontationDef + `apply_beat` (Pillar 1) | `game.encounter`, `game.beat_kinds`, `game.opposed_check`, `server.dispatch.confrontation` | `ConfrontationOverlay` | Trigger a confrontation → beats apply → momentum + edge deltas land |
-| ResourcePool + threshold→KnownFact mint (Pillar 2) | `game.resource_pool`, `game.thresholds`, `mint_threshold_lore` | journal | Crossing a threshold (e.g., humanity bar) mints a KnownFact visible in journal |
-| Difficulty calibration v1 (ADR-093) | encounter difficulty math | momentum | Analytical-distribution + ship_combat correction live (story 45-42) |
-| `mood_override` step | narration_apply | audio cue | Beat with `mood_override` flips audio track immediately |
-| Confrontation outcome dispatch | `protocol.CONFRONTATION_OUTCOME` | `LedgerPanel` + Phase-5 reveal | Outcome message refreshes ledger bars (story 47-3) |
-| Magic Phase 5 confrontation reveal | `ConfrontationOverlay` outcome panel | reveal UI | Magic confrontation result shown with revealed outcome card (ui PR #192, story 47-3) |
-| Encounter lifecycle dispatch | `server.dispatch.encounter_lifecycle` | — | XP path partial (`award_turn_xp` stub); ADR-081 deferred |
-| `mood_aliases` alias chain | `genre.models.audio.mood_aliases` | — | **Dark (polish)** — declared, one pack uses it; consumer not wired (ADR-087 P3) |
+| Feature | Status | Module(s) | UI | Manual test |
+|---------|--------|-----------|----|-------------|
+| StructuredEncounter + ConfrontationDef + `apply_beat` (Pillar 1) | Live & Wired | `game/encounter.py`, `game/beat_kinds.py`, `game/opposed_check.py`, `server/dispatch/confrontation.py` | `ConfrontationOverlay` | Trigger a confrontation → beats apply → momentum + edge deltas land |
+| ResourcePool + threshold→KnownFact mint (Pillar 2) | Live & Wired | `game/resource_pool.py`, `game/thresholds.py`, `game/beat_kinds.py` | journal | Crossing a threshold (e.g., humanity bar) mints a KnownFact visible in journal |
+| Difficulty calibration v1 (ADR-093) | Live (partial) | `game/encounter.py` | momentum | Analytical-distribution + ship_combat correction live (story 45-42) |
+| `mood_override` step | Live (partial) | `server/narration_apply.py`, `server/dispatch/confrontation.py` | audio cue | Beat with `mood_override` flips audio track immediately |
+| Confrontation outcome dispatch | Live & Wired | `protocol/messages.py`, `server/dispatch/confrontation.py` | `LedgerPanel` + Phase-5 reveal | Outcome message refreshes ledger bars (story 47-3) |
+| Magic Phase 5 confrontation reveal | Live (partial) | `ConfrontationOverlay` | reveal UI | Magic confrontation result shown with revealed outcome card (ui PR #192, story 47-3) |
+| Encounter lifecycle dispatch | Live (partial) | `server/dispatch/encounter_lifecycle.py` | — | Encounter lifecycle dispatch fires; XP accrues via `award_turn_xp`, but ADR-081 advancement effects downstream are deferred |
+| `mood_aliases` alias chain | Dark | `genre/models/audio.py` | — | **Dark (polish)** — declared, one pack uses it; consumer not wired (ADR-087 P3) |
+
+<!-- FEATURE-INVENTORY:GENERATED:END -->
 
 ### Combat / Edge / Composure (ADR-078, ADR-014)
 
@@ -197,7 +203,7 @@ A baseline smoke pass is:
 | Advancement-effect data shapes | `genre.models.advancement` | — | Shapes loaded; runtime upstream-blocked on Epic 39 per-class edge config |
 | Gold-change narration apply | narrator gold seam | `InventoryPanel` purse | Narrator-reported gold change applies to acting PC's purse (no party-wide drift); OTEL span fires (server `a50c8c9`) |
 | `composure_break` OTEL span | `telemetry.spans.combat` | Dashboard | **Dark** — span definition exists but resolution-at-edge≤0 not yet wired into critical path (ADR-078 §4) |
-| Push-currency rituals (pact_working) | `genre_workshopping/heavy_metal/` | — | **Workshop only** |
+| Push-currency rituals (pact_working) | `genre_packs/heavy_metal/` | — | **Live (asset gate pending)** — heavy_metal re-promoted 2026-05-23; loads, assets owed |
 
 ### Saving Throws & B/X Class Beats
 
@@ -525,7 +531,7 @@ Speculative prerendering (ADR-044 historical 2026-05-02 — TTS-deprecated premi
 
 ## Genre Pack Status (Pointer)
 
-**10 pack directories** under `sidequest-content/genre_packs/`, and a filesystem check (`find genre_packs/*/worlds/*/openings.yaml`, verified 2026-05-28) confirms **all 10 have at least one world with an authored `openings.yaml`**, i.e. all load: `caverns_and_claudes` (beneath_sunden), `elemental_harmony` (burning_peace, shattered_accord), `heavy_metal` (evropi, long_foundry), `mutant_wasteland` (flickering_reach), `neon_dystopia` (franchise_nations), `pulp_noir` (annees_folles), `road_warrior` (the_circuit), `space_opera` (aureate_span, coyote_star), `spaghetti_western` (dust_and_lead, five_points, the_real_mccoy), `tea_and_murder` (glenross). This matches the root `CLAUDE.md`: `heavy_metal` was re-promoted 2026-05-23; `neon_dystopia` + `pulp_noir` were promoted 2026-05-23 with world openings now authored — but the **asset gate** (portraits, POI landscapes, generated OGG) is not yet met for `heavy_metal`, `neon_dystopia`, `pulp_noir`, or `road_warrior`. The earlier "7 directories / 5 production packs / 2 empty shells" framing is **stale** and superseded by this filesystem reality. The only genuinely workshop-only pack now is `low_fantasy` (no `genre_packs/low_fantasy/` directory); `tea_and_murder/blackthorn_moor` remains a workshop-parked *world* under an otherwise-live pack.
+**10 pack directories** under `sidequest-content/genre_packs/`, and a filesystem check (`find genre_packs/*/worlds/*/openings.yaml`, verified 2026-05-28) confirms **all 10 have at least one world with an authored `openings.yaml`**, i.e. all load: `caverns_and_claudes` (beneath_sunden), `elemental_harmony` (burning_peace, shattered_accord), `heavy_metal` (evropi, long_foundry), `mutant_wasteland` (flickering_reach), `neon_dystopia` (franchise_nations), `pulp_noir` (annees_folles), `road_warrior` (the_circuit), `space_opera` (aureate_span, coyote_star), `spaghetti_western` (dust_and_lead, five_points, the_real_mccoy), `tea_and_murder` (glenross). This matches the root `CLAUDE.md`: `heavy_metal` was re-promoted 2026-05-23; `neon_dystopia` + `pulp_noir` were promoted 2026-05-23 with world openings now authored — but the **asset gate** (portraits, POI landscapes, generated OGG) is not yet met for `heavy_metal`, `neon_dystopia`, `pulp_noir`, or `road_warrior`. The earlier "7 directories / 5 production packs / 2 empty shells" framing is **stale** and superseded by this filesystem reality. `low_fantasy` — formerly the only workshop-only pack — was **deleted 2026-06-03** along with the retired `genre_workshopping/` tree. The one remaining gated world is `tea_and_murder/blackthorn_moor`, now held in place by `draft: true` under an otherwise-live pack (not a separate staging tree).
 
 **Loads (has world openings)** ≠ **cleared the full asset + playtest promotion gate.** All 10 packs load; the four flagship-tier worlds with assets remain `beneath_sunden`, `flickering_reach`, `coyote_star`, and `glenross`.
 
