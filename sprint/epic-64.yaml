@@ -219,7 +219,8 @@ stories:
     title: Expand polynesian.txt + georgian.txt shared corpora for WARN headroom — both sit ~5 words above WARN_BELOW_WORDS=1000 (polynesian=1005, georgian=1004 via count_words); a small trim flips them THIN and breaks test_audit_live_tree_no_named_corpora_left_thin_post_expansion. Add modest headroom. Found during 64-7.
     points: 1
     priority: p3
-    status: backlog
+    status: in_progress
+    started: '2026-06-03'
     repos: sidequest-content
     workflow: trivial
     type: chore
@@ -227,7 +228,8 @@ stories:
     title: Tidy two pre-existing weak/stale tests in test_audit_namegen_corpora.py — (a) test_audit_synthetic_ample_corpus_exits_zero asserts rc=0 + name-present but not OK-classification (add co-located OK-row check); (b) test_audit_live_tree_exits_zero_after_corpus_expansion docstring claims the pre-fix failure is THIN when the real mode is MISSING/rc=1 (refresh the note). Found by Reviewer round-2 during 64-7 (out-of-diff, deferred).
     points: 1
     priority: p3
-    status: backlog
+    status: in_progress
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: trivial
     type: chore
