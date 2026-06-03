@@ -23,9 +23,11 @@ stories:
     title: "Tighten 3 loose 75-6 test assertions (python.md #6): result.embedded >=1 -> ==1; over-broad failed_refs guard -> exact ['   ']; add assert op=='synced' on the skipped-path watcher event."
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-06-03'
     type: chore
   - id: 76-3
     title: expected_dim parity for the entity embed worker — mirror lore's dimension guard in embed_pending_entity_cards + EntityStore.update_embedding so a mid-session daemon model-dim change cannot write a stale-dim vector (currently self-heals one turn later via requeue).
@@ -70,13 +72,14 @@ stories:
     description: "PRE-EXISTING TEST FAILURE on develop, confirmed (unrelated) during 72-11 verify and flagged in PR #588's commit message. tests/handlers/test_aside_channel_wiring.py::test_aside_is_out_of_band_in_mp fails with: AttributeError: '_StubSession' object has no attribute '_retrieve_entities_for_turn' (raised from sidequest/handlers/player_action.py:496). Root cause: the test's _StubSession is STALE vs the universal-retrieval entity path (epic 75/76) — production _build_turn_context / session handling now calls session._retrieve_entities_for_turn(...), a method the stub never gained when entity retrieval landed. Fails in ISOLATION (not flaky/ordering), and is NOT touched by any 72-11 commit. This is a test-harness fix, not a production change. Repos: sidequest-server (test only)."
     points: 1
     priority: p3
-    status: backlog
+    status: done
     repos: sidequest-server
     workflow: trivial
     acceptance_criteria:
       - _StubSession in tests/handlers/test_aside_channel_wiring.py gains a _retrieve_entities_for_turn method matching the production session contract (same signature; returns the stub-appropriate empty/no-entities result the real path would yield for a session with no entity index).
       - test_aside_is_out_of_band_in_mp passes BOTH in isolation and in the full server suite; the aside out-of-band behavioral assertion is unchanged (the fix is purely the missing stub method, not a change to what the test asserts).
       - No production code change; full server suite green (the 1 known failure is cleared); ruff clean.
+    completed: '2026-06-03'
     type: bug
   - id: 76-9
     title: Consolidate duplicated test helpers — shared FakeSocket (16 copies, 2 shapes) + make_orchestrator (5 copies, cross-dir) into one shared support module
