@@ -4,6 +4,7 @@ sidequest-ui/
 sidequest-daemon/
 sidequest-content/
 sidequest-server/
+sidequest-composer/
 API/
 UI/
 
