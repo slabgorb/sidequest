@@ -237,7 +237,8 @@ stories:
     title: 'Engagement e2e validation — beneath_sunden + road_warrior: confrontation/movement/magic actually fire mechanically (OTEL span proof)'
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    completed: '2026-06-03'
     repos: server
     workflow: trivial
     type: chore
