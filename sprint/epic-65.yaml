@@ -232,11 +232,13 @@ stories:
     title: Reference TOC/section-mapping repair + register POI and Cast sections
     points: 2
     priority: p2
-    status: setup
+    status: done
     repos: server
     workflow: tdd
+    completed: '2026-06-03'
     branch: feat/65-10-reference-toc-section-mapping
     session_file: .session/65-10-session.md
+    review_verdict: approved
   - id: 65-11
     title: Lore POI map view — server-rendered SVG from cartography.yaml with portrait pins
     description: "Add a 'Map' section to the lore reference page (GET /reference/lore/{pack}/{world}; ADR-135 PUBLIC projection only) that renders a SERVER-SIDE SVG node-link graph from the world's cartography.yaml: regions as NODES, each region's `adjacent` list as EDGES, and NPC-binding location entities (entities[].binding.kind=='npc') as portrait PINS gated through the existing R2 manifest gate. Follow-on slice from 65-8 (its Design Notes name 65-11 as the map-view slice). REUSE, DO NOT REBUILD: route+assembler lore_page (server/reference_routes.py:119) / assemble_lore_page (server/reference_renderer.py); section+TOC registration via PACK_TOC + TOC_TO_FILES (server/reference_theme.py) following the 65-9 Cast append pattern (reference_renderer.py ~1348-1360); cartography model CartographyConfig / Region.adjacent / Region.entities (genre/models/world.py:240,208) loaded by _load_cartography/_load_world; portrait gate load_r2_manifest_keys (reference_renderer.py:1134) + portrait_image_key(pack,world,slug) (reference_presenters.py:214) + the Cast slugify path; svgwrite (already a dependency, used by orbital/render.py); the reference OTEL span family (telemetry/spans/reference.py, FLAT_ONLY_SPANS) and the gated_client/otel_capture/span_attrs_by_name test fixtures. The ONLY genuinely new code is a DETERMINISTIC node-link layout: cartography has NO coordinates (every world is navigation_mode: region with only an adjacency list), so layout is computed from the graph seeded at starting_region, ties broken by sorted region id — a layered/radial deterministic layout, NOT a random or unseeded force-directed sim. Public projection only: no ?audience param, no GM mode, no secret entity tiers."
