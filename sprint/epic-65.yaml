@@ -281,7 +281,7 @@ stories:
       Non-blocking: gameplay proceeds silently. Fits epic-65 (R2 asset tracking + YAML-derived gap audit + checked-in r2_manifest.json). repos: sidequest-content (audio.yaml + R2 upload). Render/publish scripts run under the orchestrator-root venv (uv run --project .) per project memory render-publish-scripts-use-root-venv.
     points: 2
     priority: p2
-    status: backlog
+    status: canceled
     repos: content
     workflow: trivial
     acceptance_criteria:
@@ -291,3 +291,17 @@ stories:
       - Starting a wry_whimsy/oz session shows NO 404 / 'Unable to decode audio data' in the browser console and music plays
       - r2_manifest.json updated to track the classical_pd set
     type: chore
+  - id: 65-15
+    title: 'r2_audit: parse pack audio.yaml in expected_keys() — classical_pd tracks mis-flagged as orphans; real audio 404s go uncaught'
+    description: "DEFECT (Architect audit, 2026-06-03): scripts/r2_audit.py expected_keys() learns music ONLY from audio/music/*_input_params.json (ACE-Step params). It never parses each pack's audio.yaml. Result: every classical_pd track referenced via audio.yaml 'path:' is absent from the expected set and gets mis-reported as an Orphan (in R2, no YAML). Confirmed: all 17 wry_whimsy classical_pd tracks flagged orphan despite being in R2 + manifest. Affects every classical_pd pack (tea_and_murder, victoria, wry_whimsy). Same blind spot means the audit can never CATCH a real audio 404 — it doesn't read the file declaring the dependency. Fix: parse pack audio.yaml 'path:' entries (prefixed genre_packs/<pack>/) into expected_keys()."
+    points: 2
+    priority: p3
+    status: backlog
+    repos: orchestrator
+    workflow: tdd
+    acceptance_criteria:
+      - expected_keys() parses each pack's audio.yaml and includes every 'path:' entry (prefixed genre_packs/<pack>/) in the expected set
+      - Running r2_audit reports ZERO orphans for classical_pd tracks that are referenced by some pack's audio.yaml and present in R2
+      - A pack audio.yaml referencing a track absent from R2/manifest is correctly reported under 'authored but not rendered' (real 404 caught)
+      - Existing portrait/POI/music-params audit behavior is unchanged (regression test)
+    type: bug
