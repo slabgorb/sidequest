@@ -1,0 +1,39 @@
+# Engagement e2e validation — beneath_sunden (Story 59-15, Epic 59 / ADR-113/123).
+# Proves the mechanical-engagement spine fires for real in a dungeon-crawl
+# pack: the IntentRouter must dispatch confrontation / movement / magic and the
+# owning engine must actually engage BEFORE the narrator runs — OTEL spans are
+# the only proof (CLAUDE.md "GM panel is the lie detector").
+#
+# Run (server up + Jaeger exporting):
+#   uv run --with rich --with pillow python3 scripts/playtest.py \
+#     --scenario scenarios/beneath_sunden_engagement.yaml \
+#     --span-jsonl /tmp/beneath_sunden.spans.jsonl \
+#     --contact-sheet /tmp/beneath_sunden-contact-sheet.png
+#
+# Span proof to look for (context-story-59-15.md §"Exact OTEL spans"):
+#   movement:      intent_router.subsystem(movement)      -> movement.resolved
+#                  (+ frontier.region_transition on the surface->deep handoff)
+#   confrontation: intent_router.subsystem(confrontation) -> encounter.confrontation_initiated
+#   magic:         intent_router.subsystem(magic_working) -> magic.working
+#   lie-detector:  dispatch_engagement.*.mismatch count MUST be 0
+#
+# character.class pins a Mage (caverns_and_claudes caster, magic_access=innate_v1)
+# so the magic leg (AC-A3) can actually fire — strategy=auto alone draws the
+# first class offered (Fighter). The actions descend into the Sünden Deep,
+# which spawns hostiles (ADR-106), so the confrontation leg meets a real
+# opponent instead of the safe Ropefoot camp.
+
+name: Engagement e2e — Beneath Sünden
+genre: caverns_and_claudes
+world: beneath_sunden
+
+character:
+  strategy: auto
+  class: Mage
+
+actions:
+  - "I light my lantern and study the shaft mouth before me."
+  - "I take hold of the rope and climb down into the Deep."
+  - "I press deeper into the dark until something stirs and comes for me."
+  - "I ready my staff and strike at the creature lunging out of the black."
+  - "I call up a searing bolt of light and hurl it at the thing."

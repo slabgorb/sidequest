@@ -317,10 +317,15 @@ def make_slug_connect_msg(game_slug: str, player_name: str, last_seen_seq: int =
     }
 
 
-def make_action_msg(action: str, aside: bool = False) -> dict:
+def make_action_msg(action: str, aside: bool = False, round_: int = 0) -> dict:
+    # ``round`` is required by PlayerActionPayload (Story 71-10, ge=0): a
+    # missing round fails loud server-side rather than silently defaulting.
+    # The server validates but does not read it (it stamps outbound rounds
+    # from the authoritative turn_manager.round), so the driver sends its
+    # best-known round, latched from inbound traffic.
     return {
         "type": "PLAYER_ACTION",
-        "payload": {"action": action, "aside": aside},
+        "payload": {"action": action, "aside": aside, "round": round_},
         "player_id": "",
     }
 

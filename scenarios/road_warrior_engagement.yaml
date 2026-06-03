@@ -1,0 +1,39 @@
+# Engagement e2e validation — road_warrior / the_circuit (Story 59-15, Epic 59).
+# The asymmetric counterpart to beneath_sunden: a vehicular-combat pack whose
+# six classes are ALL magic_access=null (genre_packs/road_warrior/classes.yaml).
+# Confrontation and movement must fire; magic must correctly NOT fire — the
+# spine must not hallucinate spellcasting in a magic-less pack (AC-B3, the
+# negative leg). road_warrior's magic.yaml models item/folkloric "magic," not
+# caster spellcasting, so a casting-shaped action is the right probe.
+#
+# Run (server up + Jaeger exporting):
+#   uv run --with rich --with pillow python3 scripts/playtest.py \
+#     --scenario scenarios/road_warrior_engagement.yaml \
+#     --span-jsonl /tmp/road_warrior.spans.jsonl \
+#     --contact-sheet /tmp/road_warrior-contact-sheet.png
+#
+# Span proof (context-story-59-15.md):
+#   movement:      intent_router.subsystem(movement)      -> movement.resolved
+#                  (authored adjacency — NO frontier.region_transition; not a procedural dungeon)
+#   confrontation: intent_router.subsystem(confrontation) -> encounter.confrontation_initiated
+#   magic NEGATIVE: NO magic_working dispatch, NO magic.working span,
+#                   and critically NO dispatch_engagement.magic_working.mismatch
+#   lie-detector:  dispatch_engagement.*.mismatch count MUST be 0 across the run
+#
+# No character.class pin: every road_warrior class is non-magical, which is
+# exactly what makes AC-B3 a true negative — the caster the magic leg would
+# need does not exist in this pack.
+
+name: Engagement e2e — The Circuit
+genre: road_warrior
+world: the_circuit
+
+character:
+  strategy: auto
+
+actions:
+  - "I scan the lot for trouble and size up who's around."
+  - "I gun the engine and tear off down the strip toward the refinery."
+  - "I run down the hostile rig that's been tailing me and force a fight."
+  - "I ram its flank and trade blows until one of us is wrecked."
+  - "I mutter an old road-prayer and try to hex their engine dead."

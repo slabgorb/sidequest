@@ -65,6 +65,7 @@ import argparse
 import asyncio
 import contextlib
 import json
+import math
 import random
 import sys
 import time
@@ -409,14 +410,20 @@ class AutoChargen:
     - ``input_type=story`` → run autogen, wait for autogen_result, then confirm
     - ``phase=confirmation`` → accept
     - ``phase=complete`` → mark done
+
+    When ``class_pref`` is set (scenario ``character.class``), a scene whose
+    choices include a label matching it (e.g. "Mage", "Cleric") picks that
+    choice instead of choice 1 — so validation scenarios can pin a caster for
+    the magic leg. Non-class scenes are unaffected (no label matches).
     """
 
-    def __init__(self) -> None:
+    def __init__(self, class_pref: str | None = None) -> None:
         self.done: bool = False
         self._pending_story_confirm: bool = False
         # Cache pronouns when the_story arrives so the eventual story_confirm
         # carries something other than the empty string.
         self._story_pronouns: str = "they/them"
+        self.class_pref: str | None = (class_pref or "").strip().lower() or None
 
     def respond(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
         """Return zero or more outbound messages for one CHARACTER_CREATION payload."""
@@ -441,8 +448,7 @@ class AutoChargen:
 
         choices = payload.get("choices") or []
         if choices:
-            # Pick the first available option (1-based).
-            return [make_chargen_scene_choice(1)]
+            return [make_chargen_scene_choice(self._preferred_choice(choices))]
 
         if payload.get("allows_freeform") or input_type == "text":
             # Freeform-only scene with no choices. Submit a benign default —
@@ -451,6 +457,17 @@ class AutoChargen:
 
         # Scene with no actionable fields. Try a continue to nudge.
         return [make_chargen_continue()]
+
+    def _preferred_choice(self, choices: list[Any]) -> int:
+        """1-based index of the choice to pick. Defaults to 1, but when
+        ``class_pref`` matches a choice label (the class-selection scene),
+        returns that choice so a caster can be pinned for the magic leg."""
+        if self.class_pref:
+            for i, c in enumerate(choices):
+                label = (c.get("label", "") if isinstance(c, dict) else str(c)).strip().lower()
+                if label == self.class_pref:
+                    return i + 1
+        return 1
 
     def _respond_arrange(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
         pool: list[int] = list(payload.get("pool") or [])
@@ -462,13 +479,35 @@ class AutoChargen:
             # All slots filled (or empty pool — shouldn't happen). Confirm.
             return [make_arrange_confirm()] if payload.get("confirm_enabled") else []
 
-        # Assign the highest remaining pool value to the first unfilled slot.
-        # This is "greedy and dumb" — fine for getting through chargen, not
-        # for class-optimization. The qualifying_classes panel will sort itself
-        # out as we fill in.
+        # Assign the highest remaining pool value to the best unfilled slot.
+        # With no class_pref this is "greedy and dumb" (first unfilled in dict
+        # order — STR-first). With a class_pref, route the high rolls to that
+        # class's key stat so the class actually QUALIFIES and is offered on
+        # the next scene — otherwise a caster (high INT/WIS) never appears on
+        # the menu and the magic leg can't be exercised.
         value = max(pool)
-        stat = unfilled[0]
+        stat = self._arrange_stat(unfilled)
         return [make_arrange_assign(stat, value)]
+
+    # Stat priority per caverns_and_claudes class — highest pool rolls flow to
+    # the front of the list. Keyed by lowercased class label (matches
+    # class_pref). Classes absent here fall back to dict-order (STR-first).
+    _CLASS_STAT_PRIORITY: dict[str, list[str]] = {
+        "mage": ["INT", "CON", "DEX", "WIS", "STR", "CHA"],
+        "cleric": ["WIS", "CON", "STR", "INT", "DEX", "CHA"],
+        "fighter": ["STR", "CON", "DEX", "WIS", "INT", "CHA"],
+        "thief": ["DEX", "CON", "INT", "STR", "WIS", "CHA"],
+    }
+
+    def _arrange_stat(self, unfilled: list[str]) -> str:
+        """Pick which unfilled stat slot to fill next. Honors the class_pref
+        stat priority so a requested caster qualifies; otherwise first-unfilled."""
+        priority = self._CLASS_STAT_PRIORITY.get(self.class_pref or "")
+        if priority:
+            for stat in priority:
+                if stat in unfilled:
+                    return stat
+        return unfilled[0]
 
     def _respond_story(self, payload: dict[str, Any]) -> list[dict[str, Any]]:
         autogen_result = payload.get("autogen_result")
@@ -532,6 +571,8 @@ class Playtest:
         idle_timeout: float,
         seed: int,
         fixture: str | None = None,
+        collect_renders: bool = True,
+        render_drain_timeout: float = 120.0,
     ) -> None:
         self.scenario = scenario
         self.server = server
@@ -540,6 +581,21 @@ class Playtest:
         self.force_new = force_new
         self.idle_timeout = idle_timeout
         self.rng = random.Random(seed)
+        # Daemon image renders complete asynchronously, well after the final
+        # turn resolves — so the driver drains pending renders (tracked by
+        # render_id from RENDER_QUEUED, cleared on the matching IMAGE) before
+        # disconnecting, up to render_drain_timeout, so the end-of-run contact
+        # sheet captures them instead of racing the disconnect.
+        self.collect_renders = collect_renders
+        self.render_drain_timeout = render_drain_timeout
+        self.pending_renders: set[str] = set()
+        # One-action-per-resolved-turn gate. Set True when an action is
+        # submitted, cleared on the turn's NARRATION_END (the canonical
+        # "turn done, send next" signal in solo). Without this, the server's
+        # TURN_STATUS{active} for an in-flight turn would trigger a premature
+        # next-action send — actions outran turn resolution and validation
+        # runs under-captured turns (only 2 of 4 actions producing spans).
+        self.turn_in_flight: bool = False
         # When set, the driver mints the slug via POST /dev/scene/{fixture}
         # (ADR-092 scene harness) and skips chargen — the fixture YAML
         # has already hydrated a character into the save.
@@ -548,7 +604,9 @@ class Playtest:
         self.slug: str = ""
         self.actions: list[str] = list(scenario.get("actions") or [])
         self.actions_sent: int = 0
-        self.chargen = AutoChargen()
+        self.chargen = AutoChargen(
+            class_pref=(scenario.get("character") or {}).get("class")
+        )
         # Fixture mode: the save already has a character; the slug-connect
         # handshake will report has_character=True and AutoChargen never
         # runs. Mark done at construction so the idle-timeout fallback
@@ -561,6 +619,15 @@ class Playtest:
         # POSTed to /api/games.
         self.my_turn: bool = False
         self.last_inbound_msg_type: str = ""
+        # Best-known round, latched from any inbound payload that carries one
+        # (server stamps round on broadcasts). PLAYER_ACTION requires round
+        # (ge=0, Story 71-10); the server validates but doesn't read it.
+        self.current_round: int = 0
+        # Rendered images this run produced (IMAGE messages). Even headless
+        # runs queue daemon renders; collecting them lets the driver assemble
+        # an end-of-run contact sheet so the visual output is reviewable
+        # without a UI. Each entry: {url, caption, tier, render_id}.
+        self.images: list[dict[str, str]] = []
 
     async def run(self) -> int:
         console.rule(f"[bold green]Playtest: {self.scenario.get('name', '?')}[/bold green]")
@@ -608,17 +675,21 @@ class Playtest:
         while True:
             try:
                 raw = await asyncio.wait_for(ws.recv(), timeout=self.idle_timeout)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Idle. If we're past chargen and still have actions to
                 # send, push the next one — the turn-status signal may have
                 # been lost or the game is waiting on us in a way we can't
                 # detect from message traffic alone.
                 if self.session_ready and self.actions:
                     console.print("[yellow][idle] nudging next action[/yellow]")
-                    await self._send_next_action(ws)
+                    # Force past the in-flight gate: an idle window means the
+                    # turn's NARRATION_END was lost or the server is silently
+                    # waiting on us.
+                    await self._send_next_action(ws, force=True)
                     continue
                 if self.session_ready and not self.actions:
                     console.rule("[bold green]Scenario complete[/bold green]")
+                    await self._drain_renders(ws)
                     return 0
                 console.print(
                     f"[bold red]Idle timeout while waiting for "
@@ -651,11 +722,18 @@ class Playtest:
                 and (msg.get("payload") or {}).get("status") == "resolved"
             ):
                 console.rule("[bold green]Scenario complete[/bold green]")
+                await self._drain_renders(ws)
                 return 0
 
     async def _react(self, ws: Any, msg: dict[str, Any]) -> None:
         msg_type = msg.get("type", "")
         payload = msg.get("payload") or {}
+
+        # Latch the authoritative round whenever a message carries one, so the
+        # next PLAYER_ACTION stamps a current value (default 0 pre-first-turn).
+        _r = payload.get("round")
+        if isinstance(_r, int) and _r >= self.current_round:
+            self.current_round = _r
 
         if msg_type == "SESSION_EVENT":
             event = payload.get("event")
@@ -693,10 +771,40 @@ class Playtest:
             return
 
         if msg_type == "NARRATION_END" and self.session_ready and self.actions:
-            # Canonical narration finished — the server is now awaiting the
-            # next player input (there's no explicit "your turn" signal in
-            # solo flow). Send the next scripted action.
+            # Canonical narration finished — the turn is done and the server is
+            # awaiting the next player input (there's no explicit "your turn"
+            # signal in solo flow). Clear the in-flight gate, then send the
+            # next scripted action. This is the ONE place the gate clears, so
+            # exactly one action goes out per resolved turn.
+            self.turn_in_flight = False
             await self._send_next_action(ws)
+            return
+
+        if msg_type == "RENDER_QUEUED":
+            # The render is in flight on the daemon; remember it so the drain
+            # phase waits for the matching IMAGE before disconnecting.
+            rid = payload.get("render_id") or ""
+            if rid and self.collect_renders:
+                self.pending_renders.add(rid)
+            return
+
+        if msg_type == "IMAGE":
+            # ImagePayload.url (served by the server's /renders/* mount or an
+            # absolute R2 URL). Collected for the end-of-run contact sheet.
+            rid = payload.get("render_id") or ""
+            self.pending_renders.discard(rid)
+            url = payload.get("url") or ""
+            if url:
+                self.images.append(
+                    {
+                        "url": url,
+                        "caption": payload.get("caption")
+                        or payload.get("alt")
+                        or "",
+                        "tier": payload.get("tier") or "",
+                        "render_id": rid,
+                    }
+                )
             return
 
         if msg_type == "DICE_REQUEST":
@@ -711,14 +819,60 @@ class Playtest:
 
         # Most other messages are informational — already rendered above.
 
-    async def _send_next_action(self, ws: Any) -> None:
+    async def _send_next_action(self, ws: Any, *, force: bool = False) -> None:
         if not self.actions:
             return
+        # One action per resolved turn: if a submitted action's turn hasn't
+        # finished (no NARRATION_END yet), don't pile another on. ``force``
+        # (the idle nudge) overrides — a stalled turn that never emits
+        # NARRATION_END must still make progress.
+        if self.turn_in_flight and not force:
+            return
+        self.turn_in_flight = True
         action = self.actions.pop(0)
         self.actions_sent += 1
         # Slash-commands (/status, /inventory, etc.) ride the same channel
         # as freeform narration.
-        await self._send(ws, make_action_msg(action))
+        await self._send(ws, make_action_msg(action, round_=self.current_round))
+
+    async def _drain_renders(self, ws: Any) -> None:
+        """After the scenario completes, wait (bounded) for in-flight daemon
+        renders to arrive as IMAGE messages so the end-of-run contact sheet
+        captures them. Daemon image generation runs well behind the turn that
+        queued it, so without this drain the driver disconnects first and the
+        renders are lost."""
+        if not self.collect_renders or not self.pending_renders:
+            return
+        n0 = len(self.pending_renders)
+        console.print(
+            f"[cyan][render-drain] waiting for {n0} pending render(s) "
+            f"(≤{self.render_drain_timeout:.0f}s)…[/cyan]"
+        )
+        deadline = time.monotonic() + self.render_drain_timeout
+        while self.pending_renders and time.monotonic() < deadline:
+            remaining = deadline - time.monotonic()
+            try:
+                raw = await asyncio.wait_for(ws.recv(), timeout=min(remaining, 15.0))
+            except TimeoutError:
+                continue
+            except websockets.exceptions.ConnectionClosed:
+                console.print("[yellow][render-drain] connection closed early[/yellow]")
+                break
+            try:
+                msg = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            render_message(msg)
+            await self._react(ws, msg)
+        drained = n0 - len(self.pending_renders)
+        if self.pending_renders:
+            console.print(
+                f"[yellow][render-drain] {drained}/{n0} render(s) landed; "
+                f"{len(self.pending_renders)} still pending at timeout "
+                f"(abandoned)[/yellow]"
+            )
+        else:
+            console.print(f"[green][render-drain] all {n0} render(s) landed[/green]")
 
 
 # ── CLI ─────────────────────────────────────────────────────────────────────
@@ -879,6 +1033,104 @@ def preflight_cost_check(
     return True
 
 
+# ── Contact sheet — end-of-run render montage ───────────────────────────────
+#
+# Headless playtests still queue daemon image renders (there's no UI to show
+# them, but the render pipeline runs end-to-end). Rather than waste that work,
+# the driver collects every IMAGE the run produced and montages them into a
+# single contact-sheet PNG at the end, so the visual output of a headless run
+# is reviewable at a glance. Requires Pillow (run with ``uv run --with pillow``).
+
+
+class ContactSheetError(RuntimeError):
+    """Raised when a contact sheet was requested but cannot be built."""
+
+
+def _fetch_image_bytes(url: str, rest_base: str) -> bytes:
+    """Fetch one render. Relative ``/renders/*`` URLs are resolved against the
+    server's REST base; absolute http(s) URLs (e.g. R2) are fetched directly."""
+    full = url if url.startswith(("http://", "https://")) else f"{rest_base.rstrip('/')}{url}"
+    resp = httpx.get(full, timeout=30.0, follow_redirects=True)
+    resp.raise_for_status()
+    return resp.content
+
+
+def build_contact_sheet(
+    images: list[dict[str, str]],
+    out_path: Path,
+    *,
+    rest_base: str,
+    thumb_px: int = 320,
+    cols: int | None = None,
+) -> int:
+    """Montage ``images`` into a captioned grid PNG at ``out_path``.
+
+    Returns the number of tiles successfully placed. Raises
+    ``ContactSheetError`` if Pillow is missing (loud — No Silent Fallbacks:
+    a requested sheet that silently no-ops would hide the missing dep) or if
+    no tile could be fetched/decoded.
+    """
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError as exc:  # noqa: BLE001
+        raise ContactSheetError(
+            "Pillow is required for the contact sheet — re-run with "
+            "`uv run --with pillow ...` or `uv pip install pillow`."
+        ) from exc
+
+    import io
+
+    tiles: list[tuple[Image.Image, str]] = []
+    for img in images:
+        try:
+            raw = _fetch_image_bytes(img["url"], rest_base)
+            pil = Image.open(io.BytesIO(raw)).convert("RGB")
+        except (httpx.HTTPError, OSError) as exc:  # unreachable render / bad bytes
+            console.print(
+                f"[yellow][contact-sheet] skipped {img.get('url', '?')}: {exc}[/yellow]"
+            )
+            continue
+        label = img.get("tier") or ""
+        cap = (img.get("caption") or "").strip().replace("\n", " ")
+        if cap:
+            label = f"{label}: {cap}" if label else cap
+        tiles.append((pil, label[:90]))
+
+    if not tiles:
+        raise ContactSheetError(
+            f"no renders could be fetched/decoded (had {len(images)} IMAGE url(s))"
+        )
+
+    caption_h = 22
+    pad = 8
+    cell = thumb_px + caption_h + pad
+    n = len(tiles)
+    ncols = cols or min(4, max(1, math.ceil(math.sqrt(n))))
+    nrows = math.ceil(n / ncols)
+
+    sheet = Image.new("RGB", (ncols * cell + pad, nrows * cell + pad), (24, 24, 28))
+    draw = ImageDraw.Draw(sheet)
+    try:
+        font = ImageFont.load_default()
+    except OSError:
+        font = None
+
+    for idx, (pil, label) in enumerate(tiles):
+        r, c = divmod(idx, ncols)
+        x = pad + c * cell
+        y = pad + r * cell
+        pil.thumbnail((thumb_px, thumb_px))
+        # Center the thumbnail in its cell column width.
+        ox = x + (thumb_px - pil.width) // 2
+        sheet.paste(pil, (ox, y))
+        if font is not None:
+            draw.text((x, y + thumb_px + 4), label, fill=(210, 210, 215), font=font)
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(out_path)
+    return n
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="playtest",
@@ -965,6 +1217,39 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     # runs and refuses to proceed past the cap unless --confirm-cost is
     # supplied. See sprint/context/context-story-61-4.md decision D.
     parser.add_argument(
+        "--contact-sheet",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help=(
+            "After the run, montage every IMAGE the scenario produced into a "
+            "captioned contact-sheet PNG at PATH (requires Pillow: run with "
+            "`uv run --with pillow ...`). When omitted, a sheet is still "
+            "written next to --span-jsonl (or to ./<slug>-contact-sheet.png) "
+            "if the run produced any renders. Headless runs queue daemon "
+            "renders end-to-end; this makes that visual output reviewable "
+            "without a UI."
+        ),
+    )
+    parser.add_argument(
+        "--no-contact-sheet",
+        action="store_true",
+        help="Disable the end-of-run contact sheet even if renders were produced.",
+    )
+    parser.add_argument(
+        "--render-drain-timeout",
+        type=float,
+        default=120.0,
+        metavar="SECONDS",
+        help=(
+            "Max seconds to wait after the scenario completes for in-flight "
+            "daemon renders to land as IMAGE messages (default: %(default)s). "
+            "Daemon image generation runs behind the turn that queued it; "
+            "this drain lets the contact sheet capture them. Ignored when "
+            "--no-contact-sheet is set."
+        ),
+    )
+    parser.add_argument(
         "--max-projected-cost-usd",
         type=float,
         default=0.50,
@@ -987,6 +1272,41 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         ),
     )
     return parser.parse_args(argv)
+
+
+def _emit_contact_sheet(pt: Playtest, args: argparse.Namespace) -> None:
+    """Build the end-of-run contact sheet from the renders the run captured.
+
+    Best-effort post-run artifact: a missing Pillow dep or unreachable render
+    is logged loudly but never changes the scenario's exit code (the span
+    capture / validation is the primary artifact). Disabled by
+    ``--no-contact-sheet``.
+    """
+    if args.no_contact_sheet:
+        return
+    if not pt.images:
+        console.print(
+            "[dim][contact-sheet] no IMAGE renders captured this run — "
+            "nothing to montage.[/dim]"
+        )
+        return
+
+    if args.contact_sheet is not None:
+        target = args.contact_sheet
+    elif args.span_jsonl is not None:
+        target = args.span_jsonl.with_name(f"{args.span_jsonl.stem}-contact-sheet.png")
+    else:
+        target = Path(f"{pt.slug or 'playtest'}-contact-sheet.png")
+
+    try:
+        n = build_contact_sheet(pt.images, target, rest_base=args.rest)
+    except ContactSheetError as exc:
+        console.print(f"[bold yellow][contact-sheet] {exc}[/bold yellow]")
+        print(f"contact-sheet skipped: {exc}", file=sys.stderr)
+        return
+    console.print(
+        f"[green][contact-sheet] {n} render(s) → {target.resolve()}[/green]"
+    )
 
 
 async def amain(args: argparse.Namespace) -> int:
@@ -1030,18 +1350,23 @@ async def amain(args: argparse.Namespace) -> int:
         idle_timeout=args.idle_timeout,
         seed=args.seed,
         fixture=args.fixture,
+        collect_renders=not args.no_contact_sheet,
+        render_drain_timeout=args.render_drain_timeout,
     )
 
-    # No-flag path: behaviour, output and exit code byte-for-byte
-    # unchanged — capture is strictly additive.
+    # No-flag path: span capture is strictly additive. The contact sheet is
+    # likewise additive — it never changes the scenario exit code.
     if args.span_jsonl is None:
-        return await pt.run()
+        rc = await pt.run()
+        _emit_contact_sheet(pt, args)
+        return rc
 
     # Mark the run window *before* the scenario starts so the Jaeger
     # query can scope to this run's spans only.
     run_start_us = _now_us()
     rc = await pt.run()
     run_end_us = _now_us()
+    _emit_contact_sheet(pt, args)
 
     # A failed scenario (server unreachable, protocol error, stuck
     # chargen) typically produced zero narration.turn spans. Entering the
