@@ -24,11 +24,15 @@ stories:
     title: Typed quest/stakes narrator tools — record_quest + set_stakes (ADR-102)
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - 'Bound narrator-controlled state: reuse the existing _ACTIVE_STAKES_GUARDRAIL=1024 (narration_apply.py:5762) for set_stakes, and add a cardinality cap for quest_log / quest_anchors at the ADR-102 / Pydantic schema layer (unbounded narrator strings persist to Postgres → state-bloat vector)'
+    completed: '2026-06-03'
+    branch: feat/77-2-typed-quest-stakes-tools
+    review_verdict: approved
   - id: 77-3
     title: Promote quest_anchors to first-class WorldStatePatch field + wire to orbital course
     points: 3
