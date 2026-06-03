@@ -132,7 +132,7 @@ def test_load_manifest_rejects_duplicate_ids(tmp_path):
 
 
 # append to scripts/tests/test_feature_inventory.py
-from scripts.feature_inventory_verify import verify_feature, VerifyContext, Feature
+from scripts.feature_inventory_verify import verify_feature, VerifyContext, Feature, Category
 
 
 def _ctx(tmp_path, span_names=("confrontation.resolved",)):
@@ -171,3 +171,28 @@ def test_module_existence_failure_blocks_any_status(tmp_path):
     ok, reason = verify_feature(f, _ctx(tmp_path))
     assert ok is False
     assert "does_not_exist" in reason
+
+
+# append to scripts/tests/test_feature_inventory.py
+from scripts.regenerate_feature_inventory import render_body, replace_between_markers, MARKER_BEGIN, MARKER_END
+
+
+def test_render_body_emits_category_table(tmp_path):
+    cats = [Category("Confrontation Engine", [
+        Feature(id="x", name="Conf engine", status="live_wired",
+                modules=["game/encounter.py"], ui="ConfrontationOverlay",
+                manual_test="trigger a confrontation"),
+    ])]
+    body = render_body(cats, {"x": "Live & Wired"})
+    assert "### Confrontation Engine" in body
+    assert "Conf engine" in body
+    assert "Live & Wired" in body
+    assert "ConfrontationOverlay" in body
+
+
+def test_replace_between_markers_preserves_surrounds(tmp_path):
+    f = tmp_path / "doc.md"
+    f.write_text(f"PRE\n{MARKER_BEGIN}\nold\n{MARKER_END}\nPOST\n")
+    replace_between_markers(f, "NEW")
+    out = f.read_text()
+    assert "PRE" in out and "POST" in out and "NEW" in out and "old" not in out
