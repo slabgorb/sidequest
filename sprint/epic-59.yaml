@@ -491,7 +491,8 @@ stories:
       SCOPE — one backend repo (sidequest-server). No new ADR (this is ADR-116 'a confrontation requires an Other' + the #576 outcome-resolution seam enacted on existing actor/disposition state). Content: none required (opponent-yield is engine-inferred from withdrawn/disposition state the narrator already sets via existing tools). Design-first if the seam review finds neither update_npc_disposition nor advance_confrontation can carry the trigger cleanly — then a thin tool field is the fallback, decided in the dev's first design pass.
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-03'
     repos: sidequest-server
     workflow: tdd
     depends_on: 59-30
@@ -504,4 +505,7 @@ stories:
       - "OTEL span contract (component='confrontation', the GM-panel lie-detector): the opponent-yield resolution emits a watcher span with attrs outcome='player_victory', resolution_label='opponent_yielded', trigger ('opponent_yield_sweep' | 'opponent_yield_on_location_change'), yielded_opponents (withdrawn/surrendered opponent actor names), opponents_disposition. Reuses the encounter_resolved_span family / confrontation_resolved_on_location_change emit. Dev observability only — NOT a player feature."
       - 'Dormant 49-5 threading is NOT a gate but is stamped: on opponent-yield resolution the engine stamps snapshot.pending_resolution_signal (via _build_resolution_signal, as the dial-threshold sweep already does) so the [ENCOUNTER RESOLVED] zone narrates correctly for free WHEN 49-5 revives the TurnContext threading. The narrator-zone narration is explicitly NOT an acceptance gate (the zone is dormant in production). A delivery finding cross-links 49-5 if ResolutionSignal needs a new field for the opponent-yield case.'
       - "Behavioral wiring test (NOT a source-text grep, per server CLAUDE.md 'No Source-Text Wiring Tests'): a fixture-driven test constructs a synthetic snapshot with a PC + a single side='opponent' actor, drives the opponent to yield through the REAL path (narrator-tool signal -> engine confirm -> _resolve_dial_threshold_and_phase sweep), and asserts BOTH (a) enc.outcome=='opponent_yielded' resolving player_victory (resolved=True, NOT 'abandoned_on_location_change', NOT player-side 'yielded'), AND (b) the confrontation OTEL span fired with resolution_label='opponent_yielded' (span assertion via the watcher/span capture harness). Includes the location-change variant and the no-yield/no-threshold abandoned-still-abandons regression assertion in the same suite. Extends tests/server/test_confrontation_location_change.py."
+    completed: '2026-06-03'
     type: bug
+    review_findings: "HIGH: missing dispatch-level wiring test (rule-checker + test-analyzer, <critical> 'Every Test Suite Needs a Wiring Test' violation). LOW: 2 weak test assertions (:273 !=→is None, :471 unasserted signal metrics) + 3 stale/false comments (narration_apply:2799, :4568 docstring false participant.left OTEL claim, test:389). Code itself correct — 8/9 rules compliant, 0 runtime bugs."
+    review_verdict: approved
