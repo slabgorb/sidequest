@@ -85,9 +85,11 @@ stories:
     title: "Opponent-side beat-impact legibility + numeric delta readout — surface the opponent's last_beat_impact alongside the player's so the overlay shows 'you: clean exit · them: +2 pressure' (dissolves the 73-4 repro confusion 'mine moved 0 but theirs did'), and render own/opponent numbers in BeatImpactPanel for mechanics-first players (Sebastien/Jade). Engine already records both sides in enc.last_beat_impacts; payload (build_confrontation_payload) + UI only — no engine change."
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
+    completed: '2026-06-04'
   - id: 73-8
     title: hp_depletion beat-impact reads the HP channel, not nominal suppressed dial deltas — under win_condition=hp_depletion apply_beat suppresses dial application (inert HP placeholders) but describe_beat_impact still classifies from nominal deltas, so an SWN strike Success reports effect=advance/dial_moved=True though no dial moved. Derive the impact from the HP channel (or flag suppressed) so a future HP-combat impact readout is truthful. Documented caveat at beat_kinds.py stamp site; flagged in 73-4 reconcile.
     points: 2
@@ -125,5 +127,13 @@ stories:
     priority: p2
     status: backlog
     repos: sidequest-server
+    workflow: tdd
+    type: bug
+  - id: 73-13
+    title: "BeatImpactPanel render-gate drops opponent readout when player impact absent — ConfrontationOverlay gates the panel on `{data.last_beat_impact && ...}`, so in the opponent-acts-first window (legacy beat_selection path / surprise round / player takes a non-combat action: opponent impact present, player impact absent) the WHOLE panel is suppressed, hiding the 'the enemy hit you' readout 73-7 added. Reviewer corrected TEA's 'unreachable' claim (narration_apply.py:4031-4055 preserves opponent-side selections; last_beat_impacts accumulates/never clears). Not a regression/crash. Fix: gate on (player || opponent) and let BeatImpactPanel tolerate an absent player impact. Found in 73-7 review."
+    points: 2
+    priority: p3
+    status: backlog
+    repos: sidequest-ui
     workflow: tdd
     type: bug
