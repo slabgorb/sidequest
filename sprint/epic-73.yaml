@@ -75,9 +75,11 @@ stories:
     title: "Rescope shared e2e fixtures so tests/e2e/test_encounter_wiring_e2e.py actually runs — session_handler_factory + span_exporter live in tests/server/conftest.py (invisible to tests/e2e/), so both e2e tests (test_combat_walkthrough_initiate_tick_resolve, test_xp_award_higher_in_combat_than_out) ERROR at setup with 'fixture not found'. Combat-lifecycle e2e is currently INERT — nothing validates resolution-turn behaviour end-to-end (would catch 73-5-class regressions). Fix: move the shared fixtures to a conftest visible to tests/e2e/ (e.g. tests/conftest.py) or give the e2e file its own. Found by Dev during 73-5."
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-06-04'
     type: bug
   - id: 73-7
     title: "Opponent-side beat-impact legibility + numeric delta readout — surface the opponent's last_beat_impact alongside the player's so the overlay shows 'you: clean exit · them: +2 pressure' (dissolves the 73-4 repro confusion 'mine moved 0 but theirs did'), and render own/opponent numbers in BeatImpactPanel for mechanics-first players (Sebastien/Jade). Engine already records both sides in enc.last_beat_impacts; payload (build_confrontation_payload) + UI only — no engine change."
@@ -109,3 +111,19 @@ stories:
     status: backlog
     repos: sidequest-ui
     workflow: trivial
+  - id: 73-11
+    title: Complete the fixture move — delete duplicate session_handler_factory from tests/server/conftest.py (root conftest is already inherited by tests/server/), eliminating the DRY drift risk where the two byte-identical 208-line copies can silently diverge. Also makes the root copy's 'moved from tests/server/conftest.py' header comment accurate. Flagged in 73-6 review (Reviewer should-fix).
+    points: 1
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: trivial
+    type: refactor
+  - id: 73-12
+    title: "Rewrite stale combat-lifecycle e2e assertions for the dual-dial encounter model — tests/e2e/test_encounter_wiring_e2e.py de-inerted in 73-6 but both tests now FAIL on stale assertions: test_combat_walkthrough_initiate_tick_resolve reads removed single 'metric' field (replaced by player_metric/opponent_metric + _reject_legacy_metric validator, ADR-024); test_xp_award_higher_in_combat_than_out expects in-combat XP delta 25 but observes 10. Rewrite against StructuredEncounter dual-dial model + verify XP-award semantics. Found in 73-6 (Dev Delivery Finding)."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
