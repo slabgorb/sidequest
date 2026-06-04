@@ -71,10 +71,14 @@ stories:
     title: Wire milestone accumulation -> level-up engine + OTEL + player-facing advancement delta (ADR-021 track 1; genre/models/progression.py ~:62)
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: sidequest-server
     workflow: tdd
     depends_on: 82-3
+    completed: '2026-06-04'
+    branch: feat/82-6-wire-milestone-levelup
+    review_findings: 'Production code correct (all ACs functionally met); REJECT for test rigor: HIGH = AC3 player-facing populate untested (only field existence asserted), MED = no-downgrade/at-max guard + per-turn reset untested, LOW = vacuous driver assertion (rule #6). No production change required.'
+    review_verdict: approved
   - id: 82-7
     title: Wire AffinityState tier promotion + OTEL + player-facing delta (ADR-021 track 2; game/character.py ~:55-57,102-103)
     points: 3
