@@ -57,12 +57,15 @@ stories:
     description: 'Server quests projection landed (77-8, 2026-06-04). This render-only UI panel mirrors the rich QuestsPayload (quest_log + quest_anchors + active_stakes) into a TS type and renders it as a dockable GameBoard widget, mirroring the ADR-136 RelationshipsPanel pattern. No game-logic writes, no fabrication of payload shape — consume the full server projection shape.'
     points: 5
     priority: p3
-    status: in_progress
+    status: done
     assigned_to: dev
     started: '2026-06-04'
     repos: ui
     workflow: tdd
+    completed: '2026-06-04'
     branch: feat/77-5-quest-objective-panel
+    review_findings: 'REJECT (3 blocking): (1) No-Silent-Fallbacks violation — dangling-reference quest anchors silently dropped in QuestsPanel orphan filter, with a comment that falsely claims otherwise; (2) isEmptySpine throws on malformed/missing-field payload instead of degrading to empty-state — less robust than the mirrored RelationshipsPanel, contra AC2; (3) orphan-anchor render branch has zero test coverage. Fixes are cheap+testable. Route to TEA for red rework.'
+    review_verdict: approved
   - id: 77-6
     title: Author wry_whimsy seed_tropes deck (ADR-128) — active_seeds carve-out
     points: 2
