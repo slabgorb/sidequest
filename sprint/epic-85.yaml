@@ -1,0 +1,46 @@
+id: '85'
+type: epic
+title: Post-Playtest UX Polish — Confrontation Panel & Location Surface
+description: "UX-lane follow-ups surfaced by the 2026-06-04 playtest (road_warrior/the_circuit + wry_whimsy). The mechanical fixes landed and verified (chase #647, discovered_regions pollution #648); this epic collects the player-facing presentation polish that remained. Two members: (1) confrontation-panel legibility/layout — the panel surfaces correctly now, but the dial readout is illegible, beat-caption text overflows its card, and there is dead-space + a floating-die layout problem (matters for mechanics-first players Sebastien/Jade who read the dial/DC math in the player UI); (2) the location-surface 'pick one source of truth for where-am-I' divergence — the header binds to party_status.location (free-text scene title) while the Location tab binds to the region-level LocationDescriptionPayload, so they disagree on screen during intra-region POI moves. Source: sq-playtest-pingpong 2026-06-04 (L162, L105 a/b)."
+priority: p2
+status: backlog
+repos: ui,server
+stories:
+  - id: 85-1
+    title: Confrontation panel legibility & layout pass — readable dial, beat-caption fits its card, kill the dead-space/floating-die
+    description: "Confrontation panel legibility + same-strip space pass. Design spec: docs/design/confrontation-space-usage.md (Tier A). Closes playtest L162 (sq-playtest-pingpong 2026-06-04) AND the 'not using space well' space-usage finding within the existing ConfrontationOverlay strip. Pure ui, no protocol change. (Tier B — the dockview 'confrontation mode' spatial promotion — is the bigger follow-up, see 85-3 proposal in the design doc.)"
+    points: 3
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: tdd
+    acceptance_criteria:
+      - 'A1 — Dial as headline: promote the two dials to a single tug-of-war scoreboard (YOU fills from left, THEM from right toward center), large tabular numerals, and a VISIBLE empty-track color so THEM 0/10 is not dark-on-dark (WCAG AA 4.5:1 on title + numerals). Closes L162 defect 1.'
+      - A2 — BeatGrid gridTemplateColumns auto-fill → auto-fit so tiles stretch to fill the row instead of huddling left with phantom empty columns.
+      - "A3 — Anchor the die to the committed beat: roll in the clicked tile's own row (tile expands to show rolled N vs DC M → tier); retire or shrink the disconnected fixed 200px die lane so beat→roll→result is one spatial unit. Closes L162 defect 3."
+      - A4 — Beat caption wraps INSIDE its tile (or moves to title/▾ expand); never overflows the right edge. Closes L162 defect 2.
+      - A5 — Reclaim the freed right space as a 3-line beat-history ledger (actor · beat · roll vs DC · dial Δ) so dial movement has visible mechanical provenance (mechanics-first players).
+      - 'Accessibility: beat tiles keyboard-reachable in DOM order with visible focus ring; locked-Enter state has an aria-live hint; resolution beat (e.g. Refuse the Premise ✦) carries a distinct role/label, not just an amber border; die/dial animations respect prefers-reduced-motion.'
+    type: bug
+  - id: 85-2
+    title: 'Location surface: pick ONE source of truth for where-am-I (header vs Location tab) — design-first'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: ui,server
+    workflow: tdd
+  - id: 85-3
+    title: Confrontation mode — spatial promotion to a dockview panel (opponent portrait + stakes + Guitar-Solo party action)
+    description: "Tier B of the confrontation space-usage design (docs/design/confrontation-space-usage.md, The Duchess 2026-06-04). Promote the confrontation from a thin bottom strip into a focused dockview 'confrontation mode' that claims the board canvas while an encounter is active — giving the drama peak the screen it earns (Cost Scales with Drama; Diamonds and Coal). GATING DESIGN DECISION (Architect/operator, before any code): does confrontation mode SPLIT with the narration panel (prose left, confrontation right — keeps the soloist reachable, Duchess-recommended) or TAKE OVER full-screen? Depends on / builds atop 85-1 (Tier A polish). Possible small protocol dependency: opponent portrait + stakes may not yet be on the CONFRONTATION payload — verify before scoping the server half."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: ui,server
+    workflow: tdd
+    acceptance_criteria:
+      - 'Architect decision recorded first: split-with-narration vs full-takeover (Duchess recommends split). No UI code until this is chosen.'
+      - While an encounter is active, a Confrontation dockview panel auto-focuses (reuses the existing dockview pattern — Character/Inventory/Map are already panels), and releases focus on resolution.
+      - "THEM side shows the opposing actor: portrait + name + their last beat (ADR-116 'requires an Other'); dial reads as a VS scoreboard. Solo play: the row degrades cleanly."
+      - Stakes banner (set_stakes) shown prominently at the top of confrontation mode.
+      - "'Meanwhile at the table' strip surfaces the non-soloing players' concurrent verbs (The Guitar Solo); collapses to nothing in solo play."
+      - 'Protocol check: if CONFRONTATION payload lacks actors[].portrait / stakes, the server/protocol half is in scope and flagged for Architect; otherwise ui-only.'
