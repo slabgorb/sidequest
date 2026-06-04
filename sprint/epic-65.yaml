@@ -135,9 +135,11 @@ stories:
     title: Mount useAssetPreload in App + ImageBus preload feed (AC5 follow-up from 65-2)
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: ui
     workflow: tdd
+    completed: '2026-06-04'
   - id: 65-5
     title: Asset generators skip files already on R2 (live-listing existence check)
     description: "Asset generation scripts gate regeneration on LOCAL disk existence only (render_common.py:503 'if out_path.exists() and not force'). PNGs are gitignored, so on any clone without locally-generated images the gate reports every asset 'missing' and regenerates assets already on R2 — wasting GPU/time/cost. generate_poi_images.py:167 is worse: hardcodes force=True and always regenerates. Fix: at run start list the live R2 bucket under the target genre_packs/ prefix once (boto3 list_objects_v2, reusing r2_sync_packs._build_client) and skip any render item whose expected R2 key is already uploaded — even when the local file is absent. Replaces the descoped 65-2 AC6 ledger/retention audit framing; the runtime asset_ledger is a separate concern and is NOT touched. Repo: orchestrator scripts/ only."
