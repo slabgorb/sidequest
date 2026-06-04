@@ -14,7 +14,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Dear Friend
-  portrait_style: ", Regency era miniature, watercolor on ivory, pastoral countryside, empire waist muslin, Regency romance illustration"
+  portrait_style: ", Regency-era portrait miniature, watercolor on ivory, soft pastoral palette, delicate stippled brushwork, gentle romantic lighting"
   tier: U
   spinner_verbs:
     - Writing letters
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Austen Narrator
-    visual: "A Regency-era woman in her thirties with knowing dark eyes and slight smile, wearing modest muslin dress with high waist and cap, holding quill pen, observing everything with ironic detachment"
+    visual: "An adult woman in her thirties with dark brown eyes and a faint closed-lip smile, neat dark hair pinned under a small lace cap, wearing a modest high-waisted white muslin dress with a shawl collar, holding a quill pen at writing height, seated upright with a slight tilt of the head toward the viewer"
     ocean:
       O: 5  # Sees through every pretension
       C: 4  # Perfectly structured narratives
@@ -92,7 +92,7 @@ agents:
     shortName: Austen
   sm:
     character: Elinor Dashwood (Sense and Sensibility)
-    visual: "A composed young woman in her early twenties with neat brown hair in Regency style, wearing practical muslin dress, calm sensible expression managing chaos around her"
+    visual: "An adult woman in her early twenties with neat brown hair pinned in a Regency updo, wearing a plain practical white muslin dress with long sleeves, posture straight, lips pressed together, chin level, gaze directed slightly downward toward her hands, which hold a folded paper"
     ocean:
       O: 3  # Practical over imaginative
       C: 5  # Mistress of self-control
@@ -118,7 +118,7 @@ agents:
     shortName: Elinor
   tea:
     character: Mr. Fitzwilliam Darcy (Pride and Prejudice)
-    visual: "A tall handsome gentleman in his late twenties with dark curly hair, wearing impeccable Regency tailcoat and cravat, proud reserved expression, discerning critical gaze"
+    visual: "An adult man in his late twenties, tall and broad-shouldered, with dark curly hair, clean-shaven, wearing a well-fitted dark Regency tailcoat with brass buttons, white high-collar shirt, and a neatly tied white cravat, standing with one hand behind his back, chin raised, eyes level and steady under a straight brow"
     ocean:
       O: 3  # Conventional in his way
       C: 5  # Impeccable standards
@@ -144,7 +144,7 @@ agents:
     shortName: Darcy
   dev:
     character: Fanny Price (Mansfield Park)
-    visual: "A slight modest young woman with mousy hair and downcast eyes, wearing simple plain dress less fine than those around her, quietly capable demeanor"
+    visual: "An adult woman, slight of build, in her early twenties with light brown hair loosely pinned and a few strands loose at the temple, wearing a simple pale muslin dress with a narrow sash and plain unadorned neckline, hands folded in her lap, gaze cast slightly downward, shoulders curved inward"
     ocean:
       O: 3  # Principled, not fanciful
       C: 4  # Steady, diligent work
@@ -170,7 +170,7 @@ agents:
     shortName: Fanny
   reviewer:
     character: Elizabeth Bennet (Pride and Prejudice)
-    visual: "A lively young woman in her early twenties with dark sparkling eyes and arched brow, wearing fine muslin dress, intelligent amused expression ready with wit"
+    visual: "An adult woman in her early twenties with dark brown eyes and one brow arched higher than the other, wearing a fine white muslin dress trimmed with pale ribbon at the waist, lips slightly parted in a half-smile, head tilted a few degrees to one side, posture upright and easy"
     ocean:
       O: 4  # Quick, lively mind
       C: 4  # Principled despite teasing
@@ -196,7 +196,7 @@ agents:
     shortName: Elizabeth
   architect:
     character: Emma Woodhouse (Emma)
-    visual: "A beautiful young woman in her early twenties with elegant features and confident posture, wearing fashionable expensive dress and jewelry, self-satisfied clever expression"
+    visual: "An adult woman in her early twenties with high cheekbones, a smooth brow, and light eyes, wearing a fashionable empire-waist gown in pale gold silk with short puffed sleeves and a pearl necklace, posture erect with shoulders back, chin slightly elevated, lips closed and curved at the corners"
     ocean:
       O: 4  # Imaginative matchmaker
       C: 4  # Generally sensible
@@ -222,7 +222,7 @@ agents:
     shortName: Emma
   pm:
     character: Lady Russell (Persuasion)
-    visual: "An elegant widow in her forties with silver-touched hair and knowing eyes, wearing refined dark dress appropriate to mourning ended, strategic thoughtful expression"
+    visual: "An adult woman in her mid-forties with silver-streaked dark hair swept up neatly, wearing a refined dark navy dress with a modest lace collar, seated upright in a cushioned chair, one hand resting on the armrest, gaze directed slightly off-frame with lips closed and brow level"
     ocean:
       O: 3  # Conventional wisdom
       C: 4  # Careful, methodical
@@ -248,7 +248,7 @@ agents:
     shortName: Russell
   tech-writer:
     character: Anne Elliot (Persuasion)
-    visual: "A gentle woman in her late twenties with faded beauty and thoughtful expression, wearing modest muslin that was once fashionable, holding letter with elegant penmanship, composed eloquent demeanor"
+    visual: "An adult woman in her late twenties with light brown hair pinned simply, wearing a pale muslin dress with a narrow ribbon sash, holding a folded letter in both hands, gaze directed downward at the letter, posture still, shoulders slightly forward"
     ocean:
       O: 4  # Deep inner life
       C: 4  # Patient, enduring
@@ -274,7 +274,7 @@ agents:
     shortName: Anne
   ux-designer:
     character: Jane Bennet (Pride and Prejudice)
-    visual: "A beautiful serene young woman with golden hair and sweet expression, wearing pretty muslin dress, gentle kind eyes that see good in everyone"
+    visual: "An adult woman in her early twenties with golden blonde hair loosely pinned in soft curls around her face, wearing a pretty white muslin dress with a blue sash, light blue eyes with a relaxed brow, lips parted slightly in a soft closed smile, posture easy and open"
     ocean:
       O: 3  # Sweet, not imaginative
       C: 3  # Gentle, not rigid
@@ -300,7 +300,7 @@ agents:
     shortName: Jane
   devops:
     character: Mr. Woodhouse (Emma)
-    visual: "An anxious elderly gentleman in his sixties with thin frame and worried expression, wearing old-fashioned coat and waistcoat, clutching shawl, fretting about drafts and gruel"
+    visual: "An adult man in his late sixties with a thin frame, sparse white hair, and a furrowed brow, wearing an old-fashioned long dark coat and patterned waistcoat with a high cravat, seated in a high-backed chair with a wool shawl pulled around his shoulders and both hands gripping the shawl's edge"
     ocean:
       O: 2  # Fears anything new
       C: 4  # Rigid routines
@@ -327,7 +327,7 @@ agents:
     shortName: Woodhouse
   ba:
     character: Mr. Fitzwilliam Darcy (Analyst)
-    visual: "A tall handsome gentleman in his late twenties with dark curly hair, wearing impeccable Regency tailcoat and cravat, analytical discerning gaze"
+    visual: "An adult man in his late twenties, tall and broad-shouldered, with dark curly hair, clean-shaven, wearing a well-fitted dark Regency tailcoat with brass buttons, white high-collar shirt, and a neatly tied white cravat, standing with arms crossed loosely at his chest, eyes level under a straight brow"
     ocean:
       O: 4  # Sees through pretense
       C: 5  # Exacting standards

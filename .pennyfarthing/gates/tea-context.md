@@ -53,7 +53,7 @@ GATE_RESULT:
       detail: "{missing or validation errors}"
   recovery:
     - "Ensure SM setup completed successfully"
-    - "Run `/pf:context create story {N-N}` manually if needed"
+    - "Run `/pf-context create story {N-N}` manually if needed"
 ```
 
 **Note:** TEA does NOT auto-trigger context creation. If story context is

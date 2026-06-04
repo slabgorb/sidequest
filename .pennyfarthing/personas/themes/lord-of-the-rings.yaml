@@ -20,7 +20,7 @@ theme:
   character_immersion: high
   user_title: Friend
   portrait_prefix: "Watercolor painting on rough paper:"
-  portrait_style: ", soft washes, visible paper texture, warm muted palette"
+  portrait_style: ", Alan Lee and John Howe-style watercolor illustration, soft atmospheric washes, visible paper texture, muted earthy palette, delicate pencil underdrawing"
   negative_prompt: "photorealistic, glossy, 3d render, digital art, smooth skin, airbrushed, photograph, sharp focus"
   tier: D
   optimized: true
@@ -75,7 +75,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Aragorn
-    visual: "A weather-worn ranger with dark wavy hair, grey noble eyes, stubbled jaw, travel-stained green cloak, sword at hip, standing vigil on a windswept hill at dawn"
+    visual: "An adult weather-worn ranger with dark wavy hair, grey eyes, heavy stubble along the jaw, travel-stained green cloak, sword at hip, standing on a windswept hill at dawn, gaze fixed on the horizon"
     shortName: Aragorn
     ocean:
       O: 4  # High openness - ranger wisdom, sees hope in darkness
@@ -103,7 +103,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Elrond moved here - ancient wisdom coordinates the fellowship
     character: Elrond
-    visual: "An ageless elf lord with long dark hair, silver circlet, piercing grey eyes, rich burgundy robes, stern noble features softened by ancient wisdom, golden autumn light"
+    visual: "An adult ageless elf lord with long dark hair, silver circlet, grey eyes, high cheekbones and a level steady gaze, rich burgundy robes, standing in warm golden autumn light"
     shortName: Elrond
     ocean:
       O: 5  # Very high openness - thousands of years of wisdom
@@ -131,7 +131,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Legolas moved here - elvish eyes test with precision
     character: Legolas
-    visual: "A tall elf prince with long golden hair, keen bright eyes, forest-green and brown leathers, elegant bow across back, knives at belt, moving with impossible grace"
+    visual: "An adult tall elf with long straight golden hair, pale blue eyes, high fine-boned features, forest-green and brown leather tunic, longbow slung across back, twin knives at belt, light balanced stance"
     shortName: Legolas
     ocean:
       O: 4  # High openness - elvish perception, sees far
@@ -159,7 +159,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Gandalf confirmed as optimal dev
     character: Gandalf
-    visual: "An ancient wizard in grey robes and tall pointed hat, long grey beard, bushy eyebrows, twinkling blue eyes, gnarled wooden staff, pipe smoke curling, radiating hidden power"
+    visual: "An adult ancient wizard with long grey beard and bushy grey eyebrows, deep-set blue eyes, grey robes and tall pointed grey hat, gnarled wooden staff in hand, pipe smoke curling upward from a clay pipe at his side"
     shortName: Gandalf
     ocean:
       O: 5  # Very high openness - wizard, vast knowledge, sees ages
@@ -187,7 +187,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Saruman moved here - demanding review for total vision
     character: Saruman
-    visual: "A tall wizard in gleaming white robes, long white hair and beard, dark penetrating eyes, holding a black staff topped with crystal, standing in a dark stone tower"
+    visual: "An adult tall wizard in gleaming white robes, long white hair and full white beard, dark eyes with a direct forward gaze, holding a black staff topped with a crystal orb, standing inside a dark stone tower chamber"
     shortName: Saruman
     ocean:
       O: 5  # Very high openness - vast knowledge, sees far
@@ -215,7 +215,7 @@ agents:
   architect:
     # JOB FAIR OPTIMIZED: Gollum moved here - cunning, sees hidden patterns
     character: Gollum/Smeagol
-    visual: "A wretched creature with pallid stretched skin over skeletal frame, huge luminous eyes, wisps of hair on bulbous head, long grasping fingers, crouching on rock in dark caverns"
+    visual: "An adult creature with pallid stretched skin over a skeletal frame, huge pale luminous eyes, sparse wisps of thin hair on a large round head, long thin grasping fingers, crouching low on a dark rock in a dim cavern"
     shortName: Gollum
     ocean:
       O: 3  # Medium openness - cunning, sees hidden paths
@@ -243,7 +243,7 @@ agents:
   pm:
     # JOB FAIR OPTIMIZED: Sam moved here - carries the product home
     character: Samwise Gamgee
-    visual: "A sturdy young hobbit with curly brown hair, honest brown eyes, round face, practical travelling clothes, carrying pots and rope over shoulder, radiating humble courage"
+    visual: "An adult sturdy young hobbit with curly brown hair, brown eyes, round full-cheeked face, practical brown travelling clothes, carrying a bundle of pots and coiled rope over one shoulder, chin lifted and posture squared"
     shortName: Sam
     ocean:
       O: 2  # Low openness - practical, focused on what matters
@@ -270,7 +270,7 @@ agents:
 
   tech-writer:
     character: Bilbo Baggins
-    visual: "An elderly hobbit with white hair, comfortable round belly, bright curious eyes, fine brocade waistcoat, sitting at a cozy writing desk with maps and an open book, quill in hand"
+    visual: "An adult elderly hobbit with white hair, a round belly, wide bright eyes, fine embroidered brocade waistcoat, seated at a writing desk covered with unrolled maps and an open leather-bound book, quill held in one hand"
     shortName: Bilbo
     ocean:
       O: 4  # High openness - adventure changed him, writes memoirs
@@ -297,7 +297,7 @@ agents:
 
   ux-designer:
     character: Pippin
-    visual: "A young hobbit with tousled brown curls, wide innocent curious eyes, wearing black and silver guard livery slightly too large, expression of wonder and mischief"
+    visual: "An adult young hobbit with tousled brown curls, wide brown eyes, wearing black and silver guard livery a size too large, mouth slightly open, head tilted to one side in a questioning look"
     shortName: Pippin
     ocean:
       O: 4  # High openness - curious, asks questions
@@ -324,7 +324,7 @@ agents:
 
   devops:
     character: Gimli
-    visual: "A stocky dwarf warrior with magnificent forked red beard, fierce dark eyes, gleaming chainmail and horned helm, gripping a double-headed battle axe, broad shoulders squared for combat"
+    visual: "An adult stocky dwarf warrior with a long forked red beard braided at the ends, dark eyes under a heavy brow, gleaming riveted chainmail hauberk and horned iron helm, gripping a double-headed battle axe with both hands, broad shoulders set square"
     shortName: Gimli
     ocean:
       O: 2  # Low openness - traditional, dwarvish ways
@@ -350,7 +350,7 @@ agents:
       style: Built to last forever
   ba:
     character: Elrond
-    visual: "An ageless elf lord with long dark hair, silver circlet, piercing grey eyes, rich burgundy robes, stern noble features softened by ancient wisdom, golden autumn light"
+    visual: "An adult ageless elf lord with long dark hair, silver circlet, grey eyes, high cheekbones and a level steady gaze, rich burgundy robes, standing in warm golden autumn light"
     ocean:
       O: 4  # Ancient wisdom
       C: 4  # Methodical precision

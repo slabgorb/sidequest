@@ -15,7 +15,7 @@ theme:
   default_humor: subtle
   character_immersion: high
   user_title: Jedi
-  portrait_style: ", space opera cinematic, retro sci-fi concept art, art deco, Tamara Lempicka style"
+  portrait_style: ", Tamara de Lempicka-style Art Deco painting, smooth tubular forms, polished metallic palette, retro space-opera concept-art, dramatic cinematic lighting"
   tier: U
   optimized: true
   spinner_verbs:
@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Leia Organa
-    visual: "A woman with elegant braided brown hair, wearing flowing white robes or military command vest, regal bearing, determined expression"
+    visual: "An adult woman with elegant braided brown hair, wearing flowing white robes or a fitted military command vest, chin lifted, posture straight, jaw set forward"
     shortName: Leia
     # JOB FAIR OPTIMIZED: Thrawn excels as SM (91.87)
     ocean:
@@ -98,7 +98,7 @@ agents:
 
   sm:
     character: Grand Admiral Thrawn
-    visual: "A blue-skinned humanoid with glowing red eyes and slicked-back dark hair, wearing a crisp white Imperial grand admiral uniform with gold epaulettes, calculating expression"
+    visual: "An adult blue-skinned humanoid with glowing red eyes and slicked-back dark hair, wearing a crisp white grand admiral uniform with gold epaulettes and rank insignia, hands clasped behind the back, gaze level and still"
     shortName: Thrawn
     # JOB FAIR OPTIMIZED: Thrawn scored 91.87 as SM (+3.75 over Leia)
     ocean:
@@ -126,7 +126,7 @@ agents:
 
   tea:
     character: Han Solo
-    visual: "A rugged man with tousled brown hair and cocky grin, wearing a white shirt with black vest, blaster holster at hip"
+    visual: "An adult man with tousled brown hair and a wide grin, one corner of the mouth pulled higher than the other, wearing a white shirt with a dark vest, blaster holster strapped to the hip"
     shortName: Han
     # JOB FAIR OPTIMIZED: Han scored 86.25 as TEA (+5.00 over Obi-Wan)
     ocean:
@@ -154,7 +154,7 @@ agents:
 
   dev:
     character: Yoda
-    visual: "A small green alien with large pointed ears and wrinkled face, wearing simple brown robes, eyes half-closed in wisdom, gimer stick cane"
+    visual: "An adult small green humanoid with large pointed ears and a deeply wrinkled face, wearing simple rough-spun brown robes, eyes half-closed and downcast, leaning on a gnarled wooden walking stick"
     shortName: Yoda
     # JOB FAIR OPTIMIZED: Yoda scored 77.50 as dev (+4.38 over Han)
     ocean:
@@ -182,7 +182,7 @@ agents:
 
   reviewer:
     character: Obi-Wan Kenobi
-    visual: "A bearded man with graying hair, wearing brown Jedi robes with tan tunic, wise serene expression, lightsaber hilt visible at belt"
+    visual: "An adult man with a neatly trimmed beard and graying hair, wearing layered brown hooded robes over a tan tunic, eyes open and gaze soft, lightsaber hilt clipped at the belt"
     shortName: Obi-Wan
     # JOB FAIR OPTIMIZED: Obi-Wan tied Yoda at 88.75; Yoda moved to dev
     ocean:
@@ -210,7 +210,7 @@ agents:
 
   architect:
     character: Emperor Palpatine
-    visual: "A pale elderly man in black hooded robes, deeply wrinkled face with yellow eyes, sinister knowing smile, gnarled hands"
+    visual: "An adult pale elderly man in floor-length black hooded robes, deeply wrinkled face with pale yellow eyes, thin lips drawn into a slight upward curve, gnarled hands folded in front"
     shortName: Palpatine
     ocean:
       O: 5  # Dark side vision
@@ -237,7 +237,7 @@ agents:
 
   pm:
     character: Mon Mothma
-    visual: "A woman with short auburn hair in elaborate white robes with high collar, calm composed expression, dignified bearing"
+    visual: "An adult woman with short auburn hair in elaborate white robes with a high collar, shoulders back, hands folded at the waist, gaze level and steady"
     shortName: Mon Mothma
     ocean:
       O: 4  # Political vision
@@ -264,7 +264,7 @@ agents:
 
   tech-writer:
     character: C-3PO
-    visual: "A gold-plated humanoid protocol droid with exposed wiring at joints, round photoreceptor eyes, one hand raised in worried gesture"
+    visual: "A gold-plated humanoid protocol droid with exposed wiring at the joints, large round photoreceptor eyes, one arm raised with palm outward and fingers splayed"
     shortName: C-3PO
     ocean:
       O: 3  # Protocol knowledge
@@ -291,7 +291,7 @@ agents:
 
   ux-designer:
     character: Ahsoka Tano
-    visual: "A Togruta woman with white and blue striped head-tails (lekku) and montrals, wearing warrior garb, two white lightsabers, determined independent expression"
+    visual: "An adult woman with orange and white striped skin and white and blue striped head-tails and two tall curved hollow headpieces rising from the crown, wearing fitted warrior garb with arm wrappings, holding two white lightsabers in a low ready stance, chin level, eyes forward"
     shortName: Ahsoka
     ocean:
       O: 4  # Force intuition
@@ -345,7 +345,7 @@ agents:
 
   ba:
     character: Mon Mothma
-    visual: "A woman with short auburn hair in elaborate white robes with high collar, calm composed expression, dignified bearing, holding a datapad with coalition requirements"
+    visual: "An adult woman with short auburn hair in elaborate white robes with a high collar, shoulders back, hands folded around a slim flat datapad, gaze level and steady"
     shortName: Mothma
     ocean:
       O: 4  # Political vision

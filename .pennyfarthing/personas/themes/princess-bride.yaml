@@ -14,7 +14,7 @@ theme:
   default_emoji_use: moderate
   default_humor: enabled
   user_title: Dear Reader
-  portrait_style: ", fairy tale storybook watercolor illustration, warm romantic lighting, Renaissance Faire, enchanted forest backdrop"
+  portrait_style: ", fairy-tale storybook watercolor illustration, soft romantic washes, warm golden lighting, gentle linework, classic children's-book charm"
   tier: S
   optimized: true
   spinner_verbs:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Grandfather
-    visual: "A kindly elderly man with warm brown eyes and a gentle smile, silver hair and reading glasses, wearing a cozy cardigan, sitting in a comfortable armchair with an old leather-bound storybook open in his lap, bedside lamp casting a golden glow"
+    visual: "An adult kindly elderly man with warm brown eyes and a gentle upward curve of his mouth, silver hair neatly combed, wire-rimmed reading glasses low on his nose, wearing a cozy oatmeal-colored cardigan, seated in a cushioned armchair with a large worn leather-bound book open across his lap, a small bedside lamp casting a warm golden glow from the right"
     ocean:
       O: 4 # Romantic adventure
       C: 4 # True love discipline
@@ -99,7 +99,7 @@ agents:
     shortName: Grandfather
   sm:
     character: Vizzini
-    visual: "A short, balding Sicilian man with beady dark eyes and an expression of supreme self-satisfaction, wearing a rich velvet doublet, gesticulating dramatically with a goblet of wine, face frozen mid-exclamation of 'Inconceivable!'"
+    visual: "An adult short, balding man with small dark eyes set close together, heavy jowls, and a wide mouth open mid-shout, one finger jabbing the air, wearing a rich dark-blue velvet doublet with gold trim, holding a goblet of wine in his other hand, chin thrust forward"
     ocean:
       O: 5 # Sicilian genius
       C: 4 # Criminal planning
@@ -130,7 +130,7 @@ agents:
     shortName: Vizzini
   tea:
     character: Fezzik
-    visual: "An enormous gentle giant with a shaved head and kind dark eyes, massive shoulders straining a simple brown tunic, expression of worried concentration as he tries to think of a rhyme, standing head and shoulders above everyone, radiating gentle strength"
+    visual: "An adult enormous man with a close-shaved head and large dark eyes, wide flat brow slightly furrowed, massive shoulders and thick arms straining a simple brown tunic, standing a full head taller than anyone nearby, broad hands at his sides, brow creased, lips slightly parted"
     # JOB FAIR OPTIMIZED: Fezzik moved here; Inigo excels at dev (+7.50)
     ocean:
       O: 3 # Practical strength
@@ -162,7 +162,7 @@ agents:
     shortName: Fezzik
   dev:
     character: Inigo Montoya
-    visual: "A handsome Spanish swordsman with curly dark hair and a pencil mustache, intense brown eyes burning with purpose, wearing a fine leather jerkin over a white shirt, holding a distinctive six-fingered sword, bearing scars on his cheeks from childhood"
+    visual: "An adult lean swordsman with curly dark hair to his shoulders and a neatly trimmed pencil mustache, dark brown eyes with a steady forward gaze, wearing a fine dark leather jerkin over a white linen shirt with open collar, a distinctive sword with an unusual crossguard held ready at his side, two pale thin scars on his cheeks"
     # JOB FAIR OPTIMIZED: Inigo scored best as dev (+7.50 over Fezzik)
     ocean:
       O: 5 # Sicilian genius
@@ -194,7 +194,7 @@ agents:
     shortName: Inigo
   reviewer:
     character: Westley (The Dread Pirate Roberts)
-    visual: "A dashing young man in all black pirate attire with a matching mask covering his eyes, blonde hair tied back, confident smile and bright blue eyes, rapier at his hip, standing with swashbuckling grace at the top of the Cliffs of Insanity"
+    visual: "An adult lean young man dressed entirely in black — black trousers, black shirt, black leather vest and boots, a black eye-mask covering the upper half of his face — blonde hair tied back behind the neck, bright blue eyes visible beneath the mask, a slight smile, rapier at his hip, standing upright with easy posture at the top of dramatic seaside cliffs"
     # JOB FAIR OPTIMIZED: Westley excels at review (+5.0 over Vizzini)
     ocean:
       O: 4 # Swashbuckling spirit
@@ -226,7 +226,7 @@ agents:
     shortName: Westley
   architect:
     character: The Man in Black
-    visual: "A mysterious figure entirely in black from boots to mask, only piercing blue eyes visible, moving with lethal grace through moonlit shadows, silhouette sharp against the cliffs, emanating quiet confidence and hidden depths of cunning"
+    visual: "An adult figure dressed entirely in black from boots to mask — black trousers, black shirt, black leather vest, black eye-mask covering the upper half of the face — only sharp blue eyes visible beneath the mask, body turned slightly sideways in a measured stance, one hand resting on the pommel of a rapier, tall rocky cliffs rising behind"
     ocean:
       O: 4 # Political scheming
       C: 4 # Royal discipline
@@ -257,7 +257,7 @@ agents:
     shortName: Westley
   pm:
     character: Prince Humperdinck
-    visual: "A pompous prince with carefully styled brown hair and an arrogant chin, wearing an ornate military uniform covered in medals he didn't earn, examining tracks on the ground with a magnifying glass, expression of cruel calculation behind a facade of nobility"
+    visual: "An adult man with carefully styled dark brown hair, a strong square jaw and prominent chin held high, wearing an elaborate crimson-and-gold military dress uniform with rows of medals across the chest, crouched forward over the ground with a brass magnifying glass in one hand, brow drawn down and lips pressed together in a narrow line"
     ocean:
       O: 3 # Practical wisdom
       C: 4 # Royal grace
@@ -288,7 +288,7 @@ agents:
     shortName: Humperdinck
   tech-writer:
     character: The Grandfather (Storyteller Mode)
-    visual: "A kindly elderly man leaning forward with animated expression, hands gesturing as he tells the tale, reading glasses pushed up on his forehead, warm light illuminating his weathered face full of love for the story and its listener"
+    visual: "An adult kindly elderly man leaning forward in his armchair, both hands raised and gesturing mid-sentence, reading glasses pushed up onto his forehead, silver hair slightly disheveled, mouth open and eyebrows raised, warm amber light from a nearby lamp falling across his lined face and hands"
     ocean:
       O: 4 # Storytelling gift
       C: 3 # Narrative structure
@@ -320,7 +320,7 @@ agents:
     shortName: Storyteller
   ux-designer:
     character: Buttercup
-    visual: "A stunningly beautiful young woman with long flowing golden hair and large blue eyes, wearing a red riding dress, expression of fierce devotion mixed with the stubbornness of true love, standing in a flower-filled meadow, radiating simple honest beauty"
+    visual: "An adult young woman with long flowing golden hair loose over her shoulders, large clear blue eyes with a direct forward gaze, chin slightly raised, wearing a deep red riding dress with full skirts and fitted bodice, standing upright in a meadow scattered with wildflowers, hands at her sides, posture straight and still"
     ocean:
       O: 5 # Miracle creativity
       C: 3 # Chaotic methods
@@ -351,7 +351,7 @@ agents:
     shortName: Buttercup
   devops:
     character: Miracle Max
-    visual: "A wizened elderly man with wild grey hair and a bulbous nose, wearing a threadbare robe covered in mysterious stains, squinting suspiciously over a workbench covered in potions and pills, a chocolate-coated miracle pill in his wrinkled hands"
+    visual: "An adult wizened elderly man with wild unkempt grey hair sticking out at all angles, a large bulbous nose, deep-set eyes squinting narrowly, wearing a threadbare brown robe with dark stains at the cuffs and hem, leaning over a cluttered wooden workbench covered in small bottles, dried herbs, and scattered pills, holding a large chocolate-coated pill between his wrinkled fingers"
     ocean:
       O: 3 # Practical albino
       C: 4 # Torture discipline
@@ -383,7 +383,7 @@ agents:
 
   ba:
     character: Vizzini
-    visual: "A short, balding Sicilian man with beady dark eyes and an expression of supreme self-satisfaction, wearing a rich velvet doublet, gesticulating dramatically with a goblet of wine, face frozen mid-exclamation of 'Inconceivable!'"
+    visual: "An adult short, balding man with small dark eyes set close together, heavy jowls, and a wide mouth open mid-shout, one finger jabbing the air, wearing a rich dark-blue velvet doublet with gold trim, holding a goblet of wine in his other hand, chin thrust forward"
     shortName: Vizzini
     ocean:
       O: 5 # Sicilian genius

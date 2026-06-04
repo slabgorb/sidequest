@@ -174,7 +174,7 @@ Use Context7 to verify external API examples, CLI flags, and library references 
 
 <skills>
 - `/architecture` - System documentation reference
-- `/pf:changelog` - Changelog management and release notes
+- `/pf-changelog` - Changelog management and release notes
 </skills>
 
 <exit>

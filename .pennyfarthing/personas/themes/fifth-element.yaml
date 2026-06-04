@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Meat Popsicle
-  portrait_style: ", two-thirds portrait, Klimt and Schiele painting space opera"
+  portrait_style: ", Klimt and Egon Schiele-inspired painting, decorative gold-leaf patterning, bold expressive outlines, vivid space-opera palette"
   tier: U
   dimensions:
     tone: flamboyant
@@ -65,7 +65,7 @@ agents:
   orchestrator:
     character: The Mondoshawan
     shortName: Mondoshawan
-    visual: "Massive golden-bronze armored guardian, turtle-like domed head with engravings,"
+    visual: "Adult massive golden-bronze armored guardian figure, turtle-like domed helmet with engraved geometric patterns, broad bulky torso plating, slow deliberate stance, dim ambient light catching the metalwork"
     ocean:
       O: 5  # Ancient cosmic vision
       C: 5  # Meticulous millennial planning
@@ -92,7 +92,7 @@ agents:
   sm:
     character: Ruby Rhod
     shortName: Ruby
-    visual: "Flamboyant african-american man in skintight leopard-print bodysuit"
+    visual: "Adult Black man with close-cropped hair, high-energy pose with arms wide open, wearing a skintight leopard-print bodysuit with exaggerated collar and platform boots, bright studio lighting"
     ocean:
       O: 5  # Wildly creative showmanship
       C: 3  # Chaotic but hits deadlines
@@ -119,7 +119,7 @@ agents:
   tea:
     character: Leeloo
     shortName: Leeloo
-    visual: "Young woman with bright orange bob, piercing green eyes, white bandage wrappings, studying holographic data stream, blue light on face"
+    visual: "Adult woman with a bright orange bob haircut, large green eyes, chin angled slightly downward, gaze level, white cloth bandage wrappings across shoulders and arms, cool blue holographic light washing across her face from below"
     ocean:
       O: 5  # Absorbs all knowledge instantly
       C: 4  # Methodical scanning and analysis
@@ -146,7 +146,7 @@ agents:
   dev:
     character: Korben Dallas
     shortName: Korben
-    visual: "Man with dirty blonde hair, orange tank top, arms crossed, "
+    visual: "Adult man with dirty blonde hair, square jaw, wearing an orange sleeveless tank top, arms crossed over chest, weight shifted back on one heel, neutral direct gaze"
     ocean:
       O: 3  # Practical problem solver
       C: 4  # Gets the job done right
@@ -173,7 +173,7 @@ agents:
   reviewer:
     character: Jean-Baptiste Emanuel Zorg
     shortName: Zorg
-    visual: "Man with half-shaved slicked dark hair, thin goatee"
+    visual: "Adult man with hair shaved on one side and slicked dark on the other, thin pointed goatee, sharp cheekbones, wearing a tailored dark coat with a high collar, one eyebrow raised, cool appraising gaze directed forward"
     ocean:
       O: 4  # Innovative but ruthless
       C: 5  # Demands absolute perfection
@@ -200,7 +200,7 @@ agents:
   architect:
     character: Vito Cornelius
     shortName: Cornelius
-    visual: "Earnest cleanshaven priest in black robes, round glasses, holding ancient scrolls"
+    visual: "Adult clean-shaven man in black priest robes, round wire-framed glasses, graying hair, hands cradling rolled ancient scrolls, brow slightly furrowed, eyes cast down toward the documents"
     ocean:
       O: 5  # Visionary systems thinker
       C: 4  # Structured sacred knowledge
@@ -227,7 +227,7 @@ agents:
   pm:
     character: President Lindberg
     shortName: Lindberg
-    visual: "Distinguished african-american statesman in dark suit, silver hair"
+    visual: "Adult Black man with close-cropped silver hair, square jaw, wearing a dark double-breasted suit with a white dress shirt and dark tie, shoulders back, chin level, gaze directed slightly upward"
     ocean:
       O: 3  # Pragmatic decision maker
       C: 4  # Disciplined executive process
@@ -254,7 +254,7 @@ agents:
   tech-writer:
     character: Professor Pacoli
     shortName: Pacoli
-    visual: "Elderly academic in rumpled tweed jacket, white wispy hair, egyptian ruin motifs in background"
+    visual: "Adult elderly man with wispy white hair and thin-rimmed spectacles, wearing a rumpled brown tweed jacket with elbow patches, open book in hand, background of carved stone relief panels with hieroglyph carvings, warm amber lamplight"
     ocean:
       O: 4  # Scholarly curiosity
       C: 5  # Obsessive documentation precision
@@ -281,7 +281,7 @@ agents:
   ux-designer:
     character: The Diva Plavalaguna
     shortName: Diva
-    visual: "Tall ethereal blue-skinned alien opera singer in iridescent robes, elongated head with tentacle appendages"
+    visual: "Adult tall alien figure with pale blue skin, elongated smooth skull, multiple long tentacle appendages draping from the back of the head, wearing flowing iridescent robes in shifting pearl and violet tones, standing upright with arms slightly open at the sides"
     ocean:
       O: 5  # Transcendent artistic vision
       C: 3  # Art over process
@@ -309,7 +309,7 @@ agents:
   devops:
     character: General Munro
     shortName: Munro
-    visual: "Stern clean-shaven military commander in dark uniform with medals, close-cropped gray hair, jaw set"
+    visual: "Adult clean-shaven military commander with close-cropped gray hair, wearing a dark formal uniform with rows of medals across the chest, jaw set forward, gaze fixed straight ahead, hands clasped behind the back"
     ocean:
       O: 2  # By-the-book operational
       C: 5  # Maximum operational discipline
@@ -337,7 +337,7 @@ agents:
   ba:
     character: President Lindberg
     shortName: Lindberg
-    visual: "Distinguished african-american statesman in dark suit, silver hair, commanding presence at the situation table, weighing the fate of Earth"
+    visual: "Adult Black man with close-cropped silver hair, square jaw, wearing a dark double-breasted suit with a white dress shirt and dark tie, standing at a wide briefing table with hands planted on the surface, looking down at documents spread across it"
     ocean:
       O: 4  # High openness - considers all options
       C: 4  # High conscientiousness - thorough analysis

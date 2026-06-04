@@ -11,7 +11,7 @@ Work on multiple stories in parallel using git worktrees.
 ## Quick Start
 
 ```
-/pf:session parallel
+/pf-session parallel
 ```
 
 This creates a worktree, sets up the session, and starts the TDD flow.
@@ -85,7 +85,7 @@ Ports are stored in the session file and passed to agents.
 
 | Command | Purpose |
 |---------|---------|
-| `/pf:session parallel` | Start a new parallel work session |
+| `/pf-session parallel` | Start a new parallel work session |
 | `pf git worktree list` | Show active worktrees |
 | `pf git worktree remove <name>` | Clean up a worktree |
 
@@ -94,7 +94,7 @@ Ports are stored in the session file and passed to agents.
 Same flow as main checkout:
 
 ```
-/pf:session parallel → SM → TEA → Dev → Reviewer → SM (finish)
+/pf-session parallel → SM → TEA → Dev → Reviewer → SM (finish)
 ```
 
 Agents use worktree paths from session file for all operations.

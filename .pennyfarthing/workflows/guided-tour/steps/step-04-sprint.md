@@ -23,7 +23,7 @@ Learn how Pennyfarthing organizes work using sprints, epics, and stories. Then p
 ## Completion Criteria
 - [ ] User has seen the sprint status
 - [ ] User understands the epic/story hierarchy
-- [ ] User knows how to start work with `/pf:sprint work`
+- [ ] User knows how to start work with `/pf-sprint work`
 - [ ] User understands the YAML shard structure
 </gate>
 
@@ -179,7 +179,7 @@ Sprint tracking uses a sharded YAML architecture:
 ### Story Lifecycle
 Full lifecycle: backlog → in_progress → done → archived
 - **backlog**: Story exists in YAML, not yet claimed
-- **in_progress**: Claimed via `/pf:sprint work`, Jira moved to In Progress
+- **in_progress**: Claimed via `/pf-sprint work`, Jira moved to In Progress
 - **done**: All phases complete, PR merged, Jira moved to Done
 - **archived**: Session file moved to `sprint/archive/`, YAML updated
 

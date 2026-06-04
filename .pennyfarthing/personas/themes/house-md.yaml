@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Patient
-  portrait_style: ", medical book, anatomy chart, medical illustrations"
+  portrait_style: ", vintage medical-textbook illustration, anatomical-plate engraving style, fine cross-hatched linework, muted clinical ink-and-wash palette"
   tier: S
   optimized: true
   spinner_verbs:
@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Gregory House
-    visual: "Scruffy middle-aged doctor with cane, stubbled face, piercing cynical eyes, rumpled appearance"
+    visual: "Adult male doctor in his mid-forties, lean build, heavy stubble, blue eyes with a flat direct gaze, cane held in right hand, rumpled grey T-shirt under an open button-down shirt, worn jeans"
     ocean:
       O: 5  # Very high openness - brilliant diagnostician, sees patterns
       C: 2  # Low conscientiousness - ignores rules, follows truth
@@ -97,7 +97,7 @@ agents:
 
   sm:
     character: James Wilson
-    visual: "Compassionate oncologist with warm expression, neat professional appearance, kind eyes"
+    visual: "Adult male doctor in his early forties, dark hair neatly combed, brown eyes with a steady forward gaze, clean-shaven, wearing a pressed white dress shirt with a tie and dark trousers, upright relaxed posture"
     ocean:
       O: 4  # High openness - thoughtful, philosophical
       C: 4  # High conscientiousness - responsible oncologist
@@ -124,7 +124,7 @@ agents:
 
   tea:
     character: Eric Foreman
-    visual: "Confident neurologist with shaved head, professional demeanor, determined expression"
+    visual: "Adult Black male doctor in his mid-thirties, shaved head, strong jaw, dark eyes with a steady level gaze, wearing a white lab coat over a dark collared shirt, arms folded across chest, upright posture"
     # JOB FAIR OPTIMIZED: Scored 85.0 as TEA (vs dev 72.5) - systematic neurology finds edge cases
     ocean:
       O: 3  # Medium openness - practical, focused
@@ -152,7 +152,7 @@ agents:
 
   dev:
     character: Robert Chase
-    visual: "Handsome young doctor with blonde hair, surgical scrubs"
+    visual: "Adult male doctor in his early thirties, sandy blonde hair, clean-shaven with even features, wearing light blue surgical scrubs, relaxed posture"
     # JOB FAIR OPTIMIZED: Foreman moved to TEA (85.0). Chase implements with surgical precision.
     ocean:
       O: 3  # Medium openness - practical, follows lead
@@ -180,7 +180,7 @@ agents:
 
   reviewer:
     character: Gregory House (Reviewer Mode)
-    visual: "Scruffy middle-aged doctor with cane, stubbled face, piercing cynical eyes, whiteboard visible behind"
+    visual: "Adult male doctor in his mid-forties, lean build, heavy stubble, blue eyes with a flat direct gaze, cane held in right hand, rumpled grey T-shirt under an open button-down shirt, worn jeans, large whiteboard in the background"
     ocean:
       O: 5  # Very high openness - sees what others miss
       C: 2  # Low conscientiousness - ignores protocol
@@ -207,7 +207,7 @@ agents:
 
   architect:
     character: Lisa Cuddy
-    visual: "Professional woman administrator, dark hair pulled back, authoritative stance, hospital ID badge"
+    visual: "Adult woman in her late thirties, dark hair pulled back in a neat updo, brown eyes with a direct forward gaze, wearing a tailored blazer over a blouse, hospital ID badge clipped at chest level, standing upright with shoulders squared"
     ocean:
       O: 4  # High openness - balances administration and medicine
       C: 5  # Very high conscientiousness - hospital administrator
@@ -234,7 +234,7 @@ agents:
 
   pm:
     character: Allison Cameron
-    visual: "Idealistic young female doctor with gentle expression, compassionate eyes"
+    visual: "Adult woman in her late twenties, light brown hair worn loose past the shoulders, hazel eyes with a soft downward tilt at the outer corners, wearing a white lab coat over a modest blouse, hands clasped in front, head slightly tilted"
     ocean:
       O: 4  # High openness - idealistic, sees good in people
       C: 4  # High conscientiousness - ethical, careful
@@ -261,7 +261,7 @@ agents:
 
   tech-writer:
     character: Chris Taub
-    visual: "Short male doctor with receding hairline, meticulous expression, taking notes"
+    visual: "Adult male doctor of short stature in his forties, receding dark hairline, brown eyes behind wire-rimmed glasses, wearing a white lab coat over a button-down shirt and tie, pen in hand and notepad held at chest level, head slightly bowed"
     ocean:
       O: 3  # Medium openness - practical, focused
       C: 4  # High conscientiousness - careful documentation
@@ -288,7 +288,7 @@ agents:
 
   ux-designer:
     character: Thirteen (Remy Hadley)
-    visual: "Mysterious female doctor with dark hair, intense gaze"
+    visual: "Adult woman in her early thirties, dark brown hair falling straight to the shoulders, grey-green eyes with a level unblinking gaze, wearing a white lab coat over a dark fitted top, chin slightly raised, arms at sides"
     ocean:
       O: 4  # High openness - risk-taking, experimental
       C: 3  # Medium conscientiousness - follows instincts
@@ -315,7 +315,7 @@ agents:
 
   devops:
     character: Chi Park
-    visual: "Young Asian female doctor with anxious but competent expression, slightly awkward posture"
+    visual: "Adult Asian woman in her late twenties, straight black hair in a neat ponytail, dark eyes with a slightly downcast gaze, wearing a white lab coat over a modest top, shoulders slightly hunched, arms close to the body, clipboard held in both hands"
     ocean:
       O: 3  # Medium openness - practical, by the book
       C: 5  # Very high conscientiousness - follows procedure
@@ -341,7 +341,7 @@ agents:
     shortName: Park
   ba:
     character: Lisa Cuddy (Hospital Administrator)
-    visual: "Professional woman administrator with dark hair, wearing elegant professional attire, sitting at desk with hospital budgets and patient files"
+    visual: "Adult woman in her late thirties, dark hair pulled back in a neat updo, brown eyes with a direct forward gaze, wearing a tailored blazer over a blouse, seated at a large desk with stacked folders and a telephone, posture upright and composed"
     ocean:
       O: 4
       C: 5

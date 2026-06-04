@@ -62,7 +62,7 @@ git -C {repo_path} branch --merged develop | grep -v "develop\|main" | xargs -r 
 To run git-cleanup again:
 
 ```
-/pf:git cleanup
+/pf-git cleanup
 ```
 
 Or for a quick status check across all repos:

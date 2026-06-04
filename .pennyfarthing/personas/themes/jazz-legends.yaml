@@ -14,7 +14,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Cat
-  portrait_style: ", vintage jazz album cover, smoky jazz club, high contrast black and white, bebop era, 1950s graphic design"
+  portrait_style: ", 1950s jazz illustration, bold mid-century graphic design, high-contrast black and white with one spot color, screen-printed texture"
   tier: B
   optimized: true
   spinner_verbs:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Duke Ellington
-    visual: "Elegant big band leader in formal suit, refined posture, piano keys visible"
+    visual: "Adult male bandleader in a well-tailored dark formal suit, upright posture, seated at a grand piano with keys visible, hands poised above the keys, head slightly lifted, chin forward, looking out with a calm steady gaze"
     shortName: Duke
     ocean:
       O: 5  # Very high openness - orchestral jazz innovation
@@ -96,7 +96,7 @@ agents:
 
   sm:
     character: Charlie Parker
-    visual: "Brilliant bebop saxophonist with animated expression, fast fingers suggested, genius energy"
+    visual: "Adult male alto saxophonist mid-performance, lips on the mouthpiece, cheeks slightly puffed, eyes open and alert, fingers spread across the keys of a curved alto saxophone, shoulders forward, body leaning into the horn"
     shortName: Bird
     # JOB FAIR OPTIMIZED: Parker moved here; Miles excels at dev (+15.62)
     ocean:
@@ -124,7 +124,7 @@ agents:
 
   tea:
     character: John Coltrane
-    visual: "Spiritual saxophonist with eyes closed in concentration, intense expression"
+    visual: "Adult male tenor saxophonist standing with eyes closed, head tilted slightly back, brow drawn together, fingers curved around the keys of an upright tenor saxophone, lips sealed on the mouthpiece, body still"
     shortName: Coltrane
     ocean:
       O: 5  # Very high openness - spiritual quest
@@ -151,7 +151,7 @@ agents:
 
   dev:
     character: Miles Davis
-    visual: "Cool trumpet player with intense gaze, turned slightly away, modern and introspective"
+    visual: "Adult male trumpet player in a dark turtleneck, body angled away from the viewer, head turned with a direct sideways glance, trumpet held at his side, jaw set, lips pressed together, posture upright and still"
     shortName: Miles
     # JOB FAIR OPTIMIZED: Miles scored best as dev (+15.62 over Parker)
     ocean:
@@ -179,7 +179,7 @@ agents:
 
   reviewer:
     character: Thelonious Monk
-    visual: "Eccentric pianist with distinctive hat, angular features, unique hand position"
+    visual: "Adult male pianist seated at an upright piano, wearing a brimmed felt hat pushed back on his head, sharp angular cheekbones and jawline, fingers positioned flat and spread on the keys in an unconventional horizontal hand posture, gaze fixed on the middle distance"
     shortName: Monk
     ocean:
       O: 5  # Very high openness - utterly unique
@@ -206,7 +206,7 @@ agents:
 
   architect:
     character: Charles Mingus
-    visual: "Powerful bass player with passionate expression, large hands on upright bass, emotional intensity"
+    visual: "Adult male double bass player standing beside a tall upright bass, large broad hands gripping the strings, mouth open wide, brow furrowed, shoulders raised, body leaning into the instrument with weight forward"
     shortName: Mingus
     ocean:
       O: 5  # Very high openness - classical-jazz fusion
@@ -233,7 +233,7 @@ agents:
 
   pm:
     character: Ella Fitzgerald
-    visual: "Graceful female vocalist with elegant bearing, perfect posture, warm confident smile"
+    visual: "Adult female vocalist standing at a microphone, back straight, chin lifted, a broad open smile with lips parted, teeth visible, hands loosely clasped in front, wearing a fitted evening gown, gaze directed forward"
     shortName: Ella
     ocean:
       O: 4  # High openness - scat innovation
@@ -260,7 +260,7 @@ agents:
 
   tech-writer:
     character: Wynton Marsalis
-    visual: "Distinguished trumpet player and educator, formal attire, scholarly appearance"
+    visual: "Adult male trumpet player in a dark formal suit and tie, trumpet held at waist level in both hands, chin up, eyes forward with a composed steady look, clean-shaven, trim build, upright stance"
     shortName: Wynton
     ocean:
       O: 4  # High openness - honors tradition
@@ -287,7 +287,7 @@ agents:
 
   ux-designer:
     character: Louis Armstrong
-    visual: "Joyful trumpet player with iconic wide smile, charismatic expression, infectious happiness"
+    visual: "Adult male trumpet player, broad full smile showing teeth, cheeks rounded, eyes crinkled at the corners, trumpet held out to the side in one hand, other hand open and raised at chest height, wearing a dark suit with a white pocket square"
     shortName: Satchmo
     ocean:
       O: 5  # Very high openness - invented jazz singing
@@ -314,7 +314,7 @@ agents:
 
   devops:
     character: Count Basie
-    visual: "Understated pianist at keyboard, economical movements, subtle power, cool efficiency"
+    visual: "Adult male pianist seated at a piano, fingers resting lightly on the keys, body still and upright, head level, eyes half-closed, minimal gesture, wearing a dark suit, one hand barely lifted above the keys"
     shortName: Count
     ocean:
       O: 4  # High openness - economical innovation
@@ -342,7 +342,7 @@ agents:
 
   ba:
     character: Nat Hentoff
-    visual: "Sophisticated jazz critic with horn-rimmed glasses, neat goatee, wearing sweater and beret, notebook always in hand, analytical listening expression"
+    visual: "Adult male critic with thick horn-rimmed glasses, neatly trimmed goatee, wearing a dark crewneck sweater and soft beret, a small notebook held open in one hand, head tilted slightly forward, eyes attentive behind the lenses, lips closed and level"
     ocean:
       O: 5  # Very high openness - deep jazz knowledge
       C: 4  # High conscientiousness - rigorous criticism

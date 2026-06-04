@@ -169,7 +169,7 @@ Display completion message:
 - sprint/future.yaml (UPDATED)
 
 Next steps:
-- Use `/pf:sprint` to view the backlog
+- Use `/pf-sprint` to view the backlog
 - Use `pf sprint epic promote` to move to a sprint when ready
 ```
 

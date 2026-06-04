@@ -27,7 +27,7 @@ the persona do?" We're running it live with our themed characters.
 <instructions>
 1. Enter party mode with the selected agents using the prepared stimulus
 
-2. Use the Skill tool to invoke `/pf:party-mode` with:
+2. Use the Skill tool to invoke `/pf-party-mode` with:
    - The stimulus prompt as the initial topic
    - The code snippet or situation brief as context
 
@@ -52,7 +52,7 @@ the persona do?" We're running it live with our themed characters.
 </instructions>
 
 <actions>
-- Run: `/pf:party-mode` with stimulus content
+- Run: `/pf-party-mode` with stimulus content
 </actions>
 
 ## Recording Template

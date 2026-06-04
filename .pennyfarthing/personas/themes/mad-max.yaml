@@ -23,7 +23,7 @@ theme:
   default_humor: disabled
   character_immersion: high
   user_title: Stranger
-  portrait_style: ", movie storyboard art, rough charcoal and sepia sketch, dynamic action lines, dusty wasteland atmosphere"
+  portrait_style: ", movie-storyboard illustration, rough charcoal and sepia sketch, dynamic gestural action lines, smudged dusty texture, high-contrast harsh light"
   tier: U
   optimized: 2026-01-12
   optimization_source: job-fair/mad-max-20260112-060650
@@ -77,7 +77,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Dag
-    visual: "A gaunt prophet-like figure in flowing white rags"
+    visual: "An adult gaunt figure in flowing white rags, angular face, hollow cheeks, bareheaded, standing upright amid swirling dust"
     ocean:
       O: 5
       C: 2
@@ -109,7 +109,7 @@ agents:
   # OPTIMIZED: Mechanic moved from tea (66.25) to sm (90.0)
   sm:
     character: The Organic Mechanic
-    visual: "A hulking figure in butcher's apron and medical mask, half-surgeon half-mechanic, armored in tubes and plastic masks"
+    visual: "An adult hulking figure in a stained butcher's apron and rubber medical mask, heavy build, bare arms, chest strapped with clear plastic tubes and salvaged gear, standing with arms at sides"
     ocean:
       O: 3
       C: 5
@@ -142,7 +142,7 @@ agents:
   # OPTIMIZED: Furiosa moved from sm (90.0) to tea (75.0) - best tea performer
   tea:
     character: Imperator Furiosa
-    visual: "A battle-hardened female warrior with shaved head and grease-paint forehead"
+    visual: "An adult woman with a shaved head and dark grease-paint smeared across her forehead, strong jaw, steady gaze forward, wearing weathered tactical vest and one prosthetic arm, dust on her face and shoulders"
     ocean:
       O: 3
       C: 5
@@ -175,7 +175,7 @@ agents:
   # OPTIMIZED: Word Burgers moved from tech-writer to dev (75.0) - best dev performer
   dev:
     character: The Word Burgers
-    visual: "Wasteland scribes in goggles and gas masks, surrounded by salvaged papers and hand-cranked printing presses"
+    visual: "Adult wasteland scribes in scratched goggles and worn gas masks, hunched over salvaged metal plates, salvaged mechanical press frames around them, ink-stained gloves, heavy coats patched with scrap cloth"
     ocean:
       O: 3
       C: 5
@@ -206,7 +206,7 @@ agents:
     benchmark_score: 75.0
   reviewer:
     character: Immortan Joe
-    visual: "A towering warlord in grotesque breathing apparatus and armor made of medals, white hair flowing"
+    visual: "An adult towering man in a large clear breathing apparatus covering the lower face, heavy layered armor of scavenged plastic and metal, rows of medals across the chest, long white hair flowing, standing with chest out and arms apart"
     ocean:
       O: 2
       C: 5
@@ -237,7 +237,7 @@ agents:
     benchmark_score: 91.25
   architect:
     character: The History Men
-    visual: "Elderly scribes in the ruins of Tomorrow-morrow Land, surrounded by salvaged books and drawings, mapping the world that was and the world that could be, preserving knowledge on cave walls and found paper"
+    visual: "Adult elderly scribes amid crumbling concrete ruins, surrounded by stacked bound volumes and hand-drawn diagrams on bare stone wall, etching marks onto a flat stone surface, dusty robes, thin grey hair, bent posture over their work"
     ocean:
       O: 5
       C: 4
@@ -267,7 +267,7 @@ agents:
     shortName: History Men
   pm:
     character: Aunty Entity
-    visual: "A regal leader in chainmail dress and towering wig made of salvage, african american woman"
+    visual: "An adult Black woman in a chainmail dress with exposed shoulders, towering sculptural wig built from salvaged wire and fabric, upright posture, chin raised, hands resting at her sides"
     ocean:
       O: 4
       C: 4
@@ -298,7 +298,7 @@ agents:
   # OPTIMIZED: Max moved from dev (61.25) to tech-writer - sparse style fits docs
   tech-writer:
     character: Max Rockatansky
-    visual: "A weathered road warrior in dusty leather jacket, wild hair and scarred face, haunted eyes that have seen too much, carrying improvised weapons, standing alone against the wasteland but always drawn to help"
+    visual: "An adult man in a cracked dusty leather jacket, dark unkempt hair, stubbled jaw with a faded scar across one cheek, grey eyes with a downward gaze, improvised leg brace on the left knee, carrying a sawn-off shotgun slung over one shoulder, standing alone in open wasteland"
     ocean:
       O: 3
       C: 4
@@ -328,7 +328,7 @@ agents:
     shortName: Max
   ux-designer:
     character: Toast the Knowing
-    visual: "A young warrior woman in wrapped scarves and desert gear, sharp intelligent eyes"
+    visual: "An adult young woman in wrapped linen scarves and layered desert gear, dark eyes with a level forward gaze, lean build, short dark hair, arms crossed, dust on her clothing"
     ocean:
       O: 4
       C: 4
@@ -358,7 +358,7 @@ agents:
     shortName: Toast
   devops:
     character: The Doof Warrior
-    visual: "A mutant guitarist in red onesie suspended from a massive speaker truck, blind eyes masked, shredding a flame-throwing guitar"
+    visual: "An adult male figure in a bright red full-body suit, suspended by bungee cords from a towering speaker rig mounted on a truck, eyes covered by a black leather mask, playing a heavily modified double-necked guitar with a flamethrower nozzle at the headstock, body leaning back mid-strum"
     ocean:
       O: 5
       C: 3
@@ -389,7 +389,7 @@ agents:
     shortName: Doof
   ba:
     character: The Dag
-    visual: "A gaunt prophet-like figure in flowing white rags, wild eyes that see what others miss, angular face weathered by the wasteland, standing amid the chaos with seeds clutched in hand"
+    visual: "An adult gaunt figure in flowing white rags, angular face, hollow cheeks, bareheaded, standing upright amid swirling dust with a small pouch of seeds clutched in one hand"
     ocean:
       O: 4  # Questions everything
       C: 4  # Methodical observation

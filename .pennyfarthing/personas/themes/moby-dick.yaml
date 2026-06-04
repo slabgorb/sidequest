@@ -14,7 +14,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Shipmate
-  portrait_style: ", maritime oil painting, stormy sea backdrop, dark oceanic tones, scrimshaw details"
+  portrait_style: ", maritime oil painting, thick impasto brushwork, dark stormy oceanic tones, dramatic seafaring chiaroscuro, scrimshaw-fine detailing"
   tier: U
   optimized: true
   spinner_verbs:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Captain Ahab
-    visual: "Obsessed whaling captain with grizzled beard, ivory peg leg visible, scarred face, burning monomanic eyes"
+    visual: "Adult whaling captain, tall and gaunt, grizzled grey beard, deep-set dark eyes with a fixed forward stare, jaw set hard, ivory prosthetic leg planted on the deck, long weathered coat, wool watch cap, hands gripping the rail"
     ocean:
       O: 4  # High openness - philosophical obsession
       C: 5  # Very high conscientiousness - monomaniacal focus
@@ -95,7 +95,7 @@ agents:
 
   sm:
     character: Starbuck
-    visual: "Quaker first mate with honest weathered face, moral concern in eyes, practical seaman's clothes"
+    visual: "Adult first mate, lean build, weather-lined face, steady grey eyes, dark brows drawn together, clean-shaven jaw, plain dark wool coat and trousers, hands clasped behind the back, standing upright on deck"
     ocean:
       O: 3  # Medium openness - practical, Quaker values
       C: 5  # Very high conscientiousness - responsible first mate
@@ -122,7 +122,7 @@ agents:
 
   tea:
     character: Ishmael
-    visual: "Young philosophical sailor with observant thoughtful expression, everyman features"
+    visual: "Adult young sailor, medium build, brown hair loosely kept, open round face, brown eyes looking slightly off to the side, plain loose linen shirt, canvas trousers, worn leather belt, standing at the ship's rail with hands resting on it"
     ocean:
       O: 5  # Very high openness - philosophical observer
       C: 3  # Medium conscientiousness - floater, contemplative
@@ -149,7 +149,7 @@ agents:
 
   dev:
     character: Moby Dick
-    visual: "Massive white sperm whale emerging from water, ancient and inscrutable, scarred from harpoons"
+    visual: "Massive sperm whale, chalk-white skin, barnacled and heavily scarred, enormous blunt head breaching the dark sea surface, one eye visible at the waterline, ocean churning white around the vast body"
     # JOB FAIR OPTIMIZED: Moby Dick scored best as dev (+5.62 over Queequeg)
     ocean:
       O: 1  # Very low openness - force of nature
@@ -177,7 +177,7 @@ agents:
 
   reviewer:
     character: Queequeg
-    visual: "Polynesian harpooner with elaborate tattoos covering face and body, exotic features, quiet noble strength"
+    visual: "Adult Pacific Islander harpooner, broad-shouldered and muscular, dark brown skin covered in dense blue-black geometric tattoos from forehead to wrist, wide-set dark eyes, strong jaw, long black hair, loose canvas trousers, barefoot on the deck, harpoon held upright at his side"
     # JOB FAIR OPTIMIZED: Queequeg moved here; Moby Dick excels at dev (+5.62)
     ocean:
       O: 4  # High openness - adapted to new world
@@ -205,7 +205,7 @@ agents:
 
   architect:
     character: Father Mapple
-    visual: "Former whaler turned preacher in ship-bow pulpit, weathered hands raised, fire-and-brimstone expression"
+    visual: "Adult preacher, older man, thick white hair swept back, deep-lined weathered face, dark eyes wide and upward-cast, both arms raised palms-out, standing in a wooden pulpit shaped like a ship's bow, black ministerial coat, white collar, ropes hanging beside the pulpit"
     ocean:
       O: 5  # Very high openness - spiritual insight
       C: 5  # Very high conscientiousness - dedicated preacher
@@ -232,7 +232,7 @@ agents:
 
   pm:
     character: Stubb
-    visual: "Cheerful second mate with pipe in mouth, easy-going smile, laughing at fate"
+    visual: "Adult second mate, stocky build, round ruddy face, crow's feet at the corners of blue eyes, mouth curved up at one corner, clay pipe clenched in his teeth, loose wool jacket, canvas trousers, standing easy with arms crossed"
     ocean:
       O: 3  # Medium openness - practical, good-humored
       C: 4  # High conscientiousness - competent second mate
@@ -259,7 +259,7 @@ agents:
 
   tech-writer:
     character: Ishmael (Narrator)
-    visual: "Young philosophical sailor with observant thoughtful expression, everyman features, holding quill and journal"
+    visual: "Adult young sailor, medium build, brown hair loosely kept, open round face, brown eyes cast downward at a leather-bound journal, plain loose linen shirt, canvas trousers, seated on a deck coil of rope with quill in hand and journal open on one knee"
     ocean:
       O: 5  # Very high openness - encyclopedic curiosity
       C: 4  # High conscientiousness - documents everything
@@ -286,7 +286,7 @@ agents:
 
   ux-designer:
     character: Pip
-    visual: "Young African cabin boy with haunted wide eyes, having seen the infinite"
+    visual: "Adult young cabin boy, small slight frame, dark brown skin, large dark eyes open wide and fixed on the middle distance, mouth slightly parted, simple loose cotton shirt and trousers, barefoot, sitting hunched on a coil of rope with both hands pressed flat on his knees"
     ocean:
       O: 5  # Very high openness - sees too much after madness
       C: 2  # Low conscientiousness - shattered by experience
@@ -313,7 +313,7 @@ agents:
 
   devops:
     character: Perth
-    visual: "Ship's blacksmith with massive arms, forge-burned hands, hammer and anvil, grief-hollowed face"
+    visual: "Adult blacksmith, broad chest and heavily muscled arms, scarred and soot-blackened hands, gaunt hollow cheeks, deep-set eyes with dark circles, close-cropped grey hair, heavy leather apron over a rough linen shirt, standing at an anvil with hammer in hand, forge glowing orange behind him"
     ocean:
       O: 2  # Low openness - practical craftsman
       C: 5  # Very high conscientiousness - master of his trade
@@ -339,7 +339,7 @@ agents:
     shortName: Perth
   ba:
     character: Ishmael (Analyst)
-    visual: "Young philosophical sailor with observant thoughtful expression, notebook in hand, analyzing everything from multiple perspectives"
+    visual: "Adult young sailor, medium build, brown hair loosely kept, open round face, brown eyes scanning a small notebook held in one hand, plain loose linen shirt, canvas trousers, leaning against the ship's mast with one foot crossed over the other"
     ocean:
       O: 5  # Philosophical observer
       C: 4  # Methodical chronicler

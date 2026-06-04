@@ -65,9 +65,11 @@ stories:
     title: 'Source coverage: sync stateful snapshot.npcs into the entity index — add an Npc projector path (project_npc_card currently takes only NpcPoolMember) and extend sync_entity_cards so scene-stateful NPCs, not just pool members, are retrievable.'
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-04'
     review_verdict: approved
   - id: 76-7
     title: 'Source coverage: sync factions + locations into the entity index — wire faction (world lore) and location (diffuse: room graph / world_materialization / PG promotions) sources through project_faction_card/project_location_card so entity_sync.{faction,location}_count stop reading 0. Makes the universal index actually universal.'

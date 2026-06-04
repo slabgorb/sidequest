@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Doctor
-  portrait_style: ", Norman Rockwell Saturday Evening Post illustration, warm nostalgic Americana, soft lighting, idealized realism, painterly brushstrokes, 1950s illustration style"
+  portrait_style: ", Norman Rockwell-style illustration, warm nostalgic Americana, soft idealized realism, painterly brushstrokes, 1950s American magazine illustration"
   tier: A
   optimized: true
   spinner_verbs:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Colonel Sherman Potter
-    visual: "A weathered older man in his sixties with silver hair and kind eyes, wearing an olive drab Army officer's uniform with colonel insignia, cavalry riding crop in hand, warm fatherly expression"
+    visual: "An adult weathered man in his sixties, silver hair, pale steady eyes, deep-set lines on a square jaw, wearing an olive drab Army officer's uniform with colonel insignia on the collar, cavalry riding crop held loosely at his side, chin slightly lifted, shoulders square"
     shortName: Potter
     ocean:
       O: 4  # Medical wisdom
@@ -99,7 +99,7 @@ agents:
 
   sm:
     character: Hawkeye Pierce
-    visual: "A lanky dark-haired man in his thirties with expressive eyes and sardonic grin, wearing a Hawaiian shirt under an Army jacket, martini glass in hand"
+    visual: "An adult lanky man in his thirties, dark tousled hair, dark eyes, one corner of the mouth pulled back in a half-grin, wearing a loud floral short-sleeve shirt in bright tropical colors under an unbuttoned olive Army field jacket, one hand loosely holding a martini glass, posture relaxed and slightly leaning"
     shortName: Hawkeye
     # JOB FAIR OPTIMIZED: Hawkeye scored 90.0 as SM (Radar moved to TEA at 95.0)
     ocean:
@@ -132,7 +132,7 @@ agents:
 
   tea:
     character: Radar O'Reilly
-    visual: "A young bespectacled man with boyish round face and oversized glasses, wearing Army fatigues with corporal stripes, clutching a clipboard and teddy bear, anxious but alert expression"
+    visual: "An adult young man with a round, clean-shaven face, thick round wire-rimmed glasses, wearing Army green fatigues with corporal chevrons on the sleeve, a clipboard tucked under one arm, a small stuffed bear clutched against his chest, eyes wide and slightly upward"
     shortName: Radar
     # JOB FAIR OPTIMIZED: Scored 95.0 as TEA - precognitive abilities find edge cases
     ocean:
@@ -165,7 +165,7 @@ agents:
 
   dev:
     character: Major Charles Emerson Winchester III
-    visual: "A portly aristocratic man in his forties with distinguished features, wearing surgical scrubs with sleeves rolled up, focused determined expression"
+    visual: "An adult heavyset man in his forties, broad-shouldered, broad forehead, strong jaw, dark hair neatly combed back, wearing surgical scrubs with the sleeves rolled to the elbow, arms resting on a surface, chin slightly raised, gaze directed downward at work"
     shortName: Winchester
     # JOB FAIR 2026-01-21: Scored 71.9 as Dev (best) - aristocratic precision in implementation
     ocean:
@@ -198,7 +198,7 @@ agents:
 
   reviewer:
     character: Colonel Sherman Potter
-    visual: "A weathered older man in his sixties with silver hair and kind eyes, wearing reading glasses perched on nose, reviewing documents with cavalry riding crop on desk"
+    visual: "An adult weathered man in his sixties, silver hair, pale steady eyes, deep-set lines on a square jaw, wearing reading glasses perched at the end of his nose, leaning slightly forward over a sheaf of documents, a cavalry riding crop resting on the desk beside him"
     shortName: Potter
     # JOB FAIR 2026-01-21: Scored 91.9 as Reviewer (tied best) - decades of experience catch everything
     ocean:
@@ -231,7 +231,7 @@ agents:
 
   architect:
     character: Major Margaret Houlihan
-    visual: "A striking blonde woman in her thirties with military bearing, wearing Army nurse's uniform with major's insignia, standing at a whiteboard with architectural diagrams"
+    visual: "An adult woman in her thirties, blonde hair pulled back tightly, square jaw, blue eyes, back straight and shoulders squared, wearing an Army nurse's uniform with major's gold oak leaf insignia on the collar, standing with one arm raised and pointing"
     shortName: Margaret
     # JOB FAIR 2026-01-21: Scored 82.5 as Architect (tied best) - evolved from rigid to pragmatic
     ocean:
@@ -264,7 +264,7 @@ agents:
 
   pm:
     character: Major Margaret Houlihan
-    visual: "A striking blonde woman in her thirties with military bearing, wearing immaculate Army nurse's uniform with major's insignia, stern yet softening expression"
+    visual: "An adult woman in her thirties, blonde hair neatly pinned, square jaw, blue eyes looking directly forward, back straight, wearing an immaculate Army nurse's uniform with major's gold oak leaf insignia on the collar, arms at her sides, chin level"
     shortName: Margaret
     ocean:
       O: 3  # Practical nursing
@@ -294,7 +294,7 @@ agents:
 
   tech-writer:
     character: Father Francis Mulcahy
-    visual: "A thin gentle man with receding hairline and round glasses, wearing priest's cassock with Army chaplain cross, serene peaceful expression"
+    visual: "An adult slender man with a receding hairline, round wire-rimmed glasses, wearing a black priest's cassock with a small cross on the chest, hands loosely clasped at the waist, standing upright with a slight forward lean, gaze lowered and relaxed"
     shortName: Mulcahy
     ocean:
       O: 3  # Conventional faith
@@ -326,7 +326,7 @@ agents:
 
   ux-designer:
     character: Corporal Maxwell Klinger
-    visual: "A dark-haired mustachioed man wearing an elaborate woman's dress over his Army uniform, large dangly earrings, theatrical dramatic pose"
+    visual: "An adult man with dark hair and a thick dark mustache, wearing a brightly colored floral woman's dress layered over Army fatigues visible at the collar, large dangling earrings, one hand on hip, the other arm extended outward, chin up"
     shortName: Klinger
     ocean:
       O: 3  # Practical creativity
@@ -356,7 +356,7 @@ agents:
 
   devops:
     character: Radar O'Reilly (DevOps)
-    visual: "A young bespectacled man with boyish round face, wearing Army fatigues with corporal stripes, grape Nehi soda bottle in hand, anxious anticipatory expression"
+    visual: "An adult young man with a round, clean-shaven face, thick round wire-rimmed glasses, wearing Army green fatigues with corporal chevrons on the sleeve, holding a bottle of grape soda at his side, eyebrows slightly raised, head tilted"
     shortName: Radar
     ocean:
       O: 2  # Traditional Korean
@@ -386,7 +386,7 @@ agents:
 
   ba:
     character: Radar O'Reilly
-    visual: "A young bespectacled man with boyish round face and oversized glasses, wearing Army fatigues with corporal stripes, clutching a clipboard and teddy bear, anxious but alert expression"
+    visual: "An adult young man with a round, clean-shaven face, thick round wire-rimmed glasses, wearing Army green fatigues with corporal chevrons on the sleeve, a clipboard tucked under one arm, a small stuffed bear clutched against his chest, eyes wide and slightly upward"
     shortName: Radar
     ocean:
       O: 4  # Anticipates possibilities

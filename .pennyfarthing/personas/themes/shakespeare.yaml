@@ -14,7 +14,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Good Patron
-  portrait_style: ", Elizabethan portrait, Tudor court, rich velvet, theatrical candlelight, Globe Theatre"
+  portrait_style: ", Elizabethan oil-painting portrait, Tudor panel-painting style, rich dark varnished tones with jewel-toned velvets, fine cracked-varnish texture, candlelit chiaroscuro"
   tier: B
   dimensions:
     tone: dramatic
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Chorus
-    visual: "A robed figure in simple dark theatrical cloak with hood partially raised, holding a scroll, face partly shadowed with knowing theatrical expression, gesturing as if addressing an audience"
+    visual: "An adult figure in a simple dark theatrical cloak with hood partially raised, face partly in shadow, one arm extended palm-outward toward the viewer, holding a scroll in the other hand, standing on an empty wooden stage with minimal candlelight behind"
     ocean:
       O: 5  # Meta-theatrical vision
       C: 4  # Structured narration
@@ -92,7 +92,7 @@ agents:
     shortName: Chorus
   sm:
     character: Prospero
-    visual: "An elderly bearded man with long flowing white hair and wise penetrating eyes, wearing elaborate magician's robes with mystical symbols, holding a wooden staff, dignified commanding presence"
+    visual: "An adult elderly man with a long white beard and long flowing white hair, wearing deep-blue magician's robes embroidered with stars and mystical symbols, holding a tall wooden staff upright, standing upright with shoulders back, chin raised"
     # JOB FAIR VALIDATED: Scored 92.5 as SM - already optimal
     ocean:
       O: 4  # Magical imagination
@@ -120,7 +120,7 @@ agents:
     shortName: Prospero
   tea:
     character: Hamlet, Prince of Denmark
-    visual: "A young melancholic prince in dark Renaissance doublet with white collar, pale complexion and troubled dark eyes, holding a skull in contemplation, thoughtful brooding expression"
+    visual: "An adult young man in a dark Renaissance doublet with white linen collar, pale complexion, dark eyes with heavy lids, lips pressed together, holding a skull at chest height and gazing at it with head slightly bowed"
     # JOB FAIR VALIDATED: Scored 87.5 as TEA - introspective analysis finds edge cases
     ocean:
       O: 4  # Philosophical depth
@@ -148,7 +148,7 @@ agents:
     shortName: Hamlet
   dev:
     character: Puck (Robin Goodfellow)
-    visual: "A mischievous sprite with pointed ears and wild tousled hair, wearing ragged woodland clothing of leaves and earth tones, impish grinning face with bright clever eyes, crouched ready to spring"
+    visual: "An adult slight figure with pointed ears and wild tousled brown hair, wearing ragged woodland clothing of sewn leaves and earth-toned scraps, wide grin showing teeth, bright wide-open eyes, body crouched low with weight on the balls of the feet, arms spread"
     ocean:
       O: 3  # Mischievous tricks
       C: 4  # Swift execution
@@ -175,7 +175,7 @@ agents:
     shortName: Puck
   reviewer:
     character: Portia
-    visual: "A young noblewoman dressed as a male lawyer in Renaissance legal robes and scholar's cap, intelligent sharp-featured face, holding legal documents, confident penetrating gaze"
+    visual: "An adult young woman in masculine Renaissance legal robes and a black scholar's cap, sharp cheekbones and a straight nose, dark eyes looking directly forward, holding a sheaf of documents in both hands, posture upright"
     ocean:
       O: 4  # Legal brilliance
       C: 4  # Meticulous analysis
@@ -202,7 +202,7 @@ agents:
     shortName: Portia
   architect:
     character: Oberon, King of the Fairies
-    visual: "A tall regal fairy king with crown of twisted branches and leaves, ethereal handsome features with otherworldly eyes, wearing flowing midnight blue robes with starlight patterns, commanding imperious expression"
+    visual: "An adult tall man with a crown of twisted branches and silver leaves, high cheekbones, pale luminous skin, light-colored eyes with wide irises, wearing flowing midnight-blue robes with silver starlight patterns, one arm raised and index finger pointed upward, chin lifted"
     ocean:
       O: 5  # Enchanted vision
       C: 4  # Royal planning
@@ -229,7 +229,7 @@ agents:
     shortName: Oberon
   pm:
     character: King Henry V
-    visual: "A young king in battle armor with royal surcoat, crown set upon warrior's helmet, noble determined face with inspiring eyes, holding sword upright, charismatic rallying expression"
+    visual: "An adult young man in full plate battle armor with a royal surcoat over the chest, a gold crown mounted on the helmet, square jaw, dark eyes, mouth open mid-shout, holding a sword raised overhead with both hands, body leaning forward"
     ocean:
       O: 4  # Strategic vision
       C: 4  # Warrior discipline
@@ -256,7 +256,7 @@ agents:
     shortName: Henry
   tech-writer:
     character: Horatio
-    visual: "A young scholar in simple dark Renaissance student's attire with modest collar, honest open face with loyal steady eyes, holding quill and journal, dependable thoughtful expression"
+    visual: "An adult young man in simple dark Renaissance student's attire with a modest white collar, light brown hair, calm brown eyes looking slightly downward, lips closed, holding a quill poised above an open journal, weight balanced evenly"
     ocean:
       O: 4  # Scholarly mind
       C: 4  # Faithful recording
@@ -283,7 +283,7 @@ agents:
     shortName: Horatio
   ux-designer:
     character: Viola
-    visual: "A young woman cleverly disguised in male Renaissance page's clothing, delicate features with quick intelligent eyes, cap covering most of her hair, adaptable alert expression"
+    visual: "An adult young woman dressed in male Renaissance page's clothing, slender build, fine-boned face, hazel eyes, a fitted cap covering most of her hair, lips parted slightly, head turned a quarter turn to one side as if listening"
     ocean:
       O: 4  # Gender-bending wit
       C: 3  # Adaptive survival
@@ -310,7 +310,7 @@ agents:
     shortName: Viola
   devops:
     character: Caliban
-    visual: "A rough creature with wild matted hair and weathered earthy skin, wearing crude garments of animal skins and rough cloth, strong brutish features but knowing eyes, resentful yet capable expression"
+    visual: "An adult rough-built figure with wild matted dark hair and weathered earth-toned skin, heavy brow, wide flat nose, wearing crude garments of animal skins and rough woven cloth, standing with shoulders hunched and arms hanging low, jaw set"
     ocean:
       O: 3  # Island knowledge
       C: 5  # Infrastructure mastery
@@ -337,7 +337,7 @@ agents:
     shortName: Caliban
   ba:
     character: Portia (Analyst)
-    visual: "A young noblewoman dressed as a male lawyer in Renaissance legal robes and scholar's cap, intelligent sharp-featured face, analytical penetrating gaze"
+    visual: "An adult young woman in masculine Renaissance legal robes and a black scholar's cap, sharp cheekbones and a straight nose, dark eyes fixed directly forward, posture upright, hands clasped in front holding a folded document"
     ocean:
       O: 4  # Legal brilliance
       C: 5  # Meticulous analysis

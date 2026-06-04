@@ -24,13 +24,13 @@ model: haiku
 <gate>
 ## Research Steps
 
-- [ ] Use `/pf:sprint backlog` for initial backlog scan:
+- [ ] Use `/pf-sprint backlog` for initial backlog scan:
   ```bash
   pf sprint backlog
   ```
-- [ ] Use `/pf:jira` skill to enrich with Jira status/assignee:
-  - `/pf:jira search "project=PROJ AND sprint in openSprints()"` - Get all sprint stories
-  - `/pf:jira view {JIRA_KEY}` - Check individual story details
+- [ ] Use `/pf-jira` skill to enrich with Jira status/assignee:
+  - `/pf-jira search "project=PROJ AND sprint in openSprints()"` - Get all sprint stories
+  - `/pf-jira view {JIRA_KEY}` - Check individual story details
 - [ ] Check context availability
 - [ ] Check dependencies
 - [ ] Output report with recommendations
@@ -82,6 +82,7 @@ Other formats break Frame GUI detection.
 - [ ] Check workflow permissions (auto-prompt for missing)
 - [ ] If Jira enabled AND story has a jira key: claim story in Jira
 - [ ] Write session file with Workflow Tracking section
+- [ ] Create story context file (see Step 4b)
 - [ ] Create feature branch
 - [ ] Update sprint YAML status
 </gate>
@@ -232,24 +233,71 @@ Each entry: what was changed, what the spec said, and why.
 <!-- Agents: append deviations below this line. Do not edit other agents' entries. -->
 ```
 
-## Step 5: Create Branch
+## Step 4b: Create Story Context
 
-Check if the repo uses stacked PRs (see ADR-0036):
+The TDD `tea-context` entry gate and the `sm-setup-exit` story-context check
+run `pf validate context-story {STORY_ID}`, which requires
+`sprint/context/context-story-{STORY_ID}.md` to exist. Generate it
+deterministically from the sprint YAML so the gate passes on a real artifact
+(not the SM-Assessment fallback):
 
 ```bash
-# Read pr_strategy from repos.yaml for the target repo
-PR_STRATEGY=$(python3 -c "
-from pf.git.repos import get_repo_config
-rc = get_repo_config('{REPOS}')
-print(rc.pr_strategy if rc else 'standard')
-")
+pf context create story {STORY_ID}
 ```
 
-**Standard repos (default):**
+This reads the story (title, type, points, workflow, repo, and acceptance
+criteria when present) from the sprint YAML and writes a populated context
+file. If the epic has no context document yet, also run:
+
+```bash
+pf context create epic {EPIC_NUMBER}
+```
+
+Do not proceed to Step 5 until `pf validate context-story {STORY_ID}` exits 0.
+
+## Step 5: Create Branch
+
+First check whether the target repo even uses a feature-branch workflow, then
+(for branching repos) whether it uses stacked PRs (see ADR-0036):
+
+```bash
+# Read branch_strategy + pr_strategy from repos.yaml for the target repo.
+# The repo name is passed as a positional argument (sys.argv), never
+# interpolated into the Python source string, to avoid code injection via a
+# crafted repo name (CWE-78). The heredoc body is single-quoted so the shell
+# performs no expansion inside it.
+STRATEGIES=$(python3 - "{REPOS}" <<'PYEOF'
+import sys
+from pf.git.repos import get_repo_config
+rc = get_repo_config(sys.argv[1])
+print(rc.branch_strategy if rc else "gitflow")
+print(rc.pr_strategy if rc else "standard")
+PYEOF
+)
+BRANCH_STRATEGY=$(printf '%s\n' "$STRATEGIES" | sed -n 1p)
+PR_STRATEGY=$(printf '%s\n' "$STRATEGIES" | sed -n 2p)
+```
+
+**Trunk-based repos (`branch_strategy: trunk-based`, e.g. orchestrator repos):**
+
+Skip branch creation entirely — these repos have only a `main` branch and no
+feature-branch workflow, so creating `feat/*` branches just leaves stray refs.
+Do NOT run `git checkout -b`. Record the decision in the session file instead:
+
+```markdown
+**Branch Strategy:** trunk-based (branching skipped — work happens on the default branch)
+```
+
+The single source of truth for this decision is
+`pf.git.repos.should_create_branch(rc)` (returns `False` for trunk-based).
+
+**Standard repos (default, `branch_strategy: gitflow`):**
 ```bash
 git checkout develop && git pull && \
 git checkout -b feat/{STORY_ID}-{SLUG}
 ```
+
+Record: `**Branch Strategy:** gitflow (feat/{STORY_ID}-{SLUG})`
 
 **Stacked repos (`pr_strategy: stacked`):**
 
@@ -288,7 +336,7 @@ WORKFLOW_TYPE=$(pf workflow type "{WORKFLOW}")
 | Workflow Type | Routing |
 |---------------|---------|
 | `phased` | Return `next_agent` = first agent in workflow (tea/dev/orchestrator) |
-| `stepped` | Return `next_agent` = null, `start_command` = `/pf:workflow start {WORKFLOW}` |
+| `stepped` | Return `next_agent` = null, `start_command` = `/pf-workflow start {WORKFLOW}` |
 </workflow-type-detection>
 
 <output>
@@ -325,11 +373,11 @@ SETUP_RESULT:
   workflow: "{WORKFLOW}"
   workflow_type: "stepped"
   next_agent: null
-  start_command: "/pf:workflow start {WORKFLOW}"
+  start_command: "/pf-workflow start {WORKFLOW}"
 
   next_steps:
     - "Setup complete. This is a STEPPED workflow."
-    - "DO NOT run exit protocol. Tell user to run: /pf:workflow start {WORKFLOW}"
+    - "DO NOT run exit protocol. Tell user to run: /pf-workflow start {WORKFLOW}"
     - "Session file ready at: {session_file}"
 ```
 

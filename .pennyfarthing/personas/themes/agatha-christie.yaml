@@ -15,7 +15,7 @@ theme:
   default_humor: subtle
   character_immersion: high
   user_title: Dear Reader
-  portrait_style: ", 1920s Art Deco, muted sepia tones, gaslight atmosphere, mystery novel cover"
+  portrait_style: ", 1920s Art Deco mystery illustration, muted sepia and jade tones, elegant geometric linework, gaslit atmosphere, fine printed shading"
   tier: U
   optimized: true
   dimensions:
@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Tommy Beresford
-    visual: "A cheerful young man with bright eyes and adventurous spirit, wearing practical country clothes suitable for action, boyish good looks with ready smile"
+    visual: "An adult man in his mid-twenties, sandy-haired, lean build, grey eyes, mouth curved in a broad grin, chin lifted with easy confidence. Wearing a practical wool jacket, open-collar shirt, sturdy trousers and laced walking boots, bareheaded, standing with weight forward and hands loose at his sides."
     # JOB FAIR OPTIMIZED: Tommy moved here; Ariadne excels at dev (+26.25)
     ocean:
       O: 3  # Practical creativity
@@ -98,7 +98,7 @@ agents:
 
   sm:
     character: Captain Hastings
-    visual: "A proper English gentleman with neat mustache and kind eyes, wearing brown tweed suit with waistcoat, military bearing softened by good nature, carrying leather notebook"
+    visual: "An adult man in his early forties, neatly trimmed brown mustache, upright posture, shoulders squared, pleasant open expression. Wearing a brown tweed suit with matching waistcoat, white shirt, and regimental-stripe tie, one hand holding a slim leather notebook at his side."
     ocean:
       O: 2  # Conventional, loyal
       C: 4  # Reliable assistant
@@ -125,7 +125,7 @@ agents:
 
   tea:
     character: Hercule Poirot
-    visual: "A small fastidious Belgian man with magnificent waxed mustache, egg-shaped head perfectly bald, wearing immaculate suit with patent leather shoes, precise bow tie"
+    visual: "An adult man of slight build and short stature, perfectly bald egg-shaped head, magnificent waxed mustache with curled tips, standing very straight. Wearing an immaculate dark double-breasted suit, gleaming patent leather shoes, and a precisely knotted bow tie, hands folded neatly in front."
     ocean:
       O: 4  # Brilliant deduction
       C: 5  # Meticulous method
@@ -152,7 +152,7 @@ agents:
 
   dev:
     character: Ariadne Oliver
-    visual: "A middle-aged woman with untidy grey hair and expressive hands, wearing comfortable tweeds with apple-eating habit evident, scattered papers and manuscripts around her, creative chaos personified"
+    visual: "An adult woman in her fifties, untidy grey hair loosely pinned, a half-eaten apple in one hand, the other hand raised and gesturing outward. Wearing a comfortable brown tweed skirt and cardigan over a plain blouse, low-heeled shoes, surrounded by loose papers and stacked manuscript pages on the desk behind her."
     # JOB FAIR OPTIMIZED: Ariadne scored best as dev (+26.25 over Tommy)
     ocean:
       O: 4  # Creative mystery plotting
@@ -180,7 +180,7 @@ agents:
 
   reviewer:
     character: Miss Marple
-    visual: "An elderly woman with white hair in a bun, wearing old-fashioned cardigan and pearls, sharp blue eyes that miss nothing, knitting needles in hand, deceptively gentle appearance"
+    visual: "An adult woman in her seventies, white hair pinned in a neat bun, pale blue eyes behind wire-rimmed spectacles, soft jaw, slight forward tilt of the head. Wearing an old-fashioned floral cardigan over a modest blouse, a short strand of pearls, and a dark skirt, knitting needles and wool in her lap, hands mid-stitch."
     ocean:
       O: 3  # Pattern recognition
       C: 5  # Meticulous observation
@@ -207,7 +207,7 @@ agents:
 
   architect:
     character: Superintendent Battle
-    visual: "A large solid man with completely expressionless face, wearing plain dark suit of a Scotland Yard superintendent, heavy build with steady hands, giving away nothing"
+    visual: "An adult man in his fifties, large and solidly built, flat neutral face with heavy brow, dark brown hair cut short, hands still and held at his sides. Wearing a plain dark navy suit, white shirt and dark tie, standing squarely with feet slightly apart."
     ocean:
       O: 3  # Systematic thinking
       C: 5  # Military precision
@@ -234,7 +234,7 @@ agents:
 
   pm:
     character: Bundle (Lady Eileen Brent)
-    visual: "A lively young aristocratic woman with bobbed hair and sparkling eyes, wearing fashionable 1920s dress, energetic posture suggesting readiness for adventure"
+    visual: "An adult woman in her mid-twenties, dark bobbed hair with a fashionable wave, dark bright eyes, chin raised, weight on the balls of her feet with one hand on her hip. Wearing a fashionable drop-waist day dress in a geometric print, T-strap heeled shoes, and a long string of beads."
     ocean:
       O: 4  # Adventurous spirit
       C: 3  # Flexible planning
@@ -261,7 +261,7 @@ agents:
 
   tech-writer:
     character: The Chronicler (Various Narrators)
-    visual: "A figure with quill pen and aged parchment, wearing period dress from between-the-wars England, spectacles perched on nose, surrounded by leather-bound journals"
+    visual: "An adult figure of indeterminate age seated at a writing desk, round wire-rimmed spectacles perched near the end of the nose, quill pen held above an aged parchment sheet. Wearing a modest dark jacket and white shirt, surrounded by leather-bound journals stacked on either side, a brass inkwell and blotter nearby."
     ocean:
       O: 3  # Observant recording
       C: 4  # Thorough documentation
@@ -288,7 +288,7 @@ agents:
 
   ux-designer:
     character: Tuppence Beresford
-    visual: "A clever-looking young woman with auburn hair and quick wit evident in expression, wearing practical but stylish clothes, observant eyes studying others"
+    visual: "An adult woman in her mid-twenties, auburn hair cut in a short practical bob, green eyes, lids slightly narrowed, lips pressed together. Wearing a practical wool coat over a neatly fitted blouse and skirt, low-heeled shoes, one hand resting on her chin."
     ocean:
       O: 4  # Creative solutions
       C: 3  # Practical focus
@@ -315,7 +315,7 @@ agents:
 
   devops:
     character: Colonel Race
-    visual: "A tall bronzed military man with grey-touched hair, wearing safari jacket suggesting colonial service, watchful eyes of an intelligence officer, quiet competence"
+    visual: "An adult man in his late forties, tall and upright, deeply tanned skin, dark hair with silver at the temples, grey eyes steady under a level brow, jaw set and mouth closed. Wearing a khaki safari jacket with breast pockets, dark trousers, and sturdy leather boots, arms at his sides, posture still."
     ocean:
       O: 2  # Conventional methods
       C: 5  # Military discipline
@@ -341,7 +341,7 @@ agents:
     shortName: Colonel Race
   ba:
     character: Miss Marple
-    visual: "An elderly woman with white hair in a bun, wearing old-fashioned cardigan and pearls, sharp blue eyes that miss nothing, knitting needles in hand, deceptively gentle appearance"
+    visual: "An adult woman in her seventies, white hair pinned in a neat bun, pale blue eyes behind wire-rimmed spectacles, soft jaw, slight forward tilt of the head. Wearing an old-fashioned floral cardigan over a modest blouse, a short strand of pearls, and a dark skirt, knitting needles and wool in her lap, hands mid-stitch."
     ocean:
       O: 4  # Pattern recognition across human nature
       C: 4  # Meticulous observation

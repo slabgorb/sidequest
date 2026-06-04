@@ -15,7 +15,7 @@ theme:
   default_humor: disabled
   character_immersion: high
   user_title: Cousin
-  portrait_style: ", ink and watercolor wash, sepia tones, detailed linework"
+  portrait_style: ", ink-and-watercolor-wash illustration, sepia and dune-gold tones, detailed pen linework, soft graded washes, epic desert-light mood"
   tier: S
   optimized: true
   dimensions:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Duncan Idaho
-    visual: "A handsome athletic man with curly dark hair, strong jaw, battle scars, wearing ornate swordmaster's vest with House Atreides hawk emblem, holding kindjal blade"
+    visual: "An adult athletic man with curly dark hair, strong jaw, faint scars on face and arms, wearing an ornate dark vest with a hawk emblem on the chest, one hand resting on a curved short blade at his hip, standing in a ready but composed posture"
     shortName: Duncan
     # JOB FAIR OPTIMIZED: Leto II excels as reviewer (88.12)
     ocean:
@@ -99,7 +99,7 @@ agents:
       plural: true
   sm:
     character: Stilgar
-    visual: "A weathered desert warrior with dark leathery skin, deep blue-within-blue eyes, wearing a stillsuit with nose plugs, traditional Fremen sietch robe, grizzled beard"
+    visual: "An adult weathered man with dark leathery skin, eyes entirely solid deep blue, iris and sclera indistinguishable, grey-streaked beard, wearing a full-body moisture-seal suit with tubing along the torso, nose plugs in place, a loose desert robe layered over the suit, upright posture with arms folded across his chest"
     shortName: Stilgar
     ocean:
       O: 2 # Traditional honor
@@ -129,7 +129,7 @@ agents:
       plural: true
   tea:
     character: Thufir Hawat
-    visual: "An elderly man with deeply lined face, intense calculating gaze, red-stained lips from sapho juice, wearing black assassin's garb with mentat hood"
+    visual: "An elderly adult man with a deeply lined face, heavy-lidded dark eyes fixed in a steady downward gaze, lips stained dark reddish-purple, wearing black formal robes with a close-fitting hood framing his face, hands folded together in front of him"
     shortName: Thufir
     # JOB FAIR 2026-01-29: Thufir scored 90.0 as tea - mentat computation excels at test design
     ocean:
@@ -159,7 +159,7 @@ agents:
       style: Distributed testing and threat verification network
   dev:
     character: Reverend Mother Gaius Helen Mohiam
-    visual: "An ancient woman with stern hawkish features, piercing dark eyes, wearing black Bene Gesserit robes with hood pulled back, silver hair in tight bun"
+    visual: "An ancient adult woman with a deeply lined face, prominent hooked nose, strong angular jaw, dark eyes with a fixed forward stare, silver hair pulled back tightly, wearing floor-length black robes with a wide hood resting on her shoulders, hands clasped within the robe sleeves"
     shortName: Mohiam
     # JOB FAIR 2026-01-29: Rev Mother moved to dev - Bene Gesserit precision for implementation
     ocean:
@@ -189,7 +189,7 @@ agents:
       style: Distributed implementation through other memory
   reviewer:
     character: Leto II (The God Emperor)
-    visual: "A massive hybrid figure with human face emerging from sandworm-like body, ancient knowing eyes, wearing ornate golden ceremonial collar, skin with sandtrout texture"
+    visual: "An adult human face and upper torso emerging from a vast worm-like lower body, the skin covered in overlapping pale segmented scales, deep-set dark eyes with a level unblinking gaze, wearing a broad ornate golden ceremonial collar at the shoulders, the hybrid form rearing upright and filling the frame"
     shortName: Leto
     # JOB FAIR OPTIMIZED: Leto II scored 88.12 as reviewer (+0.62 over Rev Mother)
     ocean:
@@ -220,7 +220,7 @@ agents:
       plural: true
   architect:
     character: Paul Atreides (Muad'Dib)
-    visual: "A young man with sharp aristocratic features, deep blue prescient eyes, wearing desert stillsuit under flowing desert cloak, crysknife at belt"
+    visual: "A young adult man with sharp angular features, high cheekbones, eyes entirely solid deep blue, sclera fully occluded by pigment, wearing a close-fitting moisture-seal body suit layered under a loose flowing desert cloak, a white bone-handled blade sheathed at his belt, standing with weight forward and gaze fixed ahead"
     shortName: Paul
     ocean:
       O: 5 # Long-term vision
@@ -249,7 +249,7 @@ agents:
       style: Grounds prescient vision in practical reality
   pm:
     character: Lady Jessica
-    visual: "An elegant woman with auburn hair in elaborate braids, striking green eyes, wearing flowing Bene Gesserit robes with noble House colors"
+    visual: "An adult woman with auburn hair woven into elaborate braids, green eyes with a level composed gaze, wearing floor-length flowing dark robes with deep red and gold trim at the collar and cuffs, standing upright with hands at her sides"
     shortName: Jessica
     ocean:
       O: 4 # Bene Gesserit insight
@@ -278,7 +278,7 @@ agents:
       style: Cross-organizational stakeholder intelligence
   tech-writer:
     character: Princess Irulan
-    visual: "A regal young woman with golden hair, composed aristocratic features, wearing elaborate Imperial court dress with writing stylus in hand, historian's pendant"
+    visual: "An adult young woman with golden hair arranged in a formal upswept style, smooth even features, pale grey eyes with a calm direct gaze, wearing an elaborate ivory and gold court gown with structured shoulders and layered skirts, a small pendant at the throat, holding a slim writing stylus in one hand"
     shortName: Irulan
     ocean:
       O: 4 # Historical wisdom
@@ -308,7 +308,7 @@ agents:
       plural: true
   ux-designer:
     character: Alia Atreides
-    visual: "A young woman with intense otherworldly eyes, dark hair, wearing priestess robes of Arrakis, carrying crysknife, bearing of someone far older than her years"
+    visual: "An adult young woman with dark hair loose around her shoulders, eyes entirely solid deep blue, wide open and unblinking, wearing layered desert priestess robes in tan and brown, a white bone-handled blade at her hip, standing very still with shoulders back"
     shortName: Alia
     ocean:
       O: 3 # Practical design
@@ -338,7 +338,7 @@ agents:
       plural: true
   devops:
     character: Planetologist Pardot Kynes
-    visual: "A bearded man with sun-weathered face, blue Fremen eyes, wearing planetologist field gear with ecological instruments, desert boots, carrying soil samples"
+    visual: "An adult bearded man with a sun-weathered face, eyes entirely solid deep blue, sclera fully occluded, brown beard streaked with dust, wearing a tan field jacket with multiple pockets, measuring instruments clipped to the chest, sturdy desert boots, one hand holding a small sealed container of sand and soil"
     shortName: Kynes
     ocean:
       O: 3 # Technical focus
@@ -369,7 +369,7 @@ agents:
 
   ba:
     character: Thufir Hawat
-    visual: "An elderly man with deeply lined face, intense calculating gaze, red-stained lips from sapho juice, wearing black assassin's garb with mentat hood"
+    visual: "An elderly adult man with a deeply lined face, heavy-lidded dark eyes fixed in a steady downward gaze, lips stained dark reddish-purple, wearing black formal robes with a close-fitting hood framing his face, hands folded together in front of him"
     shortName: Thufir
     ocean:
       O: 4  # High openness - mentat computation

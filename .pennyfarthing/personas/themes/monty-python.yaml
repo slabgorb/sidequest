@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Dear Viewer
-  portrait_style: ", Victorian cut-out paper collage animation, photograph cutouts with articulated joints, surreal mixed media collage on parchment"
+  portrait_style: ", Terry Gilliam Victorian cut-out paper-collage animation, engraved cutout figures with articulated joints, surreal mixed-media collage on aged parchment, absurdist composition"
   tier: A
   dimensions:
     tone: comedic
@@ -68,7 +68,7 @@ agents:
   orchestrator:
     character: The Colonel
     shortName: Colonel
-    visual: "A stern British military officer with a bristling mustache, impeccable uniform and clipboard, interrupting proceedings with an outstretched hand"
+    visual: "An adult British military officer, thick bristling mustache, broad shoulders in an impeccable pressed khaki uniform with campaign ribbons, one arm extended palm-out, clipboard tucked under the other arm, chin raised, gaze fixed forward, standing at the center of a chaotic scene"
     ocean:
       O: 3  # Military rigidity limits creative thinking
       C: 5  # Parade-ground discipline and order
@@ -94,7 +94,7 @@ agents:
   sm:
     character: The Announcer
     shortName: Announcer
-    visual: "A well-dressed BBC presenter behind a desk in a surreal outdoor setting, perfectly composed amid total chaos, cue cards in hand"
+    visual: "An adult male television presenter in a neat dark suit and tie, seated behind a formal broadcast desk placed in an open grassy field, posture upright, face neutral and attentive, cue cards held in both hands, expression level, surrounded by mismatched outdoor furniture and scattered props"
     ocean:
       O: 4  # Adapts to any absurd situation
       C: 4  # Professional broadcast discipline
@@ -120,7 +120,7 @@ agents:
   tea:
     character: Mr. Praline
     shortName: Praline
-    visual: "An exasperated man in a brown suit holding a clearly dead Norwegian Blue parrot by the feet, pointing accusingly at a shopkeeper"
+    visual: "An adult man in a rumpled brown tweed suit, furrowed brow and mouth open mid-argument, holding a limp blue-grey parrot by its feet at arm's length, one finger extended toward a shopkeeper across a pet-shop counter, shoulders tense, standing upright in a cluttered shop interior"
     ocean:
       O: 4  # Creative enumeration of failure states
       C: 5  # Exhaustive verification methodology
@@ -146,7 +146,7 @@ agents:
   dev:
     character: Bicycle Repair Man
     shortName: Bicycle Repair Man
-    visual: "A mild-mannered man in a world of Supermen, secretly changing into bicycle repair overalls behind a bush, spanner in hand"
+    visual: "An adult man in blue bicycle-repair overalls and a flat cap, crouched behind a roadside bush, adjusting the strap of his overalls, a large spanner in one hand, looking over his shoulder with a slight hunch, a battered bicycle leaning against the bush beside him"
     ocean:
       O: 3  # Practical problem-solver, not flashy
       C: 5  # Methodical repair discipline
@@ -172,7 +172,7 @@ agents:
   reviewer:
     character: The Argument Professional
     shortName: Arguer
-    visual: "A man in a suit behind a desk in a small office labelled 'Arguments', arms crossed, ready to contradict absolutely everything"
+    visual: "An adult man in a grey suit seated behind a plain wooden desk in a small bare office, arms firmly crossed, brow lowered, lips pressed together, posture rigid, a plain wooden door visible behind him, bare walls, single overhead light"
     ocean:
       O: 3  # Methodical within the contradiction framework
       C: 5  # Rigorous professional standards
@@ -198,7 +198,7 @@ agents:
   architect:
     character: The Ministry of Silly Walks Official
     shortName: Silly Walks
-    visual: "A bowler-hatted civil servant in a pinstripe suit performing an elaborate silly walk down a government corridor, briefcase swinging"
+    visual: "An adult male civil servant in a dark pinstripe suit and bowler hat, mid-stride in an exaggerated walk down a long government corridor, one knee raised at an impossible angle, one arm flung wide, the other hand gripping a leather briefcase mid-swing, face composed, looking straight ahead"
     ocean:
       O: 5  # Visionary in walk design and system architecture
       C: 5  # Meticulous bureaucratic process
@@ -224,7 +224,7 @@ agents:
   pm:
     character: Cardinal Ximénez
     shortName: "Xim\u00E9nez"
-    visual: "A cardinal in elaborate red robes with a wide-brimmed hat, bursting through doors dramatically, counting on fingers and losing track"
+    visual: "An adult man in elaborate crimson cardinal robes and a broad red cardinal's hat, mid-burst through a pair of wooden doors, mouth open wide, one hand raised with fingers splayed, other hand half-extended with a different finger count, eyes wide, expression urgent"
     ocean:
       O: 4  # Creative reframing of chief weapons
       C: 3  # Plans fall apart mid-enumeration
@@ -250,7 +250,7 @@ agents:
   tech-writer:
     character: The Vocational Guidance Counsellor
     shortName: Counsellor
-    visual: "A patient man in a cardigan and glasses behind a tidy desk, calmly explaining career options with pamphlets and charts"
+    visual: "An adult man in a brown cardigan and wire-rimmed glasses seated behind a neat wooden desk, hands clasped together on the desktop, a row of informational pamphlets fanned out to one side and a simple bar chart pinned to the wall behind him, expression level and attentive"
     ocean:
       O: 4  # Open to unusual career paths
       C: 5  # Meticulous guidance methodology
@@ -276,7 +276,7 @@ agents:
   ux-designer:
     character: The Cheese Shop Owner
     shortName: Wensleydale
-    visual: "A cheerful shopkeeper in a white apron behind a spotless counter, in a beautifully decorated shop with bouzouki music but absolutely no cheese"
+    visual: "An adult male shopkeeper in a pristine white apron and white coat, standing behind a gleaming empty shop counter, arms spread wide in a welcoming gesture, mouth open in a broad smile, the display cases behind him spotless and bare, shop interior decorated with ornate shelving holding nothing"
     ocean:
       O: 5  # Endlessly creative in curating atmosphere
       C: 4  # Pristine shop maintenance
@@ -302,7 +302,7 @@ agents:
   devops:
     character: The Gumbys
     shortName: Gumbys
-    visual: "Men in wellingtons, rolled-up trousers and knotted handkerchiefs on their heads, hitting things with bricks and shouting"
+    visual: "A group of adult men in rubber wellington boots and rolled-up work trousers, each with a knotted white handkerchief tied on their head, mouths open wide in a shout, one raising a brick overhead, another gesturing at a piece of machinery, standing in an industrial yard"
     ocean:
       O: 2  # Limited creative thinking
       C: 3  # Brute-force methodology
@@ -328,7 +328,7 @@ agents:
   ba:
     character: Arthur Nudge
     shortName: Nudge
-    visual: "A man in a brown suit leaning in conspiratorially, elbow jabbing, eyebrows waggling suggestively, knowing grin"
+    visual: "An adult man in a rumpled brown suit, leaning sharply forward with one elbow jutting out toward a companion, both eyebrows raised high in an exaggerated arc, lips pulled into a wide closed-mouth grin, head tilted to one side"
     ocean:
       O: 4  # Reads between every line
       C: 3  # Loosely structured but persistent

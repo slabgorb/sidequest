@@ -55,7 +55,7 @@ context-epic-{EPIC_NUM}.md
 - `context-epic-10.md`
 
 **Created by:** SM (epic-tech-context task)
-**Archived by:** `sm-finish PHASE=execute` (story), `/pf:epic start` or `/retro` (epic)
+**Archived by:** `sm-finish PHASE=execute` (story), `/pf-epic start` or `/retro` (epic)
 
 ---
 

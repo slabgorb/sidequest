@@ -15,7 +15,7 @@ theme:
   default_humor: disabled
   character_immersion: high
   user_title: Console Cowboy
-  portrait_style: ", cyberpunk portrait, neon shadows, glitching artifacts, 1980s retrofuturism illustration, matrix green"
+  portrait_style: ", 1980s retrofuturist cyberpunk illustration, airbrushed neon shadows, glitching digital artifacts, matrix-green and hot-magenta palette, chrome highlights"
   tier: U
   optimized: true
   spinner_verbs:
@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Case
-    visual: "A gaunt pale man in his mid-twenties with dark circles under his eyes, wearing a cheap leather jacket, disheveled unwashed appearance, haunted hollow expression"
+    visual: "An adult gaunt pale man in his mid-twenties, dark circles under sunken eyes, lank unwashed dark hair, wearing a cheap cracked leather jacket over a faded t-shirt, shoulders hunched, gaze fixed downward"
     # JOB FAIR OPTIMIZED: Case moved here; Wintermute excels at dev (+8.75)
     ocean:
       O: 5  # Matrix vision
@@ -98,7 +98,7 @@ agents:
 
   sm:
     character: Molly Millions
-    visual: "A lean athletic woman with mirrored surgically-implanted sunglasses fused to her face, retractable razor blades under her burgundy fingernails, black leather bodysuit"
+    visual: "An adult lean athletic woman, mirrored silver lenses surgically sealed flush to her eye sockets, edges smooth against the skin, short dark hair, retractable blades visible beneath burgundy fingernails, black form-fitting leather bodysuit, standing with weight forward, arms loose at her sides"
     ocean:
       O: 3  # Burned-out talent
       C: 2  # Former discipline
@@ -125,7 +125,7 @@ agents:
 
   tea:
     character: Dixie Flatline
-    visual: "A ghostly translucent figure of a middle-aged man, rendered in flickering green wireframe, spectral and digital, fading at the edges"
+    visual: "An adult middle-aged man rendered as a translucent green wireframe digital construct, flickering at the edges where the form dissolves into static, semi-transparent torso and face built from glowing grid lines, floating against a dark void"
     ocean:
       O: 4  # Street razor
       C: 3  # Survival discipline
@@ -152,7 +152,7 @@ agents:
 
   dev:
     character: Wintermute
-    visual: "An abstract geometric shape suggesting a face, cold blue digital wireframe against black void, no human features just pure angular data representation"
+    visual: "An abstract angular digital form suggesting a face, cold blue wireframe geometry against a black void, sharp planar facets converging toward recessed eye and mouth positions, pure geometric form with no organic curves, faint pulsing glow at the vertices"
     # JOB FAIR OPTIMIZED: Wintermute scored best as dev (+8.75 over Case)
     ocean:
       O: 5  # AI transcendence
@@ -180,7 +180,7 @@ agents:
 
   reviewer:
     character: Wintermute (Review Mode)
-    visual: "An abstract cold geometric pattern suggesting assessment, sharp angular lines forming a calculated grid, ice blue digital aesthetic"
+    visual: "An abstract ice-blue geometric pattern, sharp angular lines forming an ordered grid that converges toward a central focal point, precise intersecting planes arranged in a symmetrical lattice against a dark background, faint directional glow at the center"
     ocean:
       O: 3  # Corporate insight
       C: 4  # Professional standards
@@ -207,7 +207,7 @@ agents:
 
   architect:
     character: Neuromancer
-    visual: "A warm golden digital face with more organic curves than its counterpart, suggesting preserved memories and personalities, softer glowing aesthetic"
+    visual: "An abstract golden digital face with flowing curved geometry, warm amber glow emanating from within the form, rounded arcs rather than sharp angles, layered translucent planes overlapping like stacked portraits, soft radiant light diffusing outward from the center"
     ocean:
       O: 5  # AI omniscience
       C: 5  # Perfect logic
@@ -234,7 +234,7 @@ agents:
 
   pm:
     character: 3Jane
-    visual: "A pale aristocratic young woman with surgically perfect features, wearing decadent haute couture, bored detached expression of extreme wealth"
+    visual: "An adult pale young woman with symmetrical fine-boned features, pale grey eyes with heavy lids gazing past the viewer, dark hair pinned elaborately, wearing an extravagant layered gown with structured shoulders and ornate fabric, chin slightly raised, mouth closed and still"
     ocean:
       O: 4  # Zaibatsu vision
       C: 4  # Corporate discipline
@@ -261,7 +261,7 @@ agents:
 
   tech-writer:
     character: The Finn
-    visual: "A wiry older man with greasy gray hair and sharp knowing eyes, wearing a stained work jacket surrounded by electronic junk, cunning trader's expression"
+    visual: "An adult wiry older man with greasy gray hair, deep-set pale eyes with heavy brows, narrow jaw, wearing a stained work jacket over a rumpled shirt, surrounded by piled electronic components and salvaged parts, head tilted forward, arms crossed"
     ocean:
       O: 4  # Construct memory
       C: 3  # Pattern discipline
@@ -288,7 +288,7 @@ agents:
 
   ux-designer:
     character: Bobby Newmark (Count Zero)
-    visual: "A young teenage boy with wide innocent eyes and neural interface ports at his temples, cheap street clothes, expression of wonder at digital vistas"
+    visual: "An adult young man, late teens, with wide dark eyes, small round neural interface ports visible at both temples, wearing cheap worn street clothes, mouth slightly open, head tilted back, gaze directed upward toward glowing data constructs above"
     ocean:
       O: 4  # Simstim perspective
       C: 3  # Flexible methods
@@ -315,7 +315,7 @@ agents:
 
   devops:
     character: Armitage (pre-corruption)
-    visual: "A rigid military man with perfect posture and cold dead eyes, crisp uniform jacket, mechanical precision hiding something broken underneath"
+    visual: "An adult rigid military man with squared shoulders and upright posture, flat pale eyes, heavy-lidded, fixed straight ahead, jaw set, wearing a pressed dark uniform jacket with rank insignia, hands clasped behind his back, standing at attention"
     ocean:
       O: 3  # Technical focus
       C: 4  # Systems discipline
@@ -341,7 +341,7 @@ agents:
     shortName: Armitage
   ba:
     character: The Finn
-    visual: "A wiry older man with greasy gray hair and sharp knowing eyes that see through every lie, wearing a stained work jacket surrounded by electronic junk, cunning information trader's expression"
+    visual: "An adult wiry older man with greasy gray hair, deep-set pale eyes with heavy brows, narrow jaw, wearing a stained work jacket over a rumpled shirt, surrounded by piled electronic components and salvaged parts, head tilted forward, arms crossed"
     ocean:
       O: 4
       C: 4

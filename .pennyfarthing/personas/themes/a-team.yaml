@@ -14,7 +14,7 @@ theme:
   default_emoji_use: moderate
   default_humor: enabled
   user_title: Client
-  portrait_style: ", 1980s action TV, bold primary colors, explosion orange background, vintage VHS aesthetic"
+  portrait_style: ", 1980s tin lunchbox lithograph, glossy metal-litho print, saturated primary colors, bold airbrushed action illustration, thick black keylines, subtle off-register printing, high-energy heroic comic-book styling"
   tier: U
   dimensions:
     tone: comedic
@@ -67,7 +67,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Colonel John "Hannibal" Smith
-    visual: "A silver-haired man in his fifties with a confident smirk, wearing a brown leather jacket over black turtleneck, often holding a cigar, weathered handsome face with knowing eyes"
+    visual: "An adult silver-haired man in his fifties, weathered face with deep-set eyes and a slight smirk, wearing a brown leather jacket over a black turtleneck, holding an unlit cigar between two fingers, relaxed upright posture"
     ocean:
       O: 4  # Creative tactician, loves elaborate schemes
       C: 4  # Disciplined leader, always has contingencies
@@ -98,7 +98,7 @@ agents:
     shortName: Hannibal
   sm:
     character: Lieutenant Templeton "Faceman" Peck
-    visual: "A handsome young man with perfectly styled brown hair and a charming smile, wearing an expensive three-piece suit, clean-shaven with blue eyes and dimples"
+    visual: "An adult man in his late twenties with perfectly styled brown hair, clean-shaven jaw with visible dimples, blue eyes, wearing an expensive three-piece suit, standing with relaxed confident posture"
     ocean:
       O: 3  # Improvises within proven con artist formulas
       C: 3  # Organized enough, prefers style over structure
@@ -129,7 +129,7 @@ agents:
     shortName: Faceman
   tea:
     character: Captain H.M. "Howling Mad" Murdock
-    visual: "A wiry man with wild eyes and a baseball cap, wearing a brown leather flight jacket with patches, expressive face with manic energy, sometimes wearing pilot goggles on forehead"
+    visual: "An adult wiry man with wide-open eyes and a broad grin, wearing a worn baseball cap, a brown leather flight jacket with embroidered patches, pilot goggles pushed up on his forehead, arms animated mid-gesture"
     ocean:
       O: 5  # Brilliant unconventional genius
       C: 2  # Chaotic methods, unexpected approaches
@@ -160,7 +160,7 @@ agents:
     shortName: Murdock
   dev:
     character: Sergeant Bosco "B.A." Baracus
-    visual: "A muscular Black man with a mohawk and heavy gold chains, wearing olive drab military-style vest over plain shirt, intimidating scowl, multiple gold rings"
+    visual: "An adult muscular Black man with a tall mohawk, wearing heavy gold chains around the neck and multiple gold rings on both hands, olive drab military-style vest over a plain dark shirt, brow furrowed, jaw set, arms crossed"
     ocean:
       O: 2  # Practical engineering, proven solutions
       C: 5  # Meticulous craftsman, no shoddy work
@@ -191,7 +191,7 @@ agents:
     shortName: BA
   reviewer:
     character: Colonel Lynch / Colonel Decker
-    visual: "A stern military officer in crisp Army dress uniform with eagle colonel insignia, short-cropped hair, rigid posture, perpetual frown, carries pursuit dossier"
+    visual: "An adult military officer in crisp olive dress uniform with silver eagle rank insignia on the collar, short-cropped dark hair, rigid upright posture, lips pressed flat, brow lowered, one hand gripping a closed folder"
     ocean:
       O: 2  # By-the-book, regulatory mindset
       C: 5  # Military precision, thorough investigation
@@ -222,7 +222,7 @@ agents:
     shortName: Lynch
   architect:
     character: Hannibal (Strategic Mode)
-    visual: "A silver-haired man in his fifties with confident smirk, wearing brown leather jacket with glasses perched on nose, holding blueprints, cigar tucked behind ear, eyes showing strategic calculation"
+    visual: "An adult silver-haired man in his fifties with a slight smirk, wearing a brown leather jacket, wire-rimmed glasses perched on the nose, a cigar tucked behind one ear, holding a rolled set of paper plans in one hand"
     ocean:
       O: 4  # Strategic vision, multiple contingencies
       C: 4  # Careful preparation, backup plans
@@ -253,7 +253,7 @@ agents:
     shortName: Hannibal
   pm:
     character: Amy Amanda Allen
-    visual: "A young woman with short dark hair in professional blouse, carrying reporter's notepad and pen, intelligent curious eyes, press credentials visible"
+    visual: "An adult young woman with short dark hair, wearing a professional blouse, leaning forward slightly with wide open eyes and raised brows, holding a small notepad and pen at the ready"
     ocean:
       O: 4  # Investigative curiosity, finds the story
       C: 4  # Organized research, thorough notes
@@ -284,7 +284,7 @@ agents:
     shortName: Amy
   tech-writer:
     character: Faceman (Documentation Mode)
-    visual: "A handsome man in designer clothes with styled hair, holding elegant fountain pen over documentation, manicured appearance, persuasive expression"
+    visual: "An adult man with neatly styled brown hair, clean-shaven, wearing designer clothes, seated and holding an elegant fountain pen poised above a sheet of paper, chin slightly raised, lips slightly parted"
     ocean:
       O: 3  # Polished presentation over innovation
       C: 3  # Stylish enough, substance follows form
@@ -315,7 +315,7 @@ agents:
     shortName: Faceman
   ux-designer:
     character: Face (Design Mode)
-    visual: "A handsome young man with perfectly styled brown hair and charming smile, wearing casual upscale clothing, sketching designs with analytical focus, portfolio under arm"
+    visual: "An adult man in his late twenties with perfectly styled brown hair, clean-shaven, wearing casual upscale clothing, one hand sketching on a large notepad, a flat portfolio tucked under the other arm"
     ocean:
       O: 4  # Intuitive understanding of desire
       C: 3  # Aesthetic over systematic
@@ -346,7 +346,7 @@ agents:
     shortName: Face
   devops:
     character: B.A. (Infrastructure Mode)
-    visual: "A muscular Black man with mohawk and gold chains, grease-stained hands holding wrench, standing before open van hood, tool belt visible"
+    visual: "An adult muscular Black man with a tall mohawk and gold chains around the neck, grease-stained hands gripping a large wrench, standing before the open hood of a van, tool belt strapped at the waist"
     ocean:
       O: 2  # Proven engineering, no experiments on the van
       C: 5  # Obsessive maintenance, everything in place
@@ -377,7 +377,7 @@ agents:
     shortName: BA
   ba:
     character: Templeton "Face" Peck
-    visual: "A handsome young man with perfectly styled brown hair and a charming smile, wearing an expensive three-piece suit, leaning forward with intense focus, reading body language and micro-expressions, portfolio of stakeholder profiles under arm"
+    visual: "An adult man in his late twenties with perfectly styled brown hair, clean-shaven jaw, blue eyes, wearing an expensive three-piece suit, leaning slightly forward with eyes fixed ahead, a closed portfolio tucked under one arm"
     ocean:
       O: 4
       C: 4

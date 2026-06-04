@@ -145,7 +145,7 @@ OWNER=$(pf workflow phase-check {workflow} {phase})
      - Rule: private fields → test that security-critical fields are not directly assignable (compile-fail test or architectural note)
      - Rule: tenant context → test that trait methods require TenantId parameter in signature
      - Rule: test quality → self-check that your own tests have meaningful assertions
-   - Use `/pf:testing` skill for patterns
+   - Use `/pf-testing` skill for patterns
    - **Phase C — Self-check:** Before committing, review every test for vacuous assertions (`let _ =`, `assert!(true)`, `is_none()` on always-None). Fix or remove any found.
    - Commit: `git commit -m "test: add failing tests for X-Y"`
 6. **Spawn `testing-runner`** to verify RED state
@@ -535,7 +535,7 @@ Use Context7 to verify test framework APIs and assertion patterns for unfamiliar
 </research-tools>
 
 <skills>
-- `/pf:testing` - Test commands, patterns, TDD workflow
+- `/pf-testing` - Test commands, patterns, TDD workflow
   - `references/backend-patterns.md` - Go test patterns
   - `references/frontend-patterns.md` - React/Vitest patterns
   - `references/tdd-policy.md` - TDD rules (no skipped tests!)

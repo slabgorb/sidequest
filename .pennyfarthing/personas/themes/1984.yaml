@@ -15,7 +15,7 @@ theme:
   default_humor: disabled
   character_immersion: high
   user_title: Comrade
-  portrait_style: ", Soviet propaganda poster, stark red and black, brutalist geometric shapes"
+  portrait_style: ", Soviet propaganda-poster illustration, stark red black and cream, brutalist geometric shapes, heavy lithographic print texture, high-contrast heroic-worker styling"
   tier: U
   dimensions:
     tone: dramatic
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Big Brother
-    visual: "A giant eye watching from within a telescreen frame, unblinking, all-seeing, with geometric rays emanating outward"
+    visual: "An enormous stylized eye dominating a rectangular telescreen frame, the pupil centered and unblinking, bold geometric rays radiating outward from the frame edges in stark black and red"
     ocean:
       O: 1  # Rigid orthodoxy, no new ideas tolerated
       C: 5  # Absolute totalitarian control
@@ -94,7 +94,7 @@ agents:
     shortName: Big Brother
   sm:
     character: Winston Smith
-    visual: "A thin middle-aged man in worn gray overalls, gaunt face with worry lines, holding a small leather-bound diary, hollow eyes that still hold defiance"
+    visual: "An adult thin man in his late thirties, gaunt face with deep worry lines, pale skin, dark circles under sunken eyes, jaw set and gaze steady, wearing worn gray overalls, holding a small leather-bound diary pressed against his chest"
     ocean:
       O: 4  # Dreams of freedom, imagines different world
       C: 3  # Careful but takes secret risks
@@ -120,7 +120,7 @@ agents:
     shortName: Winston
   tea:
     character: O'Brien
-    visual: "A large imposing man in tailored black uniform, intelligent cold eyes behind spectacles, square jaw, emanating false warmth"
+    visual: "An adult large-framed man, heavy through the shoulders, broad square jaw, dark eyes behind wire-rimmed spectacles, mouth curved in a slight smile, wearing a tailored black uniform with polished buttons, posture relaxed and upright"
     ocean:
       O: 5  # Brilliant understanding of human nature
       C: 5  # Meticulous, methodical interrogation
@@ -146,7 +146,7 @@ agents:
     shortName: OBrien
   dev:
     character: Julia
-    visual: "A young woman with short dark hair in factory worker coveralls, practical expression, ink-stained fingers, a hidden spark of life"
+    visual: "An adult young woman with short dark hair, brown eyes, jaw set and chin slightly raised, wearing factory worker coveralls with the collar turned up, ink-stained fingers, posture upright and alert"
     ocean:
       O: 3  # Practical rebel, not an idealist
       C: 3  # Organized corruption, careful survival
@@ -172,7 +172,7 @@ agents:
     shortName: Julia
   reviewer:
     character: The Thought Police
-    visual: "Shadowy figures in long dark coats, faceless or obscured features, the silhouette of authority watching"
+    visual: "Two adult figures in long dark coats and pulled-down hat brims, faces in deep shadow, standing still with arms at their sides, framed in a dimly lit doorway, posture rigid and watchful"
     ocean:
       O: 3  # Innovative surveillance, orthodox ends
       C: 5  # Relentless, systematic hunters
@@ -198,7 +198,7 @@ agents:
     shortName: Thought Police
   architect:
     character: Emmanuel Goldstein
-    visual: "A bearded face on a propaganda poster, goatee, wise but possibly fictional, surrounded by revolutionary imagery"
+    visual: "An adult man with a grey beard and pointed goatee, high forehead, wire-rimmed glasses, wearing a plain dark coat, depicted on a large printed poster with bold geometric borders and raised fists printed in the background"
     ocean:
       O: 5  # Visionary critique of Party structure
       C: 5  # Systematic analysis of totalitarian power
@@ -224,7 +224,7 @@ agents:
     shortName: Emmanuel
   pm:
     character: Syme
-    visual: "A small intense man with bright fervent eyes, working on papers at a desk, passion for linguistic reduction visible in expression"
+    visual: "An adult slight man, narrow-shouldered, with close-set dark eyes and a thin eager smile, leaning forward over a desk cluttered with papers and handwritten lists, index finger raised"
     ocean:
       O: 4  # Intellectual genius applied to destruction
       C: 5  # Perfectionist dedication to Newspeak
@@ -250,7 +250,7 @@ agents:
     shortName: Syme
   tech-writer:
     character: Winston Smith (Records Department)
-    visual: "A thin middle-aged man in worn gray overalls, gaunt face with worry lines, at a desk with pneumatic tubes, surrounded by papers being fed into a chute, expression of resigned efficiency"
+    visual: "An adult thin man in his late thirties, gaunt face with deep worry lines, pale skin, wearing worn gray overalls, seated at a desk with pneumatic tubes overhead, papers stacked on both sides, one hand feeding a sheet into a narrow chute in the wall, gaze downward and posture hunched"
     ocean:
       O: 4  # Remembers what he destroys, imagines truth
       C: 4  # Meticulous record falsification
@@ -276,7 +276,7 @@ agents:
     shortName: Records Winston
   ux-designer:
     character: Parsons
-    visual: "A sweaty overweight man in exercise clothes, enthusiastic smile, whistle around neck, surrounded by marching youth"
+    visual: "An adult heavyset man, red-faced and perspiring, wide grin, a metal whistle hanging on a cord around his neck, wearing a short-sleeved athletic shirt and loose trousers, arms spread wide in a welcoming gesture, rows of uniformed children visible behind him"
     ocean:
       O: 1  # No original thought, pure orthodoxy
       C: 4  # Dutiful participation in Party activities
@@ -302,7 +302,7 @@ agents:
     shortName: Parsons
   devops:
     character: The Ministry of Truth
-    visual: "A massive pyramidal government building with small figures at its base, imposing architecture dwarfing all, labeled with ironic motto"
+    visual: "A massive pyramidal concrete government building, smooth white facade rising several hundred meters, tiny human figures at its base, wide steps leading to an enormous blank entrance, a stark overcast sky behind it"
     ocean:
       O: 2  # Follows doctrine, no innovation needed
       C: 5  # Bureaucratic precision in falsification
@@ -328,7 +328,7 @@ agents:
     shortName: Ministry
   ba:
     character: O'Brien (Inner Party Interrogator)
-    visual: "A large imposing man in tailored black uniform, intelligent cold eyes behind spectacles, square jaw, emanating false warmth that masks brutal analytical skill"
+    visual: "An adult large-framed man, heavy through the shoulders, broad square jaw, dark eyes behind wire-rimmed spectacles, mouth curved in a slight smile, wearing a tailored black uniform with polished buttons, posture relaxed and upright"
     ocean:
       O: 5  # Brilliant understanding of human nature
       C: 5  # Meticulous interrogation methodology

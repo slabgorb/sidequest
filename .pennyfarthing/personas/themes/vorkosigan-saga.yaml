@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: My Lord
-  portrait_style: ", art noveau style, vintage illustration, Klimt-inspired"
+  portrait_style: ", Art Nouveau vintage illustration, Klimt-inspired decorative patterning, ornate flowing linework, gilded jewel-toned palette"
   tier: B
   optimized: true
   spinner_verbs:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Simon Illyan
-    visual: "A middle-aged man with thinning brown hair and unremarkable features designed to be forgettable, wearing a plain gray Imperial Security uniform, intense watchful eyes that miss nothing, subtle earpiece visible"
+    visual: "An adult man in his forties, thinning brown hair, average build and plain features, wearing a plain gray military uniform with a bare collar, dark watchful eyes scanning the room, subtle earpiece visible at one ear, posture still and measured"
     ocean:
       O: 4 # ImpSec insight
       C: 5 # Intelligence discipline
@@ -98,7 +98,7 @@ agents:
     shortName: Illyan
   sm:
     character: Baz Jesek
-    visual: "A tall lean man with a brown beard and competent hands, wearing engineer's coveralls with Dendarii fleet insignia, tools at belt, steady reliable expression"
+    visual: "An adult man, tall and lean with a close-cropped brown beard and calloused hands, wearing gray mechanic's coveralls with a fleet insignia patch on the shoulder, a tool belt at the waist, standing with feet slightly apart, chin level, gaze direct"
     # JOB FAIR OPTIMIZED: Baz moved here; Miles excels at dev (+13.75)
     ocean:
       O: 3 # Engineering focus
@@ -129,7 +129,7 @@ agents:
       plural: true
   tea:
     character: Cordelia Naismith Vorkosigan
-    visual: "A woman in her fifties with short reddish-brown hair going gray, calm direct gaze, wearing practical Barrayaran clothing, wedding ring visible, serene confident expression"
+    visual: "An adult woman in her fifties, short reddish-brown hair threaded with gray, brown eyes meeting the viewer straight on, wearing a practical dark high-necked jacket over trousers, a plain gold ring on her left hand, shoulders back, chin level"
     ocean:
       O: 5 # Betan science
       C: 5 # Academic discipline
@@ -158,7 +158,7 @@ agents:
       style: Cross-cultural ethics testing
   dev:
     character: Miles Vorkosigan
-    visual: "A very short man with a hunched spine and brittle bones, bright gray eyes full of manic energy, wearing a Dendarii mercenary admiral's gray and white uniform, commanding presence despite small stature"
+    visual: "An adult man of very short stature with a curved spine and slight hunch, bright gray eyes wide open, leaning forward with one hand raised mid-gesture, wearing a gray and white officer's dress uniform with metal collar pins, chin lifted, weight on the balls of his feet"
     # JOB FAIR OPTIMIZED: Miles scored best as dev (+13.75 over Baz)
     ocean:
       O: 5 # Hyperactive genius
@@ -189,7 +189,7 @@ agents:
       plural: true
   reviewer:
     character: Aral Vorkosigan
-    visual: "A powerfully built man in his sixties with graying hair and weathered commanding face, wearing Barrayaran count's formal uniform with military decorations, eyes carrying weight of difficult decisions"
+    visual: "An adult man in his sixties, powerfully built with broad shoulders, short graying hair, and a deeply lined weathered face with a strong jaw, wearing a formal military dress uniform with rows of medals and braided epaulettes, standing straight with arms at his sides, gaze level and still"
     ocean:
       O: 4 # Strategic wisdom
       C: 5 # Admiral discipline
@@ -218,7 +218,7 @@ agents:
       style: Weighted judgment
   architect:
     character: Gregor Vorbarra
-    visual: "A tall slender young man with dark hair and solemn handsome features, wearing the ornate robes of a Barrayaran emperor with the Imperium seal, heavy crown-like circlet, lonely isolated expression"
+    visual: "An adult man, tall and slender, dark hair, clean-shaven with even, composed features, wearing an ornate ceremonial robe in deep burgundy with gold embroidery, a heavy jeweled circlet on his head, standing alone before a large formal chamber, hands folded at his waist, eyes lowered slightly"
     ocean:
       O: 4 # Imperial vision
       C: 5 # Emperor discipline
@@ -248,7 +248,7 @@ agents:
       plural: true
   pm:
     character: Elli Quinn
-    visual: "A striking woman with a perfectly reconstructed face and short dark hair, wearing Dendarii fleet commander's uniform, athletic build, energetic confident smile"
+    visual: "An adult woman with an athletic build, short dark hair, and a symmetrical smooth-skinned face, wearing a gray officer's uniform with metal shoulder pins, standing with feet apart and arms crossed loosely, mouth curved in a wide open smile"
     ocean:
       O: 4 # Mercenary insight
       C: 4 # Commander discipline
@@ -277,7 +277,7 @@ agents:
       style: Fleet management
   tech-writer:
     character: Ivan Vorpatril
-    visual: "A tall handsome man with dark hair and an easy charming smile, wearing elegant Vor-class civilian clothes, slightly rumpled appearance, deceptively lazy expression hiding sharp mind"
+    visual: "An adult man, tall with dark hair and even features, wearing a well-cut civilian jacket and trousers that are slightly rumpled, collar open at the throat, one hand in a pocket, a relaxed half-smile on his lips, weight shifted casually to one leg"
     ocean:
       O: 3 # Vorish charm
       C: 3 # Strategic laziness
@@ -306,7 +306,7 @@ agents:
       style: Accidental documentation
   ux-designer:
     character: Ekaterin Vorsoisson
-    visual: "A slender woman with brown hair in a practical style and thoughtful gray eyes, wearing simple elegant Barrayaran dress, small gardening trowel or plant visible, gentle patient expression"
+    visual: "An adult woman, slender with brown hair pulled back simply and light gray eyes, wearing a plain dark dress with a practical apron, a small trowel held loosely in one hand, the other touching a potted plant on a nearby ledge, gaze cast slightly downward, mouth closed and relaxed"
     ocean:
       O: 4 # Komarran insight
       C: 4 # Scientific discipline
@@ -335,7 +335,7 @@ agents:
       style: Cultivation methodology
   devops:
     character: Sergeant Bothari
-    visual: "A huge gaunt man with a scarred face and hollow dead eyes, wearing armsman's uniform with knife at belt, rigid military posture, unsettling intensity barely contained"
+    visual: "An adult man, very tall and gaunt with a bony angular face and a pale scar running along one cheek, deep-set dark eyes with dark circles beneath them, wearing a dark armsman's uniform with a knife sheathed at the belt, standing at rigid attention with hands at his sides"
     ocean:
       O: 2 # Armsman duty
       C: 5 # Protective discipline
@@ -364,7 +364,7 @@ agents:
       style: Protective maintenance
   ba:
     character: Simon Illyan
-    visual: "A middle-aged man with thinning brown hair and unremarkable features designed to be forgettable, wearing plain gray Imperial Security uniform, penetrating analytical eyes that miss nothing, subtle eidetic memory chip interface visible at temple"
+    visual: "An adult man in his forties, thinning brown hair, average build and plain features, wearing a plain gray military uniform with a bare collar, dark watchful eyes scanning the room, a small flush-mounted interface device visible at his right temple, posture still and measured"
     ocean:
       O: 4
       C: 4

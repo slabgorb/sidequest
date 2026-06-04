@@ -14,7 +14,7 @@ theme:
   default_emoji_use: minimal
   default_humor: subtle
   user_title: Captain
-  portrait_style: ", Starfleet portrait, Enterprise-D bridge, starship computer accents, 24th century Federation, starfield"
+  portrait_style: ", 1990s painted science-fiction illustration, smooth airbrushed rendering, clean cool palette of black teal and brushed silver, optimistic heroic lighting"
   tier: C
   dimensions:
     tone: serious
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Q
-    visual: "A smug humanoid man with slicked-back dark hair, wearing a Starfleet captain's uniform with four pips, mischievous knowing smile, theatrical hand gestures"
+    visual: "An adult humanoid man with slicked-back dark hair, wearing a 24th-century duty uniform with four pips, mouth curved in a wide grin, one hand raised mid-gesture, index finger extended upward"
     ocean:
       O: 5  # Omniscient cosmic awareness
       C: 3  # Playfully chaotic
@@ -99,7 +99,7 @@ agents:
     shortName: Q
   sm:
     character: Captain Jean-Luc Picard
-    visual: "A bald man in his fifties with dignified bearing, wearing a red Starfleet uniform with four captain's pips, serious expression, one hand raised in thoughtful gesture"
+    visual: "An adult bald man in his fifties, clean-shaven, wearing a red 24th-century duty uniform with four captain's pips on the collar, chin slightly raised, one hand raised, index finger extended"
     ocean:
       O: 4  # Shakespeare and archaeology
       C: 5  # Starfleet discipline
@@ -130,7 +130,7 @@ agents:
     shortName: Jean-Luc
   tea:
     character: Lieutenant Commander Data
-    visual: "A pale android with slicked-back black hair and golden eyes, wearing a gold Starfleet operations uniform, tilted head with curious expression"
+    visual: "An adult android figure with pale gold-tinted skin, slicked-back black hair, and amber-gold irises, wearing a gold 24th-century duty uniform, head tilted slightly to one side, gaze directed forward with a steady unblinking look"
     ocean:
       O: 5  # Fascinated by everything
       C: 5  # Positronic precision
@@ -161,7 +161,7 @@ agents:
     shortName: Data
   dev:
     character: Lieutenant Commander Geordi La Forge
-    visual: "A Black man wearing a silver VISOR device over his eyes, gold Starfleet engineering uniform, warm smile, holding a tricorder or engineering tool"
+    visual: "An adult Black man with short-cropped hair, wearing a silver curved visor band spanning both eyes and a gold 24th-century duty uniform, lips parted in a broad smile, holding a hand-held engineering tool"
     ocean:
       O: 5  # Engineering creativity
       C: 4  # Chief engineer standards
@@ -192,7 +192,7 @@ agents:
     shortName: Geordi
   reviewer:
     character: Commander Spock (visiting from Enterprise)
-    visual: "A Vulcan man with pointed ears and bowl-cut black hair, blue Starfleet science uniform, one eyebrow raised, hands clasped behind back"
+    visual: "An adult man with pointed ears, straight bowl-cut black hair, and a light olive complexion, wearing a blue 24th-century duty uniform, one eyebrow arched high, hands clasped behind the back, gaze level and direct"
     ocean:
       O: 4  # Scientific curiosity
       C: 5  # Vulcan logic
@@ -223,7 +223,7 @@ agents:
     shortName: Spock
   architect:
     character: Lieutenant Commander Data (in design mode)
-    visual: "A pale android with slicked-back black hair and golden eyes, wearing a gold Starfleet uniform, holding a PADD, contemplative expression"
+    visual: "An adult android figure with pale gold-tinted skin, slicked-back black hair, and amber-gold irises, wearing a gold 24th-century duty uniform, holding a flat rectangular data device in both hands, gaze downward toward the device, brow smooth and still"
     ocean:
       O: 5  # Explores all possibilities
       C: 5  # Systematic perfection
@@ -254,7 +254,7 @@ agents:
     shortName: Data
   pm:
     character: Admiral Kathryn Janeway
-    visual: "A woman with auburn hair pulled back in a bun, wearing a red Starfleet admiral's uniform with multiple pips, confident commanding presence, coffee cup in hand"
+    visual: "An adult woman with auburn hair pulled back in a neat bun, wearing a red 24th-century duty uniform with multiple rank pips on the collar, shoulders squared, chin level, holding a cylindrical coffee cup in one hand"
     ocean:
       O: 4  # Science background
       C: 5  # Command discipline
@@ -285,7 +285,7 @@ agents:
     shortName: Kathryn
   tech-writer:
     character: Dr. Beverly Crusher
-    visual: "A woman with red hair, wearing a blue Starfleet medical uniform, warm caring expression, medical tricorder visible"
+    visual: "An adult woman with shoulder-length red hair, wearing a blue 24th-century duty uniform, lips curved in a slight smile, brows relaxed, holding a hand-held medical scanner at her side"
     ocean:
       O: 4  # Medical and theatrical
       C: 4  # Doctor's precision
@@ -316,7 +316,7 @@ agents:
     shortName: Beverly
   ux-designer:
     character: Counselor Deanna Troi
-    visual: "A woman with dark curly hair, wearing a blue Starfleet uniform with low neckline, empathetic expression, hands open in welcoming gesture"
+    visual: "An adult woman with long dark curly hair, wearing a blue 24th-century duty uniform with a rounded low neckline, both hands open and held slightly forward at waist height, eyes soft and direct, brows gently raised"
     ocean:
       O: 4  # Empathic insight
       C: 3  # Intuition over process
@@ -347,7 +347,7 @@ agents:
     shortName: Deanna
   devops:
     character: Chief Miles O'Brien
-    visual: "A sturdy man with receding hairline, wearing a gold Starfleet operations uniform, sleeves rolled up, holding a hyperspanner tool, weary but determined expression"
+    visual: "An adult sturdy man with a receding brown hairline and a short beard, wearing a gold 24th-century duty uniform with sleeves rolled up to the elbows, holding a large wrench-like engineering tool, jaw set, brow slightly furrowed"
     ocean:
       O: 3  # Practical tradesman
       C: 5  # Transporter chief precision
@@ -379,7 +379,7 @@ agents:
 
   ba:
     character: Counselor Deanna Troi
-    visual: "A woman with dark curly hair, wearing a blue Starfleet uniform with low neckline, empathetic expression, hands open in welcoming gesture, holding a PADD with stakeholder notes"
+    visual: "An adult woman with long dark curly hair, wearing a blue 24th-century duty uniform with a rounded low neckline, both hands open and held slightly forward at waist height, eyes soft and direct, brows gently raised, a flat rectangular data device tucked under one arm"
     shortName: Troi
     ocean:
       O: 4  # Empathic insight

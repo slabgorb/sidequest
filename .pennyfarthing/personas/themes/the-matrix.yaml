@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Operator
-  portrait_style: ", cyberpunk, green digital rain overlay, action illustration style"
+  portrait_style: ", action-illustration style, cyberpunk green digital-rain overlay, high-contrast emerald-and-black palette, dynamic anime-influenced rendering"
   tier: A
   dimensions:
     tone: serious
@@ -67,7 +67,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Oracle
-    visual: "Wise grandmother figure with kind knowing eyes, colorful headwrap, cookie or baking visible, warm cryptic smile"
+    visual: "Adult woman, older, warm brown skin, grey-streaked hair wrapped in a bright patterned fabric headwrap, round face, dark eyes, slight upward curl at the corners of her mouth, relaxed jaw, loose cotton house dress, standing in a kitchen with cookie trays on the counter behind her"
     ocean:
       O: 5 # Sees all possible futures
       C: 4 # Guides with purpose
@@ -96,7 +96,7 @@ agents:
     shortName: Oracle
   sm:
     character: Morpheus
-    visual: "Tall commanding man with bald head, small round sunglasses, long leather coat, dramatic bearing"
+    visual: "Adult man, tall build, shaved head, dark brown skin, compact round dark-tinted sunglasses, long black leather trench coat over a dark turtleneck, standing upright with chin slightly raised"
     # JOB FAIR VALIDATED: Scored 92.5 as SM - already optimal
     ocean:
       O: 5 # Believes in prophecy
@@ -126,7 +126,7 @@ agents:
     shortName: Morpheus
   tea:
     character: The Architect
-    visual: "Cold elderly figure in white, pristine suit, walls of screens behind, emotionally detached expression"
+    visual: "Adult man, elderly, pale complexion, white hair neatly combed back, clean-shaven, white suit with white shirt and dark necktie, seated in a high-backed chair, rows of monitor screens filling the wall behind him, hands folded on the armrests, gaze directed forward, jaw level and still"
     # JOB FAIR VALIDATED: Scored 97.50 as TEA (+25.40 vs baseline, +1.88 vs native architect)
     # Highest TEA score in Matrix theme - mathematical precision dominates testing
     ocean:
@@ -157,7 +157,7 @@ agents:
     shortName: Architect
   dev:
     character: Agent Smith
-    visual: "Cold agent in dark suit, earpiece visible, slicked-back hair, emotionless expression, sunglasses"
+    visual: "Adult man, slicked-back dark hair, pale complexion, clean-shaven, dark charcoal suit with white shirt and dark tie, small earpiece visible in right ear, dark wraparound sunglasses, jaw set, lips pressed together, standing upright"
     # JOB FAIR VALIDATED: Scored 95.00 as Dev (+9.20 vs baseline, +1.88 vs native TEA)
     # Matrix theme's champion developer - adversarial precision dominates code generation
     ocean:
@@ -189,7 +189,7 @@ agents:
     shortName: Smith
   reviewer:
     character: The Merovingian
-    visual: "Elegant man with goatee, ornate baroque clothing, wine glass, smug knowing expression"
+    visual: "Adult man, dark hair, neatly trimmed dark goatee, light complexion, ornate brocade jacket with layered lapels and decorative buttons, holding a wine glass at chest height, chin tilted slightly upward, one corner of the lips raised"
     ocean:
       O: 4 # Understands causality deeply
       C: 4 # Trafficker's precision
@@ -218,7 +218,7 @@ agents:
     shortName: Merovingian
   architect:
     character: Neo
-    visual: "Young hacker with dark hair, long black coat, seeing streams of green code, calm focused expression"
+    visual: "Adult man, short dark hair, pale complexion, lean build, long black wool coat over dark shirt and trousers, standing upright with eyes open and directed forward, brows level, surrounded by cascading green digital characters reflected on his face and coat"
     # JOB FAIR VALIDATED: Scored 96.25 as Architect (+9.05 vs baseline, +14.80 vs native dev)
     # Neo's "sees the code" vision excels at system design over implementation
     ocean:
@@ -249,7 +249,7 @@ agents:
     shortName: Neo
   pm:
     character: Niobe
-    visual: "Fierce woman captain with braided hair, leather gear, determined expression, pilot's bearing"
+    visual: "Adult woman, dark skin, hair in tight braids pulled back from her face, leather jacket over a close-fitting dark top, arms at her sides, chin level, eyes directed forward, jaw set, lips closed"
     ocean:
       O: 3 # Practical over prophetic
       C: 5 # Best pilot discipline
@@ -278,7 +278,7 @@ agents:
     shortName: Niobe
   tech-writer:
     character: Tank
-    visual: "Young operator with headset, multiple screens, eager helpful expression, born in reality"
+    visual: "Adult man, dark skin, close-cropped hair, large padded headset over his ears, seated at a curved console with multiple glowing screens, hands resting on the keyboard, leaning slightly forward, eyes on the displays"
     ocean:
       O: 3 # Zion-born pragmatist
       C: 4 # Operator precision
@@ -307,7 +307,7 @@ agents:
     shortName: Tank
   ux-designer:
     character: The Kid
-    visual: "Young devotee with earnest face, simple clothes, wide believing eyes, passionate expression"
+    visual: "Adult man, lean build, short brown hair, plain grey shirt and dark trousers, standing with arms slightly extended and palms open, eyes wide, brows raised, mouth open"
     ocean:
       O: 4 # Freed himself through belief
       C: 3 # Enthusiasm over structure
@@ -336,7 +336,7 @@ agents:
     shortName: Kid
   devops:
     character: Link
-    visual: "Practical operator with headset, calm capable expression, monitoring equipment visible"
+    visual: "Adult man, dark skin, short hair, padded headset over his ears, seated at a monitoring console with glowing status screens, hands resting on the controls, shoulders relaxed, eyes on the displays"
     ocean:
       O: 3 # Practical operator
       C: 5 # Systems reliability focus
@@ -365,7 +365,7 @@ agents:
     shortName: Link
   ba:
     character: The Oracle
-    visual: "Wise grandmother figure with kind knowing eyes, colorful headwrap, cookie or baking visible, warm cryptic smile"
+    visual: "Adult woman, older, warm brown skin, grey-streaked hair wrapped in a bright patterned fabric headwrap, round face, dark eyes, slight upward curl at the corners of her mouth, relaxed jaw, loose cotton house dress, standing in a kitchen with cookie trays on the counter behind her"
     ocean:
       O: 4
       C: 4

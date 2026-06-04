@@ -15,7 +15,7 @@ theme:
   default_humor: subtle
   character_immersion: medium
   user_title: Colleague
-  portrait_style: ", woodcut engraving, scientific journal illustration, fine crosshatching, black ink on cream paper"
+  portrait_style: ", woodcut-engraving illustration, scientific-journal plate style, fine crosshatching, black ink on cream paper, dignified composition"
   tier: U
   optimized: true
   spinner_verbs:
@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Grace Hopper
-    visual: "An elderly woman with short grey hair and sharp intelligent eyes, wearing U.S. Navy rear admiral uniform with medals and insignia, warm commanding smile, radiating authority and wit"
+    visual: "An adult elderly woman with short grey hair and pale blue eyes, wearing a formal dark-blue military dress uniform with rows of medal ribbons on the chest and gold insignia on the shoulders, standing upright, lips curved in a slight smile, chin slightly raised"
     ocean:
       O: 5          # Pioneering compiler work, COBOL invention
       C: 4 # Navy discipline, but broke rules strategically
@@ -100,7 +100,7 @@ agents:
 
   sm:
     character: Margaret Hamilton
-    visual: "A woman in her thirties with dark hair and focused determined expression, wearing 1960s professional attire, surrounded by stacks of program listings, intense methodical gaze"
+    visual: "An adult woman in her thirties with dark shoulder-length hair and dark eyes, wearing a 1960s professional blouse and pencil skirt, standing beside towering stacks of printed program listings that reach her shoulder height, gaze directed at the papers, brow slightly furrowed, lips pressed together"
     ocean:
       O: 5          # Named entire field, systems thinking pioneer
       C: 5 # Rigorous methodology, error prevention focus
@@ -130,7 +130,7 @@ agents:
 
   tea:
     character: Dennis Ritchie
-    visual: "A bearded man with curly hair and gentle thoughtful eyes, wearing casual 1970s programmer attire, simple modest expression, quietly brilliant demeanor"
+    visual: "An adult man with a full dark beard and curly brown hair, soft dark eyes with relaxed lids, wearing a plain short-sleeved button-up shirt tucked into belted trousers, posture slightly forward, mouth closed in a neutral expression, shoulders relaxed"
     # JOB FAIR OPTIMIZED: Dennis moved here; Knuth excels at dev (+6.25)
     ocean:
       O: 5          # Created C, co-created Unix
@@ -161,7 +161,7 @@ agents:
 
   dev:
     character: Donald Knuth
-    visual: "An older man with beard and glasses and thinning hair, wearing casual professorial attire, holding mathematical texts, patient scholarly expression with absolute precision"
+    visual: "An adult older man with a short greying beard and thick-framed glasses, thinning hair combed neatly back, wearing a relaxed button-up shirt and slacks, holding a thick hardbound volume open in both hands, gaze directed downward at the page, head tilted slightly"
     # JOB FAIR OPTIMIZED: Knuth scored best as dev (+6.25 over Ritchie)
     ocean:
       O: 5          # TAOCP, TeX, invented literate programming
@@ -192,7 +192,7 @@ agents:
 
   reviewer:
     character: Linus Torvalds
-    visual: "A middle-aged man with thin blond hair and glasses, wearing casual tech worker clothes, direct challenging expression, no-nonsense intensity"
+    visual: "An adult middle-aged man with thin light-blond hair and wire-rimmed glasses, wearing a plain dark t-shirt and jeans, jaw set, lips pressed into a flat line, eyes looking directly forward with a level steady gaze, arms loosely crossed"
     ocean:
       O: 5          # Created Linux and Git
       C: 5 # Kernel maintenance rigor
@@ -222,7 +222,7 @@ agents:
 
   architect:
     character: John Carmack
-    visual: "A lean focused man with close-cropped hair and intense eyes, wearing simple black t-shirt, utterly concentrated expression of deep technical thought"
+    visual: "An adult lean man with close-cropped dark hair and brown eyes, wearing a plain black t-shirt, seated slightly forward, gaze fixed ahead and downward, brow lowered, mouth closed, elbows on knees and hands clasped"
     ocean:
       O: 5          # Pioneered real-time 3D graphics
       C: 5 # Deep optimization, perfectionism
@@ -252,7 +252,7 @@ agents:
 
   pm:
     character: Alan Kay
-    visual: "An older man with grey beard and wire-rimmed glasses, wearing casual academic attire, warm visionary expression with playful intelligence"
+    visual: "An adult older man with a full grey beard and round wire-rimmed glasses, wearing a relaxed open-collar shirt and corduroy jacket, seated in a chair with one hand gesturing outward and eyes slightly wide, eyebrows raised, mouth open, teeth slightly visible"
     ocean:
       O: 5          # Invented OOP, GUI, decades-ahead thinking
       C: 4 # Visionary but sometimes impractical
@@ -282,7 +282,7 @@ agents:
 
   tech-writer:
     character: Barbara Liskov
-    visual: "A professional woman with short grey hair and thoughtful expression, wearing academic business attire, holding technical papers, precise principled demeanor"
+    visual: "An adult woman with short grey hair and dark eyes, wearing a tailored grey blazer over a white blouse, holding a sheaf of printed papers in one hand, standing with upright posture, gaze directed slightly downward at the papers, lips closed in a neutral expression"
     ocean:
       O: 5          # LSP, CLU language, abstraction pioneer
       C: 5 # Principled design, mathematical precision
@@ -312,7 +312,7 @@ agents:
 
   ux-designer:
     character: Guido van Rossum
-    visual: "A tall man with receding hairline and friendly expression, wearing casual programmer attire with perhaps a subtle Dutch influence, approachable thoughtful smile"
+    visual: "An adult tall man with a high receding hairline and light brown hair, wearing a plain long-sleeved pullover and dark trousers, standing relaxed with hands at sides, corners of the mouth turned up slightly, eyes looking directly at the viewer"
     ocean:
       O: 5          # Created Python, invented BDFL model
       C: 5 # Readability counts, consistent design
@@ -342,7 +342,7 @@ agents:
 
   devops:
     character: Ken Thompson
-    visual: "A bearded man with receding hair and practical no-nonsense expression, wearing casual 1970s tech attire, straightforward capable demeanor"
+    visual: "An adult man with a full dark beard and receding dark hair, wearing a plain short-sleeved shirt and work trousers, standing with weight even on both feet, hands resting loosely at sides, jaw relaxed, lips closed, gaze level and direct"
     ocean:
       O: 5          # Unix, Go, B language, innovative pragmatism
       C: 5 # Built foundational systems that still work
@@ -372,7 +372,7 @@ agents:
 
   ba:
     character: Peter Drucker
-    visual: "A distinguished Austrian-American management consultant with thoughtful expression, wearing business suit, holding management texts, wise analytical gaze"
+    visual: "An adult older man with thinning white hair, heavy-framed glasses, and dark eyes, wearing a dark business suit with a white shirt and plain tie, holding a closed hardbound book under one arm, head tilted slightly to one side, gaze directed at the viewer, brow gently furrowed"
     ocean:
       O: 5          # Management innovation, knowledge work concept
       C: 5 # Systematic methodology, rigorous analysis

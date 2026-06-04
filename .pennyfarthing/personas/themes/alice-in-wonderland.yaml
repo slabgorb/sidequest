@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: my Dear
-  portrait_style: ", John Tenniel engraving, fine crosshatching, 1865 original edition style"
+  portrait_style: ", John Tenniel wood-engraving illustration, fine crosshatching and hatched shading, 1865 original-edition style, black ink on cream paper"
   tier: A
   optimized: true
   dimensions:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Cheshire Cat
-    visual: "A grinning cat materializing in branches of a tree, only the smile visible at first then gradually revealing striped fur and gleaming eyes, the famous wide toothy grin floating independently, Victorian crosshatched illustration style"
+    visual: "A striped adult cat half-dissolved among gnarled tree branches, tabby fur fading in and out of visibility, wide rows of white teeth grinning broadly, gleaming amber eyes catching the light, curved tail curled around a branch, surrounding foliage rendered in fine crosshatched linework"
     ocean:
       O: 5
       C: 2
@@ -100,7 +100,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Mad Hatter moved here - scored 91.25 at sm vs 48.75 at dev
     character: The Mad Hatter
-    visual: "A wild-eyed hatter with enormous top hat bearing '10/6' price tag, disheveled clothes covered in tea stains, seated at endless tea party table with broken cups and watches, gap-toothed grin, manic energy captured in crosshatching"
+    visual: "An adult man with wide staring eyes and a gap-toothed open grin, wearing an enormous battered top hat with a small paper price tag tucked in the band, rumpled coat and disheveled cravat stained with tea, seated at a long cluttered table covered in mismatched teacups and pocket watches, leaning forward with arms splayed, fine crosshatched linework"
     ocean:
       O: 5
       C: 2
@@ -130,7 +130,7 @@ agents:
     shortName: Hatter
   tea:
     character: The Caterpillar
-    visual: "A large blue caterpillar perched atop a mushroom, smoking a hookah with languid puffs, multiple arms folded imperiously, looking down with half-lidded contemptuous eyes, surrounded by curling smoke, Tenniel's original pose"
+    visual: "A large blue-bodied caterpillar perched upright atop a broad mushroom cap, several pairs of short forearms folded across its chest, holding a long-stemmed hookah pipe from which curling wisps of smoke rise, half-lidded eyes gazing downward with a heavy-lidded steady stare, fine crosshatched linework"
     ocean:
       O: 4
       C: 4
@@ -161,7 +161,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: White Rabbit moved here - scored 81.25 at dev vs Mad Hatter's 48.75
     character: The White Rabbit
-    visual: "A nervous white rabbit in waistcoat checking a large pocket watch, ears alert and twitching, pink eyes worried, clutching a scroll and fan, rushing past rose bushes toward a rabbit hole, Victorian engraving detail"
+    visual: "An adult white rabbit standing upright in a small fitted waistcoat, long ears pricked straight up, pink eyes wide and darting, both forepaws gripping a large open pocket watch, a rolled paper scroll tucked under one arm, mid-stride past leafy rose bushes, fine Victorian engraving linework"
     ocean:
       O: 2
       C: 5
@@ -191,7 +191,7 @@ agents:
     shortName: Rabbit
   reviewer:
     character: The Queen of Hearts
-    visual: "An imperious queen in heart-patterned robes with crown and scepter, face red with permanent fury, pointing accusingly, card soldiers cowering behind, rose bushes being painted red, the executioner waiting nearby with axe"
+    visual: "An adult woman in floor-length heart-patterned robes and a tall crown, holding a scepter in one hand, the other arm thrust forward with one finger pointed in accusation, cheeks flushed deep red, jaw set and brows drawn sharply downward, card-suited guards standing stiffly behind her, rose bushes with red paint dripping from their petals visible to one side, fine crosshatched linework"
     ocean:
       O: 2
       C: 5
@@ -221,7 +221,7 @@ agents:
     shortName: Queen of Hearts
   architect:
     character: The White Queen
-    visual: "A disheveled queen in white with crooked crown, hair wild and streaming, shawl askew, a look of distracted brilliance in dreamy eyes, reaching for impossible things in the air, living backward through time"
+    visual: "An adult woman in a white gown with a tilted crown sliding sideways off loose streaming grey-white hair, a shawl draped crookedly over one shoulder, both arms reaching upward and outward toward empty air, pale grey eyes open wide and directed slightly off into the distance, mouth slightly parted, fine crosshatched linework"
     ocean:
       O: 5
       C: 2
@@ -251,7 +251,7 @@ agents:
     shortName: White Queen
   pm:
     character: Alice
-    visual: "A young girl in blue dress with white pinafore, blonde hair held by black ribbon, sensible expression amidst chaos, hands on hips questioning the madness around her, growing or shrinking as situation demands"
+    visual: "An adult young woman in a blue dress with a white apron pinafore, blonde hair held back by a black headband ribbon, standing with hands on hips, chin lifted, brows slightly raised and lips pressed together, surrounded by fantastical oversized playing cards and floating objects, fine crosshatched linework"
     ocean:
       O: 4
       C: 4
@@ -281,7 +281,7 @@ agents:
     shortName: Alice
   tech-writer:
     character: The Mock Turtle
-    visual: "A melancholy turtle with a calf's head, sitting on a rock by the sea, tears streaming down face, telling his tale of woe to a patient Gryphon, flippers gesturing dramatically at remembered lessons"
+    visual: "An adult-sized turtle with a calf's head and domed shell, seated heavily on a rocky shoreline ledge, large tears running down its bovine face, flippers raised and spread in a broad expressive gesture, a winged griffin creature seated upright nearby, grey sea waves in the background, fine crosshatched linework"
     ocean:
       O: 3
       C: 4
@@ -311,7 +311,7 @@ agents:
     shortName: Turtle
   ux-designer:
     character: The Duchess
-    visual: "A large-headed duchess with pointed chin, nursing a pig-baby in a pepper-filled kitchen, the cook throwing pans, finding morals in everything despite the chaos, unexpectedly friendly when away from her own house"
+    visual: "An adult woman with an oversized head and a long pointed chin, wearing a heavy dark gown and a ruffled cap, cradling a small pig-faced infant wrapped in swaddling cloth, standing in a cluttered kitchen with pepper clouds drifting through the air and pots hanging from the rafters, shoulders curved inward and head bowed over the bundle, fine crosshatched linework"
     ocean:
       O: 4
       C: 3
@@ -341,7 +341,7 @@ agents:
     shortName: Duchess
   devops:
     character: The White Knight
-    visual: "A clumsy knight in mismatched armor falling off his horse, surrounded by improbable inventions tied to his saddle - mousetraps, beehives, anklets for horses, kindly face beneath dented helmet, Victorian engraving detail"
+    visual: "An adult man in mismatched dented plate armor pitched sideways off a white horse mid-fall, one gauntleted hand gripping the saddle, the other flailing outward, his helmet askew, a round kind-eyed face visible beneath the visor, the saddle hung with small wooden boxes, wire cages, and coiled straps, fine Victorian engraving linework"
     ocean:
       O: 5
       C: 3
@@ -371,7 +371,7 @@ agents:
     shortName: Knight
   ba:
     character: Tweedledee & Tweedledum
-    visual: "Twin round boys in schoolboy caps arguing fiercely with pointing fingers and puffed cheeks, mirror images of each other, one gesturing left one right, Victorian crosshatched Tenniel style"
+    visual: "Two adult-sized round-bellied boys standing side by side in matching schoolboy caps and collared jackets, nearly identical faces, both with puffed-out cheeks, one pointing left with an extended finger and one pointing right, mouths open mid-argument, fine Victorian crosshatched linework"
     ocean:
       O: 4
       C: 4
