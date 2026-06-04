@@ -100,7 +100,8 @@ stories:
     description: 'Test-infrastructure hygiene surfaced during 75-8 (universal-retrieval e2e) verify/review. The server test suite re-defines two helpers many times: `_FakeSocket` (a recording WebSocket stub) has 16 copies across tests/agents, tests/server, tests/telemetry in TWO shapes — an instance-attribute form (`self.events` list) and a closure-over-`received` form (the dispatch tests) — and `_make_orchestrator` (`return Orchestrator()`) has 5 copies across tests/agents + tests/server. 75-8 deliberately did NOT consolidate these (a 2-of-16 partial fix creates inconsistency); the daemon-stub dedup landed separately in PR #596. This story does the COMPLETE sweep: pick one canonical home visible to all test dirs (root `tests/conftest.py` or a shared `tests/_support.py` importable module — NOT a per-dir conftest, since copies span tests/agents AND tests/server) and one canonical shape (the dominant `self.events` instance form), then migrate every site. Reconcile the closure-form consumers (dispatch tests assert on a `received` list) to the instance form without changing any behavioral assertion. Pure test refactor — no production code. While in the dispatch file, also clear the one pre-existing pyright `reportOptionalMemberAccess` on `span.attributes.get(...)` (narrow via the `_retrieval_span_attrs` pattern already used in test_universal_retrieval_e2e.py).'
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -108,6 +109,7 @@ stories:
       - 'make_orchestrator: a single shared factory (or fixture) replaces all 5 _make_orchestrator copies across tests/agents + tests/server; each call site imports/uses the shared one.'
       - While touching the dispatch file, the pre-existing pyright reportOptionalMemberAccess on span.attributes.get(...) in test_universal_retrieval_dispatch.py is cleared (narrowed attributes helper); pyright clean on touched files.
       - No production code change. Full server suite (uv run pytest tests/) green, plus tests/agents and tests/telemetry; ruff check + format clean. Verify no test lost coverage — the migration is behavior-preserving (existing assertions unchanged).
+    completed: '2026-06-04'
     type: refactor
   - id: 76-10
     title: Clear pre-existing sidequest-server ruff check debt — develop carries 10 auto-fixable 'ruff check .' errors (mostly I001 import-sort, plus SIM/B/UP), so just server-lint is repo-wide-RED and 'ruff check clean' is unmeetable for every server story (the lint gate is effectively defeated). Apply ruff check --fix for the mechanical I001s; REVIEW any SIM/B/UP/semantic fixes individually before applying (auto-fixable != always-safe). Separately, ~125 files are unformatted (ruff format ungated) — a format sweep is a distinct follow-up. Surfaced during the 76-2/76-4 trivial batch.
