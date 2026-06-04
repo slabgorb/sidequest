@@ -34,6 +34,7 @@ completed_epics:
   - '81'
   - '83'
   - '72'
+  - '74'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -978,5 +979,30 @@ completed_stories:
   - id: 83-2
     epic: '83'
     title: Standing Folio lobby — close AC8 gaps (880/560 breakpoints + reduced-motion) and design-divergence ratification
+    points: 3
+    completed: '2026-06-04'
+  - id: 74-1
+    epic: '74'
+    title: Loader refactor — genre-tier flavor becomes world-tier/optional (no genre flavor)
+    points: 5
+    completed: '2026-05-31'
+  - id: 74-2
+    epic: '74'
+    title: Repoint flavor consumers to the World tier (reference-chrome, render pipeline, audio backend); fixes reference_renderer 500 risk before genre flavor deletion
+    points: 5
+    completed: '2026-06-04'
+  - id: 74-3
+    epic: '74'
+    title: Author world-tier lore for every live world; unblock genre-lore deletion and avoid empty LoreStore on un-migrated worlds
+    points: 5
+    completed: '2026-06-03'
+  - id: 74-4
+    epic: '74'
+    title: 'World-flavor hardening: isinstance shape-guard on raw world theme/audio, weather-absence OTEL span, remove dead seed_lore_from_genre_pack'
+    points: 3
+    completed: '2026-06-03'
+  - id: 74-5
+    epic: '74'
+    title: Convert content-pointing lore-seeding tests to synthetic fixtures (no real-pack coupling)
     points: 3
     completed: '2026-06-04'
