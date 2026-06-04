@@ -3,7 +3,7 @@ type: epic
 title: "Lobby Redesign — The Standing Folio"
 description: "Holistic from-scratch redesign of the SideQuest lobby per the Claude Design handoff (Direction A · The Standing Folio). Kills the scrollbar in the world list, replaces it with a fold-fitting genre accordion, and reframes the lobby as a literary manuscript title page: masthead name ritual, two-pane folio card (genre accordion + cinematic per-genre preview), commit row (Solo/MP toggle + Start), and below-the-fold sections (live presence, past journeys, dev scene library). Dark Folio palette + Pirata One/EB Garamond, subtle per-genre accent shift. Wires to the existing real worlds/sessions data hooks; hero art stays atmospheric CSS placeholders standing in for runtime AI renders."
 priority: p2
-status: in_progress
+status: done
 repos: ui
 stories:
   - id: 83-1
@@ -32,7 +32,7 @@ stories:
     description: "Follow-up to 83-1 from a UX verification pass (Alex/ux-designer, 2026-06-03, Playwright on localhost:5173) comparing the MERGED Standing Folio lobby against the Claude Design handoff and 83-1's own AC8. The redesign is sound and faithful overall. This story closes the two real AC8 gaps that shipped incomplete, plus parked items. KEY GAPS vs 83-1 AC8: (1) breakpoints shipped as Tailwind defaults md=768/sm=640, but AC8 spec'd <=880px (single-column folio + two-up index grid) and <=560px (stacked commit row + full-width Start) — at 860px the live lobby is still two-column. (2) reduced-motion is entirely unhandled: no prefers-reduced-motion media query or motion-reduce: variant anywhere in src; the build skipped the design's gated entrance fade but ADDED unguarded animate-spin (WorldPreview image spinner) + animate-pulse (loading skeleton + ConnectScreen 'loading' text) that ignore reduce. RESOLVED DECISIONS (Keith, 2026-06-03 — both accept-current-behavior, ZERO CODE): (3) CurrentSessions null-on-empty is KEPT ('remove it for now') — no 'No lanterns lit here tonight.' copy; the design's empty-state copy and 83-1 AC6's 'empty-state copy when none' clause are deliberately superseded. (4) Rules-in-commit-row placement is ACCEPTED ('the rules are fine for now too, I was able to find them') — pack-Rules staying behind a world selection is fine; ADR-135 tension acknowledged and deferred. PARKED (still in scope): self-host Pirata One, add console.warn to silent catches, add data-testid=lobby-accent-root, guard effectiveOpenGenre against stale removed-pack genre. Also observed: a flash-of 'Could not load worlds...' on cold mount before the worlds fetch settles. Full UX design spec: docs/design/83-2-lobby-folio-followups.md."
     points: 3
     priority: p2
-    status: in_progress
+    status: done
     repos: ui
     workflow: tdd
     acceptance_criteria:
@@ -40,5 +40,7 @@ stories:
       - 'Reduced-motion respected: animate-spin (WorldPreview image spinner) and animate-pulse (loading skeleton + ConnectScreen pulse text) are guarded with motion-reduce: (or gated behind prefers-reduced-motion: no-preference). Under an emulated prefers-reduced-motion: reduce, no looping animation runs and all content has a visible end-state as its base (no opacity:0-stuck cards).'
       - 'Parked items resolved or explicitly deferred with rationale: (a) Pirata One self-hosted for the wordmark (replaces house-serif fallback); (b) console.warn added to the three silent catches (/dev/scenes, loadSavedState, saveState) per No-Silent-Fallbacks; (c) data-testid=lobby-accent-root added and AC7 accent test asserts against it; (d) effectiveOpenGenre guarded against a stale genre whose pack was removed.'
       - Cold-mount worlds fetch shows a loading state (not the 'Could not load worlds. Is the server running?' error) until the fetch resolves or genuinely fails; the error copy only appears on a real failure.
+    completed: '2026-06-04'
     type: chore
+    review_verdict: approved
 completed: '2026-06-03'

@@ -975,3 +975,8 @@ completed_stories:
     title: Rescue test_pregen.py from the caverns_sunden blanket-skip + fix stale _stub_pack
     points: 2
     completed: '2026-06-03'
+  - id: 83-2
+    epic: '83'
+    title: Standing Folio lobby — close AC8 gaps (880/560 breakpoints + reduced-motion) and design-divergence ratification
+    points: 3
+    completed: '2026-06-04'
