@@ -36,6 +36,7 @@ completed_epics:
   - '72'
   - '74'
   - '65'
+  - '85'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -1086,4 +1087,19 @@ completed_stories:
     epic: '65'
     title: '65-4 follow-ups: clear preloadedAssets on session switch + preload hardening + test tightening'
     points: 2
+    completed: '2026-06-04'
+  - id: 85-1
+    epic: '85'
+    title: Confrontation panel legibility & layout pass — readable dial, beat-caption fits its card, kill the dead-space/floating-die
+    points: 3
+    completed: '2026-06-04'
+  - id: 85-2
+    epic: '85'
+    title: 'Location surface: pick ONE source of truth for where-am-I (header vs Location tab) — design-first'
+    points: 5
+    completed: '2026-06-04'
+  - id: 85-3
+    epic: '85'
+    title: Confrontation mode — spatial promotion to a dockview panel (opponent portrait + stakes + Guitar-Solo party action)
+    points: 5
     completed: '2026-06-04'

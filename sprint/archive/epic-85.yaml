@@ -3,7 +3,7 @@ type: epic
 title: Post-Playtest UX Polish — Confrontation Panel & Location Surface
 description: "UX-lane follow-ups surfaced by the 2026-06-04 playtest (road_warrior/the_circuit + wry_whimsy). The mechanical fixes landed and verified (chase #647, discovered_regions pollution #648); this epic collects the player-facing presentation polish that remained. Two members: (1) confrontation-panel legibility/layout — the panel surfaces correctly now, but the dial readout is illegible, beat-caption text overflows its card, and there is dead-space + a floating-die layout problem (matters for mechanics-first players Sebastien/Jade who read the dial/DC math in the player UI); (2) the location-surface 'pick one source of truth for where-am-I' divergence — the header binds to party_status.location (free-text scene title) while the Location tab binds to the region-level LocationDescriptionPayload, so they disagree on screen during intra-region POI moves. Source: sq-playtest-pingpong 2026-06-04 (L162, L105 a/b)."
 priority: p2
-status: backlog
+status: done
 repos: ui,server
 stories:
   - id: 85-1
@@ -43,9 +43,8 @@ stories:
     description: "Tier B of the confrontation space-usage design (docs/design/confrontation-space-usage.md, The Duchess 2026-06-04). Promote the confrontation from a thin bottom strip into a focused dockview 'confrontation mode' that claims the board canvas while an encounter is active — giving the drama peak the screen it earns (Cost Scales with Drama; Diamonds and Coal). GATING DESIGN DECISION (Architect/operator, before any code): does confrontation mode SPLIT with the narration panel (prose left, confrontation right — keeps the soloist reachable, Duchess-recommended) or TAKE OVER full-screen? Depends on / builds atop 85-1 (Tier A polish). Possible small protocol dependency: opponent portrait + stakes may not yet be on the CONFRONTATION payload — verify before scoping the server half."
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-06-04'
-    branch: feat/85-3-confrontation-mode-dockview-panel
     repos: ui,server
     workflow: tdd
     acceptance_criteria:
@@ -55,3 +54,7 @@ stories:
       - Stakes banner (set_stakes) shown prominently at the top of confrontation mode.
       - "'Meanwhile at the table' strip surfaces the non-soloing players' concurrent verbs (The Guitar Solo); collapses to nothing in solo play."
       - 'Protocol check: if CONFRONTATION payload lacks actors[].portrait / stakes, the server/protocol half is in scope and flagged for Architect; otherwise ui-only.'
+    completed: '2026-06-04'
+    branch: feat/85-3-confrontation-mode-dockview-panel
+    review_verdict: approved
+completed: '2026-06-04'
