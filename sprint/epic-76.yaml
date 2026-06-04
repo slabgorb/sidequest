@@ -68,6 +68,7 @@ stories:
     status: backlog
     repos: sidequest-server
     workflow: tdd
+    review_verdict: approved
   - id: 76-7
     title: 'Source coverage: sync factions + locations into the entity index — wire faction (world lore) and location (diffuse: room graph / world_materialization / PG promotions) sources through project_faction_card/project_location_card so entity_sync.{faction,location}_count stop reading 0. Makes the universal index actually universal.'
     points: 5
