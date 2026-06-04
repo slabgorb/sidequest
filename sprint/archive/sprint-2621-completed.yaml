@@ -37,6 +37,7 @@ completed_epics:
   - '74'
   - '65'
   - '85'
+  - '75'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -1101,5 +1102,78 @@ completed_stories:
   - id: 85-3
     epic: '85'
     title: Confrontation mode — spatial promotion to a dockview panel (opponent portrait + stakes + Guitar-Solo party action)
+  - id: 75-1
+    epic: '75'
+    title: Restore runtime lore accretion into the RAG — port lore_sync per-turn fact embedding
+    points: 5
+    completed: '2026-05-31'
+  - id: 75-2
+    epic: '75'
+    title: Port budgeted NPC working-set selection (npc_context.rs) — replace load-everything npc_pool prompt assembly
+    points: 5
+    completed: '2026-06-01'
+  - id: 75-3
+    epic: '75'
+    title: '[DESIGN] Universal RAG retrieval layer — index + retrieve NPCs/locations per turn (ADR)'
+    points: 3
+    completed: '2026-05-31'
+  - id: 75-4
+    epic: '75'
+    title: 'Universal retrieval: EntityCard model + per-type projectors (NPC/location/faction) + typed store generalization (ADR-118)'
+    points: 5
+    completed: '2026-06-01'
+  - id: 75-5
+    epic: '75'
+    title: 'Universal retrieval: retrieve_turn_context floor+fill orchestration + per-turn token-budget seam (ADR-118)'
+    points: 5
+    completed: '2026-06-01'
+  - id: 75-6
+    epic: '75'
+    title: 'Universal retrieval: card sync/reproject hook wired to 75-1 accretion trigger (ADR-118)'
+    points: 3
+    completed: '2026-06-01'
+  - id: 75-7
+    epic: '75'
+    title: 'Universal retrieval: OTEL retrieval.universal instrumentation + GM-panel surface (ADR-118)'
+    points: 3
+    completed: '2026-06-02'
+  - id: 75-8
+    epic: '75'
+    title: 'Universal retrieval: end-to-end integration wiring test — action to floor+fill to Valley injection (ADR-118)'
+    points: 2
+    completed: '2026-06-03'
+  - id: 75-9
+    epic: '75'
+    title: '[DESIGN] NPC-pool ratification gate + pool/Npc split (ADR-135) — governs ADR-118 projection source'
+    points: 3
+    completed: '2026-06-03'
+  - id: 75-10
+    epic: '75'
+    title: Wire player-NPC reference signal into the budgeted working-set brief tier (75-2 carryover, ADR-118)
+    points: 2
+    completed: '2026-06-03'
+  - id: 75-11
+    epic: '75'
+    title: is_projectable() predicate — observation_pending gates projection eligibility (ADR-138 D1/D3)
+    points: 2
+    completed: '2026-06-04'
+  - id: 75-12
+    epic: '75'
+    title: Wire ratification gate into ADR-118 NPC projection — reuse 49-6 spans, dedup-by-id, floor-includes-pending test (ADR-138 D2/D5/D6)
+    points: 3
+    completed: '2026-06-04'
+  - id: 75-13
+    epic: '75'
+    title: Wire ratification gate into ADR-135 reference NPC projection — withhold unratified phantoms (ADR-138 D4)
+    points: 2
+    completed: '2026-06-04'
+  - id: 75-14
+    epic: '75'
+    title: Defensive entity_card eviction + entity_card.evicted span for unprojectable cards (ADR-138 D5/D6)
+    points: 1
+    completed: '2026-06-04'
+  - id: 75-15
+    epic: '75'
+    title: RAG starve — creation-seed fragments lost on resume + sub-floor embedding similarities (gulliver 2026-06-02)
     points: 5
     completed: '2026-06-04'

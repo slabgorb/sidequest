@@ -3,7 +3,7 @@ type: epic
 title: RAG Retrieval Layer — Restore Accretion, Budgeted Selection, Universal Retrieval Design
 description: "Verified against the Rust origin (github.com/slabgorb/sidequest-api) before any code (scout, 2026-05-30). FINDING: the lore RAG is NOT dead — it fires every turn in Python (websocket_session_handler.py:2449 -> lore_embedding.py:276 -> orchestrator.py:2096, real MiniLM 384-dim embeddings via daemon) and injects retrieved lore into the live narrator prompt. BUT it is lore-only and STARVING. Two real port regressions: (A) Rust re-fed the RAG every turn with discovered facts (accumulate_and_persist_lore, lore_sync.rs:26); Python routes runtime facts through a SEPARATE KnownFact system that is never embedded, so the index holds only static seed lore. (B) Rust had budgeted NPC working-set selection (npc_context.rs:11 — scene-present NPCs get full profiles, others name+role, none-referenced -> compact names); Python loads npc_pool verbatim, which is what made 'cap the pool' (72-6) look necessary. Plus (C) net-new: NPCs/locations were NEVER RAG-indexed in either tree — the universal-retrieval-layer vision (lore+locations+NPCs+factions all retrieved per turn instead of snapshot-blob-dumped) is genuinely new design and needs an ADR. Reuse: live embedding pipeline + LoreStore.query_by_similarity already do real vector retrieval."
 priority: p2
-status: backlog
+status: done
 repos: sidequest-server
 stories:
   - id: 75-1
@@ -177,11 +177,15 @@ stories:
     title: Defensive entity_card eviction + entity_card.evicted span for unprojectable cards (ADR-138 D5/D6)
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: trivial
     depends_on: 75-12
+    completed: '2026-06-04'
     type: chore
+    review_findings: 'HIGH (round-2): round-1 covered_ids.add only closed ratified-first ordering; pending-twin-first + pre-seeded store still fires a spurious entity_card.evicted span (empirically reproduced, reachable via world_materialization exact-string dedup). Fix: structural order-independence (pre-pass seed covered_ids or two-phase deferred discard). Plus 3 MEDIUM (vacuous order-test, loose sweep-span assert, case-sensitive covered_origins). Span-parentage + n>1 from round 1 verified fixed.'
+    review_verdict: approved
   - id: 75-15
     title: RAG starve — creation-seed fragments lost on resume + sub-floor embedding similarities (gulliver 2026-06-02)
     points: 5
@@ -194,3 +198,4 @@ stories:
     type: bug
     review_findings: 'rt2: 6 production fixes verified correct + SQL safe + 41 tests green, BUT 3 HIGH test-coverage gaps on the OTEL deliverables of the prior REJECT: (1) lore_persist_failed (scope=turn) emit unasserted, (2) lore_rehydrate_failed emit unasserted, (3) disconnect last_save_failure-is-None invariant unpinned. Plus MED non-blocking: peak_similarity=0.0 fabricated in degenerate branch (use None), str(exc) leak in 3 watcher events (use type name). Testable -> red rework to TEA.'
     review_verdict: approved
+completed: '2026-06-04'
