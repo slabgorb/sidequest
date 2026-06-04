@@ -446,9 +446,10 @@ stories:
   - id: 59-30
     title: _WITNESSES engagement witness for witnessed_act + movement (close political-spine lie-detector gap)
     description: "Wiring-audit residual (sq-wire-it, 2026-06-02). Plan 2b (#583) wired the witnessed_act PRODUCER (intent router prompt + intent_router.witnessed_act_classified span) and the engine emits its four premise/bloc dial spans. But the GENERIC engagement watcher (sidequest-server/sidequest/agents/dispatch_engagement_watcher.py:180) _WITNESSES dict still covers only 6 subsystems — no witnessed_act, no movement (movement is a pre-existing gap). Without a witness, the 'dispatched-but-didn't-engage' lie detector cannot flag the case where the router classifies witnessed_act but the political_state dials never move. Docstring at line ~221 still says 'all six live-path subsystems' though 8 are now registered. Add _check_witnessed_act_engaged (evidence = political_state dial moved this turn) and _check_movement_engaged (evidence = region relocation in snapshot), register both in _WITNESSES, and correct the stale docstring count. Note: 71-34 (shared OTEL watcher-test harness) is the natural test home if it lands first."
-    points: 2
+    points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -456,7 +457,11 @@ stories:
       - _check_movement_engaged added and registered in _WITNESSES; flags mismatch when movement dispatched but no region relocation occurred
       - Stale 'all six live-path subsystems' docstring corrected to the actual registered count
       - 'Watcher unit test per new witness: positive (engaged → None) and negative (dispatched, not engaged → evidence string)'
+      - 'Movement engagement witness: thread player attribution and emit turn-stamped movement provenance on ALL engaged run_movement_dispatch branches (patch path, surface-descent, region_mode_deferred) so the witness is a pure turn-scoped post-snapshot read (Option B, Keith 2026-06-04; supersedes pure-2pt witness-add scope)'
+      - 'Live-path player_id normalization: intent_router_pass.py construction site (post-decompose, pre-run_dispatch_bank) overwrites per_player[].player_id with the actual submitting seat id (player_seats key), so the movement witness resolves on the live path and does not cry-wolf. Required for movement witness trustworthiness (Architect CRY-WOLF RULING; Keith 2026-06-04)'
+    completed: '2026-06-04'
     type: chore
+    review_verdict: approved
   - id: 59-31
     title: Opponent-yield signal — record outcome opponent_yielded/player_victory when an opponent backs down (not abandoned)
     description: |-
