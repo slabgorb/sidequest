@@ -533,9 +533,19 @@ stories:
     title: ResolutionSignal yield_side field — distinguish opponent-yield from player-yield for the dormant 49-5 [ENCOUNTER RESOLVED] narration
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    acceptance_criteria:
+      - "Add typed field yield_side: Literal['player','opponent'] | None = None to ResolutionSignal (sidequest/game/resolution_signal.py — NOT protocol/resolution.py; pydantic extra=forbid, so Literal fails loud on bad value)"
+      - "yield_side is DERIVED from outcome via a new helper yield_side_for(outcome) co-located with 59-32's is_player_victory in encounter_classifier.py: yielded->player; opponent_yielded/surrender/rout->opponent; else None. Call the derive helper in ALL ResolutionSignal builders including the factory _build_resolution_signal (6 call sites) — do NOT hand-set per-site (a None default would mislabel surrender/rout)"
+      - 'Emit yield_side on the encounter_resolution_signal_emitted OTEL span at ALL emission sites: player-yield (yield_action.py — already emits the span) + opponent-yield (_resolve_opponent_yield) + the factory path. This is the LIVE consumer (GM-panel lie-detector) that makes the field non-vacuous today per the OTEL Observability Principle'
+      - "Unit tests: yield_side_for() outcome->side matrix (player/opponent/None, incl. surrender/rout->opponent, unknown->None). Wiring test (non-vacuous, end-to-end OTEL): drive opponent-yield / player-yield / dial-threshold resolution and assert the emitted resolution OTEL span carries yield_side='opponent'/'player'/None respectively — NOT a consume-side test (the [ENCOUNTER RESOLVED] narrator consumer is dormant per 49-5)"
+      - 'SCOPE NOTE (Keith 2026-06-04): the snapshot ResolutionSignal payload is write-only today (49-5 deleted the snapshot->orchestrator threading; narrator consumer dormant). yield_side earns a real consumer via the OTEL span emit rather than landing as a dormant write-only field. Do NOT revive 49-5 here'
+    completed: '2026-06-04'
+    branch: feat/59-33-resolution-signal-yield-side
+    review_verdict: approved
   - id: 59-34
     title: Real-OTEL wiring test for the opponent_yield_on_location_change trigger path
     points: 1
