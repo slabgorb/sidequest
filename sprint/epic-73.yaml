@@ -104,9 +104,11 @@ stories:
     title: 'beat-impact descriptor test-coverage hardening — characterization tests for existing 73-4 behavior the suite left unpinned: backfire impact field asserts (tag/summary/dial_moved, not just effect), opponent>0 setback summary path (brace CritFail), same-side overwrite invariant (second player beat replaces first), encounter_resolved skip path (impact=None, no stamp), UI explicit-null render guard + inert-summary text render; drop the 2 redundant bare-truthy asserts (test_beat_impact.py:105, test_beat_impact_payload_wiring.py:92). No production change.'
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04T06:44:26Z'
     repos: sidequest-server,sidequest-ui
     workflow: trivial
+    completed: '2026-06-04'
     type: chore
   - id: 73-10
     title: Distinct beat-impact effect styling — ship genre/theme CSS for beat-impact-{resolution,inert,setback,advance,tag,backfire} so the three zero-ish cases (resolution by-design vs inert miss vs negative setback) read DIFFERENTLY visually. Today BeatImpactPanel emits the data-effect discriminator but an unstyled genre renders them alike, partially defeating the 73-4 legibility goal for Sebastien/Jade.
