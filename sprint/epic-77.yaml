@@ -96,7 +96,7 @@ stories:
     description: Blocking prerequisite for 77-5 (UI quest/objective panel), surfaced by TEA during 77-5 RED (2026-06-04). ADR-137 server lane 77-1..77-4 all landed (seed, record_quest/set_stakes tools, quest_anchors→WorldStatePatch, legacy-lane cleanup) and STORE the spine — but NONE projects it OUTBOUND to the client. quest_log (rich QuestEntry), quest_anchors, active_stakes live in game state (game/session.py:790,861,867) yet _shared_world_delta_to_state_delta (server/session_state.py:63-99) projects only location/encounter_id/party_formation/magic_state. The legacy StateDelta.quests dict[str,str] is never populated (test_wire_parity.py:75-78 asserts omission). This story ships the missing projection so the UI panel (77-5) has something to render. Mirror the ADR-136 RELATIONSHIPS snapshot pattern (server/websocket_handlers/relationships_emit.py + RelationshipsMessage/RelationshipsPayload) rather than piggybacking the thin legacy quests field. Honors ADR-137 'server lands + OTEL-verified before the panel consumes' sequencing.
     points: 5
     priority: p2
-    status: in_review
+    status: done
     started: '2026-06-04'
     repos: server
     workflow: tdd
@@ -106,6 +106,7 @@ stories:
       - 'AC3 — Empty/seeded states are well-formed: an unpopulated spine projects a clean empty payload (not a white-screen-inducing null soup); a single creation-seeded quest+anchor+stakes projects exactly that. Test: empty snapshot → empty-but-valid payload; seeded snapshot → one entry.'
       - 'AC4 — Wiring: the projection is reachable from the live NARRATION_END / state-emit production path (not just a serializer unit test). Test: drive a turn through the handler and assert the quests projection is emitted to the socket.'
       - 'AC5 — Does NOT regress the legacy quests dict consumers or the wire-parity omission contract for genuinely-empty fields. Test: existing test_wire_parity assertions still hold for empty case.'
+    completed: '2026-06-04'
     branch: feat/77-8-quests-spine-client-projection
     review_findings: '3 HIGH: (1) _quests_signature omits objective → objective-only record_quest updates never re-broadcast (AC2 violation); (2) signature joins free-text fields with :/,/| delimiters → narrator content collides distinct spines, suppressing real re-emits; (3) AC4 wiring test only proves import + direct call, never drives the production handler path. Combined fix: derive signature from build_quests_payload(snapshot).model_dump_json() + add a fixture-driven handler-path wiring test. Plus medium/low: setattr-before-emit ordering, AttributeError on dict-valued quest_log, undocumented objective player-facing contract, no empty-skip telemetry. Back to TEA for RED rework.'
-    review_verdict: rejected
+    review_verdict: approved
