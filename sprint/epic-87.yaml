@@ -1,0 +1,37 @@
+id: '87'
+type: epic
+title: 'heavy_metal → Worlds Without Number: Faithful Ruleset Port'
+description: 'Bind heavy_metal to the wwn ruleset as the SECOND WWN pack after elemental_harmony (design: docs/superpowers/specs/2026-06-04-heavy-metal-wwn-port-design.md; Story-1 plan: docs/superpowers/plans/2026-06-04-heavy-metal-wwn-story-1.md). Today heavy_metal runs native dials: combat and magic are PROSE WITH NO MECHANICAL BACKING (narrator improvises), the class/race/spell list is 5e leftover scaffolding, and the signature magic was modeled as bespoke pact/ledger confrontations. Per Keith (2026-06-04) that magic framing shades too hard into flavor and is RETIRED in favor of the port — the doom-cost feeling re-homes into spell descriptions. Unlike road_warrior→CWN (which needed a net-new crew-seat primitive), this needs ZERO engine changes: EH already proved every wwn seam (ruleset+wwn block, cast_spell, spells_wwn.yaml, hp_depletion, downed seam). This is a content port + standard calibration/OTEL wiring. Locked decisions: faithful WWN 3-chassis (Warrior/Expert/Mage + Foci, mage traditions as themed caster classes); magic_level high; lethality high; abilities already the standard six (CHA engine-mandatory for the Mental save); a complete canonical→abbreviation wwn.attribute_map IS required (verified _validate_wwn); remove edge_config (Edge→ablative HP). Touches ADR-117 (pluggable ruleset), ADR-114 (ablative HP), ADR-126 (pluggable magic). Both repos.'
+priority: p2
+status: backlog
+repos: sidequest-server,sidequest-content
+stories:
+  - id: 87-1
+    title: 'Story 1 — WWN binding + ablative-HP combat foundation: add ruleset:wwn to heavy_metal/rules.yaml with the mandatory canonical→abbreviation attribute_map (STRENGTH:STR…CHARISMA:CHA) + system_strain/trauma/magic blocks; magic_level high; lethality high; abilities already the six (CHA stays, engine-mandatory); REMOVE the ADR-078 edge_config block (Edge→ablative HP); convert the Blade-work combat from opposed_check+momentum to beat_selection+win_condition:hp_depletion with WWN damage annotations (damage_channel/attack_bonus/combat_skill) + a full six-attribute opponent_default_stats (+hp/armor_class/dexterity); keep negotiation/chase, defer pact_working/debt_collection retirement to Story 4; migrate test_heavy_metal_pack_loads_with_dual_dial_schema to the dial_threshold filter (heavy_metal NOT in COMBAT_PACKS, so only that one test); mandatory e2e OTEL wiring test (real pack → production seating+dice seam → strike ablates HP + state_patch.hp span). Plan: docs/superpowers/plans/2026-06-04-heavy-metal-wwn-story-1.md.'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server,sidequest-content
+    workflow: tdd
+  - id: 87-2
+    title: 'Story 2 — Classes & chargen: author classes.yaml as faithful WWN 3-chassis (Warrior/Expert/Mage + Foci) with grim dark-fantasy flavor in descriptions; remap archetypes.yaml/char_creation.yaml/power_tiers.yaml/archetype_constraints.yaml off the 5e class names; drop the 5e allowed_classes/allowed_races/banned_spells from rules.yaml. Mage traditions (necromancer/elementalist/pact-born) expressed as caster classes. No spells yet (Story 3).'
+    points: 8
+    priority: p2
+    status: backlog
+    repos: sidequest-server,sidequest-content
+    workflow: tdd
+  - id: 87-3
+    title: "Story 3 — Magic content: author spells_wwn.yaml in heavy_metal's grim/grotesque idiom (this is where the retired pact/ledger flavor re-homes — costly, doom-soaked spell descriptions over vanilla WWN Effort/System-Strain mechanics); wire cast_spell beats with class_filter to the caster classes; add saving_throws to every class (the spell-catalog load validator requires it once a spell catalog is present); finalize the wwn.magic config. e2e cast_spell wiring proof mirroring test_wwn_elemental_harmony_dispatch (wwn.spell.cast span, cast spent, HP ablated, B/X arm NOT fired)."
+    points: 8
+    priority: p3
+    status: backlog
+    repos: sidequest-server,sidequest-content
+    workflow: tdd
+  - id: 87-4
+    title: 'Story 4 — Content sweep + calibration + OTEL playtest: RETIRE the bespoke pact_working (Working the Rite) + debt_collection (The Collector at the Door) confrontations and the ledger_tracking/pact_cost_attribution custom_rules; exhaustive 5e-baggage sweep across all content files (no dead class/race/spell/stat references the narrator could cite); full-suite calibration with SIDEQUEST_DATABASE_URL+SIDEQUEST_GENRE_PACKS; OTEL playtest pass on heavy_metal/evropi + long_foundry verifying combat + magic fire mechanically (no improvised prose). Final integration gate for the epic.'
+    points: 5
+    priority: p3
+    status: backlog
+    repos: sidequest-server,sidequest-content
+    workflow: tdd
+    type: chore
