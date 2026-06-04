@@ -312,9 +312,10 @@ stories:
     description: "Follow-up to 59-16. The single filtered CONFRONTATION delivery resolved unseated/lobby sockets as 'receive NOTHING' (supplier returns None → emit_event skips). Rationale: in real MP every player seats a PC, so unseated = spectator with no legal moves; an empty-beats card would be noise. OPEN QUESTION (Architect/Keith to decide): should a connected-but-unseated spectator instead receive an empty-beats active CONFRONTATION card so they see 'a fight is happening' (preserving the 2026-04-26 S2 'peers are notified' intent for non-combatant observers)? If yes: the wssh supplier _confrontation_frame_for should return a build_clear-style empty-beats payload (active=True, beats=[]) for the (None, None) unseated case instead of None, and add a test. If no (current behavior): close as decided. Either way the firm invariant (union never to a socket) is unaffected. Surface: sidequest/server/websocket_session_handler.py supplier."
     points: 2
     priority: p3
-    status: backlog
+    status: canceled
     repos: sidequest-server
     workflow: trivial
+    completed: "DECIDED (Architect/Keith 2026-06-04): keep current behavior — unseated/lobby sockets receive nothing for an active CONFRONTATION. Seated NON-participant PCs already receive the class-filtered frame (supplier filters by seated PC class, not participation), so the Guitar Solo / 'peers are notified' intent is already satisfied for the population it targets. Unseated = no PC, no board, no legal moves; an empty-beats card there is decontextualized noise (Diamonds and Coal). Firm invariant (union never to a socket) unaffected. No code change. A future deliberate spectator surface would be its own story."
     type: chore
   - id: 59-22
     title: Extract shared _deliver_to_connected_recipients helper (dedupe emit_event supplier loop vs _deliver_fanout)
@@ -550,9 +551,10 @@ stories:
     title: Real-OTEL wiring test for the opponent_yield_on_location_change trigger path
     points: 1
     priority: p3
-    status: backlog
+    status: canceled
     repos: sidequest-server
     workflow: trivial
+    completed: "Stale/already-done: real-OTEL wiring test exists — tests/server/test_opponent_yield_resolution.py::test_location_change_emits_yield_trigger drives the production _apply_narration_result_to_snapshot path and asserts the watcher event fires with trigger='opponent_yield_on_location_change'. Landed with 59-31/59-33. Architect audit 2026-06-04."
     type: chore
   - id: 59-35
     title: Seat present FRIENDLY companions as side=player combatants in confrontations (ADR-116 / Guitar Solo)
