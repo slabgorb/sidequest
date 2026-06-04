@@ -343,3 +343,11 @@ stories:
       - A pack audio.yaml path absent from R2/manifest is reported under 'authored but not rendered' (real 404 caught)
       - Existing portrait/POI/music-params behavior unchanged (regression test)
     type: bug
+  - id: 65-16
+    title: '65-4 follow-ups: clear preloadedAssets on session switch + preload hardening + test tightening'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: ui
+    workflow: tdd
+    type: bug
