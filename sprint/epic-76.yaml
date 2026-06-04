@@ -33,10 +33,13 @@ stories:
     title: expected_dim parity for the entity embed worker — mirror lore's dimension guard in embed_pending_entity_cards + EntityStore.update_embedding so a mid-session daemon model-dim change cannot write a stale-dim vector (currently self-heals one turn later via requeue).
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-04'
     type: refactor
+    review_verdict: approved
   - id: 76-4
     title: Harden embed text-too-large log against future content leakage — log type(exc).__name__ instead of the ValueError object in entity_embedding.py AND lore_embedding.py (defense-in-depth; safe today, fragile if a content-bearing ValueError is introduced).
     points: 1
