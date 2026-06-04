@@ -1,0 +1,52 @@
+id: '83'
+type: epic
+title: NPC Creature Identity & Naming Hardening
+description: "Follow-ups deferred from the ping-pong #74 fix (PR slabgorb/sidequest-server#638, 2026-06-04), which classified narrator-mentioned creatures (NpcMention.is_creature) and reserved the ADR-091 culture-bound person namer for actual people — a creature now keeps its descriptive name verbatim, gets no culture, and emits npc.creature_preserved. That PR fixed the worst symptom (a lion minted as 'Keeper Goldbraid of the Emerald City') but deliberately deferred three coupled threads: (1) full Monster Manual bestiary identity (creature_id/threat_level/hp/stat block, ADR-059) materialized onto promoted creature Npcs; (2) culture self-match so a named people-group resolves to its OWN culture (Munchkin->Munchkin) instead of the current random.shuffle pick — the people-side half of #74, still unfixed; (3) ongoing-threat identity stability so a single recurring threat isn't re-minted under a new name every turn. Origin session: wry_whimsy/oz 2026-06-03."
+priority: p2
+status: backlog
+repos: server
+stories:
+  - id: 83-1
+    title: Monster Manual bestiary identity for narrator-classified creatures (ADR-059)
+    description: "Deferred from ping-pong #74 (PR #638). That fix classifies a narrator creature mention (NpcMention.is_creature) and keeps the person namer off it, but a promoted creature Npc still carries NO bestiary identity: _promote_pool_member_to_npc builds a person-shaped Npc (placeholder HpPool 10/10, no creature_id/threat_level/abilities/morale) and only reports is_creature on telemetry. The Npc model ALREADY supports creature fields (creature_id/threat_level/abilities/morale, session.py); the Monster Manual generator exists (ADR-059; _creature_patch_from_enemy in dispatch/monster_manual_inject.py returns an NpcPatch with those fields). WIRE them: when a creature-typed pool member promotes (or at the creature mention seam), draw a bestiary/creature identity — species, threat profile, HP, abilities, morale — from the Monster Manual instead of a person placeholder, with NO culture/person-name. This is the 'route creatures to Monster Manual creature generation' half of the #74 fix direction. Per CLAUDE.md 'Don't Reinvent — Wire Up What Exists': the MM and the Npc creature fields exist; the wire from a narrator-classified creature to MM generation does not."
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - 'A creature-typed pool member (is_creature=True) promotes to an Npc carrying a Monster Manual creature identity: creature_id set, threat_level set, HP from the bestiary (not the 10/10 placeholder), abilities/morale populated where the MM provides them.'
+      - The promoted creature Npc has NO culture and NO person-name — its name remains the narrator's descriptive name (or a bestiary species label), never a culture-corpus person-name.
+      - An OTEL span records the bestiary draw (creature_id, threat_level, hp, source) so the GM panel can verify the engine generated a creature identity rather than winging it. is_creature on the spawn span is True for these.
+      - Persons (is_creature=False) are completely unaffected — they still promote through the existing person path; no regression in the 72-x NPC-identity suite.
+      - A wiring test drives a creature mention end-to-end (mention → pool → promotion) and asserts the resulting Npc has MM creature fields populated and reachable from a production code path.
+  - id: 83-2
+    title: Culture self-match — named people-group resolves to its own culture (Munchkin→Munchkin)
+    description: "The people-side half of ping-pong #74, still UNFIXED after PR #638. _resolve_invented_naming_context (narration_apply.py) resolves the culture for a narrator-invented PERSON by random.shuffle over the world's bound cultures and picking the first whose corpus builds — so a named people-group is tagged with a RANDOM culture: the Munchkins (Munchkin/blue East) were minted 'Roric the Crimson' culture=Quadling; a later threat got Quadling then Emerald City. When the narrator names a specific people/group/clan, the engine should resolve THAT group's own culture (Munchkin→Munchkin) rather than shuffling. Needs a match from the mention's name/group against the bound cultures (by culture name + any authored aliases/demonyms), falling back to the existing shuffle ONLY when no match is found (a genuinely unaffiliated stranger). Keep No-Silent-Fallbacks: a matched-but-unbuildable corpus must still surface loud (namegen.thin_corpus already exists)."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - A narrator mention whose name/group maps to a bound culture (e.g. 'The Munchkins' in a world with a Munchkin culture) resolves to THAT culture's corpus, not a random one — the minted name is Munchkin-true.
+      - Matching considers the culture name and any authored demonym/alias surface; case-insensitive; singular/plural tolerant ('Munchkin' ~ 'Munchkins').
+      - When no culture matches the mention (an unaffiliated stranger), the existing shuffle-and-build behavior is preserved unchanged — this is an additive prefer-match step, not a replacement.
+      - The npc.invented_name_routed span records WHY a culture was chosen (matched vs shuffled) + the matched token, so the GM panel can see the culture router is no longer guessing.
+      - 'No-Silent-Fallbacks preserved: a matched culture whose corpus is missing/below-floor still fires the loud namegen guard, not a silent fall-through to a wrong culture.'
+    type: bug
+  - id: 83-3
+    title: Ongoing-threat identity stability — reconcile a re-described threat instead of re-minting
+    description: "Deferred from ping-pong #74. A single ongoing threat was re-minted under a NEW identity every turn because the narrator re-describes it each turn and each novel descriptor hits the Step-3 novel-mint branch: the forest threat became 'Clemence Coralfast' → 'The Unseen Watcher' → 'Keeper Goldbraid' across two turns, and NONE reconciled to the authored Cowardly Lion already in the npcs roster (disposition 5). The result is unstable opponent identity — the GM panel and the player see three monsters where there is one, and a hand-authored NPC is shadowed by phantom duplicates. Add a stability/reconciliation guard so a recurring threat resolves to its existing pool member or authored Npc instead of minting a fresh one. Likely levers: a narrator continuity signal (the mention points at an existing entity), appearance/role similarity reconciliation, and/or a 'one active unnamed threat' guard per scene. Coordinate with the existing comma-inversion match keys and the observation-gate ratification (49-6) so this doesn't fight them. Note interaction with 83-1: a creature with a stable creature_id is easier to reconcile across turns."
+    points: 5
+    priority: p3
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - A recurring threat the narrator re-describes across turns reconciles to a SINGLE persistent identity (existing pool member or authored Npc) instead of minting a new pool member each turn.
+      - An authored roster Npc (e.g. the Cowardly Lion, disposition 5) is matched and NOT shadowed by a freshly-minted phantom when the narrator references the same creature in prose.
+      - 'When reconciliation fires, an OTEL span records the match (incoming descriptor → reconciled identity + the signal used: continuity flag / similarity / scene-guard) so the GM panel can confirm the engine collapsed the duplicates.'
+      - 'No false merges: two genuinely distinct threats in the same scene stay distinct — the guard is conservative and span-visible, never a silent identity collapse (mirror the comma-inversion match precedent).'
+      - Existing NPC match/ratification behavior (comma-inversion keys, observation gate 49-6) is preserved; a regression test pins that two distinct named NPCs are not collapsed.
+    type: bug
