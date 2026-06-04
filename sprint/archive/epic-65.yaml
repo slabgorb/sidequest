@@ -3,7 +3,7 @@ type: epic
 title: Content Infrastructure — R2 asset tracking and audit
 description: Checked-in R2 manifest, YAML-derived gap audit, and cross-clone asset pull. Replaces git-LFS pointer tracking for the dual-repo (OQ-1/OQ-2) workflow.
 priority: p1
-status: backlog
+status: done
 repos: content
 stories:
   - id: 65-1
@@ -333,7 +333,8 @@ stories:
     description: "DEFECT (Architect audit 2026-06-03): scripts/r2_audit.py expected_keys() learns music ONLY from audio/music/*_input_params.json (ACE-Step params); it never parses pack audio.yaml. So every track referenced via audio.yaml 'path:' is absent from the expected set and gets mis-reported as Orphan (in R2, no YAML). Confirmed against wry_whimsy/pulp_noir classical_pd + ragtime_pd. Same blind spot means the audit can't CATCH a real audio 404. CANONICAL RESOLVER EXISTS — reuse it, do NOT reimplement path logic: sidequest-server/sidequest/genre/audio_paths.py::resolve_audio_relpath defines the rule (path starting 'assets/' -> shared genre_packs/assets/... WITHOUT pack slug; else pack-local genre_packs/<slug>/...). #338 migrated packs to the shared 'assets/' prefix, so naive genre_packs/<pack>/ prefixing is WRONG. Fix: have expected_keys() parse each pack audio.yaml and resolve each 'path:' via the same assets/-vs-pack-local rule audio_paths.py uses."
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: orchestrator
     workflow: tdd
     acceptance_criteria:
@@ -342,6 +343,7 @@ stories:
       - r2_audit reports ZERO orphans for classical_pd/ragtime_pd tracks referenced by any pack audio.yaml and present in R2 (shared OR pack-local)
       - A pack audio.yaml path absent from R2/manifest is reported under 'authored but not rendered' (real 404 caught)
       - Existing portrait/POI/music-params behavior unchanged (regression test)
+    completed: '2026-06-04'
     type: bug
   - id: 65-16
     title: '65-4 follow-ups: clear preloadedAssets on session switch + preload hardening + test tightening'
@@ -356,3 +358,4 @@ stories:
     branch: feat/65-16-clear-preloaded-assets-session-switch
     session_file: .session/65-16-session.md
     review_verdict: approved
+completed: '2026-06-04'

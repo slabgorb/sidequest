@@ -35,6 +35,7 @@ completed_epics:
   - '83'
   - '72'
   - '74'
+  - '65'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -1005,4 +1006,84 @@ completed_stories:
     epic: '74'
     title: Convert content-pointing lore-seeding tests to synthetic fixtures (no real-pack coupling)
     points: 3
+    completed: '2026-06-04'
+  - id: 65-1
+    epic: '65'
+    title: R2 asset manifest — checked-in tracking + YAML-derived gap audit
+    points: 3
+    completed: '2026-05-27'
+  - id: 65-2
+    epic: '65'
+    title: Per-session asset ledger — track runtime-generated images per save file
+    points: 3
+    completed: '2026-05-27'
+  - id: 65-3
+    epic: '65'
+    title: Pulp-noir visual_style cleanup — strip incidental setting bleed, make rain a deliberate per-shot layer
+    points: 3
+    completed: '2026-05-28'
+  - id: 65-4
+    epic: '65'
+    title: Mount useAssetPreload in App + ImageBus preload feed (AC5 follow-up from 65-2)
+    points: 3
+    completed: '2026-06-04'
+  - id: 65-5
+    epic: '65'
+    title: Asset generators skip files already on R2 (live-listing existence check)
+    points: 2
+    completed: '2026-05-28'
+  - id: 65-6
+    epic: '65'
+    title: Relocate NPC portraits to world level + wire a server portrait resolver
+    points: 8
+    completed: '2026-05-28'
+  - id: 65-7
+    epic: '65'
+    title: Populate + commit r2_manifest.json as reference-page existence oracle
+    points: 2
+    completed: '2026-06-01'
+  - id: 65-8
+    epic: '65'
+    title: Lore POI gallery — feed geography renderer from history.yaml, manifest-gated images
+    points: 3
+    completed: '2026-06-01'
+  - id: 65-9
+    epic: '65'
+    title: Lore Cast section — public NPC projection + manifest-gated portraits
+    points: 3
+    completed: '2026-06-02'
+  - id: 65-10
+    epic: '65'
+    title: Reference TOC/section-mapping repair + register POI and Cast sections
+    points: 2
+    completed: '2026-06-03'
+  - id: 65-11
+    epic: '65'
+    title: Lore POI map view — server-rendered SVG from cartography.yaml with portrait pins
+    points: 5
+    completed: '2026-06-03'
+  - id: 65-12
+    epic: '65'
+    title: Lore world timeline — merge legends, history chapters, POI founding into one spine
+    points: 3
+    completed: '2026-06-03'
+  - id: 65-13
+    epic: '65'
+    title: '65-9 review follow-ups: Cast docstring accuracy, span-test rigor, chrome-contract guard + AC8 reference_portrait spans'
+    points: 3
+    completed: '2026-06-03'
+  - id: 65-14
+    epic: '65'
+    title: wry_whimsy classical_pd audio set 404s — source/upload PD tracks to R2 + reconcile audio.yaml against manifest
+    points: 2
+    completed: '2026-06-04'
+  - id: 65-15
+    epic: '65'
+    title: 'r2_audit: parse pack audio.yaml in expected_keys() — classical_pd tracks mis-flagged as orphans; real audio 404s go uncaught'
+    points: 2
+    completed: '2026-06-04'
+  - id: 65-16
+    epic: '65'
+    title: '65-4 follow-ups: clear preloadedAssets on session switch + preload hardening + test tightening'
+    points: 2
     completed: '2026-06-04'
