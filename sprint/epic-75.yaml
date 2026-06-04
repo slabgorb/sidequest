@@ -152,10 +152,12 @@ stories:
     title: Wire ratification gate into ADR-118 NPC projection — reuse 49-6 spans, dedup-by-id, floor-includes-pending test (ADR-138 D2/D5/D6)
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-11
+    started: '2026-06-04'
+    branch: feat/75-12-wire-ratification-npc-projection
   - id: 75-13
     title: Wire ratification gate into ADR-135 reference NPC projection — withhold unratified phantoms (ADR-138 D4)
     points: 2
