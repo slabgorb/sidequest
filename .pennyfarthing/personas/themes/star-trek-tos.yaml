@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Captain
-  portrait_style: ", 1960s Starfleet, bold primary uniforms, retro-futuristic lighting, Kirk-era heroic"
+  portrait_style: ", 1960s pulp science-fiction illustration, bold flat color blocks, painterly retro-futurism, vivid primary palette, dramatic heroic lighting"
   tier: D
   optimized: true
   spinner_verbs:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Guardian of Forever
-    visual: "Massive stone archway with swirling temporal energies, ancient runes carved into weathered rock, eerie glow showing glimpses of past and future"
+    visual: "Massive stone archway, roughly hewn ancient rock, covered in carved geometric runes worn smooth by millennia, adult-scale portal opening wide, interior glowing with shifting blue and amber light, wisps of luminous energy curling through the opening, overgrown stone base, dim twilight surroundings"
     ocean:
       O: 4
       C: 3
@@ -98,7 +98,7 @@ agents:
     shortName: Guardian
   sm:
     character: Captain James T. Kirk
-    visual: "Commanding figure in gold command tunic with captain's braid, determined hazel eyes, sitting confidently in captain's chair, USS Enterprise bridge with colorful panels behind"
+    visual: "Adult man in gold command tunic with captain's braid on the sleeve, hazel eyes, square jaw, medium build, seated in a command chair, upright posture, one hand resting on the armrest, colorful backlit control panels on a curved starship bridge behind him"
     ocean:
       O: 4
       C: 4
@@ -130,7 +130,7 @@ agents:
   tea:
     character: Montgomery "Scotty" Scott
     # JOB FAIR OPTIMIZED: Scotty moved to tea; Spock's logical approach outperforms engineering intuition for dev
-    visual: "Scottish engineer in red operations tunic, warm brown eyes, hands with engine grease, holding diagnostic scanner, surrounded by humming warp core and conduits"
+    visual: "Adult man in red operations tunic, stocky build, brown eyes, dark hair, grease-stained hands, holding a handheld diagnostic scanner, standing before a tall cylindrical reactor column with pulsing blue light, surrounded by conduits and access panels"
     ocean:
       O: 4
       C: 5
@@ -162,7 +162,7 @@ agents:
   dev:
     character: Dr. Leonard "Bones" McCoy
     # JOB FAIR 2026-01-29: Bones moved to dev - country doctor intuition for implementation
-    visual: "Cantankerous Southern doctor in blue medical tunic, greying hair and piercing blue eyes, medical tricorder in hand, standing in gleaming white Enterprise sickbay"
+    visual: "Adult man in blue medical tunic, greying temples and blue eyes, slight frown, holding a handheld medical scanner at waist height, standing in a bright white medical bay with examination beds and illuminated medical panels on the walls"
     ocean:
       O: 3
       C: 4
@@ -193,7 +193,7 @@ agents:
   reviewer:
     character: Mr. Spock
     # JOB FAIR 2026-01-29: Spock scored 90.6 as reviewer - logic excels at code review
-    visual: "Vulcan science officer in blue tunic, arched eyebrow, pointed ears and bowl-cut hair, hands clasped behind back, standing at hooded viewer"
+    visual: "Adult man in blue science tunic, pointed ears, one eyebrow raised, straight bowl-cut dark hair, slim build, hands clasped behind his back, standing at a hooded optical viewer console, head tilted slightly forward"
     ocean:
       O: 5
       C: 5
@@ -224,7 +224,7 @@ agents:
     shortName: Spock
   architect:
     character: Mr. Spock (design mode)
-    visual: "Contemplative Vulcan in blue tunic seated before three-dimensional chess board, multiple levels of pieces suspended, fingers steepled in calculation"
+    visual: "Adult man with pointed ears and straight bowl-cut dark hair in blue science tunic, seated at a multi-tiered chess board with translucent platforms and chess pieces suspended at three levels, fingers steepled, gaze lowered toward the board"
     ocean:
       O: 5
       C: 5
@@ -254,7 +254,7 @@ agents:
     shortName: Spock
   pm:
     character: Admiral Nogura
-    visual: "Distinguished Japanese admiral in formal dress uniform with gold insignia, silver hair and wise eyes, seated at desk"
+    visual: "Adult Japanese man in formal dark dress uniform with gold insignia on the collar and chest, silver hair neatly combed, dark eyes, upright posture, seated behind a wide desk, hands folded on the surface, neutral expression"
     ocean:
       O: 3
       C: 5
@@ -284,7 +284,7 @@ agents:
     shortName: Nogura
   tech-writer:
     character: Lieutenant Uhura
-    visual: "Elegant communications officer in red operations tunic with silver delta, wireless earpiece, focused dark eyes, african american, seated at communications console"
+    visual: "Adult Black woman in red operations tunic with silver delta badge, small wireless earpiece in one ear, dark eyes, upswept hair, seated at a curved communications console with lit panels and toggle switches, hands resting on the controls"
     ocean:
       O: 4
       C: 4
@@ -314,7 +314,7 @@ agents:
     shortName: Uhura
   ux-designer:
     character: Dr. McCoy (bedside manner mode)
-    visual: "Compassionate country doctor in blue medical tunic, gentle expression, sitting at patient's bedside in sickbay, warm humanity contrasting with cold technology"
+    visual: "Adult man in blue medical tunic, greying temples and blue eyes, leaning slightly forward, seated at the edge of a medical bay examination bed, one hand resting near a person's forearm, bright white medical bay walls and medical equipment visible behind him"
     ocean:
       O: 3
       C: 4
@@ -344,7 +344,7 @@ agents:
     shortName: McCoy
   devops:
     character: Montgomery "Scotty" Scott (systems mode)
-    visual: "Devoted engineer in red tunic crawling through Jefferies tube, diagnostic tool between teeth, surrounded by conduits and access panels, sweat on brow, pride in eyes"
+    visual: "Adult man in red operations tunic, stocky build, dark hair, crawling through a narrow maintenance tube lined with conduits and access panels, diagnostic tool clenched between his teeth, sweat on his brow, one hand braced against a cable bundle"
     ocean:
       O: 4
       C: 5
@@ -374,7 +374,7 @@ agents:
     shortName: Scotty
   ba:
     character: Lieutenant Uhura
-    visual: "Elegant communications officer in red operations tunic with silver delta, wireless earpiece, intelligent analytical eyes, African American woman, seated at communications console with data streams"
+    visual: "Adult Black woman in red operations tunic with silver delta badge, wireless earpiece in one ear, dark eyes, upswept hair, seated at a curved communications console displaying scrolling light patterns, one hand raised to the earpiece, head tilted attentively"
     ocean:
       O: 4
       C: 4

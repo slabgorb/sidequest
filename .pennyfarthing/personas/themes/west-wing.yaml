@@ -15,7 +15,7 @@ theme:
   default_humor: subtle
   character_immersion: high
   user_title: Staffer
-  portrait_style: ", 19th century political cartoon style, bold ink linework, ink on paper, muted colors"
+  portrait_style: ", 19th-century political-cartoon illustration, bold pen-and-ink linework, ink-on-paper crosshatching, muted editorial palette, dignified satirical style"
   tier: B
   optimized: true
   spinner_verbs:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: President Josiah Bartlet
-    visual: "Distinguished older man with silver hair, piercing blue eyes, dark suit with Presidential seal pin, warm smile. Hands gesturing mid-lecture in Oval Office, Resolute desk and flag behind, golden afternoon light"
+    visual: "Distinguished adult man in his sixties, silver hair neatly combed, blue eyes, dark suit with a small enamel seal pin on the lapel, mouth curved in a slight closed smile. Standing behind a large mahogany desk in a wood-paneled oval-shaped office, both hands raised mid-gesture, American flag on a pole to one side, golden late-afternoon light from tall windows"
     ocean:
       O: 5
       C: 5
@@ -98,7 +98,7 @@ agents:
     shortName: Jed
   sm:
     character: Leo McGarry
-    visual: "Older man with lined weathered face, disheveled silver hair, weary eyes behind reading glasses, rumpled white shirt with loosened tie, coffee cup in hand. Cramped West Wing office piled high with papers and briefing books"
+    visual: "Adult man in his mid-sixties, disheveled silver hair, dark eyes behind rectangular reading glasses, rumpled white dress shirt with tie loosened and top button undone, coffee cup gripped in one hand. Standing in a cramped government office with stacks of papers and thick briefing binders covering every surface"
     ocean:
       O: 3
       C: 5
@@ -128,7 +128,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Sam moved to tea; Toby's meticulous nature helps with technical implementation
     character: Sam Seaborn
-    visual: "Handsome young man with boyish charm, earnest dark eyes, pressed suit and Princeton tie, legal pad clutched to chest. In bullpen outside Communications, idealism radiating as he walk-and-talks through warm corridors"
+    visual: "Adult man in his early thirties, clean-shaven with dark eyes, pressed dark suit and a silk tie with a narrow collegiate stripe, legal pad clutched to his chest with both arms. Walking briskly through a warmly lit open-plan office bullpen, leaning slightly forward mid-stride, head turned toward a colleague as if mid-sentence"
     ocean:
       O: 4
       C: 4
@@ -158,7 +158,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Toby scored 77.5 as dev (+7.5 over Josh) - meticulous nature helps with technical implementation
     character: Toby Ziegler
-    visual: "Bearded, balding man with furrowed brow, intense dark eyes, rumpled suit. Throwing rubber ball against wall in cramped Communications office, surrounded by crumpled speech drafts, weight of words visible in his face"
+    visual: "Adult man in his forties, close-cropped dark beard, balding head, heavy brow furrowed with deep creases, dark eyes, rumpled grey suit with collar open and tie pulled loose. Arm cocked back mid-throw with a small rubber ball aimed at the wall, surrounded by crumpled sheets of paper scattered across a cramped government office"
     ocean:
       O: 4
       C: 5
@@ -187,7 +187,7 @@ agents:
     shortName: Toby
   reviewer:
     character: Josh Lyman
-    visual: "Rumpled, energetic man with wild curly hair, intense  eyes, sleeves rolled up, backpack over shoulder. Gesturing emphatically, striding through corridors at breakneck speed"
+    visual: "Adult man in his mid-thirties, thick curly dark hair, wide brown eyes, dress shirt with sleeves rolled to the elbow and tie loosened, backpack slung over one shoulder. One arm extended mid-gesture, jaw set, striding through a government corridor at a near-run"
     ocean:
       O: 4
       C: 4
@@ -216,7 +216,7 @@ agents:
     shortName: Josh
   architect:
     character: Will Bailey
-    visual: "Thoughtful young man with military bearing, intelligent grey eyes, neat suit with subdued tie. Standing before whiteboard with speech structure diagrams, campaign office transformed to strategic planning space, quiet confidence masking unconventional brilliance"
+    visual: "Adult man in his early thirties, upright posture with squared shoulders, grey eyes, neat dark suit with a muted striped tie. Standing before a whiteboard covered in branching diagrams and outlined text blocks, marker in hand, in a sparse office with folding tables and stacked papers"
     ocean:
       O: 4
       C: 4
@@ -245,7 +245,7 @@ agents:
     shortName: Will
   pm:
     character: CJ Cregg
-    visual: "Exceptionally tall woman with bright eyes showing sharp wit, elegant practical attire, briefing book under arm. At podium in James S. Brady Press Briefing Room, White House seal behind, grace under pressure as reporters wave"
+    visual: "Exceptionally tall adult woman in her late thirties, bright green eyes, dark hair pulled back, elegant blazer and trousers, briefing book tucked under one arm. Standing at a government press podium with an official seal mounted on the wall behind her, chin raised, one hand resting on the podium edge while press correspondents in the foreground raise hands"
     ocean:
       O: 4
       C: 5
@@ -274,7 +274,7 @@ agents:
     shortName: CJ
   tech-writer:
     character: Donna Moss
-    visual: "Capable young blonde woman with knowing eyes, patient smile, sensible professional dress, comfortable shoes. Stack of folders and Post-its organized precisely, standing in bullpen outside Josh's office, competent heart keeping everyone's schedule straight"
+    visual: "Adult woman in her late twenties, shoulder-length blonde hair, steady blue eyes, slight closed smile, sensible blazer and flat-heeled shoes. Standing in an open-plan government office bullpen, a neat stack of color-tabbed folders and small sticky paper squares in her arms, a desk with a full calendar and phone behind her"
     ocean:
       O: 3
       C: 4
@@ -303,7 +303,7 @@ agents:
     shortName: Donna
   ux-designer:
     character: Joey Lucas
-    visual: "Confident deaf woman with intelligent brown eyes, direct gaze, professional polling attire, hands moving in ASL. Kenny Thurman interpreting beside her, standing before charts and polling data, truth-teller knowing what America thinks"
+    visual: "Adult woman in her thirties, brown eyes with a level direct gaze, dark professional blazer and trousers, hands moving in sign language mid-phrase. Her interpreter, an adult man in a suit, stands slightly behind and to one side, mouth open mid-speech, one hand raised in emphasis. Both standing before a large bar chart and polling data printouts mounted on a board"
     ocean:
       O: 4
       C: 4
@@ -332,7 +332,7 @@ agents:
     shortName: Joey
   devops:
     character: The Situation Room
-    visual: "Dimly lit secure room in West Wing basement, walls covered with screens showing satellite feeds, long mahogany table with leather chairs. Military aides at attention, Presidential seal on wall, nuclear football visible, infrastructure where history happens"
+    visual: "Dimly lit secure conference room in a government building basement, walls lined with large screens displaying satellite imagery and status feeds, long mahogany table with leather chairs down both sides. Military aides in uniform standing at attention along the wall, an official seal mounted behind the head chair, a dark leather attaché case chained to a wrist resting on the table"
     ocean:
       O: 3
       C: 5
@@ -362,7 +362,7 @@ agents:
     shortName: SitRoom
   ba:
     character: C.J. Cregg
-    visual: "Exceptionally tall woman with bright eyes showing sharp wit, elegant practical attire, briefing book under arm. At podium in James S. Brady Press Briefing Room, White House seal behind, grace under pressure as reporters wave"
+    visual: "Exceptionally tall adult woman in her late thirties, bright green eyes, dark hair pulled back, elegant blazer and trousers, briefing book tucked under one arm. Standing at a government press podium with an official seal mounted on the wall behind her, chin raised, one hand resting on the podium edge while press correspondents in the foreground raise hands"
     ocean:
       O: 4
       C: 4

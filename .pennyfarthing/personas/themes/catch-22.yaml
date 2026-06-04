@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Soldier
-  portrait_style: ", WWII allied propaganda poster, no words or text, red white and blue color scheme"
+  portrait_style: ", WWII Allied propaganda-poster illustration, bold flat shapes, red white and blue palette, heavy printed ink, dramatic upward heroic angle"
   tier: U
   optimized: true
   dimensions:
@@ -65,7 +65,7 @@ agents:
   orchestrator:
     # JOB FAIR OPTIMIZED: Orr moved here - the one who escapes orchestrates the system
     character: Orr
-    visual: "A small, wiry pilot with apple-stuffed cheeks and mischievous twinkling eyes, wearing a battered flight suit covered in patches, standing beside a repeatedly-crashed B-25 bomber, enigmatic smile suggesting he knows something nobody else does"
+    visual: "An adult, small and wiry pilot with apple-stuffed cheeks, pale blue eyes with a quiet upward tilt at the corners, wearing a battered flight suit covered in mismatched fabric patches, standing beside a heavily damaged twin-engine bomber with crumpled nose and bent propeller blades, lips curved in a slight closed-mouth smile, weight shifted onto one hip, arms loose at the sides"
     ocean:
       O: 5
       C: 5
@@ -92,7 +92,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Doc Daneeka moved here - coordinates while acknowledging his own suffering
     character: Doc Daneeka
-    visual: "A perpetually miserable flight surgeon with dark circles under his eyes, receding hairline, rumpled Army medical whites, hunched over paperwork in a cramped Pianosa medical tent, expression of profound self-pity despite being perfectly alive"
+    visual: "An adult flight surgeon with dark circles under downcast eyes, receding hairline, rumpled military medical whites, hunched over a stack of paperwork in a cramped canvas medical tent, shoulders slumped, brow furrowed, mouth pulled down at the corners"
     ocean:
       O: 3
       C: 3
@@ -119,7 +119,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Yossarian moved here - the only sane tester who sees clearly
     character: Yossarian
-    visual: "A wild-eyed bombardier with unkempt dark hair, wearing a rumpled flight suit"
+    visual: "An adult bombardier with wide-open dark eyes, unkempt dark hair falling across his forehead, wearing a rumpled flight suit, posture tense with hands slightly raised"
     ocean:
       O: 4
       C: 2
@@ -146,7 +146,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Catch-22 (The Concept) moved here - implements the paradoxical logic
     character: Catch-22 (The Concept)
-    visual: "An impossible Escher-like military regulation taking human form, wearing every rank insignia simultaneously, face that is both old and young, holding a document that reads itself into infinite recursion, standing in a doorway that leads back to itself"
+    visual: "An adult figure in a military uniform bearing rank insignia of every grade layered simultaneously, face half-weathered and half-smooth divided cleanly down the center, holding a thick sheaf of papers folded back on itself in a looping spiral, standing in a stone doorway whose arch mirrors and repeats behind it in diminishing perspective"
     ocean:
       O: 5
       C: 5
@@ -172,7 +172,7 @@ agents:
     shortName: Catch-22
   reviewer:
     character: Colonel Cathcart
-    visual: "A perpetually anxious colonel with thinning hair and sweating brow, chewing a cigarette holder, torn between feather and black eye, standing before a mission board constantly adding more required flights, desperate for Saturday Evening Post glory"
+    visual: "An adult colonel with thinning hair, beads of sweat on his brow, jaw clenched around a cigarette holder, standing before a large blackboard covered in chalk tallies and numbers, one hand raised with chalk mid-stroke adding another line, eyes wide and darting"
     ocean:
       O: 3
       C: 2
@@ -198,7 +198,7 @@ agents:
     shortName: Cathcart
   architect:
     character: Milo Minderbinder
-    visual: "A baby-faced mess officer with innocent blue eyes and entrepreneurial gleam, wearing flight suit covered in corporate patches from M&M Enterprises, surrounded by crates of Egyptian cotton and chocolate-covered cotton, everyone has a share smile"
+    visual: "An adult mess officer with a round, smooth-cheeked face, light blue eyes, wearing a flight suit covered in colorful commercial company patches, surrounded by stacked wooden crates and bales of raw cotton, lips parted in a wide bright smile, one hand extended palm-up toward the viewer"
     ocean:
       O: 5
       C: 4
@@ -224,7 +224,7 @@ agents:
     shortName: Milo
   pm:
     character: Major Major Major Major
-    visual: "A gangly, Lincoln-esque officer with unfortunate resemblance to Henry Fonda, perpetually leaping out his office window to avoid visitors, can only be seen when he's not in, wearing ill-fitting major's uniform he never wanted"
+    visual: "An adult, tall and lanky officer with a long narrow face, high cheekbones, and a prominent jaw, wearing an ill-fitting major's uniform with slightly too-short sleeves, caught mid-stride with one leg already over an open office windowsill, arms spread for balance, expression blank"
     ocean:
       O: 2
       C: 3
@@ -250,7 +250,7 @@ agents:
     shortName: Major
   tech-writer:
     character: Ex-P.F.C. Wintergreen
-    visual: "A shrewd enlisted man in perpetually demoted uniform, sorting mail in the base mailroom with absolute power, cold evaluating eyes judging every document's literary merit, the most powerful man on Pianosa through information control"
+    visual: "An adult enlisted man in a worn, slightly too-large uniform with demoted rank insignia, standing behind a mail room counter stacked with sorted envelopes and parcels, narrow grey eyes scanning a letter held at arm's length, mouth set in a flat unimpressed line, posture upright and deliberate"
     ocean:
       O: 3
       C: 4
@@ -276,7 +276,7 @@ agents:
     shortName: Wintergreen
   ux-designer:
     character: Chaplain Tappman
-    visual: "A gentle Anabaptist chaplain with soft worried eyes behind glasses, thinning hair, wearing rumpled vestments in a sad little tent chapel, expression of profound doubt and genuine kindness, accused of crimes that don't exist"
+    visual: "An adult chaplain with mild brown eyes behind wire-rimmed glasses, thinning light hair, wearing rumpled clerical vestments, seated in a small canvas tent chapel with a simple wooden cross on a folding table, hands folded in his lap, brow gently furrowed, gaze directed downward"
     ocean:
       O: 4
       C: 4
@@ -302,7 +302,7 @@ agents:
     shortName: Chaplain
   devops:
     character: Chief White Halfoat
-    visual: "A weathered Native American intelligence officer with knowing dark eyes, sitting in his tent prophesying his own death from pneumonia, oil derricks following his family in the background, resigned acceptance of infrastructure doom"
+    visual: "An adult intelligence officer with brown skin, dark eyes under heavy brows, close-cropped dark hair, wearing a rumpled military field uniform, seated on a cot in a canvas tent with hands resting loosely on his knees, several tall oil derrick silhouettes visible through the open tent flap behind him, hands resting loosely on his knees, back straight"
     ocean:
       O: 3
       C: 3
@@ -328,7 +328,7 @@ agents:
     shortName: White
   ba:
     character: Major Major Major Major
-    visual: "A gangly, Lincoln-esque officer with unfortunate resemblance to Henry Fonda, sitting at desk surrounded by requirement documents, window open behind him for emergency escape, notepad documenting absurdities, can only analyze when stakeholders aren't present"
+    visual: "An adult, tall and lanky officer with a long narrow face, high cheekbones, and a prominent jaw, wearing an ill-fitting major's uniform, seated at a cluttered desk covered in stacked requirement documents and open notepads, a window wide open behind him, pen in hand hovering over paper, gaze focused downward on the page"
     ocean:
       O: 3
       C: 4

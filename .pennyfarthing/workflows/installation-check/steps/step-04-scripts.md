@@ -10,11 +10,7 @@ next: step-05-layout
 </step-meta>
 
 <purpose>
-Verify that hook script files exist on disk and are executable. Pennyfarthing's
-Claude Code lifecycle hooks are registered in the plugin's `hooks/hooks.json` and
-invoke two wrapper scripts (`session-start.sh`, `dispatch.sh`) which `exec`
-`pf hooks dispatch <Event>`. This step checks that those wrappers — and the git
-hooks installed via `pf git install-hooks` — exist and can run.
+Verify that hook script files exist on disk and are executable. Step 3 checked that hooks are registered in settings.local.json — this step checks that the script files those hooks point to actually exist and can run.
 </purpose>
 
 <prerequisites>
@@ -24,10 +20,10 @@ hooks installed via `pf git install-hooks` — exist and can run.
 
 <instructions>
 1. Run the doctor command for the scripts category
-2. For each result, explain the relationship between the `hooks.json` entry and the script file:
-   - **hook/* checks**: The lifecycle wrappers (`session-start.sh`, `dispatch.sh`) in the plugin's `scripts/hooks/`, referenced by `hooks/hooks.json`. These `exec` `pf hooks dispatch <Event>`, which runs the Python handlers in one process.
+2. For each result, explain the relationship between the settings entry and the script file:
+   - **hook/* checks**: Scripts in `.pennyfarthing/scripts/hooks/` (symlink mode) or `.claude/pennyfarthing/scripts/hooks/` (copy mode). These are the actual bash scripts that hooks execute.
    - **Execute permissions**: Scripts must be executable (`chmod +x`). A registered hook pointing to a non-executable script causes "Permission denied" errors on every tool use.
-   - **git-hook/* checks**: Scripts in `.git/hooks/` (pre-commit, pre-push, post-merge), installed via `pf git install-hooks`. Framework repos should use symlinks to `pennyfarthing-dist/scripts/hooks/`; end-user repos use copies.
+   - **git-hook/* checks**: Scripts in `.git/hooks/` (pre-commit, pre-push, post-merge). Framework repos should use symlinks to `pennyfarthing-dist/scripts/hooks/`; end-user repos use copies.
 3. For git hooks, explain the difference between framework symlinks and user copies
 4. Present the collaboration menu
 </instructions>
@@ -47,7 +43,12 @@ Present results in two sections:
 | Script | Status | Detail |
 |--------|--------|--------|
 | session-start.sh | ... | ... |
-| dispatch.sh | ... | ... |
+| pre-edit-check.sh | ... | ... |
+| context-warning.sh | ... | ... |
+| context-circuit-breaker.sh | ... | ... |
+| bell-mode-hook.sh | ... | ... |
+| question-reflector-check.sh | ... | ... |
+| sprint-yaml-validation.sh | ... | ... |
 
 ## Git Hooks
 

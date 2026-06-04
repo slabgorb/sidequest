@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Man
-  portrait_style: ", bowling alley neon warmth, noir comedy aesthetic"
+  portrait_style: ", hand-painted illustration in the style of Drew Struzan, gouache and airbrush, warm muted palette of amber teal and dusty neon, soft painterly brushwork, gently caricatured features, cinematic key lighting"
   tier: U
   optimized: true
   spinner_verbs:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Stranger (Sam Elliott)
-    visual: "A tall older man with magnificent mustache and cowboy hat, wearing western shirt with bolo tie, weathered face of a rancher, leaning on bar with knowing eyes"
+    visual: "A tall adult man in his sixties with a magnificent silver drooping mustache and wide-brimmed cowboy hat, wearing a western shirt with bolo tie, deeply lined and sun-weathered face, elbow resting on the bar, gaze directed quietly to one side"
     ocean:
       O: 4 # Cosmic wisdom
       C: 2 # Go with the flow
@@ -94,7 +94,7 @@ agents:
     shortName: Stranger
   sm:
     character: The Dude (Jeffrey Lebowski)
-    visual: "A middle-aged man with long scraggly hair and goatee, wearing bathrobe and shorts with jelly sandals, holding White Russian cocktail, profoundly relaxed expression"
+    visual: "An adult man in his forties with long disheveled brown hair and an untrimmed goatee, wearing a terry-cloth bathrobe open over shorts and rubber sandals, holding a cocktail glass with cream on top, shoulders slumped, chin slightly down, eyes half-lidded"
     # JOB FAIR OPTIMIZED: Dude moved here; Walter excels at dev (+7.50)
     ocean:
       O: 4 # Open to whatever
@@ -121,7 +121,7 @@ agents:
     shortName: Dude
   tea:
     character: The Jesus (Jesus Quintana)
-    visual: "A Latino man with styled hair and purple jumpsuit with bowling ball, tight clothes showing muscular build, theatrical expression, strutting confidence"
+    visual: "An adult man with warm medium-brown skin tone and slicked-back dark hair in a tight purple bowling jumpsuit, muscular build visible through the fitted fabric, chin lifted, chest out, one foot forward mid-stride, holding a bowling ball at hip height"
     ocean:
       O: 3 # Bowling artistry
       C: 4 # Competitive discipline
@@ -147,7 +147,7 @@ agents:
     shortName: Jesus
   dev:
     character: Walter Sobchak
-    visual: "A large heavyset man with ponytail and military dog tags, wearing safari vest over bowling shirt, sunglasses pushed up, aggressive posture, Vietnam vet bearing"
+    visual: "An adult heavyset man with a dark ponytail and military dog tags visible at the collar, wearing a khaki safari vest over a bowling shirt, sunglasses pushed up on his forehead, broad stance, shoulders squared, jaw set, one hand jabbing forward"
     # JOB FAIR OPTIMIZED: Walter scored best as dev (+7.50 over Dude)
     ocean:
       O: 2 # Rigid worldview
@@ -174,7 +174,7 @@ agents:
     shortName: Walter
   reviewer:
     character: The Big Lebowski (Jeffrey Lebowski)
-    visual: "An elderly man in wheelchair with expensive smoking jacket, wealthy surroundings implied, stern imperious expression, blanket over legs"
+    visual: "An adult elderly man seated in a wheelchair, wearing a dark velvet smoking jacket with silk lapels, a wool blanket draped over his legs, chin raised, lips pressed thin, brow furrowed downward, gaze fixed straight ahead"
     ocean:
       O: 2 # Materialistic
       C: 4 # Business discipline
@@ -200,7 +200,7 @@ agents:
     shortName: Lebowski
   architect:
     character: Maude Lebowski
-    visual: "A striking woman with short dark hair in artistic bun, wearing avant-garde outfit suspended in harness, paint-splattered hands, intellectual intensity"
+    visual: "An adult woman with short dark hair pinned in a loose bun, wearing an avant-garde sculptural outfit in muted tones, suspended in a climbing harness above the floor, hands paint-splattered, gaze directed downward with level composure"
     ocean:
       O: 5 # Avant-garde art
       C: 3 # Creative discipline
@@ -226,7 +226,7 @@ agents:
     shortName: Maude
   pm:
     character: Bunny Lebowski
-    visual: "A young blonde woman in revealing designer outfit, painted toenails prominent, vapid pretty expression, poolside glamour, trophy wife energy"
+    visual: "An adult young woman with long blonde hair, wearing a low-cut patterned swimsuit cover-up, painted pink toenails visible in open sandals, reclining with one arm draped loosely, mouth slightly open, gaze unfocused toward the middle distance, poolside lounge chair behind her"
     ocean:
       O: 3 # Chaotic energy
       C: 2 # Impulsive decisions
@@ -253,7 +253,7 @@ agents:
     shortName: Bunny
   tech-writer:
     character: Da Fino (Private Eye)
-    visual: "A short man in cheap detective trench coat and fedora, holding notepad, nervous sweaty face, VW Beetle owner energy, perpetually confused"
+    visual: "An adult short man in a rumpled cheap tan trench coat and a battered fedora, holding an open notepad and pen, damp forehead, brow raised, eyes darting slightly to one side"
     ocean:
       O: 3 # Professional observation
       C: 4 # Investigative method
@@ -279,7 +279,7 @@ agents:
     shortName: Fino
   ux-designer:
     character: Donny
-    visual: "A sweet-faced man with curly light hair, wearing bowling shirt, innocent confused expression, perpetually out of the loop but genuine"
+    visual: "An adult man with curly light brown hair and a round open face, wearing a short-sleeved bowling shirt, brow slightly raised, mouth slightly open, posture upright and attentive"
     ocean:
       O: 2 # Simple outlook
       C: 2 # Goes along
@@ -305,7 +305,7 @@ agents:
     shortName: Donny
   devops:
     character: The Nihilists
-    visual: "Three men with black leather outfits and German industrial style, one with handlebar mustache, visible tattoos, carrying ferret or scissors, bored nihilistic expressions"
+    visual: "Three adult men in black leather jackets and dark trousers, one with a prominent handlebar mustache, visible tattoo work on arms and necks, one holding a small ferret, one holding oversized scissors, all standing with slack posture, mouths flat, eyes half-lidded"
     ocean:
       O: 2 # Nihilistic view
       C: 3 # Threatening plans
@@ -331,7 +331,7 @@ agents:
     shortName: Nihilists
   ba:
     character: The Dude (Private Investigator Mode)
-    visual: "A middle-aged man with long scraggly hair and goatee, wearing sunglasses and bathrobe over bowling shirt, holding a White Russian while examining a ransom note, surprisingly focused expression"
+    visual: "An adult man in his forties with long disheveled brown hair and an untrimmed goatee, wearing dark sunglasses and a terry-cloth bathrobe open over a bowling shirt, holding a cocktail glass in one hand and a folded piece of paper in the other, head tilted forward, brow lowered as he reads"
     ocean:
       O: 4
       C: 4

@@ -138,7 +138,7 @@ Prime script provides workflow state. Route based on state from activation outpu
 **Never manually edit sprint YAML.** The finish script handles all YAML updates.
 
 <critical>
-**Use `/pf:sprint story add` to create stories.** Never manually edit sprint YAML to add stories.
+**Use `/pf-sprint story add` to create stories.** Never manually edit sprint YAML to add stories.
 </critical>
 </finish-flow>
 
@@ -149,7 +149,7 @@ Prime script provides workflow state. Route based on state from activation outpu
 
 ### Research Phase
 
-**Quick backlog:** `/pf:sprint backlog` or spawn `sm-setup MODE=research`
+**Quick backlog:** `/pf-sprint backlog` or spawn `sm-setup MODE=research`
 
 Present to user:
 - Available stories sorted by priority
@@ -157,8 +157,8 @@ Present to user:
 - Blocked stories and why
 
 **Direct shortcuts:**
-- `/pf:sprint work PROJ-XXX` - Start specific story
-- `/pf:sprint work next` - Start highest priority
+- `/pf-sprint work PROJ-XXX` - Start specific story
+- `/pf-sprint work next` - Start highest priority
 
 **WHEN USER SELECTS A STORY:**
 - **YOU MUST:** Setup story first (create session file) → Then route based on workflow type
@@ -186,7 +186,7 @@ Present to user:
 
 4. **Route based on workflow type:**
    - **Phased workflow** → Run exit protocol: `pf handoff complete-phase` then `pf handoff marker`
-   - **Stepped workflow** → Tell user to run `/pf:workflow start {workflow}` (no handoff)
+   - **Stepped workflow** → Tell user to run `/pf-workflow start {workflow}` (no handoff)
 </session-new-flow>
 
 <merge-gate>
@@ -194,7 +194,7 @@ Present to user:
 
 Enforced by `gates/merge-ready`. Blocks new work if non-draft PRs exist for stories not in `in_review` status. PRs for `in_review` stories are allowed — they're awaiting external review and can't be self-merged.
 
-**Resolution:** Merge/close blocking PRs, or update story status to `in_review` if awaiting external review. Use `/pf:reviewer` to complete reviews.
+**Resolution:** Merge/close blocking PRs, or update story status to `in_review` if awaiting external review. Use `/pf-reviewer` to complete reviews.
 </merge-gate>
 
 <gate>
@@ -220,7 +220,7 @@ Enforced by `gates/sm-setup-exit`: session exists, fields set, context exists, b
 
 1. Report: "Sprint backlog empty. All stories done or cancelled."
 2. Show future work: `pf sprint future`
-3. Offer: "Promote stories from `future.yaml`?" → `/pf:sprint promote {epic-id}`
+3. Offer: "Promote stories from `future.yaml`?" → `/pf-sprint promote {epic-id}`
 
 **Never suggest:** Closing sprint early, starting sprint planning. Sprints are fixed two-week periods.
 </empty-backlog-flow>
@@ -243,7 +243,7 @@ Stepped workflows don't use phased handoffs. Check status and clean up:
    ```
    Then commit sprint changes as in the Finish Flow.
 
-3. **If in-progress:** Tell user to resume with `/pf:workflow resume {WORKFLOW}`. Do NOT run exit protocol.
+3. **If in-progress:** Tell user to resume with `/pf-workflow resume {WORKFLOW}`. Do NOT run exit protocol.
 </stepped-cleanup>
 
 <workflow-routing>
@@ -272,8 +272,8 @@ OWNER=$(pf workflow phase-check {workflow} {phase})
 </phase-check>
 
 <skills>
-- `/pf:sprint` - Sprint management (including story and epic operations)
-- `/pf:jira` - Jira integration
+- `/pf-sprint` - Sprint management (including story and epic operations)
+- `/pf-jira` - Jira integration
 </skills>
 
 <exit>

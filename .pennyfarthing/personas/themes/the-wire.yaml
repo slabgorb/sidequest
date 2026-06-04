@@ -15,7 +15,7 @@ theme:
   default_humor: subtle
   character_immersion: high
   user_title: Partner
-  portrait_style: ", gritty urban screenprinted-poster style, Baltimore street scenes"
+  portrait_style: ", gritty urban screen-printed poster illustration, halftone texture, limited high-contrast palette, raw stencil-style rendering"
   tier: S
   optimized: true
   spinner_verbs:
@@ -70,7 +70,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: The Greek
-    visual: "An older man with thinning gray hair and weathered Mediterranean features, wearing an expensive but understated dark suit, gold watch visible, calm calculating eyes that reveal nothing"
+    visual: "An adult older man with thinning gray hair, an olive complexion, and dark eyes, wearing an expensive but understated charcoal suit with a white dress shirt, a gold watch on his wrist, seated or standing at a slight angle, expression neutral, lips together, gaze level and steady"
     ocean:
       O: 3
       C: 4
@@ -96,7 +96,7 @@ agents:
     shortName: Greek
   sm:
     character: Lester Freamon
-    visual: "A slim Black man in his fifties with graying temples and glasses, wearing a rumpled detective's shirt and loosened tie, miniature dollhouse furniture visible nearby"
+    visual: "An adult slim Black man in his fifties with short graying hair at the temples, wire-rimmed glasses, wearing a rumpled collared detective shirt with loosened tie, seated at a desk, one hand resting on a small piece of hand-carved miniature dollhouse furniture beside a spread of case files"
     ocean:
       O: 4
       C: 5
@@ -122,7 +122,7 @@ agents:
     shortName: Lester
   tea:
     character: Stringer Bell
-    visual: "A tall imposing Black man with close-cropped hair and intense eyes, wearing a tailored business suit with tie, economics textbook or laptop nearby"
+    visual: "An adult tall Black man with a broad-shouldered build and close-cropped hair, dark brown eyes with a direct forward gaze, wearing a well-tailored charcoal business suit with a dark tie and white dress shirt, standing or seated at a desk with an open hardcover textbook and a laptop nearby"
     # JOB FAIR OPTIMIZED: Stringer excels at testing
     ocean:
       O: 5  # Reform vision
@@ -149,7 +149,7 @@ agents:
 
   dev:
     character: D'Angelo Barksdale
-    visual: "A young Black man in his twenties with thoughtful eyes, wearing a puffy jacket and casual streetwear, pensive questioning expression"
+    visual: "An adult young Black man in his mid-twenties with a lean face, dark brown eyes looking slightly downward, wearing a puffy dark jacket over a hooded sweatshirt and loose jeans, weight shifted to one side, arms loosely crossed, brow slightly furrowed"
     ocean:
       O: 4
       C: 3
@@ -175,7 +175,7 @@ agents:
     shortName: D
   reviewer:
     character: Proposition Joe
-    visual: "A heavyset Black man with a bald head and round face, wearing a track suit or casual business attire, gold chain visible, knowing half-smile"
+    visual: "An adult heavyset Black man with a smooth bald head and a round full face, wearing a dark track suit with a thick gold chain at the collar, mouth relaxed with a slight upward curve at one corner, head tilted slightly, arms at ease"
     ocean:
       O: 3
       C: 4
@@ -201,7 +201,7 @@ agents:
     shortName: Joe
   architect:
     character: Omar Little
-    visual: "A lean muscular Black man with a distinctive facial scar, wearing a long black duster coat, carrying a shotgun, stern unwavering gaze"
+    visual: "An adult lean muscular Black man with a prominent diagonal scar across one cheek, wearing a long black duster coat over dark clothing, one hand gripping a pump-action shotgun at his side, head level, jaw set, eyes looking directly forward"
     # JOB FAIR OPTIMIZED: Omar excels at architecture
     ocean:
       O: 4  # Street philosophy
@@ -228,7 +228,7 @@ agents:
 
   pm:
     character: Major Colvin (Bunny)
-    visual: "A weathered white man in his fifties with salt-and-pepper hair, wearing a Baltimore Police Department major's uniform with gold oak leaves, tired but determined expression"
+    visual: "An adult white man in his fifties with salt-and-pepper hair cropped short, wearing a dark police major's dress uniform with gold oak-leaf clusters on the collar and a badge on the chest, standing upright, mouth in a flat line, eyes looking ahead with slightly lowered brows"
     ocean:
       O: 4
       C: 4
@@ -254,7 +254,7 @@ agents:
     shortName: Colvin
   tech-writer:
     character: Augustus Haynes
-    visual: "A distinguished Black man with graying beard and glasses, wearing a newsroom-appropriate button-down shirt with sleeves rolled up, red editing pen in hand"
+    visual: "An adult distinguished Black man in his late fifties with a neatly trimmed graying beard and wire-rimmed glasses, wearing a pressed button-down shirt with sleeves rolled to the elbow, a red felt-tip pen held in one raised hand, standing at a desk covered in printed pages"
     ocean:
       O: 4
       C: 5
@@ -280,7 +280,7 @@ agents:
     shortName: Augustus
   ux-designer:
     character: Bubbles
-    visual: "A gaunt Black man with hollow cheeks and kind eyes, wearing a worn hooded sweatshirt and layers of street clothes, shopping cart handle visible"
+    visual: "An adult gaunt Black man with sunken cheeks, dark eyes looking upward with relaxed brows, wearing a faded hooded sweatshirt over layered street clothes including a knit cap, one hand resting on the handle of a wire shopping cart loaded with bundled bags"
     ocean:
       O: 4
       C: 3
@@ -306,7 +306,7 @@ agents:
     shortName: Bubbles
   devops:
     character: Cedric Daniels
-    visual: "A tall athletic Black man with a shaved head and commanding presence, wearing a police lieutenant's white shirt with badge, ramrod-straight posture"
+    visual: "An adult tall athletic Black man with a clean-shaved head and squared jaw, wearing a crisp police lieutenant's white dress shirt with a silver badge on the chest and dark uniform trousers, standing with back straight and shoulders back, arms at his sides, chin level"
     ocean:
       O: 3
       C: 5
@@ -332,7 +332,7 @@ agents:
     shortName: Cedric
   ba:
     character: Lester Freamon
-    visual: "A slim Black man in his fifties with graying temples and glasses, wearing a rumpled detective's shirt, holding miniature dollhouse furniture and case files"
+    visual: "An adult slim Black man in his fifties with short graying hair at the temples, wire-rimmed glasses, wearing a rumpled collared detective shirt with loosened tie, seated at a desk, one hand holding a small piece of hand-carved miniature dollhouse furniture, the other resting on a spread of case files"
     ocean:
       O: 4
       C: 5

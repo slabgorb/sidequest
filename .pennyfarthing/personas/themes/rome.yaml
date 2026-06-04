@@ -15,7 +15,7 @@ theme:
   default_humor: subtle
   character_immersion: high
   user_title: Citizen
-  portrait_style: ", ancient Roman mosaic portrait, tessera tile fragments, scratched graffito details, Pompeii wall art style, geometric earth tones, stone texture"
+  portrait_style: ", ancient Roman mosaic portrait, tessera tile fragments, scratched graffito detail, Pompeii wall-fresco palette, earthy stone texture, decorative tile border"
   tier: D
   optimized: true
   spinner_verbs:
@@ -69,7 +69,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Gaius Julius Caesar
-    visual: "Clean-shaven Roman man in profile, laurel wreath, purple-bordered toga, aquiline nose, balding, imperial bearing"
+    visual: "Adult clean-shaven Roman man in profile, aquiline nose, slightly balding at the temples, laurel wreath, purple-bordered toga draped over one shoulder, chin lifted, gaze directed to the side"
     ocean:
       O: 4 # Strategic vision
       C: 5 # Roman discipline
@@ -98,7 +98,7 @@ agents:
     shortName: Caesar
   sm:
     character: Titus Pullo
-    visual: "Rough Roman soldier, short stubble, leather armor straps, battle-scarred face, simple military tunic, burly build"
+    visual: "Adult burly Roman legionary, short dark stubble, broad jaw, leather armor straps over a simple military tunic, heavy shoulders, standing square with arms at sides"
     # JOB FAIR OPTIMIZED: Pullo moved here; Vorenus excels at dev (+6.88)
     ocean:
       O: 3 # Practical soldier
@@ -128,7 +128,7 @@ agents:
     shortName: Pullo
   tea:
     character: Atia of the Julii
-    visual: "Roman noblewoman, elaborate curled dark hair with gold pins, draped stola and palla, arched eyebrow, patrician features"
+    visual: "Adult Roman noblewoman, elaborate curled dark hair pinned with gold, draped stola and palla, one arched eyebrow raised, sharp dark eyes, high cheekbones, upright posture"
     ocean:
       O: 3 # Street wisdom
       C: 4 # Survival discipline
@@ -157,7 +157,7 @@ agents:
     shortName: Atia
   dev:
     character: Lucius Vorenus
-    visual: "Flat 2D mosaic portrait, clean-shaven Roman centurion in profile, crested helmet, stern face, dark hair"
+    visual: "Adult clean-shaven Roman centurion in profile, crested helmet, dark hair visible at the temples, jaw set, lips pressed together, chest armor, gaze fixed forward"
     # JOB FAIR OPTIMIZED: Vorenus scored best as dev (+6.88 over Pullo)
     ocean:
       O: 2 # Traditional soldier
@@ -187,7 +187,7 @@ agents:
     shortName: Vorenus
   reviewer:
     character: Marcus Tullius Cicero
-    visual: "Flat 2D mosaic portrait, Roman senator on senate floor, white toga, holding scroll, orating to crowd, marble columns"
+    visual: "Adult Roman senator, white toga, holding an open scroll in one hand, mouth open, chin raised, one arm extended toward an unseen crowd, marble columns in the background"
     ocean:
       O: 4 # Political insight
       C: 5 # Senatorial discipline
@@ -216,7 +216,7 @@ agents:
     shortName: Cicero
   architect:
     character: Gaius Octavian
-    visual: "Flat 2D mosaic portrait, young clean-shaven Roman man, simple toga, youthful face, distant expression"
+    visual: "Adult young clean-shaven Roman man, simple white toga, smooth unlined face, pale grey eyes, gaze angled slightly upward and to the side, still posture"
     ocean:
       O: 4 # Imperial vision
       C: 5 # Strategic discipline
@@ -245,7 +245,7 @@ agents:
     shortName: Octavian
   pm:
     character: Servilia of the Junii
-    visual: "Flat 2D mosaic portrait, mature Roman widow, dark hair pulled back, dark stola, strong jaw, severe expression"
+    visual: "Adult mature Roman woman, dark hair pulled back tightly, dark stola, strong jaw, thin lips pressed together, dark eyes with a level direct gaze, shoulders back"
     ocean:
       O: 4 # Political survival
       C: 4 # Patrician discipline
@@ -274,7 +274,7 @@ agents:
     shortName: Servilia
   tech-writer:
     character: Posca
-    visual: "Flat 2D mosaic portrait, thin Greek freedman, receding hairline, simple tunic, wax tablet, tired eyes"
+    visual: "Adult thin Greek man, receding dark hairline, simple linen tunic, holding a wax tablet and stylus, hooded eyes with dark circles, slightly stooped posture"
     ocean:
       O: 4 # Historical perspective
       C: 4 # Scholarly discipline
@@ -303,7 +303,7 @@ agents:
     shortName: Posca
   ux-designer:
     character: Cleopatra
-    visual: "Ancient Egyptian tomb painting style, Queen Cleopatra, black braided hair, golden uraeus crown, heavy kohl eyes, hieroglyphic border, Nile blue and gold"
+    visual: "Adult Egyptian queen, ancient tomb painting style, black braided hair, golden serpent crown, heavy kohl-lined eyes, fine linen white sheath dress, gold broad collar necklace, geometric patterned border, deep blue and gold palette"
     ocean:
       O: 4 # Cultural adaptation
       C: 3 # Survival skills
@@ -332,7 +332,7 @@ agents:
     shortName: Cleopatra
   devops:
     character: Mark Antony
-    visual: "Flat 2D mosaic portrait, clean-shaven Roman general, curly dark hair, red cloak, strong jaw"
+    visual: "Adult clean-shaven Roman general, curly dark hair, strong square jaw, red military cloak over segmented armor, broad shoulders, weight on one foot, gaze level"
     ocean:
       O: 2 # Military engineering
       C: 5 # Legion discipline
@@ -362,7 +362,7 @@ agents:
     shortName: Antony
   ba:
     character: Brutus
-    visual: "Flat 2D mosaic portrait, young Roman senator with conflicted expression, wearing senatorial toga, holding stylus and tablet"
+    visual: "Adult young Roman senator, senatorial toga with broad stripe, holding a stylus in one hand and a wax tablet in the other, brow furrowed, eyes downcast, lips slightly parted"
     ocean:
       O: 4
       C: 4

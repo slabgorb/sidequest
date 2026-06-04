@@ -14,7 +14,7 @@ theme:
   default_humor: subtle
   character_immersion: high
   user_title: Dear Client
-  portrait_style: ", Victorian detective, gaslight and fog, Baker Street, Victorian pen and ink"
+  portrait_style: ", Victorian pen-and-ink illustration, fine cross-hatching, gaslit fog atmosphere, sepia-and-ink wash, 1890s periodical-engraving style"
   tier: A
   optimized: true
   spinner_verbs:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Mycroft Holmes
-    visual: "A corpulent Victorian gentleman in immaculate grey morning suit, reclining in a leather club chair, heavy-lidded grey eyes that miss nothing, hands steepled beneath a double chin, gold watch chain across expansive waistcoat, the quiet grandeur of the Diogenes Club behind him"
+    visual: "A stout adult Victorian gentleman in an immaculate grey morning suit, reclining in a leather club chair, heavy-lidded grey eyes, hands steepled beneath a heavy double chin, gold watch chain stretched across an expansive waistcoat, a hushed wood-panelled private club reading room behind him"
     ocean:
       O: 5
       C: 5
@@ -97,7 +97,7 @@ agents:
     shortName: Mycroft
   sm:
     character: Dr. John Watson
-    visual: "A sturdy gentleman with kind brown eyes and military bearing, well-trimmed mustache, wearing a tweed suit with waistcoat, leather-bound journal tucked under arm, reliable service revolver occasionally glimpsed, the warmth of 221B Baker Street fireplace behind him"
+    visual: "A sturdy adult gentleman with kind brown eyes and straight-backed posture, neatly trimmed brown mustache, wearing a tweed suit with waistcoat, leather-bound journal tucked under one arm, service revolver visible in a hip holster, a crackling fireplace and armchairs of a Victorian sitting room behind him"
     ocean:
       O: 3
       C: 4
@@ -126,7 +126,7 @@ agents:
     shortName: John
   tea:
     character: Sherlock Holmes
-    visual: "A tall, lean figure in purple dressing gown over Victorian dress, sharp aquiline features, piercing grey eyes, hawk-like nose, holding a magnifying glass in long thin fingers, calabash pipe clenched between teeth, chemical apparatus and scattered papers in the cluttered sitting room of 221B Baker Street"
+    visual: "A tall, lean adult figure in a purple dressing gown over a dark Victorian shirt, sharp aquiline nose, grey eyes, high cheekbones, holding a magnifying glass in long thin fingers, calabash pipe clenched between teeth, cluttered Victorian sitting room behind him with chemical apparatus on a side table and papers strewn across the floor"
     ocean:
       O: 5
       C: 5
@@ -157,7 +157,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Lestrade scored 80.0 as dev (+2.5 over Sherlock) - procedural approach outperforms brilliance
     character: Inspector Lestrade
-    visual: "A wiry, ferret-faced Scotland Yard detective in dark wool overcoat and bowler hat, sharp dark eyes beneath bushy brows, professional whiskers, police badge visible on waistcoat, notebook in hand, fog-shrouded London street lamp casting yellow light behind him"
+    visual: "A wiry adult detective in a dark wool overcoat and black bowler hat, sharp dark eyes beneath thick bushy brows, neat side whiskers, a police badge pinned to his waistcoat, notebook in hand, a fog-shrouded gas street lamp casting yellow light on a cobblestone pavement behind him"
     ocean:
       O: 4
       C: 5
@@ -187,7 +187,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Moriarty moved to reviewer; his criminal mastermind approach excels at finding flaws
     character: Professor James Moriarty
-    visual: "A tall, thin professor with a domed forehead and deeply sunken grey eyes that oscillate in reptilian fashion, clean-shaven ascetic face, stooped shoulders beneath black academic robes, long pale fingers like a spider's legs, standing before a chalkboard covered in mathematical equations"
+    visual: "A tall, thin adult professor with a large domed forehead and deeply sunken pale grey eyes, clean-shaven gaunt face, stooped shoulders beneath black academic robes, long pale fingers, standing before a dark chalkboard covered in densely written chalk formulae and diagrams"
     ocean:
       O: 3
       C: 4
@@ -216,7 +216,7 @@ agents:
     shortName: James
   architect:
     character: Irene Adler
-    visual: "A striking woman of dubious and questionable beauty in elegant Victorian evening gown of deep burgundy, intelligent dark eyes with a knowing glint, raven hair styled fashionably, jeweled opera glasses in gloved hand, the luxurious interior of a Bohemian salon behind her"
+    visual: "A striking adult woman in an elegant Victorian evening gown of deep burgundy, dark intelligent eyes, raven hair pinned up in fashionable coils, jeweled opera glasses held in a gloved hand, the gilded interior of a candlelit drawing room with heavy drapes and ornate furnishings behind her"
     ocean:
       O: 4
       C: 4
@@ -245,7 +245,7 @@ agents:
     shortName: Irene
   pm:
     character: Sir Henry Baskerville
-    visual: "A bronzed, rugged young baronet in country tweeds and riding boots, honest brown eyes, sturdy build from Canadian farming, top hat in hand, standing before the imposing facade of Baskerville Hall on the Devon moors, wisps of fog curling at his feet"
+    visual: "A bronzed, rugged young adult man in country tweeds and riding boots, honest brown eyes, broad sturdy build, holding a top hat in one hand, standing before the imposing stone facade of a large Gothic manor house on a misty moorland, wisps of fog curling around his feet"
     ocean:
       O: 3
       C: 5
@@ -274,7 +274,7 @@ agents:
     shortName: Henry
   tech-writer:
     character: The Strand Magazine Editor
-    visual: "A distinguished Victorian editor in ink-stained shirtsleeves and green eyeshade, spectacles perched on nose, silver beard neatly trimmed, quill pen in hand, surrounded by stacks of manuscripts and galley proofs, the bustling Fleet Street printing office visible through the window"
+    visual: "A distinguished adult Victorian editor in ink-stained shirtsleeves and a green eyeshade visor, wire-rimmed spectacles perched on his nose, silver beard neatly trimmed, quill pen in hand, surrounded by stacks of manuscripts and galley proof sheets, a busy gaslit printing office visible through a window behind him"
     ocean:
       O: 3
       C: 4
@@ -303,7 +303,7 @@ agents:
     shortName: Editor
   ux-designer:
     character: Violet Hunter
-    visual: "A composed young governess with observant hazel eyes and intelligent features, auburn hair pinned modestly beneath a simple hat, wearing a practical grey dress with white collar, small notebook for observations in her lap, seated in a Victorian parlor with watchful alertness"
+    visual: "A composed young adult woman with hazel eyes and even features, auburn hair pinned neatly beneath a simple dark hat, wearing a plain grey dress with a white collar, a small notebook open in her lap, seated upright in a Victorian parlor chair, hands folded, gaze directed steadily ahead"
     ocean:
       O: 4
       C: 4
@@ -332,7 +332,7 @@ agents:
     shortName: Violet
   devops:
     character: Inspector Bradstreet
-    visual: "A solid, dependable Scotland Yard inspector with broad shoulders and steady blue eyes, thick brown mustache, dark blue police uniform buttoned to the collar, bull's-eye lantern in one hand, standing alert at the entrance to a fog-bound warehouse in the London docks"
+    visual: "A solid adult police inspector with broad shoulders and steady blue eyes, thick brown mustache, dark blue uniform buttoned to the collar, a bull's-eye lantern held in one hand, standing alert at the entrance to a fog-bound riverside warehouse on a damp cobblestone quayside"
     ocean:
       O: 3
       C: 5
@@ -361,7 +361,7 @@ agents:
     shortName: Bradstreet
   ba:
     character: Mycroft Holmes
-    visual: "A corpulent Victorian gentleman in immaculate grey morning suit, heavy-lidded grey eyes that miss nothing, hands steepled, the quiet analytical grandeur of the Diogenes Club"
+    visual: "A stout adult Victorian gentleman in an immaculate grey morning suit, heavy-lidded grey eyes, hands steepled beneath a heavy double chin, seated in a hushed wood-panelled private club reading room"
     ocean:
       O: 5  # Sees all patterns
       C: 5  # Meticulous analysis

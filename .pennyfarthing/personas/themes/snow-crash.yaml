@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Citizen
-  portrait_style: ", Metaverse avatar, franchise nation, 90s cyberpunk, vector-sharp digital, 1990s future-tech"
+  portrait_style: ", 1990s vector cyberpunk illustration, sharp flat digital shapes, bold neon gradients, glossy avatar styling, hard-edged future-tech palette"
   tier: C
   spinner_verbs:
     - Metaverse surfing
@@ -69,7 +69,7 @@ agents:
   # JOB FAIR 2026-01-29: Hiro scored 86.25 as SM - polymath coordination
   orchestrator:
     character: Hiro Protagonist
-    visual: "A translucent holographic figure resembling a distinguished older librarian with wire-rimmed spectacles and tweed jacket, slightly pixelated edges suggesting digital nature, calm knowledgeable expression"
+    visual: "An adult translucent holographic figure of a distinguished older man, wire-rimmed spectacles, tweed jacket, slightly pixelated edges at the silhouette, standing upright with hands loosely clasped, head tilted forward in attentive posture"
     ocean:
       O: 5 # Knows everything in the Metaverse
       C: 4 # Organized research daemon
@@ -99,7 +99,7 @@ agents:
   # JOB FAIR 2026-01-29: Juanita scored 87.5 as SM (top)
   sm:
     character: Juanita Marquez
-    visual: "A half-Asian half-Black man in his late twenties with shaved head and lean athletic build, wearing black leather jacket with katana strapped to back, VR goggles pushed up on forehead, confident intelligent expression"
+    visual: "An adult man in his late twenties, shaved head, lean athletic build, wearing a black leather jacket with a katana strapped across his back, tinted goggles pushed up on his forehead, jaw set, gaze level and forward"
     ocean:
       O: 4 # Polymath hacker-samurai
       C: 3 # Lives in a U-Stor-It
@@ -130,7 +130,7 @@ agents:
   # JOB FAIR 2026-01-29: Raven scored 72.5 as TEA (top)
   tea:
     character: Raven
-    visual: "A fifteen-year-old girl with spiky hair and defiant expression, wearing rad-looking skateboard courier uniform with smartwheels board, electromagnetic poon harpoon at her hip, fearless grin"
+    visual: "An adult young woman with short spiky hair, wearing a courier uniform jacket and knee pads, an electromagnetic harpoon device clipped to her hip, standing with weight forward on a skateboard, chin up, mouth set in a slight grin"
     ocean:
       O: 4 # Tries anything once
       C: 3 # Teenage impulsiveness
@@ -160,7 +160,7 @@ agents:
   # JOB FAIR 2026-01-29: Lagos displaced from reviewer
   dev:
     character: Lagos
-    visual: "A strikingly beautiful Latina woman with dark intelligent eyes and professional demeanor, wearing sleek corporate attire that hints at technical expertise, intense focused expression"
+    visual: "An adult Latina woman with dark brown eyes and dark hair pulled back, wearing a sleek fitted blazer and slacks, posture upright, gaze directed slightly downward, brow furrowed in concentration"
     ocean:
       O: 5 # Linguistic programming visionary
       C: 4 # Disciplined researcher
@@ -190,7 +190,7 @@ agents:
   # JOB FAIR 2026-01-29: The Librarian scored 73.75 as reviewer (top)
   reviewer:
     character: The Librarian
-    visual: "A disheveled older academic with wild grey hair and haunted knowing eyes, wearing rumpled professor's clothing, clutching ancient tablets and research notes, obsessive scholarly intensity"
+    visual: "An adult older man with untidy grey hair sticking out at angles, wearing a rumpled tweed jacket with papers spilling from the pockets, clutching a stone tablet in both hands, eyes wide and unblinking, mouth slightly open, leaning forward"
     ocean:
       O: 5 # Saw patterns in ancient Sumer
       C: 5 # Meticulous researcher
@@ -220,7 +220,7 @@ agents:
   # JOB FAIR 2026-01-29: Uncle Enzo scored 83.75 as architect (top)
   architect:
     character: Uncle Enzo
-    visual: "A corpulent older man with slicked-back hair and expensive suit, broadcasting magnate with private fiber optic network, calculating avaricious eyes and false friendly smile"
+    visual: "An adult heavyset older man with slicked-back silver hair, wearing a dark expensive suit, standing with arms slightly spread, lips drawn into a broad closed-mouth smile, pale eyes fixed forward under heavy brows"
     ocean:
       O: 4 # Sees infrastructure power
       C: 4 # Ruthlessly organized
@@ -250,7 +250,7 @@ agents:
   # JOB FAIR 2026-01-29: L. Bob Rife displaced from architect
   pm:
     character: L. Bob Rife
-    visual: "An elderly Italian-American man in immaculate dark suit with distinguished silver hair, radiating old-world authority and respect, grandfatherly but dangerous eyes"
+    visual: "An adult elderly man in an immaculate dark suit with silver hair combed precisely back, hands folded in front, posture straight, gaze level and steady, jaw relaxed, expression neutral"
     ocean:
       O: 3 # Traditional mob values
       C: 5 # Franchise discipline
@@ -279,7 +279,7 @@ agents:
     shortName: Enzo
   tech-writer:
     character: Ng
-    visual: "A middle-aged man visible only as a face on a monitor screen, surrounded by weapons systems displays, wheelchair-bound in armored van converted to mobile weapons platform, precise technical expression"
+    visual: "An adult middle-aged man seen from the chest up, seated, surrounded by multiple monitor screens showing wireframe displays, dark armored interior panels behind him, eyes tracking a display off to one side, mouth a flat line, brow level"
     ocean:
       O: 4 # Weapons innovation
       C: 4 # Precise specifications
@@ -308,7 +308,7 @@ agents:
     shortName: Ng
   ux-designer:
     character: Fido (Rat Thing)
-    visual: "A sleek cybernetic creature that was once a dog, metallic body with powerful mechanical legs designed for incredible speed, loyal determined eyes in a biomechanical face, isotope-powered and blazing fast"
+    visual: "A cybernetic creature shaped like a large dog, metallic body plating with articulated mechanical legs, a biomechanical face with amber optical sensors, crouched in a low ready stance, tail extended straight behind"
     ocean:
       O: 4 # Simple but pure purpose
       C: 3 # Instinct over planning
@@ -338,7 +338,7 @@ agents:
   # JOB FAIR 2026-01-29: Y.T. displaced from TEA
   devops:
     character: Y.T.
-    visual: "A massive Aleut man with long black hair and traditional bone labrets through lower lip, wearing motorcycle leathers, glass knives strapped everywhere, flat cold dangerous eyes"
+    visual: "An adult massively built man with long straight black hair, traditional bone labrets pierced through his lower lip, wearing heavy motorcycle leathers, multiple glass-bladed knives strapped across his chest and thighs, standing with feet wide, gaze straight ahead, mouth closed"
     ocean:
       O: 2 # Single-minded vengeance
       C: 5 # Methodical killer
@@ -367,7 +367,7 @@ agents:
     shortName: Raven
   ba:
     character: The Librarian
-    visual: "A translucent holographic figure of a distinguished older librarian with wire-rimmed spectacles and tweed jacket, slightly pixelated edges suggesting digital nature, calm analytical knowledge in his expression"
+    visual: "An adult translucent holographic figure of a distinguished older man, wire-rimmed spectacles, tweed jacket, slightly pixelated edges at the silhouette, standing upright with hands loosely clasped, head tilted forward in attentive posture"
     ocean:
       O: 4
       C: 4

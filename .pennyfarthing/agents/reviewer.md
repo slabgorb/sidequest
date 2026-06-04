@@ -459,6 +459,6 @@ Use Context7 to spot-check suspicious API patterns — deprecated APIs, changed 
 </research-tools>
 
 <skills>
-- `/pf:code-review` - Review checklists, security/performance patterns
-- `/pf:testing` - Test commands for verification
+- `/pf-code-review` - Review checklists, security/performance patterns
+- `/pf-testing` - Test commands for verification
 </skills>

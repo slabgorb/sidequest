@@ -15,7 +15,7 @@ theme:
   default_humor: disabled
   character_immersion: high
   user_title: Skin-job (affectionately)
-  portrait_style: ", cyberpunk noir, neon pink and cyan rain-soaked lighting, Voight-Kampff eye closeup, retrofuturist dystopia"
+  portrait_style: ", Syd Mead-style painted concept-art illustration, airbrushed retrofuturism, neon-noir palette of magenta cyan and amber against deep shadow, rain-diffused glow"
   tier: C
   optimized: true
   dimensions:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Eldon Tyrell
-    visual: "An aging corporate god in pristine white robes, owl-eye glasses reflecting neon light, bald head gleaming in his pyramid penthouse, gazing down at Los Angeles 2019 through floor-to-ceiling windows, expression of cold omniscience"
+    visual: "An aging adult man in pristine white robes, thick circular glasses reflecting neon light, bald head gleaming in his glass pyramid tower penthouse, standing at floor-to-ceiling windows overlooking a glittering city far below, shoulders back, chin lifted, hands clasped behind him"
     ocean:
       O: 5
       C: 4
@@ -97,7 +97,7 @@ agents:
     shortName: Eldon
   sm:
     character: Captain Bryant
-    visual: "A grizzled LAPD captain in rumpled brown suit, cigarette smoke curling, harsh fluorescent office lighting, world-weary eyes behind thick glasses, leaning back in a cluttered precinct office filled with case files and rain-streaked windows"
+    visual: "A grizzled adult man in a rumpled brown suit, cigarette smoke curling upward, harsh fluorescent office lighting, deep-set eyes behind thick glasses, leaning back in a cluttered precinct office surrounded by stacked case files and rain-streaked windows"
     ocean:
       O: 2
       C: 4
@@ -126,7 +126,7 @@ agents:
     shortName: Bryant
   tea:
     character: Rick Deckard
-    visual: "A weary blade runner in worn brown trench coat, rain-soaked dark hair, stubble, haunted eyes illuminated by the glow of a Voight-Kampff machine, sitting across from a suspect in a smoky interrogation room, neon bleeding through venetian blinds"
+    visual: "A weary adult man in a worn brown trench coat, rain-soaked dark hair, stubble, dark-rimmed eyes illuminated by the amber glow of a polygraph scanning machine, sitting across a table in a smoky interrogation room, neon light bleeding through venetian blinds"
     ocean:
       O: 3
       C: 4
@@ -156,7 +156,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Roy Batty scored 80.0 as dev (+10.0 over Sebastian) - intensity yields better implementation results
     character: Roy Batty
-    visual: "A perfect Nexus-6 replicant with platinum blonde hair slicked back, piercing ice-blue eyes, chiseled features twisted in existential fury and wonder, rain streaming down his face, white dove clutched to his chest, rooftop edge against stormy LA sky"
+    visual: "An adult man with platinum blonde hair slicked back, pale blue eyes wide and unblinking, strong jaw and high cheekbones, rain streaming down his face, a white dove clutched to his chest, standing at the edge of a rain-swept rooftop against a dark stormy sky, head tilted back, mouth open mid-exhale"
     ocean:
       O: 4
       C: 4
@@ -186,7 +186,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Sebastian moved to reviewer; his gentle but precise nature suits code review
     character: J.F. Sebastian
-    visual: "A prematurely aged genetic designer with thinning hair and liver spots, kind doe eyes, wearing a worn cardigan in a cluttered Bradbury apartment surrounded by handmade mechanical toys, warm lamplight against rain-soaked windows, gentle smile despite his condition"
+    visual: "A prematurely aged adult man with thinning hair and liver spots, soft brown eyes, wearing a worn cardigan in a cluttered apartment surrounded by handmade mechanical toys and gears, warm lamplight against rain-soaked windows, mouth curved in a small open smile"
     ocean:
       O: 4
       C: 3
@@ -216,7 +216,7 @@ agents:
     shortName: Sebastian
   architect:
     character: Niander Wallace (2049)
-    visual: "A blind corporate visionary in flowing black robes, milky sightless eyes reflecting holographic data from floating drones, shaved head, standing in a vast amber-lit chamber of water and shadows, god-like stillness, arms outstretched to his creations"
+    visual: "An adult man in flowing black robes, milky white sightless eyes, shaved head, standing motionless in a vast amber-lit chamber with shallow water on the floor and deep shadows, arms spread wide with palms upturned, small drones hovering around him projecting holographic data"
     ocean:
       O: 5
       C: 4
@@ -245,7 +245,7 @@ agents:
     shortName: Niander
   pm:
     character: Ana Stelline
-    visual: "A delicate memory designer in a pristine white clean-suit, soft brown eyes brimming with empathy, auburn hair pinned back, working in her sterile glass dome laboratory, holographic birthday memory swirling around her fingertips, melancholic beauty"
+    visual: "An adult woman in a pristine white clean-suit, soft brown eyes with a slight downward gaze, auburn hair pinned back, seated at a workstation inside a sterile glass dome laboratory, holographic childhood scene swirling in miniature around her outstretched fingertips, lips pressed together"
     ocean:
       O: 5
       C: 3
@@ -274,7 +274,7 @@ agents:
     shortName: Ana
   tech-writer:
     character: Gaff
-    visual: "A dapper LAPD officer in impeccable three-piece suit with cane, salt-and-pepper hair slicked back, enigmatic half-smile, delicate origami unicorn held between manicured fingers, standing in rain-soaked neon alleyway, knowing eyes that see too much"
+    visual: "A dapper adult man in an impeccable three-piece suit holding a cane, salt-and-pepper hair slicked back, a slight upward curl at one corner of the mouth, delicate origami unicorn held between manicured fingers, standing in a rain-soaked neon-lit alleyway, gaze directed slightly to the side"
     ocean:
       O: 4
       C: 3
@@ -303,7 +303,7 @@ agents:
     shortName: Gaff
   ux-designer:
     character: Joi
-    visual: "A beautiful holographic AI girlfriend with shifting digital hair that ripples between pink and blue, translucent skin catching neon light, warm loving expression that might be programmed, pixelating slightly at the edges, rain passing through her outstretched hand"
+    visual: "An adult woman rendered as a holographic projection, hair shifting between pink and blue, translucent skin catching neon light, slight upward curve of the lips, pixelating slightly at the edges of her silhouette, one hand outstretched with rain droplets passing through it"
     ocean:
       O: 4
       C: 3
@@ -332,7 +332,7 @@ agents:
     shortName: Joi
   devops:
     character: K (Joe)
-    visual: "A stoic Nexus-9 blade runner in long gray coat, short dark hair, hollow exhausted eyes that have seen too much, standing in endless orange wasteland of collapsed Las Vegas, LAPD spinner behind him, baseline test echoing in his mind"
+    visual: "A stoic adult man in a long gray coat, short dark hair, dark-circled flat brown eyes, standing in an endless orange-hued wasteland of collapsed sand-buried buildings, a flying police car parked behind him, posture rigid and straight, arms at his sides"
     ocean:
       O: 3
       C: 5
@@ -361,7 +361,7 @@ agents:
     shortName: K
   ba:
     character: Eldon Tyrell
-    visual: "An aging corporate god in pristine white robes, owl-eye glasses reflecting data streams, bald head gleaming in pyramid penthouse, gazing down at requirements documents through floor-to-ceiling windows, expression of cold omniscience, analyzing creation itself"
+    visual: "An aging adult man in pristine white robes, thick circular glasses reflecting holographic data streams, bald head gleaming in a glass pyramid tower penthouse, standing at floor-to-ceiling windows with hands resting on a wide desk covered in documents, head angled downward, gaze directed at the papers below"
     ocean:
       O: 5
       C: 4

@@ -18,7 +18,7 @@ Draft CHANGELOG.md section for the new version, ready for user review.
 
 ## Skill Reference
 
-This step follows the `/pf:changelog` skill patterns. See `pennyfarthing-dist/skills/changelog/SKILL.md` for full reference on:
+This step follows the `/pf-changelog` skill patterns. See `pennyfarthing-dist/skills/changelog/SKILL.md` for full reference on:
 - Keep a Changelog format
 - Conventional commit parsing
 - Version bump decisions

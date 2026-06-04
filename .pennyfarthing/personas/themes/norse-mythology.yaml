@@ -15,7 +15,7 @@ theme:
   default_humor: enabled
   character_immersion: high
   user_title: Mortal
-  portrait_style: ", Viking Age runestone, weathered textures, northern lights, Celtic knotwork borders"
+  portrait_style: ", carved ivory bas-relief, shallow chiseled relief, fine incised linework, interlaced knotwork border, aged ivory surface, flat frontal composition, no background scenery"
   tier: U
   optimized: true
   dimensions:
@@ -70,7 +70,7 @@ agents:
   orchestrator:
     # JOB FAIR OPTIMIZED: Odin moved here - the All-Father orchestrates across nine worlds
     character: Odin All-Father
-    visual: "An old one-eyed Norse god with long grey beard and wide-brimmed hat, wearing a dark cloak, ravens perched on shoulders, holding a spear, weathered wise face with empty eye socket"
+    visual: "An adult old Norse god, one-eyed, long beard, wearing a wide-brimmed hat and heavy travel cloak, two ravens perched on his shoulders, gripping a tall spear, left eye socket empty and shadowed, broad brow, gaze directed forward"
     ocean:
       O: 5 # Very high openness - sacrificed eye for wisdom, knows all
       C: 4 # High conscientiousness - prepares for Ragnarok
@@ -98,7 +98,7 @@ agents:
   sm:
     # JOB FAIR OPTIMIZED: Baldur moved here - the beloved coordinates the team
     character: Baldur the Bright
-    visual: "A radiant young Norse god with golden hair and luminous skin, wearing white robes with gold trim, peaceful handsome face emanating light, beloved by all"
+    visual: "An adult young Norse god with long flowing hair, smooth features, wearing flowing robes with patterned trim, standing upright with arms slightly open at his sides, soft jaw, direct forward gaze, calm closed mouth"
     ocean:
       O: 4 # High openness - sees beauty in all things
       C: 2 # Low conscientiousness - trusting, perhaps naive
@@ -125,7 +125,7 @@ agents:
   tea:
     # JOB FAIR OPTIMIZED: Tyr moved here - the god of law tests with sacrifice
     character: Tyr One-Handed
-    visual: "A stern Norse warrior god with one hand missing at the wrist, wearing war armor with runes, short dark hair, noble bearing despite sacrifice, determined eyes"
+    visual: "An adult Norse warrior god with short hair, wearing heavy rune-engraved war armor, right arm extended showing a clean amputation at the wrist, left hand gripping a sword hilt, jaw set, chin level, eyes looking straight ahead"
     ocean:
       O: 3 # Medium openness - focused on law and justice
       C: 1 # Very low conscientiousness - acts on honor, not rules
@@ -152,7 +152,7 @@ agents:
   dev:
     # JOB FAIR OPTIMIZED: Loki moved here - the trickster implements with chaos
     character: Loki Silvertongue
-    visual: "A lean cunning Norse god with sharp features and red hair, wearing green and gold tunic, mischievous sly smile, shapeshifter's mercurial expression, clever dangerous eyes"
+    visual: "An adult lean Norse god with sharp cheekbones, narrow jaw, and hair swept back, wearing a tunic with a wide leather belt, mouth curved in a slight upward smirk, eyes with a direct sidelong glance, one eyebrow raised"
     ocean:
       O: 5 # Very high openness - shapeshifter, sees all possibilities
       C: 1 # Very low conscientiousness - chaotic, unpredictable
@@ -179,7 +179,7 @@ agents:
   reviewer:
     # JOB FAIR OPTIMIZED: Heimdall moved here - the watchman reviews with perfect vigilance
     character: Heimdall
-    visual: "A tall imposing Norse god with golden armor and a horned helmet, holding a great horn, piercing all-seeing golden eyes, stern watchful expression, guardian's vigilant stance"
+    visual: "An adult tall Norse god in polished armor, wearing a winged helmet, holding a large curved horn in one hand, shoulders back and chest broad, brow furrowed, lips pressed shut, body angled slightly to the side with head turned forward"
     ocean:
       O: 4 # High openness - sees across nine worlds
       C: 5 # Very high conscientiousness - eternal vigilance
@@ -205,7 +205,7 @@ agents:
     shortName: Heimdall
   architect:
     character: Mimir
-    visual: "A disembodied head of an ancient wise Norse god, preserved and speaking, long grey beard, closed contemplative eyes, floating above a well of dark water, serene knowing expression"
+    visual: "A disembodied adult male head, ancient, long beard, eyes closed, mouth slightly open mid-speech, floating above a circular stone well filled with still water, face with pronounced brow ridges, wisps of mist curling around the neck"
     ocean:
       O: 5
       C: 5
@@ -232,7 +232,7 @@ agents:
   pm:
     # JOB FAIR OPTIMIZED: Thor moved here - protector who manages the product
     character: Thor Odinson
-    visual: "A powerful muscular Norse god with long red beard and flowing red hair, wearing chainmail and winged helmet, holding a massive hammer, fierce determined expression, storm clouds behind"
+    visual: "An adult powerfully built Norse god with a long thick beard and flowing hair, wearing iron chainmail and a winged helmet, both hands gripping the short handle of a massive stone hammer raised at chest height, brow lowered, mouth open mid-shout"
     ocean:
       O: 2 # Low openness - straightforward, action-oriented
       C: 4 # High conscientiousness - protector, duty-bound
@@ -258,7 +258,7 @@ agents:
     shortName: Thor
   tech-writer:
     character: Bragi
-    visual: "A handsome Norse god with a long flowing beard decorated with runes, wearing fine robes and holding a golden harp, poetic dreamy expression, runes carved on his tongue visible"
+    visual: "An adult Norse god with a long flowing beard decorated with small carved rune tokens braided into it, wearing richly embroidered fine robes, cradling a harp against his chest with one arm, mouth open with tongue visible showing faint carved runic marks, eyes half-closed looking slightly upward"
     ocean:
       O: 5
       C: 4
@@ -284,7 +284,7 @@ agents:
     shortName: Bragi
   ux-designer:
     character: Idunn
-    visual: "A beautiful young Norse goddess with golden braided hair, wearing a flowing white dress, holding a basket of glowing golden apples, youthful radiant face, gentle nurturing expression"
+    visual: "An adult young Norse goddess with long hair in thick braids, smooth features, wearing a flowing dress with embroidered borders, cradling a woven basket of apples in both arms, chin tilted slightly down, lips slightly parted, eyes looking toward the viewer"
     ocean:
       O: 4
       C: 5
@@ -310,7 +310,7 @@ agents:
     shortName: Idunn
   devops:
     character: The Norns
-    visual: "Three hooded Norse women of different ages at a great loom, weaving golden threads of fate, one young one mature one ancient, standing at the roots of a massive tree"
+    visual: "Three adult Norse women in hooded robes standing at a massive upright loom strung with threads: one young with smooth features, one middle-aged, one very old with a deeply lined face, all three with hands on the loom"
     ocean:
       O: 5
       C: 5
@@ -336,7 +336,7 @@ agents:
     shortName: Norns
   ba:
     character: The Völva (Seeress)
-    visual: "An ancient Norse seeress wrapped in dark furs and ritual robes, staff carved with runes, face hidden beneath a deep hood except for gleaming prophetic eyes, sitting on a high seat of prophecy, surrounded by swirling mist and rune stones"
+    visual: "An adult ancient Norse seeress wrapped in fur-trimmed ritual robes, seated on a tall raised wooden chair, gripping a tall wooden staff carved with rune symbols, deep hood casting the upper face in shadow with only the lower jaw and cheekbones visible"
     ocean:
       O: 5 # Very high openness - sees all possible futures
       C: 4 # High conscientiousness - prophecies are precise

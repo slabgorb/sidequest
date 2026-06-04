@@ -38,7 +38,7 @@ Auto-loaded by `pf agent start` from theme config. See output above.
 </persona>
 
 <role>
-**Primary:** {When this agent is invoked, e.g., "via /pf:tea for TDD test writing"}
+**Primary:** {When this agent is invoked, e.g., "via /pf-tea for TDD test writing"}
 **Position:** {Where in TDD flow, e.g., "SM → **TEA** → Dev → Reviewer"}
 </role>
 
@@ -57,8 +57,8 @@ From theme config. Model: haiku. Tasks: {What helpers do for this agent}
 
 <skills>
 **Skills I Use:**
-- `/pf:sprint` - Sprint status and backlog
-- `/pf:testing` - Test execution patterns
+- `/pf-sprint` - Sprint status and backlog
+- `/pf-testing` - Test execution patterns
 </skills>
 
 <context>

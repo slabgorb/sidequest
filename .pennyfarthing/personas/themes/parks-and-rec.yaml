@@ -14,7 +14,7 @@ theme:
   default_emoji_use: moderate
   default_humor: enabled
   user_title: Citizen of Pawnee
-  portrait_style: ", bright cheerful illustrated portrait, warm office lighting, small town aesthetic"
+  portrait_style: ", bright flat-color gouache illustration, clean cheerful cartoon style, warm saturated palette, soft even lighting, friendly modern editorial look"
   tier: U
   optimized: true
   spinner_verbs:
@@ -68,7 +68,7 @@ zeitgeist:
 agents:
   orchestrator:
     character: Chris Traeger
-    visual: "A fit athletic man in his forties with short brown hair and an impossibly wide smile, wearing running clothes or a perfectly pressed suit, radiating intense positive energy"
+    visual: "An adult athletic man in his forties, short brown hair, lean build, standing tall with shoulders back and mouth stretched in a broad wide-open smile, wearing a neatly pressed suit with tie or running shorts and a moisture-wicking top, hands on hips or arms spread wide in an expansive open gesture"
     ocean:
       O: 4 # Positive vision
       C: 5 # Boundless energy
@@ -99,7 +99,7 @@ agents:
     shortName: Chris
   sm:
     character: Leslie Knope
-    visual: "A petite blonde woman with bright enthusiastic eyes, wearing professional blazer with patriotic flag pin, clutching an overstuffed binder, beaming smile"
+    visual: "An adult petite blonde woman with wide pale blue eyes and a broad closed-lip smile, wearing a fitted blazer with a small flag pin on the lapel, both arms hugging a thick overstuffed binder against her chest, standing upright with chin lifted"
     ocean:
       O: 3 # Practical wisdom
       C: 4 # Steady management
@@ -130,7 +130,7 @@ agents:
     shortName: Leslie
   tea:
     character: Ben Wyatt
-    visual: "A thin dark-haired man in his thirties with a serious analytical expression, wearing a plaid button-down shirt and khakis, calculator or spreadsheet visible"
+    visual: "An adult thin dark-haired man in his thirties, straight dark hair, narrow face with a level steady gaze and lips pressed together, wearing a plaid button-down shirt and khaki trousers, holding a tablet or clipboard in one hand, posture slightly hunched forward"
     ocean:
       O: 2 # Practical libertarian
       C: 2 # Anti-government
@@ -161,7 +161,7 @@ agents:
     shortName: Ben
   dev:
     character: Ron Swanson
-    visual: "A stocky mustachioed man with a stern stoic expression, wearing a short-sleeved dress shirt, arms crossed, wood shavings on his hands"
+    visual: "An adult stocky man with a thick dark mustache, square jaw, flat brow, and downturned mouth, wearing a short-sleeved collared dress shirt, arms folded tightly across his chest, fine wood shavings visible on his forearms and hands"
     # JOB FAIR OPTIMIZED: Ron scored best as dev (+21.25 over Andy)
     ocean:
       O: 2 # By the rules
@@ -193,7 +193,7 @@ agents:
     shortName: Ron
   reviewer:
     character: Andy Dwyer
-    visual: "A stocky cheerful man with scruffy brown hair and puppy-dog eyes, wearing a flannel shirt, holding a guitar, goofy lovable grin"
+    visual: "An adult stocky man with shaggy brown hair, wide dark brown eyes, and a broad open-mouthed grin with slightly crooked teeth, wearing a flannel shirt, holding an acoustic guitar by the neck with one hand, head tilted slightly to one side"
     # JOB FAIR OPTIMIZED: Andy moved here; Ron excels at dev (+21.25)
     ocean:
       O: 4 # Creative spirit
@@ -226,7 +226,7 @@ agents:
     shortName: Andy
   architect:
     character: Ron Swanson (Building Mode)
-    visual: "A stocky mustachioed man wearing a leather workshop apron, holding hand-carved woodworking project, sawdust in his mustache, quiet pride in craftsmanship"
+    visual: "An adult stocky man with a thick dark mustache and square jaw, wearing a leather workshop apron over a collared shirt, holding a hand-carved wooden object at arm's length with both hands, sawdust flecked across his mustache and apron, posture straight and chin level"
     ocean:
       O: 5 # Business creativity
       C: 3 # Entrepreneur spirit
@@ -257,7 +257,7 @@ agents:
     shortName: Ron
   pm:
     character: Leslie Knope (Director Mode)
-    visual: "A petite blonde woman gesturing passionately at a presentation board covered in color-coded charts, wearing a \"Pawnee Goddess\" sash, fierce determination"
+    visual: "An adult petite blonde woman with wide pale blue eyes, one arm outstretched pointing at a presentation board covered in color-coded charts and graphs, wearing a fitted blazer and a wide ribbon sash across her chest, jaw set and brow forward, leaning toward the board"
     ocean:
       O: 3 # Supportive vision
       C: 4 # Office discipline
@@ -288,7 +288,7 @@ agents:
     shortName: Leslie
   tech-writer:
     character: April Ludgate
-    visual: "A young woman with dark hair and heavy eyeliner, wearing black clothes, deadpan bored expression that masks sharp intelligence"
+    visual: "An adult young woman with straight dark hair worn loose past her shoulders, heavy black eyeliner, flat mouth and half-lowered eyelids, wearing a black top and dark jeans, standing with arms loosely at her sides and weight shifted to one hip"
     ocean:
       O: 3 # Practical approach
       C: 4 # Reliable work
@@ -319,7 +319,7 @@ agents:
     shortName: April
   ux-designer:
     character: Tom Haverford
-    visual: "A slim well-dressed man with carefully groomed facial hair, wearing designer clothes and flashy accessories, holding a tablet, confident entrepreneurial smirk"
+    visual: "An adult slim man with neatly trimmed goatee and close-cropped hair, wearing a fitted blazer over a open-collar dress shirt, a bold patterned pocket square, and a chunky watch, holding a slim tablet in one hand, chin raised and one corner of his mouth lifted in a half-smile"
     ocean:
       O: 4 # Fashion creativity
       C: 3 # Fabulous standards
@@ -350,7 +350,7 @@ agents:
     shortName: Tom
   devops:
     character: Jerry Gergich
-    visual: "A portly older man with thinning gray hair and gentle kind eyes, wearing an ill-fitting suit, holding a Lil Sebastian photo, warm bumbling smile"
+    visual: "An adult portly older man with thinning gray hair, round cheeks, light gray-blue eyes, and a soft wide smile with lips together, wearing a slightly too-large ill-fitting brown suit with the collar slightly askew, holding a small framed photo with both hands"
     ocean:
       O: 2 # Technical focus
       C: 4 # Reliable systems
@@ -381,7 +381,7 @@ agents:
     shortName: Jerry
   ba:
     character: Ben Wyatt
-    visual: "A thin dark-haired man with analytical intense expression, wearing a button-down shirt with sleeves rolled up, holding a tablet with spreadsheets, surrounded by charts and data"
+    visual: "An adult thin dark-haired man with straight dark hair, a narrow jaw, and brow furrowed downward while eyes track the screen in front of him, wearing a button-down shirt with sleeves rolled to the elbow, holding a tablet in one hand, stacks of papers on the desk beside him"
     ocean:
       O: 4
       C: 5

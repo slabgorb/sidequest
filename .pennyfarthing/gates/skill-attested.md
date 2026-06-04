@@ -5,7 +5,7 @@ Reference template for verifying that required superpowers skills have been
 invoked and attested in the session file.
 
 This file is NOT referenced directly by workflow YAML. Composite gates that
-need skill attestation (e.g., gates/sdd-red-exit, gates/sdd-green-exit)
+need skill attestation (e.g., gates/spdd-red-exit, gates/spdd-green-exit)
 include their own `<check name="skill-attested">` block with phase-specific
 required skills listed inline.
 </purpose>

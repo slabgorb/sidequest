@@ -151,4 +151,4 @@ tmux -L "$SOCKET" attach -t "$SESSION"
 # Spawn a new agent pane alongside Claude Code:
 #   tmux -L pf split-window -h -t "$SESSION" -c "$DIR"
 #   tmux -L pf select-pane -t "$SESSION.{last}" -T "Dev Agent"
-#   tmux -L pf send-keys -t "$SESSION.{last}" "claude -p '/pf:dev'" C-m
+#   tmux -L pf send-keys -t "$SESSION.{last}" "claude -p '/pf-dev'" C-m

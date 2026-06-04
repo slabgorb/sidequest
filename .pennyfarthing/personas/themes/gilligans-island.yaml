@@ -15,7 +15,7 @@ theme:
   default_humor: high
   character_immersion: high
   user_title: Castaway
-  portrait_style: ", 1960s TV sitcom portrait, black and white, stylized illustration, palm trees lagoon backdrop"
+  portrait_style: ", 1960s TV-sitcom title-card illustration, stylized hand-drawn cartoon, black-and-white with cross-hatched shading, playful exaggerated style"
   tier: B
   pennyfarthing_version: "5.3.0"
   created: 2026-01-06
@@ -72,7 +72,7 @@ agents:
   orchestrator:
     character: Radio Announcer
     shortName: Announcer
-    visual: "1960s radio broadcaster, headphones around neck, speaking into vintage microphone, studio setting"
+    visual: "Adult 1960s radio broadcaster, headphones around neck, leaning toward a vintage tabletop microphone, mouth open mid-sentence, short-sleeved button-up shirt, seated at a broadcast desk in a small studio, stack of papers in hand"
     ocean:
       O: 5  # Receives signals from everywhere - maximum openness
       C: 2  # Never quite works right - low follow-through
@@ -104,7 +104,7 @@ agents:
   sm:
     character: The Skipper (Jonas Grumby)
     shortName: Skipper
-    visual: "Stocky sea captain, blue polo shirt, white captain's hat, exasperated expression, hands on hips"
+    visual: "Adult stocky man, blue polo shirt, white captain's hat, hands planted on hips, jaw set, brow furrowed, standing upright on a sandy beach"
     ocean:
       O: 2  # Traditional, by-the-book Navy man
       C: 4  # Tries to run a tight ship despite chaos
@@ -136,7 +136,7 @@ agents:
   tea:
     character: Mary Ann Summers
     shortName: Mary Ann
-    visual: "Wholesome young woman, gingham blouse, pigtails with ribbons, warm smile, holding fresh pie"
+    visual: "Adult young woman, blue gingham blouse, hair in pigtails tied with small ribbons, lips curved in a closed smile, holding a golden-crusted pie in both hands, standing in dappled tropical light"
     ocean:
       O: 3  # Practical Kansas values, grounded
       C: 5  # Thorough, reliable, tests everything
@@ -168,7 +168,7 @@ agents:
   dev:
     character: Gilligan
     shortName: Gilligan
-    visual: "Skinny young sailor, red rugby shirt, white bucket hat, goofy apologetic grin, clumsy stance"
+    visual: "Adult lean young man, red rugby shirt, white canvas bucket hat, wide open-mouthed grin, one arm outstretched to the side, weight shifted onto one foot, feet slightly apart in an unsteady stance"
     ocean:
       O: 4  # Creative in completely unexpected ways
       C: 1  # Chaotic good - plans never survive contact
@@ -200,7 +200,7 @@ agents:
   reviewer:
     character: Thurston Howell III
     shortName: Mr. Howell
-    visual: "Elderly millionaire, ascot and navy blazer, monocle, snobbish disapproving expression, cocktail glass"
+    visual: "Adult elderly man, silk ascot and navy blazer, monocle raised to one eye, chin lifted, lips pursed, holding a cocktail glass at chest height, posture stiffly upright"
     ocean:
       O: 1  # Set in wealthy, old-money ways
       C: 4  # Harvard standards must be maintained
@@ -232,7 +232,7 @@ agents:
   architect:
     character: The Professor (Roy Hinkley)
     shortName: Professor
-    visual: "Scholarly man, white dress shirt, round glasses, explaining gesture, coconut invention nearby"
+    visual: "Adult lean man, white dress shirt with sleeves rolled to the elbows, round wire-rimmed glasses, one hand raised palm-out toward the viewer, standing beside a bamboo-and-coconut contraption on a wooden workbench"
     ocean:
       O: 5  # Can invent literally anything
       C: 5  # Rigorous scientific method
@@ -264,7 +264,7 @@ agents:
   pm:
     character: Ginger Grant
     shortName: Ginger
-    visual: "Glamorous redhead, sequined evening gown, dramatic pose, movie star confidence and allure"
+    visual: "Adult woman with long red hair, floor-length silver sequined evening gown, one hand on hip, chin tilted upward, lips in a slight smile, standing with shoulders back against a tropical backdrop"
     ocean:
       O: 4  # Creative and dramatic
       C: 3  # Professional performer when it matters
@@ -296,7 +296,7 @@ agents:
   tech-writer:
     character: Eunice "Lovey" Howell
     shortName: Lovey
-    visual: "Elegant older socialite, pearl necklace, fancy hat with flowers, refined gentle smile, gloved hands"
+    visual: "Adult older woman, strand of pearls at the neck, wide-brimmed hat decorated with fabric flowers, white gloved hands folded at the waist, lips in a slight closed smile, posture straight and composed"
     ocean:
       O: 3  # Cultured but conventional
       C: 4  # Proper breeding demands thoroughness
@@ -328,7 +328,7 @@ agents:
   ux-designer:
     character: Mary Ann Summers
     shortName: Mary Ann
-    visual: "Wholesome young woman, casual island clothes, welcoming smile, arranging bamboo furniture"
+    visual: "Adult young woman, light cotton blouse and shorts, hair in pigtails, lips parted in an open smile, both hands on a bamboo chair she is positioning, dappled jungle light behind her"
     ocean:
       O: 3  # Practical Kansas values, grounded
       C: 5  # Makes everything work smoothly
@@ -360,7 +360,7 @@ agents:
   devops:
     character: The Skipper (Jonas Grumby)
     shortName: Skipper
-    visual: "Stocky sea captain, working on boat repairs, tools in hand, determined expression, sweating"
+    visual: "Adult stocky man, blue polo shirt, white captain's hat, kneeling beside a wooden hull with a wrench in one hand and a coil of rope nearby, brow set low, jaw forward, forearms damp with perspiration"
     ocean:
       O: 2  # Traditional Navy man, by the book
       C: 4  # Keeps the Minnow and island infrastructure running
@@ -390,7 +390,7 @@ agents:
       style: "Battered but functional infrastructure that somehow keeps running"
   ba:
     character: The Professor (Roy Hinkley)
-    visual: "A scholarly man with round glasses and white dress shirt, holding a clipboard with detailed diagrams, surrounded by coconut-based scientific instruments, analytical investigative expression"
+    visual: "Adult lean man, white dress shirt with sleeves rolled up, round wire-rimmed glasses, holding a clipboard covered in hand-drawn diagrams, surrounded by coconut-shell instruments and bamboo measuring rods, gaze directed down at the clipboard"
     ocean:
       O: 4
       C: 5

@@ -17,7 +17,7 @@ recovery is configured, follow this pipeline:
    Epic context is a prerequisite for story context creation.
 
 4. **For each recoverable check:**
-   - Invoke `/pf:context create {type} {id}` (epic or story)
+   - Invoke `/pf-context create {type} {id}` (epic or story)
    - Re-run `pf validate context-{type} {id}` to verify
 
 5. **Handle outcomes per check:**
@@ -25,7 +25,7 @@ recovery is configured, follow this pipeline:
    - **Created + invalid:** Report: "Context created but has validation errors.
      Manual fix needed at sprint/context/context-{type}-{id}.md"
    - **Creation failed:** Report: "Context creation failed.
-     Run `/pf:context create {type} {id}` manually"
+     Run `/pf-context create {type} {id}` manually"
 
 6. **One attempt per level (Rule #6):** Try creation exactly once per context
    type. No retry loops. If creation produces invalid output, stop and report.
@@ -41,9 +41,9 @@ pf handoff resolve-gate 131-2 tdd setup
 → Gate fails: epic-context-validated=fail (missing), story-context-validated=fail (missing)
 
 Recovery:
-1. /pf:context create epic 131        → success
+1. /pf-context create epic 131        → success
 2. pf validate context-epic 131   → exit 0 (pass) → continue
-3. /pf:context create story 131-2      → success
+3. /pf-context create story 131-2      → success
 4. pf validate context-story 131-2 → exit 0 (pass) → continue
 
 Re-run gate → all pass → proceed to handoff

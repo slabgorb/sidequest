@@ -1,15 +1,14 @@
-# SDD Workflow - Superpower Driven Development
-# Parallels tdd.yaml but layers superpowers skills onto agent phases.
-# Composability experiment — opt-in via `workflow: sdd` on a story.
+# SDD Workflow - Spec-Driven Development
+# Heavyweight feature workflow with architect spec governance.
+# Opt-in via `workflow: sdd` on a story — for work where spec fidelity
+# and deviation tracking justify the extra architect/verify phases.
 #
-# Flow: SM → TEA → Dev → Reviewer → SM
-# No architect phases. No separate verify phase.
-# Per-phase `skills.required` lists the superpowers skills agents must
-# invoke and attest to in the session file's <skills-invoked> element.
+# Flow: SM → TEA → Dev → Architect (spec-check) → TEA (verify) → Reviewer → Architect (spec-reconcile) → SM
+# For lighter work, the default `tdd` workflow (TEA → Dev → Reviewer) is used instead.
 
 workflow:
   name: sdd
-  description: Superpower Driven Development — TDD skeleton with superpowers skill attestation
+  description: Spec-driven development with architect spec governance and code review
   version: "1.0.0"
 
   phases:
@@ -38,31 +37,49 @@ workflow:
         file: gates/tea-context
         type: tea_context
         condition: Story context validated before RED phase
-      skills:
-        required:
-          - superpowers:test-driven-development
       gate:
-        file: gates/sdd-red-exit
-        type: sdd_red_exit
-        condition: All ACs have failing tests AND test-driven-development skill attested
+        file: gates/tests-fail
+        type: tests_fail
+        condition: All acceptance criteria have test coverage
 
     - name: green
       agent: dev
       input: [failing_tests, story_context]
       output: [implementation, passing_tests]
-      skills:
-        required:
-          - superpowers:test-driven-development
-          - superpowers:verification-before-completion
-          - superpowers:requesting-code-review
       gate:
-        file: gates/sdd-green-exit
-        type: sdd_green_exit
-        condition: Tests green, tree clean, no debug code AND required skills attested
+        file: gates/dev-exit
+        type: dev_exit
+        condition: Tests green, tree clean, no debug code, correct branch
+
+    - name: spec-check
+      agent: architect
+      input: [implementation, story_context]
+      output: [spec_check_result]
+      gate:
+        file: gates/spec-check
+        type: spec_check
+        condition: All ACs addressed, no undocumented spec drift, deviations logged
+
+    - name: verify
+      agent: tea
+      input: [implementation, passing_tests]
+      output: [quality_verified]
+      gate:
+        file: gates/quality-pass
+        type: quality_pass
+        condition: Lint, typecheck, and all tests passing
+      team:
+        teammates:
+          - agent: simplify-reuse
+            task: "Review changed files for code duplication and extraction opportunities. Report findings only."
+          - agent: simplify-quality
+            task: "Review changed files for naming, readability, and structural quality. Report findings only."
+          - agent: simplify-efficiency
+            task: "Review changed files for unnecessary complexity and over-engineering. Report findings only."
 
     - name: review
       agent: reviewer
-      input: [implementation, passing_tests]
+      input: [implementation, passing_tests, quality_verified]
       output: [approval]
       entry_gate:
         file: gates/status-sync
@@ -78,14 +95,19 @@ workflow:
             target_phase: green
             max_attempts: 3
 
+    - name: spec-reconcile
+      agent: architect
+      input: [approval]
+      output: [reconciliation_decisions]
+      gate:
+        file: gates/spec-reconcile-pass
+        type: spec_reconcile
+        condition: All spec-check failures reconciled, Architect reconcile section present
+
     - name: finish
       agent: sm
-      input: [approval]
+      input: [reconciliation_decisions]
       output: [archived_session, story_summary]
-      # No skills.required — SM's natural finish ceremony invokes
-      # superpowers:finishing-a-development-branch. Declaring it here
-      # without an exit gate to verify it would mislead the agent into
-      # expecting enforcement that doesn't exist.
       entry_gate:
         file: gates/status-sync
         type: status_sync
