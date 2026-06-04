@@ -1,8 +1,9 @@
 # SideQuest — AI Dungeon Master
 
 An AI narrator engine that runs tabletop-style RPGs in any genre, powered by an
-Anthropic-SDK-backed Claude narrator (ADR-101 default; Haiku 4.5 / Sonnet 4.6 /
-Opus 4.7 routed per call) invoked stateless per turn (ADR-098), with native
+Anthropic-SDK-backed Claude narrator (ADR-101 default; Haiku 4.5 classification /
+Sonnet 4.6 narration / Opus 4.7 declared-important moments, routed per call)
+invoked stateless per turn (ADR-098), with native
 tool-use for structured mechanical patches (ADR-102) and native OTEL via the
 tool registry (ADR-103). Players connect via browser, create characters
 through genre-driven scenes, and explore worlds — including the runtime
@@ -30,12 +31,16 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 │ uvicorn      │ │ client    │ │ (MLX)        │ │ YAML + audio   │
 │ WebSocket    │ │ Audio     │ │ renderer     │ │ params + LFS   │
 │ Narrator     │ │ engine    │ │ ACE-Step     │ │ images         │
-│ Anthropic SDK│ │ 3D dice   │ │ music tier   │ │ 10 live packs  │
-│ (ADR-101)    │ │ overlay   │ │ + SFX mixer  │ │ + workshopping │
+│ Anthropic SDK│ │ 3D dice   │ │ music tier   │ │ 11 live packs  │
+│ (ADR-101)    │ │ overlay   │ │ + SFX mixer  │ │ (draft-gated)  │
 └──────────────┘ └───────────┘ └──────────────┘ └────────────────┘
        ▲              │              ▲
        │  WebSocket   │   Unix sock  │
        └──────────────┴──────────────┘
+
+   sidequest-composer (Py) — standalone, offline. Public-domain
+   notation (MusicXML/MIDI) → tagged rights-free audio via MuseScore 4
+   / FluidSynth. Not wired into the runtime; a build-time content tool.
 ```
 
 | Repo | Language | Purpose | GitHub |
@@ -43,8 +48,9 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 | **sidequest** | — | Orchestrator, docs, sprint tracking | slabgorb/sidequest |
 | **sidequest-server** | Python | Game engine, FastAPI WebSocket API, narrator orchestration | slabgorb/sidequest-server |
 | **sidequest-ui** | TypeScript | React 19 client, audio engine, 3D dice overlay | slabgorb/sidequest-ui |
-| **sidequest-daemon** | Python | Media services (Z-Image / Flux image gen, ACE-Step music, SFX mixer) | slabgorb/sidequest-daemon |
+| **sidequest-daemon** | Python | Media services (Z-Image image gen, ACE-Step music, SFX mixer) | slabgorb/sidequest-daemon |
 | **sidequest-content** | YAML | Genre pack configs, audio, images, worlds | slabgorb/sidequest-content |
+| **sidequest-composer** | Python | Standalone CLI: public-domain notation → tagged, rights-free audio (deterministic synthesis, not AI) | slabgorb/sidequest-composer |
 
 > **Port history.** The backend was briefly a Rust workspace (`sidequest-api`, ~2026-03-30
 > to 2026-04-19) before being ported back to Python as `sidequest-server` per
@@ -60,7 +66,7 @@ just setup          # Install deps for every subrepo (uv sync + npm install)
 just up             # Boot daemon → server → client; tail merged logs
 just down           # Stop all background services
 just status         # Git status across every repo
-just check-all      # server-check + client-lint + client-test + daemon-lint
+just check-all      # server-check + client lint/build/test + daemon lint/test + composer lint/test
 ```
 
 ### Running a Playtest
@@ -76,33 +82,39 @@ just client         # Vite on :5173
 # Select genre → world → enter name → create character → play
 ```
 
-Logs tee to `/tmp/sidequest-{server,client,daemon}.log`. Use `just logs` to tail all of
-them, or `just logs server` for one.
+Logs tee to `~/.sidequest/logs/sidequest-{server,client,daemon}.log` (moved out of `/tmp`
+so reboots don't eat them; each launch rotates the prior file to `.log.YYYYMMDD-HHMMSS`,
+30-day retention). Use `just logs` to tail all of them, or `just logs server` for one.
 
 See [`docs/playtest-script.md`](docs/playtest-script.md) for a structured test checklist
 and [`scenarios/`](scenarios/) for headless playtest YAML driven by `just playtest-scenario`.
 
 ## Genre Packs
 
-Six narrative packs are live and wired into the runtime, each with its own
+Eleven narrative packs are live and wired into the runtime, each with its own
 rules, tropes, character creation, audio, visual style, faction agendas, OCEAN
 personality archetypes, and conlang morphemes:
 
-| Pack | Theme |
-|------|-------|
-| **caverns_and_claudes** | High fantasy dungeon crawl (meta-humor on D&D tropes; world `beneath_sunden`) |
-| **elemental_harmony** | Martial arts / elemental magic (world `burning_peace`) |
-| **mutant_wasteland** | Post-apocalyptic mutants (world `flickering_reach` fully spoilable) |
-| **road_warrior** | Late-70s / early-80s vehicle subcultures sharing one port city (world `the_circuit`) |
-| **space_opera** | Sci-fi space adventure (world `coyote_star`) |
-| **spaghetti_western** | Morally ambiguous anti-heroes — Leone/Corbucci/Kurosawa (worlds `dust_and_lead` Mexican border + `the_real_mccoy` 1878 Pittsburgh) |
-| **tea_and_murder** | Cosy Edwardian (1901-1914) BritBox murder mystery; Highland village amateur sleuths (world `glenross`) |
+| Pack | Theme | Worlds |
+|------|-------|--------|
+| **caverns_and_claudes** | High fantasy dungeon crawl (meta-humor on D&D tropes) | `beneath_sunden` (runtime procedural megadungeon, ADR-106) |
+| **elemental_harmony** | Martial arts / elemental magic (WWN ruleset) | `burning_peace`, `shattered_accord` |
+| **heavy_metal** | Baroque fantasy of pacts, decay, and blood-priced magic | `evropi`, `long_foundry` (portraits pending) |
+| **mutant_wasteland** | Post-apocalyptic mutants (fully spoilable) | `flickering_reach` |
+| **neon_dystopia** | Cyberpunk (CWN ruleset) | `franchise_nations` |
+| **pulp_noir** | 1930s detective / pre-war pulp | `annees_folles` |
+| **road_warrior** | Late-70s / early-80s vehicle subcultures sharing one port city | `the_circuit` |
+| **space_opera** | Sci-fi space adventure (SWN ruleset) | `aureate_span`, `coyote_star`, `perseus_cloud` |
+| **spaghetti_western** | Morally ambiguous anti-heroes — Leone/Corbucci/Kurosawa | `dust_and_lead`, `five_points` (1850s NYC), `the_real_mccoy` (1878 Pittsburgh) |
+| **tea_and_murder** | Cosy Edwardian (1901-1914) BritBox murder mystery | `glenross` (Highland village), `blackthorn_moor` (draft) |
+| **wry_whimsy** | Golden-age literary portal fairytale — survive by wit, not force | `oz`, `wonderland`, `gulliver` |
 
-Workshopping packs (not yet wired) live in
-`sidequest-content/genre_workshopping/` — caverns_sunden (deprecated three-sins
-hub, superseded by `beneath_sunden`), heavy_metal, low_fantasy, neon_dystopia,
-pulp_noir at various levels of completeness. The stub directory
-`genre_packs/heavy_metal/` exists but lacks `pack.yaml` and is skipped by the loader.
+All eleven packs have a `pack.yaml` and load at runtime. Worlds default to live;
+`draft: true` in a world's `world.yaml` hides it from selection until its asset
+gate (portraits + POI landscapes rendered to R2) is met — `blackthorn_moor` is
+currently the only draft world. The old `genre_workshopping/` staging tree was
+**retired 2026-06-03**; in-progress packs and worlds now live in `genre_packs/`
+like any other and rely on `draft` status to stay hidden.
 
 Genre packs are loaded via the `SIDEQUEST_GENRE_PACKS` env var. See
 [`docs/genre-pack-status.md`](docs/genre-pack-status.md) for per-pack completeness.
@@ -130,7 +142,10 @@ Genre packs are loaded via the `SIDEQUEST_GENRE_PACKS` env var. See
    Music is generated on operator command via `scripts/generate_music.py` (ADR-095)
 6. **Magic system** (Epic 47): three plugins live — `innate_v1`, `item_legacy_v1`, and
    `learned_v1` (Vancian memorization for C&C). Ledger bars track per-character magic
-   state; five wired confrontations resolve through Phase-5 sealed-letter lookup
+   state; Coyote Star v1 wires five named magic confrontations (the_standoff,
+   the_salvage, the_bleeding_through, the_quiet_word, the_long_resident) that resolve
+   through the Phase-5 `auto_fire_trigger` threshold evaluator plus the rig-coupled
+   room-entry evaluator, against the confrontation list loaded at session init
 7. **Pacing engine:** dual-track TensionTracker produces `drama_weight` (0.0–1.0) →
    controls narration length, delivery speed, beat escalation, and media render gating
 8. **World systems:** faction agendas inject per-turn, trope engine drives narrative arcs,

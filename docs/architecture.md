@@ -3,7 +3,7 @@
 > System design for the SideQuest AI Narrator engine.
 > Python package composition, narrator-primary agent model, three turn modes.
 >
-> **Last updated:** 2026-05-28
+> **Last updated:** 2026-06-04
 > - 2026-04-28: LocalDM preprocessor moved off live turn path
 > - 2026-05-02: Narrator streaming pipeline built end-to-end (dormant behind `SIDEQUEST_NARRATOR_STREAMING=0`, ADR-066)
 > - 2026-05-07: Magic prompt made plugin-aware proactive on innate-active worlds
@@ -16,6 +16,7 @@
 > - 2026-05-25: Pluggable ruleset module system (Spec 0) live — four modules (`native`, `swn`, `wwn`, `cwn`), one per pack via `ruleset:`
 > - 2026-05-26: Intent Router mechanical-engagement spine (ADR-113) wired end-to-end as a pre-narrator Haiku pass; ablative HP substrate (ADR-114 Part 1) live
 > - 2026-05-28: Persistence substrate migrated SQLite → PostgreSQL (ADR-115, complete); SQLite write layer deleted, forensics now reads Postgres tables
+> - 2026-06-03: `genre_workshopping/` staging tree retired — in-progress packs/worlds now live in `genre_packs/` and use `draft: true` to stay out of selection. Live pack count is **11** (`caverns_and_claudes`, `elemental_harmony`, `heavy_metal`, `mutant_wasteland`, `neon_dystopia`, `pulp_noir`, `road_warrior`, `space_opera`, `spaghetti_western`, `tea_and_murder`, `wry_whimsy`)
 
 ## Architectural Layers
 
@@ -68,7 +69,7 @@
 │  Genre Layer         │ │           Persistence Layer                 │
 │  (sidequest.genre)   │ │  PostgreSQL (saves, psycopg3 + pool),      │
 │  YAML pack loader    │ │  PyYAML (genre packs). Narrative log,       │
-│  10 live genre packs │ │  KnownFact accum. sidequest.game.pg/        │
+│  11 live genre packs │ │  KnownFact accum. sidequest.game.pg/        │
 └──────────────────────┘ └────────────────────────────────────────────┘
 
          ┌────────────────────────────────────────────────────────────┐
@@ -85,7 +86,7 @@ sidequest-server/
 ├── pyproject.toml                     # hatchling build, uv-managed
 ├── sidequest/
 │   ├── protocol/                      # GameMessage discriminated union, typed payloads
-│   ├── genre/                         # YAML loader, genre pack models, 6 packs
+│   ├── genre/                         # YAML loader, genre pack models, 11 packs
 │   ├── game/                          # ~30+ modules — state, combat, NPCs, lore, pacing, etc.
 │   ├── agents/                        # Anthropic SDK narrator (default) + claude -p/Ollama opt-in, auxiliary agents
 │   ├── server/                        # FastAPI HTTP/WS, session management, dispatch
@@ -132,7 +133,7 @@ Each WebSocket connection runs as an asyncio task owning a `Session`. Single-pla
 
 ### ADR-004: Genre Packs as YAML
 
-10 genre packs load via PyYAML into pydantic models (all have at least one world with an authored `openings.yaml` as of 2026-05; a subset have cleared the full asset + playtest gate — see `docs/genre-pack-status.md`). Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
+11 genre packs load via PyYAML into pydantic models (all have at least one world with an authored `openings.yaml`; a subset have cleared the full asset + playtest gate — see `docs/genre-pack-status.md`). Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
 
 ### ADR-005: Background-First Pipeline
 
