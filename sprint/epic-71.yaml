@@ -339,9 +339,11 @@ stories:
     title: intent_router degrade path doesn't persist decompose spans to turn_telemetry (GM-panel blind on degraded turns)
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04T00:00:00Z'
     repos: sidequest-server
     workflow: trivial
+    completed: '2026-06-04'
     type: bug
   - id: 71-30
     title: action_reveal.dropped_rate_limit also ephemeral — add to _EPHEMERAL_EVENT_TYPES (sibling of composing-storm fix)
