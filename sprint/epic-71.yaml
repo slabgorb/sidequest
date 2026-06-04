@@ -431,3 +431,11 @@ stories:
       - A complementary not.toMatch assertion fails if the snapshot is fed mergedPeerReveals
       - The new assertions live alongside the existing display-direction guards (mirror pattern); full UI suite stays green
     type: chore
+  - id: 71-37
+    title: Classify person-vs-creature at the NPC invention seam — route beasts to the Monster Manual (ADR-059), not the culture-NPC namer
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug

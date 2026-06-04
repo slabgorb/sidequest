@@ -554,3 +554,10 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: chore
+  - id: 59-35
+    title: Seat present FRIENDLY companions as side=player combatants in confrontations (ADR-116 / Guitar Solo)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd

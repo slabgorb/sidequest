@@ -168,3 +168,11 @@ stories:
     workflow: trivial
     depends_on: 75-12
     type: chore
+  - id: 75-15
+    title: RAG starve — creation-seed fragments lost on resume + sub-floor embedding similarities (gulliver 2026-06-02)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
