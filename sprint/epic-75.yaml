@@ -140,11 +140,14 @@ stories:
     title: is_projectable() predicate — observation_pending gates projection eligibility (ADR-138 D1/D3)
     points: 2
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-04'
     branch: feat/75-11-is-projectable-observation-pending
+    review_findings: 'ruff format --check red on tests/game/test_npc_pool_is_projectable.py (cosmetic reflow only); logic correct. Green-rework: run ruff format, re-verify, push.'
+    review_verdict: approved
   - id: 75-12
     title: Wire ratification gate into ADR-118 NPC projection — reuse 49-6 spans, dedup-by-id, floor-includes-pending test (ADR-138 D2/D5/D6)
     points: 3

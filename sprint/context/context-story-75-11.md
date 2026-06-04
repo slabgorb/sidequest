@@ -19,6 +19,23 @@ _No description in the sprint YAML — see the story title above and the epic co
 _Approach hints to be refined by TEA/Dev. The story title above defines the
 intended behavior._
 
+### Authoritative source (read first)
+- **ADR-138** `docs/adr/138-npc-ratification-gates-projection.md` — §D1 and §D3 define
+  the `is_projectable()` predicate and the `observation_pending` gate. This story
+  implements D1/D3.
+- This is **wiring an existing concept**, not greenfield. `is_projectable` /
+  `observation_pending` already appear in:
+  - `sidequest-server/sidequest/server/session_helpers.py`
+  - `sidequest-server/sidequest/server/narration_apply.py`
+  - `sidequest-server/sidequest/game/world_materialization.py`
+  - `sidequest-server/sidequest/game/npc_pool.py`
+  - `sidequest-server/sidequest/telemetry/spans/npc.py`
+  Verify whether the predicate exists vs. needs introduction, and that it's reached
+  from a production code path (project doctrine: "Verify Wiring, Not Just Existence").
+- **OTEL:** per project principle, the projection-eligibility decision should emit a
+  watcher span so the GM panel can confirm the gate is engaged — see existing
+  `telemetry/spans/npc.py`.
+
 ## Scope
 - In scope: the behavior described by the story title.
 - Out of scope: unrelated changes.
