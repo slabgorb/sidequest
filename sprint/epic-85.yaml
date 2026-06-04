@@ -43,7 +43,9 @@ stories:
     description: "Tier B of the confrontation space-usage design (docs/design/confrontation-space-usage.md, The Duchess 2026-06-04). Promote the confrontation from a thin bottom strip into a focused dockview 'confrontation mode' that claims the board canvas while an encounter is active — giving the drama peak the screen it earns (Cost Scales with Drama; Diamonds and Coal). GATING DESIGN DECISION (Architect/operator, before any code): does confrontation mode SPLIT with the narration panel (prose left, confrontation right — keeps the soloist reachable, Duchess-recommended) or TAKE OVER full-screen? Depends on / builds atop 85-1 (Tier A polish). Possible small protocol dependency: opponent portrait + stakes may not yet be on the CONFRONTATION payload — verify before scoping the server half."
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-06-04'
+    branch: feat/85-3-confrontation-mode-dockview-panel
     repos: ui,server
     workflow: tdd
     acceptance_criteria:
