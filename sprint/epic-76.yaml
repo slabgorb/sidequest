@@ -75,9 +75,12 @@ stories:
     title: 'Source coverage: sync factions + locations into the entity index — wire faction (world lore) and location (diffuse: room graph / world_materialization / PG promotions) sources through project_faction_card/project_location_card so entity_sync.{faction,location}_count stop reading 0. Makes the universal index actually universal.'
     points: 5
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-04'
+    review_verdict: approved
   - id: 76-8
     title: Fix stale _StubSession in test_aside_channel_wiring (missing _retrieve_entities_for_turn)
     description: "PRE-EXISTING TEST FAILURE on develop, confirmed (unrelated) during 72-11 verify and flagged in PR #588's commit message. tests/handlers/test_aside_channel_wiring.py::test_aside_is_out_of_band_in_mp fails with: AttributeError: '_StubSession' object has no attribute '_retrieve_entities_for_turn' (raised from sidequest/handlers/player_action.py:496). Root cause: the test's _StubSession is STALE vs the universal-retrieval entity path (epic 75/76) — production _build_turn_context / session handling now calls session._retrieve_entities_for_turn(...), a method the stub never gained when entity retrieval landed. Fails in ISOLATION (not flaky/ordering), and is NOT touched by any 72-11 commit. This is a test-harness fix, not a production change. Repos: sidequest-server (test only)."
@@ -114,3 +117,10 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: chore
+  - id: 76-11
+    title: Location source coverage v2 — wire room-graph + world_materialization adapters into the entity index (via location_view authored-prose resolution), batch the per-region promotion read, and surface per-region read failures as a watcher event (carries forward 76-7 Reviewer/Dev Delivery Findings)
+    points: 5
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
