@@ -94,9 +94,11 @@ stories:
     title: hp_depletion beat-impact reads the HP channel, not nominal suppressed dial deltas — under win_condition=hp_depletion apply_beat suppresses dial application (inert HP placeholders) but describe_beat_impact still classifies from nominal deltas, so an SWN strike Success reports effect=advance/dial_moved=True though no dial moved. Derive the impact from the HP channel (or flag suppressed) so a future HP-combat impact readout is truthful. Documented caveat at beat_kinds.py stamp site; flagged in 73-4 reconcile.
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-04'
     type: bug
   - id: 73-9
     title: 'beat-impact descriptor test-coverage hardening — characterization tests for existing 73-4 behavior the suite left unpinned: backfire impact field asserts (tag/summary/dial_moved, not just effect), opponent>0 setback summary path (brace CritFail), same-side overwrite invariant (second player beat replaces first), encounter_resolved skip path (impact=None, no stamp), UI explicit-null render guard + inert-summary text render; drop the 2 redundant bare-truthy asserts (test_beat_impact.py:105, test_beat_impact_payload_wiring.py:92). No production change.'
