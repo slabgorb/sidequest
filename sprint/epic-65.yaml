@@ -347,10 +347,12 @@ stories:
     title: '65-4 follow-ups: clear preloadedAssets on session switch + preload hardening + test tightening'
     points: 2
     priority: p2
-    status: in_progress
+    status: done
+    started: '2026-06-04'
     repos: ui
     workflow: tdd
+    completed: '2026-06-04'
     type: bug
-    started: '2026-06-04'
     branch: feat/65-16-clear-preloaded-assets-session-switch
     session_file: .session/65-16-session.md
+    review_verdict: approved
