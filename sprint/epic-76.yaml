@@ -121,6 +121,9 @@ stories:
     title: Location source coverage v2 — wire room-graph + world_materialization adapters into the entity index (via location_view authored-prose resolution), batch the per-region promotion read, and surface per-region read failures as a watcher event (carries forward 76-7 Reviewer/Dev Delivery Findings)
     points: 5
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-04'
+    review_verdict: approved
