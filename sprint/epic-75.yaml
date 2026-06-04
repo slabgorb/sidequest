@@ -164,10 +164,12 @@ stories:
     title: Wire ratification gate into ADR-135 reference NPC projection — withhold unratified phantoms (ADR-138 D4)
     points: 2
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-11
+    branch: feat/75-13-wire-ratification-gate-ref-pages
   - id: 75-14
     title: Defensive entity_card eviction + entity_card.evicted span for unprojectable cards (ADR-138 D5/D6)
     points: 1
