@@ -142,10 +142,13 @@ stories:
     title: "BeatImpactPanel render-gate drops opponent readout when player impact absent — ConfrontationOverlay gates the panel on `{data.last_beat_impact && ...}`, so in the opponent-acts-first window (legacy beat_selection path / surprise round / player takes a non-combat action: opponent impact present, player impact absent) the WHOLE panel is suppressed, hiding the 'the enemy hit you' readout 73-7 added. Reviewer corrected TEA's 'unreachable' claim (narration_apply.py:4031-4055 preserves opponent-side selections; last_beat_impacts accumulates/never clears). Not a regression/crash. Fix: gate on (player || opponent) and let BeatImpactPanel tolerate an absent player impact. Found in 73-7 review."
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-ui
     workflow: tdd
+    completed: '2026-06-04'
     type: bug
+    review_verdict: approved
   - id: 73-14
     title: BeatImpactPanel you/them labels + signed numeric deltas — add 'you'/'them' text labels and +/- sign to the own/opponent dial-delta numbers in BeatImpactPanel so two adjacent bare integers are disambiguated for a human (today only DOM testids tell them apart; CSS effect styling shipped in 73-10). Deferred from 73-7 (Architect/Reviewer notes) and 73-10 (Dev — touches the render that 73-4/73-7/73-9 assert numeric content against, so needs care w/ those 4 test files). Player-facing legibility for Sebastien/Jade.
     points: 2
