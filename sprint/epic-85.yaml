@@ -11,7 +11,8 @@ stories:
     description: "Confrontation panel legibility + same-strip space pass. Design spec: docs/design/confrontation-space-usage.md (Tier A). Closes playtest L162 (sq-playtest-pingpong 2026-06-04) AND the 'not using space well' space-usage finding within the existing ConfrontationOverlay strip. Pure ui, no protocol change. (Tier B — the dockview 'confrontation mode' spatial promotion — is the bigger follow-up, see 85-3 proposal in the design doc.)"
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: ui
     workflow: tdd
     acceptance_criteria:
@@ -21,7 +22,10 @@ stories:
       - A4 — Beat caption wraps INSIDE its tile (or moves to title/▾ expand); never overflows the right edge. Closes L162 defect 2.
       - A5 — Reclaim the freed right space as a 3-line beat-history ledger (actor · beat · roll vs DC · dial Δ) so dial movement has visible mechanical provenance (mechanics-first players).
       - 'Accessibility: beat tiles keyboard-reachable in DOM order with visible focus ring; locked-Enter state has an aria-live hint; resolution beat (e.g. Refuse the Premise ✦) carries a distinct role/label, not just an amber border; die/dial animations respect prefers-reduced-motion.'
+    completed: '2026-06-04'
     type: bug
+    review_findings: "HIGH: BeatHistoryLedger 'Them' row reads impact.opponent (cross-effect ~0) not impact.own (opponent's dial delta) — A5 ledger shows wrong number; HIGH: A3 test vacuous (anchor renders unconditionally, click inert, AC unverified); plus missing Them-row test, invalid fixture effect:'success', handleBeatSelect missing useCallback in hot path, no wiring test, stale commit-row comment."
+    review_verdict: approved
   - id: 85-2
     title: 'Location surface: pick ONE source of truth for where-am-I (header vs Location tab) — design-first'
     points: 5
