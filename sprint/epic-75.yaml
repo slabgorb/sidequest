@@ -164,12 +164,15 @@ stories:
     title: Wire ratification gate into ADR-135 reference NPC projection — withhold unratified phantoms (ADR-138 D4)
     points: 2
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
     depends_on: 75-11
+    completed: '2026-06-04'
     branch: feat/75-13-wire-ratification-gate-ref-pages
+    review_findings: "HIGH: bool() coercion at reference_renderer.py:1325 defeats Pydantic bool coercion (observation_pending:'false' silently withholds a ratified NPC; pre-empts loud ValidationError) — violates No Silent Fallbacks on the defensive gate's own edge inputs. Bundled: add direct _cast_entry_is_projectable unit tests (coercion path), remove unused otel_capture param, assert pack/world on zero-count span, tighten span docstring. Fix is one line."
+    review_verdict: approved
   - id: 75-14
     title: Defensive entity_card eviction + entity_card.evicted span for unprojectable cards (ADR-138 D5/D6)
     points: 1
