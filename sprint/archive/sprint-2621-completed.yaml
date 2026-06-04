@@ -38,6 +38,7 @@ completed_epics:
   - '65'
   - '85'
   - '75'
+  - '59'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -1175,5 +1176,180 @@ completed_stories:
   - id: 75-15
     epic: '75'
     title: RAG starve — creation-seed fragments lost on resume + sub-floor embedding similarities (gulliver 2026-06-02)
+    points: 5
+    completed: '2026-06-04'
+  - id: 59-1
+    epic: '59'
+    title: Narrator never calls advance_confrontation in tea_and_murder — social confrontations never engage
+    points: 5
+    completed: '2026-05-22'
+  - id: 59-2
+    epic: '59'
+    title: IntentRouter producer skeleton (Haiku-via-SDK) + remove DispatchPackage.degraded
+    points: 5
+    completed: '2026-05-23'
+  - id: 59-3
+    epic: '59'
+    title: Repurpose confrontation_intent_validator as router-vs-engine lie-detector watcher
+    points: 3
+    completed: '2026-05-24'
+  - id: 59-4
+    epic: '59'
+    title: 'Confrontation cutover: live IntentRouter wiring + retire begin_confrontation (atomic)'
+    points: 8
+    completed: '2026-05-24'
+  - id: 59-5
+    epic: '59'
+    title: Magic_working dispatch handler + sidecar engagement retirement
+    points: 5
+    completed: '2026-05-24'
+  - id: 59-6
+    epic: '59'
+    title: Scenario_clue dispatch handler — supplements footnotes (no retirement)
+    points: 3
+    completed: '2026-05-24'
+  - id: 59-7
+    epic: '59'
+    title: Wire three LocalDM subsystems (npc_agency, distinctive_detail_hint, reflect_absence)
+    points: 3
+    completed: '2026-05-25'
+  - id: 59-8
+    epic: '59'
+    title: Glenross playtest validation — folds 59-1 AC1 LLM behavior leg
+    points: 2
+    completed: '2026-05-29'
+  - id: 59-9
+    epic: '59'
+    title: Fix cross_player redaction gap in redact_dispatch_package
+    points: 1
+    completed: '2026-05-29'
+  - id: 59-10
+    epic: '59'
+    title: Feed genre confrontation types to Intent Router user prompt + clean 15 stale tests
+    points: 3
+    completed: '2026-05-25'
+  - id: 59-11
+    epic: '59'
+    title: Retire the orchestrator's redundant second dispatch-bank run (engage once, collect directives without re-engaging)
+    points: 5
+    completed: '2026-05-29 — already delivered by PR #508 (63f3ffe, dispatch-bank consolidation); no new work. Verified by TEA: single production call site (intent_router_pass.py), orchestrator consumes stashed bank_result with per-directive redaction, ACs pinned by tests/server/test_dispatch_bank_consolidation_G5.py.'
+  - id: 59-12
+    epic: '59'
+    title: 'Movement #456 dispatch fix — bind PC onto a live dungeon-graph node (surface->deep handoff) so run_movement_dispatch resolves; fix movement double-dispatch missing-kwargs'
+    points: 5
+    completed: '2026-05-28'
+  - id: 59-13
+    epic: '59'
+    title: Chase confrontation write-back — apply beat metric delta, transition Setup->active, seat opponent (INERT-chase dual-dial frozen 0/7)
+    points: 5
+    completed: '2026-05-26'
+  - id: 59-14
+    epic: '59'
+    title: magic_working — load magic_state for worlds with caster classes (or degrade cleanly) so Mage casting isn't a no-op
+    points: 3
+    completed: '2026-05-28'
+  - id: 59-15
+    epic: '59'
+    title: 'Engagement e2e validation — beneath_sunden + road_warrior: confrontation/movement/magic actually fire mechanically (OTEL span proof)'
+    points: 2
+    completed: '2026-06-03'
+  - id: 59-16
+    epic: '59'
+    title: 'Confrontation beats: collapse to one filtered delivery path (kill emitter firewall bypass)'
+    points: 5
+    completed: '2026-05-28'
+  - id: 59-17
+    epic: '59'
+    title: Dogfight confrontation fails to instantiate via production path
+    points: 3
+    completed: '2026-05-27'
+  - id: 59-18
+    epic: '59'
+    title: space_opera SWN combat + armor-class seeding broken — tests/server/test_space_opera_swn_combat_e2e.py (5), tests/genre/test_space_opera_loads_swn.py (1), tests/game/test_materialize_armor_class.py (3)
+    points: 5
+    completed: '2026-05-27'
+  - id: 59-19
+    epic: '59'
+    title: Dogfight smoke fails to resolve through production path — tests/integration/test_dogfight_playtest_smoke.py::test_three_turn_dogfight_resolves_through_production_path
+    points: 3
+    completed: '2026-05-28'
+  - id: 59-20
+    epic: '59'
+    title: Route dice mid-turn + connect resume through the single emit_event(per_recipient_payload) supplier; delete room_broadcast(union)
+    points: 5
+    completed: '2026-05-29'
+  - id: 59-21
+    epic: '59'
+    title: 'Decide unseated-spectator CONFRONTATION policy: empty-beats card vs no frame'
+    points: 2
+    completed: "DECIDED (Architect/Keith 2026-06-04): keep current behavior — unseated/lobby sockets receive nothing for an active CONFRONTATION. Seated NON-participant PCs already receive the class-filtered frame (supplier filters by seated PC class, not participation), so the Guitar Solo / 'peers are notified' intent is already satisfied for the population it targets. Unseated = no PC, no board, no legal moves; an empty-beats card there is decontextualized noise (Diamonds and Coal). Firm invariant (union never to a socket) unaffected. No code change. A future deliberate spectator surface would be its own story."
+  - id: 59-22
+    epic: '59'
+    title: Extract shared _deliver_to_connected_recipients helper (dedupe emit_event supplier loop vs _deliver_fanout)
+    points: 3
+    completed: '2026-05-30'
+  - id: 59-23
+    epic: '59'
+    title: 'Chassis-vs-chassis ship_combat: materialize the named threat as the Other + ablative ship-hull HP resolution'
+    points: 8
+    completed: '2026-05-29'
+  - id: 59-24
+    epic: '59'
+    title: Extend leak_audit cross_player coverage — audit_canonical_prose blind to cross_player redactions
+    points: 1
+    completed: '2026-05-29'
+  - id: 59-25
+    epic: '59'
+    title: Multi-key entity extraction in leak_audit — cover npc_name/actor, not just target
+    points: 1
+    completed: '2026-05-29'
+  - id: 59-26
+    epic: '59'
+    title: ship_combat confrontation edge bars render 0/1000000 hp — fix ablative-HP/edge-pool init for ship_combat (ADR-114); found during 67-8 live repro
+    points: 3
+    completed: '2026-06-03'
+  - id: 59-27
+    epic: '59'
+    title: Intent Router never dispatches verbal/social confrontations — only escape fires, post-commitment (wry_whimsy/oz)
+    points: 3
+    completed: '2026-06-03'
+  - id: 59-28
+    epic: '59'
+    title: apply_witnessed_act collapse/tip threshold needs a touched-this-turn guard (wry_whimsy political engine)
+    points: 2
+    completed: '2026-06-02'
+  - id: 59-29
+    epic: '59'
+    title: Co-locate witnessed_act precondition coverage into test_dispatch_precondition_gate.py
+    points: 1
+    completed: '2026-06-02'
+  - id: 59-30
+    epic: '59'
+    title: _WITNESSES engagement witness for witnessed_act + movement (close political-spine lie-detector gap)
+    points: 5
+    completed: '2026-06-04'
+  - id: 59-31
+    epic: '59'
+    title: Opponent-yield signal — record outcome opponent_yielded/player_victory when an opponent backs down (not abandoned)
+    points: 3
+    completed: '2026-06-03'
+  - id: 59-32
+    epic: '59'
+    title: Shared is_player_victory() classifier — opponent_yielded/surrender/rout inherit player_victory rewards
+    points: 2
+    completed: '2026-06-04'
+  - id: 59-33
+    epic: '59'
+    title: ResolutionSignal yield_side field — distinguish opponent-yield from player-yield for the dormant 49-5 [ENCOUNTER RESOLVED] narration
+    points: 2
+    completed: '2026-06-04'
+  - id: 59-34
+    epic: '59'
+    title: Real-OTEL wiring test for the opponent_yield_on_location_change trigger path
+    points: 1
+    completed: "Stale/already-done: real-OTEL wiring test exists — tests/server/test_opponent_yield_resolution.py::test_location_change_emits_yield_trigger drives the production _apply_narration_result_to_snapshot path and asserts the watcher event fires with trigger='opponent_yield_on_location_change'. Landed with 59-31/59-33. Architect audit 2026-06-04."
+  - id: 59-35
+    epic: '59'
+    title: Seat present FRIENDLY companions as side=player combatants in confrontations (ADR-116 / Guitar Solo)
     points: 5
     completed: '2026-06-04'
