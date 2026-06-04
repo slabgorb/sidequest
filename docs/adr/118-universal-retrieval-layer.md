@@ -6,10 +6,10 @@ date: 2026-05-31
 deciders: ["Keith Avery", "Neo (Architect)"]
 supersedes: []
 superseded-by: null
-related: [14, 48, 59, 87, 104, 115]
+related: [14, 48, 59, 87, 102, 104, 109, 115, 128, 136]
 tags: [agent-system, npc-character, observability]
 implementation-status: live
-implementation-pointer: "sidequest-server/sidequest/game/retrieval_orchestration.py + entity_card.py + dispatch/universal_retrieval.py — retrieve_turn_context called every narrator turn"
+implementation-pointer: "Core (D1–D5) live: sidequest-server/sidequest/game/retrieval_orchestration.py + entity_card.py + dispatch/universal_retrieval.py — retrieve_turn_context called every narrator turn. The 2026-06-04 amendment (unified pertinence scorer / lifecycle-aware scope / tiered forgetting) is design-only — implementation pending; see the Amendment section."
 ---
 
 # ADR-118: Universal Retrieval Layer
@@ -278,3 +278,210 @@ Story 75-3 delivers **design only**. The following stories implement it
   no demonstrated relevance gain.
 - **75-3 absorbs the floor / fold 75-2 in:** rejected — muddies the epic's
   clean three-thread framing and inflates a single story.
+
+## Amendment — Unified Pertinence Scorer, Lifecycle-Aware Scope, and Tiered Forgetting (2026-06-04)
+
+> **Design-only amendment (no code in this change).** It records decisions made
+> with Keith in the 2026-06-04 design session and names the follow-on
+> implementation work. The core layer (D1–D5) remains **live and unchanged in
+> behavior** until that work lands; this amendment redefines the *target* design.
+
+**Trigger.** The original ADR framed retrieval as a per-session continuity aid.
+The load-bearing reframing in this session: SideQuest campaigns are meant to run
+for **years**, so the accreted world (lore, cast, geography, quests, tropes,
+relationships) grows without bound while the per-turn prompt budget does not.
+Retrieval is therefore not a feature but *the* mechanism that lets the narrator
+behave like a human DM — who holds the current scene in their head and **consults
+notes on demand** when a player names something. Two facts forced the amendment:
+(1) the structured pertinence model Keith has always intended — **mention ≫
+location > recency, with embedding similarity as the *fallback*** — was only ever
+realized for NPCs (the §D4 floor is `npc_context`-shaped; 75-10 wired the NPC
+mention signal), while every other type can only be reached by the weak
+similarity tail; and (2) ADR-048 (Consequences, final bullet) records that **"no
+eviction policy exists yet"** — nothing in the design survives years of
+accretion. This amendment **supersedes §D2 and §D4 in part** and **extends
+ADR-048** by supplying the missing forgetting policy.
+
+### A1 — Unify the floor and fill into one pertinence score (supersedes §D4)
+
+§D4's two-mechanism split (binary floor + similarity-ranked fill) is replaced by
+**one scored selection**:
+
+```
+score(card) = w_mention·mention(card, action, aliases)   # dominant
+            + w_location·here(card, snapshot)            # is it here / adjacent
+            + w_recency·decay(card.last_seen, now)       # recently touched
+            + w_sim·cosine(embed(action), card)          # topical fallback
+→ rank all candidates, take until the per-turn token budget is exhausted.
+```
+
+The §D4 *floor guarantee* survives, not as a separate mechanism but as a **hard
+invariant on top of the ranking**: a card for an entity the player is
+**physically engaging this turn cannot be budgeted out**, full stop. This keeps
+the SOUL *Guitar Solo* / ADR-014 *Living World* promise as an explicit assertion
+rather than an emergent property of weights.
+
+**Drama-gated embedding (SOUL *Cost Scales with Drama*).** The `w_sim·cosine`
+term is the only expensive signal (it requires `embed(action)` via the daemon).
+It is **computed only when the structured signals come back thin** — i.e. when
+the action named nothing and the party is nowhere specific. "I attack Borin"
+resolves entirely on mention + location; the embed is **skipped**. This is
+strictly cheaper than the current always-embed fill.
+
+**Weights (resolved leans, this session):** signals are **per-type in
+*applicability*, global in *weight*.** Each entity type declares *which* of the
+four signals apply to it (e.g. `here` is load-bearing for an NPC, inapplicable to
+a free-floating lore fact); the *weight* of each signal it uses is a single
+global tuning vector. One knob, no nonsense terms.
+
+### A2 — Lifecycle-aware index scope: index the dormant, floor the active (supersedes §D2)
+
+§D2's flat `npc | location | faction` scope is widened and made **lifecycle-aware**:
+
+```
+indexed (recall-by-pertinence):  npc · location · faction · relationship
+                                 · DORMANT quest · DORMANT trope
+floor-only (imposed, never recalled):  ACTIVE quest · ACTIVE trope
+lore:  unchanged — rides the 75-1 accretion path, not a card type (per §D2)
+```
+
+The distinction (Merovingian's correction in the design session): an **active**
+trope or quest is *pressure on the table* — it applies whether or not anyone
+named it, so it belongs in the floor unconditionally. A **dormant/completed** one
+is a *note* — looked up only when referenced ("what was that quest about the
+smuggler?"). Each type declares an **active/dormant predicate**
+(`QuestStatus`, the ADR-128 governor state); only the dormant side is projected
+into the index. Nothing is deleted on completion (ADR-014) — a finished quest
+becomes a dormant, lookup-able note.
+
+**Relationships are always index-side** (resolved lean): a relationship is never
+its own floor pressure. It surfaces because the related NPC is named or present —
+the NPC's floor-presence (or a mention) pulls the relationship card in.
+
+### A3 — Acceptable forgetting: tiered projection, lazy demotion, vector-shedding (extends ADR-048)
+
+This supplies the eviction policy ADR-048 lacks — as **demotion, not deletion**,
+so *Living World* holds.
+
+- **Tiers.** `to_card(tier ∈ {FULL, SUMMARY, INDEX})` renders progressively less
+  of the same system-of-record struct. Tier is `metadata.tier`.
+- **Lazy demotion.** A note demotes on **read-miss** (it was a candidate but lost
+  the budget cut, repeatedly), never on a global timer — this avoids a
+  re-embedding stampede across thousands of cold cards. Demotion re-projects via
+  the existing §D3 dirty-flag → embedding-worker path.
+- **Vector-shedding.** An **INDEX-tier card drops its embedding** and survives on
+  the *non-vector* structured signals only — `mention` (alias-match) and
+  `here` (graph lookup). This directly bounds ADR-048's "384-dim vectors per
+  fragment … non-trivial memory cost at long durations": the cold tail sheds its
+  vectors.
+- **Rehydration.** A **mention always rehydrates a card to FULL** (re-projects,
+  re-embeds) — when a player says the name, the DM reads the whole page.
+- **Accepted behavior (ruled):** a cold, un-named, un-located note *does* fall
+  out of semantic reach until something rehydrates it. That is the DM correctly
+  forgetting the minor NPC nobody asked about — not a defect.
+- **Named rescue hatch (deferred, out of scope here):** a `consult_notes(entity)`
+  retrieval **tool** (ADR-102 tool-use) lets the narrator pull a cold card
+  mid-turn when the pre-fetch missed an oblique reference. Tracked as follow-on,
+  not built in this amendment.
+
+### A4 — Supports
+
+- **Relationship card ≡ summary-tier card.** The `disposition_log` (ADR-136) is a
+  time series and cannot be embedded whole; the relationship card is *born* at
+  SUMMARY tier — current attitude band + the two or three load-bearing beats. The
+  decay machine (A3) and the relationship projector are therefore the **same
+  shape**.
+- **Alias-aware, accretion-fed mention.** `mention` resolves through each card's
+  **aliases/epithets**, not raw player tokens (ADR-048's own example: "the Ember
+  Throne" ≡ "the seat of the fire king"). World-authored entities carry aliases
+  in YAML; **promoted/yes-and entities accrete epithets** via the 75-1 accretion
+  path — mention-matching gets smarter the longer the campaign runs, with no new
+  pipeline. Without this, the dominant signal degrades to keyword matching.
+
+### A5 — OTEL: per-card score decomposition (extends §D5)
+
+A weighted scorer that cannot be audited is improvisation with a number attached.
+Each *selected* card emits its **score breakdown** so the GM panel shows *why* a
+note surfaced and supplies weight-calibration data:
+
+- `retrieval.card.reason` per selected card: the four signal contributions
+  (`mention`, `here`, `recency`, `sim`) and the final score.
+- `retrieval.embed_skipped` (bool) — whether the drama-gate skipped the cosine
+  pass this turn (A1).
+- `retrieval.tier_demotions`, `retrieval.tier_rehydrations`,
+  `retrieval.vectors_shed` — the A3 forgetting lifecycle, never silent.
+
+These extend the §D5 attribute set; the existing `retrieval.universal` span is
+unchanged in shape, only enriched.
+
+### Reconciliation with existing ADRs (delta)
+
+- **ADR-048 (Lore RAG):** extended — A3 supplies the eviction policy 048's
+  Consequences records as missing. Lore fragments become tier-able and
+  vector-sheddable like any other card.
+- **ADR-128 (Trope Governor):** the governor's active/dormant state *is* the A2
+  predicate for tropes. Active tropes ride the floor (unchanged); dormant tropes
+  become indexed notes.
+- **ADR-136 (Relationship Surface):** the player-facing RELATIONSHIPS projection
+  and the A4 relationship *card* both project from the same disposition data;
+  the card is the *retrieval* projection (index-side, A2), orthogonal to the
+  reactive player surface.
+- **ADR-109 (Persistent Location Descriptions):** the diffuse-location projector
+  (§D3) is unchanged; A1/A2 only change how a location *card*, once projected, is
+  scored and tiered.
+- **ADR-102 (Tool-Use Protocol):** the deferred `consult_notes()` rescue hatch
+  (A3) is a future tool, explicitly out of this amendment's scope.
+- **ADR-014 (Diamonds & Coal / Living World):** preserved — forgetting is
+  demotion + vector-shed, never deletion; the present scene is never dropped (A1
+  invariant).
+
+### Implementation work (spawns a follow-on epic; story IDs assigned in sprint planning)
+
+The core (D1–D5) stays live throughout; these land incrementally on top.
+
+- **WI-1 — Unified pertinence scorer + present-scene invariant + drama-gated
+  embed.** Replace the §D4 floor/fill split with the A1 scored selection; per-type
+  signal applicability, global weights; skip the embed when structured signals are
+  thin. Wiring proven by OTEL/behavior, not source-text.
+- **WI-2 — Lifecycle-aware scope.** Active/dormant predicate per type; index
+  dormant quests/tropes + relationships; route active quests/tropes to the floor.
+- **WI-3 — Tiered projection + lazy demotion + vector-shedding.** `to_card(tier)`;
+  demote-on-read-miss; INDEX-tier drops embedding; mention rehydrates to FULL.
+- **WI-4 — Relationship projector (summary-tier).** Project `disposition_log` →
+  attitude + key beats; index-side only.
+- **WI-5 — Alias resolution + accretion-fed aliases.** Alias-aware mention match;
+  promoted entities accrete epithets via the 75-1 path.
+- **WI-6 — OTEL score decomposition.** Emit the A5 attributes; surface in the GM
+  panel.
+
+Sequencing lean: WI-1 first (it is the new spine every other item rides);
+WI-5 close behind (it hardens WI-1's dominant signal); WI-3/WI-4 share the
+tiering machine and pair; WI-2 and WI-6 are independent. Value-first cut for the
+playgroup (per the 140-turn `coyote_star` relationship-carried session):
+**WI-1 + WI-5 + WI-4** ship the felt win — mention-driven full-history NPC recall —
+before the years-scale tiering (WI-3) and the breadth (WI-2).
+
+### Consequences (delta)
+
+**Positive:**
+
+- The structured pertinence model (mention ≫ location > recency) becomes
+  *universal* across all indexed types, not NPC-only; similarity drops to its
+  intended role as the topical fallback.
+- Prompt cost falls twice: relevance already bounded growth (original ADR); the
+  drama-gate now also skips the embed on named/located turns.
+- The years-scale gap is closed without deletion — the cold tail fades and sheds
+  vectors, the warm core stays sharp, and a mention always reads the full page.
+- Every selection is explainable in the GM panel (A5) — the lie-detector now
+  covers *ranking*, not just engagement.
+
+**Negative / risks:**
+
+- **Tuning surface.** The four global weights + the tier-demotion threshold + the
+  drama-gate "thinness" cutoff all need playtest calibration; A5's per-card
+  decomposition is the instrument for it.
+- **Acceptable-forgetting edge.** A long-dormant entity referenced *obliquely*
+  (no name, no place) is unfindable until rehydrated. Ruled acceptable; the
+  deferred `consult_notes()` tool is the eventual rescue.
+- **Alias correctness is load-bearing.** A weak alias set degrades the dominant
+  signal to keyword match; A4's accretion path is essential, not optional.
