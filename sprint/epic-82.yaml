@@ -114,9 +114,11 @@ stories:
     description: 'Follow-up to archived 71-40 (epic 71). The AC1-AC4 latency instrumentation shipped + merged (server PR #689): intent_router.decompose now carries sdk_latency_ms + state_summary_bytes; complete_with_tools emits narrator.tool_loop (iterations_used) + narrator.tool_loop.cap_hit; latency_percentiles harness in telemetry/latency_report.py. THIS story closes the loop: (1) AC5 — run a representative Glenross/tea_and_murder (or coyote_star) capture against a real ANTHROPIC_API_KEY, feed captured decompose/turn latencies through latency_percentiles, and commit the written env-vs-code + iteration-correlation diagnosis (session/report artifact). (2) Wire latency_percentiles to a real consumer (it currently has NONE — Reviewer wiring finding). (3) Address non-blocking Reviewer Delivery Findings as the analysis surfaces them: emit narrator.tool_loop on the loop-exceeded raise path (worst-latency turns are currently invisible); rename/ tag narrator.tool_loop so the non-narrator dungeon-curate caller (materializer.py) does not pollute solo-turn p95; add an operator toggle for iteration_cap (no production caller sets it today); strengthen 3 test gaps (exactly-once cap-hit, dict-bytes equality, summary-absent-on-raise) and the vacuous sdk<=total invariant test. Full detail in sprint/archive/71-40-session.md (Delivery Findings + Reviewer Assessment).'
     points: 3
     priority: p2
-    status: in_progress
+    status: in_review
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
     type: chore
     branch: feat/82-9-latency-diagnosis-ac5
-    started: '2026-06-05'
+    review_findings: '3 blocking (testable): scripts/latency_diag_82_9.py silent-wrong-verdict on missing spans (No Silent Fallbacks); _corr StatisticsError crash on loops>turns; flaky sdk_latency >=20 timing assertion. Engine code (AC1-6) clean; live diagnosis artifact valid. Fixes ~15 lines.'
+    review_verdict: approved
