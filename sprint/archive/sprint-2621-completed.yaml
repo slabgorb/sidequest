@@ -1626,3 +1626,8 @@ completed_stories:
     title: Per-turn latency diagnosis — router decompose + narrator tool-loop p50/p95 + env-vs-code/iteration attribution
     points: 6
     completed: '2026-06-05'
+  - id: 83-3
+    epic: '83'
+    title: Ongoing-threat identity stability — reconcile a re-described threat instead of re-minting
+    points: 5
+    completed: '2026-06-05'

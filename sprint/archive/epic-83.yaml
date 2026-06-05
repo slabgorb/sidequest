@@ -1,46 +1,61 @@
 id: '83'
 type: epic
-title: "Lobby Redesign — The Standing Folio"
-description: "Holistic from-scratch redesign of the SideQuest lobby per the Claude Design handoff (Direction A · The Standing Folio). Kills the scrollbar in the world list, replaces it with a fold-fitting genre accordion, and reframes the lobby as a literary manuscript title page: masthead name ritual, two-pane folio card (genre accordion + cinematic per-genre preview), commit row (Solo/MP toggle + Start), and below-the-fold sections (live presence, past journeys, dev scene library). Dark Folio palette + Pirata One/EB Garamond, subtle per-genre accent shift. Wires to the existing real worlds/sessions data hooks; hero art stays atmospheric CSS placeholders standing in for runtime AI renders."
+title: NPC Creature Identity & Naming Hardening
+description: "Follow-ups deferred from the ping-pong #74 fix (PR slabgorb/sidequest-server#638, 2026-06-04), which classified narrator-mentioned creatures (NpcMention.is_creature) and reserved the ADR-091 culture-bound person namer for actual people — a creature now keeps its descriptive name verbatim, gets no culture, and emits npc.creature_preserved. That PR fixed the worst symptom (a lion minted as 'Keeper Goldbraid of the Emerald City') but deliberately deferred three coupled threads: (1) full Monster Manual bestiary identity (creature_id/threat_level/hp/stat block, ADR-059) materialized onto promoted creature Npcs; (2) culture self-match so a named people-group resolves to its OWN culture (Munchkin->Munchkin) instead of the current random.shuffle pick — the people-side half of #74, still unfixed; (3) ongoing-threat identity stability so a single recurring threat isn't re-minted under a new name every turn. Origin session: wry_whimsy/oz 2026-06-03."
 priority: p2
 status: done
-repos: ui
+repos: server
 stories:
   - id: 83-1
-    title: "Rebuild ConnectScreen as the Standing Folio lobby — genre accordion + cinematic preview"
-    description: "Replace the current scrolling-list lobby (ConnectScreen.tsx + src/screens/lobby/*) with Direction A 'The Standing Folio' from the Claude Design handoff. Reference bundle committed at sidequest-ui/design-reference/lobby-standing-folio/ — READ chats/chat1.md (intent: 'I hate the scrollbar… holistic redesign'; user locked in Direction A) and project/SideQuest Lobby.html + tokens.css for the pixel-target. Recreate the visual output in React/TS; do NOT port the prototype's inline-Babel structure. The prototype invents 20 fake worlds — IGNORE its data; wire the real catalogue from the existing /api/genres feed (GenresResponse/GenreMeta/WorldMeta) and reuse the live data hooks already in place (useSessions, useStartGame, useDisplayName, historyStore, /dev/scenes). The /tmp design fonts (Pirata One via Google, EB Garamond/Oswald self-hosted) and the Dark Folio palette in tokens.css are the type/color spec. Hero art stays atmospheric CSS-gradient placeholders standing in for the runtime AI render (per the designer's own note). Net change is structural+visual: keep every existing data path and behavior (localStorage name/genre/world persistence, mode toggle, start/join, scene library dev-gate), change the layout and chrome."
+    title: Monster Manual bestiary identity for narrator-classified creatures (ADR-059)
+    description: "Deferred from ping-pong #74 (PR #638). That fix classifies a narrator creature mention (NpcMention.is_creature) and keeps the person namer off it, but a promoted creature Npc still carries NO bestiary identity: _promote_pool_member_to_npc builds a person-shaped Npc (placeholder HpPool 10/10, no creature_id/threat_level/abilities/morale) and only reports is_creature on telemetry. The Npc model ALREADY supports creature fields (creature_id/threat_level/abilities/morale, session.py); the Monster Manual generator exists (ADR-059; _creature_patch_from_enemy in dispatch/monster_manual_inject.py returns an NpcPatch with those fields). WIRE them: when a creature-typed pool member promotes (or at the creature mention seam), draw a bestiary/creature identity — species, threat profile, HP, abilities, morale — from the Monster Manual instead of a person placeholder, with NO culture/person-name. This is the 'route creatures to Monster Manual creature generation' half of the #74 fix direction. Per CLAUDE.md 'Don't Reinvent — Wire Up What Exists': the MM and the Npc creature fields exist; the wire from a narrator-classified creature to MM generation does not."
     points: 5
     priority: p2
     status: done
-    repos: ui
+    started: '2026-06-05'
+    repos: server
     workflow: tdd
     acceptance_criteria:
-      - 'Masthead ''opening ritual'' renders: ornament dinkus, Pirata One ''SideQuest'' wordmark, italic tagline, and the centered name input (autofocus, placeholder); name persists to/from localStorage exactly as today.'
-      - 'World index is a genre ACCORDION (no scrollbar anywhere): one collapsible row per genre sourced from /api/genres; clicking a genre header expands its worlds inline and collapses the previously open one; the eyebrow shows live ''{N} worlds across {M} genres'' from real data.'
-      - 'Genre/world rows carry full keyboard + ARIA semantics: genre headers are aria-expanded buttons with a rotating chevron; worlds are role=radio inside role=radiogroup with aria-checked on the selected world; accent focus-ring visible on keyboard focus across headers, rows, mode buttons, Start.'
-      - "Selecting a world updates the cinematic preview pane: hero art (per-world/per-genre CSS gradient placeholder) with genre label, world title, era line, tone chips (cosy/gritty axes from existing toneAxes), blurb, and 'Inspired by' list — all from real WorldMeta, with graceful fallbacks for any field the server doesn't supply."
-      - 'Commit row works end-to-end: Solo / Multiplayer segmented toggle drives the Start button label (''Start Adventure'' vs ''Start or Join'') and start/join flow via the existing useStartGame; Start is disabled with no world selected; Rules/Lore links present.'
-      - 'Below-the-fold sections retained and wired to real data: ''Currently in this world'' (live presence via useSessions, empty-state copy when none), ''Past journeys'' (history from historyStore, clicking re-selects that world), and the dev-gated ''Scene library'' (fixtures from /dev/scenes, only when dev endpoint available).'
-      - "Subtle per-genre accent shift only: selecting a world sets the [data-genre] accent (per tokens.css map); type and structure stay the manuscript house style — no full genre re-skin."
-      - "Responsive per the design breakpoints (single-column folio + two-up index grid at <=880px; stacked commit row + full-width Start at <=560px); global scrollbars hidden per tokens.css; reduced-motion respected (transform-only entrance, visible end-state as base — no opacity:0-stuck cards)."
-      - Existing ConnectScreen tests updated/replaced (ConnectScreen.test.tsx, ConnectScreen.reference.test.tsx, lobby-start-ws-open, lobby-house-archetype-wiring, slug-connect-readystate-effect) so the suite proves the new structure; includes a wiring test that the redesigned screen is mounted in the real app route and reachable, not just rendered in isolation.
-    completed: '2026-06-03'
-    review_findings: "AC7 per-genre-accent test is vacuous (passes even if the accent shift is broken — asserts accordion rows' static data-genre, not the lobby root's selection-driven data-genre). Test-only rework: tighten AC7 to assert .lobby-folio root data-genre flips on selection; bundle aria-expanded initial-value, collapse-path, scene-empty positive, and empty-hero tests + fix stale 'sorts' comments. Production code correct; full suite green."
-    review_verdict: approved
+      - 'A creature-typed pool member (is_creature=True) promotes to an Npc carrying a Monster Manual creature identity: creature_id set, threat_level set, HP from the bestiary (not the 10/10 placeholder), abilities/morale populated where the MM provides them.'
+      - The promoted creature Npc has NO culture and NO person-name — its name remains the narrator's descriptive name (or a bestiary species label), never a culture-corpus person-name.
+      - An OTEL span records the bestiary draw (creature_id, threat_level, hp, source) so the GM panel can verify the engine generated a creature identity rather than winging it. is_creature on the spawn span is True for these.
+      - Persons (is_creature=False) are completely unaffected — they still promote through the existing person path; no regression in the 72-x NPC-identity suite.
+      - A wiring test drives a creature mention end-to-end (mention → pool → promotion) and asserts the resulting Npc has MM creature fields populated and reachable from a production code path.
+    completed: '2026-06-05'
   - id: 83-2
-    title: Standing Folio lobby — close AC8 gaps (880/560 breakpoints + reduced-motion) and design-divergence ratification
-    description: "Follow-up to 83-1 from a UX verification pass (Alex/ux-designer, 2026-06-03, Playwright on localhost:5173) comparing the MERGED Standing Folio lobby against the Claude Design handoff and 83-1's own AC8. The redesign is sound and faithful overall. This story closes the two real AC8 gaps that shipped incomplete, plus parked items. KEY GAPS vs 83-1 AC8: (1) breakpoints shipped as Tailwind defaults md=768/sm=640, but AC8 spec'd <=880px (single-column folio + two-up index grid) and <=560px (stacked commit row + full-width Start) — at 860px the live lobby is still two-column. (2) reduced-motion is entirely unhandled: no prefers-reduced-motion media query or motion-reduce: variant anywhere in src; the build skipped the design's gated entrance fade but ADDED unguarded animate-spin (WorldPreview image spinner) + animate-pulse (loading skeleton + ConnectScreen 'loading' text) that ignore reduce. RESOLVED DECISIONS (Keith, 2026-06-03 — both accept-current-behavior, ZERO CODE): (3) CurrentSessions null-on-empty is KEPT ('remove it for now') — no 'No lanterns lit here tonight.' copy; the design's empty-state copy and 83-1 AC6's 'empty-state copy when none' clause are deliberately superseded. (4) Rules-in-commit-row placement is ACCEPTED ('the rules are fine for now too, I was able to find them') — pack-Rules staying behind a world selection is fine; ADR-135 tension acknowledged and deferred. PARKED (still in scope): self-host Pirata One, add console.warn to silent catches, add data-testid=lobby-accent-root, guard effectiveOpenGenre against stale removed-pack genre. Also observed: a flash-of 'Could not load worlds...' on cold mount before the worlds fetch settles. Full UX design spec: docs/design/83-2-lobby-folio-followups.md."
+    title: Culture self-match — named people-group resolves to its own culture (Munchkin→Munchkin)
+    description: "The people-side half of ping-pong #74, still UNFIXED after PR #638. _resolve_invented_naming_context (narration_apply.py) resolves the culture for a narrator-invented PERSON by random.shuffle over the world's bound cultures and picking the first whose corpus builds — so a named people-group is tagged with a RANDOM culture: the Munchkins (Munchkin/blue East) were minted 'Roric the Crimson' culture=Quadling; a later threat got Quadling then Emerald City. When the narrator names a specific people/group/clan, the engine should resolve THAT group's own culture (Munchkin→Munchkin) rather than shuffling. Needs a match from the mention's name/group against the bound cultures (by culture name + any authored aliases/demonyms), falling back to the existing shuffle ONLY when no match is found (a genuinely unaffiliated stranger). Keep No-Silent-Fallbacks: a matched-but-unbuildable corpus must still surface loud (namegen.thin_corpus already exists)."
     points: 3
     priority: p2
     status: done
-    repos: ui
+    started: '2026-06-05'
+    repos: server
     workflow: tdd
     acceptance_criteria:
-      - 'Breakpoints match 83-1 AC8 spec, not Tailwind defaults: folio collapses to single-column + two-up index grid at <=880px, and the commit row stacks with full-width Start at <=560px. Runtime-verified at the boundaries (881 vs 880, 561 vs 560).'
-      - 'Reduced-motion respected: animate-spin (WorldPreview image spinner) and animate-pulse (loading skeleton + ConnectScreen pulse text) are guarded with motion-reduce: (or gated behind prefers-reduced-motion: no-preference). Under an emulated prefers-reduced-motion: reduce, no looping animation runs and all content has a visible end-state as its base (no opacity:0-stuck cards).'
-      - 'Parked items resolved or explicitly deferred with rationale: (a) Pirata One self-hosted for the wordmark (replaces house-serif fallback); (b) console.warn added to the three silent catches (/dev/scenes, loadSavedState, saveState) per No-Silent-Fallbacks; (c) data-testid=lobby-accent-root added and AC7 accent test asserts against it; (d) effectiveOpenGenre guarded against a stale genre whose pack was removed.'
-      - Cold-mount worlds fetch shows a loading state (not the 'Could not load worlds. Is the server running?' error) until the fetch resolves or genuinely fails; the error copy only appears on a real failure.
-    completed: '2026-06-04'
-    type: chore
+      - A narrator mention whose name/group maps to a bound culture (e.g. 'The Munchkins' in a world with a Munchkin culture) resolves to THAT culture's corpus, not a random one — the minted name is Munchkin-true.
+      - Matching considers the culture name and any authored demonym/alias surface; case-insensitive; singular/plural tolerant ('Munchkin' ~ 'Munchkins').
+      - When no culture matches the mention (an unaffiliated stranger), the existing shuffle-and-build behavior is preserved unchanged — this is an additive prefer-match step, not a replacement.
+      - The npc.invented_name_routed span records WHY a culture was chosen (matched vs shuffled) + the matched token, so the GM panel can see the culture router is no longer guessing.
+      - 'No-Silent-Fallbacks preserved: a matched culture whose corpus is missing/below-floor still fires the loud namegen guard, not a silent fall-through to a wrong culture.'
+    completed: '2026-06-05'
+    type: bug
     review_verdict: approved
-completed: '2026-06-03'
+  - id: 83-3
+    title: Ongoing-threat identity stability — reconcile a re-described threat instead of re-minting
+    description: "Deferred from ping-pong #74. A single ongoing threat was re-minted under a NEW identity every turn because the narrator re-describes it each turn and each novel descriptor hits the Step-3 novel-mint branch: the forest threat became 'Clemence Coralfast' → 'The Unseen Watcher' → 'Keeper Goldbraid' across two turns, and NONE reconciled to the authored Cowardly Lion already in the npcs roster (disposition 5). The result is unstable opponent identity — the GM panel and the player see three monsters where there is one, and a hand-authored NPC is shadowed by phantom duplicates. Add a stability/reconciliation guard so a recurring threat resolves to its existing pool member or authored Npc instead of minting a fresh one. Likely levers: a narrator continuity signal (the mention points at an existing entity), appearance/role similarity reconciliation, and/or a 'one active unnamed threat' guard per scene. Coordinate with the existing comma-inversion match keys and the observation-gate ratification (49-6) so this doesn't fight them. Note interaction with 83-1: a creature with a stable creature_id is easier to reconcile across turns."
+    points: 5
+    priority: p3
+    status: done
+    started: '2026-06-05'
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - A recurring threat the narrator re-describes across turns reconciles to a SINGLE persistent identity (existing pool member or authored Npc) instead of minting a new pool member each turn.
+      - An authored roster Npc (e.g. the Cowardly Lion, disposition 5) is matched and NOT shadowed by a freshly-minted phantom when the narrator references the same creature in prose.
+      - 'When reconciliation fires, an OTEL span records the match (incoming descriptor → reconciled identity + the signal used: continuity flag / similarity / scene-guard) so the GM panel can confirm the engine collapsed the duplicates.'
+      - 'No false merges: two genuinely distinct threats in the same scene stay distinct — the guard is conservative and span-visible, never a silent identity collapse (mirror the comma-inversion match precedent).'
+      - Existing NPC match/ratification behavior (comma-inversion keys, observation gate 49-6) is preserved; a regression test pins that two distinct named NPCs are not collapsed.
+    completed: '2026-06-05'
+    type: bug
+    review_verdict: approved
+completed: '2026-06-05'
