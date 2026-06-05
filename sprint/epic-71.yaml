@@ -496,7 +496,7 @@ stories:
       REPOS: content (history.yaml POI slug renames) + R2 asset object renames (operator/daemon: S3 copy old→new key, drop old, update r2_manifest.json). No server/engine change. After this lands, wonderland's Location tab (#643) resolves with NO code change; the lore page additionally needs 71-38. Was filed as 65-18 before epic 65 archived; re-homed here.
     points: 3
     priority: p2
-    status: backlog
+    status: done
     repos: content
     workflow: tdd
     acceptance_criteria:
@@ -505,4 +505,5 @@ stories:
       - "Wiring/consistency test (load-bearing guard): for wonderland, assert every cartography region_id that has a POI image resolves to an R2 key EQUAL to the region_id verbatim — for each region with a landscape, genre_packs/wry_whimsy/worlds/wonderland/assets/poi/{region_id}.png is present in r2_manifest.json. This is exactly the identifier #643's map_emit.py:585 builds, proving the Location tab resolves. Fails today (the_hall_of_doors etc.), passes after the rename."
       - "Cross-world hygiene (audit, scope-guard): extend the assertion (or r2_audit) to flag ANY world where a region_id with a POI image lacks a matching verbatim R2 key — so oz/gulliver stay green and a future world can't silently reintroduce the article mismatch. Report mismatches; only wonderland needs renaming now."
       - "No engine/server change and no new render: the assets already exist (14 on R2). Verify the wonderland Location tab resolves the landscape after a content pull + bounce with ZERO code diff in sidequest-server. The lore-page 'Renderable Landscapes' images remain gated on 71-38 (separate engine slug fix) — note the dependency, do not fold 71-38 in here."
+    completed: '2026-06-05'
     type: bug
