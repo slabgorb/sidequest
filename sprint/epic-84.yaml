@@ -29,10 +29,12 @@ stories:
     title: WI-4 Relationship card projector (index-side, summary-tier projection of disposition_log → attitude + key beats)
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
     depends_on: 84-1
+    completed: '2026-06-05'
   - id: 84-4
     title: WI-6 OTEL score decomposition — per-card retrieval.card.reason + embed_skipped + tier lifecycle spans (extends ADR-118 §D5)
     points: 2
