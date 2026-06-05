@@ -24,6 +24,8 @@ stories:
     repos: sidequest-content
     workflow: superpowers
     completed: '2026-06-05'
+    review_findings: 'Post-merge review (oq-2, 2026-06-05): content#369 merged a2ab99d0. Loader gate PASS; full suite 9805 pass / 2 known validator fails; cliche-judge PASS (Burroughs canon verified); spell inertness in sibling worlds verified mechanically.'
+    review_verdict: approved
   - id: 89-3
     title: 'Story 3 — The North & Lothar: Okar + Marentina (domed northern cities, the Carrion Caves) and Lothar (home of the Mentalist tradition). Yellow-Martian + Lotharian cultures + corpora, regions/POIs, factions/NPCs, openings.'
     points: 8
@@ -33,6 +35,8 @@ stories:
     repos: sidequest-content
     workflow: superpowers
     completed: '2026-06-05'
+    review_findings: 'Post-merge review (oq-2, 2026-06-05): content#369 merged a2ab99d0. Loader gate PASS; full suite 9805 pass / 2 known validator fails; cliche-judge PASS (Burroughs canon verified); spell inertness in sibling worlds verified mechanically.'
+    review_verdict: approved
   - id: 89-4
     title: "Story 4 — Magic content: author the two WWN caster traditions' spell lists (Lotharian Mentalist + Barsoomian Super-scientist) over the inherited Effort/System-Strain engine; wire cast_spell beats with class_filter; super-science also as gear; telepathy as universal narrator-framed baseline. Mirrors the EH/heavy_metal wwn magic seam (no engine change expected)."
     points: 8
@@ -42,6 +46,8 @@ stories:
     repos: sidequest-content
     workflow: superpowers
     completed: '2026-06-05'
+    review_findings: 'Post-merge review (oq-2, 2026-06-05): content#369 merged a2ab99d0. Loader gate PASS; full suite 9805 pass / 2 known validator fails; cliche-judge PASS (Burroughs canon verified); spell inertness in sibling worlds verified mechanically.'
+    review_verdict: approved
   - id: 89-5
     title: "Story 5 — Chargen surface + CRUNCH FLAGS (Keith's mechanics call): Earthman gravity-boon as a world-tier origin trait that MUST resolve to a REAL engine consumer (no unwired crunch — document the tier exception + verify the consumer); green four-arm physiology (fiction-only vs light trait); Mentalist/Super-scientist expressed as classes-vs-Foci. Touches the engine only where a consumer is required."
     points: 8
@@ -59,3 +65,5 @@ stories:
     workflow: superpowers
     completed: '2026-06-05'
     type: chore
+    review_findings: 'Post-merge review (oq-2): authoring half landed in content#369 (portrait_manifest 10 NPCs, audio mood-map, POI prompts); renders to R2 deferred to operator. VALIDATOR DEBT: barsoom tropes.yaml + legends/ missing — 2 live-pack validator tests red on develop, no owning story.'
+    review_verdict: approved
