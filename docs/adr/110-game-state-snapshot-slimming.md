@@ -352,6 +352,75 @@ arguments from the original §Alternatives still apply. If 61-2's bounded
 projections still leave the Valley too large at session length 100+, a
 future ADR can revisit Phase D with concrete numbers.
 
+### Amendment 2026-06-05 — The IntentRouter is a second, un-slimmed consumer (story 82-10)
+
+The 82-9 live `tea_and_murder/glenross` latency diagnosis
+(`sidequest-server/docs/82-9-latency-diagnosis.md`) surfaced that ADR-110's
+slimming has only ever covered **one** of the two per-turn snapshot consumers.
+
+**The finding.** The ADR-113 `IntentRouter.decompose` pre-narrator pass is a
+second consumer of a JSON snapshot dump, built by its **own**
+`_build_state_summary` in `sidequest/server/intent_router_pass.py` — *separate*
+from the narrator's `_build_turn_context` in `session_helpers.py`. The router's
+builder applies **Phase A only** (`model_dump(exclude_defaults=True,
+exclude_none=True)`) and then *adds* router-specific projections
+(`confrontation_types`, `witnessed_act_vocabulary`, `present_npcs`). It does
+**not** apply Phase B (`_PHASE_B_DROP_FIELDS`) or Phase C
+(`_apply_phase_c_projections`). The 59-4 docstring named this explicitly as a
+deferred coupling decision: *"keeps this local to avoid coupling the router pass
+to the much heavier `session_helpers._build_turn_context`… If the router's needs
+grow, revisit centralizing the slimmer."*
+
+The cost of that deferral is now measured. The router ships a mean **48,744-byte**
+(~48 KB) `state_summary` on every turn — **5–10× the narrator's post-Phase-C
+5–10 KB** — and `state_summary_bytes` correlates **0.50** with decompose
+latency. Decompose runs **3.8 s p50 / 6.6 s p95** against the ADR-113 `<1.2 s`
+budget; the env-vs-code split shows ~100 % of that is the raw Haiku round-trip
+and **0.1 ms** of code overhead, i.e. there is *no* hot-spot to optimize in the
+decompose timing path — the only code lever is the **input size** that feeds the
+round-trip. That lever is exactly ADR-110's slimming, applied to the consumer it
+never reached.
+
+**The decision: extract-and-reuse, not a second slimmer.** Per "reuse what
+exists," the fix is to lift the Phase B drop + Phase C projection out of
+`session_helpers._build_turn_context` into a shared, narrator-agnostic
+`apply_snapshot_slimming(payload, snapshot, *, current_room_id, perspective)`
+that both consumers call, then have the router apply it to its base dump **before**
+layering its router-specific additions. The narrator's downstream mutations that
+are *prompt-specific* — the sealed-letter handshake / `party_formation` /
+`shared_world_delta` merge, the notorious-party non-self redaction, the 45-13
+room-state-injection span — stay in `_build_turn_context` and are **not**
+extracted; the router neither needs nor wants them.
+
+**Why this is safe for the router.** Phase B/C were audited against the
+*narrator's* anti-confabulation needs — the narrator must hold ground truth for
+prose. The router has a strictly *weaker* need: it only picks which dispatch
+handlers fire. Every field safe to drop for the narrator is safe to drop for the
+router, and the router's in-scene-NPC / tail-K-facts / current-room projections
+align with what dispatch routing actually reads (present NPCs → `npc_agency`,
+current encounter → `confrontation`, capped clues → `scenario_clue`). So the
+extraction is a near-zero-risk 5–10× cut with no new projection logic invented.
+
+**Scope boundary — the few-KB allowlist is a *measured follow-up*, not this
+cut.** The 82-9 diagnosis aspires to "48 KB → a few-KB allowlist." A router-
+*specific positive allowlist* (tighter than the narrator's, scoped to only the
+fields dispatch preconditions read) is a real additional lever, but it carries
+dispatch-precondition regression risk and needs its own audit of what each
+`run_dispatch_precondition_gate` branch consumes. The reuse cut lands first,
+measured by OTEL before/after; only if the re-run diagnosis shows the router
+still over budget does the positive-allowlist follow-up earn its risk. This
+mirrors the original A+B-before-C-and-D discipline: take the audited-safe cut,
+measure, and let the data decide whether the riskier tightening is warranted.
+
+**Observability (mandatory).** The router's `intent_router.decompose` span
+already carries `state_summary_bytes` and `latency_ms`/`sdk_latency_ms` (added in
+71-40/82-9). The slimming story must show the **before/after** on
+`state_summary_bytes` *and* the resulting `latency_ms`/p95 move on the GM panel —
+the same lie-detector contract the narrator's `prompt.game_state.bytes` span
+satisfies — and re-run `scripts/latency_diag_82_9.py` against a fresh capture
+(with the Jaeger query limit raised for a tighter-than-n=7 sample) to confirm the
+decompose p95 drop.
+
 ## References
 
 - ADR-014 — Diamonds and Coal (narrator detail discipline)
