@@ -10,9 +10,11 @@ stories:
     title: WI-1 Unified pertinence scorer + present-scene invariant + drama-gated embed (supersedes ADR-118 §D4)
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-05'
   - id: 84-2
     title: WI-5 Alias resolution + accretion-fed aliases — mention resolves through epithets, promoted entities accrete via 75-1 path
     points: 3
