@@ -39,3 +39,11 @@ stories:
     status: backlog
     repos: server,content
     workflow: tdd
+  - id: 90-5
+    title: '90-1 fail-loud hardening — pin the failure-path contract from review: test encountergen exit-1 (bestiary-less ruleset pack) + EncounterSeedError raise; emit pregen.seed_manual span (error attr) before raising; assert ruleset span attr in AC4; unit-test Bestiary validators; decide ensure_loaded broad-except policy for EncounterSeedError (ADR-006 vs fail-loud); doc/content polish (stale docstrings, awn in AC6 wording, hp-floor headers, derive AC6 slug list from rules.yaml scan)'
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    type: chore
