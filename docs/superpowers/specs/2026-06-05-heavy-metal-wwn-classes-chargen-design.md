@@ -1,10 +1,31 @@
-# Heavy Metal → WWN — Story 2: Classes & Chargen (Faithful Port)
+# Heavy Metal → WWN — Story 2: Classes, Chargen & Magic (Faithful Port)
 
 **Date:** 2026-06-05
 **Status:** Approved (brainstorming → spec). Story 87-2 of epic 87.
 **Author:** Architect (Leonard of Quirm), with Keith
 **Parent epic spec:** `docs/superpowers/specs/2026-06-04-heavy-metal-wwn-port-design.md`
-**Canonical working reference:** the live `elemental_harmony` WWN binding — `genre_packs/elemental_harmony/classes.yaml` is the template this port follows.
+**Canonical working reference:** the live `elemental_harmony` WWN binding — `genre_packs/elemental_harmony/classes.yaml` + `spells_wwn.yaml` are the templates this port follows.
+
+---
+
+> ## ⚠️ AMENDMENT — 2026-06-05 (Keith): REAL MAGIC, NOT EFFORT-ONLY
+> Keith: *"I want actual magic and shit"* … *"I want things replaced with WWN."*
+> **Epic Story 3 (magic content) is folded into this story (87-2); Story 4 stays.** The
+> "casters are Effort-only, spells deferred to Story 3" decision below (original D3, §3.3,
+> §6) is **superseded**. This story now ships **real WWN High Magic**, ported faithfully:
+> - **`spells_wwn.yaml`** — a faithful PORT of WWN High Magic spells (mechanics verbatim;
+>   grim heavy_metal flavor reskin at most). Loaded into `pack.wwn_spell_catalog`.
+> - **Caster classes carry FULL `wwn_magic`** — `casts_per_day_by_level`,
+>   `max_spell_level_by_level`, `prepared_by_level`, and `starting_prepared` resolving to
+>   real catalog spells. Casters seed a **populated** `SpellcastingState` at chargen (not `None`).
+> - **`cast_spell` beat** added to the Blade-work combat with `class_filter` to the three
+>   caster classes (`necromancer`/`elementalist`/`pact_born`).
+> - **`saving_throws` on EVERY class** — the spell-catalog load validator requires it once a
+>   catalog is present (carried over from the absorbed Story 3).
+> - **`wwn.magic`** config finalized.
+>
+> Read the AMENDMENT-tagged notes in §3.3, §4, §5, §6 — they govern over the original text.
+> On a port: **port WWN faithfully; do not ask "how faithful" or reskin-vs-original.**
 
 ---
 
@@ -28,7 +49,7 @@ Story 1 (87-1, merged) already bound `ruleset: wwn`, the `wwn:` block, ablative-
 |---|----------|-----------|
 | D1 | **5 classes, faithful WWN 3-chassis.** Warrior and Expert stay as the vanilla WWN chassis (grim flavor in descriptions, not renamed). The **Mage** chassis is expressed as the three epic-D1 traditions as caster classes: **Necromancer, Elementalist, Pact-born**. | Most faithful reading of epic D1 ("Warrior / Expert / Mage + Foci; Mage traditions expressed as caster classes"); least name-invention. `warrior`/`expert` ids are trivially renamable later. |
 | D2 | **One signature ability per class (ADR-095); no separate Foci construct.** Abilities live in the class `abilities:` list, exactly as EH does it. | EH already collapsed WWN "Foci" into the `abilities` signature pattern. The epic's "+ Foci" is WWN-descriptive, not a mandate for a new content primitive. |
-| D3 | **Story-2 casters carry `effort_sources` only** — Effort pool seeded at chargen, **no** `casts_per_day_by_level` / `max_spell_level_by_level` / `prepared_by_level` / `starting_prepared`. | Proven safe by EH's "Vowed" `martial_artist` (`magic_access: wwn` + `effort_sources`, no cast tables → `SpellcastingState` seeds as `None`). Avoids dangling spell-id references before Story 3 authors `spells_wwn.yaml`. |
+| ~~D3~~ | ~~**Story-2 casters carry `effort_sources` only**~~ — **SUPERSEDED by the 2026-06-05 AMENDMENT (see top banner).** Casters now carry **full `wwn_magic`** (cast tables + `starting_prepared` → real catalog spells) and seed a **populated** `SpellcastingState`. The EH model to follow is **Channeler/Spirit Medium**, not the Effort-only `martial_artist`. | Keith: real magic, ported from WWN, this story. |
 | D4 | **Wholesale replace, genre + live world.** Replace 5e `class_hint`s in genre `char_creation.yaml` **and** `evropi/char_creation.yaml`; replace `power_tiers.yaml` keys; replace world `typical_classes:`. No "defer the world to Story 4." | Keith's directive; "no half-wired features" — the evropi play path must show WWN classes the moment this lands. |
 | D5 | **`class_label: Calling`.** | Fits the elegiac/vocational register; player-facing on the reference page + chargen summary, the way EH uses "Discipline". |
 | D6 | **Story-4 baggage stays put.** `ledger_tracking` / `pact_cost_attribution` custom_rules and the `pact_working` / `debt_collection` confrontations are **not** touched here — their retirement is epic D5 / Story 4. | Keeps this story to classes & chargen; those are dial confrontations that still load. |
@@ -177,11 +198,15 @@ per-tier visual flavor for portrait/power-tier rendering). The five keys **must*
   not assumed pre-existing.
 
 ## 6. Non-goals
-- **No spells, no `cast_spell` wiring, no `spells_wwn.yaml`** (Story 3). Casters are Effort-only.
+- ~~No spells … Casters are Effort-only.~~ **SUPERSEDED by the 2026-06-05 AMENDMENT** — real WWN
+  magic (`spells_wwn.yaml`, full caster cast-tables, `cast_spell` wiring, `saving_throws` on every
+  class) is **in scope** for this story now (epic Story 3 folded in).
 - **No retirement** of `pact_working` / `debt_collection` confrontations or `ledger_tracking` /
   `pact_cost_attribution` custom rules (Story 4).
-- **No engine/Python changes** beyond tests. No new UI. No asset work.
-- No `long_foundry` portrait rendering (still pending; out of scope).
+- **No engine/Python changes** beyond tests — the `wwn` magic seam already exists (EH binding:
+  `seed_wwn_magic`, `cast_spell` dispatch, `wwn_spell_catalog` loader). This remains a content port
+  plus its wiring/consistency tests.
+- No new UI. No asset work. No `long_foundry` portrait rendering (still pending; out of scope).
 
 ## 7. Risks
 - **Cross-file id drift** — the 5 ids appear in `classes.yaml`, `rules.yaml`, two
