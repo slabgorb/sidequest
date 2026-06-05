@@ -19,10 +19,12 @@ stories:
     title: WI-5 Alias resolution + accretion-fed aliases — mention resolves through epithets, promoted entities accrete via 75-1 path
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
     depends_on: 84-1
+    completed: '2026-06-05'
   - id: 84-3
     title: WI-4 Relationship card projector (index-side, summary-tier projection of disposition_log → attitude + key beats)
     points: 3
@@ -57,3 +59,11 @@ stories:
     repos: sidequest-server
     workflow: tdd
     depends_on: 84-1
+  - id: 84-7
+    title: WI-5 follow-up — epithet extractor POS hardening (replace -s verb heuristic) before §A4 faction/location alias reuse
+    points: 3
+    priority: p3
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: refactor
