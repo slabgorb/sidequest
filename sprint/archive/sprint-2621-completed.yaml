@@ -41,6 +41,7 @@ completed_epics:
   - '59'
   - '76'
   - '66'
+  - '71'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -1434,4 +1435,194 @@ completed_stories:
     epic: '66'
     title: Creation confirmation sheet shows raw funnel labels not resolved race/class (+ per-genre field-label override)
     points: 2
+    completed: '2026-06-05'
+  - id: 71-1
+    epic: '71'
+    title: "space_opera Rules page — render per-class signature ability in the class picker"
+    points: 3
+    completed: '2026-05-27'
+  - id: 71-2
+    epic: '71'
+    title: "Orrery ring label — apply ADR-094 upright-flip on far-arc tangent labels"
+    points: 2
+    completed: '2026-05-28'
+  - id: 71-3
+    epic: '71'
+    title: WS reconnect error banner auto-clears on successful reconnect/turn round-trip
+    points: 2
+    completed: '2026-05-27'
+  - id: 71-4
+    epic: '71'
+    title: "Player-action transcript — contrast bump on own-echo + persist peer action post-resolution"
+    points: 3
+    completed: '2026-05-27'
+  - id: 71-5
+    epic: '71'
+    title: "MP opening narration — POV-swap the driving player's own card (not raw-bypass)"
+    points: 3
+    completed: '2026-05-28'
+  - id: 71-6
+    epic: '71'
+    title: "Narration POV person-agreement — anchor-PC bare-possessive + mixed-person slips"
+    points: 2
+    completed: '2026-05-28'
+  - id: 71-7
+    epic: '71'
+    title: Authored chassis crew silently skipped when chapter seeds placeholder PC
+    points: 3
+    completed: '2026-05-27'
+  - id: 71-8
+    epic: '71'
+    title: Fix pre-existing pyright error in reference_presenters.py present_magic rows reassignment
+    points: 1
+    completed: '2026-05-28'
+  - id: 71-9
+    epic: '71'
+    title: Migrate dice-overlay-wiring-34-5 source-text wiring test to behavioral assertion
+    points: 1
+    completed: '2026-05-28'
+  - id: 71-10
+    epic: '71'
+    title: "Peer-action transcript: anchor by exact round (add round to PlayerActionPayload) — replaces positional placement"
+    points: 3
+    completed: '2026-05-28'
+  - id: 71-11
+    epic: '71'
+    title: "Per-genre peer-action contrast a11y sweep — axe/devtools across live theme_css, bump peer token if <4.5:1"
+    points: 2
+    completed: '2026-05-28'
+  - id: 71-12
+    epic: '71'
+    title: "Comment-guard at peer-reveal capture site (App.tsx) — 'MUST use raw reveals, never merged' to prevent stale-draft regression"
+    points: 1
+    completed: '2026-06-03'
+  - id: 71-13
+    epic: '71'
+    title: "MP opening live-broadcast bypasses emit_event — route opening through emit_event(author_player_id) for uniform per-recipient POV + perception fanout + event-sourcing (anchor-peer live-swap + visible_to private-segment leak)"
+    points: 5
+    completed: '2026-05-28'
+  - id: 71-14
+    epic: '71'
+    title: "Test-file pyright cleanup for 71-5 — +13 type-looseness in opening-POV test files + 2 visibility_sidecar alias false-positives (pyright-ignore)"
+    points: 1
+    completed: '2026-05-29'
+  - id: 71-15
+    epic: '71'
+    title: "ADR-055 — wire per-transition trope-tick + item resource depletion on room-graph movement"
+    points: 5
+    completed: '2026-05-28'
+  - id: 71-16
+    epic: '71'
+    title: "ADR-113 — per-dispatch confidence scoring + threshold gating in the intent router"
+    points: 5
+    completed: '2026-05-28'
+  - id: 71-17
+    epic: '71'
+    title: "ADR-092 — resolve scene-harness dev-gate doctrine (Cloudflare-only vs DEV_SCENES env gate)"
+    points: 2
+    completed: '2026-05-29'
+  - id: 71-18
+    epic: '71'
+    title: "GM-panel NPC Registry widget reads only npc_pool — merge snapshot.npcs so roster NPCs are not a false-negative"
+    points: 1
+    completed: '2026-05-29'
+  - id: 71-19
+    epic: '71'
+    title: "Author Glenross ADR-053 scenario — give the tea_and_murder flagship a solvable mystery (clue graph, suspects, belief state, gossip)"
+    points: 8
+    completed: '2026-05-30'
+  - id: 71-20
+    epic: '71'
+    title: "Fail loud at startup when Postgres schema is behind alembic head — a behind-head DB is a silent landmine"
+    points: 3
+    completed: '2026-05-29'
+  - id: 71-21
+    epic: '71'
+    title: "perseus_cloud one-sided combat — beat_selection has no server-driven enemy-attack path (resolve_opponent_attack)"
+    points: 5
+    completed: '2026-05-30'
+  - id: 71-23
+    epic: '71'
+    title: "Solo narration streaming — wire messages.stream into existing UI delta path"
+    points: 5
+    completed: '2026-06-04'
+  - id: 71-24
+    epic: '71'
+    title: "perseus_cloud personal-melee combat beat bank — distinct from ship/dogfight beats"
+    points: 3
+    completed: '2026-06-01'
+  - id: 71-25
+    epic: '71'
+    title: "perseus_cloud location grounding — declare world POIs (New Kowloon) as snapshot entities from content"
+    points: 3
+    completed: '2026-06-04'
+  - id: 71-27
+    epic: '71'
+    title: "Router emits combat dispatch with no registered handler — register or stop emitting"
+    points: 2
+    completed: '2026-05-31'
+  - id: 71-28
+    epic: '71'
+    title: "OTEL-coverage split — encounter beats land in events table but emit no watcher spans (live GM panel half-blind)"
+    points: 3
+    completed: '2026-05-30'
+  - id: 71-29
+    epic: '71'
+    title: intent_router degrade path doesn't persist decompose spans to turn_telemetry (GM-panel blind on degraded turns)
+    points: 2
+    completed: '2026-06-04'
+  - id: 71-30
+    epic: '71'
+    title: "action_reveal.dropped_rate_limit also ephemeral — add to _EPHEMERAL_EVENT_TYPES (sibling of composing-storm fix)"
+    points: 1
+    completed: '2026-06-04'
+  - id: 71-31
+    epic: '71'
+    title: "space_opera doctrine — move named/backstoried cultures from genre to world layer, genre ships generic culture slots (Crunch in Genre, Flavor in World)"
+    points: 3
+    completed: '2026-05-31'
+  - id: 71-32
+    epic: '71'
+    title: "World-level scenario discovery + world-aware binding — load scenarios from worlds/<world>/scenarios/ and bind only the active world's scenario; relocate tea_and_murder/the_morning_train under worlds/glenross/ (follow-up to 71-19)"
+    points: 5
+    completed: '2026-05-30'
+  - id: 71-33
+    epic: '71'
+    title: "Migrate pulp_noir scenarios to world tier (worlds/annees_folles/scenarios/) — restore scenario binding after 71-32 made bind world-aware"
+    points: 3
+    completed: '2026-05-30'
+  - id: 71-34
+    epic: '71'
+    title: "Extract shared OTEL watcher-test harness (_setup/_Sock/_wait_for) into tests/integration/conftest — dedupe across combat + beat-advance wiring tests"
+    points: 2
+    completed: '2026-06-04'
+  - id: 71-35
+    epic: '71'
+    title: Delete the dead is_gm / GM-seat axis from the projection firewall (behaviour-preserving)
+    points: 3
+    completed: '2026-06-01'
+  - id: 71-36
+    epic: '71'
+    title: "Machine-guard the peer-reveal accumulator invariant — source-text wiring test that snapshot captures raw peerReveals.reveals, never mergedPeerReveals (71-12 follow-up)"
+    points: 1
+    completed: '2026-06-04'
+  - id: 71-37
+    epic: '71'
+    title: "Classify person-vs-creature at the NPC invention seam — route beasts to the Monster Manual (ADR-059), not the culture-NPC namer"
+    points: 5
+    completed: '2026-06-04'
+  - id: 71-38
+    epic: '71'
+    title: "POI lore-gate slug normalization — decouple R2-object-key slug (verbatim) from HTML-anchor slug (slugify)"
+    points: 3
+    completed: '2026-06-04'
+  - id: 71-39
+    epic: '71'
+    title: "Wonderland POI slug↔region_id article normalization — align history.yaml POI slugs + R2 keys to the canonical region_id"
+    points: 3
+    completed: '2026-06-05'
+  - id: 71-40
+    epic: '71'
+    title: Per-turn latency diagnosis — router decompose + narrator tool-loop p50/p95 + env-vs-code/iteration attribution
+    points: 6
     completed: '2026-06-05'

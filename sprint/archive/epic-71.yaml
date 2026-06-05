@@ -3,7 +3,7 @@ type: epic
 title: "Playtest bugfix — uncovered findings (coyote_star MP, 2026-05-27)"
 description: Open playtest findings from the 2026-05-27 coyote_star MP run (and carryover) NOT already covered by epics 59/61/63/64/65/66/67/68/69/70. Cross-referenced from the ping-pong tracker. Excludes findings covered by the dispatch-bank consolidation (59-11), reference-renderer epic (63), MP-resilience epic (67), genre-tone epic (68), gameboard-UX epic (69), daemon-media epic (70); excludes the beneath_sunden unmapped-deep QUESTION (by design, ADR-106).
 priority: p2
-status: backlog
+status: done
 repos: sidequest-ui,sidequest-server
 stories:
   - id: 71-1
@@ -495,7 +495,11 @@ stories:
     title: Per-turn latency diagnosis — router decompose + narrator tool-loop p50/p95 + env-vs-code/iteration attribution
     points: 6
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-05'
     type: bug
+    review_verdict: approved
+completed: '2026-06-05'
