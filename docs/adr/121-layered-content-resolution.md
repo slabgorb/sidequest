@@ -1,6 +1,6 @@
 ---
 id: 121
-title: "Layered Content Resolution — Global→Genre→World→Culture Merge with Per-Field Strategies and Provenance"
+title: "Layered Content Resolution — Per-Field Merge Strategies and Provenance; the Two-Tier Archetype Shim Is the Production Path"
 status: accepted
 date: 2026-05-31
 deciders: ["Keith Avery", "Neo (Architect)"]
@@ -8,18 +8,35 @@ supersedes: []
 superseded-by: null
 related: [3, 60, 82]
 tags: [core-architecture]
-implementation-status: partial
-implementation-pointer: "Resolver.resolve_merged four-tier walk is dead code; production uses two-tier shim (archetype/shim.py) — sprint story 82-4 (wire or narrow)"
+implementation-status: live
+implementation-pointer: "LayeredMerge/MergeStrategy (genre/resolver.py) + provenance wire types (protocol/provenance.py) + two-tier shim (genre/archetype/shim.py via chargen_mixin); four-tier Resolver walk removed by story 82-4"
 ---
 
 # ADR-121: Layered Content Resolution
 
 > **Documents a system already live in code.** The `LayeredMerge` base class,
-> the `MergeStrategy` taxonomy, the `Resolver[T]` / `Resolved[T]` walk, and the
-> `Provenance` / `MergeStep` wire types shipped during the Rust→Python port
-> (ADR-082) without a governing ADR — they are the Python port of the Rust
-> `#[derive(Layered)]` proc-macro + `Resolver<T>` system. This record closes
-> that architecture-of-record gap and states what the decision *was*.
+> the `MergeStrategy` taxonomy, and the `Provenance` / `MergeStep` wire types
+> shipped during the Rust→Python port (ADR-082) without a governing ADR — they
+> are the Python port of the Rust `#[derive(Layered)]` proc-macro system. This
+> record closes that architecture-of-record gap and states what the decision
+> *was*.
+>
+> **Amended 2026-06-05 (Story 82-4): narrowed to production reality.** The
+> original record also described a four-tier `Resolver[T]` / `Resolved[T]`
+> walk (Global → Genre → World → Culture via `resolve_merged`) as live. The
+> 2026-06-03 ADR-vs-code audit found that walk had **no production consumer**:
+> it was never instantiated outside its own module, no genre pack ships its
+> per-tier file layout (no `{axis}.yaml` at any tier; culture directories hold
+> flat `{culture}.yaml` corpus files, ADR-091), and the actual production
+> resolution path — the two-tier archetype shim — merges *different schemas
+> per tier* by pair-constrained lookup, which the same-type `LayeredMerge`
+> walk cannot express. Story 82-4 **removed** the dead walk (`Resolver`,
+> `ResolutionContext`, `Resolved`, `_load_tier`) per *No Stubbing* ("dead code
+> is worse than no code") and narrowed this ADR to what is genuinely live:
+> the per-field merge machinery, the provenance wire types, and the two-tier
+> shim as the production resolution path. Sections below are rewritten to the
+> narrowed scope; the original four-tier design survives in git history and in
+> the Rust reference repo.
 
 ## Context
 
@@ -53,40 +70,47 @@ Decomposition) governs this merge engine — see *Reconciliation* below.
 
 ## Decision
 
-**A four-tier merge walk — Global → Genre → World → Culture — is implemented as a
-runtime pydantic base class (`LayeredMerge`) that reads per-field merge strategies
-from field metadata at merge time, paired with a `Resolver[T]` that walks the tier
-files on disk and emits a `Resolved[T]` carrying the value plus full
-`Provenance`.** The provenance types live in the protocol package so they can ride
-on wire payloads to the GM panel.
+**Layered content resolution is two live pieces plus one production path:**
 
-### The four-tier walk
+1. **Per-field merge machinery** — a runtime pydantic base class
+   (`LayeredMerge`, `genre/resolver.py`) whose subclasses declare per-field
+   merge strategies via `Field(json_schema_extra={"merge": ...})`, dispatched
+   through the `MergeStrategy` taxonomy. This is how a deeper tier's instance
+   of a model merges into a shallower tier's.
+2. **Provenance wire types** — `Provenance` / `MergeStep` / `Tier` /
+   `ContributionKind` (`protocol/provenance.py`) live in the protocol package
+   so they ride on `GameMessage` payloads to the GM panel.
+3. **The two-tier archetype shim is the production resolution path** —
+   `resolve_archetype` (`genre/archetype/shim.py`), called from chargen
+   (`server/websocket_handlers/chargen_mixin.py`,
+   `_resolve_character_archetype`). It resolves a `(jungian, rpg_role)` pair
+   through **world funnel → genre fallback**, consuming *different schemas per
+   tier* (`archetypes_base.yaml` axes at the global tier,
+   `archetype_constraints.yaml` pairing weights at the genre tier,
+   `archetype_funnels.yaml` at the world tier) and emitting tier-annotated
+   `Provenance` on every resolution.
 
-`Resolver[T].resolve_merged(axis, field_path, ctx)`
-(`genre/resolver.py`) walks exactly four tiers, in a fixed order, each
-optional, each merging *into* the accumulated value when its file exists:
+### What was deliberately removed (82-4)
 
-1. **Global** — `{root}/{field_path}.yaml` (`resolver.py`)
-2. **Genre** — `{root}/{genre}/{field_path}.yaml` (`resolver.py`)
-3. **World** — `{root}/{genre}/worlds/{world}/{field_path}.yaml`
-   (`resolver.py`), only when `ctx.world` is set
-4. **Culture** — `{root}/{genre}/worlds/{world}/cultures/{culture}/{field_path}.yaml`
-   (`resolver.py`), only when both `ctx.world` and `ctx.culture` are set
+The Rust port also carried a generic four-tier file walk —
+`Resolver[T].resolve_merged` over `{root}/{field_path}.yaml`,
+`{root}/{genre}/{field_path}.yaml`, `worlds/{world}/{field_path}.yaml`,
+`cultures/{culture}/{field_path}.yaml` — plus its `ResolutionContext` /
+`Resolved[T]` carrier types. It was removed rather than wired because:
 
-The tier order is not configurable; it is fixed both in the `Tier` enum docstring
-("Always walked in this order: Global, Genre, World, Culture",
-`provenance.py`) and in the straight-line structure of `resolve_merged`. A
-deeper tier always merges into the value produced by all shallower tiers. The
-first tier to supply a file produces the value with `ContributionKind.initial`;
-each subsequent tier merges with `ContributionKind.merged` (`resolver.py`,
-`328-330`, `361-363`). If no tier supplies the field, the walk raises
-`GenreValidationError` (`resolver.py`) — no silent empty default, honoring
-*No Silent Fallbacks*. (`Resolver.resolve`, `resolver.py`, is the
-single-file World-tier convenience load; `resolve_merged` is the full walk.)
+- **No consumer:** never instantiated in production or tests.
+- **No content:** no genre pack ships any `{axis}.yaml` tier file the walk
+  could load; culture directories contain flat `{culture}.yaml` corpus files
+  (ADR-091 naming), not per-axis subdirectories.
+- **Wrong shape for the real problem:** production archetype resolution is
+  pair-constrained *lookup* across heterogeneous per-tier schemas — not a
+  same-type document merge. `LayeredMerge` cannot express it; the shim does.
 
-`ResolutionContext` (`resolver.py`) carries the three keys that locate the
-deeper-tier files: `genre` (required), `world` (required for World/Culture), and
-`culture` (required for Culture only).
+If a future axis genuinely needs a same-schema multi-tier document merge, the
+building blocks remain (`LayeredMerge` + provenance types) and the removed walk
+is recoverable from git history / the Rust reference — but reintroducing it is
+a **new decision** that must arrive together with the content layout that
+feeds it and a production consumer (the wiring doctrine that retired it).
 
 ### The `MergeStrategy` taxonomy
 
@@ -136,9 +160,10 @@ generated `merge` impls. See *Alternatives considered*.
   annotation. If true enforcement is ever wanted, it is a *new* decision, not a
   bug fix, and must be reconciled against Rust parity (see Consequences).
 
-- **Tier order is fixed and total.** Global → Genre → World → Culture, no
-  reordering, no per-pack override. A deeper tier never executes before a
-  shallower one; the merge accumulator only ever flows downhill.
+- **Tier precedence is fixed.** In the production shim, World beats Genre — a
+  world-funnel match wins; the genre fallback fires only when no funnel
+  absorbs the pair. In `LayeredMerge.merge`, the deeper tier always merges
+  *into* the shallower one. No per-pack override of precedence exists.
 
 - **Every field is expected to declare a strategy.** `LayeredMerge.merge` reads
   `extra.get("merge", "replace")` (`resolver.py`) — so an *undeclared* field
@@ -152,11 +177,13 @@ generated `merge` impls. See *Alternatives considered*.
   instances and raises `TypeError` otherwise (`resolver.py`) — a misdeclared
   `deep_merge` on a scalar field fails loud, not silently.
 
-- **Provenance is mandatory output.** Every `Resolved[T]` carries a `Provenance`
-  with a non-optional ordered `merge_trail: list[MergeStep]`
-  (`provenance.py`). The final `source_tier`/`source_file` record the
-  deepest tier that contributed (`resolver.py`). Resolution that produces
-  a value also always produces the audit trail of how.
+- **Provenance is mandatory output.** Every `ArchetypeResolution` carries a
+  `Provenance` with a non-optional ordered `merge_trail: list[MergeStep]`
+  (`provenance.py`); `source_tier`/`source_file` record the tier that supplied
+  the final value (`world` for a funnel hit, `genre` for a fallback —
+  `shim.py`). Resolution that produces a value also always produces the audit
+  trail of how, and `apply_archetype_resolved` copies it onto the character as
+  `archetype_provenance` in lockstep with the resolved name.
 
 ## Observability
 
@@ -166,35 +193,38 @@ rather than the narrator improvising content origins.
 
 - `Provenance` and `MergeStep` (`provenance.py`) are `ProtocolBase` types,
   living in `sidequest/protocol/` precisely so they **travel on the wire as part
-  of `GameMessage` payloads** (`provenance.py`, `resolver.py`). The
-  GM panel can therefore show, for any resolved value, which tier produced it and
-  the full chain of contributions.
+  of `GameMessage` payloads**. The character's `archetype_provenance` carries
+  the full record; the GM panel can therefore show, for any resolved archetype,
+  which tier produced it and the contribution trail.
 - `MergeStep` records `tier`, `file`, an optional source `span`
   (line/column range, `Span`, `provenance.py`), and a `ContributionKind`
   (`initial` / `replaced` / `appended` / `merged`, `provenance.py`). The
-  trail is the human-auditable answer to "where did this archetype's `name` come
-  from, and which tier last touched its `tags`."
-- The `Resolver` constructs a `MergeStep` at each contributing tier with the file
-  path and contribution kind (`resolver.py`, `290-297`, `314-321`,
-  `339-346`, `372-379`), and assembles them into the final `merge_trail`.
+  trail is the human-auditable answer to "where did this archetype's `name`
+  come from."
+- The shim constructs the `MergeStep` at the contributing tier (`shim.py` —
+  world funnel or genre fallback, each `ContributionKind.initial`), and the
+  production caller emits the **OTEL span events** that make engagement
+  verifiable: `character_creation.archetype_resolved` (with `source`,
+  `source_tier`, `weight`, `faction` attributes) and
+  `character_creation.archetype_resolution_failed`
+  (`chargen_mixin._resolve_character_archetype`).
 
-**Honesty caveat (current state):** `span` is always emitted as `None` by the
-resolver today (`resolver.py`, `292`, etc.) — the line/column range is wired
-through the *type* and the wire payload but the resolver does not yet populate it
-from the YAML parse. The `ContributionKind` set the resolver emits is `initial`
-and `merged`; the finer `replaced` / `appended` distinctions exist in the enum but
-are not yet emitted per-field (the trail records a tier-level `merged`, not a
-per-field breakdown). These are panel-fidelity gaps, not correctness gaps — the
-trail is accurate about *which tiers and files contributed in what order*.
+**Honesty caveat (current state):** `span` is always emitted as `None` — the
+line/column range is wired through the *type* and the wire payload but not yet
+populated from the YAML parse. The shim's trail is single-step (`initial` at
+the deciding tier); the finer `replaced` / `appended` kinds exist in the enum
+for `LayeredMerge`-based merging but the production path has no multi-step
+trail to apply them to. These are panel-fidelity gaps, not correctness gaps —
+the trail is accurate about which tier and file decided the value.
 
 ## Consequences
 
 **Positive**
 
 - Content authors (Keith, Jade, future table members per the homebrew goal) can
-  override at the tier that matches their intent — a world override file, a
-  culture specialization — without touching engine code or restating the whole
-  object. The merge engine composes the layers.
+  override at the tier that matches their intent — a world funnel file refines
+  the genre's archetype table — without touching engine code or restating the
+  whole object. The shim composes the layers and names its sources.
 - Per-field strategy keeps the common cases (scalar override, list accretion,
   nested-struct refinement) declarative and local to the model, not buried in
   imperative merge code.
@@ -218,9 +248,10 @@ trail is accurate about *which tiers and files contributed in what order*.
   that *forgets* its strategy declaration still merges (as `replace`) rather than
   erroring at merge time. Correctness depends on the per-subclass wiring test
   catching the omission; if a subclass ships without that test, the gap is silent.
-- **`Resolved`/`Provenance` ride the wire.** Because provenance is a protocol type
-  on `GameMessage` payloads, changes to `Provenance`/`MergeStep` shape are
-  client-visible contract changes, not purely internal refactors.
+- **`Provenance` rides the wire.** Because provenance is a protocol type
+  on `GameMessage` payloads (`archetype_provenance`), changes to
+  `Provenance`/`MergeStep` shape are client-visible contract changes, not
+  purely internal refactors.
 - **Provenance fidelity is partial** (see Observability caveat): `span` is
   unpopulated and `ContributionKind` is tier-level, so the panel cannot yet show
   per-field, line-level origin.
@@ -248,12 +279,11 @@ trail is accurate about *which tiers and files contributed in what order*.
 
 - **ADR-003 (Genre Pack Architecture)** — defines the pack/world *filesystem
   layout* and the `loader.py` flat-file load path. It does **not** govern this
-  merge engine. The resolver consumes the directory structure ADR-003 defines
-  (`{genre}/`, `worlds/{world}/`, `cultures/{culture}/`) but adds the orthogonal
-  concern of *how structured objects combine across those directories with
-  recorded provenance*. ADR-003's "genre vs world (the second axis)" is the
-  doctrine; this ADR is the merge mechanism that realizes it and extends it down
-  to a fourth (Culture) tier.
+  resolution behavior. The shim consumes models the loader reads from the
+  directory structure ADR-003 defines (`{genre}/`, `worlds/{world}/`) but adds
+  the orthogonal concern of *how the final value is chosen across those tiers
+  with recorded provenance*. ADR-003's "genre vs world (the second axis)" is
+  the doctrine; this ADR is the resolution mechanism that realizes it.
 - **ADR-060 (Genre Models Decomposition)** — split the monolithic genre models
   file into domain submodules under `genre/models/`. It governs *where model
   definitions live*, not *how their instances merge*. The `LayeredMerge` subclasses
@@ -265,7 +295,9 @@ trail is accurate about *which tiers and files contributed in what order*.
   `Resolver<T>` (`resolver/merge.rs`, `resolver/load.rs`, `resolver/resolved.rs`,
   cited in `resolver.py`). The proc-macro's compile-time behavior was
   re-expressed as the runtime `LayeredMerge` base class; the merge *semantics*
-  (tier order, four strategies, provenance trail) were preserved verbatim — most
+  (strategy taxonomy, provenance trail) were preserved verbatim — most
   consequentially the documentation-only `culture_final`, kept for exact parity.
+  The ported `Resolver<T>` walk itself was carried across but never gained a
+  Python-side consumer and was removed by Story 82-4 (see the amendment note).
   The Rust origin is preserved read-only at
   `github.com/slabgorb/sidequest-api` per ADR-082.
