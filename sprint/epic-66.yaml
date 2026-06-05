@@ -1,9 +1,9 @@
 id: '66'
 type: epic
 title: Character Creation Depth
-description: 'Mechanical depth and correctness of the character-creation pipeline (chargen): differentiated statlines, class/race/mutation mechanical surface, and the player-facing crunch Sebastien expects. Spun out of Playtest 2026-05-25 (mutant_wasteland/flickering_reach) findings.'
+description: 'Mechanical depth and correctness of the character-creation pipeline (chargen): differentiated statlines, class/race/mutation mechanical surface, and the player-facing crunch Sebastien expects. Spun out of Playtest 2026-05-25 (mutant_wasteland/flickering_reach) findings. CANCELLED 2026-06-05: superseded by the Without-Number SRD adoption (SWN/WWN/CWN/AWN ruleset modules) — chargen depth needs a fresh re-scope on top of the SRD chargen seams, not these pre-SRD stories.'
 priority: p2
-status: backlog
+status: canceled
 repos: sidequest-server,sidequest-content
 stories:
   - id: 66-1
@@ -11,7 +11,7 @@ stories:
     description: "Every PC in mutant_wasteland rolls the identical statline [13,13,13,12,12,12] (Brawn/Reflexes/Toughness 13, Wits/Instinct/Presence 12). Root cause (confirmed in code during Playtest 2026-05-25): mutant_wasteland/rules.yaml selects stat_generation: point_buy (budget 27); _allocate_point_buy() in sidequest-server/sidequest/game/builder.py:2330-2363 is a deterministic round-robin → ALWAYS [13,13,13,12,12,12] for 6 stats. The race/mutation/calling differentiation block (builder.py:2417-2435) keys on hint PRESENCE (is not None), not hint VALUE, with hardcoded deltas — so two characters that both have race+class+mutation hints receive IDENTICAL deltas regardless of which choices they made. The genuinely-correct path is already fully wired and method-agnostic: stat_bonuses is a real field on MechanicalEffects (genre/models/character.py:78), accumulates into acc.stat_bonuses (builder.py:1185-1186), and is applied UNCONDITIONALLY for every method including point_buy (builder.py:2410-2412), correctly skipping the derivation block when present (not acc.stat_bonuses guard at :2418). So the fix is CONTENT, ZERO server change: author thematic stat_bonuses onto the class/race/mutation choices in mutant_wasteland/char_creation.yaml. Balance numbers are Sebastien-facing crunch — Keith authors the values (e.g. Scavenger→+Wits/+Instinct, Plant Person→+Toughness/−Reflexes). Supporting piece: a thin load-time VALIDATOR (per feedback_no_content_coupled_tests — a separate CLI/load check, NOT a content-coupled pytest) that warns LOUD when a point_buy genre ships chargen choices with no differentiating stat_bonuses, so this gap fails at load instead of surfacing in a playtest. DO NOT extend the builder.py:2419 guard — it keys on hint presence not value and would still produce identical deltas; standard_array's presence-based behavior is also locked by test_builder_stats.py:234-250 (Rust parity). Reference: ping-pong [BUG] All PCs roll identical flat statlines."
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-content,sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -25,7 +25,7 @@ stories:
     description: "Playtest 2026-05-25: a Lv1 Scavenger's Abilities tab is completely empty. Root cause (confirmed by reading content): mutant_wasteland's 5 classes (Scavenger/Mutant/Beastkin/Pureblood/Wirewalker — defined as class_hint in char_creation.yaml) have NO signature abilities or class moves authored anywhere in the pack (archetypes.yaml has flavor archetypes with no ability/signature/class_move keys). ADR-095 ('one signature ability per non-magical class') + #274 (class-move pills) imply each non-magical class should surface at least a signature move. The server has nothing to materialize because the content doesn't define it. This is balance-laden, Sebastien-facing class mechanical surface — Keith authors the abilities (what each class's signature does, costs, beats). Per feedback_no_content_coupled_tests, the 'live pack has signature abilities' gap should be surfaced by a load-time VALIDATOR (warn when a non-magical class ships with no signature ability/class moves), NOT a content-coupled pytest. UI floor already shipped: sidequest-ui PR #280 adds a 'No special abilities yet.' empty-state so the tab is never blank — but that does NOT make the Scavenger mechanically complete; this story does."
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-content,sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -37,7 +37,7 @@ stories:
     title: Chargen names-step extraction — split rider road-name vs rig-name from prose (or use followup answer); stop storing whole sentence as char_name
     points: 3
     priority: p2
-    status: backlog
+    status: canceled
     repos: server
     workflow: tdd
     type: bug
@@ -53,7 +53,7 @@ stories:
       If the decision is YES (author abilities): model on spaghetti_western/classes.yaml (which just landed) and epic-66 sibling 66-2 (mutant_wasteland signature abilities). Author one signature ability per allowed_class. Content (pack YAML) — delegate to a gm agent per project convention (delegate-content-tasks-to-gm-background-agent); any engine wiring stays on the main thread. Sibling pattern: 66-2 "Author ADR-095 signature abilities + class moves for mutant_wasteland". ADRs: 097.
     points: 3
     priority: p3
-    status: backlog
+    status: canceled
     repos: content,server
     workflow: tdd
     acceptance_criteria:
@@ -73,7 +73,7 @@ stories:
       Cosmetic / display-only: in-game state is CORRECT (snapshot already has the resolved values). Screenshot: .sq-playtest-screenshots/005-character-sheet.png. repos: sidequest-ui (confirmation sheet binding); sidequest-server only if the resolved values aren't already exposed to the client pre-commit (verify the snapshot/funnel payload carries resolved race/char_class at confirmation time).
     points: 2
     priority: p3
-    status: backlog
+    status: canceled
     repos: ui,server
     workflow: tdd
     acceptance_criteria:
