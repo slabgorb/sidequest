@@ -35,10 +35,12 @@ stories:
     title: WI-6 OTEL score decomposition — per-card retrieval.card.reason + embed_skipped + tier lifecycle spans (extends ADR-118 §D5)
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
     depends_on: 84-1
+    completed: '2026-06-05'
   - id: 84-5
     title: WI-2 Lifecycle-aware scope — dormant quest/trope indexing + active→floor routing; per-type active/dormant predicate (amends ADR-118 §D2; quest source = epic 77, trope = ADR-128)
     points: 5
