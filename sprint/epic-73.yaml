@@ -134,10 +134,14 @@ stories:
     title: "Rewrite stale combat-lifecycle e2e assertions for the dual-dial encounter model — tests/e2e/test_encounter_wiring_e2e.py de-inerted in 73-6 but both tests now FAIL on stale assertions: test_combat_walkthrough_initiate_tick_resolve reads removed single 'metric' field (replaced by player_metric/opponent_metric + _reject_legacy_metric validator, ADR-024); test_xp_award_higher_in_combat_than_out expects in-combat XP delta 25 but observes 10. Rewrite against StructuredEncounter dual-dial model + verify XP-award semantics. Found in 73-6 (Dev Delivery Finding)."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-04'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-05'
     type: bug
+    review_findings: "Round 2: all 3 round-1 findings FIXED + Claude-client guard added (good). One new blocking (MEDIUM, meaningful-assertions rule): the replacement pytest.raises(ValidationError) is partially vacuous — constructor omits required player_metric/opponent_metric so it raises on missing fields even if _reject_legacy_metric is deleted. Fix: add match=r\"legacy 'metric' field\". One-line."
+    review_verdict: approved
   - id: 73-13
     title: "BeatImpactPanel render-gate drops opponent readout when player impact absent — ConfrontationOverlay gates the panel on `{data.last_beat_impact && ...}`, so in the opponent-acts-first window (legacy beat_selection path / surprise round / player takes a non-combat action: opponent impact present, player impact absent) the WHOLE panel is suppressed, hiding the 'the enemy hit you' readout 73-7 added. Reviewer corrected TEA's 'unreachable' claim (narration_apply.py:4031-4055 preserves opponent-side selections; last_beat_impacts accumulates/never clears). Not a regression/crash. Fix: gate on (player || opponent) and let BeatImpactPanel tolerate an absent player impact. Found in 73-7 review."
     points: 2

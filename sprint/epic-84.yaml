@@ -13,7 +13,6 @@ stories:
     status: backlog
     repos: sidequest-server
     workflow: tdd
-    depends_on: 76-7
   - id: 84-2
     title: WI-5 Alias resolution + accretion-fed aliases — mention resolves through epithets, promoted entities accrete via 75-1 path
     points: 3
