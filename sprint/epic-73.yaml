@@ -157,9 +157,12 @@ stories:
     title: BeatImpactPanel you/them labels + signed numeric deltas — add 'you'/'them' text labels and +/- sign to the own/opponent dial-delta numbers in BeatImpactPanel so two adjacent bare integers are disambiguated for a human (today only DOM testids tell them apart; CSS effect styling shipped in 73-10). Deferred from 73-7 (Architect/Reviewer notes) and 73-10 (Dev — touches the render that 73-4/73-7/73-9 assert numeric content against, so needs care w/ those 4 test files). Player-facing legibility for Sebastien/Jade.
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-ui
     workflow: tdd
+    completed: '2026-06-05'
+    review_verdict: approved
   - id: 73-15
     title: Filter narrator tool_definitions by bound ruleset — WWN/CWN-only tools exposed on every pack (ADR-117 tightening)
     description: "Architect finding (2026-06-04, ADR-117 ruleset routing dig). orchestrator.py:3844/3992 hands the narrator default_registry.tool_definitions() — ALL registered tools, unfiltered by bound ruleset. The WWN/CWN-only tools (commit_effort/long_rest/veterans_luck=wwn; adjust_system_strain/stabilize_mortal_injury=cwn) are therefore visible to the narrator on EVERY pack, including native packs. They self-guard fail-loud: tool description says 'WWN-only…' and the handler raises ValueError if pack.rules.ruleset != the required slug (e.g. commit_effort.py:96). So this is NOT a correctness bug (no silent fallback) — it is a tightening: the narrator wastes tool-budget on, and can mis-attempt, tools irrelevant to the bound ruleset. Tighten by filtering tool_definitions to the bound ruleset at assembly time. NOTE: SM may re-home — no dedicated ruleset epic exists; parked in 73 because the gated tools are combat/lethality tools."
