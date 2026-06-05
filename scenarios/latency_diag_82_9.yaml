@@ -1,0 +1,28 @@
+# 82-9 latency diagnosis (AC5) — drives a representative tea_and_murder/glenross
+# solo session so the live intent_router.decompose + narration.turn span
+# latencies form a usable p50/p95 sample (env-vs-code + iteration correlation).
+# Run with --span-jsonl and feed the captured latencies through
+# sidequest.telemetry.latency_report.build_latency_report.
+name: Latency Diag 82-9
+genre: tea_and_murder
+world: glenross
+
+character:
+  strategy: auto
+
+actions:
+  - "look around the drawing room"
+  - "study the assembled guests"
+  - "walk to the rain-streaked window"
+  - "examine the writing desk"
+  - "ask the butler about the missing letter"
+  - "search the bookshelf for anything hidden"
+  - "question the widow about her late husband"
+  - "step into the hallway and listen"
+  - "inspect the locked study door"
+  - "confront the nervous nephew"
+  - "read the torn note found by the hearth"
+  - "compare the handwriting to the ledger"
+  - "accuse no one yet — gather the guests"
+  - "lay out the timeline of the evening"
+  - "name the culprit and explain the method"
