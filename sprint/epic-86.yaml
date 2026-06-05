@@ -10,9 +10,11 @@ stories:
     title: 'Plan 1 — CWN binding + ablative-HP driver combat: add ruleset:cwn to road_warrior; adopt standard CWN six (STR/DEX/CON/INT/WIS/CHA), remap every flavor-name reference (injury_system, archetypes, classes, char_creation, power_tiers); remove edge_config/Driver Edge → ablative HP + Shock/Trauma/Mortal/Major-Injury; combat confrontation win_condition:hp_depletion with opponent_default_stats carrying ALL SIX abilities + hp + armor_class; classes→CWN class+foci; FIX the hp_depletion calibration migration (test_road_warrior_pack_loads_with_dual_dial_schema + COMBAT_PACKS, per space_opera precedent); apply the Without-Number wiring checklist; mandatory OTEL/integration wiring test (cwn spans fire on a real turn).'
     points: 5
     priority: p2
-    status: in_progress
+    status: done
     repos: sidequest-server,sidequest-content
     workflow: tdd
+    completed: '2026-06-05'
+    review_verdict: approved
   - id: 86-2
     title: 'Plan 2 — Solo rig two-pool vehicle combat: wire the dormant RigComposurePool + rig_crash into a real confrontation. Vehicle AC (+Drive moving, -4 stationary), Armor reduction, Rig Composure as ablative hull; NET-NEW two-pool resolution (hull→0 = crash event → dismounted → driver HP, per CWN §2.4.8.1-2); ramming (opposed Dex/Drive, max-HP dmg + Trauma 1d12×3, ramming vehicle takes dmg back); crash damage to occupants (Physical+Luck saves). New WinCondition variant or beat-application branch. Assert rig_pool.delta/zero_crossing + rig_pool.crash_event spans fire.'
     points: 8
