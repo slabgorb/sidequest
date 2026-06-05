@@ -10,7 +10,7 @@ stories:
     title: 'Plan 1 — CWN binding + ablative-HP driver combat: add ruleset:cwn to road_warrior; adopt standard CWN six (STR/DEX/CON/INT/WIS/CHA), remap every flavor-name reference (injury_system, archetypes, classes, char_creation, power_tiers); remove edge_config/Driver Edge → ablative HP + Shock/Trauma/Mortal/Major-Injury; combat confrontation win_condition:hp_depletion with opponent_default_stats carrying ALL SIX abilities + hp + armor_class; classes→CWN class+foci; FIX the hp_depletion calibration migration (test_road_warrior_pack_loads_with_dual_dial_schema + COMBAT_PACKS, per space_opera precedent); apply the Without-Number wiring checklist; mandatory OTEL/integration wiring test (cwn spans fire on a real turn).'
     points: 5
     priority: p2
-    status: backlog
+    status: in_progress
     repos: sidequest-server,sidequest-content
     workflow: tdd
   - id: 86-2
