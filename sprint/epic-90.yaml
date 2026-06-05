@@ -1,0 +1,38 @@
+id: '90'
+type: epic
+title: Ruleset-Module Worlds — Live Combat & Magic Verification Enablement
+description: "Make WWN/CWN/SWN (RulesetModule, ADR-117) worlds able to PROVE their crunch fires under live narrator-in-the-loop play — the deferred half of story 87-4 AC5 (decision D1: 87-4 leans on test_wwn_heavy_metal_combat.py for the MECHANICAL proof; this epic delivers the LIVE proof). Findings from 87-4: (1) WWN combat seats its Other from the confrontation def's opponent_default_stats in rules.yaml (heavy_metal: hp 10/ac 12) at trigger time via instantiate_encounter_from_trigger — so the Other's combat numbers are NOT a blocker; the live runs produced no wwn.* simply because the narrator never triggered a combat confrontation from a social opening (correct ADR-116/139 behavior). (2) encountergen is native-dial-only (requires rules.yaml allowed_classes) so it FAILS for ruleset-module packs ('genre heavy_metal has no allowed_classes'); pregen.seed_manual's call returns None and the Monster Manual encounters pool stays empty (evropi 49 NPCs/0 enc; long_foundry 39/0). That gap matters for FREE-PLAY REACHABILITY — supplying named/located/varied hostiles a fight-seeker can run into (the basic bestiary floor) — NOT for whether a triggered Other is mechanically capable. (3) The scene-harness hydrator can't seed per-character WWN spellcasting (core.spellcasting) and its encounter block builds a dial StructuredEncounter, not WWN hp_depletion — so a content-only fixture can't prove wwn.spell.cast or deterministic WWN combat (needs server work). (4) long_foundry ships magic.yaml (ADR-126) but snapshot.magic_state is None — plugin never instantiated at session-bind. SCOPE: 90-1 encountergen ruleset-awareness (reachable statted hostiles); 90-2 WWN magic plugin session-bind instantiation; 90-3 AC5b live free-play OTEL proof (evropi+long_foundry+barsoom); 90-4 scene-harness hydrator seeds WWN spellcasting + hp_depletion encounter for a DETERMINISTIC fixture proof. Server/tooling — OUT of epic 87's zero-engine-changes premise. BENEFICIARIES (all RulesetModule worlds): heavy_metal (evropi, long_foundry, in-progress Barsoom world — epic 89, also WWN), elemental_harmony (wwn), neon_dystopia (cwn), space_opera (swn). Barsoom (epic 89) DEPENDS on this epic. Refs: ADR-059/114/116/117/126/139; encountergen at sidequest-server/sidequest/cli/encountergen/; seed at server/dispatch/pregen.py; hydrator at server/game/scene_harness.py."
+priority: p2
+status: backlog
+repos: server,content
+stories:
+  - id: 90-1
+    title: Encountergen ruleset-awareness — emit WWN/CWN/SWN-aligned enemy stat blocks via the RulesetModule seam so pregen.seed_manual populates the Monster Manual encounters pool for ruleset-module packs (replaces native allowed_classes/class_hp_bases dependency)
+    points: 8
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+  - id: 90-2
+    title: WWN/ADR-126 magic plugin not instantiated at session-bind — long_foundry ships magic.yaml but runtime snapshot.magic_state is None, so cast paths gate; instantiate the world MagicPlugin into the session and assert magic_state present via OTEL
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 90-3
+    title: AC5b live free-play OTEL proof — a fight-seeker reaches WWN combat (wwn.* + ablative HP) and a caster fires wwn.spell.cast from a world opening, lie-detector quiet, across heavy_metal evropi + long_foundry + barsoom (epic 89); depends on 90-1 statted enemies + 90-2 magic_state
+    points: 5
+    priority: p2
+    status: backlog
+    repos: content,server
+    workflow: tdd
+    depends_on: 90-1
+  - id: 90-4
+    title: Scene-harness hydrator — seed per-character WWN core.spellcasting (Effort/prepared) and a WWN hp_depletion encounter so a DETERMINISTIC fixture playtest can prove wwn.* combat + wwn.spell.cast live (deterministic counterpart to 90-3 free-play); _hydrate_character + _hydrate_encounter in server/game/scene_harness.py
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
