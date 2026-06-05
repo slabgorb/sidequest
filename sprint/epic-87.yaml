@@ -18,16 +18,29 @@ stories:
     review_verdict: approved
   - id: 87-2
     title: 'Story 2 — Classes & chargen: author classes.yaml as faithful WWN 3-chassis (Warrior/Expert/Mage + Foci) with grim dark-fantasy flavor in descriptions; remap archetypes.yaml/char_creation.yaml/power_tiers.yaml/archetype_constraints.yaml off the 5e class names; drop the 5e allowed_classes/allowed_races/banned_spells from rules.yaml. Mage traditions (necromancer/elementalist/pact-born) expressed as caster classes. No spells yet (Story 3).'
-    points: 8
+    points: 13
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server,sidequest-content
     workflow: tdd
+    acceptance_criteria:
+      - 'classes.yaml: 5 faithful-WWN classes (warrior, expert, necromancer, elementalist, pact_born) — correct chassis/role/prime_requisite per spec §3; warrior carries warrior:true; the three Mage traditions carry magic_access:wwn with FULL wwn_magic (effort_sources + casts_per_day_by_level + max_spell_level_by_level + prepared_by_level + starting_prepared that resolves to real spells). Every class carries saving_throws (the spell-catalog load validator requires it once a catalog is present).'
+      - spells_wwn.yaml authored as a faithful PORT of WWN High Magic spells (mechanics verbatim WWN; grim heavy_metal flavor reskin at most — this is where the retired pact/ledger doom-cost feeling re-homes). Loads into pack.wwn_spell_catalog (non-empty); every caster class's starting_prepared id resolves in the catalog.
+      - cast_spell beat added to the Blade-work combat confrontation with class_filter to [necromancer, elementalist, pact_born]; cast_spell EXCLUDED from non-caster encounter_beat_choices. wwn.magic config finalized.
+      - Each class has one signature ability (ADR-095) with grim dark-fantasy flavor; no separate Foci construct (follows EH abilities pattern).
+      - 'rules.yaml: 5e allowed_classes/allowed_races/banned_spells/default_race removed; default_class:warrior and class_label:Calling set; wwn: block magic finalized; custom_rules (ledger_tracking/pact_cost_attribution) and the pact_working/debt_collection confrontations left UNTOUCHED (Story 4).'
+      - '5e class names replaced everywhere: genre char_creation.yaml AND evropi/char_creation.yaml class_hints reference the 5 new ids; power_tiers.yaml re-keyed from 12 5e blocks to 5 WWN-display-name blocks with fresh per-tier visuals; world typical_classes (evropi + long_foundry) updated.'
+      - 'Cross-file consistency: no class_hint / typical_classes / power_tiers key references a class id/display-name absent from classes.yaml (a test enforces this — protects reference-page anchors).'
+      - "Wiring: heavy_metal loads via load_genre_pack; chargen builds a character per class; each CASTER seeds a POPULATED SpellcastingState (prepared == starting_prepared[:capacity], NOT None) + an Effort pool; warrior/expert seed effort={}/spellcasting=None; the cast_spell dispatch is reachable for a caster on the real pack (wwn.spell.cast span fires, cast spent, HP ablated); class_label shows 'Calling'. Full suite green vs recorded baseline."
+    completed: '2026-06-05'
+    review_findings: "HIGH: default_class is the lowercase id 'warrior' but the builder resolves class only by display_name (builder.py:2286, no id fallback) — a freeform-default chargen character silently gets no ClassDef (no abilities, no warrior:true). Masked by the existing test (.lower()=='warrior'). Fix: default_class: Warrior + add a guard test that default_class resolves to a ClassDef. LOW: 4 new test files fail ruff format --check (pure reflow)."
+    review_verdict: approved
   - id: 87-3
     title: "Story 3 — Magic content: author spells_wwn.yaml in heavy_metal's grim/grotesque idiom (this is where the retired pact/ledger flavor re-homes — costly, doom-soaked spell descriptions over vanilla WWN Effort/System-Strain mechanics); wire cast_spell beats with class_filter to the caster classes; add saving_throws to every class (the spell-catalog load validator requires it once a spell catalog is present); finalize the wwn.magic config. e2e cast_spell wiring proof mirroring test_wwn_elemental_harmony_dispatch (wwn.spell.cast span, cast spent, HP ablated, B/X arm NOT fired)."
     points: 8
     priority: p3
-    status: backlog
+    status: canceled
     repos: sidequest-server,sidequest-content
     workflow: tdd
   - id: 87-4
