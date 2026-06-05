@@ -17,6 +17,7 @@ epics:
   - '84'
   - '86'
   - '87'
+  - '88'
 standalone_stories:
   - id: 73-16
     jira: 73-16

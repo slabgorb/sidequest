@@ -1,0 +1,27 @@
+id: '88'
+type: epic
+title: Ashes Without Number — mutant_wasteland ruleset port
+description: 'Faithful port of Ashes Without Number (Sine Nomine) as the fourth Without-Number sister module, binding mutant_wasteland to a thin awn ruleset (AWN combat == CWN). Design: docs/superpowers/specs/2026-06-05-ashes-without-number-mutant-wasteland-design.md (§11 Architect Addendum has the seam analysis + story split). Foundation-first: Plan 1 (ruleset binding + ablative-HP personal combat) seeded now as stories 88-1 (engine) and 88-2 (content). Later plans — Mutations (bespoke MutationPlugin), Radiation/Disease, Stress/Addiction, Survival hexcrawl, Creatures, Enclaves — get stories when their specs land. No new ADR (instance of ADR-117 + inherits ADR-114).'
+priority: p2
+status: backlog
+repos: server,content
+stories:
+  - id: 88-1
+    title: AWN Plan 1 engine — thin awn ruleset module + binding seams + wiring/chargen tests
+    points: 5
+    priority: p2
+    status: done
+    started: '2026-06-05'
+    repos: server
+    workflow: tdd
+    completed: '2026-06-05'
+    review_findings: 3 stale module docstrings misstate the changed contract (adjust_system_strain.py:16, stabilize_mortal_injury.py:23 say CWN-only; downed_seam.py:15 says cwn/wwn) — code correct, doc-only + recommended test hardening; green rework
+    review_verdict: approved
+  - id: 88-2
+    title: AWN Plan 1 content — mutant_wasteland awn binding, standard-six sweep, hp_depletion combat confrontation
+    points: 3
+    priority: p2
+    status: backlog
+    repos: content
+    workflow: tdd
+    depends_on: 88-1
