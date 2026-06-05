@@ -21,10 +21,12 @@ stories:
     title: AWN Plan 1 content — mutant_wasteland awn binding, standard-six sweep, hp_depletion combat confrontation
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: content
     workflow: tdd
     depends_on: 88-1
+    completed: '2026-06-05'
     review_findings: 'F1 (HIGH): standard-six sweep not exhaustive — worlds/flickering_reach/archetypes.yaml retains 12 flavor-named stat_ranges keys; world archetypes replace genre archetypes in play (only playable world) and swn _stat raises KeyError on the dead keys → combat-path crash. Fix: 12-key remap + TEA world-tier gate.'
     review_verdict: approved
   - id: 88-3
