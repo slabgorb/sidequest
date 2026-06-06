@@ -22,10 +22,14 @@ stories:
     title: Local rung in the model ladder — CallType.CLASSIFICATION/SCRATCH route to Ollama behind explicit config; fail loud if unreachable (NO silent Haiku fallback)
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-06'
     repos: sidequest-server
     workflow: tdd
     depends_on: 92-1
+    completed: '2026-06-06'
+    review_findings: "[SEC][HIGH] role boundary erased on local path (send_stateless flattens system+user) — use send_with_session role-separated messages + RED test; mirror in QwenRouterLlm. [TEST] vacuous 'adapter is not None' + negative-isinstance — assert isinstance(_OllamaIntentRouterLlm). Recommended: SIDEQUEST_OLLAMA_URL test, curate success-path test."
+    review_verdict: approved
   - id: 92-3
     title: Asides to local (ADR-107) — single-shot Haiku to qwen, same fail-loud config seam (fold into 92-2 if trivial)
     points: 2
