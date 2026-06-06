@@ -21,10 +21,12 @@ stories:
     title: Attribute and fix the 8x/turn Haiku volume (caller tags from 91-1; fix retries/fan-out or document budget with per-turn assertion)
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-06'
     repos: sidequest-server
     workflow: tdd
     depends_on: 91-1
+    completed: '2026-06-06'
     type: bug
   - id: 91-3
     title: 'Intent Router cache repair + fail-loud floor guard (combined prefix >=4096 or raise at build; live-gated test: cache_creation>0 turn 1, cache_read>0 turn 2; DESCOPE if local routing epic lands first)'
