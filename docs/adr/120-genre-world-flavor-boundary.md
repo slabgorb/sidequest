@@ -1,18 +1,31 @@
 ---
 id: 120
 title: "Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World"
-status: accepted
+status: superseded
+status_rationale: "Flavor-in-world half stands and is subsumed by ADR-140; the 'mechanics-in-genre' half (archetype templates / classes / spell catalogs / mechanical tropes as genre-tier scaffolding) is invalidated — cast and catalog are world-tier per ADR-140."
 date: 2026-05-31
 deciders: ["Keith Avery", "Neo (Architect)"]
 supersedes: []
-superseded-by: null
-related: [3, 4, 79]
+superseded-by: 140
+related: [3, 4, 79, 140]
 tags: [core-architecture]
-implementation-status: live
-implementation-pointer: null
+implementation-status: retired
+implementation-pointer: "Doctrine superseded by ADR-140 (genre=rulebook, world owns cast/catalog). The flavor-in-world loader code (genre-tier flavor optional, world-authoritative theme/audio/visual_style, per-load OTEL spans) remains live under ADR-140's umbrella: sidequest-server/sidequest/genre/loader.py (_load_single_world, _emit_world_flavor_loaded)."
 ---
 
 # ADR-120: Genre/World Flavor Boundary
+
+> **Superseded by [ADR-140](140-genre-rulebook-world-cast-catalog.md) (2026-06-06).**
+> The *flavor-in-world* decision below (D1–D5) is correct and remains live — it
+> is subsumed by ADR-140. But ADR-120's **"mechanics-in-genre"** framing drew the
+> crunch boundary in the wrong place: it kept declaring **archetype templates,
+> classes/callings, spell catalogs, and "mechanical" tropes** as genre-tier
+> scaffolding (see §"Invariants/Contracts" below). Epic 94 invalidated that:
+> those are **cast and catalog**, which are **world-tier** and must be
+> homebrewable without engine changes. The corrected doctrine — *the genre tier
+> is the RULEBOOK only; the world tier owns the cast and catalog* — is ADR-140.
+> Read this ADR for the flavor boundary; read ADR-140 for the cast/catalog
+> boundary that supersedes the "mechanics-in-genre" claim.
 
 > **Documents a system already live in code, mid-migration.** Epic 74 story 74-1
 > shipped (`completed: 2026-05-31`) the loader refactor that moved the

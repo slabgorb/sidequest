@@ -73,9 +73,9 @@ Current backend reference documents: `docs/architecture.md`, `docs/tech-stack.md
 | [ADR-007: Unified Character Model](007-unified-character-model.md) | ✓ accepted | live |
 | [ADR-101: Anthropic SDK as Narrator Backend](101-anthropic-sdk-as-narrator-backend.md) | ✓ accepted | *partial* → Backend live + default on develop: sidequest-server/sidequest/agents/llm_factory.py (default anthropic_sdk), anthropic_sdk_client.py, model_routing.py, anthropic_cost.py. Phased cleanups (sidecar/perception-rewriter/OTEL-scraper deletion) tracked by ADR-102/104/103. |
 | [ADR-115: Persistence Substrate Migration — SQLite-Per-Session to PostgreSQL](115-postgres-persistence-substrate.md) | ✓ accepted | live → docs/superpowers/specs/2026-05-26-postgres-persistence-migration-design.md |
-| [ADR-120: Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World](120-genre-world-flavor-boundary.md) | ✓ accepted | live |
 | [ADR-121: Layered Content Resolution — Per-Field Merge Strategies and Provenance; the Two-Tier Archetype Shim Is the Production Path](121-layered-content-resolution.md) | ✓ accepted | live → LayeredMerge/MergeStrategy (genre/resolver.py) + provenance wire types (protocol/provenance.py) + two-tier shim (genre/archetype/shim.py via chargen_mixin); four-tier Resolver walk removed by story 82-4 |
 | [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | ✓ accepted | *partial* → sidequest-server reference_renderer.py — audience doctrine + stories 65-7..65-9 live; 65-10..65-12 pending |
+| [ADR-140: Genre Is the Rulebook Only; the World Owns the Cast and Catalog — Supersedes ADR-120's Mechanics-in-Genre](140-genre-rulebook-world-cast-catalog.md) | ✓ accepted | *partial* → sidequest-server/sidequest/genre/loader.py (_load_single_world world-tier classes/spells_wwn/seed_tropes loads + pack-level world-first aggregation), sidequest/server/dispatch/{class_resolve,char_creation_resolve,wwn_spell_catalog_resolve}.py (world-first resolvers), sidequest/genre/models/pack.py (World.classes / World.wwn_spell_catalog / World.chassis_classes / World.seed_tropes). Delivered by epic 94 stories 94-1..94-3. |
 
 ## Prompt Engineering
 
@@ -296,6 +296,7 @@ Retired ADRs. See [SUPERSEDED.md](SUPERSEDED.md) for the grouped view.
 | [ADR-083: Multi-LoRA Stacking and Verification Pipeline](083-multi-lora-stacking-and-verification.md) | ✗ historical | — |
 | [ADR-084: Compositional-Dimension Specialization for Style LoRAs](084-lora-composition-dimension.md) | ✗ superseded | [ADR-070](070-mlx-image-renderer.md) |
 | [ADR-089: Pre-Rendered Cavern Battle Maps via Ported Cellular Automata](089-cavern-template-generation.md) | ✗ superseded | [ADR-096](096-cavern-renderer-revival.md) |
+| [ADR-120: Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World](120-genre-world-flavor-boundary.md) | ✗ superseded | [ADR-140](140-genre-rulebook-world-cast-catalog.md) |
 
 ## Implementation Drift
 
@@ -330,5 +331,6 @@ ADRs whose implementation is absent, partial, or deferred. See [DRIFT.md](DRIFT.
 | [ADR-135: Reference Pages Are a Public Table Tool — Single Fixed Projection, No GM Audience](135-reference-pages-public-table-tool.md) | *partial* | sidequest-server reference_renderer.py — audience doctrine + stories 65-7..65-9 live; 65-10..65-12 pending |
 | [ADR-137: Quest & Stakes Substrate — Create/Anchor Lane, First-Class active_stakes Source, and One-Mechanism Consolidation](137-quest-stakes-substrate.md) | *partial* | sidequest-server/sidequest/game/quest_seed.py (story 77-1 seed-at-creation live, quest.seeded_at_creation OTEL); 77-2..77-7 deferred |
 | [ADR-139: Confrontation Integrity Invariants — Win-Condition Liveness, Seated-Actor HP Durability, the Mechanically-Capable Other, and the Dispatch Applicability Gate](139-confrontation-integrity-invariants.md) | *partial* | sidequest-server/sidequest/game/ — confrontation resolution + ADR-059 monster_manual injection + opponent-seater; first impl on FIXER branches fix/eh-opp-damage and fix/eh-magic-gate (2026-06-04 burning_peace playtest); verification home = Epic 73 Confrontation Engine Hardening |
+| [ADR-140: Genre Is the Rulebook Only; the World Owns the Cast and Catalog — Supersedes ADR-120's Mechanics-in-Genre](140-genre-rulebook-world-cast-catalog.md) | *partial* | sidequest-server/sidequest/genre/loader.py (_load_single_world world-tier classes/spells_wwn/seed_tropes loads + pack-level world-first aggregation), sidequest/server/dispatch/{class_resolve,char_creation_resolve,wwn_spell_catalog_resolve}.py (world-first resolvers), sidequest/genre/models/pack.py (World.classes / World.wwn_spell_catalog / World.chassis_classes / World.seed_tropes). Delivered by epic 94 stories 94-1..94-3. |
 
 <!-- ADR-INDEX:GENERATED:END -->

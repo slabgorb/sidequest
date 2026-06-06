@@ -70,6 +70,10 @@
 
 - [ADR-078: Edge / Composure Combat, Mechanical Advancement, and Push-Currency Rituals](078-edge-composure-advancement-rituals.md) — superseded
 
+### Superseded by [ADR-140: Genre Is the Rulebook Only; the World Owns the Cast and Catalog — Supersedes ADR-120's Mechanics-in-Genre](140-genre-rulebook-world-cast-catalog.md)
+
+- [ADR-120: Genre/World Flavor Boundary — Mandatory-File Loader Contract, Mechanics-in-Genre, Flavor-in-World](120-genre-world-flavor-boundary.md) — superseded
+
 ## Historical — no successor
 
 These ADRs describe features or decisions that were cut without direct replacement.
