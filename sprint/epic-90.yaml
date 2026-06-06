@@ -20,10 +20,14 @@ stories:
     title: WWN/ADR-126 magic plugin not instantiated at session-bind — long_foundry ships magic.yaml but runtime snapshot.magic_state is None, so cast paths gate; instantiate the world MagicPlugin into the session and assert magic_state present via OTEL
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-06'
     repos: server
     workflow: tdd
+    completed: '2026-06-06'
     type: bug
+    review_findings: ruff check . fails repo-wide (I001 on test file, Dev linted only prod files); bind_world import-cycle comment inaccurate (no real cycle); stale RED-phase comments; skip-path missing logger.info; 4 test-assertion gaps. No production logic bugs. Green rework.
+    review_verdict: approved
   - id: 90-3
     title: AC5b live free-play OTEL proof — a fight-seeker reaches WWN combat (wwn.* + ablative HP) and a caster fires wwn.spell.cast from a world opening, lie-detector quiet, across heavy_metal evropi + long_foundry + barsoom (epic 89); depends on 90-1 statted enemies + 90-2 magic_state
     points: 5
