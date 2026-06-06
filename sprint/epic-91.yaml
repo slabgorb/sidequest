@@ -30,10 +30,13 @@ stories:
     title: 'Intent Router cache repair + fail-loud floor guard (combined prefix >=4096 or raise at build; live-gated test: cache_creation>0 turn 1, cache_read>0 turn 2; DESCOPE if local routing epic lands first)'
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-05'
     type: bug
+    review_verdict: approved
   - id: 91-4
     title: Cross-model runaway coverage — extend ADR-134 detector + per-session cumulative cost to all call sites and models
     points: 2
