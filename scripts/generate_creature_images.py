@@ -19,7 +19,6 @@ from render_common import (
     GENRE_PACKS_DIR,
     TOKEN_LIMIT,
     deterministic_seed,
-    estimate_tokens,
     load_visual_style,
     load_yaml,
     render_batch,
@@ -38,22 +37,28 @@ def collect_creatures(genre_dir: Path) -> list[dict]:
     for creatures_path in sorted(genre_dir.rglob("creatures.yaml")):
         data = load_yaml(creatures_path)
         rel = creatures_path.relative_to(genre_dir)
-        world = rel.parts[1] if len(rel.parts) > 2 and rel.parts[0] == "worlds" else "default"
+        world = (
+            rel.parts[1]
+            if len(rel.parts) > 2 and rel.parts[0] == "worlds"
+            else "default"
+        )
 
         creature_list = data.get("creatures", [])
         if isinstance(data, list):
             creature_list = data
 
         for creature in creature_list:
-            creatures.append({
-                "genre": genre_name,
-                "world": world,
-                "name": creature.get("name", "unknown"),
-                "id": creature.get("id", "unknown"),
-                "description": creature.get("description", ""),
-                "threat_level": creature.get("threat_level", 1),
-                "tags": creature.get("tags", []),
-            })
+            creatures.append(
+                {
+                    "genre": genre_name,
+                    "world": world,
+                    "name": creature.get("name", "unknown"),
+                    "id": creature.get("id", "unknown"),
+                    "description": creature.get("description", ""),
+                    "threat_level": creature.get("threat_level", 1),
+                    "tags": creature.get("tags", []),
+                }
+            )
 
     return creatures
 
@@ -85,25 +90,44 @@ def compose_prompt(creature: dict, visual_style: dict) -> tuple[str, str, int]:
 
     clip = f"{name}, creature illustration"
 
-    seed = deterministic_seed(f"creature-{creature['genre']}-{creature['id']}", base_seed)
+    seed = deterministic_seed(
+        f"creature-{creature['genre']}-{creature['id']}", base_seed
+    )
 
     return subject, clip, seed
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate creature images from creatures.yaml")
+    parser = argparse.ArgumentParser(
+        description="Generate creature images from creatures.yaml"
+    )
     parser.add_argument("--genre", help="Only process this genre")
     parser.add_argument("--world", help="Only process this world (requires --genre)")
-    parser.add_argument("--dry-run", action="store_true", help="Preview prompts without rendering")
-    parser.add_argument("--steps", type=int, default=DEFAULT_STEPS, help="Inference steps")
-    parser.add_argument("--force", action="store_true", help="Regenerate existing images")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview prompts without rendering"
+    )
+    parser.add_argument(
+        "--steps", type=int, default=DEFAULT_STEPS, help="Inference steps"
+    )
+    parser.add_argument(
+        "--force", action="store_true", help="Regenerate existing images"
+    )
+    parser.add_argument(
+        "--no-upload",
+        action="store_true",
+        help="Test render: keep PNGs local, do not upload to R2 or rebuild the manifest",
+    )
     args = parser.parse_args()
     if args.world and not args.genre:
         parser.error("--world requires --genre")
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-    genre_dirs = sorted(GENRE_PACKS_DIR.iterdir()) if not args.genre else [GENRE_PACKS_DIR / args.genre]
+    genre_dirs = (
+        sorted(GENRE_PACKS_DIR.iterdir())
+        if not args.genre
+        else [GENRE_PACKS_DIR / args.genre]
+    )
     genre_dirs = [d for d in genre_dirs if d.is_dir() and (d / "pack.yaml").exists()]
 
     if not genre_dirs:
@@ -130,6 +154,7 @@ def main():
             dry_run=args.dry_run,
             steps=args.steps,
             force=args.force,
+            upload=not args.no_upload,
         )
     )
 

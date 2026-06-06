@@ -78,6 +78,7 @@ def apply_shard(items, shard, key):
 
 def load_yaml(path: Path) -> dict:
     import yaml
+
     with open(path) as f:
         return yaml.safe_load(f) or {}
 
@@ -252,7 +253,9 @@ def _resolve_lora_file(file: str) -> str:
     return str((LORA_DIR / p).resolve())
 
 
-def resolve_lora_args(visual_style: dict) -> tuple[list[str] | None, list[float] | None]:
+def resolve_lora_args(
+    visual_style: dict,
+) -> tuple[list[str] | None, list[float] | None]:
     """Pick lora_paths/lora_scales for send_render based on schema state.
 
     Three valid input shapes:
@@ -456,7 +459,9 @@ async def check_daemon() -> bool:
         return False
 
 
-def existing_r2_keys(prefix: str = "genre_packs/", bucket: str = "sidequest") -> set[str]:
+def existing_r2_keys(
+    prefix: str = "genre_packs/", bucket: str = "sidequest"
+) -> set[str]:
     """Return the set of live R2 object keys under ``prefix`` (one paginated LIST).
 
     Generated PNGs are gitignored, so a local-disk-only existence check
@@ -486,10 +491,95 @@ def existing_r2_keys(prefix: str = "genre_packs/", bucket: str = "sidequest") ->
         region_name="auto",
     )
     keys: set[str] = set()
-    for page in client.get_paginator("list_objects_v2").paginate(Bucket=bucket, Prefix=prefix):
+    for page in client.get_paginator("list_objects_v2").paginate(
+        Bucket=bucket, Prefix=prefix
+    ):
         for obj in page.get("Contents", []):
             keys.add(obj["Key"])
     return keys
+
+
+# Content types for the only extensions the renderers emit. Fail loud on
+# anything else rather than guessing a type (No-Silent-Fallbacks).
+_UPLOAD_CONTENT_TYPES: dict[str, str] = {".png": "image/png"}
+
+
+def _r2_upload_client():
+    """Build a boto3 R2 client for uploads.
+
+    Mirrors :func:`existing_r2_keys`'s inline client (same No-Silent-Fallbacks
+    KeyError-on-missing-creds contract) rather than importing r2_sync_packs —
+    the generators run as ``python scripts/x.py``, which can't resolve the
+    ``scripts.*`` package imports r2_sync_packs relies on (see existing_r2_keys
+    docstring).
+    """
+    import os
+
+    import boto3
+
+    return boto3.client(
+        "s3",
+        endpoint_url=os.environ["R2_S3_ENDPOINT"],
+        aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
+        region_name="auto",
+    )
+
+
+def _upload_render_to_r2(
+    client, out_path: Path, content_root: Path, bucket: str
+) -> bool:
+    """Upload one freshly-rendered PNG to R2, keyed by its content-relative path.
+
+    Returns True if uploaded, False if the file lives outside ``content_root``
+    (an ``output_dir`` / ad-hoc dump that has no canonical R2 key — the
+    test-render escape hatch). The 1:1 key convention matches r2_sync_packs:
+    the R2 key IS the path relative to content_root. Errors propagate (fail
+    loud) — a render that can't reach canonical storage must not look like a
+    success.
+    """
+    try:
+        key = out_path.relative_to(content_root).as_posix()
+    except ValueError:
+        log.info(
+            "  NO-UPLOAD %s (outside content_root — not a canonical asset)",
+            out_path.name,
+        )
+        return False
+    ctype = _UPLOAD_CONTENT_TYPES.get(out_path.suffix.lower())
+    if ctype is None:
+        raise ValueError(
+            f"render upload: unsupported extension {out_path.suffix!r} for {out_path}"
+        )
+    with out_path.open("rb") as fh:
+        client.put_object(Bucket=bucket, Key=key, Body=fh, ContentType=ctype)
+    log.info("  R2 PUT %s", key)
+    return True
+
+
+def _rebuild_r2_manifest() -> None:
+    """Rebuild r2_manifest.json from the live bucket after a batch uploaded.
+
+    Runs r2_manifest_from_bucket.py as ``python -m`` with cwd at the repo root
+    so its ``scripts.*`` imports resolve. Best-effort: the uploads already
+    succeeded, so a manifest-rebuild failure is logged loudly but does not fail
+    the render (the index can be rebuilt manually).
+    """
+    import subprocess
+    import sys
+
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "scripts.r2_manifest_from_bucket"],
+            cwd=str(_root),
+            check=True,
+        )
+    except Exception as exc:  # noqa: BLE001 — log loud, don't mask the successful uploads
+        log.error(
+            "r2_manifest rebuild FAILED after upload (%s) — uploads succeeded; "
+            "rerun: python -m scripts.r2_manifest_from_bucket",
+            exc,
+        )
 
 
 async def render_batch(
@@ -505,6 +595,7 @@ async def render_batch(
     output_dir: Path | None = None,
     catalog_compose: bool = False,
     fidelity: str = "turbo",
+    upload: bool = True,
 ) -> None:
     """Generic batch render loop for any image type.
 
@@ -538,6 +629,12 @@ async def render_batch(
             (genre + world + casting + culture + camera) apply. Items
             without `catalog_ref` fall back to the legacy local-composition
             path so worlds with no catalog-ready content still render.
+        upload: When True (default), each successful render is uploaded to R2
+            immediately and r2_manifest.json is rebuilt once at the end, so the
+            canonical serve source never drifts behind local renders. Set False
+            (CLI ``--no-upload``, or env ``SIDEQUEST_RENDER_NO_UPLOAD``) for test
+            renders that should stay local. ``output_dir`` dumps skip upload
+            regardless (no canonical key). Never uploads on dry_run.
     """
     import time
 
@@ -545,25 +642,56 @@ async def render_batch(
         log.error("No items found!")
         return
 
-    log.info("Found %d items across %d genre packs",
-             len(items), len(set(it["genre"] for it in items)))
+    log.info(
+        "Found %d items across %d genre packs",
+        len(items),
+        len(set(it["genre"] for it in items)),
+    )
 
     content_root = GENRE_PACKS_DIR.parent
     remote_keys: set[str] = set()
     if not force and not dry_run:
         remote_keys = existing_r2_keys()
-        log.info("R2 has %d objects under genre_packs/ — will skip those already uploaded",
-                 len(remote_keys))
+        log.info(
+            "R2 has %d objects under genre_packs/ — will skip those already uploaded",
+            len(remote_keys),
+        )
+
+    # Upload-on-success closes the render→R2 gap: render_batch used to write
+    # PNGs to local disk only, so R2 (the canonical serve source) silently
+    # drifted unless someone ran r2_sync_packs by hand. The test-render escape
+    # hatch is ``upload=False`` (CLI ``--no-upload``) OR the
+    # ``SIDEQUEST_RENDER_NO_UPLOAD`` env var; ``output_dir`` dumps also skip
+    # naturally (no content-root-relative key). Never uploads on dry_run.
+    import os
+
+    do_upload = (
+        upload
+        and not dry_run
+        and os.environ.get("SIDEQUEST_RENDER_NO_UPLOAD", "") == ""
+    )
+    upload_client = _r2_upload_client() if do_upload else None
+    if do_upload:
+        log.info(
+            "Upload-on-success ENABLED — fresh renders push to R2 (bucket=sidequest)"
+        )
+    elif not dry_run:
+        log.info(
+            "Upload-on-success DISABLED (test render) — PNGs stay local, R2 untouched"
+        )
 
     if not dry_run:
         if not await check_daemon():
-            log.error("Daemon not running at %s — start with: sidequest-renderer", SOCKET_PATH)
+            log.error(
+                "Daemon not running at %s — start with: sidequest-renderer", SOCKET_PATH
+            )
             return
         log.info("Daemon is alive at %s", SOCKET_PATH)
 
     total = len(items)
     success = 0
     failed = 0
+    uploaded = 0
     start_time = time.monotonic()
 
     for i, item in enumerate(items, 1):
@@ -610,7 +738,11 @@ async def render_batch(
         else:
             out_dir = GENRE_PACKS_DIR / item["genre"] / "images" / image_subdir
 
-        slug = item.get("slug") or (item.get("id") and slugify(item["id"])) or slugify(item["name"])
+        slug = (
+            item.get("slug")
+            or (item.get("id") and slugify(item["id"]))
+            or slugify(item["name"])
+        )
         out_path = out_dir / f"{slug}.png"
 
         # Skip if already generated locally OR already on R2 (unless --force).
@@ -629,8 +761,14 @@ async def render_batch(
 
         if (out_path.exists() or on_r2) and not force and not dry_run:
             where = "local" if out_path.exists() else "R2"
-            log.info("[%d/%d] SKIP %s/%s (already exists: %s)",
-                     i, total, item["genre"], item["name"], where)
+            log.info(
+                "[%d/%d] SKIP %s/%s (already exists: %s)",
+                i,
+                total,
+                item["genre"],
+                item["name"],
+                where,
+            )
             success += 1
             continue
 
@@ -654,16 +792,25 @@ async def render_batch(
             out_dir.mkdir(parents=True, exist_ok=True)
 
         label = item.get("role", item.get("chapter_label", ""))
-        log.info("[%d/%d] %s / %s / %s%s", i, total, item["genre"], item["world"], item["name"],
-                 f" ({label})" if label else "")
+        log.info(
+            "[%d/%d] %s / %s / %s%s",
+            i,
+            total,
+            item["genre"],
+            item["world"],
+            item["name"],
+            f" ({label})" if label else "",
+        )
 
         if dry_run:
-            print(f"\n{'='*80}")
+            print(f"\n{'=' * 80}")
             print(f"Genre: {item['genre']}  World: {item['world']}")
             print(f"Name: {item['name']}")
             print(f"Seed: {seed}")
             if use_catalog:
-                print("\nMode: catalog-composed (daemon applies GENRE + WORLD + CASTING + LOCATION + camera)")
+                print(
+                    "\nMode: catalog-composed (daemon applies GENRE + WORLD + CASTING + LOCATION + camera)"
+                )
                 print(f"Catalog ref: {catalog_subject}")
             else:
                 print("\nMode: local pre-composed prompt (legacy fallback)")
@@ -671,7 +818,9 @@ async def render_batch(
                 print(f"  {positive}")
                 print("\nStyle suffix:")
                 print(f"  {suffix or '(none)'}")
-                print(f"\nFull positive prompt sent to daemon ({estimate_tokens(full_positive)} tokens):")
+                print(
+                    f"\nFull positive prompt sent to daemon ({estimate_tokens(full_positive)} tokens):"
+                )
                 print(f"  {full_positive}")
                 print("\nCLIP prompt:")
                 print(f"  {clip}")
@@ -682,7 +831,11 @@ async def render_batch(
             lora_paths, lora_scales = resolve_lora_args(visual_style)
             if use_catalog:
                 result = await send_render(
-                    tier, "", "", seed, steps,
+                    tier,
+                    "",
+                    "",
+                    seed,
+                    steps,
                     subject=catalog_subject,
                     genre=item["genre"],
                     world=item["world"],
@@ -693,7 +846,11 @@ async def render_batch(
                 )
             else:
                 result = await send_render(
-                    tier, full_positive, clip, seed, steps,
+                    tier,
+                    full_positive,
+                    clip,
+                    seed,
+                    steps,
                     lora_paths=lora_paths,
                     lora_scales=lora_scales,
                     variant=visual_style.get("preferred_model", ""),
@@ -705,11 +862,18 @@ async def render_batch(
                 continue
 
             render_result = result["result"]
-            rendered_path = Path(render_result.get("image_path") or render_result["image_url"])
+            rendered_path = Path(
+                render_result.get("image_path") or render_result["image_url"]
+            )
             shutil.copy2(rendered_path, out_path)
             elapsed = result["result"].get("elapsed_ms", 0)
             log.info("  OK (%.1fs) → %s", elapsed / 1000, out_path)
             success += 1
+
+            if upload_client is not None and _upload_render_to_r2(
+                upload_client, out_path, content_root, "sidequest"
+            ):
+                uploaded += 1
 
         except Exception as e:
             log.error("  FAILED: %s", e)
@@ -717,8 +881,14 @@ async def render_batch(
 
     total_time = time.monotonic() - start_time
 
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"Done! {success}/{total} generated, {failed} failed")
-    print(f"Total time: {total_time/60:.1f} minutes")
+    print(f"Total time: {total_time / 60:.1f} minutes")
     if success > 0 and total_time > 0:
-        print(f"Average: {total_time/success:.1f}s per image")
+        print(f"Average: {total_time / success:.1f}s per image")
+
+    # Rebuild the canonical index once per batch so r2_manifest.json reflects
+    # what we just pushed (one bucket scan, not per-image).
+    if uploaded > 0:
+        print(f"Uploaded {uploaded} render(s) to R2 — rebuilding r2_manifest.json")
+        _rebuild_r2_manifest()
