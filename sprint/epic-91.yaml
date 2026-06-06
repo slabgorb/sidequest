@@ -10,10 +10,13 @@ stories:
     title: 'Single SDK choke point — universal usage instrumentation (log line + llm.request span + cost_usd + caller tag on EVERY Anthropic call; wiring test: no AsyncAnthropic() outside the factory)'
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-05'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-05'
     type: refactor
+    review_verdict: approved
   - id: 91-2
     title: Attribute and fix the 8x/turn Haiku volume (caller tags from 91-1; fix retries/fan-out or document budget with per-turn assertion)
     points: 3
