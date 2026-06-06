@@ -53,3 +53,4 @@ stories:
     repos: sidequest-server
     workflow: trivial
     type: chore
+    review_verdict: approved
