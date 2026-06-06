@@ -7,32 +7,73 @@ status: in_progress
 repos: server,content
 stories:
   - id: 94-1
-    title: Repoint genre-flavor consumers to the world tier — fix 20 regressions from the cast/catalog migration
+    title: Repoint chassis/rigs + trope-seeding consumers to the world tier
     description: |-
-      Keith's hand-migration moved the cast/catalog files (archetypes, tropes, char_creation, inventory, classes, chassis_classes, seed_tropes, power_tiers, bestiary) from the genre tier down to worlds/<world>/, per the corrected boundary (genre = rulebook; world owns cast/catalog). The schema+loader contract was corrected and content-validate-all PASSES for all 11 packs (0 errors). BUT the server suite has 20 regressions because runtime consumers still read the moved files at the GENRE tier (GenrePack.chassis_classes is None, GenrePack.seed_tropes is [], etc.). This is the ADR-120 Epic-74 74-2 "consumer repoint" phase, now owed (it was meant to run BEFORE deleting genre files).
+      Genre/world boundary consumer-repoint, part 1 of 3 (epic 94). Repoint chassis/rigs and trope-seeding consumers from the genre tier to the world tier; clear the cascading load-OTEL test.
 
-      ALREADY DONE (on branches, not merged):
-      - sidequest-content feat/content-flavor-world-migration: per-world cast/catalog + bestiaries authored; pack_schema.yaml genre required_files trimmed to rulebook; genre pack.yaml extension cleanup; orphaned world tropes reconciled (coyote_star, dust_and_lead).
-      - sidequest-server feat/genre-world-contract: loader genre char_creation/tropes -> optional + per-world loud chargen-resolution invariant.
+      Surfaces:
+      - chassis_classes: GenrePack.chassis_classes is None (space_opera genre file moved to coyote_star). Load at world scope, expose on World, repoint consumers world-first.
+      - seed_tropes: GenrePack.seed_tropes is [] (tea_and_murder genre file moved to glenross). Load at world scope, expose on World, repoint trope-seeding world-first.
+      - loader cache OTEL wiring test cascades off the above.
 
-      REMAINING (this story): repoint each runtime consumer genre->world (world-first, genre fallback where still sensible), expose world-tier fields on the World object where missing, and update the assertions to the world tier. Six surfaces / 20 failing tests:
-      1. Chassis/rigs (GenrePack.chassis_classes None; space_opera->coyote_star): test_genre_pack_chassis_load, tests/interior/test_loader (voidborn_freighter), test_axis_pack_chargen[space_opera]
-      2. Trope seeding (GenrePack.seed_tropes []; tea_and_murder->glenross): test_seed_tropes_loader x3
-      3. Class kits / chargen (tea_and_murder classes->worlds): test_tea_and_murder_class_kits x2
-      4. WWN spell catalog + elemental chargen (elemental_harmony char_creation/archetypes->worlds): test_wwn_spell_catalog_load x2, test_elemental_harmony_loads_wwn, test_pack_load[elemental_harmony], test_resolution_mode[elemental_harmony] x2, test_genre_flavor_world_tier ac6[elemental_harmony], test_axis_pack_chargen[heavy_metal]
-      5. char_creation reputation pass-through (spaghetti_western char_creation->worlds): test_spaghetti_western_drift_wiring x2
-      6. Load OTEL wiring (cascade): test_loader_cache_otel_wiring
+      Failing tests: test_genre_pack_chassis_load, tests/interior/test_loader (voidborn_freighter), test_axis_pack_chargen[space_opera], test_seed_tropes_loader x3, test_loader_cache_otel_wiring.
 
-      ALSO: author a superseding ADR (ADR-120 'mechanics-in-genre' is wrong: cast/catalog are world-tier). Per CLAUDE.md No-Source-Text-Wiring-Tests, prefer OTEL/behavior assertions over genre-tier presence checks when updating tests.
-    points: 8
+      Prereqs (branches, unmerged): content feat/content-flavor-world-migration, server feat/genre-world-contract. Assert world-tier behavior/OTEL, not genre-file presence.
+    points: 3
     priority: p1
     status: backlog
     repos: server,content
     workflow: tdd
     acceptance_criteria:
-      - All 20 identified server tests pass with consumers reading world-tier cast/catalog (world-first, genre fallback where sensible)
-      - World object exposes chassis_classes, seed_tropes, classes, and char_creation/archetype surfaces resolved from the world tier; loader loads them at world scope
-      - just server-test is green (no new failures); content-validate-all stays green for all 11 packs
-      - Test assertions target world-tier resolution via behavior/OTEL, not genre-tier file presence (per No-Source-Text-Wiring-Tests)
-      - A superseding ADR is authored documenting genre=rulebook / world-owns-cast-catalog, marking ADR-120's mechanics-in-genre invalidated
+      - World loads and exposes chassis_classes from the world tier (coyote_star); chassis/rig consumers read world-first
+      - World loads and exposes seed_tropes from the world tier (glenross); trope-seeding reads world-first
+      - test_genre_pack_chassis_load, interior/test_loader, axis_pack_chargen[space_opera], seed_tropes_loader x3, loader_cache_otel_wiring all pass
+      - Assertions target world-tier behavior/OTEL, not genre-file presence
+    type: refactor
+  - id: 94-2
+    title: Repoint chargen + class-kit + char_creation consumers to the world tier
+    description: |-
+      Genre/world boundary consumer-repoint, part 2 of 3 (epic 94). Repoint character-creation, classes, and class-kit chargen consumers genre->world (world-first, genre fallback where sensible).
+
+      Surfaces:
+      - char_creation: genre char_creation moved to worlds. Chargen + reputation pass-through must read world char_creation.
+      - classes / class kits: tea_and_murder classes moved to worlds (blackthorn_moor, glenross). Class-kit chargen must resolve world-tier classes.
+
+      Failing tests: test_tea_and_murder_class_kits x2 (incl. doctor_chargen_produces_signature_items_end_to_end), test_spaghetti_western_drift_wiring x2 (char_creation reputation pass-through), test_axis_pack_chargen[heavy_metal].
+
+      Prereqs: content feat/content-flavor-world-migration, server feat/genre-world-contract. Assert world-tier behavior/OTEL, not genre-file presence.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    acceptance_criteria:
+      - char_creation and classes resolve world-first; class-kit chargen reads the world tier
+      - spaghetti_western char_creation reputation pass-through works from world char_creation
+      - test_tea_and_murder_class_kits x2, test_spaghetti_western_drift_wiring x2, test_axis_pack_chargen[heavy_metal] all pass
+      - Assertions target world-tier behavior/OTEL, not genre-file presence
+    type: refactor
+  - id: 94-3
+    title: Repoint WWN spell catalog + elemental_harmony load to world tier; author superseding ADR
+    description: |-
+      Genre/world boundary consumer-repoint, part 3 of 3 (epic 94). Repoint WWN spell-catalog and elemental_harmony archetype/resolution consumers genre->world, then author the superseding ADR.
+
+      Surfaces:
+      - WWN spell catalog + elemental_harmony chargen/archetypes moved to worlds (burning_peace, shattered_accord). Spell-catalog load + resolution-mode resolution must read world-tier surfaces.
+
+      Failing tests: test_wwn_spell_catalog_load x2, test_elemental_harmony_loads_wwn, test_pack_load[elemental_harmony], test_resolution_mode[elemental_harmony] x2, test_genre_flavor_world_tier ac6[elemental_harmony].
+
+      Plus: author a superseding ADR documenting genre=rulebook / world-owns-cast-catalog and marking ADR-120's mechanics-in-genre invalidated. Final gate: full just server-test green + content-validate-all green (11 packs).
+
+      Prereqs: content feat/content-flavor-world-migration, server feat/genre-world-contract, and 94-1/94-2 merged. Assert world-tier behavior/OTEL, not genre-file presence.
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    acceptance_criteria:
+      - WWN spell catalog resolves with world-tier archetypes/char_creation; elemental_harmony loads clean under WWN
+      - test_wwn_spell_catalog_load x2, test_elemental_harmony_loads_wwn, test_pack_load[elemental_harmony], test_resolution_mode[elemental_harmony] x2, test_genre_flavor_world_tier ac6[elemental_harmony] all pass
+      - 'Superseding ADR authored: genre=rulebook / world-owns-cast-catalog; ADR-120 mechanics-in-genre marked invalidated'
+      - Full just server-test green; content-validate-all green for all 11 packs
     type: refactor
