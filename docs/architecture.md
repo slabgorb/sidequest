@@ -133,7 +133,7 @@ Each WebSocket connection runs as an asyncio task owning a `Session`. Single-pla
 
 ### ADR-004: Genre Packs as YAML
 
-11 genre packs load via PyYAML into pydantic models (all have at least one world with an authored `openings.yaml`; a subset have cleared the full asset + playtest gate — see `docs/genre-pack-status.md`). Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth. Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
+11 genre packs load via PyYAML into pydantic models (all have at least one world with an authored `openings.yaml`; a subset have cleared the full asset + playtest gate — see `docs/genre-pack-status.md`). Read-only at runtime. Shared with the `sidequest-content` repo as single source of truth for pack **specs** (YAML config, prompts, generation params). Each pack defines: world topology, NPC archetypes (with OCEAN profiles), item catalogs, trope definitions, audio themes, visual style, conlang morphemes, and faction agendas. **Rendered media (images + audio) is canonical in R2, indexed by `sidequest-content/r2_manifest.json`** — not the local pack folders; R2 wins on any disagreement. Layered inheritance between genre and world tiers is handled via a base-class pattern in `sidequest.genre.models`.
 
 ### ADR-005: Background-First Pipeline
 

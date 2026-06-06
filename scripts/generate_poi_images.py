@@ -39,7 +39,11 @@ def collect_pois(genre_dir: Path) -> list[dict]:
     for history_path in sorted(genre_dir.rglob("history.yaml")):
         data = load_yaml(history_path)
         rel = history_path.relative_to(genre_dir)
-        world = rel.parts[1] if len(rel.parts) > 2 and rel.parts[0] == "worlds" else "default"
+        world = (
+            rel.parts[1]
+            if len(rel.parts) > 2 and rel.parts[0] == "worlds"
+            else "default"
+        )
 
         chapters = data.get("chapters", [])
         for chapter in chapters:
@@ -60,23 +64,23 @@ def collect_pois(genre_dir: Path) -> list[dict]:
                 # haven't authored visual_prompt entries fall back to the
                 # legacy local-composition path inside render_batch.
                 slug = poi.get("slug", "")
-                catalog_ref = (
-                    f"where:{world}/{slug}" if slug and visual_prompt else ""
-                )
+                catalog_ref = f"where:{world}/{slug}" if slug and visual_prompt else ""
 
-                pois.append({
-                    "genre": genre_name,
-                    "world": world,
-                    "slug": slug,
-                    "chapter_id": chapter_id,
-                    "chapter_label": chapter_label,
-                    "name": poi.get("name", "unknown"),
-                    "description": poi.get("description", ""),
-                    "visual_prompt": visual_prompt,
-                    "catalog_ref": catalog_ref,
-                    "region": poi.get("region", ""),
-                    "type": poi.get("type", ""),
-                })
+                pois.append(
+                    {
+                        "genre": genre_name,
+                        "world": world,
+                        "slug": slug,
+                        "chapter_id": chapter_id,
+                        "chapter_label": chapter_label,
+                        "name": poi.get("name", "unknown"),
+                        "description": poi.get("description", ""),
+                        "visual_prompt": visual_prompt,
+                        "catalog_ref": catalog_ref,
+                        "region": poi.get("region", ""),
+                        "type": poi.get("type", ""),
+                    }
+                )
 
     return pois
 
@@ -112,10 +116,21 @@ async def main() -> None:
     parser = argparse.ArgumentParser(description="Generate POI landscape images")
     parser.add_argument("--genre", help="Only process this genre pack")
     parser.add_argument("--world", help="Only process this world (requires --genre)")
-    parser.add_argument("--dry-run", action="store_true", help="Preview prompts without rendering")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview prompts without rendering"
+    )
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
     parser.add_argument("--output-dir", type=Path, help="Override output directory")
-    parser.add_argument("--force", action="store_true", help="Regenerate even if image exists (local or on R2)")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Regenerate even if image exists (local or on R2)",
+    )
+    parser.add_argument(
+        "--no-upload",
+        action="store_true",
+        help="Test render: keep PNGs local, do not upload to R2 or rebuild the manifest",
+    )
     parser.add_argument(
         "--poi",
         help="Only process this POI slug (requires --world)",
@@ -133,7 +148,9 @@ async def main() -> None:
         parser.error("--poi requires --world")
     shard = parse_shard(args.shard)
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
+    )
 
     all_pois = []
     for genre_dir in sorted(GENRE_PACKS_DIR.iterdir()):
@@ -172,7 +189,12 @@ async def main() -> None:
         key=lambda p: f"{p['genre']}:{p['world']}:{p.get('slug') or p['name']}",
     )
     if shard is not None:
-        log.info("Shard %d/%d: rendering %d of the work-list", shard[0], shard[1], len(unique_pois))
+        log.info(
+            "Shard %d/%d: rendering %d of the work-list",
+            shard[0],
+            shard[1],
+            len(unique_pois),
+        )
 
     await render_batch(
         unique_pois,
@@ -185,6 +207,7 @@ async def main() -> None:
         output_dir=args.output_dir,
         catalog_compose=True,
         fidelity="high_fidelity",
+        upload=not args.no_upload,
     )
 
 

@@ -22,7 +22,6 @@ from render_common import (
     TOKEN_LIMIT,
     apply_shard,
     deterministic_seed,
-    estimate_tokens,
     load_visual_style,
     load_yaml,
     parse_shard,
@@ -39,6 +38,7 @@ def _slugify_name(name: str) -> str:
     collapsed = re.sub(r"\s+", "_", lowered)
     return re.sub(r"[^a-z0-9_-]", "", collapsed)
 
+
 DEFAULT_STEPS = 20
 log = logging.getLogger(__name__)
 
@@ -51,23 +51,29 @@ def collect_characters(genre_dir: Path) -> list[dict]:
     for manifest_path in sorted(genre_dir.rglob("portrait_manifest.yaml")):
         data = load_yaml(manifest_path)
         rel = manifest_path.relative_to(genre_dir)
-        world = rel.parts[1] if len(rel.parts) > 2 and rel.parts[0] == "worlds" else "default"
+        world = (
+            rel.parts[1]
+            if len(rel.parts) > 2 and rel.parts[0] == "worlds"
+            else "default"
+        )
 
         for char in data.get("characters", []):
             name = char.get("name", "unknown")
             slug = char.get("id") or _slugify_name(name)
-            characters.append({
-                "genre": genre_name,
-                "world": world,
-                "name": name,
-                "slug": slug,
-                "catalog_ref": f"npc:{slug}",
-                "role": char.get("role", ""),
-                "type": char.get("type", "npc_major"),
-                "appearance": char.get("appearance", ""),
-                "culture_aesthetic": char.get("culture_aesthetic", ""),
-                "element_visual": char.get("element_visual", ""),
-            })
+            characters.append(
+                {
+                    "genre": genre_name,
+                    "world": world,
+                    "name": name,
+                    "slug": slug,
+                    "catalog_ref": f"npc:{slug}",
+                    "role": char.get("role", ""),
+                    "type": char.get("type", "npc_major"),
+                    "appearance": char.get("appearance", ""),
+                    "culture_aesthetic": char.get("culture_aesthetic", ""),
+                    "element_visual": char.get("element_visual", ""),
+                }
+            )
 
     return characters
 
@@ -103,10 +109,19 @@ async def main() -> None:
     parser = argparse.ArgumentParser(description="Generate character portrait images")
     parser.add_argument("--genre", help="Only process this genre pack")
     parser.add_argument("--world", help="Only process this world (requires --genre)")
-    parser.add_argument("--dry-run", action="store_true", help="Preview prompts without rendering")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview prompts without rendering"
+    )
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
-    parser.add_argument("--force", action="store_true", help="Regenerate even if image exists")
+    parser.add_argument(
+        "--force", action="store_true", help="Regenerate even if image exists"
+    )
     parser.add_argument("--output-dir", type=Path, help="Override output directory")
+    parser.add_argument(
+        "--no-upload",
+        action="store_true",
+        help="Test render: keep PNGs local, do not upload to R2 or rebuild the manifest",
+    )
     parser.add_argument(
         "--shard",
         help="Render only shard i/n of the work-list (e.g. 0/2 on one Mac, 1/2 on "
@@ -118,7 +133,9 @@ async def main() -> None:
         parser.error("--world requires --genre")
     shard = parse_shard(args.shard)
 
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S"
+    )
 
     all_chars = []
     for genre_dir in sorted(GENRE_PACKS_DIR.iterdir()):
@@ -142,7 +159,12 @@ async def main() -> None:
         all_chars, shard, key=lambda c: f"{c['genre']}:{c['world']}:{c['slug']}"
     )
     if shard is not None:
-        log.info("Shard %d/%d: rendering %d of the work-list", shard[0], shard[1], len(all_chars))
+        log.info(
+            "Shard %d/%d: rendering %d of the work-list",
+            shard[0],
+            shard[1],
+            len(all_chars),
+        )
 
     await render_batch(
         all_chars,
@@ -155,6 +177,7 @@ async def main() -> None:
         output_dir=args.output_dir,
         catalog_compose=True,
         fidelity="high_fidelity",
+        upload=not args.no_upload,
     )
 
 
