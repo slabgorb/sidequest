@@ -22,6 +22,7 @@ stories:
       - A latent/unseen pool member does not (seen-gate semantics preserved)
       - OTEL span on the promotion/projection decision (lie-detector)
     type: bug
+    review_verdict: approved
   - id: 97-2
     title: Seal-reconcile roster races reconnect order — first reconnector told the table is solo (sealed=0/1)
     description: "Measured (server log .20260607-090551 lines 652/668, 863/878 — 3x, always the first reconnector): after a server reload both seats reconnect; the FIRST gets turn_status.reconciled_on_connect sealed=0/1 (solo roster), the second 0/2. build_seal_reconcile_roster (sidequest/server/turn_status_roster.py) derives its roster from room.playing_player_ids() — live sockets — not the durable snapshot.player_seats. Plausibly contributes to the seat-2 'Enter enabled / no waiting lock' symptom in the MP desync entry. CAUTION: the 45-2 phantom-chargen-peer guard is why playing_* exists; a fix must not let mid-chargen phantoms inflate the barrier roster."
