@@ -44,6 +44,8 @@ completed_epics:
   - '71'
   - '87'
   - '89'
+  - '94'
+  - '95'
 completed_stories:
   - id: 55-1
     epic: '55'
@@ -1718,3 +1720,23 @@ completed_stories:
     title: 'Story 6 — Assets: portraits (portrait_manifest.yaml) for the Lore Cast (currently placeholders), audio mood-map, and any remaining POIs for Stories 2-3 regions. Render to R2, rebuild r2_manifest.json. NOTE: the Story-1 red/green-core POIs (8) already shipped at 28 steps via PRs #365-367; this story covers portraits + South/North POIs + audio.'
     points: 5
     completed: '2026-06-05'
+  - id: 94-1
+    epic: '94'
+    title: Repoint chassis/rigs + trope-seeding consumers to the world tier
+    points: 3
+    completed: '2026-06-06'
+  - id: 94-2
+    epic: '94'
+    title: Repoint chargen + class-kit + char_creation consumers to the world tier
+    points: 3
+    completed: '2026-06-06'
+  - id: 94-3
+    epic: '94'
+    title: Repoint WWN spell catalog + elemental_harmony load to world tier; author superseding ADR
+    points: 3
+    completed: '2026-06-06'
+  - id: 95-1
+    epic: '95'
+    title: Region→orbital-scope binding + perseus_cloud sector orrery content
+    points: 5
+    completed: '2026-06-06'
