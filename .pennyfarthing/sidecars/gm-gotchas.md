@@ -27,3 +27,7 @@
 
 ### pf branch-protection hook evaluates the branch BEFORE the compound command runs (2026-06-07)
 - `git checkout -b feat/x && git commit ...` in one Bash call gets BLOCKED on a protected branch — the PreToolUse hook sees `git commit` while HEAD is still develop. Split into two calls: checkout first, commit second.
+
+### Seed/trope YAML: unquoted ": " inside a list-item string silently becomes a dict (2026-06-07)
+- Delivery hints written as prose ("The pattern has a shape: one counter, one route...") parse as a one-key mapping and fail SeedTrope's string validation at LOAD, not at write. Hit 4× across 10 seed decks. Pre-flight before committing any authored deck: `grep -n '^    - [^"].*: ' <file>` and quote offenders.
+- Always wiring-verify authored pack YAML through the real loader, not just yaml.safe_load: `uv run python -c "from sidequest.genre.loader import load_genre_pack; ..."` from sidequest-server. model_validate on the raw list misses nothing here, but the loader run also proves the file is where the loader looks (seed_tropes.yaml is a STANDALONE file at pack root or worlds/<world>/, NOT a pack.yaml key — the pack.yaml `- seed_tropes` line is just a section list entry).
