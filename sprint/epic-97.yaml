@@ -1,0 +1,81 @@
+id: '97'
+type: epic
+title: Ping-pong 2026-06-07 follow-ups — residuals from the perseus MP fix sitting
+description: "Deliberately-out-of-scope residuals flagged in the 2026-06-07 ping-pong FIXER notes (PRs #739-#742 server, #351/#352 ui). Each story cites its parent entry's FIXER note as the measured evidence base."
+priority: p2
+status: backlog
+repos: server,ui
+stories:
+  - id: 97-1
+    title: Pool-member relationship projection gap — engaged npc_pool members never get ADR-136 cards
+    description: 'Measured (ping-pong 2026-06-07 relationships entry, FIXER notes on server #742): build_relationship_entries (sidequest/game/projection/relationships.py) projects snapshot.npcs ONLY. Engaged npc_pool members never get ADR-136 relationship cards regardless of beats — perseus repro: Rifenna Muse (handshake, struck deal, three scenes, pool entry) absent while a roster-promoted combat opponent got a card. Needs a design decision: pool->roster promotion on sustained engagement (ADR-128 development ladder?) OR direct pool projection. Do NOT spuriously mint Npc objects (see test_disposition_does_not_drift_without_a_stateful_npc).'
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - An engaged npc_pool member with relationship-relevant history appears on the Relationships tab
+      - A latent/unseen pool member does not (seen-gate semantics preserved)
+      - OTEL span on the promotion/projection decision (lie-detector)
+    type: bug
+  - id: 97-2
+    title: Seal-reconcile roster races reconnect order — first reconnector told the table is solo (sealed=0/1)
+    description: "Measured (server log .20260607-090551 lines 652/668, 863/878 — 3x, always the first reconnector): after a server reload both seats reconnect; the FIRST gets turn_status.reconciled_on_connect sealed=0/1 (solo roster), the second 0/2. build_seal_reconcile_roster (sidequest/server/turn_status_roster.py) derives its roster from room.playing_player_ids() — live sockets — not the durable snapshot.player_seats. Plausibly contributes to the seat-2 'Enter enabled / no waiting lock' symptom in the MP desync entry. CAUTION: the 45-2 phantom-chargen-peer guard is why playing_* exists; a fix must not let mid-chargen phantoms inflate the barrier roster."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - First reconnector after a reload reconciles against the full seated-PC roster (sealed=0/2 for a 2-seat session)
+      - Phantom chargen peers still excluded (45-2 guard regression test)
+    type: bug
+  - id: 97-3
+    title: Dice banner DC has two sources of truth — client formula vs server effective difficulty
+    description: "Measured (ping-pong dice entry FIXER notes, ui #352): the pre-roll TARGET banner DC is a CLIENT-side formula — handleBeatSelect builds the local DiceRequest with rawDc = clamp(10 + |beat.base|*2, 10..30) (App.tsx) — while the server resolves against its own effective difficulty. They happened to agree in the five_points solo control; in SWN/hp_depletion packs they can diverge (Chico total=12 outcome=Fail vs displayed DC 12 — with Tie at ==, server's effective DC wasn't 12). Server should be the only DC author: either the beat commit round-trips for a server-built DiceRequest, or the server's authoritative difficulty corrects the banner before the roll. This is THE Sebastien/Jade player-facing math surface (CLAUDE.md)."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+    acceptance_criteria:
+      - The displayed pre-roll target equals the difficulty the server resolves against, for native and hp_depletion rulesets
+      - dice.throw_resolved difficulty matches the banner the player saw (verifiable in one screenshot+log pair)
+    type: bug
+  - id: 97-4
+    title: 'Scratch sweep fires on same-region drift — clear_scratch_on_scene_end keys on the raw location-string gate #739 fixed for encounters'
+    description: "Same root-cause family as server #739 (region-drift encounter abandonment), deliberately left out of its scope (flagged in the entry's FIXER notes): the Scratch sweep — clear_scratch_on_scene_end — still keys on the raw old_loc != result.location string gate, so a same-region scene-title drift in a region-mode world wipes scratch state that should survive (the party never left the scene). Fix mirrors #739: consult the _same_region_drift signal (narration_apply.py) at the scratch-sweep gate. Check #739's tests for the harness (tests/server/test_region_drift_encounter_continue.py)."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - Same-region drift does not clear scratch; a genuine region change still does
+      - OTEL/log evidence on the keep-vs-sweep decision
+    type: bug
+  - id: 97-5
+    title: Turn-1 double-apply of _apply_npc_mentions — narrator.cache.both_writes_fired root cause
+    description: "Measured (blackthorn solo 2026-06-07 turn 1): two byte-identical disposition beats per NPC — two _apply_npc_mentions passes in one turn. Server #742's Npc.last_development_turn dedupe made it harmless at the development seam, but the UPSTREAM double-apply is unexplained and presumably double-runs every other per-mention side effect (last_seen updates, pool matching, mint paths). Cross-ref: the unfiled narrator.cache.both_writes_fired WARN on the ping-pong watch list. Root-cause and fix at the source, then consider removing the seam-level dedupe if it becomes dead."
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - One narration turn produces exactly one _apply_npc_mentions pass (or the second pass is load-bearing and documented)
+      - both_writes_fired WARN explained or eliminated
+    type: bug
+  - id: 97-6
+    title: test_chargen_name_rig_extraction xdist flake — pg-gated pair fails order-dependently in parallel full-suite runs
+    description: 'Known flake documented 2026-06-07 (server #741 PR notes): tests/server/test_chargen_name_rig_extraction.py::TestNameRigExtractionWiring pair (extracted_name_and_renamed_rig, extraction_decisions_are_observable) fails order-dependently under xdist in FULL-suite runs — chargen.names_extracted span absent from the InMemorySpanExporter capture. Passes in isolation, serially, per-directory, and intermittently in full runs with identical code. These pg-gated tests only started RUNNING when SIDEQUEST_TEST_DATABASE_URL became part of the standard env (they were silently skipped in earlier baselines). Suspect shared tracer-provider/span-exporter state across tests in a worker, or an extraction-path global raced by a sibling test. Fix the isolation, not the assertion.'
+    points: 2
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - Pair passes 5 consecutive full-suite parallel runs
+      - Root cause documented in the test docstring
+    type: chore
