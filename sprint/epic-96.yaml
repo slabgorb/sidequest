@@ -1,0 +1,24 @@
+id: '96'
+type: epic
+title: Genre/World Boundary Follow-ups — fixture decoupling & tier-leak fixes
+description: "Follow-up work from epic 94 (genre=rulebook / world owns cast+catalog, ADR-140). The content repoint exposed two debts: (1) server tests wrongly coupled to LIVE content packs — content-only changes must never turn tests red; validators validate content, tests test fixtures. PR sidequest-server#726 skipped the content-coupled tests as a stopgap (skip reasons say 'story 94-4'; the fixture-rewrite story now lives here). (2) The Earthman race-boon is applied at genre tier (source=Race) when it is barsoom world content — a real tier leak; guard test test_earthman_boon_is_world_tier_not_engine_hardcode deliberately left RED."
+priority: p2
+status: backlog
+repos: sidequest-server
+stories:
+  - id: 96-1
+    title: Rewrite content-coupled server tests against fixtures (decouple from live packs)
+    points: 8
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: refactor
+  - id: 96-2
+    title: Fix Earthman race-boon tier leak — world-tier trait applied at genre tier (source=Race)
+    points: 3
+    priority: p2
+    status: backlog
+    repos: sidequest-server
+    workflow: tdd
+    type: bug
