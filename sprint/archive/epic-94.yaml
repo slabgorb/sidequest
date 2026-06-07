@@ -3,7 +3,7 @@ type: epic
 title: Genre/World Boundary Correction — Genre is Rulebook, World Owns Cast/Catalog
 description: "Corrects the genre/world boundary (supersedes ADR-120 'mechanics-in-genre'): the genre tier is the RULEBOOK ONLY (resolution rules, progression, tone/voice axes, narrator voice, lethality/visibility policy, theme/audio chrome). The CAST and CATALOG — archetypes, tropes, char_creation, inventory, classes, chassis_classes, seed_tropes, power_tiers, bestiary — are world-authoritative. Keith's hand-migration moved these files to worlds; the schema+loader contract was corrected (genre cast/catalog files optional + per-world resolution invariant) and content-validate-all is green for all 11 packs. Remaining: repoint runtime consumers that still read the moved files at the genre tier (ADR-120 Epic-74 74-2 consumer-repoint phase, now owed) + author a superseding ADR."
 priority: p1
-status: in_progress
+status: done
 repos: server,content
 stories:
   - id: 94-1
@@ -80,3 +80,4 @@ stories:
       - Full just server-test green; content-validate-all green for all 11 packs
     completed: '2026-06-06'
     type: refactor
+completed: '2026-06-06'
