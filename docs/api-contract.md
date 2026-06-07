@@ -317,12 +317,20 @@ Narrative text from the AI with optional state deltas and structured footnotes.
 
 **NARRATION_END (turn-completion marker):**
 ```json
-{ "type": "NARRATION_END", "payload": { "state_delta": { ... } } }
+{ "type": "NARRATION_END", "payload": { "state_delta": { ... }, "round": 5 } }
 ```
 
 `NARRATION_END` clears the "thinking" indicator and commits any final
 `state_delta` in the same render cycle as the preceding `NARRATION` text.
 Always sent, even when the turn produced no state delta.
+
+`round` (added 2026-06-07, server #741) is the round the turn **resolved** —
+captured before `record_interaction()` bumps the counter, so it matches the
+`round` on the turn's `ACTION_REVEAL` entries. The UI anchors persisted
+peer-action quotes into the transcript by this round (ui #351); the own
+`PLAYER_ACTION` round remains a legacy fallback. Dice-driven turns (beat
+commits ride `DICE_THROW`, never `PLAYER_ACTION`) have no other round
+carrier. `null`/absent on legacy frames.
 
 > **Removed (2026-04, per ADR-076):** `NARRATION_CHUNK` was a streaming
 > partial-text variant paired with binary TTS voice frames. With TTS gone,
