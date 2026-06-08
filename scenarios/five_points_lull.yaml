@@ -1,0 +1,45 @@
+# Lull-escalation seed fire — spaghetti_western / five_points (#398/#399 + #755 verify).
+#
+# Player complaint behind this: long info-drip / dead air with no engine push to
+# break the monotony — "77-7's lull escalation had ammunition only in wry_whimsy"
+# until content #398/#399 authored seed decks for the other packs. spaghetti_western
+# got a genre-tier seed_tropes.yaml in #398. #755 made the escalation span carry
+# session/genre/world attribution and added a loud once-per-session empty-deck signal.
+#
+# Mechanism (verified by reading the engine): TensionTracker.boring_streak ramps +1
+# per quiet (no-encounter) turn; at boring_streak >= escalation_streak (=5 for this
+# pack), pacing_hint returns an escalation_beat and apply_lull_escalation fires —
+# draws a seed from the active deck and emits pacing.lull_escalation.
+#
+# These 8 actions are DELIBERATELY decision-free / stakes-free / complication-free —
+# pure lull, to drive the streak to threshold. (They violate Cut-the-Dull-Bits as
+# gameplay ON PURPOSE: the seed fire IS the engine enforcing Cut-the-Dull-Bits.)
+# Avoid anything that seats an encounter or confronts an NPC (that resets the streak).
+#
+# Run (server up + Jaeger; #755 LIVE = server @ beb05f48):
+#   uv run --with rich --with pillow python3 scripts/playtest.py \
+#     --scenario scenarios/five_points_lull.yaml --fresh \
+#     --span-jsonl /tmp/five_points_lull.spans.jsonl
+#
+# Span proof:
+#   FIRED (decks reach engine): pacing.lull_escalation fired=True selected_seed_id=<id>
+#                               reason=fired + seed.fired span; carries session/genre/world (#755)
+#   EMPTY (deck not loaded):    pacing.lull_escalation fired=False reason=none_available
+#                               (= the #398/#399 deck isn't reaching active_seeds — a finding)
+
+name: Lull-escalation seed fire — Five Points (#398/#399 + #755 verify)
+genre: spaghetti_western
+world: five_points
+
+character:
+  strategy: auto
+
+actions:
+  - "I wander down the block, taking in the morning bustle of the ward without any particular aim."
+  - "I stop at a coffee-and-cake stand, buy a roll, and watch the cartmen pass."
+  - "I read the handbills pasted along a wall, just passing the time."
+  - "I drift toward the waterfront to watch the boats unload."
+  - "I sit on a crate and whittle a bit of kindling, letting the hours slide by."
+  - "I amble back uptown along the quiet side streets, in no hurry at all."
+  - "I lean on a railing and watch the gulls wheel over the river."
+  - "I find a bench in the square and rest a while, doing nothing in particular."

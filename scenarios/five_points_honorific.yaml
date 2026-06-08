@@ -1,0 +1,32 @@
+# Honorific NPC mint + pronoun fallback — spaghetti_western / five_points (#747 verify).
+#
+# CORRECTED probe (v2). The #747 fix treats Sergeant/Dr/Reverend/Captain as
+# NEUTRAL titles that KEEP the skip; honorific_fallback only fires on GENDERED
+# titles (Father/Mr/Sir/Lord→he, Mother/Mrs/Lady/Dame→she). v1 used "Sergeant"
+# and correctly never hit the fallback. This version seeks a PRIEST so the
+# narrator names a "Father <surname>" with no gendered first name and (ideally)
+# no nearby pronoun on first mention.
+#
+# Spans to catch:
+#   MINT:    npc.auto_minted_from_prose pronoun_source=honorific_fallback
+#   RATIFY:  npc.observation_gate_promoted ratified_by=prose
+#
+# Action 1 elicits the priest by title only (no first name invited, no pronoun).
+# Action 2 re-cites by bare surname in prose (ratification). Action 3 continues.
+#
+# Run (server up + Jaeger exporting):
+#   uv run --with rich --with pillow python3 scripts/playtest.py \
+#     --scenario scenarios/five_points_honorific.yaml --fresh \
+#     --span-jsonl /tmp/five_points_honorific.spans.jsonl
+
+name: Honorific mint + pronoun fallback — Five Points (#747 verify)
+genre: spaghetti_western
+world: five_points
+
+character:
+  strategy: auto
+
+actions:
+  - "I duck into the Catholic chapel off the square and ask for the priest who hears confessions here — I need a word with the Father, and I keep it respectful."
+  - "I take a seat near the rail and tell the Father what I came to say, watching the collar more than the face."
+  - "When the priest answers, I press for the one name I came for and see whether the Father gives it up."

@@ -1,0 +1,42 @@
+# Standoff pre-combat seat seam — spaghetti_western / five_points (#750 verify).
+#
+# Repro of the sq-playtest 2026-06-07 (five_points-2 turn 5) finding: an armed
+# brace matching the standoff def's own intent_verbs (threaten/intimidate/
+# confront) yielded confrontation=None with ZERO telemetry — the genre's
+# signature stare-down (standoff_rules.sizing_up) was unreachable because only
+# an actual DRAW seated the confrontation.
+#
+# Probe shape: coat-open armed display + veiled-threat ultimatum, NO draw.
+# Action 4 is the first show of force (armed display); action 5 is the ultimatum
+# with an explicit hand-away-from-iron so the resolver cannot read it as a draw.
+#
+# Run (server up + Jaeger exporting):
+#   uv run --with rich --with pillow python3 scripts/playtest.py \
+#     --scenario scenarios/five_points_standoff.yaml --fresh \
+#     --span-jsonl /tmp/five_points_standoff.spans.jsonl
+#
+# Span proof (#750):
+#   WORKING (seats):  intent_router.confrontation_classified emitted>=1
+#                     + encounter.confrontation_initiated (a pre_combat/standoff type)
+#                     + standoff_rules.sizing_up reachable
+#   LOUD DECLINE:     intent_router.confrontation_classified emitted=0 verb_hits=[...]
+#                     + intent_router.confrontation_verb_unrouted WARNING
+#   FAILURE (orig):   NO confrontation_classified span at all; prose-only standoff
+#
+# Period note: 1857 Five Points, Manhattan — grog cellars and ward toughs, NOT
+# the western-saloon register #393 flagged. Orange Street is real Five Points
+# geography (later Baxter St).
+
+name: Standoff seat seam — Five Points (#750 verify)
+genre: spaghetti_western
+world: five_points
+
+character:
+  strategy: auto
+
+actions:
+  - "I push into the grog cellar and take the measure of the room, marking whoever's holding court over this stretch of the ward."
+  - "I cross to the tough the others keep deferring to and plant myself close enough that he has to look at me."
+  - "I tell him flat that I know what his crew's been running up Orange Street, and that it ends tonight."
+  - "I let my coat swing open so he can see the pistol shoved in my belt, and I hold his stare."
+  - "I keep my hand nowhere near the iron and tell him low — the next man who crosses me doesn't get told twice. Your move."

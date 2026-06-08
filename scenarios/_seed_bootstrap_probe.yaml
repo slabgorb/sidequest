@@ -1,0 +1,7 @@
+name: Seed bootstrap probe — five_points
+genre: spaghetti_western
+world: five_points
+character:
+  strategy: auto
+actions:
+  - "I take a slow look around and get my bearings."
