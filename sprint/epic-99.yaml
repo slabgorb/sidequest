@@ -1,0 +1,40 @@
+id: '99'
+type: epic
+title: Docs accuracy overhaul (cont.) — purge port/SDK/Postgres drift
+description: 'Remaining docs/ drift after PRs #380/#381 shipped the turn-sequence rewrites, superpowers completed-sweep, FEATURES.md reconciliation, and genre-pack-structure reference. This epic tracks the docs still carrying stale architecture (claude -p, SQLite, Rust port-era layout, pre-ADR-136 relationship model).'
+priority: p2
+status: backlog
+repos: orchestrator
+stories:
+  - id: 99-1
+    title: Comprehensive rewrite of docs/relationship-systems.md (ADR-136/125/128/053)
+    points: 5
+    priority: p2
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    type: chore
+  - id: 99-2
+    title: 'Playtest docs cleanup: salvage+delete playtest-script.md, fix cookbook SQLite line, repoint README:89'
+    points: 3
+    priority: p2
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    type: chore
+  - id: 99-3
+    title: Refresh docs/system-diagram.md (13 drift markers)
+    points: 2
+    priority: p3
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    type: chore
+  - id: 99-4
+    title: Refresh docs/tech-stack.md (light touch)
+    points: 1
+    priority: p3
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    type: chore
