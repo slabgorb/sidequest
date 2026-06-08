@@ -317,7 +317,9 @@ def build_lore_projection(pack: str, world: str, *, pack_dir: Path, world_dir: P
         )
         gated_map_slugs = _gate_cast_slugs_on_manifest(
             map_npc_slugs,
-            manifest_path=pack_dir / "worlds" / world / "r2_manifest.json",
+            pack=pack,
+            world=world,
+            pack_dir=pack_dir,
         )
         sections.append(
             build_lore_map_section(
@@ -328,7 +330,7 @@ def build_lore_projection(pack: str, world: str, *, pack_dir: Path, world_dir: P
     return {"schema_version": 1, "pack": pack, "world": world, "sections": sections}
 ```
 
-> **Verify before running:** open `reference_renderer.py` around line 1099 and confirm the exact keyword name and manifest-path argument `_gate_cast_slugs_on_manifest` expects (the call there gates the HTML map's slugs). Match it verbatim — if the signature differs from `manifest_path=...`, mirror the real call. Do not invent a path; reuse whatever the HTML map passes.
+> **Verified signature:** `_gate_cast_slugs_on_manifest(authored_slugs, *, pack, world, pack_dir)` — it computes the manifest path internally as `pack_dir.parent.parent / "r2_manifest.json"`; there is NO `manifest_path` kwarg. The gate short-circuits on an empty slug set before touching the manifest (so a cartography fixture with no npc entities never raises `FileNotFoundError`).
 
 - [ ] **Step 4: Run test to verify it passes**
 
@@ -496,9 +498,11 @@ def test_map_projection_leaks_no_entity_internals():
         cart, pack="p", world="w", portrait_on_r2_slugs=frozenset({"old_sten"})
     )
     blob = _json.dumps(section)
-    # The secret binding ref must not cross the JSON boundary.
+    # The secret binding ref value must not cross the JSON boundary.
     assert "npc_sten_secret_id" not in blob
-    assert "ref" not in blob
+    # Binding keys must not appear (quoted-key form — robust vs. substrings that
+    # could legitimately occur inside a portrait URL/domain).
+    assert '"ref"' not in blob
     assert '"kind"' not in blob
     # Pin carries exactly the public projection keys.
     pin = section["regions"][0]["pins"][0]
