@@ -2,8 +2,8 @@
 
 How the four repositories coordinate to run the SideQuest AI Narrator.
 
-> **Last updated:** 2026-05-18 (post-ADR-101 SDK cutover; ADR-106 megadungeon
-> closed; forensics telemetry P1+P2 live; ADR-107 aside channel accepted)
+> **Last updated:** 2026-06-08 (ADR-115 PostgreSQL complete; wry_whimsy pack live;
+> sidequest-composer added; Opus 4.8; ADR-136 pool relationship projection)
 
 ## Repository Ecosystem
 
@@ -11,6 +11,7 @@ How the four repositories coordinate to run the SideQuest AI Narrator.
 graph TB
     subgraph "Orchestrator (oq-1 / oq-2)"
         ORC[sidequest (orchestrator)<br/>Sprint tracking, scripts,<br/>cross-repo justfile, ADRs]
+        COMPOSER[sidequest-composer<br/>Notation → rights-free audio CLI<br/>MusicXML/MIDI → OGG via MuseScore 4]
     end
 
     subgraph "Game Engine (sidequest-server, Python)"
@@ -34,11 +35,11 @@ graph TB
     end
 
     subgraph "Asset Library (sidequest-content)"
-        PACKS[Genre Packs<br/>genre_packs/ — 10 live<br/>draft: true = staged in place<br/>YAML, audio params, images, worlds]
+        PACKS[Genre Packs<br/>genre_packs/ — 11 live<br/>draft: true = staged in place<br/>YAML, audio params, images, worlds]
     end
 
     subgraph "External (Anthropic)"
-        SDK[Anthropic API<br/>Haiku 4.5 / Sonnet 4.6 / Opus 4.7<br/>per-call routing ADR-101]
+        SDK[Anthropic API<br/>Haiku 4.5 / Sonnet 4.6 / Opus 4.8<br/>per-call routing ADR-101]
     end
 
     UI -->|WebSocket /ws + JSON| SERVER
@@ -61,6 +62,7 @@ graph TB
     ORC -.->|just commands| SERVER
     ORC -.->|just commands| UI
     ORC -.->|just commands| FLUX
+    COMPOSER -.->|OGG output| PACKS
 
     classDef py fill:#306998,stroke:#333,color:#fff
     classDef ts fill:#3178c6,stroke:#333,color:#fff
@@ -71,7 +73,7 @@ graph TB
     class SERVER,AGENTS,GAME,GENRE,PROTO,DCLIENT,TELEMETRY,FLUX,MIXER,ACES py
     class UI ts
     class PACKS yaml
-    class ORC orch
+    class ORC,COMPOSER orch
     class SDK ext
 ```
 
@@ -91,6 +93,7 @@ graph TB
 | Server → Anthropic | HTTPS (Anthropic Python SDK) | Tool-use messages, prompt caching, per-call model routing (ADR-101 / ADR-102) |
 | Server → Anthropic | HTTPS (subprocess `claude -p`) | Opt-in only; daemon-side subject extraction and ADR-106 dungeon "curate" stage |
 | Server → Jaeger | gRPC (OTEL) | Native tool-registry spans (ADR-103) |
+| Server → PostgreSQL | psycopg3 (`psycopg_pool`) | Session state, turn telemetry, mechanical census (ADR-115); per-session row lock (`SELECT … FOR UPDATE`); Alembic DDL |
 | Content → All | Filesystem path | YAML + Git-LFS binary assets (legacy); audio OGGs and new images served from R2 |
 
 ## Data Flow: Game Turn (SDK / Tool-Use Path)
@@ -222,7 +225,7 @@ absent — RESTORE P2.
 sequenceDiagram
     participant T as Turn Pipeline
     participant E as emit_event
-    participant DB as SQLite (save.db)
+    participant DB as PostgreSQL (sessions)
     participant J as Jaeger (gRPC)
     participant V as Forensics Viewer
 
@@ -231,14 +234,14 @@ sequenceDiagram
     E->>DB: INSERT events (narration row)
     E->>DB: INSERT turn_telemetry<br/>(model, tokens, cost, latency, tool counts)
     E->>DB: INSERT mechanical_census<br/>(per-PC edge/xp/inv/trope + diff lane)
-    Note over E,DB: All three writes share the NARRATION<br/>transaction so per-turn metrics never<br/>desync from the event they describe.
+    Note over E,DB: All three writes share the NARRATION<br/>transaction so per-turn metrics never<br/>desync from the event they describe.<br/>ADR-115: psycopg3 pool, per-session row lock.
     deactivate E
 
     T->>J: tool-registry OTEL spans (ADR-103)
     Note over J: Native — each tool call emits<br/>a span; no sidecar scraper.<br/>Old ADR-058 playtest_otlp pipe<br/>only feeds legacy dashboard panes.
 
-    V->>DB: open_save_readonly(path)
-    Note over V,DB: NEVER SqliteStore.open() —<br/>that path WAL-flips + schema-migrates<br/>+ commits on construction.
+    V->>DB: read-only pool connection
+    Note over V,DB: ADR-124 forensics viewer connects<br/>read-only to PostgreSQL — never the<br/>write-path session pool.
     DB-->>V: read-only cursor
     V->>V: fold KnownFacts by fact_id (ADR-100)
 ```
@@ -266,16 +269,18 @@ sequenceDiagram
 - WebSocket server: real-time game communication (ADR-038)
 - Session management: connect → create → play lifecycle, with `SessionRoom`
   for multiplayer (ADR-036/037); aside channel resolver (ADR-107)
-- SQLite persistence: save/load game state (ADR-006); `sqlite3` via
-  `asyncio.to_thread`; forensics sinks `turn_telemetry` + `mechanical_census`
-  ride the NARRATION transaction
+- PostgreSQL persistence: session state, turn telemetry, mechanical census
+  (ADR-115); psycopg3 + `psycopg_pool.ConnectionPool`; per-session row lock;
+  `SIDEQUEST_DATABASE_URL` required at startup — no silent default; forensics
+  sinks `turn_telemetry` + `mechanical_census` ride the NARRATION transaction
 - Pacing engine: tension model, drama-aware delivery
 - Multiplayer: turn barriers, perception rewriting at the tool layer
   (ADR-104), broadcast-layer firewall (ADR-105)
 - Input sanitization: protocol-layer prompt injection defense (ADR-047)
 - OTEL telemetry: native tool-registry spans (ADR-103), narrator cost
   telemetry (`llm.request` span carries model, tokens, cache hits, cost USD)
-- `open_save_readonly` API for forensic save access (never `SqliteStore.open()`)
+- ADR-124 forensics viewer uses a read-only PostgreSQL connection; legacy
+  `SqliteStore` and `open_save_readonly` are retired (ADR-115 cutover complete)
 
 ### sidequest-ui (TypeScript / React)
 - Game client: narrative display, character sheets, inventory, journal
@@ -299,17 +304,17 @@ sequenceDiagram
 
 ### sidequest-content
 - Genre pack YAML configs — `genre_packs/` (the single tree; the
-  `genre_workshopping/` staging tree was retired 2026-06-03). **10 live
-  production packs** as of 2026-05-29 (all load, each with at least one world
+  `genre_workshopping/` staging tree was retired 2026-06-03). **11 live
+  production packs** as of 2026-06-08 (all load, each with at least one world
   carrying an authored `openings.yaml`): `caverns_and_claudes`
   (ADR-106 `beneath_sunden`), `elemental_harmony`, `heavy_metal`,
   `mutant_wasteland`, `neon_dystopia`, `pulp_noir`, `road_warrior`, `space_opera`,
-  `spaghetti_western`, `tea_and_murder` (renamed from victoria). In-progress
-  worlds stage in place via `draft: true` (`low_fantasy`, formerly the lone
-  workshop pack, was deleted 2026-06-03). See `docs/genre-pack-status.md`
-  for the lobby-selectable world matrix and which worlds have cleared the asset +
-  playtest gate (flagship: `beneath_sunden`, `flickering_reach`, `coyote_star`,
-  `glenross`, plus `space_opera`'s now-live `aureate_span` and `perseus_cloud`).
+  `spaghetti_western`, `tea_and_murder`, `wry_whimsy` (portal-fairytale; hosts
+  `oz`, `wonderland`, `gulliver`). In-progress worlds stage in place via
+  `draft: true`. See `docs/genre-pack-status.md` for the lobby-selectable world
+  matrix and which worlds have cleared the asset + playtest gate (flagship:
+  `beneath_sunden`, `flickering_reach`, `coyote_star`, `glenross`, plus
+  `space_opera`'s `aureate_span` and `perseus_cloud`).
 - Audio assets — ACE-Step `*_input_params.json` per track in repo; OGG
   playback files live in R2 (`cdn.slabgorb.com`), not Git LFS (ADR-095)
 - Image assets — portraits, POI landscapes; new generations upload to R2,
@@ -317,6 +322,14 @@ sequenceDiagram
 - World data: history, factions, cultures, regions; the `beneath_sunden`
   world authors only the surface anchor — the dungeon is procedural at runtime
 - Fonts and visual style assets
+
+### sidequest-composer (Python CLI, uv-managed)
+- Standalone pipeline: public-domain notation (MusicXML/MIDI) → tagged,
+  rights-free audio via MuseScore 4 / FluidSynth
+- Deterministic synthesis — not AI generation; results are reproducible
+- Output OGGs land in `sidequest-content` for R2 upload (not daemon-triggered)
+- Entrypoint: `composer render <manifest|score|url>`
+- Provenance tagging: PD-source + rendered-locally embedded in each file
 
 ## Port-Drift Reference
 
