@@ -11,7 +11,10 @@ stories:
     description: 'Measured (ping-pong 2026-06-07 relationships entry, FIXER notes on server #742): build_relationship_entries (sidequest/game/projection/relationships.py) projects snapshot.npcs ONLY. Engaged npc_pool members never get ADR-136 relationship cards regardless of beats — perseus repro: Rifenna Muse (handshake, struck deal, three scenes, pool entry) absent while a roster-promoted combat opponent got a card. Needs a design decision: pool->roster promotion on sustained engagement (ADR-128 development ladder?) OR direct pool projection. Do NOT spuriously mint Npc objects (see test_disposition_does_not_drift_without_a_stateful_npc).'
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-07'
+    completed: '2026-06-08'
+    completion_note: 'Delivered by merged PR #743 (12d0e7ec, feat(97-1): pool relationship projection + milestone promotion, ADR-136/128). relationships.py:107-157 projects engaged npc_pool members with seen-gate, OTEL spans (npc.pool_projected / npc.pool_projection_skipped), and pool->roster promotion. Story was never closed at the time; reconciled 2026-06-08.'
     repos: server
     workflow: tdd
     acceptance_criteria:
