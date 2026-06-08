@@ -41,13 +41,19 @@ The map *data* helpers (`_edges_and_dangling`, `_npc_pins`) are imported from `r
   "starting_region": "harbor",
   "regions": [
     {"id": "harbor", "name": "The Harbor", "adjacent": ["market"],
-     "pins": [{"slug": "old-sten", "label": "Old Sten", "portrait_url": "https://.../old-sten.png"}]},
+     "pins": [{"slug": "old_sten", "label": "Old Sten", "portrait_url": "https://.../old_sten.png"}]},
     {"id": "market", "name": "Night Market", "adjacent": ["harbor"], "pins": []}
   ],
   "edges": [["harbor", "market"]],
   "dangling": [["harbor", "ghost-isle"]]
 }
 ```
+
+**Verified model shapes (Task 1 implementer, against the real code):**
+- `Region` (`genre/models/world.py`) requires `name`, `summary`, `description` (no defaults); `adjacent`/`entities` default to `[]`; `extra: allow`.
+- `LocationEntity` (`protocol/models.py`) requires `id`, `label`, `tier` ∈ `{real_object, yes_and, flavor_only}`; `binding` optional; `extra: forbid`.
+- `LocationEntityBinding` requires `kind` ∈ `{location_feature, npc, item, clue, scenario_clue}` and `ref` (min_length 1); **`flavor_only` is NOT a binding kind** (it's a `tier` value); `extra: forbid`. Non-npc / no-binding entities never pin.
+- Pin slug = `slugify_player_name(entity.label)` (spaces→underscores): `"Old Sten"` → `"old_sten"`. The entity `id` is NOT the slug.
 
 `portrait_url` is `null` when the pin's portrait is not on R2. **No region/entity field other than `id`, `name`, `adjacent`, and the `{slug, label, portrait_url}` pin projection ever appears** — this is the public projection for the map.
 
@@ -255,8 +261,8 @@ def test_lore_projection_includes_map_when_cartography_present(tmp_path: Path):
     (world_dir / "cartography.yaml").write_text(
         "starting_region: harbor\n"
         "regions:\n"
-        "  harbor: {name: The Harbor, adjacent: [market]}\n"
-        "  market: {name: Night Market, adjacent: [harbor]}\n",
+        "  harbor: {name: The Harbor, summary: Salt docks., description: Fog and hulls., adjacent: [market]}\n"
+        "  market: {name: Night Market, summary: Lit stalls., description: Spice and smoke., adjacent: [harbor]}\n",
         encoding="utf-8",
     )
     doc = build_lore_projection("p", "w", pack_dir=tmp_path, world_dir=world_dir)
@@ -366,8 +372,8 @@ def _client(tmp_path: Path) -> TestClient:
     (world_dir / "cartography.yaml").write_text(
         "starting_region: harbor\n"
         "regions:\n"
-        "  harbor: {name: The Harbor, adjacent: [market]}\n"
-        "  market: {name: Night Market, adjacent: [harbor]}\n",
+        "  harbor: {name: The Harbor, summary: Salt docks., description: Fog and hulls., adjacent: [market]}\n"
+        "  market: {name: Night Market, summary: Lit stalls., description: Spice and smoke., adjacent: [harbor]}\n",
         encoding="utf-8",
     )
     app = FastAPI()
@@ -464,25 +470,35 @@ def test_map_projection_leaks_no_entity_internals():
             "regions": {
                 "harbor": {
                     "name": "The Harbor",
+                    "summary": "Salt docks.",
+                    "description": "Fog and hulls.",
                     "adjacent": ["market"],
                     "entities": [
                         {
+                            "id": "sten",
                             "label": "Old Sten",
-                            "binding": {"kind": "npc", "target": "npc_sten_secret_id"},
+                            "tier": "real_object",
+                            # `ref` is the keeper-side link target; it must NOT leak.
+                            "binding": {"kind": "npc", "ref": "npc_sten_secret_id"},
                         }
                     ],
                 },
-                "market": {"name": "Night Market", "adjacent": ["harbor"]},
+                "market": {
+                    "name": "Night Market",
+                    "summary": "Lit stalls.",
+                    "description": "Spice and smoke.",
+                    "adjacent": ["harbor"],
+                },
             },
         }
     )
     section = build_lore_map_section(
-        cart, pack="p", world="w", portrait_on_r2_slugs=frozenset({"old-sten"})
+        cart, pack="p", world="w", portrait_on_r2_slugs=frozenset({"old_sten"})
     )
     blob = _json.dumps(section)
-    # The secret binding target must not cross the JSON boundary.
+    # The secret binding ref must not cross the JSON boundary.
     assert "npc_sten_secret_id" not in blob
-    assert "target" not in blob
+    assert "ref" not in blob
     assert '"kind"' not in blob
     # Pin carries exactly the public projection keys.
     pin = section["regions"][0]["pins"][0]
