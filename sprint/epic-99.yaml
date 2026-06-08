@@ -18,7 +18,8 @@ stories:
     title: 'Playtest docs cleanup: salvage+delete playtest-script.md, fix cookbook SQLite line, repoint README:89'
     points: 3
     priority: p2
-    status: backlog
+    status: in_progress
+    started: '2026-06-08'
     repos: orchestrator
     workflow: trivial
     type: chore

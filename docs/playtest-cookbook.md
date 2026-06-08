@@ -308,13 +308,15 @@ just server
 
 ## How to Test: Persistence / Save-Load
 
+Sessions persist to PostgreSQL (ADR-115). No local `.db` files — the session lives in the `sessions` table, keyed by slug.
+
 1. Play a few turns in any scenario
-2. Check `~/.sidequest/saves/` for the SQLite `.db` file
-3. Stop the session, restart server, reconnect (the default reuses the same-day slug — do NOT pass `--fresh`)
+2. Stop the server (`Ctrl-C`)
+3. Restart the server (`just server`) and reconnect — the default reuses the same-day slug, so do **not** pass `--fresh`
 4. Verify state restored correctly (inventory, HP, location, NPC dispositions)
 
 ```bash
-# Reconnect to existing slug (reuse is the default; --fresh would mint a new one)
+# Reconnect to existing slug (reuse is the default; --fresh would mint a new session)
 just playtest --genre mutant_wasteland
 ```
 
@@ -441,6 +443,40 @@ encounter:                                     # optional — forces immediate e
 | OTEL verification | `just up-traced` + Jaeger |
 | Cost projection | `just playtest-scenario smoke_test` (shows projected cost) |
 | Stress test | `just playtest-scenario combat_stress` |
+
+## Feature Coverage Audit Checklist
+
+Run through this after any significant server change to verify nothing regressed. Tick each row when exercised; note the span or UI signal that confirmed it.
+
+| System | Span / Signal | Notes |
+|--------|---------------|-------|
+| WebSocket connection | ConnectScreen shows "connected" | |
+| Character creation | `chargen.*` spans | |
+| Intent classification | `intent_router.*` spans (state-override, no LLM) | |
+| Unified narrator (ADR-067) | `narrator.turn` span | |
+| Auxiliary subsystems | `chassis_voice`, `distinctive_detail`, `npc_agency`, `reflect_absence` spans | |
+| State patching + projection filter | `state_patch` events in watcher | |
+| Confrontation engine (ADR-033 Pillars 1+2) | `confrontation.*` spans | |
+| HP / ablative HP (ADR-114) | `player_hp`/`opponent_hp` in UI; `state_patch` HP delta | |
+| Trope engine | `trope_engine` spans (engine dark — ADR-087 P1) | Verify data ticks even if beats don't fire |
+| Image generation (Z-Image MLX) | `IMAGE` message in watcher | |
+| Music (mood-based library playback) | `AUDIO_CUE` message; crossfade on beat change | |
+| Audio mixing (music + SFX, 2-channel) | AudioStatus panel; SFX on combat | TTS retired ADR-076 |
+| Slash commands (server + client routes) | `/character`, `/inventory`, `/map`, etc. respond | |
+| Map overlay | SVG overlay loads; location highlight updates | |
+| Inventory (within state_delta) | `/inventory` panel shows items | |
+| Character sheet | `/character` panel; stat grid renders | |
+| Journal / KnowledgeJournal | `/journal` panel; handout thumbnails | |
+| Multiplayer (2+ players) | Turn barrier holds; peer actions visible | |
+| GM Mode / Watcher / Dashboard tabs | Event stream live; trope timeline; snapshot inspector | |
+| PostgreSQL persistence (ADR-115) | Reconnect restores session; no `.db` file in `~/.sidequest/saves/` | |
+| Genre theming (CSS — ADR-079) | Genre-specific palette applies | |
+| Beat filter | Low-drama actions suppress image render | |
+| 3D dice (inline tray) | `InlineDiceTray` renders; physics active | ADR-075 |
+| Magic system (WWN/SWN/CWN pluggable) | `magic.*` spans fire for spell actions | |
+| Orbital chart (ADR-094) | Orrery renders for space_opera / coyote_star | |
+
+---
 
 ## Gaps — Fixtures We Don't Have Yet
 

@@ -86,7 +86,7 @@ Logs tee to `~/.sidequest/logs/sidequest-{server,client,daemon}.log` (moved out 
 so reboots don't eat them; each launch rotates the prior file to `.log.YYYYMMDD-HHMMSS`,
 30-day retention). Use `just logs` to tail all of them, or `just logs server` for one.
 
-See [`docs/playtest-script.md`](docs/playtest-script.md) for a structured test checklist
+See [`docs/playtest-cookbook.md`](docs/playtest-cookbook.md) for how to test specific features
 and [`scenarios/`](scenarios/) for headless playtest YAML driven by `just playtest-scenario`.
 
 ## Genre Packs
