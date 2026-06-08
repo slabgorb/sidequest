@@ -23,6 +23,7 @@ stories:
     workflow: tdd
   - id: 98-3
     title: U1 UI — two-scale MapWidget (cartography graph default + orrery drill-down), retire orbital:bool whole-Map toggle
+    description: "DEPENDS ON 100-10 (epic 100, Phase 3 shared d3-dag Map). Cross-epic sequencing: 100-10 replaces cartographyLayout.ts with the shared d3-dag layout module and adopts it in MapOverlay. This story (98-3) must build the two-scale drill (cartography-default + orrery drill-down) ON TOP of that shared component — NOT against the doomed SVG cartographyLayout.ts, or the work is redone. Ownership division: 100-10 owns the layout engine (d3-dag); 98-3 owns the view-model (scale/drill UX at the MapWidget layer, retiring orbital:bool). Land 100-10 first (p2 < p3 already favors this). See Architect spec reconciliation (epic-100 spec lines 51-52 'overlay feed frozen' contradicts this story)."
     points: 5
     priority: p3
     status: backlog
