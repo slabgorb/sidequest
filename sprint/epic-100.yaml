@@ -30,7 +30,7 @@ stories:
     title: Phase 1 — Lore Cast section JSON projection (is_projectable gate, R2 portrait resolved server-side)
     points: 3
     priority: p2
-    status: in_progress
+    status: in_review
     started: '2026-06-08'
     repos: sidequest-server
     workflow: tdd
