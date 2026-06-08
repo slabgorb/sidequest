@@ -253,6 +253,7 @@ def test_main_exits_nonzero_on_alert(monkeypatch: pytest.MonkeyPatch) -> None:
     the alert fires — so cron jobs and CI pipelines see a visible failure
     and can page on it."""
     mod = _import_reconcile()
+    monkeypatch.setattr(sys, "argv", ["reconcile_dark_spend.py"])
     # Patch fetch functions to return a dark-spend scenario (100% dark)
     monkeypatch.setenv("ANTHROPIC_ADMIN_KEY", "sk-ant-admin-test")
     with (
@@ -271,6 +272,7 @@ def test_main_exits_nonzero_on_alert(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_main_exits_zero_on_clean(monkeypatch: pytest.MonkeyPatch) -> None:
     """main() must exit 0 when the gap is within tolerance — no false alarms."""
     mod = _import_reconcile()
+    monkeypatch.setattr(sys, "argv", ["reconcile_dark_spend.py"])
     monkeypatch.setenv("ANTHROPIC_ADMIN_KEY", "sk-ant-admin-test")
     with (
         patch.object(mod, "fetch_billed_usd", return_value=1.00),
