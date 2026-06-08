@@ -10,11 +10,13 @@ stories:
     title: 'Phase 0 — ADR-135 amendment: server-projection/React-render seam, public-firewall rule, no-session invariant'
     points: 2
     priority: p2
-    status: in_progress
+    status: done
     started: '2026-06-08'
     repos: orchestrator
     workflow: trivial
+    completed: '2026-06-08'
     type: chore
+    review_verdict: approved
   - id: 100-2
     title: 'Phase 1 — Lore generic-YAML section projection + classify() firewall reuse (security-bearing: no keeper field crosses JSON)'
     points: 5
