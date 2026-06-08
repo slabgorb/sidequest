@@ -23,17 +23,54 @@ CHANGELOG.
   remains for legacy `.db` files.
 - **Pluggable rulesets bound, engine + content (ADR-117).** `space_opera` → **SWN**
   (attack-vs-AC, `hp_depletion`, dogfight shot resolution, 1d8+DEX initiative);
-  `neon_dystopia` → **CWN** (System Strain, Trauma/Shock/Mortal-Major injury
-  lethality, `net_run` hacking-as-confrontation).
+  `neon_dystopia` + `road_warrior` → **CWN** (System Strain, Trauma/Shock/Mortal-Major
+  injury lethality, `net_run` hacking-as-confrontation); `elemental_harmony` +
+  `heavy_metal` → **WWN** (full non-magic turn plus the WWN magic engine — Effort
+  pools, prepared spells, `resolve_spellcast`); `mutant_wasteland` → **AWN** (the honest
+  Ashes-Without-Number slug over the CWN injury stack).
+- **N-seat table engine (ADR-129).** Generalized sealed-commit loop with poker and
+  auction modes and an NPC betting/bidding policy, behind the same commit barrier as
+  the turn loop.
+- **Premise/bloc faction substrate (`wry_whimsy`).** Authorable premises/blocs as
+  content (per-world `premises.yaml`), router classification of uprising-shaped intent,
+  and a runtime political/belief state engine (v1 belief dials authoritative).
 - **space_opera grows to three live worlds** — `aureate_span` promoted out of
   draft (camp-cosmic redirect, 7 portraits + 21 POIs) and `perseus_cloud` shipped,
   alongside `coyote_star`. New **`spaghetti_western/five_points`** (NYC 1856-57)
   with 12 authored + rendered POIs.
+- **`wry_whimsy` portal-fairytale pack** with three worlds — **Oz**, **Wonderland**,
+  and **Gulliver** — the sensible-outsider-reshapes-absurd-society spine, plus pack
+  classes and per-world bestiary/lore/tropes.
+- **`heavy_metal` WWN port adds Barsoom** — a full world skeleton on the WWN ruleset
+  with its own classes and chargen, joining `evropi` and `long_foundry`.
+- **Player-facing NPC relationships (ADR-136).** Reactive `RELATIONSHIPS` projection
+  and emit, a disposition beat-log, a UI Relationships tab, and a claims-only belief
+  firewall (NPC belief never leaks the keeper's ground truth).
+- **Save-forensics telemetry (ADR-124/132).** A durable per-turn forensic substrate
+  plus a phase-2 mechanical-coverage census, feeding the Save Forensics page and the
+  GM panel; loud-skip folds over malformed turns rather than silent gaps.
+- **Authenticated player identity (ADR-119).** Player-vs-character identity split —
+  a stable player identity distinct from the seat/character it claims, wired through
+  connect and the session room.
+- **Confrontation single filtered delivery (ADR-105).** One class-filtered,
+  per-recipient `CONFRONTATION` supplier for both the live turn and connect-resume
+  paths — the perception firewall has a single source of truth.
+- **Genre-pack filesystem schema + load-time validation.** `python -m
+  sidequest.cli.validate pack` checks a pack against the on-disk schema; `just
+  content-validate[-all]` runs it across the inventory.
+- **Feature-inventory surfacing.** A verified-manifest → markdown generator
+  (`regenerate_feature_inventory.py`) with a build guard so shipped features don't
+  silently drop out of the product record.
 - **Render pipeline.** Caller `--steps` honored end-to-end (daemon worker, #94;
   default 15→20); world `visual_style` now overrides genre (stops portrait grammar
   bleeding into landscapes); `render_queue.py` sequential render→sync runner.
-- **Client.** Asset preload on reconnect, world-level NPC portraits, round-anchored
-  peer-action transcript, genre-theme token persistence fix.
+- **Audio.** Daemon between-session music generation (ACE-Step pipeline → R2, ADR-095)
+  and composer-rendered public-domain audio buckets (classical / ragtime / jazz /
+  parlor) synthesized from PD notation and synced to R2.
+- **Client.** Genre-grouped lobby world picker with scoped theming, reference Lore
+  routes (POI / Cast / timeline projections, ADR-135), asset preload on reconnect,
+  world-level NPC portraits, round-anchored peer-action transcript, genre-theme
+  token persistence fix.
 - **Docs.** Live 10-pack inventory refresh, `orc-quest → sidequest` repo rename,
   this `FEATURES.md`.
 
