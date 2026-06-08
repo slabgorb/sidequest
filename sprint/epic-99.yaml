@@ -26,9 +26,10 @@ stories:
     title: Refresh docs/system-diagram.md (13 drift markers)
     points: 2
     priority: p3
-    status: backlog
+    status: done
     repos: orchestrator
     workflow: trivial
+    completed: '2026-06-08'
     type: chore
   - id: 99-4
     title: Refresh docs/tech-stack.md (light touch)
