@@ -1,7 +1,3 @@
-# Sprint TO Sprint 2624 - Completed Work
-# Jira Sprint ID: 0
-# Archived: 2026-06-08
-
 sprint:
   name: "TO Sprint 2624"
   number: 2624
@@ -12,8 +8,36 @@ sprint:
   end_date: 2026-06-21
   status: active
 
-completed_epics: []
-  # Epic shard files live in sprint/archive/epic-{ref}.yaml
-
-completed_stories: []
-  # Orphan stories not belonging to an epic
+completed_epics:
+  - '91'
+completed_stories:
+  - id: 91-1
+    epic: '91'
+    title: 'Single SDK choke point — universal usage instrumentation (log line + llm.request span + cost_usd + caller tag on EVERY Anthropic call; wiring test: no AsyncAnthropic() outside the factory)'
+    points: 5
+    completed: '2026-06-05'
+  - id: 91-2
+    epic: '91'
+    title: Attribute and fix the 8x/turn Haiku volume (caller tags from 91-1; fix retries/fan-out or document budget with per-turn assertion)
+    points: 3
+    completed: '2026-06-06'
+  - id: 91-3
+    epic: '91'
+    title: 'Intent Router cache repair + fail-loud floor guard (combined prefix >=4096 or raise at build; live-gated test: cache_creation>0 turn 1, cache_read>0 turn 2; DESCOPE if local routing epic lands first)'
+    points: 3
+    completed: '2026-06-05'
+  - id: 91-4
+    epic: '91'
+    title: Cross-model runaway coverage — extend ADR-134 detector + per-session cumulative cost to all call sites and models
+    points: 2
+    completed: '2026-06-05'
+  - id: 91-5
+    epic: '91'
+    title: Dark-spend detector — automated three-layer reconciliation (instrumented vs Admin API), loud alert on >10% gap, GM dashboard surface
+    points: 3
+    completed: '2026-06-08'
+  - id: 91-6
+    epic: '91'
+    title: Gate narrator.cache.both_writes_fired WARNING on cache_read>0 (cold-start dual writes are unavoidable, not a pathology)
+    points: 1
+    completed: '2026-06-05'

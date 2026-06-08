@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant Cron as Cron Job<br/>(nightly)
+    participant Script as reconcile_dark_spend.py
+    participant AdminAPI as Anthropic<br/>Admin API
+    participant Server as SideQuest Server<br/>:8765
+    participant Ledger as SessionCostLedger
+    participant Dashboard as GM Dashboard
+    participant Alert as ERROR Log<br/>+ exit 1
+
+    Cron->>Script: python scripts/reconcile_dark_spend.py --days 1
+
+    Script->>AdminAPI: GET /v1/organizations/cost_report<br/>(x-api-key: ANTHROPIC_ADMIN_KEY)
+    AdminAPI-->>Script: {data: [{results: [{amount: "1423"}]}]}<br/>→ billed_usd = $14.23
+
+    Script->>Server: GET /api/debug/cost/instrumented
+    Server->>Ledger: instrumented_total_usd()
+    Ledger-->>Server: sum(cumulative_cost_usd.values())
+    Server-->>Script: {instrumented_usd: 13.87, session_count: 4}
+
+    Script->>Script: compute_gap()<br/>gap_pct = (14.23 - 13.87) / 14.23 × 100<br/>= 2.5%  →  alert = False
+
+    Script->>Server: POST /api/debug/cost/reconciliation<br/>{instrumented_usd, billed_usd, gap_pct, alert}
+
+    alt alert = True (gap > 10%)
+        Server->>Dashboard: dark_spend.gap_detected<br/>severity=error
+        Script->>Alert: ERROR: DARK SPEND ALERT gap=47.3%<br/>billed=$14.23 instrumented=$7.52
+        Script-->>Cron: exit 1
+    else alert = False
+        Server->>Dashboard: reconciliation result stored<br/>(GET /api/debug/cost/reconciliation)
+        Script-->>Cron: exit 0
+    end

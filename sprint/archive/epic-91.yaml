@@ -3,7 +3,7 @@ type: epic
 title: Dark Spend — LLM Cost Observability & Cache Integrity
 description: "Cost-forensics 2026-06-05 ([COST-1] pingpong) found ~half the daily Anthropic bill invisible to all internal accounting: Haiku 4.5 burns $3.3-3.5/day (4x'd Jun 3) with ZERO prompt caching (cache_creation=0 org-wide despite llm_factory.py documenting a 1h marker — the under-4,096-floor silent-no-cache trap), ~8 Haiku calls/turn vs the expected ~1 (575 calls / 70 turns on Jun 4), and ~97% of that spend emits no llm.request span and no usage log line. Log-based cost tables (narrator.sdk.usage) structurally see only the narrator Sonnet loop. Per-turn unit economics make or break the business model: narrator is healthy (6.6-7.6c/turn post-May-31 tier fix) while the classification side is unmetered waste. Doctrine: NO UNINSTRUMENTED TOKEN — every Anthropic call goes through one choke point that logs + spans model/tokens/cache/cost/caller, the ADR-134 runaway detector covers all models, and a daily dark-spend reconciliation against the Admin API (scripts/anthropic_usage.py) alerts loudly when billed > instrumented. Sibling epic (local classification routing, wiring epic-48 Ollama deliverables) removes the Haiku bill entirely; story 91-3 (cache repair) is descoped if that lands first. Evidence + methodology: /sq-llm-costs skill, pingpong [COST-1]."
 priority: p1
-status: ready
+status: done
 repos: sidequest-server
 stories:
   - id: 91-1
@@ -53,9 +53,11 @@ stories:
     title: Dark-spend detector — automated three-layer reconciliation (instrumented vs Admin API), loud alert on >10% gap, GM dashboard surface
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-08'
     repos: orchestrator,sidequest-server
     workflow: tdd
+    completed: '2026-06-08'
   - id: 91-6
     title: Gate narrator.cache.both_writes_fired WARNING on cache_read>0 (cold-start dual writes are unavoidable, not a pathology)
     points: 1
@@ -67,3 +69,4 @@ stories:
     completed: '2026-06-05'
     type: chore
     review_verdict: approved
+completed: '2026-06-08'
