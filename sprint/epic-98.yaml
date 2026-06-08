@@ -1,56 +1,44 @@
 id: '98'
 type: epic
-title: Docs accuracy overhaul — purge port/SDK/Postgres drift
-description: 'Sweep docs/ for stale architecture: claude -p subprocess (now Anthropic SDK ADR-101), SQLite (now Postgres ADR-115), Rust port-era layout (ADR-082), retired turn-barrier/TurnMode model, missing ADR-136 relationship surface. Rewrite from verified live code, not memory.'
-priority: p2
+title: ADR-141 Two-Scale Spatial Model — Galactic Graph + Per-System Orrery
+description: 'Implement ADR-141 (accepted 2026-06-08). Two-scale spatial model: galactic/campaign view = cartography.yaml SVG nodes-and-edges graph (systems=nodes, jumps=edges); local view = per-system orrery drilled into from the current node. One file per system (worlds/<world>/systems/<id>.yaml), fake perseus_cloud orbits.yaml root deleted. Spec: docs/superpowers/specs/2026-06-08-two-scale-spatial-model-epic-design.md. Reuses both renderers + drill-down scope + ADR-130 clock — minimal new code. P3: orrery already renders (#748 verified); this is legibility + per-system structure, below the p1 backlog.'
+priority: p3
 status: backlog
-repos: orchestrator
+repos: content,server,ui
 stories:
   - id: 98-1
-    title: Rewrite stale turn-sequence docs (solo + multiplayer)
+    title: C1 Content — split perseus_cloud orbits.yaml into systems/<id>.yaml, delete fake root, author yula
     points: 3
-    priority: p2
+    priority: p3
     status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
+    repos: content
+    workflow: tdd
+    type: refactor
   - id: 98-2
-    title: Audit + refresh remaining docs/sequence/ files (image-rendering, lore-storage, confrontations-and-scenarios)
-    points: 3
-    priority: p2
-    status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
-  - id: 98-3
-    title: 'Playtest docs cleanup: salvage+delete playtest-script.md, fix cookbook, repoint README'
-    points: 3
-    priority: p2
-    status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
-  - id: 98-4
-    title: Comprehensive rewrite of docs/relationship-systems.md (ADR-136/125/128/053)
+    title: S1 Server — per-region system-file resolution in orbital/loader.py (system_root() unchanged)
     points: 5
-    priority: p2
+    priority: p3
     status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
-  - id: 98-5
-    title: Refresh docs/system-diagram.md (13 drift markers)
+    repos: server
+    workflow: tdd
+  - id: 98-3
+    title: U1 UI — two-scale MapWidget (cartography graph default + orrery drill-down), retire orbital:bool whole-Map toggle
+    points: 5
+    priority: p3
+    status: backlog
+    repos: ui
+    workflow: tdd
+  - id: 98-4
+    title: C2 Content — jump mechanics on reached cartography routes (yula neighbors first)
     points: 2
     priority: p3
     status: backlog
-    repos: orchestrator
+    repos: content
     workflow: trivial
-    type: chore
-  - id: 98-6
-    title: Refresh docs/tech-stack.md (light touch)
-    points: 1
+  - id: 98-5
+    title: S2 Server — inter-system jump adjudication via SWN ruleset seam (ADR-117), default cost OTEL-logged
+    points: 5
     priority: p3
     status: backlog
-    repos: orchestrator
-    workflow: trivial
-    type: chore
+    repos: server
+    workflow: tdd
