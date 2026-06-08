@@ -1,0 +1,19 @@
+# Sprint TO Sprint 2624 - Completed Work
+# Jira Sprint ID: 0
+# Archived: 2026-06-08
+
+sprint:
+  name: "TO Sprint 2624"
+  number: 2624
+  jira_sprint_id: 0
+  jira_sprint_name: "TO Sprint 2624"
+  goal: Ruleset-world combat & magic, cost observability, and the reference SPA migration
+  start_date: 2026-06-08
+  end_date: 2026-06-21
+  status: active
+
+completed_epics:
+  # Epic shard files live in sprint/archive/epic-{ref}.yaml
+
+completed_stories:
+  # Orphan stories not belonging to an epic

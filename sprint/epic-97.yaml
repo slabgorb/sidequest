@@ -13,14 +13,14 @@ stories:
     priority: p1
     status: done
     started: '2026-06-07'
-    completed: '2026-06-08'
-    completion_note: 'Delivered by merged PR #743 (12d0e7ec, feat(97-1): pool relationship projection + milestone promotion, ADR-136/128). relationships.py:107-157 projects engaged npc_pool members with seen-gate, OTEL spans (npc.pool_projected / npc.pool_projection_skipped), and pool->roster promotion. Story was never closed at the time; reconciled 2026-06-08.'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - An engaged npc_pool member with relationship-relevant history appears on the Relationships tab
       - A latent/unseen pool member does not (seen-gate semantics preserved)
       - OTEL span on the promotion/projection decision (lie-detector)
+    completed: '2026-06-08'
+    completion_note: 'Delivered by merged PR #743 (12d0e7ec, feat(97-1): pool relationship projection + milestone promotion, ADR-136/128). relationships.py:107-157 projects engaged npc_pool members with seen-gate, OTEL spans (npc.pool_projected / npc.pool_projection_skipped), and pool->roster promotion. Story was never closed at the time; reconciled 2026-06-08.'
     type: bug
     review_verdict: approved
   - id: 97-2

@@ -34,7 +34,9 @@ stories:
     title: Refresh docs/tech-stack.md (light touch)
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-08'
     repos: orchestrator
     workflow: trivial
+    completed: '2026-06-08'
     type: chore
