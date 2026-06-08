@@ -21,9 +21,11 @@ stories:
     title: 'Phase 1 — Lore generic-YAML section projection + classify() firewall reuse (security-bearing: no keeper field crosses JSON)'
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-08'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-08'
   - id: 100-3
     title: Phase 1 — Lore Cast section JSON projection (is_projectable gate, R2 portrait resolved server-side)
     points: 3
