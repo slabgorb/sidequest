@@ -62,9 +62,11 @@ stories:
     title: Phase 1 — Rules page JSON projection API + firewall reuse (/reference/api/rules/{pack})
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-09'
   - id: 100-7
     title: Phase 1 — Theme tokens in projection JSON (theme.yaml -> CSS-var token set, C3)
     points: 2

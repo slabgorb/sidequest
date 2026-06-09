@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant Browser
+    participant Server as FastAPI Server<br/>(reference_routes.py)
+    participant Resolver as Pack Resolver<br/>(_resolve_pack_dir)
+    participant Projector as Rules Projector<br/>(build_rules_projection)
+    participant YAML as Rules YAML Files<br/>(rules.yaml, power_tiers.yaml,<br/>beat_vocabulary.yaml, ...)
+    participant Firewall as Visibility Firewall<br/>(build_generic_yaml_section<br/>+ classify())
+
+    Browser->>Server: GET /reference/api/rules/space_opera
+    Server->>Resolver: resolve "space_opera"
+    alt Pack not found
+        Resolver-->>Server: raise ValueError
+        Server-->>Browser: 404 Not Found
+    else Pack found
+        Resolver-->>Server: /path/to/space_opera/
+        Server->>Projector: build_rules_projection("space_opera", pack_dir=…)
+        loop For each RULES_FILE present on disk
+            Projector->>YAML: load YAML file
+            YAML-->>Projector: raw dict (includes keeper fields)
+            Projector->>Firewall: build_generic_yaml_section(raw_dict, world="")
+            Note over Firewall: classify() checks each field<br/>narrator_hint → KEEPER → strip<br/>beat_vocabulary.obstacles → KEEPER → strip<br/>power_tiers.*.npc → KEEPER → strip<br/>public fields → PLAYER → keep
+            Firewall-->>Projector: cleaned section dict
+        end
+        Projector-->>Server: {schema_version:1, pack:"space_opera", sections:[…]}
+        Server-->>Browser: 200 JSONResponse<br/>(no keeper fields present)
+    end
