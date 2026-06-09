@@ -200,7 +200,16 @@ System Strain / Mortal Injury / Shock," express it as
 `isinstance(cfg, CwnConfig)` (covers all present and future subclasses) or
 probe the method override.
 
-**Known debt:** the remaining slug-string sites (the four named above, post-88-1
-state) are recorded for a consolidation sweep — tracked as future sprint work
-(epic 88 follow-on), scheduled alongside the next plan that touches those files,
-and mandatory before sister module #6.
+**Known debt — RESOLVED (story 88-3, 2026-06-09).** The four slug-string sites
+named above were in fact converted to capability gates *inline during 88-1/88-2*,
+not deferred: `builder.py` `seed_system_strain` → `isinstance(cfg, CwnConfig)`;
+`stabilize_mortal_injury.py` / `adjust_system_strain.py` → `isinstance(module,
+CwnRulesetModule)`; `downed_seam.py` → `isinstance(cfg, (CwnConfig, WwnConfig))`.
+Each is covered by a green AWN test proving the gate fires for `awn` (a thin
+`CwnConfig`/`CwnRulesetModule` subclass): `test_awn_downed_target_gets_mortal_injury`,
+`test_awn_returns_pool_maxed_at_con_score`, `test_awn_pack_applies_strain`,
+`test_awn_pack_can_stabilize`. Story 88-3 verified this and corrected the lagging
+docstring summaries. The only `rules.ruleset == "cwn"` checks that remain are the
+genuinely slug-specific hacking-ladder gates (`dice.py`, `confrontation.py`) — kept
+by design per the doctrine above. No outstanding consolidation work; the doctrine
+stands for sister module #6 and beyond.

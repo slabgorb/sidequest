@@ -3,7 +3,7 @@ type: epic
 title: Ashes Without Number — mutant_wasteland ruleset port
 description: 'Faithful port of Ashes Without Number (Sine Nomine) as the fourth Without-Number sister module, binding mutant_wasteland to a thin awn ruleset (AWN combat == CWN). Design: docs/superpowers/specs/2026-06-05-ashes-without-number-mutant-wasteland-design.md (§11 Architect Addendum has the seam analysis + story split). Foundation-first: Plan 1 (ruleset binding + ablative-HP personal combat) seeded now as stories 88-1 (engine) and 88-2 (content). Later plans — Mutations (bespoke MutationPlugin), Radiation/Disease, Stress/Addiction, Survival hexcrawl, Creatures, Enclaves — get stories when their specs land. No new ADR (instance of ADR-117 + inherits ADR-114).'
 priority: p2
-status: backlog
+status: done
 repos: server,content
 stories:
   - id: 88-1
@@ -33,8 +33,11 @@ stories:
     title: WN capability-gate consolidation sweep — convert remaining ruleset slug-string sites to isinstance/override-probe capability gates (ADR-117 amendment 2026-06-05)
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: server
     workflow: tdd
     depends_on: 88-2
+    completed: '2026-06-09'
     type: refactor
+completed: '2026-06-09'

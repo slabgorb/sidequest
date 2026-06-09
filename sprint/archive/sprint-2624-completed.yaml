@@ -10,6 +10,7 @@ sprint:
 
 completed_epics:
   - '91'
+  - '88'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -41,3 +42,18 @@ completed_stories:
     title: Gate narrator.cache.both_writes_fired WARNING on cache_read>0 (cold-start dual writes are unavoidable, not a pathology)
     points: 1
     completed: '2026-06-05'
+  - id: 88-1
+    epic: '88'
+    title: AWN Plan 1 engine — thin awn ruleset module + binding seams + wiring/chargen tests
+    points: 5
+    completed: '2026-06-05'
+  - id: 88-2
+    epic: '88'
+    title: AWN Plan 1 content — mutant_wasteland awn binding, standard-six sweep, hp_depletion combat confrontation
+    points: 3
+    completed: '2026-06-05'
+  - id: 88-3
+    epic: '88'
+    title: WN capability-gate consolidation sweep — convert remaining ruleset slug-string sites to isinstance/override-probe capability gates (ADR-117 amendment 2026-06-05)
+    points: 2
+    completed: '2026-06-09'
