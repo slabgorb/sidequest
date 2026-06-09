@@ -71,9 +71,11 @@ stories:
     title: Phase 1 — Theme tokens in projection JSON (theme.yaml -> CSS-var token set, C3)
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: sidequest-server
     workflow: tdd
+    completed: '2026-06-09'
   - id: 100-8
     title: 'Phase 2 — React reference shell: session-free /reference/* routes + generic node-tree renderer components (C2)'
     points: 5
