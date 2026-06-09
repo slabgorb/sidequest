@@ -20,7 +20,7 @@ magic_design.md,,,,,X,X,,X,,,,3,8,partial
 openings.yaml,,,,,X,X,X,,,,X,4,7,partial
 pacing.yaml,,,,X,,,,,,,,1,10,singleton
 pack.yaml,X,X,X,X,X,X,X,X,X,X,X,11,0,universal
-power_tiers.yaml,X,,X,X,X,X,X,X,X,X,X,10,1,near-universal-gap
+power_tiers.yaml,X,X,X,X,X,X,X,X,X,X,X,11,0,universal
 powers.yaml,,,,,,,X,,,,,1,10,singleton
 progression.yaml,X,X,X,X,X,X,X,X,X,X,X,11,0,universal
 projection.yaml,X,,X,X,,,X,X,X,,,6,5,partial
