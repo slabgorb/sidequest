@@ -10,7 +10,7 @@ stories:
     title: Rewrite content-coupled server tests against fixtures (decouple from live packs)
     points: 8
     priority: p2
-    status: backlog
+    status: in_progress
     repos: sidequest-server
     workflow: tdd
     type: refactor
