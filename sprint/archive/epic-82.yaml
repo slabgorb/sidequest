@@ -3,7 +3,7 @@ type: epic
 title: Surface the Dark Subsystems — Wire Consumers + OTEL for Overstated ADRs
 description: "Audit-2026-06-03 'overstated' ADRs where infrastructure exists but NO PRODUCTION CONSUMER reaches it — so by the project's wiring doctrine ('Verify Wiring, Not Just Existence'; 'no consumer fails the wire-it test') they are not actually live. Each surviving story must add a real production consumer AND emit an OTEL/watcher event (GM panel = lie-detector) before it can be called wired; frontmatter downgraded live->partial until then. ACTIVE: ADR-049 (no verbosity/vocab UI controls; TurnContext hardcodes defaults; CONNECT ignored), ADR-021 (1 of 4 progression tracks wired — mechanics-first Sebastien/Jade want it legible), ADR-121 (Resolver.resolve_merged four-tier walk is dead code; prod uses a two-tier shim — wire or narrow). DEPRECATED (not built): ADR-052 /tone axis system — tone is the CONTENT AUTHOR's domain (pack prose/config/world flavor), not an engine command (story dropped); ADR-040 No-Raw-Stats — reversed by mechanics-first visibility doctrine, players consistently ask for MORE visibility (story 82-5, done). See docs/adr/AUDIT-2026-06-03.md."
 priority: p2
-status: backlog
+status: done
 repos: sidequest-server,sidequest-ui
 stories:
   - id: 82-2
@@ -29,7 +29,7 @@ stories:
     description: 'ADR-021 overstated. Only track 4 (journey recap, persistence.py/pg/snapshot.py) is live. Tracks 1-3 exist as data models only: milestone accumulation/level-up is a TODO (genre/models/progression.py ~:62); AffinityState tier promotion is P6-deferred (game/character.py ~:55-57,102-103); item narrative_weight has no runtime consumer, P2-deferred (game/item_catalog_resolution.py ~:31); WealthTier/milestone_categories are data-only with no consumer (progression.py ~:187-221). FIX: wire the engines — milestone->level-up, AffinityState tier promotion, and an item narrative_weight (or WealthTier gold->label) consumer — each with OTEL. MECHANICS-FIRST: per CLAUDE.md, expose the resulting advancement deltas in player-facing surfaces (Sebastien/Jade). LARGE (8pts) — split into 82-3a/b/c per track if needed; log the split. Navigate by symbol.'
     points: 8
     priority: p2
-    status: split
+    status: done
     repos: sidequest-server
     workflow: tdd
     split_into:
@@ -41,6 +41,7 @@ stories:
       - AffinityState tier promotion fires at runtime (P6 un-deferred); an OTEL/watcher event records the tier crossing.
       - Item narrative_weight has a real runtime consumer (P2 un-deferred) OR WealthTier maps gold->wealth label in a production consumer; the chosen track emits OTEL.
       - WIRING TEST per wired track proving the engine runs in a real turn (not just data-model existence); fails on current code. Full server-test green. If split, each sub-story carries its own wiring test.
+    completed: '2026-06-08'
     type: bug
   - id: 82-4
     title: Make four-tier Resolver the production resolution path or narrow ADR-121 (consumer + provenance OTEL)
@@ -157,3 +158,4 @@ stories:
     completed: '2026-06-05'
     type: chore
     review_verdict: approved
+completed: '2026-06-09'

@@ -39,9 +39,13 @@ stories:
     title: "Plan 4 — War Rig (crewed vessel): SWN Space Combat port — departments→stations (driver/gunner/wrench/spotter/road-boss), Command Points economy (Do Your Duty/Above-and-Beyond/Support Department), Crisis table (continuing/acute, Deal With a Crisis). NET-NEW crew-seat primitive (EncounterActor has no seat field): multi-PC, one shared Hull, concurrent verbs per round = the SOUL Guitar-Solo wider-action. Single-seat-fighter case == solo rig. Architectural fork to settle in this story's spec: reuse ADR-077 dogfight sealed-letter infra vs beat_selection vs new crew-seat confrontation type. Depends on 86-1/86-2."
     points: 13
     priority: p3
-    status: backlog
+    status: done
     repos: sidequest-server,sidequest-content
     workflow: tdd
+    split_into:
+      - 86-6
+      - 86-7
+    completed: '2026-06-09'
   - id: 86-5
     title: 'Plan 5 — Content remap + calibration + playtest: vessel stat blocks in inventory.yaml (composure/armor/speed/mount_slots per rig tier), mount_slots→CWN vehicle weapons, archetype + lethality calibration against the live cwn substrate, OTEL playtest pass on road_warrior/the_circuit verifying every rig/chase/War-Rig subsystem fires (no improvised prose). Final integration gate for the epic.'
     points: 5
@@ -49,3 +53,23 @@ stories:
     status: backlog
     repos: sidequest-server,sidequest-content
     workflow: tdd
+  - id: 86-6
+    title: 'War Rig table-game core: register war_rig_crew kind + custom-beat seam + shared Hull pool (rig_pool.* spans, vessel-scoped) + Hull->0 crash fan-out to N occupants + mandatory OTEL wiring test. Reuses ADR-129 N-Seat Table Engine per spec 2026-06-09-road-warrior-war-rig-crew-spec.md. Single-seat==solo-rig degenerate case. Solo prod path stays on 86-2.'
+    points: 8
+    priority: p3
+    status: done
+    started: '2026-06-09'
+    repos: sidequest-server,sidequest-content
+    workflow: tdd
+    depends_on: 86-4
+    completed: '2026-06-09'
+    review_findings: 'BLOCKING: war_rig_crew never registered in production (table/__init__.py missing the side-effect import) — UnknownTableGameError at runtime; the registration test masks it by importing the module directly. Plus weak OTEL wiring assertions, missing unknown-verb/armor-floor tests, war_rig.py missing __all__, and stale dormant-crash content comment. Red rework: TEA strengthens the wiring test (import package, assert registration) + OTEL/negative assertions; Dev adds the __init__ import + __all__.'
+    review_verdict: approved
+  - id: 86-7
+    title: 'Command Points economy + Crisis table: per-vessel CP shared resource (Do Your Duty/Above-and-Beyond/Support Department) + d10 Crisis table (continuing/acute, Deal With a Crisis), reusing rig_damage_tiers/rig_crash. Asserts command_points.*/crisis spans fire. Depends on 86-6.'
+    points: 5
+    priority: p3
+    status: backlog
+    repos: sidequest-server,sidequest-content
+    workflow: tdd
+    depends_on: 86-4
