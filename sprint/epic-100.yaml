@@ -108,9 +108,11 @@ stories:
     title: 'Phase 3 — React section components: POI, Cast, Timeline'
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: sidequest-ui
     workflow: tdd
+    completed: '2026-06-09'
   - id: 100-12
     title: 'Phase 4 — Cutover: flip /reference/* to SPA, retire Python HTML emitters + islands.js, keep reference_visibility.py feeding the API'
     points: 5
