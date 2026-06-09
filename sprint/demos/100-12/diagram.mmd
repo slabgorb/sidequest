@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant Browser as Browser<br/>/reference/lore/:pack/:world
+    participant React as React SPA<br/>(session-free route)
+    participant API as FastAPI<br/>/reference/api/*
+    participant Firewall as reference_visibility.py<br/>(firewall — unchanged)
+    participant Content as sidequest-content<br/>(YAML packs + R2 assets)
+
+    Browser->>React: Cold load (no session, no auth)
+    React->>API: GET /reference/api/lore/:pack/:world
+    API->>Firewall: classify() — strip keeper fields
+    Firewall->>Content: Load world YAML + theme.yaml
+    Content-->>Firewall: Raw world data
+    Firewall-->>API: Public-only data (no keeper fields)
+    API-->>React: JSON { sections[], theme_tokens{}, portrait_urls[] }
+    Note over React: theme_tokens → CSS vars (session-free injector)
+    Note over React: sections → POI / Cast / Map(d3-dag) / Timeline components
+    React-->>Browser: Rendered reference page
+
+    Note over API: /reference/* HTML routes DELETED
+    Note over API: /reference/api/* JSON routes LIVE
+    Note over Firewall: reference_visibility.py UNCHANGED

@@ -15,6 +15,7 @@ completed_epics:
   - '92'
   - '86'
   - '99'
+  - '100'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -186,3 +187,63 @@ completed_stories:
     title: Refresh docs/tech-stack.md (light touch)
     points: 1
     completed: '2026-06-08'
+  - id: 100-1
+    epic: '100'
+    title: 'Phase 0 — ADR-135 amendment: server-projection/React-render seam, public-firewall rule, no-session invariant'
+    points: 2
+    completed: '2026-06-08'
+  - id: 100-2
+    epic: '100'
+    title: 'Phase 1 — Lore generic-YAML section projection + classify() firewall reuse (security-bearing: no keeper field crosses JSON)'
+    points: 5
+    completed: '2026-06-08'
+  - id: 100-3
+    epic: '100'
+    title: Phase 1 — Lore Cast section JSON projection (is_projectable gate, R2 portrait resolved server-side)
+    points: 3
+    completed: '2026-06-08'
+  - id: 100-4
+    epic: '100'
+    title: Phase 1 — Lore POI section JSON projection (R2 landscape gate server-side)
+    points: 3
+    completed: '2026-06-08'
+  - id: 100-5
+    epic: '100'
+    title: Phase 1 — Lore Timeline section JSON projection
+    points: 2
+    completed: '2026-06-09'
+  - id: 100-6
+    epic: '100'
+    title: Phase 1 — Rules page JSON projection API + firewall reuse (/reference/api/rules/{pack})
+    points: 5
+    completed: '2026-06-09'
+  - id: 100-7
+    epic: '100'
+    title: Phase 1 — Theme tokens in projection JSON (theme.yaml -> CSS-var token set, C3)
+    points: 2
+    completed: '2026-06-09'
+  - id: 100-8
+    epic: '100'
+    title: 'Phase 2 — React reference shell: session-free /reference/* routes + generic node-tree renderer components (C2)'
+    points: 5
+    completed: '2026-06-09'
+  - id: 100-9
+    epic: '100'
+    title: Phase 2 — Session-free theme injector (CSS-var mechanism fed from projection JSON, not WS theme_css; C3)
+    points: 3
+    completed: '2026-06-09'
+  - id: 100-10
+    epic: '100'
+    title: Phase 3 — Shared d3-dag map component + in-game MapOverlay adoption + delete cartographyLayout.ts (C4)
+    points: 5
+    completed: '2026-06-09'
+  - id: 100-11
+    epic: '100'
+    title: 'Phase 3 — React section components: POI, Cast, Timeline'
+    points: 5
+    completed: '2026-06-09'
+  - id: 100-12
+    epic: '100'
+    title: 'Phase 4 — Cutover: flip /reference/* to SPA, retire Python HTML emitters + islands.js, keep reference_visibility.py feeding the API'
+    points: 5
+    completed: '2026-06-09'

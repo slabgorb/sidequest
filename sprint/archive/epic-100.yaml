@@ -3,7 +3,7 @@ type: epic
 title: Reference pages → React SPA migration (server-projection / React-render seam)
 description: 'Get the server out of HTML rendering: server emits public-projected JSON, React renders it. Reuse reference_visibility.py firewall as the server-side projection (keeper fields never cross the JSON boundary, C1); /reference/* SPA routes render with no session (C2); theme via a session-free injector fed from the projection JSON (C3); cartography map becomes one d3-dag component shared with the in-game MapOverlay (kills the reference_map.py↔cartographyLayout.ts split-brain, C4). Spec: docs/superpowers/specs/2026-06-08-reference-pages-react-migration-design.md. Phase 1 Slice A (lore map projection JSON API) already SHIPPED via sidequest-server PR #762 (plan: docs/superpowers/plans/2026-06-08-reference-lore-projection-api-map-slice.md). Amends ADR-135 (server-rendered HTML premise).'
 priority: p2
-status: backlog
+status: done
 repos: sidequest-server,sidequest-ui,orchestrator
 stories:
   - id: 100-1
@@ -117,7 +117,10 @@ stories:
     title: 'Phase 4 — Cutover: flip /reference/* to SPA, retire Python HTML emitters + islands.js, keep reference_visibility.py feeding the API'
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
+    completed: '2026-06-09'
     type: refactor
+completed: '2026-06-09'
