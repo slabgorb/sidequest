@@ -69,3 +69,5 @@ stories:
     completed: '2026-06-08'
     branch: feat/90-6-region-mode-location-drift-abandons-combat
     type: bug
+    review_findings: 'HIGH: same-region-continue elif not scoped to combat — continues all non-mobile categories incl. social, reintroducing the 2026-04-30 negotiation-walk-out abandon for region-mode worlds (oz). MEDIUM: tautological/non-wiring dispatch test; invalid-region heading abandons combat. Needs category-scoping + new social test.'
+    review_verdict: approved

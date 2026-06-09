@@ -21,13 +21,6 @@ This is the group the game is *actually for*. Features must serve this group. If
 - **Sebastien** (Keith's nephew, ~James's age) — Plays on and off. A **mechanics-first** player (with Jade, one of two in the group) — wants to know the rules, the numbers, how the system works. **Design implication:** in **player-facing** surfaces, expose the math behind mechanical resolution (dice rolls, beat selection, ability costs, advancement deltas) so he doesn't have to guess what just happened. This is a player-UI consideration — *not* an excuse to invoke his name for OTEL spans, the GM panel, watcher telemetry, or any other dev-side observability. Those exist so the dev (Keith) can verify the engine works; Sebastien doesn't see them and isn't served by them. If you're tempted to write "Sebastien's lie-detector" about a backend OTEL emit or a GM-panel chart, you've made the wrong association — that's a Keith/dev tool, not a Sebastien feature.
 - **Jade** (introduced to the group by Sebastien; not previously known to Keith) — A long-time DM in her own right — like Keith, a **forever-GM who also wants to play along** — and, as of **2026-05-29**, **one of the people who writes content.** She isn't *the* content author — Keith authors too, and others may — but she's the first *non-Keith* author to come aboard, which makes her a concrete instance of the project's real goal: **the authoring surfaces must handle homebrew.** She's playing / extending `genre_packs/space_opera/worlds/perseus_cloud`, onboarded onto a paste-new-stuff-in / **pull-request** update path (better tools and wizards to follow). The load-bearing requirement she stands for is that *anyone* — Jade, Keith, a future table member — can add worlds, packs, rules, and lore **as content** (pack/world YAML, world overrides, the "Yes, And" collaborative-worldbuilding path) **without touching engine code**. If authoring what a table wants requires a server change, that's a failure of the content surface. Her instincts run **mechanics-first**: with Sebastien she ran the 5-hour, 140+ turn `coyote_star` session *while the confrontation engine was broken* and carried it on narrative, NPC, and relationship strength alone — and the two of them specifically miss the crunch that wasn't firing. **Two design implications.** (1) As a *player*, she wants mechanical resolution legible in **player-facing** surfaces — a player-UI consideration, not a license for her name on OTEL/GM-panel/dev observability. (2) As an *author*, the crunch a table wants must be **expressible in homebrew content**, not buried in engine code. The 2026-05-25 SWN-crunch / ablative-HP reintroduction (`docs/superpowers/specs/2026-05-25-swn-crunch-ablative-hp-design.md`) is a direct response to Sebastien + Jade.
 
-### Aspirational audience: the household
-
-Nice-to-have, not load-bearing. If they never play, SideQuest is still a success. Don't bend primary-audience features to chase these users.
-
-- **Sonia** (Keith's partner, lives with Keith) — The `tea_and_murder` genre pack is a love letter to her, not a feature gate. Has a nerd-force-field from years of living with nerds. Keith will live if she never plays.
-- **Antonio & Pedro** (Sonia's sons, late 20s, share the household with Keith and Sonia as adults — Keith is not a parental figure to them) — Low reading tolerance, Pedro especially. Antonio is AI-skeptical and has his own playgroup; one of them is an artist. If visual/voice features happen to land for them, great — but don't compromise playgroup pacing or narrative depth to court them.
-
 ### Player-style axes
 
 - *Narrative vs mechanical:* James/Alex narrative-first; Sebastien/Jade mechanical-first; Keith both. (Sebastien/Jade also love narrative — they carried a 140-turn game on it — but feel the absence of crunch.)
@@ -142,25 +135,14 @@ sidequest-composer/           # Notation → rights-free audio CLI (subrepo, uv-
 
 ## Architecture
 
-- **Server communicates via WebSocket** for real-time game events (narration, state updates)
-- **Small REST surface** for save/load, character listing, genre pack metadata
-- **Anthropic Python SDK** is the default narrator LLM backend per **ADR-101** (supersedes ADR-001): prompt caching, native tool-use (replaces the ADR-039 JSON sidecar via ADR-102), per-call model routing (Haiku/Sonnet/Opus). Backend is selected by `SIDEQUEST_LLM_BACKEND` (default `anthropic_sdk`) — see `sidequest-server/sidequest/agents/llm_factory.py`. The `claude -p` CLI subprocess and Ollama remain opt-in non-default backends, and `claude -p` still serves some non-narrator jobs (e.g. dungeon "curate")
-- **Genre packs** live in `sidequest-content/genre_packs/` (single source of truth for pack/world **specs** — YAML config, prompts, generation params), loaded by the server from `SIDEQUEST_GENRE_PACKS`. **Rendered media assets (images + audio) are canonical in R2, not the repo** — `sidequest-content/r2_manifest.json` (a full bucket scan: key/md5/size/uploaded_at per object) is the authoritative index of what exists and where; when local files and R2 disagree, R2 wins. Rebuild the index with `scripts/r2_manifest_from_bucket.py`. A pack can bind one of four live pluggable ruleset modules via `ruleset:` in its `rules.yaml` (`native` default = ADR-033 dial engine; `swn` = Stars Without Number → `space_opera`; `wwn` = Worlds Without Number → `elemental_harmony`; `cwn` = Cities Without Number → `neon_dystopia`; unknown values fail loud at load)
-- **Media daemon** is a Python sidecar for image generation (Flux / Z-Image) and music generation (ACE-Step). Music is generated on operator command via `python scripts/generate_music.py --genre <pack>` — per-track JSON params files in `sidequest-content/genre_packs/<pack>/audio/music/*_input_params.json` are the canonical spec; the daemon uploads OGG to R2 at `genre_packs/<pack>/audio/music/<track>.ogg`. See ADR-095
-- **Save files** live in a single **PostgreSQL** database (one `sessions` table: integer `session_id` PK + `session_slug` TEXT UNIQUE), per **ADR-115** (complete). The per-file SQLite model is **retired** — the SQLite write layer (`SqliteStore`/`SqliteSaveRepository`) was deleted, not dual-pathed. Config requires `SIDEQUEST_DATABASE_URL`: there is **no silent default** — unset raises `MissingDatabaseUrlError`, and the app fails loud at startup if Postgres is unreachable (pool wait timeout 10s), honoring "No Silent Fallbacks". Connectivity is psycopg3 + `psycopg_pool.ConnectionPool`; concurrency uses per-session row locks (`SELECT ... FOR UPDATE`); Alembic owns all DDL (raw SQL via `op.execute`, no ORM). Old `~/.sidequest/saves/*.db` files are never written anymore — a read-only importer (`python -m sidequest.game.importer`) imports one legacy `.db` at a time. See `.pennyfarthing/guides/save-management.md` for cleanup, inspection, and migration procedures
-
-### Port history
-
-The backend was briefly a Rust workspace (`sidequest-api`, ~2026-03-30 to 2026-04-19). **ADR-082** ported it back to Python as `sidequest-server`; **ADR-085** governed tracker hygiene through cutover. The Rust tree no longer exists on disk locally, but is preserved as a read-only reference at **https://github.com/slabgorb/sidequest-api** — use it when an ADR references a Rust-specific layout and you need to trace the original implementation. Older ADRs that reference Rust-specific layouts (crates, `lib.rs`, cargo decomposition) are preserved as historical design records — see `docs/adr/README.md` for the port-era context header and per-ADR post-port mapping notes.
+see docs/architecture.md
 
 ## Commands
 
 All commands run from the orchestrator root. Services tee logs to `~/.sidequest/logs/sidequest-{server,client,daemon}.log` (moved out of `/tmp` so reboots don't eat them; rotated per launch with timestamped `.log.YYYYMMDD-HHMMSS` backups, 30-day retention). Re-tail with `just logs [service]` or `tail -F ~/.sidequest/logs/sidequest-server.log`. (Some older code comments still reference the retired `/tmp/sidequest-server.log` path.)
 
 ```bash
-# Boot everything (daemon warmup → server → client, tails merged logs)
-just up
-just down                 # Stop all background services
+
 just logs [service]       # Tail one or all service logs
 
 # Individual services (foreground, Ctrl-C to stop)
@@ -209,8 +191,6 @@ path, config, or default. Silent fallbacks mask configuration problems and lead 
 hours of debugging "why isn't this quite right."
 
 </critical>
-
-
 
 <critical>
 

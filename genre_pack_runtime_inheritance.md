@@ -15,13 +15,23 @@ per the rules below. Files that exist on disk but are never read are flagged.
 | **world override → COMPOSE** | `magic.yaml` — per-field last-writer-wins + `hard_limits` append (`magic_loader.py:56-157`) |
 | **world override → AUTHORITATIVE** | `theme, audio, visual_style, lore, tropes` — world value wins, genre is fallback (`loader.py:1167-1215`) |
 | **world-only** | no genre base: `world, cartography, openings, history, npcs, archetype_funnels, rigs, items, portrait_manifest, premises, calendar, orbits, chart` |
-| **globbed dirs** | `cultures/`, `legends/`, `scenarios/` scanned as directories (`loader.py:1118,1139,1326`); `.gitkeep`/`_meta.yaml` skipped |
+| **globbed dirs** | `legends/`, `scenarios/` scanned as directories (`loader.py:1167,1326`); `.gitkeep`/`_meta.yaml` skipped |
+| **cultures — dir SHADOWS root** | `if cultures/ dir exists → read the dir (one Culture per `*.yaml`, files lacking a `name:` key skipped as art-pipeline `visual_tokens` overlays); else → read world-root `cultures.yaml` as a list` (`loader.py:1144-1163`). The dir and the root are **mutually exclusive**, not merged. A world that ships `visual_tokens`-only files in `cultures/` and keeps its name-gen cultures in the root `cultures.yaml` loads **zero** name-gen cultures (this was glenross's silent bug, fixed 2026-06-09 by moving its 6 cultures into `cultures/*_names.yaml`). |
 | 🚫 **NOT read** | exists on disk, loader never opens it |
 
 **Files that are NEVER read at runtime (project-wide):**
 - All markdown: `combat_design.md`, `magic_design.md`, `CAMPAIGN_NOTES.md`, `players-guide.md`, `README.md`
 - `*.draft` / `*.yaml.draft`, `premises.draft.yaml` (only `premises.yaml` is read)
-- **`inventory.yaml`, `power_tiers.yaml`, `projection.yaml` at the WORLD level** — these are read **only at genre level** (`loader.py:1647,1622,1897`). World copies are dead.
+- **`power_tiers.yaml`, `projection.yaml` at the WORLD level** — read **only at genre level** (`load_genre_pack`, loader.py:1673 / 1947). World copies are dead.
+- ⚠ **CORRECTION (2026-06-09):** **`inventory.yaml` at the WORLD level IS read.** An
+  earlier revision of this doc listed it as genre-only/dead; that is wrong. Epic 94
+  added a world-tier read in `_load_single_world` (loader.py:1479) with **world-first
+  resolution** (`server.dispatch.inventory_resolve.resolve_inventory`), and the load
+  emits a `world_inventory` `state_transition` watcher event. Verified by loading
+  coyote_star (`credits` currency, 16 catalog items). The 13 world `inventory.yaml`
+  files are live, intended per-world catalogs (ADR-140) — the 🚫 `inventory (dead)`
+  marks on the per-genre diagrams below are **stale** and should be read as "world
+  inventory loads, world-first."
 
 ---
 
@@ -44,8 +54,8 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    G["<b>GENRE elemental_harmony</b><br/>req: pack·rules·progression·axes·prompts·visibility_baseline·lethality_policy<br/>opt: theme·archetypes·audio·tropes·classes·archetype_constraints·client_theme·spells_wwn<br/>⚠ no power_tiers (only genre missing it); no genre magic.yaml"]
-    W1["<b>burning_peace</b><br/>override: archetypes·visual_style·tropes·char_creation·bestiary·cultures·lore · cultures/ · legends/<br/>world-only: world·cartography·openings·history·archetype_funnels·portrait_manifest<br/>🚫 inventory·power_tiers·projection (world copies dead)"]
+    G["<b>GENRE elemental_harmony</b><br/>req: pack·rules·progression·axes·prompts·visibility_baseline·lethality_policy<br/>opt: theme·archetypes·audio·tropes·classes·archetype_constraints·client_theme·spells_wwn·<b>power_tiers</b> ✅<br/>(power_tiers added at genre 2026-06-09 — was the only genre missing it; no genre magic.yaml)"]
+    W1["<b>burning_peace</b><br/>override: archetypes·visual_style·tropes·char_creation·bestiary·lore · cultures/ · legends/<br/>world-only: world·cartography·openings·history·archetype_funnels·portrait_manifest<br/>(inventory loads world-first; power_tiers moved to genre 2026-06-09; stale root cultures.yaml deleted)"]
     W2["<b>shattered_accord</b><br/>override: archetypes·visual_style·tropes·char_creation·bestiary·lore · cultures/ · legends/<br/>world-only: world·cartography·openings·history·archetype_funnels·portrait_manifest<br/>🚫 inventory (dead)"]
     G --> W1
     G --> W2
@@ -144,7 +154,7 @@ flowchart LR
     G["<b>GENRE space_opera</b><br/>req: pack·rules·progression·axes·prompts·visibility_baseline·lethality_policy<br/>opt: theme·archetypes·audio·power_tiers·classes·archetype_constraints·projection·client_theme·magic<br/>🚫 combat_design.md · magic_design.md (docs, never read)"]
     W1["<b>aureate_span</b><br/>override: archetypes·visual_style·tropes·char_creation·bestiary·lore · cultures/ · legends/<br/>world-only: world·cartography·openings·history·npcs·archetype_funnels·portrait_manifest<br/>🚫 inventory (dead)"]
     W2["<b>coyote_star</b> ⭐ fullest<br/>override: archetypes·visual_style·tropes·char_creation·<b>magic(COMPOSE)</b>·bestiary·<b>chassis_classes</b>·lore · cultures/ · legends/<br/>world-only: world·cartography·openings·history·npcs·archetype_funnels·<b>rigs·orbits·chart</b>·portrait_manifest<br/>🚫 inventory (dead)"]
-    W3["<b>perseus_cloud</b> (Jade's world)<br/>override: archetypes·visual_style·tropes·char_creation·bestiary·lore · cultures/<br/>world-only: world·cartography·openings·history·npcs·portrait_manifest·<b>orbits</b><br/>🚫 inventory (dead); ⚠ no legends/ dir (only world missing it)"]
+    W3["<b>perseus_cloud</b> (Jade's world)<br/>override: archetypes·visual_style·tropes·char_creation·bestiary·lore · cultures/ · legends/ ✅<br/>world-only: world·cartography·openings·history·npcs·portrait_manifest·<b>orbits</b><br/>(inventory loads world-first; legends/ added 2026-06-09 — 3 legends)"]
     G --> W1
     G --> W2
     G --> W3
@@ -213,9 +223,20 @@ flowchart LR
 
 ## Cross-genre runtime findings
 
-1. **Dead world files (exist, never loaded):** `inventory.yaml` ships in 13 worlds but is read **only at genre level** — every world copy is dead. Same for the singleton world-level `power_tiers.yaml` and `projection.yaml` (both genre-only loaders). If a world wants custom loadout/economy it must do it at genre tier or via a different mechanism.
+1. ⚠ **CORRECTED.** ~~`inventory.yaml` ... every world copy is dead.~~ **World-level
+   `inventory.yaml` IS loaded** (epic 94, `_load_single_world` loader.py:1479) and
+   resolved **world-first** — the 13 world copies are live, intended per-world economies/
+   catalogs (ADR-140). The genuinely-dead world files are the singleton world-level
+   `power_tiers.yaml` and `projection.yaml` (both read only by `load_genre_pack`,
+   loader.py:1673 / 1947). The one shipped world `power_tiers.yaml` (burning_peace) was
+   a misfiled *genre* file and was moved to `elemental_harmony/power_tiers.yaml`
+   (2026-06-09).
 2. **`premises.draft.yaml` is never read** — only `premises.yaml` (gulliver/wonderland ship the draft name; oz ships the real one and is the only world whose premises actually load).
-3. **`legends/` missing from perseus_cloud only** — every other world loads a legends dir; perseus_cloud silently has none.
+3. ~~**`legends/` missing from perseus_cloud only**~~ ✅ **RESOLVED (2026-06-09):** 3
+   legends authored for perseus_cloud (`the_last_lane`, `the_coelitha_survey`,
+   `the_lazzaro_compact`), inferred from the world's own history/lore; all parse and
+   their `terrain_scars` regions validate against `cartography.yaml`. All 21 worlds now
+   load a legends dir.
 4. **`magic.yaml` composition is live in exactly 2 worlds:** long_foundry and coyote_star (world magic composes over genre magic). Other genres ship a genre `magic.yaml` that loads with no world override.
 5. **Orbital tier (orbits.yaml + chart.yaml) only in space_opera** — coyote_star (both) and perseus_cloud (orbits only). chart.yaml is coyote_star-exclusive.
 6. **`*_design.md` never reach the engine** — `combat_design.md` (neon, pulp, road_warrior, space_opera) and `magic_design.md` (neon, pulp, space_opera) are pure docs.

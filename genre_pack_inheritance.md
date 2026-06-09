@@ -45,7 +45,32 @@ flowchart TD
 
 ## Override pairs (the inheritance surface)
 
-These 14 files exist at both genre and world level, so a world file merges over the
-genre default: `archetypes`, `tropes`, `visual_style`, `magic`, `classes`, `cultures`,
-`audio`, `char_creation`, `inventory`, `openings`, `projection`, `power_tiers`,
-`bestiary`, `seed_tropes`.
+These files exist at both genre and world level: `archetypes`, `tropes`, `visual_style`,
+`magic`, `classes`, `cultures`, `audio`, `char_creation`, `inventory`, `openings`,
+`projection`, `power_tiers`, `bestiary`, `seed_tropes`.
+
+> ⚠ **Correction (2026-06-09) — "merges over" is too simple; the strategy differs per file.**
+> Verified against the live loader (`sidequest-server/sidequest/genre/loader.py`). The
+> resolution is **not** uniform per-field merge. Real behavior:
+>
+> - **REPLACE (world list wins wholesale):** `archetypes`, `cultures`, `bestiary`,
+>   `char_creation`, `classes`, `spells_wwn`, `chassis_classes`, `seed_tropes`.
+> - **AUTHORITATIVE (world value wins, genre is fallback):** `theme`, `audio`,
+>   `visual_style`, `lore`, `tropes`.
+> - **COMPOSE (per-field last-writer + `hard_limits` append):** `magic.yaml` only.
+> - **`inventory` → world-first resolve:** world `inventory.yaml` loads (epic 94) and is
+>   resolved ahead of the genre default. *Live, not dead.*
+> - **`power_tiers`, `projection` → genre-only:** read **only** by `load_genre_pack`
+>   (loader.py:1673 / 1947). **World-level copies are never read** — do not treat these as
+>   a world override surface. (The one world `power_tiers.yaml` that shipped, in
+>   burning_peace, was a misfiled genre file and was moved to the genre level.)
+> - **`cultures` is dir-shadows-root, not a merge:** the loader reads the `cultures/`
+>   **directory** if present, **else** the root `cultures.yaml` — they are mutually
+>   exclusive. Files in `cultures/` without a `name:` key are art-pipeline `visual_tokens`
+>   overlays and are skipped for name generation. A world that puts only overlays in
+>   `cultures/` while leaving its name-gen cultures in the (now-shadowed) root loads zero
+>   name-gen cultures (glenross's bug, fixed 2026-06-09).
+>
+> So the `W_OVERRIDE`/`G_SHARED` boxes in the flowchart above are a useful first
+> approximation, but `power_tiers` and `projection` belong with the **genre-only** set,
+> and `cultures` resolution is shadow-not-merge.
