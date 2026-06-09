@@ -3,7 +3,7 @@ type: epic
 title: Docs accuracy overhaul (cont.) — purge port/SDK/Postgres drift
 description: 'Remaining docs/ drift after PRs #380/#381 shipped the turn-sequence rewrites, superpowers completed-sweep, FEATURES.md reconciliation, and genre-pack-structure reference. This epic tracks the docs still carrying stale architecture (claude -p, SQLite, Rust port-era layout, pre-ADR-136 relationship model).'
 priority: p2
-status: backlog
+status: done
 repos: orchestrator
 stories:
   - id: 99-1
@@ -45,3 +45,4 @@ stories:
     workflow: trivial
     completed: '2026-06-08'
     type: chore
+completed: '2026-06-09'

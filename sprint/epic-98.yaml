@@ -10,11 +10,13 @@ stories:
     title: C1 Content — split perseus_cloud orbits.yaml into systems/<id>.yaml, delete fake root, author yula
     points: 3
     priority: p3
-    status: in_progress
+    status: done
     repos: content
     workflow: tdd
+    completed: '2026-06-09'
     type: refactor
     branch: feat/98-1-split-perseus-cloud-systems-author-yula
+    review_verdict: approved
   - id: 98-2
     title: S1 Server — per-region system-file resolution in orbital/loader.py (system_root() unchanged)
     points: 5

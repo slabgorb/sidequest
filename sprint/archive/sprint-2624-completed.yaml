@@ -14,6 +14,7 @@ completed_epics:
   - '82'
   - '92'
   - '86'
+  - '99'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -165,3 +166,23 @@ completed_stories:
     title: 'Command Points economy + Crisis table: per-vessel CP shared resource (Do Your Duty/Above-and-Beyond/Support Department) + d10 Crisis table (continuing/acute, Deal With a Crisis), reusing rig_damage_tiers/rig_crash. Asserts command_points.*/crisis spans fire. Depends on 86-6.'
     points: 5
     completed: '2026-06-09'
+  - id: 99-1
+    epic: '99'
+    title: Comprehensive rewrite of docs/relationship-systems.md (ADR-136/125/128/053)
+    points: 5
+    completed: '2026-06-09'
+  - id: 99-2
+    epic: '99'
+    title: 'Playtest docs cleanup: salvage+delete playtest-script.md, fix cookbook SQLite line, repoint README:89'
+    points: 3
+    completed: '2026-06-08'
+  - id: 99-3
+    epic: '99'
+    title: Refresh docs/system-diagram.md (13 drift markers)
+    points: 2
+    completed: '2026-06-08'
+  - id: 99-4
+    epic: '99'
+    title: Refresh docs/tech-stack.md (light touch)
+    points: 1
+    completed: '2026-06-08'
