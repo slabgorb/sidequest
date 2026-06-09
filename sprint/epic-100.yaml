@@ -90,9 +90,11 @@ stories:
     title: Phase 2 — Session-free theme injector (CSS-var mechanism fed from projection JSON, not WS theme_css; C3)
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: sidequest-ui
     workflow: tdd
+    completed: '2026-06-09'
   - id: 100-10
     title: Phase 3 — Shared d3-dag map component + in-game MapOverlay adoption + delete cartographyLayout.ts (C4)
     points: 5
