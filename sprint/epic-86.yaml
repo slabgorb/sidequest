@@ -69,7 +69,11 @@ stories:
     title: 'Command Points economy + Crisis table: per-vessel CP shared resource (Do Your Duty/Above-and-Beyond/Support Department) + d10 Crisis table (continuing/acute, Deal With a Crisis), reusing rig_damage_tiers/rig_crash. Asserts command_points.*/crisis spans fire. Depends on 86-6.'
     points: 5
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: sidequest-server,sidequest-content
     workflow: tdd
     depends_on: 86-4
+    completed: '2026-06-09'
+    review_findings: "HIGH: in-round continuing-crisis escalation fires crisis.escalated but applies no Hull damage (hull=None) while docstrings + player-facing rules.yaml promise it — a span without its mechanic (AC2 half-wired). MEDIUM: mandatory wiring test asserts component-membership only (can't catch it); no cross-round CP-persistence integration test; DC boundary untested; support_department OTEL/bonus untested. LOW: __all__ omits new public constants; max=0/negative-ability_mod untested. Rework: tighten wiring test + add in-round escalation/persistence/boundary tests (TEA), then wire Hull or correct overclaims (Dev)."
+    review_verdict: approved

@@ -3,7 +3,7 @@ type: epic
 title: Local Classification Routing — Haiku to Ollama/qwen
 description: "Wire epic-48's closed deliverables (Ollama backend via SIDEQUEST_LLM_BACKEND seam, qwen models on the M3 Ultra, MLX->Ollama serving, and the 48-4 A/B eval harness) to take the high-frequency classification workload off Anthropic billing entirely. Cost-forensics 2026-06-05 ([COST-1] / epic 91) showed the Haiku tier (Intent Router ADR-113 + asides ADR-107 + SCRATCH callers) at $3.3-3.5/day, 100% uncached, growing with play volume — the exact workload a local qwen-class model serves at $0 marginal cost with no cache-floor games. Hard gate: NO routing flip without A/B evidence on the real captured router corpus (a misclassified dispatch is a SOUL/agency problem, not just a cost problem). Doctrine: the local rung is explicit config, fail-loud if Ollama is unreachable — a silent fallback to Haiku would recreate dark spend by design. Landing this DESCOPES epic 91-3 (cache repair) and frees 82-10 (router prompt slimming) from the 4,096-token cache-floor constraint. Verification consumes epic 91 tooling: caller-tagged baselines (91-1) prove the savings; dark-spend reconciliation (91-5) proves the Haiku line goes to ~zero. See sprint/context/context-epic-91.md Cross-Epic Dependencies."
 priority: p1
-status: ready
+status: done
 repos: sidequest-server
 stories:
   - id: 92-1
@@ -34,7 +34,7 @@ stories:
     title: Asides to local (ADR-107) — single-shot Haiku to qwen, same fail-loud config seam (fold into 92-2 if trivial)
     points: 2
     priority: p2
-    status: backlog
+    status: canceled
     repos: sidequest-server
     workflow: tdd
     depends_on: 92-1
@@ -42,8 +42,9 @@ stories:
     title: Playtest verification + cost proof — full session with agent.backend=ollama spans firing; 91-5 reconciliation shows Haiku line ~zero
     points: 2
     priority: p1
-    status: backlog
+    status: canceled
     repos: sidequest-server
     workflow: tdd
     depends_on: 92-2
     type: chore
+completed: '2026-06-09'

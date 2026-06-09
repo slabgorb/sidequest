@@ -12,6 +12,7 @@ completed_epics:
   - '91'
   - '88'
   - '82'
+  - '92'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -108,3 +109,23 @@ completed_stories:
     title: Parse SIDEQUEST_NARRATOR_ITERATION_CAP once at startup, not per-turn (82-9 follow-up; narrator.py:86 + orchestrator.py:4125)
     points: 1
     completed: '2026-06-05'
+  - id: 92-1
+    epic: '92'
+    title: 'A/B eval: Haiku vs local qwen on real captured Intent Router corpus (48-4 harness; acceptance threshold on DispatchPackage classification agreement + latency budget)'
+    points: 3
+    completed: '2026-06-05'
+  - id: 92-2
+    epic: '92'
+    title: Local rung in the model ladder — CallType.CLASSIFICATION/SCRATCH route to Ollama behind explicit config; fail loud if unreachable (NO silent Haiku fallback)
+    points: 5
+    completed: '2026-06-06'
+  - id: 92-3
+    epic: '92'
+    title: Asides to local (ADR-107) — single-shot Haiku to qwen, same fail-loud config seam (fold into 92-2 if trivial)
+    points: 2
+    completed: '2026-06-09'
+  - id: 92-4
+    epic: '92'
+    title: Playtest verification + cost proof — full session with agent.backend=ollama spans firing; 91-5 reconciliation shows Haiku line ~zero
+    points: 2
+    completed: '2026-06-09'
