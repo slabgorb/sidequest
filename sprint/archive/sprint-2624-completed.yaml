@@ -13,6 +13,7 @@ completed_epics:
   - '88'
   - '82'
   - '92'
+  - '86'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -128,4 +129,39 @@ completed_stories:
     epic: '92'
     title: Playtest verification + cost proof — full session with agent.backend=ollama spans firing; 91-5 reconciliation shows Haiku line ~zero
     points: 2
+    completed: '2026-06-09'
+  - id: 86-1
+    epic: '86'
+    title: 'Plan 1 — CWN binding + ablative-HP driver combat: add ruleset:cwn to road_warrior; adopt standard CWN six (STR/DEX/CON/INT/WIS/CHA), remap every flavor-name reference (injury_system, archetypes, classes, char_creation, power_tiers); remove edge_config/Driver Edge → ablative HP + Shock/Trauma/Mortal/Major-Injury; combat confrontation win_condition:hp_depletion with opponent_default_stats carrying ALL SIX abilities + hp + armor_class; classes→CWN class+foci; FIX the hp_depletion calibration migration (test_road_warrior_pack_loads_with_dual_dial_schema + COMBAT_PACKS, per space_opera precedent); apply the Without-Number wiring checklist; mandatory OTEL/integration wiring test (cwn spans fire on a real turn).'
+    points: 5
+    completed: '2026-06-05'
+  - id: 86-2
+    epic: '86'
+    title: 'Plan 2 — Solo rig two-pool vehicle combat: wire the dormant RigComposurePool + rig_crash into a real confrontation. Vehicle AC (+Drive moving, -4 stationary), Armor reduction, Rig Composure as ablative hull; NET-NEW two-pool resolution (hull→0 = crash event → dismounted → driver HP, per CWN §2.4.8.1-2); ramming (opposed Dex/Drive, max-HP dmg + Trauma 1d12×3, ramming vehicle takes dmg back); crash damage to occupants (Physical+Luck saves). New WinCondition variant or beat-application branch. Assert rig_pool.delta/zero_crossing + rig_pool.crash_event spans fire.'
+    points: 8
+    completed: '2026-06-05'
+  - id: 86-3
+    epic: '86'
+    title: "Plan 3 — Vehicle chase confrontation: CWN Vehicle Chases §2.6.2 pace/pursuit model as the chase encounter type (fleeing Drive check = pace; passengers hinder +1..+3; pursuers Dex/Drive vs pace with situational mods); map road_warrior's existing Opening/Pursuit/Escalation/Crisis/Resolution beats; converge into the Plan 2 two-pool combat when vehicles close. OTEL confrontation.* spans on each chase beat."
+    points: 5
+    completed: '2026-06-05'
+  - id: 86-4
+    epic: '86'
+    title: "Plan 4 — War Rig (crewed vessel): SWN Space Combat port — departments→stations (driver/gunner/wrench/spotter/road-boss), Command Points economy (Do Your Duty/Above-and-Beyond/Support Department), Crisis table (continuing/acute, Deal With a Crisis). NET-NEW crew-seat primitive (EncounterActor has no seat field): multi-PC, one shared Hull, concurrent verbs per round = the SOUL Guitar-Solo wider-action. Single-seat-fighter case == solo rig. Architectural fork to settle in this story's spec: reuse ADR-077 dogfight sealed-letter infra vs beat_selection vs new crew-seat confrontation type. Depends on 86-1/86-2."
+    points: 13
+    completed: '2026-06-09'
+  - id: 86-5
+    epic: '86'
+    title: 'Plan 5 — Content remap + calibration + playtest: vessel stat blocks in inventory.yaml (composure/armor/speed/mount_slots per rig tier), mount_slots→CWN vehicle weapons, archetype + lethality calibration against the live cwn substrate, OTEL playtest pass on road_warrior/the_circuit verifying every rig/chase/War-Rig subsystem fires (no improvised prose). Final integration gate for the epic.'
+    points: 5
+    completed: '2026-06-09'
+  - id: 86-6
+    epic: '86'
+    title: 'War Rig table-game core: register war_rig_crew kind + custom-beat seam + shared Hull pool (rig_pool.* spans, vessel-scoped) + Hull->0 crash fan-out to N occupants + mandatory OTEL wiring test. Reuses ADR-129 N-Seat Table Engine per spec 2026-06-09-road-warrior-war-rig-crew-spec.md. Single-seat==solo-rig degenerate case. Solo prod path stays on 86-2.'
+    points: 8
+    completed: '2026-06-09'
+  - id: 86-7
+    epic: '86'
+    title: 'Command Points economy + Crisis table: per-vessel CP shared resource (Do Your Duty/Above-and-Beyond/Support Department) + d10 Crisis table (continuing/acute, Deal With a Crisis), reusing rig_damage_tiers/rig_crash. Asserts command_points.*/crisis spans fire. Depends on 86-6.'
+    points: 5
     completed: '2026-06-09'
