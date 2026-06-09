@@ -21,9 +21,13 @@ stories:
     title: S1 Server — per-region system-file resolution in orbital/loader.py (system_root() unchanged)
     points: 5
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-09'
     repos: server
     workflow: tdd
+    completed: '2026-06-09'
+    review_findings: 'HIGH: path traversal (CWE-22) — region_id interpolated into filesystem path in _resolve_system_file (loader.py:105) with no sanitization, runtime source is narrator-patchable current_region. Plus untested production-goal path (explicit region_id wiring) and untested blank-region fail-loud guard. Fix is ~3 lines + 3 tests.'
+    review_verdict: approved
   - id: 98-3
     title: U1 UI — two-scale MapWidget (cartography graph default + orrery drill-down), retire orbital:bool whole-Map toggle
     description: "DEPENDS ON 100-10 (epic 100, Phase 3 shared d3-dag Map). Cross-epic sequencing: 100-10 replaces cartographyLayout.ts with the shared d3-dag layout module and adopts it in MapOverlay. This story (98-3) must build the two-scale drill (cartography-default + orrery drill-down) ON TOP of that shared component — NOT against the doomed SVG cartographyLayout.ts, or the work is redone. Ownership division: 100-10 owns the layout engine (d3-dag); 98-3 owns the view-model (scale/drill UX at the MapWidget layer, retiring orbital:bool). Land 100-10 first (p2 < p3 already favors this). See Architect spec reconciliation (epic-100 spec lines 51-52 'overlay feed frozen' contradicts this story)."
