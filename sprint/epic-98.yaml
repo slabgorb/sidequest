@@ -52,8 +52,10 @@ stories:
     title: S2 Server — inter-system jump adjudication via SWN ruleset seam (ADR-117), default cost OTEL-logged
     points: 5
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-06-10'
     repos: server
     workflow: tdd
+    completed: '2026-06-09'
     branch: feat/98-5-jump-adjudication-swn-seam
+    review_verdict: approved
