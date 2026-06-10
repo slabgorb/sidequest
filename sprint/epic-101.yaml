@@ -95,7 +95,8 @@ stories:
     description: "daemon.py is a 1,290-LOC god module hosting the socket server, heartbeat writer, CLI parsing, EmbedWorker, RenderService, warmup/shutdown/status, AND dispatch — and dispatch is half-extracted: dispatch_request() (daemon.py:168) handles ONLY tier=music while image tiers are routed by a parallel inline if/elif chain in _handle_client (methods at lines 429-897); the function's own docstring admits image renders 'never reach this function'. Two dispatch mechanisms for one method is the embryo of the next split-brain. Scope: (1) unify render dispatch — all tiers route through one dispatcher with loud ValueError on unknown tier (No Silent Fallbacks); (2) extract EmbedWorker and RenderService into their own modules (media/embed_worker.py, media/render_service.py or similar), leaving daemon.py as socket lifecycle + routing only; (3) preserve the heartbeat and warmup contracts exactly — server's DaemonStateMirror (story 45-31) and daemon_client are consumers; do NOT change the wire protocol. Pairs with 101-5 (flux alias retirement) — sequence after it to avoid churn. Wiring test: existing socket integration tests must pass unchanged, plus one test proving every advertised method reaches the unified dispatcher."
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: daemon
     workflow: tdd
     acceptance_criteria:
@@ -103,7 +104,10 @@ stories:
       - EmbedWorker + RenderService live outside daemon.py; daemon.py under ~500 LOC, socket lifecycle + routing only
       - 'Wire protocol unchanged: server daemon_client + DaemonStateMirror integration tests green without modification'
       - Wiring test proves every RPC method (ping/status/shutdown/warm_up/render/embed) reaches the unified dispatcher
+    completed: '2026-06-10'
     type: refactor
+    review_findings: 'BLOCKING: test_78_3 over-deletion guard fails — _make_heartbeat re-export dropped from daemon.py (F401 fix removed it; suite not re-run). Plus [MEDIUM] GENERATION_FAILED messages not [:512]-truncated like COMPOSE_FAILED. Green rework.'
+    review_verdict: approved
   - id: 101-8
     title: Unify slug derivation across render/portrait/reference surfaces
     description: |-
