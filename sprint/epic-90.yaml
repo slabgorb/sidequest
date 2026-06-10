@@ -91,8 +91,9 @@ stories:
     title: "Route hydration lie-detectors (wwn.magic_hydrated + magic.state_hydrated) into the typed GM-panel Subsystems feed — 90-7 fast-follow #1 (design-bearing). Today scene_harness._hydrate_character emits both via watcher_hub.publish_event, so they reach only the dashboard RAW console: neither event_type is in the UI WatcherEventType union (sidequest-ui/src/types/watcher.ts) NOR in SPAN_ROUTES (sidequest-server/sidequest/telemetry/spans/), so they never appear in the typed Subsystems tab the way wwn.spell.cast / wwn.effort.commit do. DECISION NEEDED: re-emit as a routed OTEL span (Span.open + SpanRoute event_type=state_transition, component=magic — mirrors wwn.py helpers, no UI change) vs add the literal event_types to the UI union. Routed-span path changes 90-7's emit mechanism + its test contract (tests monkeypatch _hub.publish_event). Apply the chosen pattern to BOTH siblings. Ref: 90-7 Reviewer delivery finding; scene_harness.py:371-390."
     points: 3
     priority: p3
-    status: in_progress
+    status: done
     started: '2026-06-10'
     repos: server
     workflow: tdd
+    completed: '2026-06-10'
     type: chore
