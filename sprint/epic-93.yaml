@@ -50,7 +50,8 @@ stories:
     description: "Render a new 'History' section on the character sheet, starting with the origin block. New collapsible/labelled 'History' section in CharacterSheet.tsx that reads the creation_answers payload from 93-2 and lists, per scene, the prompt and the player's answer (their verbatim words for freeform, their chosen label for selections). Scenes marked archetype_inferred get a small badge ('inferred from your words') so the player sees where the engine read their freeform. The section is structured as the future home for player-linked lore (93-4 attaches lore there) — so build the container/heading to host more than the origin block, but render ONLY the origin block now (no lore stubs). Add the creation_answers type to payloads.ts. Audience: makes chargen provenance legible in the player UI (Sebastien/Jade) and gives narrative-first players (James) their own words back. Refs: CharacterSheet.tsx ~101-242; payloads.ts CharacterSheetData ~22-88; depends on 93-2 snapshot field."
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: sidequest-ui
     workflow: tdd
     depends_on: 93-2
@@ -61,6 +62,8 @@ stories:
       - creation_answers is typed in payloads.ts (CharacterSheetData); the section renders nothing (graceful) when the field is absent/empty on legacy saves.
       - The History container is structured to host additional entry kinds later (lore) without a rewrite, but renders only the origin block now — no placeholder/stub lore rows.
       - Component test asserts the History/Origin rows render from a creation_answers fixture incl. the inferred badge.
+    completed: '2026-06-10'
+    review_verdict: approved
   - id: 93-4
     title: History section lore-link plumbing to the ADR-048 store
     description: "Wire the character-sheet History section to player-linked lore. The History section (93-3) is designed as the home for player-linked lore; this story attaches it to the existing lore store. Story 75-15 already persists creation-seed lore fragments across resume (rag.character_creation_lore_seeded) via the ADR-048 lore RAG store — surface the fragments that are linked to THIS character/player in the History section beneath the origin block. Server: expose the player-/character-linked lore fragments in (or alongside) the character snapshot — a typed list of {fragment_id, title/summary, source} filtered to the character's creation-seed + player-attributed fragments (perception/visibility honored). UI: render those as a 'Lore' subsection under History, linking to the lore page where one exists. No new lore authoring — this is plumbing existing fragments to the surface. NO SILENT FALLBACK: if a linked fragment id resolves to nothing, log/skip loudly, don't fabricate. Refs: ADR-048 lore RAG; story 75-15 (creation-seed lore persistence); depends on 93-3 (History section) + 93-2 (creation_answers)."
