@@ -188,7 +188,9 @@ pf jira claim {JIRA_KEY}
 
 **Write the session file to the canonical absolute path: `{REPO_ROOT}/.session/{STORY_ID}-session.md`** — where `{REPO_ROOT}` is the project root (the directory containing `.pennyfarthing/`). The `Write` tool requires an absolute path; resolve `{REPO_ROOT}` from your activation context, then pass the joined path verbatim.
 
-Use the `Write` tool with that absolute path and the following content (the `Write` tool will create the `.session/` directory if it does not exist):
+Use the `Write` tool with that absolute path and the following content (the `Write` tool will create the `.session/` directory if it does not exist).
+
+**Timestamp format (required):** Replace every `{NOW}` placeholder — the `**Phase Started:**` field and the `setup` Phase History `Started` cell — with the current UTC time as an **ISO-8601** instant, e.g. `2026-06-03T22:00:00Z` (or `2026-06-03T22:00:00+00:00`). Do **not** emit a human-readable form like `2026-06-03 22:00 UTC`; `pf handoff complete-phase` parses these timestamps with `datetime.fromisoformat`, and a non-ISO-8601 value blocks the phase handoff (gh #74).
 
 ```markdown
 ---

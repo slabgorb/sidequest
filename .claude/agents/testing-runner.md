@@ -12,7 +12,7 @@ model: haiku
 | `CONTEXT` | Yes | Why tests are being run |
 | `RUN_ID` | Yes | Unique identifier for this run |
 | `FILTER` | No | Test name pattern for filtered runs |
-| `STORY_ID` | No | For cache writing |
+| `STORY_ID` | No | Optional context only — the cache is keyed on `RUN_ID`, never `STORY_ID` |
 | `SKIP_CACHE_WRITE` | No | Set `true` for background runs |
 </arguments>
 
@@ -33,7 +33,7 @@ This runs lint + typecheck + tests. Exit 0 = all passed.
 - [ ] Ensure test containers running
 - [ ] Run tests via check.sh (or filtered if FILTER set)
 - [ ] Check skip violations
-- [ ] Write cache (if STORY_ID provided)
+- [ ] Write cache to `.session/test-runs/${RUN_ID}.md` (unless SKIP_CACHE_WRITE)
 - [ ] Output structured results
 </gate>
 
@@ -72,19 +72,25 @@ fi
 
 ## Test Cache
 
-Write cache after running:
+Cache the run summary to an **isolated, RUN_ID-keyed** file under
+`.session/test-runs/`. NEVER write test results to the live workflow session
+file — that file holds the SM/TEA/Dev audit trail (assessments, Delivery
+Findings, Design Deviations) the handoff gates parse, and overwriting it
+destroys unrecoverable, gitignored state (gh #53).
+
+Write the cache after running (skip when `SKIP_CACHE_WRITE` is `true`):
 ```bash
-source .pennyfarthing/scripts/test/test-cache.sh
-SESSION_FILE=".session/${STORY_ID}-session.md"
-test_cache_write "$SESSION_FILE" "$RESULT" "$PASS" "$FAIL" "$SKIP" "${DURATION}s"
+if [ "${SKIP_CACHE_WRITE:-false}" != "true" ]; then
+    # Writes .session/test-runs/${RUN_ID}.md and prints the path.
+    # The helper validates RUN_ID and refuses to touch any live session file.
+    printf '%s\n' "$RESULT_SUMMARY" | python -m pf.session.test_cache "$RUN_ID"
+fi
 ```
 
-Check cache before running:
+Read a prior run's cache by its RUN_ID:
 ```bash
-if test_cache_valid "$SESSION_FILE"; then
-    CACHED_RESULT=$(test_cache_get "$SESSION_FILE" "result")
-    echo "Using cached: $CACHED_RESULT"
-fi
+CACHE_FILE=".session/test-runs/${RUN_ID}.md"
+[ -f "$CACHE_FILE" ] && cat "$CACHE_FILE"
 ```
 
 <output>

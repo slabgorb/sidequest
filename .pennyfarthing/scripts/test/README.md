@@ -2,20 +2,23 @@
 
 Scripts for test infrastructure and benchmarking.
 
-## Scripts
+## Test-result caching
 
-| Script | Purpose |
-|--------|---------|
-| `test-setup.sh` | Set up test environment |
-| `test-cache.sh` | Manage test result caching |
-| `ground-truth-judge.py` | Python judge for ground truth evaluation |
-| `swebench-judge.py` | SWE-bench style evaluation |
-
-## Usage
+Caching moved into the Python package (SOUL #9, #11). The `testing-runner`
+subagent writes each run's summary to an isolated, RUN_ID-keyed file — never
+the live workflow session file (gh #53):
 
 ```bash
-.pennyfarthing/scripts/test/test-setup.sh
+printf '%s\n' "$RESULT_SUMMARY" | python -m pf.session.test_cache "$RUN_ID"
+# → .session/test-runs/${RUN_ID}.md
 ```
+
+See `pf.session.test_cache` (`test_run_cache_path`, `is_live_session_file`,
+`write_test_run_cache`).
+
+> **Note:** the legacy bash helpers (`test-setup.sh`, `test-cache.sh`) and the
+> judge scripts that this directory once documented are no longer shipped here.
+> Test execution is `pf check` / `scripts/workflow/check.py`.
 
 ## Ownership
 
