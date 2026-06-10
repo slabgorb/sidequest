@@ -28,13 +28,15 @@ stories:
     description: "Measured (server log .20260607-090551 lines 652/668, 863/878 — 3x, always the first reconnector): after a server reload both seats reconnect; the FIRST gets turn_status.reconciled_on_connect sealed=0/1 (solo roster), the second 0/2. build_seal_reconcile_roster (sidequest/server/turn_status_roster.py) derives its roster from room.playing_player_ids() — live sockets — not the durable snapshot.player_seats. Plausibly contributes to the seat-2 'Enter enabled / no waiting lock' symptom in the MP desync entry. CAUTION: the 45-2 phantom-chargen-peer guard is why playing_* exists; a fix must not let mid-chargen phantoms inflate the barrier roster."
     points: 2
     priority: p2
-    status: started
+    status: done
     started: '2026-06-10'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - First reconnector after a reload reconciles against the full seated-PC roster (sealed=0/2 for a 2-seat session)
       - Phantom chargen peers still excluded (45-2 guard regression test)
+    completed: '2026-06-10'
+    review_verdict: approved
     type: bug
     branch: feat/97-2-seal-reconcile-roster-reconnect-order
   - id: 97-3
