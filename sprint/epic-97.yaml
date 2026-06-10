@@ -56,13 +56,16 @@ stories:
     description: "Same root-cause family as server #739 (region-drift encounter abandonment), deliberately left out of its scope (flagged in the entry's FIXER notes): the Scratch sweep — clear_scratch_on_scene_end — still keys on the raw old_loc != result.location string gate, so a same-region scene-title drift in a region-mode world wipes scratch state that should survive (the party never left the scene). Fix mirrors #739: consult the _same_region_drift signal (narration_apply.py) at the scratch-sweep gate. Check #739's tests for the harness (tests/server/test_region_drift_encounter_continue.py)."
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - Same-region drift does not clear scratch; a genuine region change still does
       - OTEL/log evidence on the keep-vs-sweep decision
+    completed: '2026-06-10'
     type: bug
+    review_verdict: approved
   - id: 97-5
     title: Turn-1 double-apply of _apply_npc_mentions — narrator.cache.both_writes_fired root cause
     description: "Measured (blackthorn solo 2026-06-07 turn 1): two byte-identical disposition beats per NPC — two _apply_npc_mentions passes in one turn. Server #742's Npc.last_development_turn dedupe made it harmless at the development seam, but the UPSTREAM double-apply is unexplained and presumably double-runs every other per-mention side effect (last_seen updates, pool matching, mint paths). Cross-ref: the unfiled narrator.cache.both_writes_fired WARN on the ping-pong watch list. Root-cause and fix at the source, then consider removing the seam-level dedupe if it becomes dead."
