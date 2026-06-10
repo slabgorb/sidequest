@@ -74,3 +74,10 @@ stories:
     type: bug
     review_findings: 'HIGH: same-region-continue elif not scoped to combat — continues all non-mobile categories incl. social, reintroducing the 2026-04-30 negotiation-walk-out abandon for region-mode worlds (oz). MEDIUM: tautological/non-wiring dispatch test; invalid-region heading abandons combat. Needs category-scoping + new social test.'
     review_verdict: approved
+  - id: 90-7
+    title: "WWN scene-harness hydrator — add the dropped Effort half: seed per-character core.effort (source-keyed EffortPool) and emit wwn.magic_hydrated OTEL, on top of #787's spellcasting-only 90-4. #787 shipped prepared/spellcasting + hp_depletion but omitted effort hydration (the title's '(Effort/prepared)') and the GM-panel lie-detector span; reference oq-1 closed PR #788 for the worked implementation + tests (effort block = source-keyed mapping, EffortPool.source from key, loud-fail on malformed)"
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
