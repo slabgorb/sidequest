@@ -1,0 +1,65 @@
+# WWN deterministic combat fixture — drops a Channeler into an hp_depletion
+# duel with Effort + spellcasting already seeded, so a scene-harness run can
+# prove wwn.spell.cast + ablative HP fire WITHOUT a chargen or rest beat in the
+# loop (the on-disk counterpart to 90-3's live free-play OTEL proof; closes the
+# 90-7 "no committed fixture exercises the effort: block" gap).
+#
+# Usage: http://localhost:5173/?scene=combat_wwn_emberfront  (requires DEV_SCENES=1)
+#
+# Hydration touches (scene_harness._hydrate_character / _hydrate_encounter):
+#   character.effort        -> core.effort["channeler"] = EffortPool(source="channeler")
+#   character.spellcasting  -> core.spellcasting (prepared verbatim, ready to cast)
+#   encounter.win_condition -> hp_depletion (ADR-114 HP-kill channel, not the dial)
+#   encounter.actors        -> seats the caster vs the opponent for the cast spine
+
+name: Combat — Emberfront Duel (WWN)
+genre: elemental_harmony
+world: burning_peace
+player_name: Fixture-Ash
+location: The Cracked Caldera
+
+turn: 3
+
+character:
+  name: Ash-of-Embers
+  description: A Channeler whose forearms are veined with cooling magma
+  personality: Focused, slow to anger, unbending once committed
+  level: 1
+  hp: 8
+  max_hp: 8
+  ac: 13
+  char_class: Channeler
+  race: Human
+  pronouns: they/them
+  backstory: Apprenticed at the Caldera registers; first time under live fire
+  # WWN Effort — source-keyed pool. The key IS the class-source the cast spine
+  # reads at commit time (core.effort.get("channeler")); the seeded max mirrors
+  # a level-1 Channeler (effort_base 1 + Spirit/skill).
+  effort:
+    channeler:
+      max: 2
+  # WWN spell economy — prepared verbatim (a fixture seeds the prepared list so
+  # the cast can fire with no rest beat, unlike chargen's prepared==[]).
+  spellcasting:
+    prepared:
+      - cinder_lance
+    casts_remaining: 2
+    casts_per_day: 2
+    max_spell_level: 1
+
+npcs:
+  - name: Slaglar the Unbanked
+    role: hostile
+    disposition: -20
+
+encounter:
+  type: combat
+  win_condition: hp_depletion
+  category: combat
+  actors:
+    - name: Ash-of-Embers
+      role: caster
+      side: player
+    - name: Slaglar the Unbanked
+      role: defender
+      side: opponent
