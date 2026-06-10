@@ -31,10 +31,12 @@ stories:
     title: "Explicit free-play cast classified as magic_working — intent router routes a named cast ('I cast foundation_of_flame') to resolve_spellcast so wwn.spell.cast fires from a world opening (today: pure narration, casts_remaining unchanged, no dispatch_engagement.magic_working.mismatch). AC5b 'from a world opening' blocker. Server; dispatch_engagement lie-detector assertion."
     points: 5
     priority: p1
-    status: backlog
+    status: in_review
     repos: server
     workflow: tdd
     type: bug
+    review_findings: 'R1 [HIGH][TEST]: AC4 live-classification test is unrunnable — tests/server conftest hermeticity stubs the router factory (empty package) and refuses real SDK; relocate to tests/agents/ (91-3 live opt-in pattern) and verify it reaches live Haiku. Fold in: D1 stale comment block (test_dispatch_precondition_gate.py:197-209); optional S1 spell_ref length cap + S3 generic unknown-spell directive payload. S2 cross-seat actor spoofing recorded as non-blocking delivery finding.'
+    review_verdict: approved
   - id: 102-4
     title: WN turn model (SWN design §6-7, P4 follow-on) — sealed-letter commitment + 1d8+DEX initiative-ordered RESOLUTION + dead_premise narrator call when a committed action's target is already dropped at its initiative slot. Shared across SWN/WWN/CWN/AWN. server,ui.
     points: 8
