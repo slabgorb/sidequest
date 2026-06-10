@@ -250,3 +250,10 @@ This module is implemented under the **architecture ADR** the parent design prod
 ADR governs. It carries forward the parent's narrow supersede of ADR-114's scoping line (SWN
 resolution in scope) and consumes, unchanged, ADR-114's `HpPool`, ADR-074/075 dice, ADR-036
 sealed-letter barrier, and ADR-068 magic-literal discipline.
+
+## Status addendum (2026-06-10)
+
+Plans P1–P3 delivered by prior epics (SWN module foundation, ablative HP substrate, initiative
+spine). Plans P4 (turn model / sealed-letter initiative, §6–7), P5 (narrator tool contract, §8),
+and P7 (psionics / Effort, §6) are targeted by epic 102 stories 102-4, 102-5, and 102-6
+respectively — pending merge as of this date.
