@@ -3,7 +3,7 @@ type: epic
 title: Complete the Without Number Family (SWN/WWN/CWN/AWN) — Retire Deferred Live-Dispatch Wiring
 description: "Keith directive (2026-06-10): the deferred 'Without Number' (WN) module surfaces should no longer be deferred. The 90-3 AC5b live free-play playtest (heavy_metal/long_foundry, PC Vesska, slug 2026-06-10-long_foundry) exposed that the WN combat/magic crunch is built but only PARTIALLY wired into live dispatch — fixtures pass on the apply_beat/downed-seam path, but live narrator-in-the-loop play hits unwired seams. This epic delivers the deferred wiring across the whole WN family: SWN (space_opera), WWN (heavy_metal, elemental_harmony, barsoom), CWN (neon_dystopia, road_warrior/the_circuit), AWN (mutant_wasteland — Ashes Without Number). MEASURED AC5b GAPS (FIXER investigation, oq-2, 2026-06-10): (1) PC-DEATH RUNS NO WN DOWNED SEAM — run_cwn_wwn_downed_seam fires {ruleset}.mortal_injury/.shock only when the PLAYER drops an OPPONENT (strike path, dice.py:760); when the player is dropped by opponent reprisal (_resolve_opponent_reprisal -> check_hp_depletion), post_resolution_lethality.py applies a generic verdict=dead with NO wwn.* span (post_resolution_lethality.py:14 confirms the reprisal path runs no downed seam). So a dying PC emits hp_depletion.resolved + post_resolution_lethality.applied but zero wwn.* — AC5b combat-half cannot show WN lethality engaged. (2) IN-COMBAT cast_spell VIA THE DICE PATH DOESN'T ROUTE TO THE WN CAST SPINE — DiceThrowPayload carries beat_id but NO spell_id; _resolve_wwn_cast_for_beat (narration_apply.py:5453) only runs on the narrator-driven apply_beat path (spell_id from BeatSelection sidecar). Clicking 'Work a Spell (INT)' fires dispatch_dice_throw -> dice.throw_resolved beat_id=cast_spell as a generic INT throw: no wwn.spell.cast, casts_remaining stays 2/2, no Effort/System-Strain. Needs spell selection in the dice protocol + UI. (3) EXPLICIT FREE-PLAY CAST NOT CLASSIFIED AS magic_working — the intent router never routes a named cast ('I cast foundation_of_flame') to resolve_spellcast, so the wwn.spell.cast 'from a world opening' path is silent (the narrator improvises the working with zero mechanical backing — the Illusionism OTEL exists to catch). NOTE: WWN magic uses core.spellcasting/core.effort, NOT magic_state — the magic_init AND-gate (magic_init.py:204) is a SEPARATE latent bug for the retired plugin-framework magic and is NOT on the AC5b path (long_foundry's 78KB magic.yaml is orphaned draft content in an incompatible schema). DEFERRED PLAN PHASES to retire (SWN module design 2026-05-26-swn-module-design.md): P4 turn model (§6-7 sealed-letter + 1d8+DEX initiative-ordered resolution + dead_premise narrator call); P5 narrator tool contract (§8); P7 psionics (SWN/WWN disciplines + Effort). Plus AWN module live wiring for mutant_wasteland (spec 2026-06-05-ashes-without-number) and a doc-drift cleanup pass retiring stale 'not wired to dispatch (Plan 3)'/'deferred' markers in wwn.py/swn.py/cwn.py and DRIFT.md. BLOCKS 90-3 (AC5b proof). Refs: ADR-114/116/117/139; specs/completed/2026-05-26-swn-module-design.md, 2026-06-05-ashes-without-number-mutant-wasteland-design.md; sidequest-server dispatch/dice.py, dispatch/downed_seam.py, server/post_resolution_lethality.py, server/narration_apply.py, agents/intent_router.py."
 priority: p2
-status: backlog
+status: done
 repos: server,content,ui
 stories:
   - id: 102-1
@@ -64,9 +64,13 @@ stories:
     title: Psionics (SWN design §6 follow-on, P7) — SWN/WWN psychic disciplines + Effort economy + System Strain, wired into live dispatch with {ruleset}.effort.commit/reclaim + system_strain.delta spans. server,content (discipline catalogs).
     points: 8
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server,content
     workflow: tdd
+    completed: '2026-06-10'
+    review_findings: 'Round-Trip 0 HIGH resolved + verified. New gate-blocking finding: B017 (pytest.raises(Exception)) at tests/integration/test_psionics_authoring_surface_102_6.py:138 and :164 fails ruff check / check-all. Fix: narrow to pytest.raises(ValidationError).'
+    review_verdict: approved
   - id: 102-7
     title: AWN (Ashes Without Number) module live wiring for mutant_wasteland — bind the AWN RulesetModule + content per spec 2026-06-05-ashes-without-number-mutant-wasteland-design.md; prove AWN combat + lethality fire live (mirrors heavy_metal/WWN). server,content.
     points: 8
@@ -87,3 +91,4 @@ stories:
     completed: '2026-06-10'
     type: chore
     review_verdict: approved
+completed: '2026-06-10'
