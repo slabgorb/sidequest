@@ -76,7 +76,10 @@ stories:
     title: Doc-drift cleanup — retire stale 'not wired to dispatch (Plan 3)'/'deferred' markers across ruleset/wwn.py, swn.py, cwn.py (apply_killing_blow IS wired at dice.py:644/725; veterans_luck has a narrator tool) and reconcile docs/adr/DRIFT.md + the WN plan docs so 'deferred' reflects reality post-102. chore.
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server
     workflow: trivial
+    completed: '2026-06-10'
     type: chore
+    review_verdict: approved
