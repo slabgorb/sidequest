@@ -10,6 +10,7 @@
 - **Handoff CLI is the canonical exit protocol.** `pf handoff resolve-gate` → gate check → `pf handoff complete-phase` → `pf handoff marker`. Nothing after the marker. If marker output contains `relay: true`, use the Skill tool to invoke the named skill.
 
 ### Product direction (settled — don't revisit in sprint planning)
+- **WN SRD use is confirmed proper by Kevin Crawford** (direct contact, ~2026-06). No partnership, but he affirmed SideQuest is using the Without Number SRD correctly. Licensing posture for epic 102 / WN-family work is settled — don't re-raise SRD legitimacy as a risk in planning. Corollary directive from Keith: WN mechanics adopt SideQuest's turn semantics (module seam, ADR-036 submit-and-wait substrate) — we implement WN crunch *inside* SideQuest's table model, not a parallel turn system.
 - **Narrative consistency is the #1 product goal.** The solo narrative experience is the core value prop. Mechanical state (known_facts, LoreStore, NPC registry, inventory) exists as guardrails for the LLM, not as game mechanics for the player. Consistency bugs (NPC name changes, forgotten items, lost facts, turn count resets) are always high priority.
 - **Book conceit is retired.** UI has pivoted to persistent docked sidebar + Current Turn Focus + Scrollable History. Decided 2026-04-05. Don't coordinate stories that rebuild the book metaphor.
 - **No skeumorphism.** Genre-flavored chrome is fine (three archetypes: `parchment`, `terminal`, `rugged`). But UI is functional first. Reject handoffs where the acceptance criteria sacrifice usability for metaphor.
@@ -52,3 +53,8 @@
 ### Hardware context (for sizing and parallelization)
 - **MacBook Pro M3 Max 128GB.** Can run Flux locally without VRAM constraints. No CUDA — MPS or CPU only. Unified memory means ML workloads don't round-trip across PCIe. Size ML-adjacent stories knowing this is the target hardware.
 - **Velocity context: ~20x human dev speed, sustained since Nov 2025.** Don't size sprints based on what a human would take. Parallel agents change the math 5-10x on parallelizable work.
+
+### `pf sprint story finish` merge_pr step no-ops silently when no PR exists — create PRs FIRST (102-4, 2026-06-10)
+- The finish script's step 2 (merge_pr) found no open PR for the story branches and silently continued; steps 1/4-7 ran anyway (session archived, YAML updated, session removed). Result: story marked complete with ZERO code merged to develop in either repo — the exact half-finished state the merge-gate doctrine exists to prevent.
+- **Decision:** SM creates and merges the PRs (gh pr create → gh pr merge --squash --delete-branch) BEFORE running `pf sprint story finish`, or — as recovered here — verifies post-finish that origin/develop actually contains the story commits and repairs immediately (102-4: server#810, ui#372 created+merged after the fact). Always verify `gh pr list --state all --head <branch>` shows MERGED before calling a story done.
+- Also note: develop can move during a long story (102-7 merged mid-review from a parallel workspace) — check PR mergeable state before merging; 102-4 was MERGEABLE CLEAN despite both touching the dispatch area.

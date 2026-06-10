@@ -295,3 +295,16 @@
 ### UI source-regex wiring pins break on signature changes — update the PIN, not the design (102-2)
 - `src/__tests__/confrontation-wiring.test.tsx` greps App.tsx/GameBoard.tsx source for exact handler signatures (`onBeatSelect?.(beatId, draft)` etc). Adding a parameter breaks the regex, not the behavior — extend the pin to the new signature in the same PR. (Server CLAUDE.md bans source-grep wiring tests; the UI repo still has them.)
 - Pre-existing red on develop (2026-06-10, confirmed via stash-bisect): `lobby-start-ws-open.test.tsx` "Leave + Start" times out even in isolation, and `npm run build` fails on 5 `BeatEffect` type errors in `ConfrontationOverlay.beatimpact.test.tsx`. Neither is 102-2's.
+
+### Fixtures that DISPATCH during setup must depend on otel_capture, or their spans vanish (102-4 GREEN, 2026-06-10)
+- **What happened:** Two dead-premise tests asserted on spans fired inside their `kill_order_combat` fixture and got `finished_spans: []` — while a sibling test asserting the SAME span (dispatched inline in the test body) passed. pytest instantiates fixtures in signature order; `(kill_order_combat, otel_capture)` ran the dispatch before the in-memory exporter was installed on the provider.
+- **How to apply:** Any fixture that drives production dispatch must take `otel_capture` as a parameter itself. If one test sees a span and another sees none for the same code path, suspect capture-install ordering before suspecting the engine.
+
+### build_confrontation_payload keys MUST be declared on protocol ConfrontationPayload (extra="forbid") (102-4)
+- The dispatch-level emit does `ConfrontationPayload(**build_confrontation_payload(...))` and the model is `extra="forbid"` — a new key added only to the dict builder crashes the mid-turn CONFRONTATION broadcast at runtime, and dispatch-level tests miss it because they pass `room_broadcast=None` (the emit block is gated on it). When adding a payload key: builder + `sidequest/protocol/messages.py::ConfrontationPayload` + UI `ConfrontationData`, all three.
+
+### encounter_lifecycle initiative is UNSEEDED — production-seam WN combat tests must force the order (102-4)
+- `_roll_and_persist_initiative` rolls with a fresh `random.Random()`; monkeypatching `random.randint` does NOT pin it (instance method, not the module function). Under the 102-4 sealed-round walk the persisted order decides who acts first, so any test seating via `instantiate_encounter_from_trigger` and dispatching dice on a WN pack is a coin flip unless it overwrites `enc.initiative` post-seat (`InitiativeEntry(token_id=..., value=...)`, PC first reproduces the pre-102-4 strike-then-reprisal choreography). Symptom of the miss: ~44% flaky failures where the low-HP PC drops before their slot.
+
+### Extracting a 400-line branch: anchor-matched python surgery beats hand-retyped Edit old_strings (102-4)
+- To move dice.py's beat-application block into a shared helper (legacy path + WN round walk both call it), a heredoc python script that locates exact anchor lines (`s.index(...)`), cuts the region, dedents/renames (`payload.beat_id`→`beat_id`, `resolved.outcome`→`outcome_tier`), and reinserts as a function preserved the block byte-for-byte. Hand-reproducing 400 lines in an Edit old_string is where mismatches breed. Always `ast.parse` + `ruff format` afterward.

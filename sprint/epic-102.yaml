@@ -42,9 +42,13 @@ stories:
     title: WN turn model (SWN design §6-7, P4 follow-on) — sealed-letter commitment + 1d8+DEX initiative-ordered RESOLUTION + dead_premise narrator call when a committed action's target is already dropped at its initiative slot. Shared across SWN/WWN/CWN/AWN. server,ui.
     points: 8
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server,ui
     workflow: tdd
+    completed: '2026-06-10'
+    review_findings: "REJECTED, 1 HIGH: no regression net for the round-ledger reset (wn_commits.clear unpinned; round-2 barrier coverage missing — a one-line regression silently reverts AC1 after round one). 3 MEDIUM: source='dice_throw_beat' mislabel on round-walk resolution close (OTEL honesty); double-commit rejection untested; MP sealed-commit lacks wire-level proof. LOW: stale docstrings post-refactor, PY-3 annotations, downed-actor negative span assert. Implementation itself sound — fixes are testable; route red rework to TEA, Dev follows."
+    review_verdict: approved
   - id: 102-5
     title: WN narrator tool contract (SWN design §8, P5 follow-on) — the per-module narrator tool surface so the narrator drives WN resolution through typed tools (not improv); isolated behind tool-level tests + OTEL per §12 risk note. Shared WN-family.
     points: 8
