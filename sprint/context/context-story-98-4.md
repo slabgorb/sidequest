@@ -1,73 +1,48 @@
----
-parent: context-epic-98.md
-workflow: trivial
----
-
 # Story 98-4: C2 Content — jump mechanics on reached cartography routes (yula neighbors first)
 
-## Business Context
+**Story ID:** 98-4  
+**Epic:** 98 — ADR-141 Two-Scale Spatial Model — Galactic Graph + Per-System Orrery  
+**Points:** 2  
+**Workflow:** trivial  
+**Type:** content authoring  
+**Repos:** sidequest-content  
 
-This story authors the **campaign-scale jump crunch** as content — the fuel /
-transit / hazard numbers that make inter-system travel a real mechanical decision
-rather than a free hop. It is the content half of the jump-mechanics increment
-(S2 + C2), the payoff the mechanics-first players (Sebastien, Jade) ask for at the
-campaign scale.
+## Summary
 
-Per Diamonds-and-Coal, jump mechanics are authored **on demand**, edge by edge, as
-play reaches them — starting with `yula`'s neighbors. An `adjacent` pair without
-an authored `routes` entry is still fully navigable (the ruleset computes a default
-cost, 98-5). This story does not block the campaign graph from being whole; it
-*enriches* the edges play actually uses.
+Author jump mechanics (fuel, transit time, drive rating requirements) on the cartography routes between reached systems in the `perseus_cloud` world. Start with `yula` and its neighbors. These mechanics override default ruleset-derived jump costs when explicitly authored on route edges.
 
-## Technical Guardrails
+## Context
 
-**Lane:** GM/World-Builder (YAML only). **Repo:** content. **Depends on:** 98-5
-(S2) for the finalized field schema.
+**ADR-141** mandates a two-scale spatial model: galactic campaign view (cartography graph of systems) and local view (per-system orrery). Jump mechanics live on the graph **edges** (`cartography.yaml` `routes:`), overriding ruleset-default costs (ADR-117 SWN drive/fuel subsystem, landed in 98-5).
 
-**Key file:**
-- `worlds/perseus_cloud/cartography.yaml` — the `routes:` section.
+**Related Stories:**
+- 98-1 (DONE): Split `orbits.yaml` into per-system files, authored `yula`
+- 98-2 (DONE): Server loader resolution (per-region system files)
+- 98-3 (DONE): UI two-scale MapWidget (cartography graph ↔ orrery drill-down)
+- 98-5 (DONE): Server jump adjudication via SWN seam (default cost OTEL-logged)
 
-**The content model (epic 98 §3 — authoritative; epic-100 spec defers to it):**
-- **Connectivity stays on `adjacent:`** — do NOT move or fork it. It already feeds `dungeon/region_projection.py` + `movement.py` and is the *only* input to the d3-dag layout.
-- **Jump mechanics are `routes:` entries** — one per traversable `adjacent` pair *that play reaches*. A `routes` entry is an *annotation* on an existing adjacency, not a new connection.
-- An `adjacent` pair with **no** matching `routes` entry is a **valid navigable edge** with a ruleset-default jump cost (98-5 AC2) — **not** an error, **not** dangling.
-- A `routes` entry whose endpoints are **not** in any `adjacent` list is a route-level anomaly (server drops + WARNs) — never author one.
+**This story (98-4) depends on:** 98-5 (S2 finalizes the `routes` edge field names — `jump_fuel`, `transit_days`, `drive_rating_min`, `hazard`, etc.)
 
-**What NOT to touch:**
-- Do **not** author orbital/system data (that is 98-1's lane).
-- Do **not** invent field names — use the exact names 98-5 finalizes (`jump_fuel`, `transit_days`, `drive_rating_min`, `hazard`/`danger`, …).
-- Do **not** author routes for edges play has not reached (Diamonds-and-Coal).
+## Acceptance Criteria
 
-## Scope Boundaries
+1. For each `adjacent` edge from `yula` that play reaches, a `routes` entry in `sidequest-content/genre_packs/space_opera/worlds/perseus_cloud/cartography.yaml` carries authored jump mechanics in the field names finalized by S2 (98-5).
+2. Unreached edges carry **no** routes entry and rely on the SWN ruleset default (valid, not an error).
+3. *The Black Door* (`zephyr → ceron`) retains its existing narrative fields (`distance`, `danger`, `terrain`, `from_id`, `to_id`); jump-mechanics fields are added if/when reached.
 
-**In scope:**
-- `routes:` entries with authored jump mechanics for each reached `yula`-neighbor edge, in the S2-finalized field names.
-- Preserving *The Black Door* (`zephyr → ceron`) narrative fields.
+## Implementation Notes
 
-**Out of scope:**
-- The server adjudication that reads these fields (98-5).
-- Default-cost computation for unrouted edges (98-5, ruleset-owned).
-- Routes for unreached edges or other systems' neighbors (on demand, future).
+- **Data model:** `cartography.yaml` `routes:` is a list of objects with `from_id`, `to_id`, and optional mechanics fields.
+- **Connectivity:** Graph connectivity stays on each system's `adjacent:` list (not on `routes:`); `routes:` entries are mechanics overlays on existing adjacencies.
+- **Defaults:** An adjacency with no matching `routes` entry uses the ruleset default; the default cost is explicit and OTEL-logged (No Silent Fallbacks).
+- **Spec location:** `docs/superpowers/specs/2026-06-08-two-scale-spatial-model-epic-design.md` § Story C2.
 
-## AC Context
+## Files
 
-- **AC1 — reached `yula` edges carry authored mechanics.** For each `adjacent`
-  edge out of `yula` that play reaches, a `routes` entry exists carrying jump
-  mechanics in the S2-finalized field names. *Test:* parse `cartography.yaml`;
-  for each authored route, assert its endpoints appear in the relevant `adjacent`
-  lists and the required jump fields are present and well-typed.
-- **AC2 — unreached edges intentionally bare.** Edges not yet reached carry **no**
-  `routes` entry and rely on the ruleset default (valid, not an error). *Test:*
-  assert the file does not over-author — no routes for unreached `yula` neighbors;
-  confirm the graph still treats them as navigable (cross-check 98-5 AC2 default).
-- **AC3 — *The Black Door* preserved.** The existing `zephyr → ceron` route keeps
-  its narrative fields (`distance`/`danger`/`terrain`/`from_id`/`to_id`); jump
-  -mechanics fields are added only if/when that edge is reached. *Test:* assert the
-  Black Door entry retains its original fields and is not clobbered by the new
-  schema.
+- `sidequest-content/genre_packs/space_opera/worlds/perseus_cloud/cartography.yaml` (modify `routes:`)
+- Spec: `/docs/superpowers/specs/2026-06-08-two-scale-spatial-model-epic-design.md`
 
-## Assumptions
+## Key References
 
-- **98-5 (S2) is merged or its `routes` field schema is finalized and documented before this story starts** — C2 authors against S2's field names. If S2 has not finalized the names, this story cannot complete correctly; sequence C2 after S2's AC3 (schema doc). The dependency graph is `S1 → S2 → C2`.
-- "Edges play reaches" is interpretable from current play state (the party is in/near `yula`). If which neighbor edges count as "reached" is ambiguous, default to authoring `yula`'s direct `adjacent` neighbors and flag the rest as on-demand — over-authoring the whole graph violates Diamonds-and-Coal.
-- The `trivial` workflow is appropriate because this is additive YAML annotation on existing adjacencies — no engine logic. Validation is schema/load (fields present, endpoints valid, Black Door intact), the same content-validation harness 98-1 uses.
+- ADR-141: Two-Scale Spatial Model (galactic graph + per-system orrery)
+- ADR-117: SWN ruleset seam for jump mechanics (drive/fuel/transit)
+- Story 98-5: Finalizes the `routes` field names

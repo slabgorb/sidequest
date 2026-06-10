@@ -17,6 +17,7 @@ completed_epics:
   - '99'
   - '100'
   - '96'
+  - '98'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -257,4 +258,29 @@ completed_stories:
     epic: '96'
     title: Fix Earthman race-boon tier leak — world-tier trait applied at genre tier (source=Race)
     points: 3
+    completed: '2026-06-09'
+  - id: 98-1
+    epic: '98'
+    title: C1 Content — split perseus_cloud orbits.yaml into systems/<id>.yaml, delete fake root, author yula
+    points: 3
+    completed: '2026-06-09'
+  - id: 98-2
+    epic: '98'
+    title: S1 Server — per-region system-file resolution in orbital/loader.py (system_root() unchanged)
+    points: 5
+    completed: '2026-06-09'
+  - id: 98-3
+    epic: '98'
+    title: U1 UI — two-scale MapWidget (cartography graph default + orrery drill-down), retire orbital:bool whole-Map toggle
+    points: 5
+    completed: '2026-06-09'
+  - id: 98-4
+    epic: '98'
+    title: C2 Content — jump mechanics on reached cartography routes (yula neighbors first)
+    points: 2
+    completed: '2026-06-10'
+  - id: 98-5
+    epic: '98'
+    title: S2 Server — inter-system jump adjudication via SWN ruleset seam (ADR-117), default cost OTEL-logged
+    points: 5
     completed: '2026-06-09'

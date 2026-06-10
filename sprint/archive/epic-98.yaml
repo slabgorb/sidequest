@@ -3,7 +3,7 @@ type: epic
 title: ADR-141 Two-Scale Spatial Model — Galactic Graph + Per-System Orrery
 description: 'Implement ADR-141 (accepted 2026-06-08). Two-scale spatial model: galactic/campaign view = cartography.yaml SVG nodes-and-edges graph (systems=nodes, jumps=edges); local view = per-system orrery drilled into from the current node. One file per system (worlds/<world>/systems/<id>.yaml), fake perseus_cloud orbits.yaml root deleted. Spec: docs/superpowers/specs/2026-06-08-two-scale-spatial-model-epic-design.md. Reuses both renderers + drill-down scope + ADR-130 clock — minimal new code. P3: orrery already renders (#748 verified); this is legibility + per-system structure, below the p1 backlog.'
 priority: p3
-status: backlog
+status: done
 repos: content,server,ui
 stories:
   - id: 98-1
@@ -45,9 +45,13 @@ stories:
     title: C2 Content — jump mechanics on reached cartography routes (yula neighbors first)
     points: 2
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: content
     workflow: trivial
+    completed: '2026-06-10'
+    branch: feat/98-4-jump-mechanics-cartography-routes
+    review_verdict: approved
   - id: 98-5
     title: S2 Server — inter-system jump adjudication via SWN ruleset seam (ADR-117), default cost OTEL-logged
     points: 5
@@ -59,3 +63,4 @@ stories:
     completed: '2026-06-09'
     branch: feat/98-5-jump-adjudication-swn-seam
     review_verdict: approved
+completed: '2026-06-10'
