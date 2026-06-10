@@ -3,7 +3,7 @@ type: epic
 title: Chargen Freeform Resolution & Character History Surface
 description: "All-freeform chargen hard-blocks at the archetype gate, and the player's chargen answers are orphaned. Two coupled problems found in the heavy_metal/barsoom playtest ([BAR-1] pingpong). PROBLEM 1 (hard-block): a player who answers hint-bearing chargen scenes via the 'describe it in your own words' box accumulates ZERO archetype hints (builder.apply_freeform records the text but sets no jungian_hint/rpg_role_hint), so axis-bearing packs (heavy_metal, elemental_harmony) dead-end at confirm with 'archetype resolution failed (missing_axes_with_pack_axes)' (chargen_mixin gate ~495-540). The fail-loud gate is correct; freeform just offers no path to an archetype. PROBLEM 2 (orphaned data): freeform text is consumed only for the {class} prose slot then discarded; selections survive only as a few flavor labels (origin_label/calling_label/background/drive). The player's actual answers — their words and their picks — never reach the Character, snapshot, or sheet. DECISIONS (operator, 2026-06-06): (A) resolve the block with a Haiku one-shot inference of the missing jungian_hint/rpg_role_hint from the accumulated freeform text, constrained to the pack's valid axis values, following the intent-router emit_tool pattern; emit a chargen.archetype_inferred OTEL span (lie detector — GM panel must show inference fired vs preset accumulation); still fail loud when there is nothing to infer from. (B) add a durable creation_answers provenance record to Character (per scene: prompt, kind=choice|freeform, the player's words or chosen label) and carry it in the snapshot. (C) render a new 'History' section on the character sheet, starting with the origin block (chargen answers + an inferred-archetype badge), designed as the future home for player-linked lore. (D) wire that section to the existing lore store (ADR-048 / story 75-15 creation-seed fragments) so player-linked lore surfaces. AUDIENCE: keeps the freeform escape hatch viable for narrative-first players (Alex/James) instead of dead-ending; makes chargen provenance legible in the player UI (Sebastien/Jade). Spans sidequest-server (inference + storage + lore link) and sidequest-ui (History section)."
 priority: p2
-status: backlog
+status: done
 repos: sidequest-server,sidequest-ui
 stories:
   - id: 93-1
@@ -69,7 +69,8 @@ stories:
     description: "Wire the character-sheet History section to player-linked lore. The History section (93-3) is designed as the home for player-linked lore; this story attaches it to the existing lore store. Story 75-15 already persists creation-seed lore fragments across resume (rag.character_creation_lore_seeded) via the ADR-048 lore RAG store — surface the fragments that are linked to THIS character/player in the History section beneath the origin block. Server: expose the player-/character-linked lore fragments in (or alongside) the character snapshot — a typed list of {fragment_id, title/summary, source} filtered to the character's creation-seed + player-attributed fragments (perception/visibility honored). UI: render those as a 'Lore' subsection under History, linking to the lore page where one exists. No new lore authoring — this is plumbing existing fragments to the surface. NO SILENT FALLBACK: if a linked fragment id resolves to nothing, log/skip loudly, don't fabricate. Refs: ADR-048 lore RAG; story 75-15 (creation-seed lore persistence); depends on 93-3 (History section) + 93-2 (creation_answers)."
     points: 5
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: sidequest-server,sidequest-ui
     workflow: tdd
     depends_on: 93-3
@@ -80,3 +81,7 @@ stories:
       - An unresolvable linked fragment id is skipped loudly (logged), never fabricated (No Silent Fallbacks).
       - 'OTEL/observability: emit a span/log for lore-link resolution count per character so the GM panel can confirm fragments reached the surface.'
       - "Wiring + perception test: a character's linked fragments reach the snapshot and render; another player's private fragments do NOT leak into this character's History."
+    completed: '2026-06-10'
+    review_findings: 'HIGH: by_choice dict typed object → 4 pyright errors + disabled type safety on projection hot path (lore_linking.py:56). One-line annotation fix (LoreFragment). Tests green; type-only green-rework.'
+    review_verdict: approved
+completed: '2026-06-10'

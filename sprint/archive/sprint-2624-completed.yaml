@@ -19,6 +19,7 @@ completed_epics:
   - '96'
   - '98'
   - '101'
+  - '93'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -324,4 +325,24 @@ completed_stories:
     epic: '101'
     title: Unify slug derivation across render/portrait/reference surfaces
     points: 3
+    completed: '2026-06-10'
+  - id: 93-1
+    epic: '93'
+    title: Haiku archetype inference unblocks all-freeform chargen
+    points: 5
+    completed: '2026-06-10'
+  - id: 93-2
+    epic: '93'
+    title: Durable creation_answers provenance model + snapshot exposure
+    points: 5
+    completed: '2026-06-10'
+  - id: 93-3
+    epic: '93'
+    title: Character-sheet History section — origin block
+    points: 3
+    completed: '2026-06-10'
+  - id: 93-4
+    epic: '93'
+    title: History section lore-link plumbing to the ADR-048 store
+    points: 5
     completed: '2026-06-10'
