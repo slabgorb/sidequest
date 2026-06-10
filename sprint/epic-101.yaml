@@ -73,7 +73,8 @@ stories:
     description: "Daemon feature tour (2026-06-09, Architect) found three housekeeping rots: (1) sidequest_daemon/ml/ is an EMPTY package — zero bytes, zero importers; CLAUDE.md still documents it as 'GPU memory management (ADR-046)'. Delete the package; check ADR-046 implementation status against docs/adr/DRIFT.md and update its pointer if the coordinator logic now lives in zimage_mlx_worker or was never ported. (2) pygame-ce>=2.5 in sidequest-daemon/pyproject.toml is a dead dependency — no pygame import anywhere; sole mention is a historical docstring at media/pipeline_factory.py:3 ('Previously constructed an audio playback pipeline'). Drop the dep. (3) Orchestrator CLAUDE.md daemon tree is fiction in two places: lists 'audio/ — pygame-ce mixer (music + SFX, no TTS)' (no audio/ package exists — playback lives in sidequest-ui/src/audio) and the ml/ ADR-046 line. Fix the tree to match reality: media/ (render+music), renderer/ (beat filter + models), training/ (ADR-073/48-3 CLIs), telemetry/ (ADR-131 bridge), genre/+types.py (cross-boundary stubs). Optionally add a JARGONFILE note that daemon renderer/beat_filter.py (render-worthiness) and server game/beat_filter.py (confrontation beats) are a name collision, not duplicates."
     points: 1
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: daemon,orchestrator
     workflow: trivial
     acceptance_criteria:
@@ -81,7 +82,10 @@ stories:
       - pygame-ce removed from pyproject; uv sync clean; stale docstring in pipeline_factory.py updated
       - CLAUDE.md daemon tree matches the actual package layout (no audio/, no ml/, training/ + telemetry/ present)
       - ADR-046 status verified against DRIFT.md and pointer corrected if drifted
+    completed: '2026-06-10'
     type: chore
+    review_findings: "Rework verified (commit ed9ab49b): CLAUDE.md:121 types.py annotation corrected to real contents (DocumentEvent/GameState/Character); CLAUDE.md:6 Flux/audio staleness fixed. Blocking finding resolved. Deferred: daemon CLAUDE.md:23 (separate-repo follow-up)."
+    review_verdict: approved
   - id: 101-7
     title: Finish daemon dispatch extraction — one dispatch path for all tiers; pull EmbedWorker/RenderService out of the daemon.py god module
     description: "daemon.py is a 1,290-LOC god module hosting the socket server, heartbeat writer, CLI parsing, EmbedWorker, RenderService, warmup/shutdown/status, AND dispatch — and dispatch is half-extracted: dispatch_request() (daemon.py:168) handles ONLY tier=music while image tiers are routed by a parallel inline if/elif chain in _handle_client (methods at lines 429-897); the function's own docstring admits image renders 'never reach this function'. Two dispatch mechanisms for one method is the embryo of the next split-brain. Scope: (1) unify render dispatch — all tiers route through one dispatcher with loud ValueError on unknown tier (No Silent Fallbacks); (2) extract EmbedWorker and RenderService into their own modules (media/embed_worker.py, media/render_service.py or similar), leaving daemon.py as socket lifecycle + routing only; (3) preserve the heartbeat and warmup contracts exactly — server's DaemonStateMirror (story 45-31) and daemon_client are consumers; do NOT change the wire protocol. Pairs with 101-5 (flux alias retirement) — sequence after it to avoid churn. Wiring test: existing socket integration tests must pass unchanged, plus one test proving every advertised method reaches the unified dispatcher."
