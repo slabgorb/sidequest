@@ -339,3 +339,8 @@ flag it as a faithfulness/calibration choice for the GM during the standard-six 
 
 Story A is the foundation; Story B can author against it as it lands. Both are needed before
 mutant_wasteland is a working `awn` pack.
+
+## Status addendum (2026-06-10)
+
+Plan 1 (AWN module live wiring for mutant_wasteland) is targeted by epic 102 story 102-7 —
+pending merge as of this date.

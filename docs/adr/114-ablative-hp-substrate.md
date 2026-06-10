@@ -9,7 +9,7 @@ superseded-by: null
 related: [14, 21, 33, 40, 74, 75]
 tags: [game-systems]
 implementation-status: partial
-implementation-pointer: docs/superpowers/plans/2026-05-25-swn-hp-substrate.md
+implementation-pointer: docs/superpowers/plans/completed/2026-05-25-swn-hp-substrate.md
 ---
 
 # ADR-114: Ablative HP Substrate — HP Reclaims the Lethality Track Beneath the Dials
