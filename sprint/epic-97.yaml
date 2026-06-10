@@ -83,12 +83,14 @@ stories:
     description: 'Known flake documented 2026-06-07 (server #741 PR notes): tests/server/test_chargen_name_rig_extraction.py::TestNameRigExtractionWiring pair (extracted_name_and_renamed_rig, extraction_decisions_are_observable) fails order-dependently under xdist in FULL-suite runs — chargen.names_extracted span absent from the InMemorySpanExporter capture. Passes in isolation, serially, per-directory, and intermittently in full runs with identical code. These pg-gated tests only started RUNNING when SIDEQUEST_TEST_DATABASE_URL became part of the standard env (they were silently skipped in earlier baselines). Suspect shared tracer-provider/span-exporter state across tests in a worker, or an extraction-path global raced by a sibling test. Fix the isolation, not the assertion.'
     points: 2
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server
     workflow: tdd
     acceptance_criteria:
       - Pair passes 5 consecutive full-suite parallel runs
       - Root cause documented in the test docstring
+    completed: '2026-06-10'
     type: chore
   - id: 97-7
     title: 'fix: ConfrontationOverlay BeatEffect tsc error breaks client-build on develop (from 73-4/97-3)'
