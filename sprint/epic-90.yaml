@@ -30,9 +30,10 @@ stories:
     review_verdict: approved
   - id: 90-3
     title: AC5b live free-play OTEL proof — a fight-seeker reaches WWN combat (wwn.* + ablative HP) and a caster fires wwn.spell.cast from a world opening, lie-detector quiet, across heavy_metal evropi + long_foundry + barsoom (epic 89); depends on 90-1 statted enemies + 90-2 magic_state
+    description: 'SUPERSEDED by 90-9 (Architect ruling 2026-06-10). The magic_init/magic_state premise was a red herring: WWN worlds own magic via the WN RulesetModule (core.spellcasting/core.effort → wwn.spell.cast), and the AC5b spine was already built in epic 102 (102-1/2/3/4). No code was written on the 90-3 branches. Real remaining work re-filed as 90-9 (reachability + chargen tooling + live re-run). Decision doc: sidequest-server/docs/superpowers/specs/2026-06-10-wn-worlds-own-magic-not-magic_state.md'
     points: 5
     priority: p2
-    status: backlog
+    status: canceled
     repos: content,server
     workflow: tdd
     depends_on: 90-1
@@ -97,3 +98,16 @@ stories:
     workflow: tdd
     completed: '2026-06-10'
     type: chore
+  - id: 90-9
+    title: 'AC5b live OTEL proof, reframed — fix headless chargen to honor scenario class: (scripts/playtest.py) + author a fight-seeker→WWN-combat reachability path, then live re-verify the epic-102 WN cast/combat spine fires (wwn.spell.cast, wwn.* combat + ablative HP, {ruleset}.mortal_injury/.shock) across heavy_metal evropi/long_foundry + barsoom; NO magic_init/magic_state/server-schema work (Architect ruling 2026-06-10, supersedes 90-3)'
+    points: 3
+    priority: p2
+    status: backlog
+    repos: orchestrator,content
+    workflow: tdd
+    acceptance_criteria:
+      - 'Headless chargen honors scenario class: — scripts/playtest.py with strategy:auto and a caster class: rolls a PC with non-empty core.spellcasting (not a martial PC). Covered by a failing-then-passing test.'
+      - 'A fight-seeker reaches a live WWN combat in free-play — an authored opening/scenario path routes an aggressive player into an active_confrontation with a WWN-statted enemy (evropi today: 11 aggressive turns, active_confrontation stays None). Content lane; verified by a playtest run.'
+      - 'Live OTEL re-verification: a real caster who reaches combat fires wwn.spell.cast, and wwn.* combat + ablative HP + {ruleset}.mortal_injury/.shock spans emit, lie-detector quiet, across heavy_metal evropi + long_foundry + barsoom.'
+      - 'OUT OF SCOPE (do not do): no magic_init/magic_state/WorldMagicConfig work, no relaxing the magic_init AND-gate, no long_foundry/magic.yaml schema reconciliation. magic_state: null on a WWN world is expected/correct.'
+      - 'Separate content hygiene (optional, non-blocking): quarantine/retire orphaned long_foundry/magic.yaml (78KB ADR-126 draft emitting the misleading magic.init_skipped).'
