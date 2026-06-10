@@ -108,16 +108,17 @@ sidequest-ui/                 # React frontend (subrepo)
 
 sidequest-daemon/             # Python media services (subrepo)
 ├── sidequest_daemon/         # Package root
-│   ├── audio/                # pygame-ce mixer (music + SFX, no TTS)
-│   ├── genre/                # Genre pack model subset (VisualStyle, AudioConfig)
-│   ├── media/
+│   ├── media/                # Image render + music generation
 │   │   ├── workers/          # zimage_mlx_worker.py — sole runtime image worker (ADR-070)
 │   │   ├── music_pipeline.py # ACE-Step → ffmpeg → R2 (ADR-095, operator-triggered)
 │   │   ├── prompt_composer.py, subject_extractor.py, recipes.py, ...
 │   │   └── daemon.py         # Unix socket server + CLI entry
-│   ├── ml/                   # GPU memory management (ADR-046)
-│   ├── renderer/             # Data models (StageCue, RenderTier, RenderResult)
-│   └── scene_interpreter.py
+│   ├── renderer/             # Beat filter (render-worthiness) + data models (StageCue, RenderTier, RenderResult)
+│   ├── training/             # Fine-tune + deploy CLIs (ADR-073: sidequest-train / sidequest-deploy)
+│   ├── telemetry/            # watcher_bridge.py — OTEL HTTP bridge to server (ADR-131)
+│   ├── genre/                # Cross-boundary genre model subset (VisualStyle, AudioConfig)
+│   ├── scene_interpreter.py
+│   └── types.py              # Cross-boundary data stubs (StageCue, RenderTier, RenderResult)
 ├── tests/
 └── pyproject.toml
 

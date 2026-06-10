@@ -98,6 +98,12 @@ These are the named rules every narrator-facing decision is weighed against.
   keyed to a threshold and producing deltas. `beat_selections` firing is the
   signal that the mechanical engine engaged (and is the wrong success metric for
   social-first packs — see **Victoria**). (**ADR-018**, **ADR-033**)
+- **beat_filter.py (name collision)** — Two unrelated files share this name; they
+  are *not* duplicates. Daemon `sidequest_daemon/renderer/beat_filter.py` decides
+  *render-worthiness* (which narrative beats merit an image). Server
+  `sidequest/game/beat_filter.py` decides *confrontation beats* (the mechanical
+  outcomes above). Same word, different "beat" — don't refactor one expecting the
+  other.
 - **Ablative HP** — The current lethality substrate (reintroduced **2026-05-25**,
   **ADR-114**): HP is the personal vitality track beneath the mechanical dials,
   ablated by damage. *Content YAML already carries HP* — the materializer
