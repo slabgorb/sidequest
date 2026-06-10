@@ -16,6 +16,7 @@ completed_epics:
   - '86'
   - '99'
   - '100'
+  - '96'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -246,4 +247,14 @@ completed_stories:
     epic: '100'
     title: 'Phase 4 — Cutover: flip /reference/* to SPA, retire Python HTML emitters + islands.js, keep reference_visibility.py feeding the API'
     points: 5
+    completed: '2026-06-09'
+  - id: 96-1
+    epic: '96'
+    title: Rewrite content-coupled server tests against fixtures (decouple from live packs)
+    points: 8
+    completed: '2026-06-09'
+  - id: 96-2
+    epic: '96'
+    title: Fix Earthman race-boon tier leak — world-tier trait applied at genre tier (source=Race)
+    points: 3
     completed: '2026-06-09'
