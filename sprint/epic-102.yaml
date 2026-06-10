@@ -20,9 +20,13 @@ stories:
     title: In-combat cast_spell via the dice path routes to the WN cast spine — add spell selection (spell_id) to DiceThrowPayload + ConfrontationOverlay so the 'Work a Spell' beat fires wwn.spell.cast and spends Effort/casts instead of resolving as a generic INT dice throw (today _resolve_wwn_cast_for_beat only runs on the narrator apply_beat path). AC5b spellcast blocker. server,ui.
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server,ui
     workflow: tdd
+    completed: '2026-06-10'
+    review_findings: 'HIGH: killing dice-path cast leaves dead opponent free to reprise (stale apply_result.resolved gate, ADR-139 liveness); MEDIUM: latent silent spine-skip on opposed_check wwn cast; MEDIUM x2 test-strength (parity outcome divergence, face-independence); LOW x2 ts test type escapes; LOW doc x2 stale docstrings'
+    review_verdict: approved
   - id: 102-3
     title: "Explicit free-play cast classified as magic_working — intent router routes a named cast ('I cast foundation_of_flame') to resolve_spellcast so wwn.spell.cast fires from a world opening (today: pure narration, casts_remaining unchanged, no dispatch_engagement.magic_working.mismatch). AC5b 'from a world opening' blocker. Server; dispatch_engagement lie-detector assertion."
     points: 5
