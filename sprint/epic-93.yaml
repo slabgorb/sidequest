@@ -32,7 +32,8 @@ stories:
     description: "Stop orphaning the player's chargen answers. Today freeform text is consumed only for the {class} prose slot then discarded, and selections survive only as flavor labels (origin_label/calling_label/background/drive) — the per-scene answer the player actually gave is never durably recorded. Add a creation_answers provenance record to the Character model: an ordered list, one entry per answered chargen scene, each carrying scene_id, prompt (the scene's question/title), kind ('choice' | 'freeform'), value (the player's verbatim freeform text OR the chosen option label), and an optional archetype_inferred flag/marker for the scene(s) whose freeform fed 93-1's inference. Populate it in builder.build() from self._results (ChoiceInput.choice_label / FreeformInput.text are already captured on SceneResult — this is wiring, not new capture). Expose creation_answers in the character snapshot (CharacterSheetDetails / views.py serialization) so the UI can read it. Server-only; the UI render is 93-3. Refs: builder.py ~1730 (apply_choice/choice_label), ~1790 (apply_freeform/FreeformInput), ~2654 (build); character.py model; server/views.py snapshot."
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
@@ -42,6 +43,8 @@ stories:
       - creation_answers is carried in the character snapshot payload and round-trips through save/load (persisted, not recomputed).
       - The scene(s) whose freeform fed 93-1's archetype inference are marked archetype_inferred=true so the UI can badge them.
       - 'Wiring test: a snapshot built from a real chargen flow exposes creation_answers (asserts it reaches the serialized payload, not just the in-memory model).'
+    completed: '2026-06-10'
+    review_verdict: approved
   - id: 93-3
     title: Character-sheet History section — origin block
     description: "Render a new 'History' section on the character sheet, starting with the origin block. New collapsible/labelled 'History' section in CharacterSheet.tsx that reads the creation_answers payload from 93-2 and lists, per scene, the prompt and the player's answer (their verbatim words for freeform, their chosen label for selections). Scenes marked archetype_inferred get a small badge ('inferred from your words') so the player sees where the engine read their freeform. The section is structured as the future home for player-linked lore (93-4 attaches lore there) — so build the container/heading to host more than the origin block, but render ONLY the origin block now (no lore stubs). Add the creation_answers type to payloads.ts. Audience: makes chargen provenance legible in the player UI (Sebastien/Jade) and gives narrative-first players (James) their own words back. Refs: CharacterSheet.tsx ~101-242; payloads.ts CharacterSheetData ~22-88; depends on 93-2 snapshot field."
