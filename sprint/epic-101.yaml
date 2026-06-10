@@ -47,10 +47,12 @@ stories:
     title: UI dead-code sweep — delete deprecated OverlayType (zero importers) and retire no-op groupPortraitSegments call sites
     points: 1
     priority: p3
-    status: backlog
+    status: in_progress
     repos: ui
     workflow: trivial
     type: chore
+    started: '2026-06-10'
+    branch: feat/101-4-ui-deadcode-overlaytype-portrait-segments
   - id: 101-5
     title: Retire daemon 'flux' alias shim — warm_up_flux(), worker='flux' RPC dispatch target, --warmup=flux CLI doc (zero callers remain)
     description: "ADR-070 wiring check (2026-06-09): media/workers/ contains ONLY zimage_mlx_worker.py — the doctrine holds, FluxMLXWorker is gone. But daemon.py retains a compatibility shim whose stated justification no longer exists: warm_up_flux() at daemon.py:271 ('retained so the --warmup=flux CLI flag and existing RPC callers that dispatch on worker=\"flux\" keep working'), the target in ('all','flux','image') dispatch at daemon.py:443, and the --warmup=flux usage doc at daemon.py:9. Grep across sidequest-server/sidequest/daemon_client, sidequest-server/sidequest/media, and orchestrator scripts/ finds ZERO callers sending worker='flux' — the shim is dead naming debt that misleads readers into thinking a Flux renderer still exists. Remove the alias (or collapse it to 'image'), update the CLI usage text, and check justfile/just daemon warmup invocations for the flag. Also sweep stale Flux-vs-Z-Image comments in daemon.py (lines 220,250,322,907-909) where they describe retired behavior rather than current MPS/CPU device placement."
