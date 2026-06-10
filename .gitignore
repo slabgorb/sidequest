@@ -117,3 +117,6 @@ tui-pid
 
 # Asset contact sheets (generate_image_sheets.py) — regenerable, not tracked
 image_sheets/
+
+# Playtest OTEL span dumps — regenerable scratch
+.playtest-spans/
