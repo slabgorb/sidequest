@@ -50,10 +50,13 @@ stories:
     title: '90-1 fail-loud hardening — pin the failure-path contract from review: test encountergen exit-1 (bestiary-less ruleset pack) + EncounterSeedError raise; emit pregen.seed_manual span (error attr) before raising; assert ruleset span attr in AC4; unit-test Bestiary validators; decide ensure_loaded broad-except policy for EncounterSeedError (ADR-006 vs fail-loud); doc/content polish (stale docstrings, awn in AC6 wording, hp-floor headers, derive AC6 slug list from rules.yaml scan)'
     points: 3
     priority: p2
-    status: backlog
-    repos: server,content
+    status: done
+    started: '2026-06-10'
+    repos: server
     workflow: tdd
+    completed: '2026-06-10'
     type: chore
+    review_verdict: approved
   - id: 90-6
     title: Region-mode location-drift abandons live combat the turn it instantiates
     description: "Measured root cause (Perseus MP playtest 2026-06-06, server log). A combat/social confrontation DOES instantiate (initiative rolls; encounter_type=combat present) but is deactivated the SAME turn by a cosmetic scene re-title. In region-mode worlds the narrator drifts the scene title every turn (narrator.location_drift_repaired fires each turn); narration_apply.py's encounter-abandon block (~L3298 'if old_loc != result.location') keys off the raw location STRING, not the cartography region. Combat is category=combat -> not _encounter_is_mobile -> falls to the else at L3451 (emit encounter.deactivated_on_location_change L3455), outcome='abandoned_on_location_change'. Net: combat instantiates -> dies same turn -> next turn no active encounter -> no beat menu -> beat_selections=0 confrontation=None active=False forever; narrator free-hands hit/miss. The code at L3218-3244 ALREADY detects this is a same-region sub-location POI (region.entry_skipped_sub_location) and refuses to fork a new region, but the abandon block ignores that signal. NOT #707 (space_opera Firefight is resolution_mode beat_selection + win_condition hp_depletion, not opposed_check). NOT the ADR-113 confidence gate (per-dispatch gating is not operational; every dispatch fires). Distinct from 90-3 (which assumed instantiation works) and BLOCKS it for any region-mode ruleset world (perseus/swn, the_circuit/cwn). Repro: space_opera/perseus_cloud MP SWN, draw weapon (turn 3) then fire on Governance enforcers (turn 4). Fix lane: sidequest-server/sidequest/server/narration_apply.py only. Pingpong: ~/Projects/sq-playtest-pingpong.md (DRIVER UPDATE 2026-06-06)."
