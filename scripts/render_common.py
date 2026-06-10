@@ -10,7 +10,9 @@ import asyncio
 import hashlib
 import json
 import logging
+import re
 import shutil
+import unicodedata
 from pathlib import Path
 
 SOCKET_PATH = Path("/tmp/sidequest-renderer.sock")
@@ -299,9 +301,24 @@ def resolve_lora_args(
 
 
 def slugify(text: str) -> str:
-    """Convert text to filesystem-safe slug."""
-    return (
-        text.lower()
+    """Convert text to a filesystem-safe, ASCII R2 object-key slug.
+
+    Story 101-8: NFKD-fold non-ASCII to base letters FIRST (mirror of
+    ``sidequest.server.slug_fold.fold_to_ascii`` \u2014 the orchestrator scripts are a
+    standalone package, so the rule is duplicated to the same documented
+    contract). Diacritics fold (``caf\u00e9`` \u2192 ``cafe``); previously this rule kept
+    non-ASCII verbatim, writing non-ASCII R2 keys \u2014 the worst case. ASCII output
+    is unchanged. A trailing ``[^a-z0-9_-]`` drop removes any non-decomposing
+    letter (``\u0142``, ``\u00f8``, Cyrillic) that survives the fold, so the render-side key
+    matches the consumer-side filter (``slugify_player_name`` / ``_slugify_name``).
+    """
+    folded = "".join(
+        ch
+        for ch in unicodedata.normalize("NFKD", text)
+        if not unicodedata.combining(ch)
+    )
+    slug = (
+        folded.lower()
         .replace("'", "")
         .replace("\u2019", "")
         .replace('"', "")
@@ -314,6 +331,10 @@ def slugify(text: str) -> str:
         .replace(" ", "_")
         .strip("_-")
     )
+    # Drop ONLY non-ASCII letters NFKD could not decompose (``ł``, ``ø``, Cyrillic)
+    # so render-key == consumer-key on those names, while preserving this rule's
+    # historical ASCII punctuation behavior (AC3: ASCII output unchanged).
+    return re.sub(r"[^\x00-\x7f]", "", slug)
 
 
 def deterministic_seed(key: str, base_seed: int) -> int:
