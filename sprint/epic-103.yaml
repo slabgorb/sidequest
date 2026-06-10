@@ -1,0 +1,78 @@
+id: '103'
+type: epic
+title: Seaboard of Saints — mutant_wasteland world + Saint layer on AWN
+description: 'Materializes docs/superpowers/specs/2026-06-10-seaboard-of-saints-build-plan.md (Architect, 2026-06-10). World design: 2026-05-14-mutant-wasteland-seaboard-of-saints-design.md, rebased per 2026-06-09-seaboard-of-saints-awn-rebase-addendum.md (doctrine: AWN wins always). AWN Plans 1+2 verified DONE (102-7, mutations.yaml live) — epic is unblocked. Scope locked with Keith 2026-06-10: all 17 regions in v1, non-human stocks (Animal/Plant/Synthetic) in v1. Saints = world-tier curation presets over the live AWN MP economy (saints.yaml -> genre mutation IDs, SaintRegistry in sidequest/mutation/, loud ID validation); stocks = generic chargen branching layer from AWN primitives only; flickering_reach stays Saint-less. OTEL: awn.saint.applied / awn.stock.applied spans. Critical path: 103-1 -> 103-2 -> 103-8 -> 103-10.'
+priority: p2
+status: backlog
+repos: server,ui,content
+stories:
+  - id: 103-1
+    title: Saint layer — saints.yaml schema + SaintRegistry in sidequest/mutation/ + loud mutation-ID validation at world load + Saint-Marked chargen preset over MpEconomy + awn.saint.applied span + wiring test; ships 3 proof Saints (bundle-only / bundle+affinity / drawback-fires-in-confrontation). Build plan §D-A.
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+  - id: 103-2
+    title: Stock system — stock chargen step + per-stock branching of the mutation step; stocks.yaml schema + generic stock application (attr mods/Move/AC/Trauma-Target/granted mutation IDs, zero per-stock special cases); Sleeper implants as System-Strain item sources; awn.stock.applied span; UI chargen branch flow. Ships proof stocks (Sleeper, one Animal). Build plan §D-B.
+    points: 8
+    priority: p2
+    status: backlog
+    repos: server,ui,content
+    workflow: tdd
+  - id: 103-3
+    title: Roll the Bones alt-attribute mode — 3d6-in-order over the standard six, 2-stat reroll budget, chargen flag + UI affordance. Build plan §D-C.
+    points: 2
+    priority: p3
+    status: backlog
+    repos: server,ui
+    workflow: tdd
+  - id: 103-4
+    title: Saint canon (GM lane) — all ~25 Saints from world spec §6 curated to AWN mutation IDs in worlds/seaboard_of_saints/saints.yaml + iconography + veneration flavor; gap analysis -> additive genre-tier mutations where no analog exists (coordinated genre PR). Depends on 103-1 schema freeze.
+    points: 5
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+  - id: 103-5
+    title: 'World core (GM lane) — world.yaml (draft: true until asset gate), lore.yaml (the Glory, the Shake, New Catholicism, Magisterium doctrine incl. Wild-Mutant marking), history.yaml.'
+    points: 3
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+  - id: 103-6
+    title: All 17 regions (GM lane) — places/cartography.yaml + encounter_tables.yaml; the Corridor as connective spine; region statuses per world spec §3; cliché bans (§11) enforced. Depends on 103-5.
+    points: 8
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+  - id: 103-7
+    title: Cultures + factions (GM lane) — 15 cultures with ADR-091 corpus bindings; 6 major factions + regional minors; Cryptic-Alliance faction tags (v1 = content tags, AWN Plan-7 Enclave retrofit hook flagged). Depends on 103-5.
+    points: 5
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+  - id: 103-8
+    title: Stocks + dramatic content (GM lane) — full stocks.yaml roster (all Animal/Plant/Synthetic variants incl. Penobscot/Wampanoag-named uplift), Penitent flavor-focus over AWN classes, tropes.yaml, openings.yaml, archetypes.yaml, bestiary/creatures, currency flavor (Mint coins, regional scrips). Depends on 103-2 schema freeze + 103-6.
+    points: 8
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+  - id: 103-9
+    title: 'Asset gate (art/music lane) — visual_style.yaml, portrait_manifest.yaml (Saint icons, faction NPCs), POI landscapes for 17 regions, audio params; world leaves draft: true only when gate MET. Depends on 103-6 + 103-7.'
+    points: 5
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+  - id: 103-10
+    title: 'End-to-end wiring + regression — integration test per stock: chargen -> narrator opening -> confrontation where Saint drawback/stock trait mechanically fires (OTEL-asserted) -> save cycle; flickering_reach regression (loads clean, Wild-only, zero Saint content); cliché-judge audit over shipped content. Depends on all. Build plan §4 DoD.'
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
