@@ -38,7 +38,10 @@ stories:
     description: "Spec: addendum §5 Story M-D + §4. orbital/render.py textPath arc-belt: opposite-side belts need opposite sweep-flag/reversed path so 'broken drift' label reads upright. Cosmetic, ADR-094; no OTEL needed."
     points: 1
     priority: p3
-    status: in_progress
+    status: done
     repos: server
     workflow: trivial
+    completed: '2026-06-11'
     type: bug
+    review_findings: 'Round-2 APPROVED. Single-source upright-flip applied; round-1 HIGH resolved + found non-reachable (arc belts suppressed from OTEL strategy layer). Effective fix intact, snapshot+3 unit tests green.'
+    review_verdict: approved
