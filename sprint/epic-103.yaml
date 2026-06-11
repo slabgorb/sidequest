@@ -93,6 +93,8 @@ stories:
     title: 'End-to-end wiring + regression — integration test per stock: chargen -> narrator opening -> confrontation where Saint drawback/stock trait mechanically fires (OTEL-asserted) -> save cycle; flickering_reach regression (loads clean, Wild-only, zero Saint content); cliché-judge audit over shipped content. Depends on all. Build plan §4 DoD.'
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-11'
     repos: server,content
     workflow: tdd
+    completed: '2026-06-11'

@@ -3,7 +3,7 @@ type: epic
 title: 'Space-Opera Map: single-system collapse, lore-map wiring, fancier graph'
 description: Materializes docs/superpowers/specs/2026-06-11-space-opera-map-playtest-addendum.md (SM/DRIVER + Operator, 2026-06-11). Amends the 2026-06-08 Two-Scale epic (98) and reference-SPA migration (100). Corrects isCluster=regionCount>1 (single-vs-cluster must key on multi-SYSTEM, not multi-region), collapses single-system worlds (coyote_star, aureate_span) to orrery-as-Map, and completes story 100-12's dropped seam by wiring the lore-page Map section to the d3-dag CartographyMap with NPC portrait pins. Found in 2026-06-11 coyote_star playtest.
 priority: p2
-status: backlog
+status: done
 repos: server,ui
 stories:
   - id: 104-1
@@ -51,3 +51,4 @@ stories:
     type: bug
     review_findings: 'Round-2 APPROVED. Single-source upright-flip applied; round-1 HIGH resolved + found non-reachable (arc belts suppressed from OTEL strategy layer). Effective fix intact, snapshot+3 unit tests green.'
     review_verdict: approved
+completed: '2026-06-11'
