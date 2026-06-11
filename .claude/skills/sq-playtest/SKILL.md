@@ -187,7 +187,23 @@ curl -s localhost:8765/api/debug/save/{slug}/timeline        # per-round event-k
 curl -s localhost:8765/api/debug/save/{slug}/snapshot        # full latest snapshot
 curl -s localhost:8765/api/debug/save/{slug}/turn/{round}    # one round's events
 curl -s localhost:8765/api/debug/state                       # live in-memory state
+curl -s localhost:8765/api/sessions/{slug}/encounter_events  # confrontation DIAL deltas (NOT HP — see trap below)
 ```
+
+**Forensics > grep — OTEL spans never hit the text log.** Mechanical spans (`state_patch.hp`,
+`wwn.*`, `wwn.spell.cast`, confrontation beats) stream to the GM panel / `WatcherSpanProcessor`
+— they are **not** written to `sidequest-server.log`. `grep`-ing the log for them will always
+come up empty and tempt you into a false "subsystem silent" finding. To verify HP ablation,
+read the **live snapshot `HpPool`** (`{current, max}`) in the dashboard State tab or the
+`/snapshot` endpoint — not the log, not the narration.
+
+**TRAP — dial delta is not the HP channel.** `encounter_events` reports confrontation **DIAL**
+movement (e.g. `opponent_delta`, `metric_target="combat"`), which is a *separate* track from
+ablative HP. A suppressed dial delta (`opponent_delta=0`) does **not** mean the opponent took no
+damage — check the opponent's `HpPool` in the snapshot. (Real session mistake: a `0` dial delta
+was read as "hollow strike / unbacked HP" when the Daggereye's `HpPool` was actually `{current:2,
+max:14}` — ~12 HP of working ablation. Combat-half HP and the dial track are independent; confirm
+HP in the pool, not the dial.)
 
 Pipe through `python3 -m json.tool` (or a small extractor) to inspect `npcs`, `npc_pool`, room/region state, footnotes, `political_state` (premise/bloc), inventory items (`characters[0].core.inventory.items` — each has `category`/`equipped`/`state`/`tags`), etc.
 

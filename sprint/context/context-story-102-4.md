@@ -11,6 +11,7 @@ Retires deferred phase P4 of the SWN module design (§6–7). Faithful WN combat
 
 ## Technical Guardrails
 
+- **Keith directive (2026-06-10): keep SideQuest turn semantics.** The WN turn model is implemented *inside* SideQuest's existing table model — module seam, ADR-036 submit-and-wait barrier, ADR-051 turn counters — not as a parallel turn system. WN crunch adapts to SideQuest's semantics, never the reverse. (Also noted: Kevin Crawford has confirmed our SRD use is proper — licensing is settled, not a design constraint.)
 - **Spec authority:** SWN module design §6 (turn model), §7 (action economy → sealed action menu), plus the P4 initiative-spine design (`2026-05-27-swn-p4-initiative-spine-design.md`) — read both before designing; the initiative spine may be partially landed. Check `game/ruleset/resolution.py` and the encounter/turn modules for existing initiative machinery before building any (Don't Reinvent).
 - **Module owns the whole turn (§3, Approach A):** the turn model lives behind the RulesetModule seam, not in generic dispatch. Native-ruleset genres keep today's turn flow untouched.
 - **Sealed-commit precedent:** ADR-129's N-seat table engine generalized a sealed-commit loop for poker/auction — study its commit/reveal structure for reuse before writing a new one. ADR-036's turn barrier (no narration until everyone submits) is the MP substrate the sealed letter rides on; peer action text remains visible during the wait phase per the 2026-05-03 amendment (sealed *resolution*, not hidden submission).
