@@ -22,9 +22,12 @@ stories:
     description: 'Spec: addendum §5 Story M-B. DEPENDS ON 104-1 (consumes the server multi-system flag). isCluster reads the flag, not regionCount. Single-system world -> orrery-as-Map (reuse verified #748 collapse, no cluster graph, no drill); coyote_star/aureate_span regression-tested. Cluster (perseus_cloud) unchanged. UI test w/ single-system multi-region fixture asserts no cluster graph + no drill + orrery direct.'
     points: 3
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-11'
     repos: ui
     workflow: tdd
+    completed: '2026-06-11'
+    review_verdict: approved
   - id: 104-3
     title: M-C — Wire lore-page Map section + NPC portrait-pin renderer (completes 100-12 dropped seam)
     description: "Spec: addendum §5 Story M-C + §3. Completes story 100-12 dropped seam. Add case 'map' to SectionDispatch -> MapSection adapting server {regions,edges,pins,starting_region} to CartographyMap. Render NPC portrait pins (the 'fancy node thing'). Session-free (reference SPA, no WS). UI test: lore map section renders a graph (not nothing) + pins when portrait_url present. Same upgraded renderer serves the in-game cluster graph (one component, both surfaces — honors 100-10 intent)."
