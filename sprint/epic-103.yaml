@@ -20,9 +20,13 @@ stories:
     title: Stock system — stock chargen step + per-stock branching of the mutation step; stocks.yaml schema + generic stock application (attr mods/Move/AC/Trauma-Target/granted mutation IDs, zero per-stock special cases); Sleeper implants as System-Strain item sources; awn.stock.applied span; UI chargen branch flow. Ships proof stocks (Sleeper, one Animal). Build plan §D-B.
     points: 8
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-11'
     repos: server,ui,content
     workflow: tdd
+    completed: '2026-06-11'
+    review_findings: "[HIGH] go_back/revert break on requires_stock skipped scenes (builder.py:2265/2280) — back-nav lands on wrong stock's branch scene, poisons chosen_saint_id into confirm crash; [MEDIUM] _stockify two silent early-returns violate No Silent Fallbacks; [MEDIUM] apply_stock partial attr mutation on unknown key; [MEDIUM] missing back-nav-across-skip test coverage"
+    review_verdict: approved
   - id: 103-3
     title: Roll the Bones alt-attribute mode — 3d6-in-order over the standard six, 2-stat reroll budget, chargen flag + UI affordance. Build plan §D-C.
     points: 2

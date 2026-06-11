@@ -267,6 +267,41 @@ Controls session phase transitions.
 }
 ```
 
+**Stock step (story 103-2, additive):** when the active world ships a stock
+roster (`worlds/<slug>/stocks.yaml`) and the current scene's choices carry
+`stock_id` mechanical effects, the scene frame is upgraded to
+`input_type: "stock"` with a `stock_options` array aligned 1:1 with
+`choices`. The client previews the selected stock's mechanical deltas
+before confirming and responds with the **standard** scene-choice message
+(`{"phase": "scene", "choice": "<index+1>"}`) — no new client→server shape.
+`granted_mutations` carries display names, never catalog ids.
+
+```json
+{
+  "type": "CHARACTER_CREATION",
+  "payload": {
+    "phase": "scene",
+    "input_type": "stock",
+    "prompt": "What are you?",
+    "choices": [{ "label": "Sleeper", "description": "..." }],
+    "stock_options": [
+      {
+        "id": "sleeper",
+        "label": "Sleeper",
+        "description": "...",
+        "deltas": {
+          "attr_mods": { "CON": 1 },
+          "move": 8,
+          "ac": 13,
+          "trauma_target_mod": 1,
+          "granted_mutations": ["Aquatic Adaptation"]
+        }
+      }
+    ]
+  }
+}
+```
+
 **Confirmation:**
 ```json
 {

@@ -103,7 +103,7 @@ stories:
     title: 'fix: ConfrontationOverlay BeatEffect tsc error breaks client-build on develop (from 73-4/97-3)'
     points: 2
     priority: p2
-    status: backlog
+    status: in_review
     repos: sidequest-ui
     workflow: tdd
     type: bug
