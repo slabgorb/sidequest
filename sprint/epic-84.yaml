@@ -71,9 +71,11 @@ stories:
       ADDED 2026-06-10 (Keith): the intent router's reference/alias matching must ALSO honor the SAME NFKD-fold normalization adopted in Story 101-8 for slugs. 101-8 unified slug derivation onto a shared stdlib NFKD fold (unicodedata.normalize('NFKD', …) + strip combining marks; ASCII unchanged, diacritics → base letters). Entity retrieval in the intent router (faction/location/NPC alias + epithet matching, ADR-118 §A4) currently risks the same diacritic split-brain: a diacritic-named entity (evropi, coyote_star) won't match its alias if one side folds and the other drops/keeps the accent. Reuse the SAME shared fold helper 101-8 introduces — do not add a second normalization rule.
     points: 3
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-11'
     repos: sidequest-server
     workflow: tdd
     acceptance_criteria:
       - Intent-router reference/alias matching (faction/location/NPC epithet + alias resolution, ADR-118 §A4) normalizes candidate names through the SAME shared NFKD-fold helper introduced in Story 101-8 — a diacritic-named entity resolves its alias regardless of accent. Verified by a fixture/OTEL test with a diacritic entity (no source-text grep), and the normalization is the shared 101-8 helper, NOT a re-implemented rule.
+    completed: '2026-06-11'
     type: refactor
