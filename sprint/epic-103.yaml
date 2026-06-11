@@ -10,9 +10,11 @@ stories:
     title: Saint layer — saints.yaml schema + SaintRegistry in sidequest/mutation/ + loud mutation-ID validation at world load + Saint-Marked chargen preset over MpEconomy + awn.saint.applied span + wiring test; ships 3 proof Saints (bundle-only / bundle+affinity / drawback-fires-in-confrontation). Build plan §D-A.
     points: 5
     priority: p2
-    status: backlog
+    status: done
+    started: '2026-06-10'
     repos: server,content
     workflow: tdd
+    completed: '2026-06-10'
   - id: 103-2
     title: Stock system — stock chargen step + per-stock branching of the mutation step; stocks.yaml schema + generic stock application (attr mods/Move/AC/Trauma-Target/granted mutation IDs, zero per-stock special cases); Sleeper implants as System-Strain item sources; awn.stock.applied span; UI chargen branch flow. Ships proof stocks (Sleeper, one Animal). Build plan §D-B.
     points: 8
