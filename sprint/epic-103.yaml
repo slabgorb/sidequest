@@ -86,7 +86,8 @@ stories:
     title: 'Asset gate (art/music lane) — visual_style.yaml, portrait_manifest.yaml (Saint icons, faction NPCs), POI landscapes for 17 regions, audio params; world leaves draft: true only when gate MET. Depends on 103-6 + 103-7.'
     points: 5
     priority: p3
-    status: backlog
+    status: in_progress
+    started: '2026-06-11'
     repos: content
     workflow: tdd
   - id: 103-10
