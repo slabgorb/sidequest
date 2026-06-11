@@ -118,3 +118,22 @@ repos:
       Feeds genre-pack music into sidequest-content (cf. ADR-095 ACE-Step tier);
       a rights-free, offline alternative for classical/PD background tracks.
       Gymnopedie smoke test is gated on MuseScore 4 being installed.
+
+  understudy:
+    path: sidequest-understudy
+    type: service
+    description: Naive simulated-player playtest client — joins real sessions via the UI
+    language: python
+    test_command: pytest
+    build_command: "true"
+    lint_command: ruff check .
+    dev_command: understudy
+    branch_strategy: gitflow
+    default_branch: develop
+    notes: |
+      Bots join a real session through the actual React UI in a headless
+      browser, perceive the page as a screen reader would, and role-play
+      a seat in persona — one LLM call per turn, model-agnostic
+      (Anthropic / Ollama / claude -p). The naivety invariant: the bot
+      is handed only what a player is handed; interface confusion is a
+      finding, not a failure. Reports land in reports/<date>-<name>-rN/.

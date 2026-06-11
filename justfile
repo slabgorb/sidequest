@@ -577,6 +577,10 @@ playtest *flags:
 playtest-scenario file:
     cd {{root}}/sidequest-server && uv run python3 {{root}}/scripts/playtest.py --scenario {{root}}/scenarios/{{file}}.yaml
 
+# Naive simulated-player table (sidequest-understudy)
+understudy manifest *flags:
+    cd {{root}}/sidequest-understudy && uv run understudy run runs/{{manifest}}.yaml {{flags}}
+
 # tmuxinator session — server, client, daemon, otel in four panes
 tmux:
     tmuxinator start -p {{root}}/.tmuxinator.yml
