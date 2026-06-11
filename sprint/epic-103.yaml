@@ -76,9 +76,12 @@ stories:
     title: Stocks + dramatic content (GM lane) — full stocks.yaml roster (all Animal/Plant/Synthetic variants incl. Penobscot/Wampanoag-named uplift), Penitent flavor-focus over AWN classes, tropes.yaml, openings.yaml, archetypes.yaml, bestiary/creatures, currency flavor (Mint coins, regional scrips). Depends on 103-2 schema freeze + 103-6.
     points: 8
     priority: p3
-    status: backlog
+    status: done
+    started: '2026-06-11'
     repos: content
-    workflow: tdd
+    workflow: trivial
+    completed: '2026-06-11'
+    review_verdict: approved
   - id: 103-9
     title: 'Asset gate (art/music lane) — visual_style.yaml, portrait_manifest.yaml (Saint icons, faction NPCs), POI landscapes for 17 regions, audio params; world leaves draft: true only when gate MET. Depends on 103-6 + 103-7.'
     points: 5

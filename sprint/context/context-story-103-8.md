@@ -1,6 +1,6 @@
 ---
 parent: context-epic-103.md
-workflow: tdd
+workflow: trivial
 ---
 
 # Story 103-8: Stocks + dramatic content (GM lane) — full stock roster, Penitent, tropes/openings/archetypes/bestiary/currency
