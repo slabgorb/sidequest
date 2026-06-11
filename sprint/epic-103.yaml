@@ -40,9 +40,10 @@ stories:
     title: 'World core (GM lane) — world.yaml (draft: true until asset gate), lore.yaml (the Glory, the Shake, New Catholicism, Magisterium doctrine incl. Wild-Mutant marking), history.yaml.'
     points: 3
     priority: p3
-    status: backlog
+    status: done
     repos: content
     workflow: tdd
+    completed: '2026-06-10'
   - id: 103-6
     title: All 17 regions (GM lane) — places/cartography.yaml + encounter_tables.yaml; the Corridor as connective spine; region statuses per world spec §3; cliché bans (§11) enforced. Depends on 103-5.
     points: 8
