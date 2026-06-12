@@ -86,6 +86,71 @@ the R2-existence short-circuit.
 See the module docstring for the full job grammar and the branch-safety warning
 (it reads the `sidequest-content` working tree — see the gotchas above).
 
+### Lift a whole world's asset gate: `render_world_assets.sh`
+
+`render_queue.py` is for hand-picked jobs. When you just want **one world's full
+image gate** (every POI + every portrait, uploaded, manifest rebuilt) in a single
+command, use the batch wrapper. It runs the two `generate_*` scripts in sequence
+against the local daemon, then rebuilds `r2_manifest.json` from a live bucket scan.
+
+```bash
+just daemon            # the renders need the local MLX daemon up — fail-loud if not
+scripts/render_world_assets.sh mutant_wasteland seaboard_of_saints           # full gate → R2
+scripts/render_world_assets.sh space_opera perseus_cloud --steps 40 --force  # extra flags pass through
+scripts/render_world_assets.sh space_opera coyote_star --no-upload           # local test render, R2 untouched
+```
+
+- Always invoke via the **shell script**, not bare `python3` — it routes each step
+  through the right venv (the R2/manifest steps need `boto3` from the root env).
+- Logs tee to `~/.sidequest/logs/render-<genre>-<world>-<stamp>.log`.
+- It does **not** lift `draft: true`. That's a deliberate human step in
+  `worlds/<world>/world.yaml` *after* you've eyeballed the rendered set.
+
+### Watch the render across boxes: the live R2 preview gallery
+
+A render fanning out across two Macs uploads to one R2 bucket, so neither box's
+local contact sheet sees the whole picture — but the CDN does. `generate_r2_preview.py`
+emits a self-contained `image_sheets/r2_preview.html` that points an `<img>` at the
+**CDN URL** of every *expected* asset (derived from the manifests, not local dirs).
+Not-yet-rendered tiles render as "pending" rather than hidden — the point is seeing
+what's still missing. A live `rendered / expected` counter, 30s cache-bust
+auto-refresh (new uploads from either box appear without a reload), and a
+click-to-zoom lightbox are built in.
+
+```bash
+uv run python scripts/generate_r2_preview.py --open               # everything, open in browser
+uv run python scripts/generate_r2_preview.py --genre heavy_metal  # one pack
+uv run python scripts/generate_r2_preview.py --world evropi --kind poi
+```
+
+Leave the tab open while a batch runs; it self-refreshes. Keys are derived from the
+same manifest collectors the renderers use, so a "pending" tile is a genuine gap,
+not a path mismatch.
+
+### Audio: `render-pd-audio` (public-domain) and `generate_music.py` (ACE-Step)
+
+Image gate and audio gate are separate. For the public-domain music a world's
+`audio.yaml` demands, the reconciler renders `demand ∩ catalog ∖ already-in-R2`:
+
+```bash
+just render-pd-audio --pack wry_whimsy            # or --dry-run / --force
+```
+
+For ACE-Step generated tracks, `generate_music.py` walks a pack's
+`audio/music/*_input_params.json` and dispatches each to the daemon (→ R2):
+
+```bash
+uv run --project sidequest-server python scripts/generate_music.py --genre heavy_metal           # all missing
+uv run --project sidequest-server python scripts/generate_music.py --genre heavy_metal --track combat
+```
+
+### Where am I? Audit the gaps
+
+Before and after a run, `r2_audit.py` diffs the YAML-derived "should exist" key set
+against `r2_manifest.json`, reporting authored-but-not-rendered,
+rendered-but-not-uploaded, and orphan keys (root venv — needs `boto3`). The
+`/sq-audit` skill wraps this for a pack/world/asset completeness sweep.
+
 ## Playtest & observability
 
 | Script | Purpose |
