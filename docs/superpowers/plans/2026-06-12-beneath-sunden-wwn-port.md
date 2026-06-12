@@ -1,6 +1,6 @@
 # Beneath Sünden WWN Port Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Port the `caverns_and_claudes` pack (sole world: `beneath_sunden`) from the native dial engine to the WWN SRD ruleset, reusing heavy_metal's already-balanced WWN artifacts with zero new balancing.
 
@@ -28,7 +28,7 @@
 
 **Files:** none (git only)
 
-- [ ] **Step 1: Create the content branch**
+- [x] **Step 1: Create the content branch**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -36,7 +36,7 @@ git checkout develop && git pull origin develop
 git checkout -b feat/wwn-port-caverns
 ```
 
-- [ ] **Step 2: Create the server branch**
+- [x] **Step 2: Create the server branch**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-server
@@ -44,7 +44,7 @@ git checkout develop && git pull origin develop
 git checkout -b feat/wwn-caverns-wiring-test
 ```
 
-- [ ] **Step 3: Baseline — confirm the pack validates BEFORE the port**
+- [x] **Step 3: Baseline — confirm the pack validates BEFORE the port**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3 && just content-validate caverns_and_claudes
@@ -59,14 +59,14 @@ Expected: PASS (exit 0). If it fails before we touch anything, STOP and report �
 **Files:**
 - Create: `sidequest-content/genre_packs/caverns_and_claudes/spells_wwn.yaml`
 
-- [ ] **Step 1: Copy heavy_metal's catalog verbatim**
+- [x] **Step 1: Copy heavy_metal's catalog verbatim**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content/genre_packs
 cp heavy_metal/spells_wwn.yaml caverns_and_claudes/spells_wwn.yaml
 ```
 
-- [ ] **Step 2: Replace the file header comment** (everything above `version: "1.0"`) with:
+- [x] **Step 2: Replace the file header comment** (everything above `version: "1.0"`) with:
 
 ```yaml
 # Caverns & Claudes — WWN High Magic (spells_wwn.yaml)
@@ -90,7 +90,7 @@ cp heavy_metal/spells_wwn.yaml caverns_and_claudes/spells_wwn.yaml
 # starting_prepared id in classes.yaml MUST resolve here (loader fails loud).
 ```
 
-- [ ] **Step 3: Reflavor prose that names heavy_metal institutions**
+- [x] **Step 3: Reflavor prose that names heavy_metal institutions**
 
 Find every heavy_metal-specific proper noun or institution in `genre_description` / `mechanical_effect` prose:
 
@@ -104,11 +104,11 @@ Rules for the rewrite — **prose only; never touch `id`, `level`, `save`, `dama
 - "Pact / 999 Crimson Gods" (e.g. `lance_of_darkness`) → what was bargained with at the bottom of the shaft — the thing that answered the digging. No named patron pantheon.
 - Barsoom-tradition spells (`phantom_bowmen`, `mind_veil`, `disintegration_ray`, `invisibility_compound`, and any other Mentalist/Super-scientist entries): **DELETE these entries entirely.** They are pulp-science workings for a different setting; no caverns class prepares them, and dead catalog entries are dead code. (If the validator later complains about a dangling reference, that reference is a bug to fix, not a reason to keep the entry.)
 
-- [ ] **Step 4: Hard-limit audit (spec §4 — flag, don't rebalance)**
+- [x] **Step 4: Hard-limit audit (spec §4 — flag, don't rebalance)**
 
 Check every remaining spell against `caverns_and_claudes/magic.yaml` `hard_limits` (no_resurrection, no_true_creation, no_unlimited_high_evocation, no_plane_shift, no_permanence_without_renewal). For any conflict, list the spell in the PR description under **"Hard-limit calls for Keith"** with options (drop spell vs. drop limit). Do not resolve unilaterally; do not modify spell mechanics.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -125,7 +125,7 @@ git commit -m "feat(caverns): WWN spell catalog, ported from heavy_metal (no ret
 **Files:**
 - Rewrite: `sidequest-content/genre_packs/caverns_and_claudes/classes.yaml`
 
-- [ ] **Step 1: Replace the entire file with the content below.**
+- [x] **Step 1: Replace the entire file with the content below.**
 
 Mechanics fields (saving_throws, wwn_magic numbers, warrior flag, ability mechanical_effects) are byte-faithful to heavy_metal's chassis; only flavor prose, beat ids, and starting_prepared selection differ. Beat ids reference the Task 4 rules.yaml confrontations (combat: strike/brace/committed_blow/break_contact; chase: sprint/duck_through/barricade/douse_torch; negotiation: talk_up_the_haul/swear_its_not_cursed/plead_poverty/flash_the_coin/walk_toward_the_door).
 
@@ -336,7 +336,7 @@ Mechanics fields (saving_throws, wwn_magic numbers, warrior flag, ability mechan
       involuntary: false
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -351,7 +351,7 @@ git commit -m "feat(caverns): WWN 3-chassis Callings (Warrior/Expert/Mage), heav
 **Files:**
 - Rewrite: `sidequest-content/genre_packs/caverns_and_claudes/rules.yaml`
 
-- [ ] **Step 1: Replace the entire file with the content below.**
+- [x] **Step 1: Replace the entire file with the content below.**
 
 What's kept from the old file verbatim: `custom_rules`, `stat_display_fields`, `encounter_base_tension`, `initiative_rules`, `default_location`, `default_time_of_day`, the **chase** and **negotiation** confrontations (dial-resolved, unchanged per spec §2). What's gone: `allowed_races`/`default_race`/`banned_spells`/`magic_level` (B/X scaffolding, 87-2 precedent), `edge_config`, the dial combat def with its momentum metrics and `morale:` block.
 
@@ -650,7 +650,7 @@ confrontations:
     mood: comedic
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -667,7 +667,7 @@ git commit -m "feat(caverns): bind ruleset wwn — point-buy, WWN combat, drop d
 - Delete: `sidequest-content/genre_packs/caverns_and_claudes/spellbook.yaml`
 - Delete: `sidequest-content/genre_packs/caverns_and_claudes/spells/` (arcane_l1.yaml, divine_l1.yaml)
 
-- [ ] **Step 1: Replace magic.yaml with:**
+- [x] **Step 1: Replace magic.yaml with:**
 
 ```yaml
 # magic.yaml — caverns_and_claudes genre layer
@@ -736,14 +736,14 @@ narrator_register: |
   players did. Most did not come back up. Some are still down there.
 ```
 
-- [ ] **Step 2: Delete the retired B/X files**
+- [x] **Step 2: Delete the retired B/X files**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content/genre_packs/caverns_and_claudes
 git rm spellbook.yaml spells/arcane_l1.yaml spells/divine_l1.yaml
 ```
 
-- [ ] **Step 3: Check the world tier for B/X magic references**
+- [x] **Step 3: Check the world tier for B/X magic references**
 
 ```bash
 grep -rn "spell_slots\|divine_favor\|innate_v1\|learned_v1\|spellbook" worlds/beneath_sunden/
@@ -751,7 +751,7 @@ grep -rn "spell_slots\|divine_favor\|innate_v1\|learned_v1\|spellbook" worlds/be
 
 If any hits (e.g. a world-tier spellbook.yaml or a `divine_favor` bar instantiation): remove those blocks too — they reference a retired subsystem and would be dead config. Include them in this commit.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A genre_packs/caverns_and_claudes
@@ -767,7 +767,7 @@ git commit -m "feat(caverns): retire B/X spell-slot surface — item magic + WWN
 **Files:**
 - Rewrite: `sidequest-content/genre_packs/caverns_and_claudes/char_creation.yaml`
 
-- [ ] **Step 1: Replace the entire file with the content below.**
+- [x] **Step 1: Replace the entire file with the content below.**
 
 Point-buy packs carry no stat-roll scene (EH/heavy_metal precedent — stats come from `rules.yaml stat_generation`); the B/X `the_roll` and `the_arrangement` scenes are dropped. The Brecca framing and the remaining scene skeleton (calling → story → kit → mouth) are kept — the FSM hints (`class_hint`, `identity_capture`, `equipment_generation`) are unchanged shapes.
 
@@ -852,7 +852,7 @@ Point-buy packs carry no stat-roll scene (EH/heavy_metal precedent — stats com
   allows_freeform: false
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -870,7 +870,7 @@ git commit -m "feat(caverns): point-buy chargen, three WWN Callings"
 - Modify: `sidequest-content/genre_packs/caverns_and_claudes/worlds/beneath_sunden/archetypes.yaml` (typical_classes lists)
 - Modify: `sidequest-content/genre_packs/caverns_and_claudes/worlds/beneath_sunden/bestiary.yaml` (header comment only)
 
-- [ ] **Step 1: Replace lethality_policy.yaml entirely**
+- [x] **Step 1: Replace lethality_policy.yaml entirely**
 
 The current policy (`comedic_danger_no_permadeath`, humiliated-on-zero-HP) contradicts both `lethality: high` + WWN Mortal Injury and the world register's "grave, lethal, Moria-as-tragedy." New content, modeled on heavy_metal's:
 
@@ -885,7 +885,7 @@ must_narrate: "Render the death with specific, grave detail — the deep is a wo
 must_not_narrate: "narrate survival; invent an ally's last-second intervention; soften the damage after the fact; play the death for comedy — the name goes on the Board, and the Board is never funny"
 ```
 
-- [ ] **Step 2: inventory.yaml — re-key the starting-cash map**
+- [x] **Step 2: inventory.yaml — re-key the starting-cash map**
 
 Replace the class-keyed cash block (currently `Delver: 10 / Fighter: 60 / Cleric: 50 / Mage: 80 / Thief: 75` with its comment, ~lines 404–415) with:
 
@@ -904,7 +904,7 @@ Replace the class-keyed cash block (currently `Delver: 10 / Fighter: 60 / Cleric
 
 (Values are the old per-role values carried over — Fighter→Warrior 60, Thief→Expert 75, Mage→Mage 80. Cleric's 50 retires with the class. No retuning.)
 
-- [ ] **Step 3: worlds/beneath_sunden/archetypes.yaml — re-key typical_classes**
+- [x] **Step 3: worlds/beneath_sunden/archetypes.yaml — re-key typical_classes**
 
 Four lists reference the old classes. Apply the mapping Fighter→Warrior, Thief→Expert, Cleric→Mage (the rite-keeper niche folds into the camp's recovered-workings practitioner):
 
@@ -913,7 +913,7 @@ Four lists reference the old classes. Apply the mapping Fighter→Warrior, Thief
 - ~line 127 (`[Fighter, Thief, Cleric]`) → `[Warrior, Expert, Mage]`
 - ~line 220 (`[Thief]`) → `[Expert]`
 
-- [ ] **Step 4: bestiary.yaml — fix the stale header line**
+- [x] **Step 4: bestiary.yaml — fix the stale header line**
 
 In the header comment, replace the line:
 
@@ -929,7 +929,7 @@ with:
 
 The stat-block fields themselves are already WWN-shaped (level/hp/armor_class/attack_bonus/damage/morale/skill/save); change nothing else in this file.
 
-- [ ] **Step 5: Sweep for surviving stale references**
+- [x] **Step 5: Sweep for surviving stale references**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content/genre_packs/caverns_and_claudes
@@ -938,7 +938,7 @@ grep -rn "Fighter\|Cleric\|Thief\|Magic-User\|edge_config\|spell_slots\|roll_3d6
 
 Expected: no hits. (`archetype_constraints.yaml`'s `fallback_name: "Fighter"/"Cleric"/"Thief"` entries are NPC archetype titles, not class references — they stay. The Carl-the-Cleric playtest comment is history — it stays.) Fix any other hit by the same mapping.
 
-- [ ] **Step 6: Run the validator — this is the gate**
+- [x] **Step 6: Run the validator — this is the gate**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3 && just content-validate caverns_and_claudes
@@ -952,7 +952,7 @@ Expected: PASS (exit 0). Likely first-run failures and their meanings:
 
 Iterate until green. Do NOT silence a failure by deleting the thing it points at without understanding it.
 
-- [ ] **Step 7: Run the server test suite against the new pack** (catches loader-level regressions the validator doesn't own)
+- [x] **Step 7: Run the server test suite against the new pack** (catches loader-level regressions the validator doesn't own)
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-server && uv run pytest tests/ -x -q -k "caverns or genre_loader or pack"
@@ -960,7 +960,7 @@ cd /Users/slabgorb/Projects/oq-3/sidequest-server && uv run pytest tests/ -x -q 
 
 Expected: PASS, or failures that are demonstrably the pre-existing OTEL-deadlock / MessageType-count knowns (verify against the failure text before dismissing; if a failure names caverns content, it's ours).
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -976,14 +976,14 @@ git commit -m "feat(caverns): lethal policy, re-keyed cash/archetypes, bestiary 
 - Create: `sidequest-server/tests/integration/test_wwn_caverns_dispatch.py`
 - Read first: `sidequest-server/tests/integration/test_wwn_elemental_harmony_dispatch.py` (the template — read it END TO END before writing)
 
-- [ ] **Step 1: Copy the EH test as the starting point**
+- [x] **Step 1: Copy the EH test as the starting point**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-server
 cp tests/integration/test_wwn_elemental_harmony_dispatch.py tests/integration/test_wwn_caverns_dispatch.py
 ```
 
-- [ ] **Step 2: Apply the caverns substitutions**
+- [x] **Step 2: Apply the caverns substitutions**
 
 Every EH-specific value has a caverns counterpart. Replace:
 
@@ -997,7 +997,7 @@ Every EH-specific value has a caverns counterpart. Replace:
 | `Channeler` (class name, helper names, followup text) | `Mage` |
 | "Martial Exchange" (combat label in the seat helper) | `"Dungeon Combat"` |
 
-- [ ] **Step 3: Rewrite the chargen walk for the caverns scene list**
+- [x] **Step 3: Rewrite the chargen walk for the caverns scene list**
 
 The EH walk picks choice 0 on the origins scene to land a Channeler. The caverns scene list (Task 6) opens with `the_calling`, where **Mage is choice index 2**. Replace the builder-walk loop's choice logic with:
 
@@ -1026,7 +1026,7 @@ The EH walk picks choice 0 on the origins scene to land a Channeler. The caverns
 
 Keep the rest of the helper (CharacterBuilder construction, `with_equipment_tables`, `with_classes`, `build(name)`) byte-identical to the EH version.
 
-- [ ] **Step 4: Keep all four EH assertions, retargeted**
+- [x] **Step 4: Keep all four EH assertions, retargeted**
 
 1. `caster.core.spellcasting.casts_remaining` decremented (2 → 1);
 2. opponent `core.hp.current` reduced below `_OPPONENT_HP` (wracking_bolt damage through the HP channel);
@@ -1035,7 +1035,7 @@ Keep the rest of the helper (CharacterBuilder construction, `with_equipment_tabl
 
 Keep the rng monkeypatch pinning and the content-not-on-disk skip pattern unchanged.
 
-- [ ] **Step 5: Run the test — expect it to FAIL first if content branch isn't checked out**
+- [x] **Step 5: Run the test — expect it to FAIL first if content branch isn't checked out**
 
 The test reads the real pack from disk. Make sure the sidequest-content checkout is on `feat/wwn-port-caverns`, then:
 
@@ -1046,7 +1046,7 @@ uv run pytest tests/integration/test_wwn_caverns_dispatch.py -v -n0
 
 Expected: PASS (all assertions). `-n0` because OTEL span-count tests deadlock under parallel xdist (known). If it fails, debug the actual failure — common trap: the chargen walk not landing the Mage (assert `character.char_class == "Mage"` early in the test to localize).
 
-- [ ] **Step 6: Lint + commit**
+- [x] **Step 6: Lint + commit**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-server
@@ -1059,7 +1059,7 @@ git commit -m "test(wwn): caverns_and_claudes end-to-end wiring proof — Mage c
 
 ### Task 9: Full gates, PRs
 
-- [ ] **Step 1: Full validator + server check**
+- [x] **Step 1: Full validator + server check**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3 && just content-validate caverns_and_claudes
@@ -1068,7 +1068,7 @@ cd /Users/slabgorb/Projects/oq-3/sidequest-server && uv run ruff check . && uv r
 
 Expected: validator exit 0; all wwn-tagged tests pass.
 
-- [ ] **Step 2: Headless playtest smoke (optional but recommended)**
+- [x] **Step 2: Headless playtest smoke (optional but recommended)**
 
 With server running (`just server` in another pane):
 
@@ -1078,7 +1078,7 @@ cd /Users/slabgorb/Projects/oq-3 && just playtest --genre caverns_and_claudes
 
 Watch for a combat to seat and `state_patch_hp` spans on the GM dashboard (`just otel`). The lie detector: if combat narrates but no HP spans fire, the binding didn't take.
 
-- [ ] **Step 3: Push + PR — content repo (base develop)**
+- [x] **Step 3: Push + PR — content repo (base develop)**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-content
@@ -1101,7 +1101,7 @@ EOF
 )"
 ```
 
-- [ ] **Step 4: Push + PR — server repo (base develop)**
+- [x] **Step 4: Push + PR — server repo (base develop)**
 
 ```bash
 cd /Users/slabgorb/Projects/oq-3/sidequest-server
@@ -1116,7 +1116,7 @@ EOF
 )"
 ```
 
-- [ ] **Step 5: Note the cross-repo merge order in both PRs**
+- [x] **Step 5: Note the cross-repo merge order in both PRs**
 
 Content PR merges first; the server test PR's CI will read the content from whatever ref CI checks out — if CI pins content to develop, the server PR stays red until the content PR lands. That ordering is correct and expected; do not "fix" it by weakening the test's skip condition.
 
