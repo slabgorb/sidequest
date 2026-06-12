@@ -86,6 +86,7 @@ from playtest_messages import (  # noqa: E402
     make_chargen_confirm,
     make_chargen_continue,
     make_chargen_freeform,
+    make_chargen_portrait_confirm,
     make_chargen_scene_choice,
     make_dice_throw,
     make_slug_connect_msg,
@@ -445,6 +446,15 @@ class AutoChargen:
 
         if input_type == "story":
             return self._respond_story(payload)
+
+        if input_type == "pick_portrait":
+            # Epic-66 portrait picker, interposed once at the Confirmation
+            # boundary. The driver always skips (portraits are cosmetic). Answer
+            # with phase=portrait_confirm so the server clears the
+            # portrait_step_shown gate — a generic continue/scene-choice does
+            # not, leaving chargen stalled until the next action trips
+            # WrongPhaseError.
+            return [make_chargen_portrait_confirm()]
 
         choices = payload.get("choices") or []
         if choices:

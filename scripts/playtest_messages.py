@@ -365,6 +365,22 @@ def make_chargen_continue() -> dict:
     }
 
 
+def make_chargen_portrait_confirm(selected_portrait_ref: str | None = None) -> dict:
+    """Answer the Epic-66 ``pick_portrait`` frame (phase=portrait_confirm).
+
+    The headless driver always SKIPS the portrait step — portraits are
+    cosmetic and an invented slug would trip the server's unknown-ref warning.
+    A skip is ``selected_portrait_ref=None``. Without this the driver would
+    fall through to a generic ``continue``, the server never clears
+    ``portrait_step_shown``, and the next action raises WrongPhaseError.
+    """
+    return {
+        "type": "CHARACTER_CREATION",
+        "payload": {"phase": "portrait_confirm", "selected_portrait_ref": selected_portrait_ref},
+        "player_id": "",
+    }
+
+
 def make_arrange_assign(stat: str, value: int) -> dict:
     return {
         "type": "CHARACTER_CREATION",
