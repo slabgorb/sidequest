@@ -1,5 +1,10 @@
 ## Dev Gotchas
 
+### pf protected-branch hook reads the branch BEFORE your compound command runs — `git checkout -b X && git commit` still blocks (2026-06-12)
+- On a gitflow subrepo (`develop` is protected: sidequest-daemon, -content, -ui), the boilerplate `git checkout -b feat/… && git add … && git commit …` in ONE Bash call is BLOCKED by `pf hooks dispatch PreToolUse` with "Cannot commit to protected branch 'develop'." The PreToolUse hook evaluates the shell's *current* branch at dispatch time — i.e. BEFORE the `checkout` inside the same compound has run — so it still sees `develop` and refuses. The whole tool call is rejected; the `checkout` never executes either (verified: `git branch --show-current` still `develop` afterward).
+- **Fix:** create/switch the branch in its OWN Bash call first (`git checkout -b feat/…`), confirm with `git branch --show-current`, THEN run `git add`/`git commit` in a separate call. Same root cause as the cwd gotcha in the handoff (hook reads persistent shell state, not post-command state) — applies to the branch, not just cwd.
+- Staging is fine in the compound; it's only the `commit` the hook gates. Creating the branch separately is the whole fix.
+
 ### `git add -A` in a subrepo sweeps strangers' untracked files into your story commit (2026-06-09, story 98-3)
 - sidequest-ui had a stray untracked `src/styles/reference.css` (epic-100 leftover, present before story setup). The dev-workflow boilerplate `git add . && git commit` swept it into the 98-3 feature commit and it got PUSHED before I noticed. Fix: `git rm --cached <file> && git commit --amend --no-edit && git push --force-with-lease`.
 - **Rule of thumb:** check the FIRST `git status` of the session for pre-existing `??` entries; stage explicitly (`git add <paths-I-touched>`) or at minimum eyeball `git status --short` output between add and commit. Pre-existing untracked files belong to nobody's branch — leave them untracked.
