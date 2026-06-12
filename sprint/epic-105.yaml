@@ -10,7 +10,7 @@ stories:
     title: Restore the span-proof instrument — teach scripts/playtest.py to answer the Epic-66 pick_portrait frame (portrait_confirm skip) so scenarios/beneath_sunden_engagement.yaml (59-15) runs past chargen and captures movement/confrontation/magic spans instead of silently dying with WrongPhaseError; coordinate with 90-9 which also edits playtest.py chargen
     points: 2
     priority: p1
-    status: backlog
+    status: in_review
     repos: orchestrator
     workflow: tdd
     type: bug
