@@ -1,0 +1,104 @@
+category: "Confrontation Engine (ADR-033)"
+features:
+
+  - id: pillar1_structured_encounter
+    name: "StructuredEncounter + ConfrontationDef + `apply_beat` (Pillar 1)"
+    status: live_wired
+    modules:
+      - game/encounter.py
+      - game/beat_kinds.py
+      - game/opposed_check.py
+      - server/dispatch/confrontation.py
+    ui: "`ConfrontationOverlay`"
+    manual_test: "Trigger a confrontation → beats apply → momentum + edge deltas land"
+    evidence:
+      spans:
+        - "encounter.confrontation_initiated"
+        - "encounter.beat_applied"
+      wiring_tests:
+        - "sidequest-ui/src/__tests__/confrontation-wiring.test.tsx"
+
+  - id: pillar2_resource_pool
+    name: "ResourcePool + threshold→KnownFact mint (Pillar 2)"
+    status: live_wired
+    modules:
+      - game/resource_pool.py
+      - game/thresholds.py
+      - game/beat_kinds.py
+    ui: "journal"
+    manual_test: "Crossing a threshold (e.g., humanity bar) mints a KnownFact visible in journal"
+    evidence:
+      spans:
+        - "encounter.metric_advance"
+      wiring_tests:
+        - "sidequest-ui/src/__tests__/confrontation-wiring.test.tsx"
+
+  - id: difficulty_calibration_v1
+    name: "Difficulty calibration v1 (ADR-093)"
+    status: live_partial
+    modules:
+      - game/encounter.py
+    ui: "momentum"
+    manual_test: "Analytical-distribution + ship_combat correction live (story 45-42)"
+    evidence:
+      adr: 93
+
+  - id: mood_override_step
+    name: "`mood_override` step"
+    status: live_partial
+    modules:
+      - server/narration_apply.py
+      - server/dispatch/confrontation.py
+    ui: "audio cue"
+    manual_test: "Beat with `mood_override` flips audio track immediately"
+    evidence:
+      spans:
+        - "encounter.confrontation_initiated"
+
+  - id: confrontation_outcome_dispatch
+    name: "Confrontation outcome dispatch"
+    status: live_wired
+    modules:
+      - protocol/messages.py
+      - server/dispatch/confrontation.py
+    ui: "`LedgerPanel` + Phase-5 reveal"
+    manual_test: "Outcome message refreshes ledger bars (story 47-3)"
+    evidence:
+      spans:
+        - "encounter.resolved"
+        - "encounter.resolution_signal_emitted"
+      wiring_tests:
+        - "sidequest-ui/src/__tests__/confrontation-wiring.test.tsx"
+
+  - id: magic_phase5_reveal
+    name: "Magic Phase 5 confrontation reveal"
+    status: live_partial
+    modules:
+      - ConfrontationOverlay
+    ui: "reveal UI"
+    manual_test: "Magic confrontation result shown with revealed outcome card (ui PR #192, story 47-3)"
+    evidence:
+      wiring_tests:
+        - "sidequest-ui/src/__tests__/magic-confrontation-wiring.test.tsx"
+
+  - id: encounter_lifecycle_dispatch
+    name: "Encounter lifecycle dispatch"
+    status: live_partial
+    modules:
+      - server/dispatch/encounter_lifecycle.py
+    ui: "—"
+    manual_test: "Encounter lifecycle dispatch fires; XP accrues via `award_turn_xp`, but ADR-081 advancement effects downstream are deferred"
+    evidence:
+      spans:
+        - "encounter.confrontation_initiated"
+      adr: 33
+
+  - id: mood_aliases_chain
+    name: "`mood_aliases` alias chain"
+    status: dark
+    modules:
+      - genre/models/audio.py
+    ui: "—"
+    manual_test: "**Dark (polish)** — declared, one pack uses it; consumer not wired (ADR-087 P3)"
+    evidence:
+      adr: 87
