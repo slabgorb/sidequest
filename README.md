@@ -218,3 +218,4 @@ See [`docs/architecture.md`](docs/architecture.md) for the full system design.
 
 Sprint plans live in `sprint/` as YAML files with per-story context documents.
 See `sprint/current-sprint.yaml` for active work and `sprint/archive/` for completed stories.
+# .github-private
