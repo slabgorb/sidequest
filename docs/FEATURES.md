@@ -43,7 +43,7 @@ CHANGELOG.
   classes and per-world bestiary/lore/tropes.
 - **`heavy_metal` WWN port adds Barsoom** — a full world skeleton on the WWN ruleset
   with its own classes and chargen, joining `evropi` and `long_foundry` (live
-  2026-06-05; POIs on R2, portraits still rendering).
+  2026-06-05; POIs and portraits complete on R2).
 - **`mutant_wasteland` adds Seaboard of Saints** — a second world beside
   `flickering_reach`, asset-complete (18 POIs + 51 portraits + leitmotif music on R2).
 - **All worlds now live — no drafts.** `tea_and_murder/blackthorn_moor` cleared its

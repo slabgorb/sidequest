@@ -12,10 +12,17 @@
 ## Summary
 
 - **11 packs, 22 worlds, all live** — no world sets `draft: true` as of 2026-06-12.
-- **Every world has POI landscapes and portraits on R2.** The old "asset gate"
-  framing (worlds held back pending renders) currently gates nothing.
-- Render-in-flight: `heavy_metal/barsoom` portraits (world went live 2026-06-05
-  with POIs first; portrait batch still growing).
+- **Every world has POI landscapes on R2 — zero POI gaps across all packs.**
+  The old "asset gate" framing (worlds held back pending renders) currently
+  gates nothing.
+- **Portraits are complete except 7 errored `heavy_metal` pickers** that failed
+  during render and were never uploaded: 5 in `evropi` (`picker_antman_scoutdrone_m01`,
+  `picker_gnome_tunnelwise_f01`, `picker_half_orc_minehand_m01`,
+  `picker_vaermm_copyist_f01`, `picker_zked_daggereye_f01`) and 2 in `long_foundry`
+  (`picker_astran_feed_keeper_f01`, `picker_kragmoor_thaumaturge_m01`). These need a
+  re-render. `heavy_metal/barsoom` is **complete** — no outstanding portrait gap.
+- Otherwise the only remaining unrendered assets are authored-but-not-rendered music
+  variations (see below); R2 holds a surplus of objects, not a deficit.
 
 ## Per-world matrix
 
@@ -27,9 +34,9 @@ pack-level (`genre_packs/<pack>/audio/music/`, ADR-095) unless noted.
 | caverns_and_claudes | beneath_sunden | 5 | 18 | +7 creature images; WWN port + 105-2 seam registry (entrance room) landed 2026-06-12 |
 | elemental_harmony | burning_peace | 8 | 22 | |
 | elemental_harmony | shattered_accord | 19 | 26 | |
-| heavy_metal | evropi | 43 | 44 | |
-| heavy_metal | long_foundry | 25 | 7 | |
-| heavy_metal | barsoom | 17 | 13 | WWN ruleset; live 2026-06-05; portraits still rendering |
+| heavy_metal | evropi | 43 | 44 | 5 picker portraits errored at render, not yet uploaded |
+| heavy_metal | long_foundry | 25 | 7 | 2 picker portraits errored at render, not yet uploaded |
+| heavy_metal | barsoom | 17 | 13 | WWN ruleset; live 2026-06-05; portraits complete |
 | mutant_wasteland | flickering_reach | 20 | 5 | fully spoilable (only world that is) |
 | mutant_wasteland | seaboard_of_saints | 18 | 51 | leitmotif music tracks on R2 |
 | neon_dystopia | franchise_nations | 8 | 27 | |
@@ -53,6 +60,18 @@ caverns_and_claudes 33 · elemental_harmony 187 · heavy_metal 41 ·
 mutant_wasteland 195 · neon_dystopia 54 · pulp_noir 42 · road_warrior 150 ·
 space_opera 86 · spaghetti_western 58 · wry_whimsy uses shared PD music under
 the `assets/` prefix.
+
+### Authored-but-unrendered music
+
+`audio.yaml` authors 126 music tracks (a2a / leitmotif variations) that have no
+rendered `.ogg` on R2: **60 in elemental_harmony, 60 in space_opera, 6 in
+tea_and_murder**. The tea_and_murder 6 are a bookkeeping artifact — they *are*
+rendered, but under the legacy `victoria/` pack key (see "Known legacy R2 keys"
+below), so the manifest sees them as unrendered against the `tea_and_murder/`
+prefix. The elemental_harmony and space_opera variations are genuinely
+unrendered. These are the only authored-asset gaps outside the 7 errored
+heavy_metal pickers; every POI landscape and (other than those 7) every portrait
+is rendered.
 
 ## Known legacy R2 keys (not worlds)
 
