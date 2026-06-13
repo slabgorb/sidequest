@@ -19,10 +19,11 @@ stories:
     title: Deterministic surface→deep seam crossing — when a PC in a cartography region that owns a deep_descent route expresses descent, bind to the dungeon entrance (or fail loud), NOT gated on the Haiku intent router alone; forbid location_update from inventing procedural-deep sub-locations on the surface lane; emit OTEL proving pc_region reaches a procedural node + discovered_regions>0 + projection engages. 59-15 goes green on span-proof
     points: 5
     priority: p1
-    status: backlog
+    status: done
     repos: server
     workflow: tdd
     depends_on: 105-1
+    completed: '2026-06-13'
     type: bug
   - id: 105-3
     title: 'Reverse seam — leaving the Deep: entrance→surface ascent (back up the rope)'
