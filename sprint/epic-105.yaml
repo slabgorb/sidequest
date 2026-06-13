@@ -24,3 +24,16 @@ stories:
     workflow: tdd
     depends_on: 105-1
     type: bug
+  - id: 105-3
+    title: 'Reverse seam — leaving the Deep: entrance→surface ascent (back up the rope)'
+    description: "Found during the 2026-06-12 confabulated-crawl fix (pingpong, fix branch fix/playtest-beneath-sunden-in-dungeon-movement): the surface→deep seam crossing (105-2, #831) and in-dungeon graph traversal are now live, but the REVERSE crossing — leaving the Deep from the dungeon's entrance node back to surface cartography (the_dropmouth, 'back up the rope') — is unwired. Today a 'back'/'up' intent from entrance fail-louds via movement.unresolved (no_candidate_edges: the graph has no surface node), which is honest but strands the party below. Design shape: the seam registry (ADR-106/105-2) is bidirectional at the threshold — when the PC stands on the dungeon entrance node and the intent is back/toward_exit with no in-graph candidate, resolve the ascent to the cartography region that OWNS the seam route (seam_route_for from_id, i.e. the_dropmouth) via the same per-PC pc_region patch path, with movement.resolved seam_kind=deep_descent resolved_via=surface_ascent span. Mind the hybrid gates added in the in-dungeon-movement fix (movement.py _defer_region_mode fall-through + intent_router_pass dungeon-exits projection: the surface exit should appear in current_region_exits at the entrance node). Sibling findings logged in the same pingpong entry: narration_apply cartography-advance prose-teleport hazard (~line 3895) and attach_dungeon_to_session seeding pc_regions=entrance before cartography init (which bypassed the 105-2 crossing entirely in session 14836) — adjacent, possibly same-story scope per Architect."
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    acceptance_criteria:
+      - From the dungeon entrance node, a back/up/toward_exit intent with no deeper in-graph candidate resolves the PC to the seam-owning cartography region (the_dropmouth) via the per-PC patch path — no narrator improvisation
+      - movement.resolved span fires with resolved_via=surface_ascent and seam_kind, GM-panel observable; frontier/dungeon map emits reflect the PC leaving the graph
+      - current_region_exits at the entrance node lists the surface exit so the router classifies departure intents as movement
+      - 'Non-regression: in-dungeon traversal (deeper/back within the graph) and the 105-2 surface→deep crossing remain green'
