@@ -10,10 +10,13 @@ stories:
     title: 'Equip starting armor at chargen and derive AC from the WWN SRD (ramp lever #1) — Leather Armor rolls into inventory with equipped:false so every Warrior fights at unarmored AC 10; equip the rolled armor and recompute armor_class from the WWN SRD armor entry (weapons already auto-equip; gap is armor-specific), with OTEL proving opponent reprisals roll vs the higher AC'
     points: 3
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-13'
     repos: server,content
     workflow: tdd
+    completed: '2026-06-13'
     type: bug
+    review_verdict: approved
   - id: 106-2
     title: 'WWN reprisal model — defensive beats must mitigate the per-beat opponent reprisal (ramp lever #2). The unconditional ADR-033 counter-attack stapled to every player beat ignores Brace/Break Contact and is not WWN-faithful. DESIGN-BEARING: Architect ruling needed (initiative round where the player can full-defend, vs keeping the beat model but making defensive beats reduce to-hit/damage/grant a save)'
     points: 5

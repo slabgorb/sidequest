@@ -3,7 +3,7 @@ type: epic
 title: Seaboard of Saints — mutant_wasteland world + Saint layer on AWN
 description: 'Materializes docs/superpowers/specs/2026-06-10-seaboard-of-saints-build-plan.md (Architect, 2026-06-10). World design: 2026-05-14-mutant-wasteland-seaboard-of-saints-design.md, rebased per 2026-06-09-seaboard-of-saints-awn-rebase-addendum.md (doctrine: AWN wins always). AWN Plans 1+2 verified DONE (102-7, mutations.yaml live) — epic is unblocked. Scope locked with Keith 2026-06-10: all 17 regions in v1, non-human stocks (Animal/Plant/Synthetic) in v1. Saints = world-tier curation presets over the live AWN MP economy (saints.yaml -> genre mutation IDs, SaintRegistry in sidequest/mutation/, loud ID validation); stocks = generic chargen branching layer from AWN primitives only; flickering_reach stays Saint-less. OTEL: awn.saint.applied / awn.stock.applied spans. Critical path: 103-1 -> 103-2 -> 103-8 -> 103-10.'
 priority: p2
-status: backlog
+status: done
 repos: server,ui,content
 stories:
   - id: 103-1
@@ -100,3 +100,4 @@ stories:
     repos: server,content
     workflow: tdd
     completed: '2026-06-11'
+completed: '2026-06-13'
