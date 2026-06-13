@@ -1,0 +1,24 @@
+id: '107'
+type: epic
+title: beneath_sunden dungeon scene advance and Monster Manual binding — per-room scene/render plus authored bestiary (ADR-106/059/109)
+description: 'Source: 2026-06-13 combat playtest of caverns_and_claudes/beneath_sunden (sq-playtest-pingpong), OTEL + save-forensics. Distinct concern from Epic 106 (combat mechanics): this is dungeon traversal infrastructure + content, sibling to Epic 105 (procedural-deep reachability). Two interlocked findings. (1) Generated-dungeon traversal does not advance the structured location/scene: descending the procedural ADR-106 dungeon (rope -> The Dropmouth -> Wider Chamber -> combat) leaves discovered_rooms empty, scene_id null, region_transitions frozen after the scripted opening (only ropefoot->the_dropmouth turn 2 + the_dropmouth->entrance turn 4; zero after). The narration sub-titles advance but the engine treats the whole descent as ONE scene, so the render pipeline (keys off scene/room change per ADR-109/ADR-050) under-fires — fewer illustrations than rooms traversed (renders are not dead; daemon confirmed at least one fired). (2) Combat opponents are narrator-improvised (the creature of animal musk) with no stable identity or portrait, because there is no per-room content binding and no authored bestiary. Per Operator direction the monsters should be pre-rendered content entities (Monster Manual, ADR-059 pre-gen) injected into game_state as nearby creatures so the narrator draws from them instead of inventing. The two interlock: per-room content binding needs scene advance. SCOPE: the structured scene/location advance (server) + authored bestiary content + ADR-059 injection (content+server). OUT OF SCOPE: the confrontation-panel portrait/icon RENDERING (UI polish, stays in the ping-pong loop) — this epic makes the opponent a real entity with an asset; wiring the panel to show it is separate. Refs: ADR-106 (procedural dungeon edge-expansion), ADR-059 (Monster Manual game-state injection), ADR-109 (persistent location descriptions + mechanical manifest), ADR-050 (image pacing throttle); coordinate with Epic 105 (same dungeon seam neighborhood).'
+priority: p1
+status: ready
+repos: server,content
+stories:
+  - id: 107-1
+    title: Generated-dungeon scene/location advance — traversing ADR-106 procedural rooms never updates discovered_rooms, scene_id, or region_transitions (all frozen after the scripted opening), so the whole descent reads as one scene and the ADR-109/ADR-050 render pipeline under-fires; advance the structured scene per room entry (populate discovered_rooms, advance scene_id, log region_transitions) so a fresh POI/illustration fires on room entry and per-room content binding becomes possible
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 107-2
+    title: 'Monster Manual for beneath_sunden — combat opponents are narrator-improvised (the creature of animal musk) with no stable name or portrait; author the dungeon bestiary as content entities (stable names + portrait assets: the four-toed pale scuttler, the eyeless bristle-faced den creature) and inject per ADR-059 into game_state as creatures nearby (not yet met), bound per-room, so the narrator draws from them instead of inventing'
+    points: 5
+    priority: p1
+    status: backlog
+    repos: content,server
+    workflow: tdd
+    depends_on: 107-1
