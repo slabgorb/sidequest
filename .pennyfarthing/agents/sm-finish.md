@@ -15,14 +15,26 @@ model: haiku
 </arguments>
 
 <execution>
+> **Interpreter note (read first).** Every `pf.*` Python invocation below MUST
+> run with the `pf` CLI's OWN interpreter, NOT `python`/`python3` from the
+> project `.venv`. The project `.venv` (server/orchestrator) has no `pf`
+> package, so `python -m pf.*` / `from pf... import` there throws
+> `ModuleNotFoundError: No module named 'pf'` — and a subagent then burns many
+> tool calls retrying venv/path variations. The `pf` launcher's shebang points
+> at its uv-tool venv python, which DOES have `pf`; each block below resolves it
+> as `PF_PY` and uses `"$PF_PY"`. Never `source .venv/bin/activate` for `pf.*`.
+
 ## 1. Create PR (if needed)
 
 Before running preflight, check if a PR exists for the branch. If not, create one.
 
 ```bash
+# Resolve the pf-tool interpreter (has the `pf` package; project .venv does not).
+PF_PY="$(sed -n '1s/^#!//p' "$(command -v pf)")"
+
 # Read pr_mode and pr_strategy
-PR_MODE=$(source .venv/bin/activate && python -m pf.common.pr_config)
-PR_STRATEGY=$(python3 -c "
+PR_MODE=$("$PF_PY" -m pf.common.pr_config)
+PR_STRATEGY=$("$PF_PY" -c "
 from pf.git.repos import get_repo_config
 rc = get_repo_config('{REPOS}')
 print(rc.pr_strategy if rc else 'standard')
@@ -31,7 +43,8 @@ print(rc.pr_strategy if rc else 'standard')
 
 Format the PR title using the project's `pr_title_format` from `.pennyfarthing/repos.yaml`:
 ```bash
-PR_TITLE=$(python3 -c "
+PF_PY="$(sed -n '1s/^#!//p' "$(command -v pf)")"
+PR_TITLE=$("$PF_PY" -c "
 from pf.git.repos import format_pr_title
 print(format_pr_title(jira_key='${JIRA_KEY:-$STORY_ID}', title='${title}', scope='${scope}'))
 ")
@@ -91,7 +104,8 @@ session, parses R1-format findings via `pf.findings.capture.parse_delivery_findi
 and writes the `## Impact Summary` section between Delivery Findings and agent assessments.
 
 ```bash
-source .venv/bin/activate && python -c "
+PF_PY="$(sed -n '1s/^#!//p' "$(command -v pf)")"
+"$PF_PY" -c "
 from pathlib import Path
 from pf.findings.summary import write_impact_summary_to_session
 import json
@@ -108,7 +122,8 @@ print(json.dumps(result))
 The preflight script runs all checks in parallel using asyncio:
 
 ```bash
-source .venv/bin/activate && python -m pf.preflight finish {STORY_ID} --branch {BRANCH} --jira {JIRA_KEY}
+PF_PY="$(sed -n '1s/^#!//p' "$(command -v pf)")"
+"$PF_PY" -m pf.preflight finish {STORY_ID} --branch {BRANCH} --jira {JIRA_KEY}
 ```
 
 If no JIRA_KEY, omit the `--jira` flag.
