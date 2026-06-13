@@ -21,9 +21,11 @@ stories:
     title: 'WWN reprisal model — defensive beats must mitigate the per-beat opponent reprisal (ramp lever #2). The unconditional ADR-033 counter-attack stapled to every player beat ignores Brace/Break Contact and is not WWN-faithful. DESIGN-BEARING: Architect ruling needed (initiative round where the player can full-defend, vs keeping the beat model but making defensive beats reduce to-hit/damage/grant a save)'
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-13'
     repos: server
     workflow: tdd
+    completed: '2026-06-13'
     type: bug
   - id: 106-3
     title: WWN-gate native combat mechanics ungated by the RulesetModule (ADR-117) — convert the native edge/tag bleed (edge dial, Counter Stance fleeting tag, to-their-edge chip) into a STRONG (~-3) next-round opponent penalty expressed in WWN terms (Keith ruling); and gate native per-tick + chargen-seed XP (135 at L1) so XP follows the WWN small-integer expedition-XP scale

@@ -31,3 +31,25 @@ used.
 - *Potion of Mending heal magnitude* → use the WWN SRD healing value, not an invented number.
 - *XP scale / award model* → WWN expedition-XP and small-integer scale, not the native
   135-at-L1 number observed on a fresh Warrior.
+
+## 2026-06-13 — Epic 106 ramp rulings (Keith, answering the 106-1 Delivery Findings)
+
+Four blocked-story rulings resolved so Epic 106 (WWN combat hardening for
+`beneath_sunden`) can run. All defer to WWN where the SRD speaks.
+
+- **106-2 reprisal model → WWN initiative round (full-defend).** Adopt the WWN
+  initiative round so a player can declare full defense and avoid reprisal. Reuses the
+  ~80%-built `wn_round.py` infra the Architect found. The beat model does *not* become
+  the reprisal authority; WWN initiative does. This is ramp lever #2.
+- **helmet_iron → model shield/helmet as +AC modifiers.** Don't drop the item. WWN
+  gives helmets no *base* AC, so `helmet_iron` must not occupy the body-armor roll slot
+  that leaves ~1/3 of Warriors at AC 10. Model helmet (and shield) as additive AC
+  modifiers stacked on body armor, per WWN shield handling. Followup to 106-1.
+- **106-4 consumable-use heal magnitude → STILL OPEN (guaranteed vs random scarcity
+  not yet ruled).** Heal *magnitude* already governed by the WWN-SRD ruling above
+  (Potion of Mending uses the SRD value). The scarcity/slot question (guaranteed heal
+  slot vs intended random scarcity) was not asked and remains owed before 106-4 runs.
+- **106-5 death-state → true WWN dying window.** Implement a real WWN dying/down state,
+  not terminal-dead-only. Caveat carried into the story: the WWN d6 stabilize clock is
+  currently unactionable in solo play — the story must address the solo actuator gap,
+  not ship a clock nothing can advance.
