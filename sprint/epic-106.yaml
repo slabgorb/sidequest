@@ -31,7 +31,7 @@ stories:
     title: WWN-gate native combat mechanics ungated by the RulesetModule (ADR-117) — convert the native edge/tag bleed (edge dial, Counter Stance fleeting tag, to-their-edge chip) into a STRONG (~-3) next-round opponent penalty expressed in WWN terms (Keith ruling); and gate native per-tick + chargen-seed XP (135 at L1) so XP follows the WWN small-integer expedition-XP scale
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: server
     workflow: tdd
     type: bug
@@ -46,7 +46,7 @@ stories:
     title: Death-state coherence — the down/death path emits TWO contradictory statuses (terminal dead/mortally-wounded incapacitating + non-terminal dies-in-6-rounds non-incapacitating) with mis-stamped provenance (created_turn:0, encounter:None); deterministic 2/2. Emit ONE coherent state (a real stabilizable dying window OR a terminal dead verdict, never both) and stamp the real created_turn/created_in_encounter
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: server
     workflow: tdd
     type: bug
@@ -54,7 +54,7 @@ stories:
     title: Narration-truth guardrail — narrator over-claims a player knockdown and negates a successful hit at low HP (narrates a miss on a Strike Success that removed opponent HP, and depicts the PC going down while at 1/10 with a live beat menu and no ENCOUNTER_RESOLVED); symmetric player-down cousin of the fixed kill-overclaim-on-failed-strike anchor (fbff7135), on a successful player beat
     points: 3
     priority: p1
-    status: backlog
+    status: canceled
     repos: server
     workflow: tdd
     type: bug
