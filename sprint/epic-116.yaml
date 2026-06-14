@@ -1,0 +1,19 @@
+id: '116'
+type: epic
+title: Fate Core Narrator / Intent-Router Integration (ADR-144 F2)
+description: 'ADR-144 F2 — wire the Fate engine (F1, merged) into the live narrator + intent-router spine: freeform action classification (F2a, done — formerly mis-numbered epic 113 locally; renumbered to 116 after an epic-number collision with the Genre→World hygiene epic on origin/main), aspects-as-prompt + invoke + compel (F2b), create-advantage rendering + honesty lie-detector (F2c), deterministic opponent AI (F2d). Decomposition: docs/superpowers/plans/2026-06-14-f2-narrator-intent-router-integration.md. Depends on F1 (merged).'
+priority: p1
+status: in_progress
+repos: server
+stories:
+  - id: 116-1
+    title: 'F2a — Fate action classifier: Intent Router classifies a freeform action in a ruleset:fate pack with an active conflict into a fate_action subsystem dispatch routed to dispatch_fate_action (F1d), emitting fate.action.classified. New agents/subsystems/fate_action.py + _register_defaults; _build_fate_summary router enrichment + FATE_ROUTING_RULES; precondition-gate to active conflicts. DELIVERED: PR #861 squash-merged to sidequest-server develop (1f328271). Renumbered from local 113-1 after an epic-number collision. Plan: docs/superpowers/plans/2026-06-14-f2a-fate-action-classifier.md'
+    points: 5
+    priority: p1
+    status: done
+    assigned_to: slabgorb
+    started: '2026-06-14T16:02:14Z'
+    repos: server
+    workflow: tdd
+    completed: '2026-06-14T16:30:00Z'
+    review_verdict: approved
