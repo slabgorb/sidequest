@@ -385,3 +385,38 @@
 
 ### Pre-existing ruff-format drift surfaces only when you touch a file (106-1, 2026-06-13)
 - `ruff format --check` on a file you edited can flag regions you DIDN'T touch (e.g. a multi-line ternary / split log string that now fits on one line). The drift was committed earlier (an upstream commit wasn't `ruff format`-clean on that file). Fix: run `uv run ruff format <file>` (not just `--check`) on any file you edit, then `git diff` to confirm the normalization is whitespace-only and your semantic edits are intact. The dev-exit gate runs format, so leaving drift blocks handoff.
+
+## 108-6 WWN dying window (2026-06-14)
+
+- **Live-hostile polarity in the downed seam.** `run_cwn_wwn_downed_seam`'s
+  `actor_side` is the ATTACKER's side, and the downed defender is
+  `_opposite_side_first_actor(encounter, actor_side)`. So `actor_side` IS the hostile
+  side relative to the downed actor. A naive `superseded = already_terminal or
+  live_hostile` SUPPRESSED opponent Mortal Injuries entirely (the live player is the
+  opponent's hostile) — 6 combat-dispatch tests went `statuses=[]`. Correct design:
+  `resolve_downed` mints EITHER the stabilizable window (no live hostile = solo) OR the
+  ordinary Mortal Injury clock (live hostile present — every opponent the player drops,
+  and a PC at sword-point) via a `dying_window` bool. Never let the window branch suppress
+  the ordinary clock.
+- **HpPool delta method is `apply_delta(delta)`, NOT `adjust()`** (creature_core.py).
+  `core.hp.apply_delta(1 - core.hp.current)` to set HP to 1.
+- **OTEL tick honesty at a gate.** Don't emit a per-round span with a hardcoded
+  `action_was_stabilization=False` at the turn-intake gate — the gate runs BEFORE the
+  narrator/tool, so it can't know if the action was a stabilization, and a hardcoded value
+  contradicts the tool's own `resolved` span. Emit the honest tick from where the outcome
+  is known (the stabilize tool: True+roll+success; the expiry path: False+died).
+- **Full suite is parallel (xdist `-n auto`) and has pre-existing cross-worker DB-state
+  bleed.** Tests like `test_102_5_wn_tool_narrator_wiring` ("unknown actor: 'Vesska'") and
+  the space_opera SWN HP-ablation e2e flake under the full parallel run but PASS in
+  isolation (`-n0`). To tell a real regression from a flake: re-run the failing test in
+  isolation, and diff against `develop` by checking out develop's versions of your touched
+  files into your venv. wry_whimsy content-validation (missing `seed_tropes.yaml`) fails
+  deterministically and is a content-repo issue, not server code.
+
+## ruff format trap (2026-06-14, 108-6 rework)
+
+- **NEVER run `uv run ruff format tests/ sidequest/`** (or any broad path) to fix your own
+  files — the repo is not uniformly ruff-formatted, so it reformatted 162 UNRELATED files
+  and polluted the diff. Format ONLY your changed files by explicit path:
+  `uv run ruff format path/a.py path/b.py`. Same for `ruff check --fix` — scope it.
+  Recovery: `git status --short | awk '{print $2}' | grep -vxF -f keep.txt | xargs git checkout HEAD --`.

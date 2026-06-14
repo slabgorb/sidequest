@@ -84,3 +84,27 @@
 - The implementation was correct; what earned REJECTED was the absent regression net on the story's own core invariant (the WN round ledger reset — every test ended after round one, so a dropped `clear()` would silently revert AC1 for rounds 2+ with a green suite). In a TDD shop the net IS the deliverable; grade "suite cannot catch a one-line break of the headline AC" as HIGH, not a Medium missing-edge-case.
 - OTEL labels are findings too: a shared close helper hardcoding `source="dice_throw_beat"` mislabeled round-walk resolutions on the GM panel + ADR-124 forensics rows. When the project's doctrine is "the GM panel is the lie detector," a wrong span attribute is a real defect — prescribe a parameterized source + a span-attribute test, not a doc fix.
 - Re-review of a rework delta: keep the round-1 record standing, verify each rejection-table row with line evidence from the DELTA diff, and run an independent preflight — Dev's own RUN_IDs are evidence of their run, not yours.
+
+## 108-6 WWN dying window review (2026-06-14)
+
+- **`otel_capture` accepted-but-unasserted = decorative test.** Two expiry tests took the
+  span-capture fixture and asserted nothing on it — the AC5 tick/resolved emits could be
+  deleted and they'd pass. When a test requests an OTEL fixture, grep that it actually
+  calls `get_finished_spans()` and asserts span names/attrs. An accepted-but-unused
+  lie-detector fixture is worse than none (it reads as coverage).
+- **Tests passing via a fallback, not the logic under test.** The AC2 permit test bound a
+  bare `MagicMock` genre_pack; the production capability gate (`isinstance(cfg, Cwn/Wwn)`)
+  failed on the mock → the cfg-missing branch returned "don't expire" → permit. The test
+  passed for the WRONG reason — it never exercised the deadline computation. Check that
+  permit/within-deadline tests bind a REAL config so they hit the real branch, not a
+  short-circuit.
+- **Text-scrape assertion in an anti-text-scrape PR.** `'Frail' in s.text` slipped into the
+  story whose whole point was `stabilizable`/`is_dying_window_status` structured flags.
+  When the PR theme is "structured markers not text scraping," grep the new TESTS for
+  `in s.text` / `.text ==` — the irony is common and it matches a stated project rule
+  (cannot dismiss).
+- **Dev lint-checks production, forgets test files.** Production ruff was clean; two new
+  test files had I001. Always run ruff on the test files in the diff, not just `sidequest/`.
+- **`X or "default"` slug fallbacks mis-namespace OTEL.** `_bound_wn_slug(sd) or "wwn"` would
+  emit cwn/awn spans under `wwn.*` if slug were None — flag slug-honesty fallbacks even when
+  "unreachable," because they silently corrupt GM-panel attribution.

@@ -57,6 +57,10 @@ stories:
     title: 'WWN dying/down window + solo-actuator gap (BRAINSTORM-FLAGGED) — emit a real WWN mortally-wounded → d6-round stabilize → dead window under the WN round, not terminal-dead-only. The solo-actuator gap is an OPEN design problem (in solo play nothing can advance or act on the stabilize clock — input is disabled once the PC is out of the action) and MUST be brainstormed before implementation: a clock nothing can advance is worse than no clock. Server #846 already removed the dual-status CONTRADICTION (terminal-dead shows one coherent status); this story is the actionable WINDOW, not the contradiction fix. Re-homes the cancelled 106-5 dying-window work the cancellation commit (e5ae1fc8) promised would fold into this rework but never did. Refs: gm-decisions 2026-06-13/14, ADR-114, ADR-143.'
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-14'
     repos: server
     workflow: superpowers
+    completed: '2026-06-14'
+    review_findings: "Test integrity (HIGH): expiry tests assert nothing on AC5 spans; AC2 permit test passes via no-cfg fallback not the real carve; text-scrape 'Frail' in s.text violates structured-markers rule. Lint (HIGH): 2 ruff I001 in new test files. MEDIUM: slug-or-wwn mis-namespace; missing edge-case tests. LOW: dead _MORTAL_INJURY_MARKER + stale docstrings. Production logic is correct — red rework for test rigor + hygiene."
+    review_verdict: approved

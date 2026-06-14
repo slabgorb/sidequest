@@ -155,3 +155,27 @@
 - **`assert <list>` (truthy) violates the meaningful-assertion rule (lang-review #6 / CLAUDE.md A4).** Use `assert len(x) == N` to lock the count. The Reviewer cannot dismiss a rule-matching finding (only downgrade severity), so a truthy-list assert WILL bounce the review. Always count.
 - **A `MagicMock` world fakes a cartography region and masks no-source tests.** `_maybe_emit_location_description`'s fallback does `world.cartography.regions.get(room_id)` — on a `MagicMock` world that returns a truthy MagicMock, so `sourced=True` and it EMITS even for a room that doesn't exist. For a no-source/negative test set `world.cartography = None` (mirror `test_location_description_emit.py::test_emit_fires_no_source_when_neither_path_resolves`). The POSITIVE test is safe with a default MagicMock world only because `load_room_payload` succeeds and the fallback is never reached.
 - **Split-party negative for current_region:** two seats, one moves, one stays → `region_for()` (no perspective) returns None (no consensus) → the apply_world_patch consensus-sync (session.py:1546) does NOT advance `current_region`; but the per-PC move STILL appends `discovered_regions` + logs `region_transitions` (shared fog-of-war, frontier_hook line 152 is unconditional). Assert both halves — it's the negative contract a single-PC test structurally cannot show.
+
+## 108-6 WWN dying window (2026-06-14)
+
+- **Weak-test trap on incapacitation gates.** A "downed soloist can still act" wiring
+  test can pass *today* for the wrong reason: the current WWN dying-window status is
+  minted NON-incapacitating, so `find_incapacitating_status` returns None and the gate
+  trivially lets it through. The real solo-halt only exists once the window is
+  *incapacitating*. Fix: assert `window.incapacitating is True` as the test premise, so
+  the test actually exercises the gate carve instead of a degenerate fall-through.
+- **`apply_post_resolution_lethality` early-returns** unless `encounter` is resolved with
+  a PC-down outcome (`post_resolution_lethality.py:208-211`). Any per-turn clock/expiry
+  homed there will NOT fire on a normal player-action turn (a stall) — so "clock can't be
+  paused" must be wired on the player-action path. The handler has cfg via
+  `session._session_data.genre_pack` (`player_action.py:429`), so the bound
+  `cfg.trauma.*` is reachable at the gate. Test the OUTCOME via `PlayerActionHandler.handle`,
+  not the function, to avoid coupling and to force the requirement onto the right path.
+- **Grounded harnesses for WN lethality tests:** span capture = local `InMemorySpanExporter`
+  + `_tracer=` (test_142_wn_lethality_spans.py); `resolve_downed` = `WwnRulesetModule()` +
+  `WwnConfig(attribute_map=...)` + `CreatureCore` (test_wwn_lethality.py); downed seam =
+  reuse `_make_reprisal_pack`/`_make_snapshot_and_encounter` from
+  test_reprisal_wn_downed_seam.py (ablate the opponent core to 0 HP for the no-live-hostile
+  case); gate = `_playing_session`/`_action_msg`/`_ReachedNarrationPath` sentinel from
+  test_player_action_incapacitated_gate.py; stabilize tool = `pg_store_with` +
+  `default_registry._tools[...]` direct-handler call.
