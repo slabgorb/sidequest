@@ -10,10 +10,13 @@ stories:
     title: "Engine core cut — run_wn_round() resolves the player's WN action without native apply_beat() scaffolding under a WN binding: no fleeting-tag grant (Opening/Counter Stance), no dial-metric advance, no composure rider, no Brace as an action. Resolve the committed action as a WN action (attack/full-defense/move/item-use/cast) with WN math (d20+hit vs AC, weapon dice, Shock, saves). Add OTEL wn.native_scaffolding_suppressed proving the native riders did NOT fire under the WN binding (lie-detector: native engine is OFF). Seam: dispatch/dice.py ~671-676 + run_wn_round() beat-resolution path; isinstance(WithoutNumberRulesetModule) gate. Do NOT regress the native module for native packs."
     points: 5
     priority: p1
-    status: backlog
+    status: done
+    started: '2026-06-14'
     repos: server
     workflow: tdd
+    completed: '2026-06-14'
     type: refactor
+    review_verdict: approved
   - id: 108-2
     title: 107-2 — the WN round seats its Other from the bound room roster, not an improvised opponent. Under a WN binding the opponent-seater (ADR-116 single room-sourced chokepoint) MUST prefer a bound Monster-Manual creature at the acting PC's location (npcs entries with manual_origin:true, resolution_tier:spawn, bound via location) over a narrator-invented placeholder ('aquatic creature…', 'Unknown Adversary'). Verify participant.joined{source,side} OTEL shows the bound source. Engine seater half of 107-2 (content stub-fix half is 108-3). Preserves ADR-139 mechanically-capable-Other (authored opponent_damage).
     points: 5
