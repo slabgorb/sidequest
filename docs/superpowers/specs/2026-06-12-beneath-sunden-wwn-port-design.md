@@ -1,8 +1,19 @@
 # Beneath Sünden WWN Port — Design
 
 **Date:** 2026-06-12
-**Status:** Approved (brainstorm with Keith, 2026-06-12)
+**Status:** Approved (brainstorm with Keith, 2026-06-12) — **PARTIALLY SUPERSEDED 2026-06-14 by ADR-143 (combat model).**
 **Repos:** sidequest-content (primary), sidequest-server (integration test only)
+
+> **⛔ CORRECTION (2026-06-14, ADR-143 + gm-decisions.md).** This doc's combat
+> section (§2) tells you to keep `resolution_mode: beat_selection` and layer WWN
+> resolution on top of the native beat shape (copying `heavy_metal` "Blade-work").
+> **That is the native/WWN hybrid Keith ruled a DEAD END.** WWN combat does **not**
+> use `beat_selection`, native beats, `edge_config`, Brace, or the per-beat
+> auto-reprisal. Under a WWN binding, combat resolves through the Without Number
+> initiative-round engine (`wn_round.py`); the native beat scaffolding is **removed,
+> not balanced.** We bind WWN so we don't have to balance. Read **ADR-143** before
+> touching WWN combat content. The rest of this doc (procedural dungeon, classes,
+> magic, bestiary, dial chase/negotiation) stands.
 
 ## Goal
 
@@ -87,6 +98,16 @@ its header comment ("native dial engine") is stale.
   `initiative_rules`, `default_location` / `default_time_of_day`.
 
 ### 2. Combat confrontation → WWN
+
+> **⛔ SUPERSEDED 2026-06-14 by ADR-143.** Everything below in this subsection
+> describes the native/WWN **hybrid** (`beat_selection` + native beats + Brace +
+> `edge_config` + per-beat reprisal with WWN math layered on). Keith ruled that hybrid
+> a **dead end** — we bind WWN to stop balancing, not to balance native against it.
+> WWN combat resolves through the Without Number initiative-round engine
+> (`wn_round.py`); there is **no `beat_selection` combat def, no native beat list, no
+> Brace, no `edge_config`.** Do **not** author the shape below. (The `opponent_damage`
+> DamageSpec requirement — ADR-139 Invariant 3 — and the "chase/negotiation stay dial"
+> rule do carry forward.) See ADR-143 and gm-decisions.md (2026-06-14).
 
 Replace the dial combat def with the heavy_metal Blade-work shape:
 

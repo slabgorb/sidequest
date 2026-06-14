@@ -53,3 +53,41 @@ Four blocked-story rulings resolved so Epic 106 (WWN combat hardening for
   not terminal-dead-only. Caveat carried into the story: the WWN d6 stabilize clock is
   currently unactionable in solo play — the story must address the solo actuator gap,
   not ship a clock nothing can advance.
+
+## 2026-06-14 — Remove the native combat engine under a Without Number binding. DO NOT balance it. (Keith, emphatic)
+
+**Ruling (Keith, verbatim intent):** *"We have tried in the past to make native work
+with WWN. This is a DEAD END. We are going to use the Without Number engine so we don't
+have to balance. All this 'we were trying to balance native tricks with this other
+stuff' — YES, that's the thing we failed at, because the scope was too much. PLEASE get
+this clear in ALL documentation — we keep UNDOING it."*
+
+**The point.** We bind Without Number **so that we never have to balance combat.** WN's
+published math IS the balance. Layering the native dial/beat engine underneath a WN
+binding and tuning the seam re-creates the exact open-ended balancing problem the binding
+was meant to eliminate. That hybrid is the dead end. We keep reverting to it because the
+reflex — and stale design docs — say "keep `beat_selection`, layer WWN on top."
+
+**Ruling, concretely.** Under a WN binding (`ruleset: wwn` now; `swn`/`cwn`/`awn` staged,
+same rule), combat resolves through the Without Number initiative-round engine
+(`wn_round.py`). The native ADR-033 beat engine is **DELETED from the WN combat path, not
+gated/tuned**: the `strike`/`brace`/`push`/`angle` beat kinds, the edge / fleeting-tag /
+"Counter Stance" system, the per-beat auto-reprisal, and the inert dial metrics. **Brace
+is not a WWN action.** Each side acts on its own initiative; attack `d20 + hit vs AC`,
+weapon dice, Shock, morale, WN saves/lethality/XP.
+
+**This SUPERSEDES** the "Option A full-defend" balance path (#839) and **every**
+"tune/convert/gate the native beat" finding: #192 mitigation magnitude, #442
+Counter-Stance conversion, Brace tuning. Those are resolved by **removal**, not
+adjustment. No agent ships another native-balance patch under a WN world.
+
+**Architecture-of-record:** ADR-143 (`docs/adr/143-wn-binding-replaces-native-combat-no-balancing.md`).
+**Doctrine:** SOUL.md → *Bind the Ruleset, Don't Balance It*. **Owner of the rework
+spec/epic:** Architect (Neo). FIXER does **not** ship native-balance patches.
+
+**Still valid work (NOT native, not affected by this ruling):** light pool; helmet/armor
+AC from the WWN SRD; the guaranteed-heal grant (#843); the Monster Manual per-room
+creature binding feeding the WN seater (the WN round must seat its Other from the bound
+room roster, per ADR-116, not improvise one — this is the 107-2 finding, and it is a
+*seating* fix, not a balance patch). Dial **chase/negotiation** confrontations are not WN
+combat and keep the native dial engine even in WN packs.
