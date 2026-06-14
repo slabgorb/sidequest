@@ -26,6 +26,7 @@ completed_epics:
   - '103'
   - '105'
   - '107'
+  - '106'
 completed_stories:
   - id: 91-1
     epic: '91'
@@ -527,3 +528,33 @@ completed_stories:
     title: 'Monster Manual for beneath_sunden — combat opponents are narrator-improvised (the creature of animal musk) with no stable name or portrait; author the dungeon bestiary as content entities (stable names + portrait assets: the four-toed pale scuttler, the eyeless bristle-faced den creature) and inject per ADR-059 into game_state as creatures nearby (not yet met), bound per-room, so the narrator draws from them instead of inventing'
     points: 5
     completed: '2026-06-13'
+  - id: 106-1
+    epic: '106'
+    title: 'Equip starting armor at chargen and derive AC from the WWN SRD (ramp lever #1) — Leather Armor rolls into inventory with equipped:false so every Warrior fights at unarmored AC 10; equip the rolled armor and recompute armor_class from the WWN SRD armor entry (weapons already auto-equip; gap is armor-specific), with OTEL proving opponent reprisals roll vs the higher AC'
+    points: 3
+    completed: '2026-06-13'
+  - id: 106-2
+    epic: '106'
+    title: 'WWN reprisal model — defensive beats must mitigate the per-beat opponent reprisal (ramp lever #2). The unconditional ADR-033 counter-attack stapled to every player beat ignores Brace/Break Contact and is not WWN-faithful. DESIGN-BEARING: Architect ruling needed (initiative round where the player can full-defend, vs keeping the beat model but making defensive beats reduce to-hit/damage/grant a save)'
+    points: 5
+    completed: '2026-06-13'
+  - id: 106-3
+    epic: '106'
+    title: WWN-gate native combat mechanics ungated by the RulesetModule (ADR-117) — convert the native edge/tag bleed (edge dial, Counter Stance fleeting tag, to-their-edge chip) into a STRONG (~-3) next-round opponent penalty expressed in WWN terms (Keith ruling); and gate native per-tick + chargen-seed XP (135 at L1) so XP follows the WWN small-integer expedition-XP scale
+    points: 5
+    completed: '2026-06-14'
+  - id: 106-4
+    epic: '106'
+    title: Consumable use in confrontation (KEITH PRIORITY) — wire the heal-potion effect to the HpPool (consume half is wired, effect half is not; magnitude sourced from the WWN SRD healing entry, not invented) AND make beat generation scan carried inventory to surface item-use beats (drink/throw/read) with the item consumed on use; includes the guaranteed-heal-slot content decision so the kit is deterministic for testing
+    points: 5
+    completed: '2026-06-14'
+  - id: 106-5
+    epic: '106'
+    title: Death-state coherence — the down/death path emits TWO contradictory statuses (terminal dead/mortally-wounded incapacitating + non-terminal dies-in-6-rounds non-incapacitating) with mis-stamped provenance (created_turn:0, encounter:None); deterministic 2/2. Emit ONE coherent state (a real stabilizable dying window OR a terminal dead verdict, never both) and stamp the real created_turn/created_in_encounter
+    points: 3
+    completed: '2026-06-14'
+  - id: 106-6
+    epic: '106'
+    title: Narration-truth guardrail — narrator over-claims a player knockdown and negates a successful hit at low HP (narrates a miss on a Strike Success that removed opponent HP, and depicts the PC going down while at 1/10 with a live beat menu and no ENCOUNTER_RESOLVED); symmetric player-down cousin of the fixed kill-overclaim-on-failed-strike anchor (fbff7135), on a successful player beat
+    points: 3
+    completed: '2026-06-14'

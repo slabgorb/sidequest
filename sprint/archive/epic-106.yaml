@@ -3,7 +3,7 @@ type: epic
 title: WWN combat hardening for beneath_sunden — fair ramp, ruleset-bleed remediation, and narration truth
 description: 'Source: 2026-06-13 single-player combat playtest of caverns_and_claudes/beneath_sunden (WWN ruleset, ADR-117), OTEL + save-forensics confirmed (sq-playtest-pingpong 2026-06-13). The #432 weapon-damage fix made dungeon combat winnable and the core loop is VERIFIED healthy (Strike ablates HP, reprisal ATTACK/DAMAGE telemetry split, beat-impact chip reads HP channel, lethality/death resolution correct). What remains is making L1 beneath_sunden a FAIR, WWN-faithful, TRUTHFUL ramp. Three threads: (1) Easy-ramp survivability levers — starting armor is never equipped so every Warrior fights at unarmored AC 10 (1-of-5 survived), and the per-beat opponent reprisal is unconditional and ignores defensive beats. (2) WWN ruleset-bleed — native mechanics running ungated inside a WWN-bound world: the confrontation edge/tag system in the chase, native per-tick + chargen-seed XP (135 XP at L1), and the reprisal model itself. Standing ruling: WWN-bound mechanical values come from the WWN SRD (.pennyfarthing/sidecars/gm-decisions.md, 2026-06-13). (3) Narration truth — convincing-narration-vs-mechanics lies (knockdown over-claim + hit-underclaim) and dead consumables (heal potion consumed + narrated but restores 0 HP). Keith priority within the epic: consumable-use-in-confrontation (heal-effect wiring + beat-menu inventory scan). Excludes UI polish (panel portraits, scrapbook captions, narration register) and the dungeon-scene/Monster-Manual cluster (Epic 107). Sibling: Epic 105 (beneath_sunden procedural-deep reachability). Refs: ADR-117 (RulesetModule), ADR-033 (beat engine), ADR-114 (ablative HP), ADR-123 (LethalityArbiter), ADR-059 (Monster Manual), beat_kinds.py, game/ruleset/, dice.py, wn_round.py, snapshot_slimming.py.'
 priority: p1
-status: ready
+status: done
 repos: server,content
 stories:
   - id: 106-1
@@ -37,9 +37,10 @@ stories:
     type: bug
   - id: 106-4
     title: Consumable use in confrontation (KEITH PRIORITY) — wire the heal-potion effect to the HpPool (consume half is wired, effect half is not; magnitude sourced from the WWN SRD healing entry, not invented) AND make beat generation scan carried inventory to surface item-use beats (drink/throw/read) with the item consumed on use; includes the guaranteed-heal-slot content decision so the kit is deterministic for testing
+    description: "SUPERSEDED by Epic 108 / ADR-143 (2026-06-14 'remove native, bind the ruleset' ruling). Both halves delivered or obsoleted: (1) heal-effect→HpPool wiring shipped in sidequest-server dispatch/item_use.py (_apply_consumable_heal rolls authored heal_amount, emits state_patch.hp, consume+effect in one place shared by wn_round + legacy path); magnitude 1d6+2 / Greater 2d6+2 per gm-decisions; guaranteed-heal content grant = #843. (2) beat-generation inventory scan is obsolete AND prohibited — replaced by the WN 'Use Item' action button (108-5, done) + item-use resolution in run_wn_round (108-1, done); the native beat-scan path is exactly the scaffolding 108-3 strips and the 2026-06-14 ruling forbids. Closed by SM 2026-06-14 per Keith."
     points: 5
     priority: p1
-    status: backlog
+    status: canceled
     repos: server,content
     workflow: tdd
   - id: 106-5
@@ -58,3 +59,4 @@ stories:
     repos: server
     workflow: tdd
     type: bug
+completed: '2026-06-14'
