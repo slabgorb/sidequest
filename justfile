@@ -464,11 +464,13 @@ check-all: server-check client-lint client-build client-test daemon-lint daemon-
 # Content validation — reference chrome + visibility across all live packs
 content-validate-references: reference-chrome-validate reference-validate-all
 
-# OTEL dashboard — opens the browser-friendly /ws/watcher viewer
-# served by sidequest-server itself. Server must already be running
-# (e.g. via `just up` or `just server`).
+# OTEL Inspector — opens the React Inspector (#/dashboard), the unified
+# live-telemetry + save-forensics surface. The server-rendered HTML dashboard
+# was retired; React is the single stack. The client must be running
+# (`just client`); in dev the Inspector lives at the Vite dev server, in a
+# built/prod deploy it's served wherever the UI bundle is hosted, at #/dashboard.
 otel:
-    uv run python3 -m webbrowser http://localhost:8765/dashboard
+    uv run python3 -m webbrowser http://localhost:5173/#/dashboard
 
 # ---------------------------------------------------------------------------
 # Jaeger v2 — local trace collector + query UI for raw OTLP spans.
