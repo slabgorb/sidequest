@@ -45,10 +45,15 @@ Four blocked-story rulings resolved so Epic 106 (WWN combat hardening for
   gives helmets no *base* AC, so `helmet_iron` must not occupy the body-armor roll slot
   that leaves ~1/3 of Warriors at AC 10. Model helmet (and shield) as additive AC
   modifiers stacked on body armor, per WWN shield handling. Followup to 106-1.
-- **106-4 consumable-use heal magnitude → STILL OPEN (guaranteed vs random scarcity
-  not yet ruled).** Heal *magnitude* already governed by the WWN-SRD ruling above
-  (Potion of Mending uses the SRD value). The scarcity/slot question (guaranteed heal
-  slot vs intended random scarcity) was not asked and remains owed before 106-4 runs.
+- **106-4 consumable-use heal magnitude → RESOLVED (Keith, 2026-06-13).**
+  - *Scarcity/slot:* **guaranteed heal for everyone.** Every kit (warrior/mage/expert)
+    starts with exactly one Potion of Mending; additionally a **30% chance the guaranteed
+    potion is a *better* one instead** (upgrade only — never worse, never zero). This
+    makes the kit deterministic enough to test the beat-scan while preserving an upside roll.
+  - *Magnitude:* WWN SRD has **no standard healing potion (genuinely silent)**, so per the
+    escalation clause this went to Keith. Anchored to the WWN-family heal idiom (CWN Lazarus
+    Patch = 1d6+level): **Potion of Mending = `1d6+2`; Potion of Mending (Greater) = `2d6+2`.**
+    L1 Warrior pool ≈ 10, so base ≈ half a pool — a reprieve, not a reset; keeps the lethal ramp.
 - **106-5 death-state → true WWN dying window.** Implement a real WWN dying/down state,
   not terminal-dead-only. Caveat carried into the story: the WWN d6 stabilize clock is
   currently unactionable in solo play — the story must address the solo actuator gap,
