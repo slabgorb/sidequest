@@ -18,9 +18,10 @@ stories:
     title: Land standalone inventory defect fixes (evropi damage/AC, seaboard power_glove, caverns armor) + neon orphan loadout keys
     points: 2
     priority: p1
-    status: backlog
+    status: done
     repos: content
     workflow: trivial
+    completed: '2026-06-14'
     type: bug
   - id: 114-3
     title: WWN CC0 equipment extraction tool — SRD chapter to canonical baseline catalog
