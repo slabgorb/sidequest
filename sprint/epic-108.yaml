@@ -1,0 +1,41 @@
+id: '108'
+type: epic
+title: WN combat owns the WN round — remove native beat scaffolding under a Without Number binding (ADR-143)
+description: "Source: Keith's emphatic 2026-06-14 standing ruling (gm-decisions.md; ADR-143; SOUL.md 'Bind the Ruleset, Don't Balance It'). We bind Without Number so we never have to balance combat; the native ADR-033 beat/dial engine layered under a WWN binding is the dead end we keep failing at (scope too large, endless seam-tuning). This epic REMOVES the native combat scaffolding from the WN combat path — it does NOT balance/tune/gate it. Supersedes the 'Option A full-defend' path (#839) and every convert/tune finding (#192 mitigation magnitude, #442 Counter-Stance conversion, Brace tuning); resolves what canceled story 106-3 was flailing at by removal instead of conversion. CRITICAL CONTEXT: the WN initiative-round engine (wn_round.py, story 102-4) ALREADY EXISTS and already runs WWN hp_depletion combat with persisted initiative — the per-beat auto-reprisal is already starved. This is a CLEANUP of residual native reuse, not a new engine. Two residual bleeds: (1) run_wn_round() still calls native apply_beat() (beat_kinds.py) to resolve the player's committed action, so it still grants fleeting tags ('Opening'/'Counter Stance'), advances inert dials, and offers Brace; (2) WWN combat content is still authored as resolution_mode: beat_selection with native beat lists/edge_config. Both are removed, not tuned. Invariants preserved: ADR-116 (Other required; single room-sourced seater — this subsumes the 107-2 MM-seater finding), ADR-139 (win-condition liveness, HP durability, mechanically-capable Other via authored opponent_damage), ADR-114 (ablative HP). OTEL: the lie detector must prove native is OFF (wn.native_scaffolding_suppressed). Scope: WN COMBAT only (hp_depletion); dial chase/negotiation confrontations keep the native dial engine even in WN packs and are untouched. Rollout WWN-first (beneath_sunden in play; heavy_metal/elemental_harmony/barsoom swept the same way); swn/cwn/awn same doctrine, staged. NO rebalancing of any WN number — that's the whole point. Refs: ADR-143, ADR-117 (RulesetModule), ADR-142 (WN core extraction, doc-gap), ADR-033, ADR-116, ADR-139, ADR-114; wn_round.py, beat_kinds.py, dispatch/dice.py (seam ~671-676), game/ruleset/without_number.py. Sibling: Epic 106 (the prior hybrid-hardening epic; 106-3/5/6 canceled by this shift)."
+priority: p1
+status: ready
+repos: server,content
+stories:
+  - id: 108-1
+    title: "Engine core cut — run_wn_round() resolves the player's WN action without native apply_beat() scaffolding under a WN binding: no fleeting-tag grant (Opening/Counter Stance), no dial-metric advance, no composure rider, no Brace as an action. Resolve the committed action as a WN action (attack/full-defense/move/item-use/cast) with WN math (d20+hit vs AC, weapon dice, Shock, saves). Add OTEL wn.native_scaffolding_suppressed proving the native riders did NOT fire under the WN binding (lie-detector: native engine is OFF). Seam: dispatch/dice.py ~671-676 + run_wn_round() beat-resolution path; isinstance(WithoutNumberRulesetModule) gate. Do NOT regress the native module for native packs."
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: refactor
+  - id: 108-2
+    title: 107-2 — the WN round seats its Other from the bound room roster, not an improvised opponent. Under a WN binding the opponent-seater (ADR-116 single room-sourced chokepoint) MUST prefer a bound Monster-Manual creature at the acting PC's location (npcs entries with manual_origin:true, resolution_tier:spawn, bound via location) over a narrator-invented placeholder ('aquatic creature…', 'Unknown Adversary'). Verify participant.joined{source,side} OTEL shows the bound source. Engine seater half of 107-2 (content stub-fix half is 108-3). Preserves ADR-139 mechanically-capable-Other (authored opponent_damage).
+    points: 5
+    priority: p1
+    status: backlog
+    repos: server
+    workflow: tdd
+    type: bug
+  - id: 108-3
+    title: "Content de-nativize WWN combat defs — strip resolution_mode:beat_selection, native beat lists (strike/brace/push/angle/committed_blow/break_contact), edge_config, combat momentum metrics, and the Brace action from the COMBAT confrontation defs across the WWN packs (beneath_sunden primary verify target; heavy_metal evropi+long_foundry, elemental_harmony, heavy_metal/barsoom swept the same way). WWN combat defs express only win_condition:hp_depletion + opponent stats + authored opponent_damage DamageSpec (ADR-139 Inv-3). Chase/negotiation DIAL defs untouched. Also fix the 107-2 content stubs: Torchdeep/Torchhold/Bileden have creature_id=None/threat=None/abilities=[] (give real stat blocks) and the 'Dungeon Names' naming-source leak into the description field. → gm agent."
+    points: 5
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: superpowers
+    depends_on: 108-1
+    type: chore
+  - id: 108-4
+    title: 'ADR-142 doc backfill (housekeeping) — write the missing docs/adr/142-*.md recording the Without Number core extraction shipped in sidequest-server #841 (WithoutNumberRulesetModule, without_number.py, unified lethality spans, four WN modules reparented as clean siblings; tests test_142_wn_core_extraction.py / test_102_4_wn_turn_model_family.py cite it). Closes the 141->143 numbering hole. Regen ADR indexes.'
+    points: 1
+    priority: p3
+    status: backlog
+    repos: orchestrator
+    workflow: trivial
+    type: chore
