@@ -1,0 +1,89 @@
+id: '114'
+type: epic
+title: SRD-sourced inventory — bind the equipment catalog, don't author it (inventory audit 2026-06-14)
+description: "From the 2026-06-14 cross-pack inventory audit (docs/inventory-audit-2026-06-14.md). No pack sources gear from its bound SRD's equipment chapter — all 11 packs hand-author bespoke items with a ruleset-shaped mechanical envelope bolted on. This is the inventory analogue of the ADR-143/144 'bind the ruleset, don't balance it' doctrine: if a genre binds WWN, the gear should BE WWN gear. Licensing reality: WWN is CC0 (verbatim-reproducible); CWN likely CC0 (verify); SWN/AWN free editions carry no open license (derive-only); Fate Core has no equipment economy at all. Epic brings inventory in line with each bound ruleset world-by-world and resolves the standalone mechanical defects. Coordinates with epic-113 (ADR-140 genre->world boundary hygiene) — SRD-sourcing naturally yields the correct genre-baseline + world-override placement."
+priority: p1
+status: backlog
+repos: server,content
+stories:
+  - id: 114-1
+    title: Design ADR — SRD-sourced inventory model, schema extensions, and licensing policy
+    points: 3
+    priority: p1
+    status: backlog
+    repos: server,content
+    workflow: superpowers
+    type: chore
+  - id: 114-2
+    title: Land standalone inventory defect fixes (evropi damage/AC, seaboard power_glove, caverns armor) + neon orphan loadout keys
+    points: 2
+    priority: p1
+    status: backlog
+    repos: content
+    workflow: trivial
+    type: bug
+  - id: 114-3
+    title: WWN CC0 equipment extraction tool — SRD chapter to canonical baseline catalog
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server
+    workflow: tdd
+    depends_on: 114-1
+  - id: 114-4
+    title: WWN baseline catalog + wire caverns_and_claudes, elemental_harmony, heavy_metal; de-duplicate barsoom/long_foundry
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 114-3
+  - id: 114-5
+    title: CWN extraction + neon_dystopia and road_warrior personal gear; cyberware system_strain as a typed field
+    points: 5
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 114-3
+  - id: 114-6
+    title: road_warrior — bind the CWN vehicle chapter, retire bespoke Rig Composure (ADR-143)
+    points: 8
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 114-5
+  - id: 114-7
+    title: space_opera — de-triplicate world catalogs, hoist shared core, add world-distinct gear, backfill SWN tech levels
+    points: 3
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: tdd
+    depends_on: 114-1
+    type: refactor
+  - id: 114-8
+    title: mutant_wasteland — re-stat inventory against the AWN schema (trauma die/shock), fix genre scrap_armor mitigation
+    points: 3
+    priority: p3
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 114-1
+  - id: 114-9
+    title: 'Design — Fate gear model: ruleset:fate binding + CatalogItem schema for aspect/permission gear (ADR-144 impl)'
+    points: 3
+    priority: p2
+    status: backlog
+    repos: server,content
+    workflow: superpowers
+    type: chore
+  - id: 114-10
+    title: Apply Fate gear model to pulp_noir, spaghetti_western, tea_and_murder, wry_whimsy
+    points: 5
+    priority: p3
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    depends_on: 114-9
