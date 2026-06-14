@@ -1,11 +1,12 @@
 # CLAUDE.md — SideQuest
 
-This is the orchestrator repo for the SideQuest RPG Runner/Editor. It coordinates five subrepos:
+This is the orchestrator repo for the SideQuest RPG Runner/Editor. It coordinates six subrepos:
 - **sidequest-server** — Python/FastAPI game engine and WebSocket API (port 8765)
 - **sidequest-ui** — React/TypeScript game client (Vite, port 5173)
 - **sidequest-daemon** — Python media services (Z-Image generation, music generation)
 - **sidequest-content** — Genre packs (YAML configs, audio, images, world data)
 - **sidequest-composer** — Standalone CLI: public-domain notation (MusicXML/MIDI) → tagged, rights-free audio via MuseScore 4 / FluidSynth. Deterministic synthesis, not AI generation
+- **sidequest-understudy** — Naive simulated-player playtest client: bots join real sessions through the React UI and role-play a seat in persona, one LLM call per turn. The naivety invariant — the bot sees only what a player sees — turns interface confusion into a finding
 
 ## Who This Is For
 
@@ -128,6 +129,21 @@ sidequest-composer/           # Notation → rights-free audio CLI (subrepo, uv-
 │   ├── tools.py              # External CLI resolution (mscore, bundled ffmpeg)
 │   └── stages/               # fetch · render · normalize · tag · encode (swappable)
 ├── tests/                    # incl. gated Gymnopedie smoke test (needs MuseScore 4)
+└── pyproject.toml
+
+sidequest-understudy/         # Naive simulated-player playtest client (subrepo, uv-managed)
+├── src/understudy/           # Package root (Typer entrypoint `understudy`)
+│   ├── cli.py                # `understudy run <manifest.yaml> [--headed|--reconnect|--turns]`
+│   ├── orchestrate/          # Run loop, seat scheduling, guards (turn/token/wall-clock)
+│   ├── perception/           # Screen-reader-style page reading (what the player sees)
+│   ├── brain/                # Per-turn LLM decision (claude_p / anthropic / ollama / fake)
+│   ├── actuation/            # Decision → Playwright browser actions
+│   ├── persona/              # Archetypes + themed name sets (naivety invariant lives here)
+│   ├── findings/             # Complaints + stuck-signals → CONFIRMED/BEHAVIORAL/CLAIMED
+│   └── report/               # report.md / findings.json / transcript / spans writers
+├── runs/                     # Example run manifests
+├── reports/                  # Run outputs (gitignored); each run writes state/ for --reconnect
+├── tests/
 └── pyproject.toml
 ```
 

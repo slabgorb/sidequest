@@ -41,6 +41,11 @@ out-of-band aside channel for OOC table-talk (ADR-107).
    sidequest-composer (Py) — standalone, offline. Public-domain
    notation (MusicXML/MIDI) → tagged rights-free audio via MuseScore 4
    / FluidSynth. Not wired into the runtime; a build-time content tool.
+
+   sidequest-understudy (Py) — naive simulated-player playtest client.
+   Bots join a real session through the React UI and role-play a seat,
+   one LLM call per turn. A test harness, not part of the runtime;
+   interface confusion is a finding (the naivety invariant).
 ```
 
 | Repo | Language | Purpose | GitHub |
@@ -51,6 +56,7 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 | **sidequest-daemon** | Python | Media services (Z-Image image gen, ACE-Step music, SFX mixer) | slabgorb-org/sidequest-daemon |
 | **sidequest-content** | YAML | Genre pack configs, audio, images, worlds | slabgorb-org/sidequest-content |
 | **sidequest-composer** | Python | Standalone CLI: public-domain notation → tagged, rights-free audio (deterministic synthesis, not AI) | slabgorb-org/sidequest-composer |
+| **sidequest-understudy** | Python | Naive simulated-player playtest client — bots join real sessions through the UI and role-play a seat | slabgorb-org/sidequest-understudy |
 
 > **Port history.** The backend was briefly a Rust workspace (`sidequest-api`, ~2026-03-30
 > to 2026-04-19) before being ported back to Python as `sidequest-server` per
@@ -99,20 +105,20 @@ personality archetypes, and conlang morphemes:
 |------|-------|--------|
 | **caverns_and_claudes** | High fantasy dungeon crawl (meta-humor on D&D tropes) | `beneath_sunden` (runtime procedural megadungeon, ADR-106) |
 | **elemental_harmony** | Martial arts / elemental magic (WWN ruleset) | `burning_peace`, `shattered_accord` |
-| **heavy_metal** | Baroque fantasy of pacts, decay, and blood-priced magic | `evropi`, `long_foundry` (portraits pending) |
-| **mutant_wasteland** | Post-apocalyptic mutants (fully spoilable) | `flickering_reach` |
+| **heavy_metal** | Baroque fantasy of pacts, decay, and blood-priced magic | `evropi`, `long_foundry`, `barsoom` (WWN ruleset; portraits still rendering) |
+| **mutant_wasteland** | Post-apocalyptic mutants (`flickering_reach` fully spoilable) | `flickering_reach`, `seaboard_of_saints` |
 | **neon_dystopia** | Cyberpunk (CWN ruleset) | `franchise_nations` |
 | **pulp_noir** | 1930s detective / pre-war pulp | `annees_folles` |
 | **road_warrior** | Late-70s / early-80s vehicle subcultures sharing one port city | `the_circuit` |
 | **space_opera** | Sci-fi space adventure (SWN ruleset) | `aureate_span`, `coyote_star`, `perseus_cloud` |
 | **spaghetti_western** | Morally ambiguous anti-heroes — Leone/Corbucci/Kurosawa | `dust_and_lead`, `five_points` (1850s NYC), `the_real_mccoy` (1878 Pittsburgh) |
-| **tea_and_murder** | Cosy Edwardian (1901-1914) BritBox murder mystery | `glenross` (Highland village), `blackthorn_moor` (draft) |
+| **tea_and_murder** | Cosy Edwardian (1901-1914) BritBox murder mystery | `glenross` (Highland village), `blackthorn_moor` |
 | **wry_whimsy** | Golden-age literary portal fairytale — survive by wit, not force | `oz`, `wonderland`, `gulliver` |
 
 All eleven packs have a `pack.yaml` and load at runtime. Worlds default to live;
 `draft: true` in a world's `world.yaml` hides it from selection until its asset
-gate (portraits + POI landscapes rendered to R2) is met — `blackthorn_moor` is
-currently the only draft world. The old `genre_workshopping/` staging tree was
+gate (portraits + POI landscapes rendered to R2) is met — there are currently no
+draft worlds (all 22 are live). The old `genre_workshopping/` staging tree was
 **retired 2026-06-03**; in-progress packs and worlds now live in `genre_packs/`
 like any other and rely on `draft` status to stay hidden.
 
@@ -180,6 +186,9 @@ sidequest-server/sidequest/
 ├── handlers/         # Per-message-type dispatch handlers
 ├── agents/           # Anthropic SDK narrator (default) + claude -p/Ollama opt-in, auxiliaries
 ├── game/             # State, characters, encounters, tropes, turns, persistence
+│                     #   game/ruleset/ — pluggable SRD modules (native + Without Number family)
+├── dungeon/          # Runtime procedural Jaquaysed megadungeon (ADR-106)
+├── mutation/         # AWN mutation system — acquire / use / stocks (ADR-102)
 ├── genre/            # YAML genre pack loader
 ├── audio/            # Server-side music/SFX coordination
 ├── media/            # Image generation orchestration
@@ -191,7 +200,8 @@ sidequest-server/sidequest/
 ├── daemon_client/    # Unix-socket client for the media daemon
 ├── telemetry/        # OTEL span definitions and watcher hooks
 └── cli/              # Standalone CLIs: encountergen, loadoutgen, namegen,
-                      #   validate, corpusmine, corpuslabel, corpusdiff
+                      #   validate, weathergen, cookbook_ingest,
+                      #   corpusmine, corpuslabel, corpusdiff
 ```
 
 See [`docs/architecture.md`](docs/architecture.md) for the full system design.
