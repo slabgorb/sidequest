@@ -212,12 +212,12 @@ move / item-use / cast**. If a future WN sister-ruleset (CWN/SWN/AWN) authors a 
 defensive Main Action from *its* SRD, it is added per-module from that SRD — never as a
 revived native `brace`. Player-surface design: `docs/superpowers/specs/2026-06-14-wn-combat-action-surface-design.md`.
 
-### Note — ADR-142 doc gap
+### Note — ADR-142 dependency
 
 ADR-142 ("Without Number core extraction — honest `WithoutNumberRulesetModule` +
 lethality/attribute groundwork") shipped in `sidequest-server` (#841,
 `tests/game/ruleset/test_142_wn_core_extraction.py`,
-`test_102_4_wn_turn_model_family.py`) but its ADR document was never landed in
-`docs/adr/` (the orchestrator ADR set jumps 141 → 143). This ADR depends on ADR-142's WN
-core; the missing ADR-142 record is tracked as housekeeping (subrepo-code-without-
-orchestrator-ADR drift) and does not block this decision.
+`test_102_4_wn_turn_model_family.py`). Its ADR document initially lagged the code
+(the orchestrator set briefly jumped 141 → 143); that gap is now closed —
+`docs/adr/142-without-number-core-extraction.md` is landed. This ADR depends on
+ADR-142's extracted WN core.
