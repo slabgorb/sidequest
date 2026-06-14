@@ -1,0 +1,32 @@
+id: '111'
+type: epic
+title: Ruleset Chargen Seam (ADR-143) — retroactive capture
+description: 'Retroactive backfill of an already-merged superpowers implementation. Moves chargen attribute mechanics onto RulesetModule with a WWN Skills/Foci/Background substrate; UI arrange panel reads ability_names and the character sheet renders skills/foci. Spec: docs/superpowers/specs/2026-06-14-ruleset-chargen-seam-design.md; plan: docs/superpowers/plans/2026-06-14-ruleset-chargen-seam.md. Shipped via server #850, content #444, ui #388.'
+priority: p1
+status: done
+repos: server,content,ui
+stories:
+  - id: 111-1
+    title: 'server: chargen seam — module-owned attribute mechanics + WWN Skills/Foci/Background substrate (PR #850)'
+    points: 5
+    priority: p1
+    status: done
+    repos: server
+    workflow: superpowers
+    completed: '2026-06-14'
+  - id: 111-2
+    title: 'content: skills/backgrounds/foci + chargen wiring for the 3 WWN packs (PR #444)'
+    points: 5
+    priority: p1
+    status: done
+    repos: content
+    workflow: superpowers
+    completed: '2026-06-14'
+  - id: 111-3
+    title: 'ui: arrange panel reads ability_names + character sheet skills/foci sections (PR #388)'
+    points: 3
+    priority: p1
+    status: done
+    repos: ui
+    workflow: superpowers
+    completed: '2026-06-14'

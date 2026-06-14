@@ -1,0 +1,32 @@
+id: '112'
+type: epic
+title: Light & Darkness Survival Clock — retroactive capture
+description: 'Retroactive backfill of an already-merged superpowers implementation. Generic environmental survival clock: engine + ruleset teeth + environment_clock + OTEL + narrator hook (server), caverns light-pool/lit-flags/light_source tags (content), and the -2-in-the-dark survival gauge (ui). Spec: docs/superpowers/specs/2026-06-13-light-darkness-survival-clock-design.md; plan: docs/superpowers/plans/2026-06-13-light-darkness-survival-clock.md. Shipped via server #834, content #435, ui #385.'
+priority: p2
+status: done
+repos: server,content,ui
+stories:
+  - id: 112-1
+    title: 'server: survival-clock engine, ruleset teeth, environment_clock, OTEL + narrator (PR #834)'
+    points: 5
+    priority: p2
+    status: done
+    repos: server
+    workflow: superpowers
+    completed: '2026-06-13'
+  - id: 112-2
+    title: 'content: caverns light survival-clock pool, lit flags, light_source tags (PR #435)'
+    points: 3
+    priority: p2
+    status: done
+    repos: content
+    workflow: superpowers
+    completed: '2026-06-13'
+  - id: 112-3
+    title: 'ui: light survival gauge with -2-in-the-dark affordance (PR #385)'
+    points: 3
+    priority: p2
+    status: done
+    repos: ui
+    workflow: superpowers
+    completed: '2026-06-13'

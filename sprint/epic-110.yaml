@@ -1,0 +1,24 @@
+id: '110'
+type: epic
+title: Without Number Core Extraction (ADR-142) — retroactive capture
+description: 'Retroactive backfill of an already-merged superpowers implementation (working tree clean; orchestrator received only the ADR/spec/plan docs). Honest WithoutNumberRulesetModule base + lethality/attribute groundwork and the shaped WWN standard array across the three WWN packs. Spec: docs/superpowers/specs/2026-06-13-without-number-core-extraction-design.md. Shipped via server #841, content #440.'
+priority: p1
+status: done
+repos: server,content
+stories:
+  - id: 110-1
+    title: 'server: honest WithoutNumberRulesetModule base + lethality/attribute groundwork (PR #841)'
+    points: 5
+    priority: p1
+    status: done
+    repos: server
+    workflow: superpowers
+    completed: '2026-06-14'
+  - id: 110-2
+    title: 'content: shaped WWN standard array across the three WWN packs (PR #440)'
+    points: 3
+    priority: p1
+    status: done
+    repos: content
+    workflow: superpowers
+    completed: '2026-06-14'
