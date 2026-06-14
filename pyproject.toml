@@ -1,6 +1,6 @@
 [project]
 name = "sidequest-orchestrator-scripts"
-version = "1.3.0"
+version = "1.4.0"
 description = "Cross-repo tooling scripts for SideQuest (image gen, playtest, migrations, ADR tooling, etc.)"
 requires-python = ">=3.11"
 dependencies = [

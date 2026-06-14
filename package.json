@@ -1,6 +1,6 @@
 {
   "name": "sidequest-orchestrator",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "SideQuest Orchestrator — Sprint coordination and genre pack management",
   "private": true,
   "scripts": {

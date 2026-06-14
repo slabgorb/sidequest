@@ -10,7 +10,32 @@ For the cross-repo, product-level feature history, see [`docs/FEATURES.md`](docs
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-14
+
+> Window 2026-05-26→06-14. Headlines: the Without Number ruleset becomes the
+> binding authority for combat (ADRs 142/143 — bind the ruleset, stop balancing
+> the native engine), and a new `sidequest-understudy` subrepo joins the fleet
+> as a naive simulated-player playtest client.
+
 ### Added
+- ADR-143 — a Without-Number binding *replaces* the native combat engine
+  (#398): the bound ruleset owns the WN round, native `apply_beat` scaffolding
+  is cut, and "bind the ruleset, don't balance it" is promoted to SOUL.md
+  doctrine after the WWN-combat dead end was ruled emphatically (2026-06-14).
+  Includes the combat action-surface spec (with "full defense" struck from the
+  WN action set) and the ruleset chargen-seam spec/plan moving chargen mechanics
+  onto `RulesetModule` + a WWN substrate.
+- ADR-142 — Without Number core extraction: an honest `WithoutNumberRulesetModule`
+  base, reparented WN siblings (WWN/SWN/CWN/AWN), and a shaped-attribute retune,
+  with source spec.
+- `sidequest-understudy` — new subrepo: a naive black-box simulated-player
+  playtest client that joins real sessions via the UI. Wired into `repos.yaml`
+  and a `just` recipe; ships with design spec, 13-task TDD plan, and reconnect
+  via persisted browser state.
+- Light & darkness generic environmental survival-clock spec + implementation
+  plan.
+- AWN Plan 2 mutation engine — `MutationPlugin` + tables spec/plan, with
+  `magic.yaml` reconciliation.
 - Pluggable SRD ruleset design corpus (ADR-117): SWN `RulesetModule` specs/plans
   (attack-vs-AC, skill checks, saves, 1d8+DEX initiative spine, dogfight×SWN) and
   CWN design — foundation/binding, System Strain, hacking-as-confrontation
@@ -18,22 +43,37 @@ For the cross-repo, product-level feature history, see [`docs/FEATURES.md`](docs
 - Epic 71 filed from the 2026-05-28 playtest: narration POV agreement, dice-overlay
   wiring, peer-action WCAG contrast, orrery far-arc label upright-flip (ADR-094),
   room-graph transition trope-tick (ADR-055), ADR-113 per-dispatch confidence gate.
+- Epic 105 (beneath_sunden surface→deep crossing): seam-crossing design + spec
+  (#395), `pick_portrait` chargen driver frame (105-1), Monster Manual per-room
+  binding (107-2).
+- Asset/render tooling: `render_world_assets.sh` batch POI+portrait gate, an
+  R2-backed live preview gallery + `generate_r2_preview.py` asset sheet (#393),
+  and portal-picker / culture-gate authoring gotchas.
 - `scripts/render_queue.py` — sequential render→sync runner (single daemon socket,
   stop-on-first-failure, explicit upload payload per sync), and `scripts/README.md`
   documenting the render/publish pipeline (two-venv boto3 split, `--steps`/`--force`,
   never-switch-branches-mid-render, absolute R2 paths).
 - `docs/FEATURES.md` — cross-repo product feature digest (per-release headline
-  features across server/ui/daemon/content).
+  features across server/ui/daemon/content) + one-time cross-repo coverage census.
 - Story 71-19 Glenross ADR-053 scenario authoring; 71-20 fail-loud guard when the
   DB schema is behind the Alembic head (ADR-115).
 
 ### Changed
+- All seven repos transferred personal → `slabgorb-org` GitHub org (commercial
+  prep); remotes repointed to org SSH paths via `scripts/transfer_to_org.sh`.
 - `render` `--steps` flag now reaches the daemon end-to-end; default raised 15→20
   (#320). `just`/justfile loads server env from `.env` via dotenv-load (ADR-115).
 - Top-level docs refreshed to the live 10-pack inventory; orchestrator repo rename
-  `orc-quest → sidequest` reflected in README + system-diagram (#322).
+  `orc-quest → sidequest` reflected in README + system-diagram (#322). CLAUDE.md
+  reconciled to current genre/world reality and the understudy subrepo.
 
 ### Fixed
+- `sm-finish` runs `pf.*` modules with the pf-tool interpreter, not the project
+  `.venv`.
+- `r2_audit` resolver sources audio from `audio.yaml` and drops phantom `params`
+  keys; `generate_music` glob descends into `audio/music/themed/` subdirs.
+- `render_common.slugify` NFKD-folds non-ASCII (101-8, #386).
+- Restored `api-contract.md` after an accidental wip-sweep deletion.
 - leak_audit perception-firewall hardening (ADR-104/105): redact cross_player
   dispatches in `redact_dispatch_package`, extended cross_player coverage,
   multi-key entity extraction.
