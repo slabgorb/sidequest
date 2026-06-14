@@ -26,6 +26,6 @@ Follow the step files in order:
 
 Read `.claude/agents/world-builder.md` for your full agent definition, constraints, and design principles.
 
-**CRITICAL:** This is a personal project under the `slabgorb` GitHub account. No Jira. No 1898 org.
+**CRITICAL:** This is a personal project under the `slabgorb-org` GitHub organization. No Jira. No 1898 org.
 **CRITICAL:** Read `cultures.yaml` BEFORE writing any names. Every name through the conlang.
 </instructions>

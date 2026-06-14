@@ -248,7 +248,7 @@ sequenceDiagram
 
 ## Repository Responsibilities
 
-### sidequest (Orchestrator repo — slabgorb/sidequest; local clones oq-1 / oq-2 / oq-4)
+### sidequest (Orchestrator repo — slabgorb-org/sidequest; local clones oq-1 / oq-2 / oq-4)
 - Cross-repo coordination via `justfile`
 - Sprint tracking and story management (Pennyfarthing)
 - Architecture docs, Architecture Decision Records, design artifacts (`docs/`)

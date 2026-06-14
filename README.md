@@ -45,12 +45,12 @@ out-of-band aside channel for OOC table-talk (ADR-107).
 
 | Repo | Language | Purpose | GitHub |
 |------|----------|---------|--------|
-| **sidequest** | — | Orchestrator, docs, sprint tracking | slabgorb/sidequest |
-| **sidequest-server** | Python | Game engine, FastAPI WebSocket API, narrator orchestration | slabgorb/sidequest-server |
-| **sidequest-ui** | TypeScript | React 19 client, audio engine, 3D dice overlay | slabgorb/sidequest-ui |
-| **sidequest-daemon** | Python | Media services (Z-Image image gen, ACE-Step music, SFX mixer) | slabgorb/sidequest-daemon |
-| **sidequest-content** | YAML | Genre pack configs, audio, images, worlds | slabgorb/sidequest-content |
-| **sidequest-composer** | Python | Standalone CLI: public-domain notation → tagged, rights-free audio (deterministic synthesis, not AI) | slabgorb/sidequest-composer |
+| **sidequest** | — | Orchestrator, docs, sprint tracking | slabgorb-org/sidequest |
+| **sidequest-server** | Python | Game engine, FastAPI WebSocket API, narrator orchestration | slabgorb-org/sidequest-server |
+| **sidequest-ui** | TypeScript | React 19 client, audio engine, 3D dice overlay | slabgorb-org/sidequest-ui |
+| **sidequest-daemon** | Python | Media services (Z-Image image gen, ACE-Step music, SFX mixer) | slabgorb-org/sidequest-daemon |
+| **sidequest-content** | YAML | Genre pack configs, audio, images, worlds | slabgorb-org/sidequest-content |
+| **sidequest-composer** | Python | Standalone CLI: public-domain notation → tagged, rights-free audio (deterministic synthesis, not AI) | slabgorb-org/sidequest-composer |
 
 > **Port history.** The backend was briefly a Rust workspace (`sidequest-api`, ~2026-03-30
 > to 2026-04-19) before being ported back to Python as `sidequest-server` per

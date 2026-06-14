@@ -1202,10 +1202,10 @@ files may need `-n0` reruns to confirm).
 
 ```bash
 git -C sidequest-server push -u origin feat/105-2-seam-crossing
-gh pr create -R slabgorb/sidequest-server --base develop --title "105-2: seam registry — deterministic surface→deep crossing" \
+gh pr create -R slabgorb-org/sidequest-server --base develop --title "105-2: seam registry — deterministic surface→deep crossing" \
   --body "Spec: orc-quest docs/superpowers/specs/2026-06-12-surface-deep-crossing-design.md (rev 2). Registry + deep_descent resolver; movement hybrid fix (de4f85c8 dead-code); narration-guard recovery; router region-exits projection. AC4 (59-15 live span-proof) verifies after 105-1 lands."
 git -C sidequest-content push -u origin feat/105-2-under-the-rope
-gh pr create -R slabgorb/sidequest-content --base develop --title "105-2: author Under the Rope — beneath_sunden entrance room" \
+gh pr create -R slabgorb-org/sidequest-content --base develop --title "105-2: author Under the Rope — beneath_sunden entrance room" \
   --body "The deep's first room (spec §4 Piece 1): authored landing + rat-tier Gnaw-Swarm hook. Pairs with sidequest-server feat/105-2-seam-crossing."
 ```
 
