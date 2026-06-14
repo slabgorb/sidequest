@@ -31,3 +31,50 @@ stories:
       - themes/ content moved to worlds/beneath_sunden/themes/ in sidequest-content; old genre-root path removed
       - existing dungeon theme tests (tests/dungeon/test_themes.py, test_themes_wiring.py) updated and green; a beneath_sunden session loads its palette from the world dir end-to-end (wiring test)
     type: refactor
+  - id: 113-2
+    title: Reconcile pack_schema.yaml with the actual server loader allowlist (drift both directions)
+    description: |-
+      The 2026-06-14 audit cross-checked pack_schema.yaml against the real genre-pack loader (sidequest-server/sidequest/genre/loader.py). They have drifted apart in BOTH directions, so the pack validator can neither flag dead files nor recognize live ones.
+
+      SCHEMA LISTS as genre extensions, but loader DROPPED (dead):
+      - openings.yaml — loader.py:1831 sets openings=[] ; openings are world-tier only now
+      - powers.yaml — fully UNREFERENCED in server + daemon
+      - weather.yaml — repointed to world_dir (Epic 74); pack-root file no longer consulted
+
+      LOADER READS, but schema OMITS (live mechanics, currently invisible to the validator):
+      - skills.yaml (loader.py:1892), spells_wwn.yaml (:699/1920+), foci.yaml (:1877),
+        bestiary.yaml (:1950), backgrounds.yaml (:1861), witnessed_acts.yaml (:1973),
+        mutations.yaml (:1985), disciplines_psionic.yaml (:1932)
+
+      ROOT CAUSE: the loader reads a fixed hard-coded filename allowlist (no glob at pack root), so any unknown YAML dropped at a pack root is silently ignored. The schema's extensions[] list is hand-maintained and went stale against that allowlist.
+
+      SCOPE: make pack_schema.yaml the source of truth for the loader allowlist (or generate/validate one against the other) so the two cannot silently diverge again. Decide whether validator should WARN on unknown pack-root YAML (currently silently ignored — a No-Silent-Fallbacks gap).
+    points: 3
+    priority: p3
+    status: backlog
+    repos: server,content
+    workflow: tdd
+    acceptance_criteria:
+      - "pack_schema.yaml genre extensions match the loader's actual filename allowlist: openings/powers/weather removed, skills/spells_wwn/foci/bestiary/backgrounds/witnessed_acts/mutations/disciplines_psionic added"
+      - a test asserts schema and loader allowlist agree, so future drift fails CI
+      - pack validator flags (at least WARN) an unknown YAML file at a pack root instead of silently ignoring it
+    type: chore
+  - id: 113-3
+    title: Relocate combat_design.md / magic_design.md out of runtime genre-pack folders into docs/
+    description: |-
+      Genre-mechanics design docs currently live inside runtime-loaded genre-pack folders. The loader is YAML-only so it ignores them (harmless), but documentation does not belong in a runtime content dir. This is a content-only move + decide the destination.
+
+      FILES:
+      - combat_design.md ×4 — neon_dystopia, pulp_noir, road_warrior, space_opera
+      - magic_design.md ×3 — neon_dystopia, pulp_noir, space_opera
+
+      DECIDE destination (suggest sidequest-content/docs/genre/<genre>/ to keep them near their pack while out of the runtime tree). Confirm nothing references the in-pack path before moving (loader is YAML-only; grep for the .md filenames across repos to be sure).
+    points: 1
+    priority: p3
+    status: backlog
+    repos: content
+    workflow: trivial
+    acceptance_criteria:
+      - design docs moved out of genre_packs/<genre>/ into a docs location; no .md design docs remain at any pack root
+      - grep confirms no code or content references the old in-pack .md paths (or references updated)
+    type: chore
